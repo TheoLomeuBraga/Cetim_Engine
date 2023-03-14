@@ -96,14 +96,12 @@ void lua_pushtable(lua_State* L, Table t){
 
 Table lua_totable(lua_State* L,int index){
     Table t;
-    // Make sure the argument at tableIndex is a table
-    luaL_checktype(L, index, LUA_TTABLE);
 
+	
     // Iterate over the table and extract its keys and values
     lua_pushnil(L);  // Push the first key
     while (lua_next(L, index) != 0) {
         std::string key;
-		
         // At this point, the stack contains the key at index -2 and the value at index -1
         
        
@@ -124,7 +122,6 @@ Table lua_totable(lua_State* L,int index){
             float value = lua_toboolean(L, -2);
             key = std::to_string(value);
         }
-		
         
 		if (lua_type(L, -1) == LUA_TNUMBER) {
             // The value is a number
@@ -147,7 +144,6 @@ Table lua_totable(lua_State* L,int index){
             // The value is a table, recurse into it
             t.setTable(key,lua_totable(L, lua_gettop(L)));
         }
-
         // Pop the value, but leave the key for the next iteration
         lua_pop(L, 1);
     }
@@ -1764,7 +1760,7 @@ public:
 		Table ret;
 		if (estados_lua.find(script) != estados_lua.end()) {
 			lua_getglobal(estados_lua[script], var.c_str());
-			ret = lua_totable(estados_lua[script], -1);
+			ret = lua_totable(estados_lua[script], -2);
 		}
 		return ret;
 	}
@@ -1784,7 +1780,7 @@ public:
 			lua_getglobal(estados_lua[script], func.c_str());
 			lua_pushtable(estados_lua[script],arg);
 			if (lua_pcall(estados_lua[script], 2, 1, 0) != 0){
-				ret = lua_totable(estados_lua[script],-1);
+				ret = lua_totable(estados_lua[script],-2);
 			}
 		}
 		return ret;
@@ -2050,20 +2046,19 @@ int get_lua_var(lua_State* L){
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
-	//cl->pegar_string(string script, string var)
-	//cl->pegar_numero(string script, string var)
-	//cl->pegar_tabela(string script, string var)
+	
 	lua_getglobal(cl->estados_lua[script_name],var_name.c_str() );
-	if (lua_type(L, -1) == LUA_TNUMBER) {
+	int lua_type_id = lua_type(cl->estados_lua[script_name], -1);
+	if (lua_type_id == LUA_TNUMBER) {
 		lua_pushnumber(L,cl->pegar_numero(script_name,var_name));
     }
-    else if (lua_type(L, -1) == LUA_TSTRING) {  
+    else if (lua_type_id == LUA_TSTRING) {  
 		lua_pushstring(L,cl->pegar_string(script_name,var_name).c_str());
     }
-    else if (lua_type(L, -1) == LUA_TBOOLEAN) {
+    else if (lua_type_id == LUA_TBOOLEAN) {
 		lua_pushboolean(L,cl->pegar_boleana(script_name,var_name));
     }
-    else if (lua_type(L, -1) == LUA_TTABLE) {
+    else if (lua_type_id == LUA_TTABLE) {
 		lua_pushtable(L,cl->pegar_tabela(script_name,var_name));
     }
 	return 1;
