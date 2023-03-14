@@ -262,6 +262,9 @@ int have_script(lua_State* L);
 int add_script_lua(lua_State* L);
 int remove_script(lua_State* L);
 
+int get_lua_var(lua_State* L);
+int set_lua_var(lua_State* L);
+
 
 
 
@@ -1395,6 +1398,10 @@ namespace funcoes_ponte {
 		pair<string, lua_function>("have_script", have_script),
 		pair<string, lua_function>("add_script_lua", add_script_lua),
 		pair<string, lua_function>("remove_script", remove_script),
+		pair<string, lua_function>("get_lua_var", get_lua_var),
+		pair<string, lua_function>("set_lua_var", set_lua_var),
+		
+		
 		
 			
 			
@@ -2009,3 +2016,17 @@ int get_lua_component(lua_State* L){
 	lua_pushtable(L,ret);
 	return 1;
 }
+
+int get_lua_var(lua_State* L){
+	Table ret;
+
+	lua_pushtable(L,ret);
+	return 1;
+}
+
+int set_lua_var(lua_State* L){
+	
+	return 0;
+}
+
+

@@ -5,7 +5,6 @@ require("TMP_libs.components.transform")
 require("TMP_libs.components.render_tile_map")
 
 require("TMP_libs.stystems")
-require("TMP_libs.input")
 require("math")
 require("io")
 json = require "libs.json"
