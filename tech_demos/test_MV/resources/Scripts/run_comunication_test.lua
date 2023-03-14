@@ -7,5 +7,14 @@ function create_test_object()
 end
 
 function run_test()
-    
+end
+
+function destroy_test_object()
+end
+
+function full_test()
+    print("runing comunication test")
+    create_test_object()
+    run_test()
+    destroy_test_object()
 end

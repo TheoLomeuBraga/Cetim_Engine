@@ -27,7 +27,7 @@ require("TMP_libs.material")
 require("all_sceanes")
 
 
-
+require("run_comunication_test")
 
 
 
@@ -46,6 +46,7 @@ end
 function START()
     
 	print("core iniciando")
+    full_test()
     set_resolution()
 
     

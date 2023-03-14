@@ -14,6 +14,9 @@ require("TMP_libs.components.component_all")
 
 require("TMP_libs.layers_table")
 
+
+
+
 function extract_object_properties(object)
     ret = {}
     name = ""
@@ -199,7 +202,6 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
         properties = extract_object_properties(o)
         pos = Vec3:new((o.x * 2)  / tile_map_info_size.tile_x,(-o.y * 2)  / tile_map_info_size.tile_y,0)
         pos = Vec3:new(pos.x -1 ,pos.y + 1  ,0)
-        print("pos",pos.x,pos.y,pos.z)
         if properties.name == "player_start" then
         elseif properties.name  == "crate" then
             
@@ -219,7 +221,7 @@ sceanes_db = {}
 
 sceanes_db.test = {}
 function sceanes_db.test:load()
-    print("loading m1")
+    print("loading test map")
     initialize_render_settings()
     this_sceane.objects_layesrs = layers_table:new_2D()
     this_sceane.objects_layesrs:create()
