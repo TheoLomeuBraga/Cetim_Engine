@@ -4,6 +4,7 @@ require("TMP_libs.components.lua_scripts")
 test_object = {}
 
 function create_test_object()
+    test_object = game_object:new(create_object())
 end
 
 function run_test()
@@ -18,3 +19,4 @@ function full_test()
     run_test()
     destroy_test_object()
 end
+

@@ -13,3 +13,15 @@ function mult_v3(arg)
         z = arg.z * 2,
     }
 end
+
+function START()
+end
+
+function UPDATE()
+end
+
+function COLIDE(Colision)
+end
+
+function END()
+end
