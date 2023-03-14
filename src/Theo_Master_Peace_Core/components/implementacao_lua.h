@@ -249,7 +249,6 @@ int have_component(lua_State* L);
 //scripts
 int get_script_size(lua_State* L);
 int get_script_name(lua_State* L);
-int get_script_var(lua_State* L);
 int set_script_var(lua_State* L);
 int call_script_function(lua_State* L);
 
@@ -1387,7 +1386,6 @@ namespace funcoes_ponte {
 		//script
 		pair<string, lua_function>("get_script_size", get_script_size),
 		pair<string, lua_function>("get_script_name", get_script_name),
-		pair<string, lua_function>("get_script_var", get_script_var),
 		pair<string, lua_function>("set_script_var", set_script_var),
 		pair<string, lua_function>("call_script_function", call_script_function),
 
@@ -1920,32 +1918,7 @@ int get_script_name(lua_State* L) {
 }
 
 
-int get_script_var(lua_State* L) {
 
-	int argumentos = lua_gettop(L);
-	objeto_jogo* obj = NULL;
-	if (argumentos > 0) {
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	if (argumentos == 4 && cl != NULL) {
-
-		if (lua_tonumber(L, 4) == 0) {
-			lua_pushstring(L, cl->pegar_string(lua_tostring(L, 2), lua_tostring(L, 3)).c_str());
-			return 1;
-		}
-		else if (lua_tonumber(L, 4) == 1) {
-			lua_pushnumber(L, cl->pegar_numero(lua_tostring(L, 2), lua_tostring(L, 3)));
-			return 1;
-		}
-		else if (lua_tonumber(L, 4) == 2) {
-			lua_pushboolean(L, cl->pegar_boleana(lua_tostring(L, 2), lua_tostring(L, 3)));
-			return 1;
-		}
-
-	}
-	return 0;
-}
 
 int set_script_var(lua_State* L) {
 	int argumentos = lua_gettop(L);

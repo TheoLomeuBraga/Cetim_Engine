@@ -23,6 +23,8 @@ function get_lua_component()
 end
 function get_lua_var(object,script_name,variable_name)
 end
+function set_lua_var(object,script_name,variable_name,value)
+end
 
 lua_scripts_component = {}
 function lua_scripts_component:new(object_ptr)
@@ -53,8 +55,9 @@ function lua_scripts_component:new(object_ptr)
         --return get_script_var(self.object_ptr,script_name,variable_name,variable_type)
         return get_lua_var(object,script_name,variable_name)
     end
-    function ls:set_variable(script_name,variable_name,variable_type,variable_value)
-        set_script_var(self.object_ptr,script_name,variable_name,variable_type,variable_value)
+    function ls:set_variable(object,script_name,variable_name,value)
+        --set_script_var(self.object_ptr,script_name,variable_name,variable_type,variable_value)
+        set_lua_var(object,script_name,variable_name,value)
     end
     function ls:call_function(script_name,function_name)
         call_script_function(self.object_ptr,script_name,function_name)
