@@ -252,22 +252,15 @@ int have_component(lua_State* L);
 
 //scripts
 int get_script_size(lua_State* L);
-
 int get_script_name(lua_State* L);
-
-int have_script(lua_State* L);
-
-int add_script_lua(lua_State* L);
-
-int remove_script(lua_State* L);
-
 int get_script_var(lua_State* L);
-
 int set_script_var(lua_State* L);
-
 int call_script_function(lua_State* L);
 
 int get_lua_component(lua_State* L);
+int have_script(lua_State* L);
+int add_script_lua(lua_State* L);
+int remove_script(lua_State* L);
 
 
 
@@ -1394,14 +1387,15 @@ namespace funcoes_ponte {
 		//script
 		pair<string, lua_function>("get_script_size", get_script_size),
 		pair<string, lua_function>("get_script_name", get_script_name),
-		pair<string, lua_function>("have_script", have_script),
-		pair<string, lua_function>("add_script_lua", add_script_lua),
-		pair<string, lua_function>("remove_script", remove_script),
 		pair<string, lua_function>("get_script_var", get_script_var),
 		pair<string, lua_function>("set_script_var", set_script_var),
 		pair<string, lua_function>("call_script_function", call_script_function),
 
 		pair<string, lua_function>("get_lua_component", get_lua_component),
+		pair<string, lua_function>("have_script", have_script),
+		pair<string, lua_function>("add_script_lua", add_script_lua),
+		pair<string, lua_function>("remove_script", remove_script),
+		
 			
 			
 	};
@@ -1859,35 +1853,11 @@ int have_component(lua_State* L) {
 	return 1;
 }
 
-int add_script_lua(lua_State* L) {
-	int argumentos = lua_gettop(L);
-	objeto_jogo* obj = NULL;
-	if (argumentos > 0) {
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	if (argumentos == 2 && cl != NULL) {
-		cl->adicionar_script(lua_tostring(L, 2));
-	}
-	return 0;
-}
 
-int remove_script(lua_State* L) {
-	int argumentos = lua_gettop(L);
-	objeto_jogo* obj = NULL;
-	if (argumentos > 0) {
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	if (argumentos == 2 && cl != NULL) {
-		cl->remover_script(lua_tostring(L, 2));
-	}
-	return 0;
-}
 
 //scripts
 
-//pegar_lista_scripts
+
 
 int get_script_size(lua_State* L) {
 	int output = 0;
@@ -1917,23 +1887,6 @@ int get_script_name(lua_State* L) {
 	return 1;
 }
 
-int have_script(lua_State* L) {
-	bool output = false;
-	int argumentos = lua_gettop(L);
-	objeto_jogo* obj = NULL;
-	if (argumentos > 0) {
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	if (argumentos == 2 && cl != NULL) {
-		map<string, lua_State*> m = cl->pegar_estados_lua();
-		if (m.find(lua_tostring(L, 2)) != m.end()) {
-			output = true;
-		}
-	}
-	lua_pushboolean(L, output);
-	return 1;
-}
 
 int get_script_var(lua_State* L) {
 
@@ -1996,6 +1949,52 @@ int call_script_function(lua_State* L) {
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	if (argumentos == 3 && cl != NULL) {
 		cl->chamar_funcao(lua_tostring(L, 2), lua_tostring(L, 3));
+	}
+	return 0;
+}
+
+//new script fonctions
+
+int have_script(lua_State* L) {
+	bool output = false;
+	int argumentos = lua_gettop(L);
+	objeto_jogo* obj = NULL;
+	if (argumentos > 0) {
+		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	}
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	if (argumentos == 2 && cl != NULL) {
+		map<string, lua_State*> m = cl->pegar_estados_lua();
+		if (m.find(lua_tostring(L, 2)) != m.end()) {
+			output = true;
+		}
+	}
+	lua_pushboolean(L, output);
+	return 1;
+}
+
+int add_script_lua(lua_State* L) {
+	int argumentos = lua_gettop(L);
+	objeto_jogo* obj = NULL;
+	if (argumentos > 0) {
+		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	}
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	if (argumentos == 2 && cl != NULL) {
+		cl->adicionar_script(lua_tostring(L, 2));
+	}
+	return 0;
+}
+
+int remove_script(lua_State* L) {
+	int argumentos = lua_gettop(L);
+	objeto_jogo* obj = NULL;
+	if (argumentos > 0) {
+		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	}
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	if (argumentos == 2 && cl != NULL) {
+		cl->remover_script(lua_tostring(L, 2));
 	}
 	return 0;
 }

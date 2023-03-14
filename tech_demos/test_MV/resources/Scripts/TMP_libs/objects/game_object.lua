@@ -7,6 +7,8 @@ function create_object(parent)
 end
 function remove_object(object)
 end
+function have_component(object,component)
+end
 function add_component(object,component)
 end
 function remove_component(object,component)
@@ -15,6 +17,7 @@ function get_object_family_json(object)
 end
 function get_object_family(object)
 end
+
 
 game_object = {}
 function game_object:new(object_ptr)
