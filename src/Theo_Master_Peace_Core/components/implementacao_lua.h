@@ -2045,6 +2045,7 @@ int set_lua_var(lua_State* L){
 	//cl->mudar_numero(string script, string var, float valor)
 	//cl->mudar_tabela(string script, string var, Table valor)
 	
+	
 	return 0;
 }
 

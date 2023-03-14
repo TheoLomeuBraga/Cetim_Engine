@@ -13,7 +13,7 @@ function run_test()
     print("valor z: ",test_object.components[components.lua_scripts]:get_variable(test_object.object_ptr,"resources/Scripts/comunication_test.lua","tab").z)
 
     test_object.components[components.lua_scripts]:set_variable(test_object.object_ptr,"resources/Scripts/comunication_test.lua","var_x",{x = 10,y = 20,z = 30})
-    print("valor z: ",test_object.components[components.lua_scripts]:get_variable(test_object.object_ptr,"resources/Scripts/comunication_test.lua","tab").z)
+    print("valor z: ",test_object.components[components.lua_scripts]:get_variable(test_object.object_ptr,"resources/Scripts/comunication_test.lua","var_x").z)
 end
 
 function destroy_test_object()
