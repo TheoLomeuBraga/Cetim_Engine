@@ -2044,7 +2044,17 @@ int set_lua_var(lua_State* L){
 	//cl->mudar_string(string script, string var, string valor)
 	//cl->mudar_numero(string script, string var, float valor)
 	//cl->mudar_tabela(string script, string var, Table valor)
-	
+	lua_getglobal(cl->estados_lua[script_name],var_name.c_str() );
+	int lua_type_id = lua_type(L, 4);
+	cout<< " AAAAA: " << lua_type_id << endl;
+	if (lua_type_id == LUA_TNUMBER) {
+    }
+    else if (lua_type_id == LUA_TSTRING) {  
+    }
+    else if (lua_type_id == LUA_TBOOLEAN) {
+    }
+    else if (lua_type_id == LUA_TTABLE) {
+    }
 	
 	return 0;
 }
