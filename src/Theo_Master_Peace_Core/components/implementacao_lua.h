@@ -2048,12 +2048,16 @@ int set_lua_var(lua_State* L){
 	int lua_type_id = lua_type(L, 4);
 	cout<< " AAAAA: " << lua_type_id << endl;
 	if (lua_type_id == LUA_TNUMBER) {
+		cl->mudar_numero(script_name,var_name,lua_tonumber(L,4));
     }
     else if (lua_type_id == LUA_TSTRING) {  
+		cl->mudar_string(script_name,var_name,lua_tostring(L,4));
     }
     else if (lua_type_id == LUA_TBOOLEAN) {
+		cl->mudar_numero(script_name,var_name,lua_tonumber(L,4));
     }
     else if (lua_type_id == LUA_TTABLE) {
+		cl->mudar_tabela(script_name,var_name,lua_totable(L,4));
     }
 	
 	return 0;
