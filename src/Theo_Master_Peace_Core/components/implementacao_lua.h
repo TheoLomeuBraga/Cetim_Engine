@@ -1694,6 +1694,7 @@ public:
 	~componente_lua() {
 		limpar_scripts();
 	}
+
 	//mudar
 	void mudar_string(string script, string var, string valor) {
 		if (estados_lua.find(script) != estados_lua.end()) {
@@ -1716,6 +1717,12 @@ public:
 	void mudar_boleana(string script, string var, bool valor) {
 		if (estados_lua.find(script) != estados_lua.end()) {
 			lua_pushboolean(estados_lua[script], valor);
+			lua_setglobal(estados_lua[script], var.c_str());
+		}
+	}
+	void mudar_tabela(string script, string var, Table valor) {
+		if (estados_lua.find(script) != estados_lua.end()) {
+			lua_pushtable(estados_lua[script], valor);
 			lua_setglobal(estados_lua[script], var.c_str());
 		}
 	}
@@ -1753,12 +1760,34 @@ public:
 		}
 		return ret;
 	}
+	Table pegar_tabela(string script, string var) {
+		Table ret;
+		if (estados_lua.find(script) != estados_lua.end()) {
+			lua_getglobal(estados_lua[script], var.c_str());
+			ret = lua_totable(estados_lua[script], -1);
+		}
+		return ret;
+	}
 
+
+	//função
 	void chamar_funcao(string script, string func) {
 		if (estados_lua.find(script) != estados_lua.end()) {
 			lua_getglobal(estados_lua[script], func.c_str());
 			lua_call(estados_lua[script], 0, 0);
 		}
+	}
+
+	Table chamar_funcao_lua(string script, string func,Table arg) {
+		Table ret;
+		if (estados_lua.find(script) != estados_lua.end()) {
+			lua_getglobal(estados_lua[script], func.c_str());
+			lua_pushtable(estados_lua[script],arg);
+			if (lua_pcall(estados_lua[script], 2, 1, 0) != 0){
+				ret = lua_totable(estados_lua[script],-1);
+			}
+		}
+		return ret;
 	}
 
 	componente_lua() {
@@ -2020,7 +2049,10 @@ int get_lua_component(lua_State* L){
 int get_lua_var(lua_State* L){
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	string script_name = lua_tostring(L, 2);
+	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
+	//cl->pegar_string(string script, string var)
+	//cl->pegar_numero(string script, string var)
+	//cl->pegar_tabela(string script, string var)
 	
 	return 1;
 }
@@ -2028,7 +2060,10 @@ int get_lua_var(lua_State* L){
 int set_lua_var(lua_State* L){
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	string script_name = lua_tostring(L, 2);
+	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
+	//cl->mudar_string(string script, string var, string valor)
+	//cl->mudar_numero(string script, string var, float valor)
+	//cl->mudar_tabela(string script, string var, Table valor)
 	
 	return 0;
 }
@@ -2036,9 +2071,9 @@ int set_lua_var(lua_State* L){
 int lua_call_function(lua_State* L){
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	string script_name = lua_tostring(L, 2);
+	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
 	Table ret,arg;
-
+	//cl->chamar_funcao_lua(string script, string func,Table arg)
 
 	lua_pushtable(L,ret);
 	return 1;
