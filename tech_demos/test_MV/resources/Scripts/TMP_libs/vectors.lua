@@ -3,7 +3,6 @@ function Vec2:new(x,y)
     vec = {}
     vec.x = x
     vec.y = y
-    
     return vec
 end
 
@@ -13,7 +12,6 @@ function Vec3:new(x,y,z)
     Vec.x = x
     Vec.y = y
     Vec.z = z
-    
     return Vec
 end
 
@@ -24,6 +22,5 @@ function Vec4:new(x,y,z,w)
     Vec.y = y
     Vec.z = z
     Vec.w = w
-    
     return Vec
 end

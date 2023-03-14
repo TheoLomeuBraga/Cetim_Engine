@@ -264,6 +264,7 @@ int remove_script(lua_State* L);
 
 int get_lua_var(lua_State* L);
 int set_lua_var(lua_State* L);
+int lua_call_function(lua_State* L);
 
 
 
@@ -1400,8 +1401,7 @@ namespace funcoes_ponte {
 		pair<string, lua_function>("remove_script", remove_script),
 		pair<string, lua_function>("get_lua_var", get_lua_var),
 		pair<string, lua_function>("set_lua_var", set_lua_var),
-		
-		
+		pair<string, lua_function>("lua_call_function", lua_call_function),
 		
 			
 			
@@ -2018,15 +2018,30 @@ int get_lua_component(lua_State* L){
 }
 
 int get_lua_var(lua_State* L){
-	Table ret;
-
-	lua_pushtable(L,ret);
+	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	string script_name = lua_tostring(L, 2);
+	
 	return 1;
 }
 
 int set_lua_var(lua_State* L){
+	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	string script_name = lua_tostring(L, 2);
 	
 	return 0;
+}
+
+int lua_call_function(lua_State* L){
+	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	string script_name = lua_tostring(L, 2);
+	Table ret,arg;
+
+
+	lua_pushtable(L,ret);
+	return 1;
 }
 
 
