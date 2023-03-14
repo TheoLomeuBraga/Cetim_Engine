@@ -1545,10 +1545,10 @@ namespace funcoes_lua {
 
 class componente_lua : public componente {
 	bool iniciado = false;
-	map<string, lua_State*> estados_lua;
 	map<string, shared_ptr<string>> scripts_lua_string;
 	map<string, bool> scripts_lua_iniciados;
 public:
+	map<string, lua_State*> estados_lua;
 
 	vector<string> pegar_lista_scripts() {
 		vector<string> ret = {};
@@ -2053,7 +2053,19 @@ int get_lua_var(lua_State* L){
 	//cl->pegar_string(string script, string var)
 	//cl->pegar_numero(string script, string var)
 	//cl->pegar_tabela(string script, string var)
-	
+	lua_getglobal(cl->estados_lua[script_name],var_name.c_str() );
+	if (lua_type(L, -1) == LUA_TNUMBER) {
+		lua_pushnumber(L,cl->pegar_numero(script_name,var_name));
+    }
+    else if (lua_type(L, -1) == LUA_TSTRING) {  
+		lua_pushstring(L,cl->pegar_string(script_name,var_name).c_str());
+    }
+    else if (lua_type(L, -1) == LUA_TBOOLEAN) {
+		lua_pushboolean(L,cl->pegar_boleana(script_name,var_name));
+    }
+    else if (lua_type(L, -1) == LUA_TTABLE) {
+		lua_pushtable(L,cl->pegar_tabela(script_name,var_name));
+    }
 	return 1;
 }
 
