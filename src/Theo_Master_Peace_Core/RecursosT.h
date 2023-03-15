@@ -298,12 +298,12 @@ public:
 		struct colis_info_struct {
 			void* obj = NULL;
 			void* cos_obj = NULL;
-			bool sensor;
+			bool sensor = true;
 			bool colidindo = true;
-			float distancia;
-			vec3 pos;
-			float velocidade;
-			vec3 nor;
+			float distancia = 0;
+			vec3 pos = vec3(0,0,0);
+			float velocidade = 0;
+			vec3 nor = vec3(0,0,0);
 
 
 

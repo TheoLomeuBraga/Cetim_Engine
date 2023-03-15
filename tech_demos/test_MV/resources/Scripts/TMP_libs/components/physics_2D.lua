@@ -10,6 +10,8 @@ end
 function set_gravity(x,y,z)
 end
 
+function raycast_2D(position,distance,angle)
+end
 
 --boady_dynamics
 boady_dynamics = {}

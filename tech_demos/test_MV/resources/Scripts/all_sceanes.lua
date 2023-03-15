@@ -156,6 +156,10 @@ function create_crate(pos)
     --mat.color = {r=0,g=1,b=0,a=1}
     ret.components[components.render_sprite].material = deepcopyjson(mat)
     ret.components[components.render_sprite]:set()
+
+    ret:add_component(components.lua_scripts)
+    ret.components[components.lua_scripts]:add_script("resources/Scripts/collision_debuger.lua")
+    --collision_debuger.lua
 end
 
 

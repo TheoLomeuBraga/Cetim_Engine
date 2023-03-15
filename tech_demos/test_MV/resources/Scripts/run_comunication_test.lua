@@ -20,6 +20,7 @@ function run_test()
 end
 
 function destroy_test_object()
+    remove_object(test_object.object_ptr)
 end
 
 function full_test()

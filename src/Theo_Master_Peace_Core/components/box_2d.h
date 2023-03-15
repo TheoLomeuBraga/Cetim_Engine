@@ -336,6 +336,7 @@ public:
 	filtro_colisao() {};
 
 	bool ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB) {
+		
 		bool ret = false;
 		b2Body* corpoA = fixtureA->GetBody();
 		b2Body* corpoB = fixtureB->GetBody();
@@ -364,13 +365,17 @@ public:
 		
 
 		colis_info ci;
-		ci.obj = corpo_obj[corpoB].get();
-		ci.velocidade = contact->GetTangentSpeed();
-
 		
+		ci.velocidade = contact->GetTangentSpeed();
+		
+		ci.colidindo = contact->IsTouching();
 
-		corpo_obj[corpoA]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
 		ci.obj = corpo_obj[corpoA].get();
+		ci.cos_obj = corpo_obj[corpoB].get();
+		corpo_obj[corpoA]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
+		
+		ci.obj = corpo_obj[corpoB].get();
+		ci.cos_obj = corpo_obj[corpoA].get();
 		corpo_obj[corpoB]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
 	}
 

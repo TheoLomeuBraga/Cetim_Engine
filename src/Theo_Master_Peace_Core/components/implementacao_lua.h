@@ -1266,7 +1266,12 @@ namespace funcoes_ponte {
 	}
 
 
-	
+	int raycast_2D(lua_State* L){
+		Table ret;
+
+		lua_pushtable(L,ret);
+		return 1;
+	}
 	
 
 	map<string, lua_function> funcoes_ponte_map = {
@@ -1367,6 +1372,8 @@ namespace funcoes_ponte {
 		//physic
 		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
 		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
+		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
+		
 		
 		
 
@@ -1644,16 +1651,10 @@ public:
 			lua_State* L = p.second;
 
 			if (col.obj != NULL) {
-				lua_getglobal(L, "COLIDE");
 
-				//tabela
-				//lua_newtable(L);
-				//lua_pushstring(L, "object_ID");
-				//lua_pushstring(L, ponteiro_string(col.obj).c_str());
-				//lua_settable(L, -3);
+				lua_getglobal(L, "COLLIDE");
 				
 				lua_pushtable(L,colis_info_table(col));
-
 
 				lua_call(L, 1, 0);
 			}

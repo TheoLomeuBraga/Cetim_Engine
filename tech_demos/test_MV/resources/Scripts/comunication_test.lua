@@ -22,7 +22,7 @@ end
 function UPDATE()
 end
 
-function COLIDE(Colision)
+function COLLIDE(collision_info)
 end
 
 function END()
