@@ -1,9 +1,23 @@
+--[[
 require("TMP_libs.definitions")
 require("TMP_libs.objects.material")
 require("TMP_libs.objects.game_object")
 require("TMP_libs.time")
 require("TMP_libs.vectors")
+require("TMP_libs.short_cuts.create_mesh")
+]]
+require("TMP_libs.definitions")
+require("TMP_libs.components.component_table")
+require("TMP_libs.components.component_all")
+require("TMP_libs.components.component_index")
+require("TMP_libs.objects.material")
+require("TMP_libs.objects.game_object")
+require("TMP_libs.time")
+require("TMP_libs.vectors")
+require("TMP_libs.short_cuts.create_mesh")
 
+
+father = ""
 cube = {}
 ray_info = {
     position = {x=0,y=0},
@@ -13,11 +27,11 @@ ray_info = {
 
 function START()
     print("raycast test")
-    --[[
+    
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
-    cube = create_mesh(nil,false,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","cube")})
-    ]]
+    cube = create_mesh(father,false,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
+    
 end
 
 function UPDATE()

@@ -8,7 +8,7 @@ require("TMP_libs.short_cuts.fps_counter")
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")
-require("TMP_libs.short_cuts.create_mesh")
+
 
 require("TMP_libs.components.component_all")
 
@@ -222,6 +222,7 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
 
             obj:add_component(components.lua_scripts)
             obj.components[components.lua_scripts]:add_script("resources/Scripts/test_raycast.lua")
+            obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","father",this_sceane.objects_layesrs.background_3D)
         end
     end
 end
