@@ -1,11 +1,11 @@
 require("TMP_libs.objects.game_object")
 require("TMP_libs.components.transform")
 require("TMP_libs.components.render_mesh")
-require("math")
 
 
 function create_mesh(father,is_ui,pos,rot,sca,layer,mats,meshes_locations)
     ret = game_object:new(create_object(father))
+    
     ret:add_component(components.transform)
     ret.components[components.transform].is_ui = is_ui
     ret.components[components.transform].position = deepcopy(pos)
