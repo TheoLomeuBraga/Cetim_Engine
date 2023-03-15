@@ -35,14 +35,25 @@ function START()
 end
 
 function UPDATE()
-    --[[
+    --
     Time:get()
     ray_info.angle = ray_info.angle + Time.delta
-    rc_ret = raycast_2D(ray_info.position,ray_info.max_distance,ray_info.angle)
-    if rc_ret.position ~= nil then
-        print("raycast colision point: ",rc_ret.position.x,rc_ret.position.y,rc_ret.position.z)
+    rc_hit,rc_ret = raycast_2D(ray_info.position,ray_info.max_distance,ray_info.angle)
+    
+    if rc_hit then
+        --[[
+        if rc_ret.position ~= nil then
+            print("raycast colision point: ",rc_ret.position.x,rc_ret.position.y,rc_ret.position.z)
+        end
+        ]]
+        cube.components[components.transform].position = Vec3:new(rc_ret.position.x,rc_ret.position.y,0)
+        cube.components[components.transform]:set()
+    else
+        cube.components[components.transform].position = Vec3:new(ray_info.position.x,ray_info.position.y,0)
+        cube.components[components.transform]:set()
     end
-    ]]
+    
+    
     
 end
 

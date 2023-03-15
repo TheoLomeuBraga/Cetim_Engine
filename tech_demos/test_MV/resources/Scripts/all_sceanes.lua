@@ -223,6 +223,14 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
             obj:add_component(components.lua_scripts)
             obj.components[components.lua_scripts]:add_script("resources/Scripts/test_raycast.lua")
             obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","father",this_sceane.objects_layesrs.background_3D)
+
+            ray_info = {
+                position = {x=pos.x,y=pos.y},
+                max_distance = 100,
+                angle = 0,
+            }
+            print("AAAAAAAAAAAAAA: ",pos.x,pos.y,pos.z)
+            obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","ray_info",ray_info)
         end
     end
 end
