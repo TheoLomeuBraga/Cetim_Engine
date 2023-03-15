@@ -1647,14 +1647,12 @@ public:
 				lua_getglobal(L, "COLIDE");
 
 				//tabela
-				lua_newtable(L);
-				//id obj
-				lua_pushstring(L, "object_ID");
-				lua_pushstring(L, ponteiro_string(col.obj).c_str());
-
-				lua_settable(L, -3);
-				//fim tabela
-
+				//lua_newtable(L);
+				//lua_pushstring(L, "object_ID");
+				//lua_pushstring(L, ponteiro_string(col.obj).c_str());
+				//lua_settable(L, -3);
+				
+				lua_pushtable(L,colis_info_table(col));
 
 
 				lua_call(L, 1, 0);

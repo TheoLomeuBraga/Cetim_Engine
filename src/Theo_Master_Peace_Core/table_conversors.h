@@ -229,3 +229,9 @@ Table info_camada_table(info_camada ic){
     ret.setTable("layers_can_colide",vFloat_table(layers_can_colide));
     return ret;
 }
+
+Table colis_info_table(colis_info col){
+    Table ret;
+    
+    return ret;
+}
