@@ -214,6 +214,9 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
             mat = material:new()
             mat.shader = "resources/Shaders/mesh"
             create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,45,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new(properties.model_file,properties.model_name)})
+        elseif properties.name == "raycast_test" then
+            --obj:add_component(components.lua_scripts)
+            --obj.components[components.lua_scripts]:add_script("resources/Scripts/collision_debuger.lua")
         end
     end
 end
