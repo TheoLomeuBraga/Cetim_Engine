@@ -190,13 +190,13 @@
                         {
                          "name":"name",
                          "type":"string",
-                         "value":"crate"
+                         "value":"raycast_test"
                         }],
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":64,
-                 "y":16
+                 "x":96,
+                 "y":256
                 }, 
                 {
                  "class":"",
@@ -225,6 +225,24 @@
                  "width":0,
                  "x":32,
                  "y":144
+                }, 
+                {
+                 "class":"",
+                 "height":0,
+                 "id":38,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"crate"
+                        }],
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":64,
+                 "y":16
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -277,7 +295,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":38,
+ "nextobjectid":39,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
