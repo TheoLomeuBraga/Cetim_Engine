@@ -250,7 +250,6 @@ int have_component(lua_State* L);
 int get_script_size(lua_State* L);
 int get_script_name(lua_State* L);
 int set_script_var(lua_State* L);
-int call_script_function(lua_State* L);
 
 int get_lua_component(lua_State* L);
 int have_script(lua_State* L);
@@ -259,7 +258,7 @@ int remove_script(lua_State* L);
 
 int get_lua_var(lua_State* L);
 int set_lua_var(lua_State* L);
-int lua_call_function(lua_State* L);
+int call_lua_function(lua_State* L);
 
 
 
@@ -1387,7 +1386,6 @@ namespace funcoes_ponte {
 		pair<string, lua_function>("get_script_size", get_script_size),
 		pair<string, lua_function>("get_script_name", get_script_name),
 		pair<string, lua_function>("set_script_var", set_script_var),
-		pair<string, lua_function>("call_script_function", call_script_function),
 
 		pair<string, lua_function>("get_lua_component", get_lua_component),
 		pair<string, lua_function>("have_script", have_script),
@@ -1395,7 +1393,7 @@ namespace funcoes_ponte {
 		pair<string, lua_function>("remove_script", remove_script),
 		pair<string, lua_function>("get_lua_var", get_lua_var),
 		pair<string, lua_function>("set_lua_var", set_lua_var),
-		pair<string, lua_function>("lua_call_function", lua_call_function),
+		pair<string, lua_function>("call_lua_function", call_lua_function),
 		
 			
 			
@@ -1419,13 +1417,6 @@ namespace funcoes_lua {
 
 	void adicionar_funcoes_ponte_estado_lua(lua_State* L) {
 		vector<pair<string, lua_function>> funcoes_ponte_pair = map_vetor<string, lua_function>(funcoes_ponte::funcoes_ponte_map);
-
-
-
-		//solu��o 2
-		//thread af(adicionar_parte_funcoes_ponte_estado_lua, L, funcoes_ponte_pair, 0, (int)funcoes_ponte_pair.size() / 2);
-		//adicionar_parte_funcoes_ponte_estado_lua(L, funcoes_ponte_pair, (int)funcoes_ponte_pair.size() / 2, (int)funcoes_ponte_pair.size());
-		//af.join();
 
 		//solu��o 1
 		for (pair<string, lua_function > p : funcoes_ponte::funcoes_ponte_map) {
@@ -1777,9 +1768,27 @@ public:
 		if (estados_lua.find(script) != estados_lua.end()) {
 			lua_getglobal(estados_lua[script], func.c_str());
 			lua_pushtable(estados_lua[script],arg);
-			if (lua_pcall(estados_lua[script], 2, 1, 0) != 0){
-				ret = lua_totable(estados_lua[script],-2);
-			}
+			lua_call(estados_lua[script], 1, 1);
+
+			/*
+			int lua_type_id = lua_type(estados_lua[script], -2);
+			cout << "lua_type_id: " << lua_type_id << endl;
+			if (lua_type_id == LUA_TNUMBER) {
+				escrever("LUA_TNUMBER");
+    		}
+    		else if (lua_type_id == LUA_TSTRING) {  
+				escrever("LUA_TSTRING");
+    		}
+    		else if (lua_type_id == LUA_TBOOLEAN) {
+				escrever("LUA_TBOOLEAN");
+    		}
+    		else if (lua_type_id == LUA_TTABLE) {
+				escrever("LUA_TTABLE");
+    		}
+			*/
+			
+			ret = lua_totable(estados_lua[script],-2);
+			
 		}
 		return ret;
 	}
@@ -1945,19 +1954,6 @@ int set_script_var(lua_State* L) {
 	return 0;
 }
 
-int call_script_function(lua_State* L) {
-	int argumentos = lua_gettop(L);
-	objeto_jogo* obj = NULL;
-	if (argumentos > 0) {
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	if (argumentos == 3 && cl != NULL) {
-		cl->chamar_funcao(lua_tostring(L, 2), lua_tostring(L, 3));
-	}
-	return 0;
-}
-
 //new script fonctions
 
 int have_script(lua_State* L) {
@@ -2041,12 +2037,8 @@ int set_lua_var(lua_State* L){
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
-	//cl->mudar_string(string script, string var, string valor)
-	//cl->mudar_numero(string script, string var, float valor)
-	//cl->mudar_tabela(string script, string var, Table valor)
 	lua_getglobal(cl->estados_lua[script_name],var_name.c_str() );
 	int lua_type_id = lua_type(L, 4);
-	cout<< " AAAAA: " << lua_type_id << endl;
 	if (lua_type_id == LUA_TNUMBER) {
 		cl->mudar_numero(script_name,var_name,lua_tonumber(L,4));
     }
@@ -2063,15 +2055,16 @@ int set_lua_var(lua_State* L){
 	return 0;
 }
 
-int lua_call_function(lua_State* L){
+int call_lua_function(lua_State* L){
+	
 	objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-	string script_name = lua_tostring(L, 2),var_name = lua_tostring(L, 3);
-	Table ret,arg;
-	//cl->chamar_funcao_lua(string script, string func,Table arg)
-
+	string script_name = lua_tostring(L, 2),func_name = lua_tostring(L, 3);
+	Table t = lua_totable(L,4);
+	Table ret = cl->chamar_funcao_lua(script_name,func_name,t);
 	lua_pushtable(L,ret);
 	return 1;
+	
 }
 
 

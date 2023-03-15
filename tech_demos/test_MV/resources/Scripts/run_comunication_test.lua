@@ -15,7 +15,8 @@ function run_test()
     test_object.components[components.lua_scripts]:set_variable("resources/Scripts/comunication_test.lua","var_x",{x = 10,y = 20,z = 30})
     print("valor z: ",test_object.components[components.lua_scripts]:get_variable("resources/Scripts/comunication_test.lua","var_x").z)
 
-    print("valor z denovo: ",test_object.components[components.lua_scripts]:call_function("resources/Scripts/comunication_test.lua","mult_v3",{x = 10,y = 20,z = 30}).z)
+    mlt_v3_ret = test_object.components[components.lua_scripts]:call_function("resources/Scripts/comunication_test.lua","mult_v3",{x = 10,y = 20,z = 30})
+    print("retorno de mult_v3: ",mlt_v3_ret.x,mlt_v3_ret.y,mlt_v3_ret.z)
 end
 
 function destroy_test_object()
@@ -25,6 +26,6 @@ function full_test()
     print("runing comunication test")
     create_test_object()
     run_test()
-    --destroy_test_object()
+    destroy_test_object()
 end
 

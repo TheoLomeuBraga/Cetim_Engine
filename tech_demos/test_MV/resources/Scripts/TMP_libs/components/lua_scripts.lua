@@ -15,7 +15,7 @@ end
 
 function have_script(object,script)
 end
-function add_script(object,script)
+function add_script_lua(object,script)
 end
 function remove_script(object,script)
 end
@@ -25,7 +25,7 @@ function get_lua_var(object,script_name,variable_name)
 end
 function set_lua_var(object,script_name,variable_name,value)
 end
-function lua_call_function(object,script_name,function_name,arg)
+function call_lua_function(object,script_name,function_name,arg)
 end
 
 lua_scripts_component = {}
@@ -34,15 +34,6 @@ function lua_scripts_component:new(object_ptr)
     ls.object_ptr = object_ptr
     ls.scripts = {}
     function ls:get()
-        --[[
-        self.scripts = nil
-        self.scripts = {}
-        i = 0
-        while i < get_script_size(self.object_ptr) do
-            self.scripts[i] = get_script_name(self.object_ptr,i)
-            i = i + 1
-        end
-        ]]
         self.scripts = deepcopyjson(get_lua_component(self.object_ptr).scripts)
     end
     function ls:set()
@@ -63,7 +54,7 @@ function lua_scripts_component:new(object_ptr)
     end
     function ls:call_function(script_name,function_name,arg)
         --call_script_function(self.object_ptr,script_name,function_name)
-        lua_call_function(self.object_ptr,script_name,function_name,arg)
+        return call_lua_function(self.object_ptr,script_name,function_name,arg)
     end
     
     function ls:delet()
