@@ -1,4 +1,5 @@
 require("TMP_libs.components.component_index")
+require("TMP_libs.components.component_table")
 
 --mesh
 function get_mesh_json(object)
@@ -41,15 +42,6 @@ function render_mesh_component:new(object_ptr)
     end
     --buscar por erros
     function rm:set()
-        --[[
-        j = {}
-        j.layer = self.layer
-        j.use_oclusion = self.use_oclusion
-        j.normal_direction = self.normal_direction
-        j.meshes = deepcopyjson(self.meshes)
-        j.materials = deepcopyjson(self.materials)
-        set_mesh_json(self.object_ptr,json.encode(j))
-        ]]
         get_set_render_mesh(set_lua,deepcopyjson(self))
         
     end

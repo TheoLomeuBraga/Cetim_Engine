@@ -4,7 +4,8 @@ compiler_linux=g++
 engine_cpp_windows_path=./src/Theo_Master_Peace/EngineTMasterPece.cpp
 
 
-font_reader_cpp_path=./src/Font_Reader/leitor_de_fontes_TMP_linux.cpp
+#font_reader_cpp_path=./src/Font_Reader/leitor_de_fontes_TMP_linux.cpp
+font_reader_cpp_path=./src/Font_Reader_2/Font_Reader.cpp
 
 tags_windows=-std=c++17 -pipe -Wa,-mbig-obj
 

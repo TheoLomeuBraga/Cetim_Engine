@@ -1,4 +1,4 @@
-adicionar raycast 2D
+corigir leitor de fontes
 atualizar inputs da interface lua
 
 adicionar fisica 3d
