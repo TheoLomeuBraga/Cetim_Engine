@@ -4,10 +4,11 @@
 using json = nlohmann::json;
 #include <fstream>
 #include <vector>
+#include <iostream>
 
 using json = nlohmann::json;
 
-void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath) {
+void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         // Error handling
@@ -28,7 +29,7 @@ void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath) {
         return;
     }
 
-    json charList;
+    json fontInfo;
     for (FT_ULong charCode = FT_Get_First_Char(face, NULL); charCode != 0; charCode = FT_Get_Next_Char(face, charCode, NULL)) {
         FT_UInt glyphIndex = FT_Get_Char_Index(face, charCode);
         if (glyphIndex == 0) {
@@ -57,7 +58,9 @@ void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath) {
 
         charData["bitmap"] = bitmapData;
 
-        charList.push_back(charData);
+        fontInfo["pixel_perfect"] = pixel_perfect;
+
+        fontInfo.push_back(charData);
     }
 
     FT_Done_Face(face);
@@ -69,7 +72,9 @@ void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath) {
         return;
     }
 
-    outputFile << charList.dump(4); // Indent with 4 spaces
+    std::cout << fontInfo.dump(4) << std::endl;
+
+    outputFile << fontInfo.dump(4); // Indent with 4 spaces
     outputFile.close();
 }
 
@@ -77,7 +82,6 @@ std::vector<std::string> argumentos;
 
 int main(int argc, char** argv)
 {
-
 	for (int i = 0; i < argc; i++) {
 		argumentos.push_back(argv[i]);
 	}

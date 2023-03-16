@@ -5,7 +5,7 @@ engine_cpp_windows_path=./src/Theo_Master_Peace/EngineTMasterPece.cpp
 
 
 #font_reader_cpp_path=./src/Font_Reader/leitor_de_fontes_TMP_linux.cpp
-font_reader_cpp_path=./src/Font_Reader_2/Font_Reader.cpp
+font_reader_cpp_path=./src/Font_Reader_2/font_reader_2.cpp
 
 tags_windows=-std=c++17 -pipe -Wa,-mbig-obj
 
@@ -23,7 +23,7 @@ libs_windows=-llua54 -lglfw3dll  -lglew32 -lopengl32 -lbox2d.dll -lfreetype -lsf
 
 windows:
 	${compiler_windows} ${tags_windows} ${engine_cpp_windows_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/engine_theo_master_peace.exe 
-	${compiler_windows} ${tags_windows} ${font_reader_cpp_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader.exe
+	${compiler_windows} ${tags_windows} ${font_reader_cpp_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_2.exe
 #
 
 engine_cpp_linux_path=./src/Theo_Master_Peace/TMP_LINUX.cpp
@@ -38,4 +38,4 @@ definitions_linux=
 
 linux:
 	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
-	${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader
+	${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
