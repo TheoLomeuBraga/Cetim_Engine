@@ -8,7 +8,7 @@ using json = nlohmann::json;
 
 using json = nlohmann::json;
 
-void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect) {
+std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         // Error handling
@@ -72,9 +72,11 @@ void storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,boo
         return;
     }
 
-    std::cout << fontInfo.dump(4) << std::endl;
+    std::string fontInfo_dump = fontInfo.dump(4);
 
-    outputFile << fontInfo.dump(4); // Indent with 4 spaces
+    std::cout << fontInfo_dump << std::endl;
+
+    outputFile << fontInfo_dump; // Indent with 4 spaces
     outputFile.close();
 }
 
