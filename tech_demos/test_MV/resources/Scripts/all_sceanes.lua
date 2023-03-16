@@ -205,7 +205,7 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
     for o_id,o in ipairs(tile_map_layer_info_map["objects"].objects) do
         properties = extract_object_properties(o)
         pos = Vec3:new((o.x * 2)  / tile_map_info_size.tile_x,(-o.y * 2)  / tile_map_info_size.tile_y,0)
-        pos = Vec3:new(pos.x -1 ,pos.y + 1  ,0)
+        pos = Vec3:new(pos.x - 1 ,pos.y + 1  ,0)
         if properties.name == "player_start" then
         elseif properties.name  == "crate" then
             
@@ -215,6 +215,11 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
             mat.shader = "resources/Shaders/mesh"
             create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,45,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new(properties.model_file,properties.model_name)})
         elseif properties.name == "raycast_test" then
+            mat = matreial:new()
+            mat.shader = "resources/Shaders/mesh"
+            mat.color = {r = 1,g = 0,b = 0,a = 1}
+            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
+            --[[
             obj = game_object:new(create_object(this_sceane.objects_layesrs.background_3D))
             obj:add_component(components.transform)
             obj.components[components.transform].position = deepcopy(pos)
@@ -230,6 +235,7 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
                 angle = 0,
             }
             obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","ray_info",ray_info)
+            ]]
         end
     end
 end

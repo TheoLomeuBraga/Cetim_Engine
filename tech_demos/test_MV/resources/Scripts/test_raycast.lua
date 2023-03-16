@@ -30,6 +30,7 @@ function START()
     
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
+    mat.color = {r = 1,g = 0,b = 0,a = 1}
     cube = create_mesh(father,false,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
     
 end
