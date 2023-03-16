@@ -62,6 +62,31 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
     ash to gpt:
     make a function to get UTF-8 representation of character code and  an c++ function that use fretype to print and storage all characters in utf-8 in a font file has including regional charters using an solution like "while (glyphIndex != 0)"  for the loop 
     */
+   /*
+   ask to gpt:
+   make a c++ function that use fretype to print and storage all characters in utf-8 in a font file has including regional charters using an solution like "while (glyphIndex != 0)"  for the loop and use the function "
+   std::string utf8_encode(unsigned int codepoint) {
+    std::string result;
+    if (codepoint <= 0x7F) {
+        result.push_back((char)codepoint);
+    } else if (codepoint <= 0x7FF) {
+        result.push_back((char)(0xC0 | (codepoint >> 6)));
+        result.push_back((char)(0x80 | (codepoint & 0x3F)));
+    } else if (codepoint <= 0xFFFF) {
+        result.push_back((char)(0xE0 | (codepoint >> 12)));
+        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
+        result.push_back((char)(0x80 | (codepoint & 0x3F)));
+    } else if (codepoint <= 0x10FFFF) {
+        result.push_back((char)(0xF0 | (codepoint >> 18)));
+        result.push_back((char)(0x80 | ((codepoint >> 12) & 0x3F)));
+        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
+        result.push_back((char)(0x80 | (codepoint & 0x3F)));
+    }
+    return result;
+}
+   "
+   that is in te file utf8_encode.h
+   */
     json fontInfo;
     std::vector<json> chars_infos;
     /*
