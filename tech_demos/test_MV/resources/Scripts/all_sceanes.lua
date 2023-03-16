@@ -229,7 +229,6 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
                 max_distance = 100,
                 angle = 0,
             }
-            print("AAAAAAAAAAAAAA: ",pos.x,pos.y,pos.z)
             obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","ray_info",ray_info)
         end
     end

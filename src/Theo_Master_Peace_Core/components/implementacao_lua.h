@@ -1270,9 +1270,7 @@ namespace funcoes_ponte {
 		Table ret;
 		colis_info ci;
 		bool rca = box_2D::ray_cast(table_vec2(lua_totable(L,1)),lua_tonumber(L,2),lua_tonumber(L,3),ci);
-		if(rca){
-			ret = colis_info_table(ci);
-		}
+		ret = colis_info_table(ci);
 		lua_pushboolean(L,rca);
 		lua_pushtable(L,ret);
 		return 2;
