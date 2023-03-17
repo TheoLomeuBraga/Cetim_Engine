@@ -23,6 +23,7 @@ int stringToInt(const std::string& str) {
 }
 
 // function to get UTF-8 representation of a Unicode character code
+/*
 std::string utf8_encode(unsigned int codepoint) {
     std::string result;
     if (codepoint <= 0x7F) {
@@ -42,6 +43,7 @@ std::string utf8_encode(unsigned int codepoint) {
     }
     return result;
 }
+*/
 
 std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect,int quality) {
     
@@ -74,7 +76,7 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
     FT_UInt glyphIndex;
     FT_ULong charCode = FT_Get_First_Char(face, &glyphIndex);
     while (glyphIndex != 0) {
-        std::string utf8Char = utf8_encode(charCode);
+        //std::string utf8Char = utf8_encode(charCode);
         //std::cout << utf8Char << " ";
         std::cout << (wchar_t)charCode << std::endl;
         FT_Load_Char(face, charCode, FT_LOAD_RENDER);

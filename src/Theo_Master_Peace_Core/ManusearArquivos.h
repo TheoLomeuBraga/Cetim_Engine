@@ -153,6 +153,12 @@ namespace ManuseioDados {
 
 	}
 
+	shared_ptr<fonte> load_font_2(string lugar){
+		fonte ret;
+		
+		mapeamento_fontes.aplicar(lugar, ret);
+		return mapeamento_fontes.pegar(lugar);
+	}
 
 	void carregar_fonte_thread(string local, shared_ptr<fonte>* ret) {
 		*ret = carregar_fonte(local);

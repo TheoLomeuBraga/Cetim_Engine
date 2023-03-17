@@ -1,6 +1,8 @@
 #pragma once
 #include<map>
 #include<vector>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 class ft_char{
 public:
@@ -22,3 +24,5 @@ public:
     bool pixel_perfect;
     std::map<wchar_t,ft_char> chars;
 };
+
+

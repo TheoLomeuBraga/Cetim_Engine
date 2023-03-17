@@ -340,15 +340,23 @@ public:
 #define NUM_CARACTERES 128
 
 		struct Caractere_info_struct {
+			
 			char letra;
 			ivec2 res;
 			vec4 pos_sca;
 			float avancamento;
 			vector<unsigned char> data;
 			
-
-			
-
+			/*
+			wchar_t char_;
+    		int width;
+    		int height;
+    		int left;
+    		int top;
+    		int pitch;
+    		int adivancement;
+    		std::vector<char> bitmap;
+			*/
 
 
 		};
