@@ -15,6 +15,13 @@ bool fileExists(const char* filename) {
     return file.good();
 }
 
+int stringToInt(const std::string& str) {
+    std::istringstream iss(str);
+    int result;
+    iss >> result;
+    return result;
+}
+
 // function to get UTF-8 representation of a Unicode character code
 std::string utf8_encode(unsigned int codepoint) {
     std::string result;
@@ -36,7 +43,7 @@ std::string utf8_encode(unsigned int codepoint) {
     return result;
 }
 
-std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect) {
+std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect,int quality) {
     
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
@@ -57,73 +64,42 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
         FT_Done_Face(face);
         FT_Done_FreeType(ft);
     }
-    
-    /*
-    ash to gpt:
-    make a function to get UTF-8 representation of character code and  an c++ function that use fretype to print and storage all characters in utf-8 in a font file has including regional charters using an solution like "while (glyphIndex != 0)"  for the loop 
-    */
-   /*
-   ask to gpt:
-   make a c++ function that use fretype to print and storage all characters in utf-8 in a font file has including regional charters using an solution like "while (glyphIndex != 0)"  for the loop and use the function "
-   std::string utf8_encode(unsigned int codepoint) {
-    std::string result;
-    if (codepoint <= 0x7F) {
-        result.push_back((char)codepoint);
-    } else if (codepoint <= 0x7FF) {
-        result.push_back((char)(0xC0 | (codepoint >> 6)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    } else if (codepoint <= 0xFFFF) {
-        result.push_back((char)(0xE0 | (codepoint >> 12)));
-        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    } else if (codepoint <= 0x10FFFF) {
-        result.push_back((char)(0xF0 | (codepoint >> 18)));
-        result.push_back((char)(0x80 | ((codepoint >> 12) & 0x3F)));
-        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    }
-    return result;
-}
-   "
-   that is in te file utf8_encode.h
-   */
+
+    FT_Set_Pixel_Sizes(face, 0, quality);
+
     json fontInfo;
     std::vector<json> chars_infos;
-    /*
-    
-    
-    FT_ULong charCode;
-    FT_UInt glyphIndex;
-    std::vector<std::string> utf8Chars;
-    charCode = FT_Get_First_Char(face, &glyphIndex);
-    for (FT_ULong charCode = FT_Get_First_Char(face, NULL); charCode != 0; charCode = FT_Get_Next_Char(face, charCode, NULL)) {
-        FT_UInt glyphIndex = FT_Get_Char_Index(face, charCode);
 
-        
+    
+    FT_UInt glyphIndex;
+    FT_ULong charCode = FT_Get_First_Char(face, &glyphIndex);
+    while (glyphIndex != 0) {
+        std::string utf8Char = utf8_encode(charCode);
+        std::cout << utf8Char << " ";
         std::cout << (char)charCode << std::endl;
+        FT_Load_Char(face, 'A', FT_LOAD_RENDER);
         json charData = {
-            {"char",(char)charCode},
+            {"char",utf8Char},
             {"width",face->glyph->bitmap.width},
             {"height",face->glyph->bitmap.rows},
             {"left",face->glyph->bitmap_left},
             {"top",face->glyph->bitmap_top},
             {"pitch",face->glyph->bitmap.pitch},
+            {"adivancement",(float)face->glyph->advance.x / 64},
         };
 
         std::vector<uint8_t> bitmapData;
-        for (int y = 0; y < face->glyph->bitmap.rows; y++) {
-            for (int x = 0; x < face->glyph->bitmap.width; x++) {
-                bitmapData.push_back(face->glyph->bitmap.buffer[y * face->glyph->bitmap.pitch + x]);
-            }
+        for (int i = 0; i < face->glyph->bitmap.rows * face->glyph->bitmap.width; i++){
+            bitmapData.push_back(face->glyph->bitmap.buffer[i]);
         }
 
         charData["bitmap"] = bitmapData;
 
-        
-
         chars_infos.push_back(charData);
+
+        charCode = FT_Get_Next_Char(face, charCode, &glyphIndex);
     }
-    */
+
     fontInfo["pixel_perfect"] = pixel_perfect;
     fontInfo["chars"] = chars_infos;
 
@@ -161,6 +137,6 @@ int main(int argc, char** argv)
         std::pair<std::string,bool>("False",false),
         std::pair<std::string,bool>("True",true),
     }; 
-    std::cout << args[1] << " " << args[2] << " " << args[3] << std::endl;
-    std::cout << storeCharsInfoInJSON(args[1].c_str(), args[2].c_str(),arg_true_false[args[3]]) << std::endl;
+    std::cout << "args: " << args[1] << " " << args[2] << " " << args[3] << " " << args[4] << std::endl;
+    std::cout << storeCharsInfoInJSON(args[1].c_str(), args[2].c_str(),arg_true_false[args[3]],stringToInt(args[4])) << std::endl;
 }

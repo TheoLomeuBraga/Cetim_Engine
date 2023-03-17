@@ -1,4 +1,4 @@
-corigir leitor de fontes
+aprimoras sistema de texto
 atualizar inputs da interface lua
 
 adicionar fisica 3d
