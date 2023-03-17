@@ -18,7 +18,7 @@ function render_text_component:new(object_ptr)
     rs.font = ""
     rs.text = ""
     rs.line_size = 34
-    rs.space_betwen_chars = 0
+    rs.space_betwen_chars = 2
     rs.max_space_betwen_chars = 3
     rs.min_space_betwen_chars = 0
     rs.material = matreial:new()

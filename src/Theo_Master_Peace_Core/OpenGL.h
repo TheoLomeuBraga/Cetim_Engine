@@ -856,25 +856,26 @@ typedef struct mesh_ogl_struct mesh_ogl;
 							}
 						}
 						else {
-
-							//std::cout << "a " << font->Characters['a'].avancamento << endl;
-							//std::cout << "space " << font->Characters[' '].avancamento << endl;
-							//std::cout << "l " << font->Characters['l'].avancamento << endl;
-
 							
-							//pos_adi_char.x = (float)(((unsigned int)font->Characters[letra].avancamento >> 6) / font->qualidade);
+							/*
 							float meia_qualidade = font->qualidade / 2;
 							pos_adi_char.x = (font->Characters[letra].avancamento + meia_qualidade) / font->qualidade ;
-							
-
-							//pos_adi_char.x = 0;
-							//pos_adi_char.x = ((unsigned int)font->Characters[letra].avancamento >> 6);
-
 							pos_adi_char.y = font->Characters[letra].pos_sca.y / (float)font->qualidade;
 
 
 							sca_char.x = font->Characters[letra].pos_sca.z / (float)font->qualidade;
 							sca_char.y = font->Characters[letra].pos_sca.w / (float)font->qualidade;
+							*/
+
+							vec2 qualidade = vec2(font->Characters[letra].res.x,font->Characters[letra].res.y);
+
+							float meia_qualidade = qualidade.x / 2;
+							pos_adi_char.x = ((font->Characters[letra].avancamento + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
+							pos_adi_char.y = (font->Characters[letra].pos_sca.y / (float)qualidade.x) + rt->espaco_entre_letras;
+
+
+							sca_char.x = font->Characters[letra].pos_sca.z / (float)qualidade.x;
+							sca_char.y = font->Characters[letra].pos_sca.w / (float)qualidade.x;
 
 							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x, pos_char.y + pos_adi_char.y + altura_linha, 0));
 							lugar_letra = scale(lugar_letra, vec3(sca_char.x, sca_char.y, 1));
