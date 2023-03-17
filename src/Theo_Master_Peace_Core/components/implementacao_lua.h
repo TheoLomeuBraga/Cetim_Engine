@@ -54,10 +54,6 @@ std::string floatToString(float value) {
     return ss.str();
 }
 
-
-
-
-
 void lua_pushtable(lua_State* L, Table t){
     lua_newtable(L);
     for(std::pair<std::string, float> p : t.m_floatMap){
@@ -87,11 +83,7 @@ void lua_pushtable(lua_State* L, Table t){
         lua_pushtable(L,p.second);
         lua_settable(L, -3);
     }
-    
-
-    
 }
-
 
 
 Table lua_totable(lua_State* L,int index){
@@ -150,9 +142,21 @@ Table lua_totable(lua_State* L,int index){
     return t;
 }
 
+std::wstring lua_towstring(lua_State* L, int index) {
+    const char* utf8Str = luaL_checkstring(L, index);
 
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.from_bytes(utf8Str);
+}
 
+void lua_pushWstring(lua_State* L, const std::wstring& ws) {
+    // Convert wstring to UTF-8 encoded string
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+    std::string utf8str = conv.to_bytes(ws);
 
+    // Push the UTF-8 string to the Lua stack
+    lua_pushstring(L, utf8str.c_str());
+}
 
 
 
