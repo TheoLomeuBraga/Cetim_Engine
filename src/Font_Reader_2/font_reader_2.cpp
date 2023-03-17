@@ -22,29 +22,6 @@ int stringToInt(const std::string& str) {
     return result;
 }
 
-// function to get UTF-8 representation of a Unicode character code
-/*
-std::string utf8_encode(unsigned int codepoint) {
-    std::string result;
-    if (codepoint <= 0x7F) {
-        result.push_back((char)codepoint);
-    } else if (codepoint <= 0x7FF) {
-        result.push_back((char)(0xC0 | (codepoint >> 6)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    } else if (codepoint <= 0xFFFF) {
-        result.push_back((char)(0xE0 | (codepoint >> 12)));
-        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    } else if (codepoint <= 0x10FFFF) {
-        result.push_back((char)(0xF0 | (codepoint >> 18)));
-        result.push_back((char)(0x80 | ((codepoint >> 12) & 0x3F)));
-        result.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
-        result.push_back((char)(0x80 | (codepoint & 0x3F)));
-    }
-    return result;
-}
-*/
-
 std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFilePath,bool pixel_perfect,int quality) {
     
     FT_Library ft;
@@ -76,9 +53,7 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
     FT_UInt glyphIndex;
     FT_ULong charCode = FT_Get_First_Char(face, &glyphIndex);
     while (glyphIndex != 0) {
-        //std::string utf8Char = utf8_encode(charCode);
-        //std::cout << utf8Char << " ";
-        std::cout << (wchar_t)charCode << std::endl;
+        //std::cout << (wchar_t)charCode << std::endl;
         FT_Load_Char(face, charCode, FT_LOAD_RENDER);
         json charData = {
             {"char",(wchar_t)charCode},
@@ -117,9 +92,6 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
     outputFile.close();
     return fontInfo_dump;
 }
-
-
-
 
 int main(int argc, char** argv)
 {

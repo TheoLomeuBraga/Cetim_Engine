@@ -122,7 +122,7 @@ namespace ManuseioDados {
 			
 			if (mapeamento_fontes.pegar(lugar).get() == NULL) {
 				
-				string S, l;
+				string S;
 
 				file >> S;
 
@@ -155,7 +155,15 @@ namespace ManuseioDados {
 
 	shared_ptr<fonte> load_font_2(string lugar){
 		fonte ret;
-		
+		ifstream file(lugar);
+		if (file) {
+			if (mapeamento_fontes.pegar(lugar).get() == NULL){
+				string S;
+				file >> S;
+				json JSON = json::parse(S);
+				
+			}
+		}
 		mapeamento_fontes.aplicar(lugar, ret);
 		return mapeamento_fontes.pegar(lugar);
 	}
