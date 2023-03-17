@@ -375,6 +375,11 @@ public:
 			float avancamento;
 			Caractere_info Characters[NUM_CARACTERES];
 			void remover_da_api_grafica();
+
+			/*
+			bool pixel_perfect;
+    		std::map<wchar_t,ft_char> chars;
+			*/
 			
 			void deletar() {
 				remover_fonte(this);
@@ -383,7 +388,11 @@ public:
 				deletar();
 			}
 		};
+
 		
+
+
+
 		string Local_Fonte = "resources/Fonts/arial.json";
 		shared_ptr<fonte> fonte_principal;
 
