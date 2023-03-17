@@ -40,9 +40,6 @@ function set_resolution()
     window:set()
 end
 
-
-
-
 function START()
     
 	print("core iniciando")

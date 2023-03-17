@@ -77,7 +77,7 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
         std::string utf8Char = utf8_encode(charCode);
         std::cout << utf8Char << " ";
         std::cout << (char)charCode << std::endl;
-        FT_Load_Char(face, 'A', FT_LOAD_RENDER);
+        //FT_Load_Char(face, 'Ã', FT_LOAD_RENDER);
         json charData = {
             {"char",utf8Char},
             {"width",face->glyph->bitmap.width},
@@ -126,7 +126,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < argc; i++) {
 		args.push_back(argv[i]);
 	}
-
+    
     std::map<std::string,bool> arg_true_false = {
         std::pair<std::string,bool>("0",false),
         std::pair<std::string,bool>("1",true),
