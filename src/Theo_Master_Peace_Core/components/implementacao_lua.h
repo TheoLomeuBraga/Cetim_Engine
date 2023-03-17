@@ -149,7 +149,7 @@ std::wstring lua_towstring(lua_State* L, int index) {
     return converter.from_bytes(utf8Str);
 }
 
-void lua_pushWstring(lua_State* L, const std::wstring& ws) {
+void lua_pushwstring(lua_State* L, const std::wstring& ws) {
     // Convert wstring to UTF-8 encoded string
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
     std::string utf8str = conv.to_bytes(ws);
