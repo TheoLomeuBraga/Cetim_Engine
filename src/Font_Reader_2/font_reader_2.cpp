@@ -75,11 +75,11 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
     FT_ULong charCode = FT_Get_First_Char(face, &glyphIndex);
     while (glyphIndex != 0) {
         std::string utf8Char = utf8_encode(charCode);
-        std::cout << utf8Char << " ";
-        std::cout << (char)charCode << std::endl;
-        //FT_Load_Char(face, 'Ã', FT_LOAD_RENDER);
+        //std::cout << utf8Char << " ";
+        std::cout << (wchar_t)charCode << std::endl;
+        FT_Load_Char(face, charCode, FT_LOAD_RENDER);
         json charData = {
-            {"char",utf8Char},
+            {"char",(wchar_t)charCode},
             {"width",face->glyph->bitmap.width},
             {"height",face->glyph->bitmap.rows},
             {"left",face->glyph->bitmap_left},
