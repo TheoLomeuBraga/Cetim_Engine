@@ -856,16 +856,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 							}
 						}
 						else {
-							
-							/*
-							float meia_qualidade = font->qualidade / 2;
-							pos_adi_char.x = (font->Characters[letra].avancamento + meia_qualidade) / font->qualidade ;
-							pos_adi_char.y = font->Characters[letra].pos_sca.y / (float)font->qualidade;
-
-
-							sca_char.x = font->Characters[letra].pos_sca.z / (float)font->qualidade;
-							sca_char.y = font->Characters[letra].pos_sca.w / (float)font->qualidade;
-							*/
 
 							vec2 qualidade = vec2(font->Characters[letra].res.x,font->Characters[letra].res.y);
 
