@@ -23,9 +23,6 @@ function render_text_component:new(object_ptr)
     rs.min_space_betwen_chars = 0
     rs.material = matreial:new()
     function rs:get()
-
-        --j = {}
-        --j = deepcopyjson(json.decode(get_text_json(self.object_ptr)))
         j = get_set_render_text(get_lua,self.object_ptr)
 
         self.layer = j.layer
@@ -40,25 +37,7 @@ function render_text_component:new(object_ptr)
         
     end
     function rs:set()
-
-        --[[
-        j = {}
-
-        j.layer = self.layer
-        j.font = self.font
-        j.text = self.text
-        j.line_size = self.line_size
-        
-        j.space_betwen_chars = self.space_betwen_chars
-        j.max_space_betwen_chars = self.max_space_betwen_chars
-        j.min_space_betwen_chars = self.min_space_betwen_chars
-        j.material = deepcopyjson(self.material)
-
-        set_text_json(self.object_ptr,json.encode(j))
-        ]]
         get_set_render_text(set_lua,deepcopyjson(self))
-        
-
     end
     function rs:delet()
     end

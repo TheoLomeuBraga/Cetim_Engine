@@ -17,7 +17,7 @@ built_path=./built
 
 libs_path_windows=-L./libs/windows
 
-definitions_windows=-D GLEW_STATIC
+definitions_windows=-D GLEW_STATIC -D WINDOWS
 
 libs_windows=-llua54 -lglfw3dll  -lglew32 -lopengl32 -lbox2d.dll -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -34,7 +34,7 @@ libs_path_linux=-L./libs/linux
 
 libs_linux=-llua -lglfw -lGLEW -lglut -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system
 
-definitions_linux=
+definitions_linux= -D LINUX
 
 linux:
 	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
