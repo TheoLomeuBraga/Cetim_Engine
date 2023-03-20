@@ -393,8 +393,7 @@ public:
 
 
 
-		string Local_Fonte = "resources/Fonts/arial.json";
-		shared_ptr<fonte> fonte_principal;
+		
 
 
 
