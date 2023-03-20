@@ -385,8 +385,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 			glUseProgram(ShaderGL);
 
-			fonte_principal = ManuseioDados::carregar_fonte(Local_Fonte);
-			adicionar_fonte(fonte_principal.get());
+			
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -828,69 +827,60 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 					shared_ptr<fonte> font = rt->font;
-					if (font == NULL) {
-						font = fonte_principal;
-					}
+					if (font != NULL){
 
-					string texto = rt->texto;
-					mat4 lugar_texto = tf->matrizTransform;
+						string texto = rt->texto;
+						mat4 lugar_texto = tf->matrizTransform;
 
 
 
-					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
-					float altura_linha = 0;
-					float tamanho_linha = 0;
+						vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
+						float altura_linha = 0;
+						float tamanho_linha = 0;
 
 
-					for (int i = 0; i < texto.size(); i++) {
-						char letra = texto.at(i);
-						if (letra == '\n') {
-							altura_linha -= +rt->espaco_entre_linhas;
-							pos_char.x = 0;
-						}
-						else if (letra == ' ') {
-							pos_char.x += rt->tamanho_espaco;
-							if (pos_char.x > rt->tamanho_max_linha) {
+						for (int i = 0; i < texto.size(); i++) {
+							char letra = texto.at(i);
+							if (letra == '\n') {
 								altura_linha -= +rt->espaco_entre_linhas;
 								pos_char.x = 0;
 							}
-						}
-						else {
+							else if (letra == ' ') {
+								pos_char.x += rt->tamanho_espaco;
+								if (pos_char.x > rt->tamanho_max_linha) {
+									altura_linha -= +rt->espaco_entre_linhas;
+									pos_char.x = 0;
+								}
+							}
+							else {
 
-							vec2 qualidade = vec2(font->Characters[letra].res.x,font->Characters[letra].res.y);
+								vec2 qualidade = vec2(font->Characters[letra].res.x,font->Characters[letra].res.y);
 
-							float meia_qualidade = qualidade.x / 2;
-							pos_adi_char.x = ((font->Characters[letra].avancamento + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
-							pos_adi_char.y = (font->Characters[letra].pos_sca.y / (float)qualidade.x) + rt->espaco_entre_letras;
+								float meia_qualidade = qualidade.x / 2;
+								pos_adi_char.x = ((font->Characters[letra].avancamento + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
+								pos_adi_char.y = (font->Characters[letra].pos_sca.y / (float)qualidade.x) + rt->espaco_entre_letras;
 
 
-							sca_char.x = font->Characters[letra].pos_sca.z / (float)qualidade.x;
-							sca_char.y = font->Characters[letra].pos_sca.w / (float)qualidade.x;
+								sca_char.x = font->Characters[letra].pos_sca.z / (float)qualidade.x;
+								sca_char.y = font->Characters[letra].pos_sca.w / (float)qualidade.x;
 
-							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x, pos_char.y + pos_adi_char.y + altura_linha, 0));
-							lugar_letra = scale(lugar_letra, vec3(sca_char.x, sca_char.y, 1));
+								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x, pos_char.y + pos_adi_char.y + altura_linha, 0));
+								lugar_letra = scale(lugar_letra, vec3(sca_char.x, sca_char.y, 1));
 
 
 							
 
-							//textura
-							if (font == NULL) {
-								adicionar_fonte(fonte_principal.get());
-								glActiveTexture(GL_TEXTURE0);
-								glBindTexture(GL_TEXTURE_2D, fontes[fonte_principal.get()][letra]);
-							}
-							else {
+								//textura
 								adicionar_fonte(font.get());
 								glActiveTexture(GL_TEXTURE0);
 								glBindTexture(GL_TEXTURE_2D, fontes[font.get()][letra]);
-							}
 
-							glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
+								glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
 
-							//transform
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &lugar_letra[0][0]);
+								//transform
+								glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &lugar_letra[0][0]);
 
-							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+								glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 
 
@@ -898,25 +888,25 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 							
-							float pos_adi = pos_adi_char.x + rt->espaco_entre_letras;
-							pos_adi = std::max(pos_adi, rt->espaco_entre_letras_min);
-							pos_adi = std::min(pos_adi, rt->espaco_entre_letras_max);
+								float pos_adi = pos_adi_char.x + rt->espaco_entre_letras;
+								pos_adi = std::max(pos_adi, rt->espaco_entre_letras_min);
+								pos_adi = std::min(pos_adi, rt->espaco_entre_letras_max);
 
-							pos_char.x += pos_adi;
-							
+								pos_char.x += pos_adi;
 
-							if (pos_char.x > rt->tamanho_max_linha) {
-								altura_linha -= +rt->espaco_entre_linhas;
-								pos_char.x = 0;
+
+								if (pos_char.x > rt->tamanho_max_linha) {
+									altura_linha -= +rt->espaco_entre_linhas;
+									pos_char.x = 0;
+								}
+
+
 							}
 
 
 						}
 
-
 					}
-
-
 
 
 
