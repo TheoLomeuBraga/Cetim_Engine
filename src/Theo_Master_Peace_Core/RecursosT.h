@@ -346,8 +346,16 @@ public:
 			vec4 pos_sca;
 			float avancamento;
 			vector<unsigned char> data;
+
+
+		};
+		typedef struct Caractere_info_struct Caractere_info;
+
+		class caractere_info {
+		public:
+			caractere_info(){}
 			
-			/*
+			
 			wchar_t char_;
     		int width;
     		int height;
@@ -355,12 +363,13 @@ public:
     		int top;
     		int pitch;
     		int adivancement;
-    		std::vector<char> bitmap;
-			*/
-
+    		const char* bitmap;
+			
+			~caractere_info(){
+				delete[] bitmap;
+			}
 
 		};
-		typedef struct Caractere_info_struct Caractere_info;
 
 
 		class fonte;
@@ -377,8 +386,9 @@ public:
 			void remover_da_api_grafica();
 
 			/*
+			string path;
 			bool pixel_perfect;
-    		std::map<wchar_t,ft_char> chars;
+    		std::map<wchar_t,caractere_info> chars;
 			*/
 			
 			void deletar() {
