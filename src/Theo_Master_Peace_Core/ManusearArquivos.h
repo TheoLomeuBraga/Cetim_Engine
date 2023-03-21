@@ -117,26 +117,42 @@ namespace ManuseioDados {
 
 	shared_ptr<fonte> carregar_fonte(string lugar) {
 		ifstream file(lugar);
-
+		
 		if (file) {
 			
 			if (mapeamento_fontes.pegar(lugar).get() == NULL) {
 				
 				string S;
-
 				file >> S;
 
-				fonte F = desconverter_JSON::desconverter_fonte(S);
-				
-				F.local = lugar;
+				fonte f;
 
-				mapeamento_fontes.aplicar(lugar, F);
+				json JSON = json::parse(S);
+		
+				f.pixel_perfect = (bool)JSON["pixel_perfect"].get<int>();
+				f.quality = JSON["quality"].get<int>();
+				std::map<wchar_t,caractere_info> chars;
+				vector<json> chars_json = JSON["chars"].get<vector<json>>();
+				for(json c : chars_json){
+					pair<wchar_t,caractere_info> cp;
+					wchar_t charcter = (wchar_t)c["char"].get<int>(); 
+					cp.first = charcter;
+					cp.second.char_ = charcter;
+					cp.second.width = c["width"].get<int>();
+					cp.second.height = c["height"].get<int>();
+					cp.second.left = c["left"].get<float>();
+					cp.second.top = c["top"].get<float>();
+					cp.second.pitch = c["pitch"].get<float>();
+					cp.second.adivancement = c["adivancement"].get<float>();
+			
+					cp.second.bitmap = c["bitmap"].get<vector<unsigned char>>();
 
-
-
+					chars.insert(cp);
+				}
+				f.chars = chars;
+				f.path = lugar;
+				mapeamento_fontes.aplicar(lugar, f);
 				return mapeamento_fontes.pegar(lugar);
-
-
 			}
 			else
 			{
@@ -151,21 +167,6 @@ namespace ManuseioDados {
 
 
 
-	}
-
-	shared_ptr<fonte> load_font_2(string lugar){
-		fonte ret;
-		ifstream file(lugar);
-		if (file) {
-			if (mapeamento_fontes.pegar(lugar).get() == NULL){
-				string S;
-				file >> S;
-				json JSON = json::parse(S);
-				
-			}
-		}
-		mapeamento_fontes.aplicar(lugar, ret);
-		return mapeamento_fontes.pegar(lugar);
 	}
 
 	void carregar_fonte_thread(string local, shared_ptr<fonte>* ret) {

@@ -33,6 +33,8 @@ using namespace std;
 //#define EDITOR_MODE true
 #define EDITOR_MODE false
 
+#define AAAAA cout << "AAAAA\n"/
+
 vec3 gravidade = vec3(0, -9.8f, 0);
 //vec3 gravidade = vec3(0, 0, 0);
 
@@ -337,7 +339,7 @@ public:
 
 
 
-#define NUM_CARACTERES 128
+//#define NUM_CARACTERES 128
 
 		struct Caractere_info_struct {
 			
@@ -363,11 +365,9 @@ public:
     		int top;
     		int pitch;
     		int adivancement;
-    		const char* bitmap;
+    		vector<unsigned char> bitmap;
 			
-			~caractere_info(){
-				delete[] bitmap;
-			}
+			
 
 		};
 
@@ -376,6 +376,7 @@ public:
 		void remover_fonte(fonte* f);
 		class fonte : public asset {
 		public:
+			/*
 			string local;
 			fonte(){}
 			int ID = -1;
@@ -384,12 +385,14 @@ public:
 			float avancamento;
 			Caractere_info Characters[NUM_CARACTERES];
 			void remover_da_api_grafica();
+			*/
 
-			/*
+			//*
 			string path;
+			int quality;
 			bool pixel_perfect;
     		std::map<wchar_t,caractere_info> chars;
-			*/
+			//*/
 			
 			void deletar() {
 				remover_fonte(this);
@@ -916,11 +919,9 @@ public:
 			string local;
 			void aplicar(string local, Y valor) {
 				if (mapa.find(local) == mapa.end()) {
-					mapa.insert(pair<string, shared_ptr<Y>>(local, make_shared<Y>(valor)));
+					mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
 				}
-				else {
-					mapa[local] = make_shared<Y>(valor);
-				}
+				mapa[local] = make_shared<Y>(valor);
 			}
 
 			

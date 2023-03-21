@@ -978,13 +978,14 @@ namespace funcoes_ponte {
 			objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
 			ret.setFloat("layer",rt->camada);
-			ret.setString("font",rt->font->local);
-			ret.setString("text",rt->texto);
+			ret.setString("font",rt->font->path);
 			ret.setFloat("line_size",rt->tamanho_max_linha);
 			ret.setFloat("space_betwen_chars",rt->espaco_entre_letras);
 			ret.setFloat("max_space_betwen_chars",rt->espaco_entre_letras_max);
 			ret.setFloat("min_space_betwen_chars",rt->espaco_entre_letras_min);
 			ret.setTable("material",material_table(rt->mat));
+			std::wstring_convert<codecvt_utf8<wchar_t>, wchar_t> converter;
+			ret.setString("text",converter.to_bytes(rt->texto));
 			lua_pushtable(L,ret);
 			return 1;
 		}else{
@@ -993,7 +994,7 @@ namespace funcoes_ponte {
 			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
 			rt->camada = t.getFloat("layer");
 			rt->font = ManuseioDados::carregar_fonte(t.getString("font"));
-			rt->texto = t.getString("text");
+			rt->set_text_by_string(t.getString("text"));
 			rt->tamanho_max_linha = t.getFloat("line_size");
 			rt->espaco_entre_letras = t.getFloat("space_betwen_chars");
 			rt->espaco_entre_letras_max = t.getFloat("max_space_betwen_chars");

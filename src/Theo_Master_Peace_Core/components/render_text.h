@@ -19,10 +19,13 @@ class render_texto : public componente {
 		float espaco_entre_letras = 0.5f;
 		float espaco_entre_letras_max = 3.0f, espaco_entre_letras_min = 0.0f;
 		float espaco_entre_linhas = 3;
-		string texto = "";
+		//string texto = "";
+		wstring texto;
 
-
-
+		void set_text_by_string(string text){
+			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    		texto = converter.from_bytes(text.c_str());
+		}
 
 
 		render_texto() {}

@@ -41,6 +41,7 @@ namespace converter_JSON {
 		return JSON;
 	}
 
+	/*
 	string converter_fonte(fonte* f) {
 		json JSON;
 
@@ -59,6 +60,7 @@ namespace converter_JSON {
 
 		return JSON.dump();
 	}
+	*/
 
 	string converter_TMP_L2D(TMP_L2D l) {
 		json JSON;
@@ -120,7 +122,7 @@ namespace desconverter_JSON {
 		fonte ret;
 
 		json JSON = json::parse(J);
-
+		/*
 		ret.qualidade = JSON["quality"].get<int>();
 		ret.pixel_perfeito = (bool)JSON["pixel_perfect"].get<int>();
 		if (JSON.find("adivancement") != JSON.end()) {
@@ -130,6 +132,28 @@ namespace desconverter_JSON {
 		for (int i = 0; i < NUM_CARACTERES; i++) {
 			ret.Characters[i] = desconverter_caractere(carac[i]);
 		}
+		*/
+		
+		ret.pixel_perfect = (bool)JSON["pixel_perfect"].get<int>();
+		std::map<wchar_t,caractere_info> chars;
+		vector<json> chars_json = JSON["chars"].get<vector<json>>();
+		for(json c : chars_json){
+			pair<wchar_t,caractere_info> cp;
+			wchar_t charcter = (wchar_t)c["char"].get<int>(); 
+			cp.first = charcter;
+			cp.second.char_ = charcter;
+			cp.second.width = c["width"].get<int>();
+			cp.second.height = c["height"].get<int>();
+			cp.second.left = c["left"].get<float>();
+			cp.second.top = c["top"].get<float>();
+			cp.second.pitch = c["pitch"].get<float>();
+			cp.second.adivancement = c["adivancement"].get<float>();
+			
+			cp.second.bitmap = c["bitmap"].get<vector<unsigned char>>();
+
+			chars.insert(cp);
+		}
+		ret.chars = chars;
 		return ret;
 	}
 

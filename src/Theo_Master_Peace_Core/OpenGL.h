@@ -45,8 +45,10 @@ typedef struct mesh_ogl_struct mesh_ogl;
 		unsigned int frame_buffer, deeph_buffer;
 		vector<unsigned int> frame_buffers_texturas = vector<unsigned int>(SAIDAS_SHADER);
 
-		map<fonte*,  unsigned int*> fontes;
-		map<fonte*, vector<unsigned char*> > fontes_data;
+		//map<fonte*,  unsigned int*> fontes;
+		//map<fonte*, vector<unsigned char*> > fontes_data;
+		map<fonte*,  map<wchar_t,unsigned int>> fontes;
+		map<fonte*,  map<wchar_t,unsigned char*>> charters_bitmaps;
 
 		map<imagem*, unsigned int> texturas;
 		map<string, unsigned int> shaders,compute_shaders;
@@ -511,7 +513,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 		void adicionar_fonte(fonte* f) {
-
+			/*
 			if (fontes.find(f) == fontes.end()) {
 				fontes.insert(pair<fonte*, unsigned int*>(f,new unsigned int[NUM_CARACTERES]));
 				fontes_data.insert(pair<fonte*, vector<unsigned char*> >(f, vector<unsigned char*>()));
@@ -520,16 +522,50 @@ typedef struct mesh_ogl_struct mesh_ogl;
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 				for (int i = 0; i < NUM_CARACTERES; i++) {
 
-					//Caractere_info carac = f->Characters[i];
-
 					glGenTextures(1, &fontes[f][i]);
 					glBindTexture(GL_TEXTURE_2D, fontes[f][i]);
 
-					fontes_data[f][i] = vetor_ponteiro(f->Characters[i].data);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->Characters[i].res.x, f->Characters[i].res.y, 0, GL_RED, GL_UNSIGNED_BYTE, fontes_data[f][i]);
+					//fontes_data[f][i] = vetor_ponteiro(f->Characters[i].data);
+					//glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->Characters[i].res.x, f->Characters[i].res.y, 0, GL_RED, GL_UNSIGNED_BYTE, fontes_data[f][i]);
+					fontes_data[f][i] = f->chars[i].bitmap;
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[i].width, f->chars[i].height, 0, GL_RED, GL_UNSIGNED_BYTE, fontes_data[f][i]);
 
 
-					if (f->pixel_perfeito) {
+					//if (f->pixel_perfeito) {
+					if (f->pixel_perfect) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					}
+					else
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					}
+				}
+			}
+			*/
+		
+			if (fontes.find(f) == fontes.end()) {
+
+				fontes.insert(pair<fonte*,  map<wchar_t,unsigned int>>(f,{}));
+				charters_bitmaps.insert(pair<fonte*,  map<wchar_t,unsigned char*>>(f,{}));
+
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+				for (pair<wchar_t,caractere_info> char_fonte_atual : f->chars) {
+
+					fontes[f].insert(pair<wchar_t,unsigned int>(char_fonte_atual.first,0));
+
+					glGenTextures(1, &fontes[f][char_fonte_atual.first]);
+					glBindTexture(GL_TEXTURE_2D, fontes[f][char_fonte_atual.first]);
+
+					charters_bitmaps[f][char_fonte_atual.first] = vetor_ponteiro<unsigned char>(f->chars[char_fonte_atual.first].bitmap);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[char_fonte_atual.first].width, f->chars[char_fonte_atual.first].height, 0, GL_RED, GL_UNSIGNED_BYTE, charters_bitmaps[f][char_fonte_atual.first]);
+
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+						
+					if (f->pixel_perfect) {
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 					}
@@ -545,7 +581,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 		void remover_fonte(fonte* f) {
-
+			/*
 			if(fontes.find(f) != fontes.end())
 			for (int i = 0; i < NUM_CARACTERES; i++) {
 				glDeleteTextures(1, &fontes[f][i]);
@@ -554,6 +590,16 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 				fontes.erase(f);
 				fontes_data.erase(f);
+			}
+			map<fonte*,  map<wchar_t,unsigned char*>> charters_bitmaps
+			*/
+			for (pair<wchar_t,unsigned int> wc_ui : fontes[f]) {
+				glDeleteTextures(1, &wc_ui.second);
+				fontes.erase(f);
+			}
+			for (pair<wchar_t,unsigned char*> bm : charters_bitmaps[f]) {
+				delete [] bm.second;
+				charters_bitmaps.erase(f);
 			}
 
 
@@ -789,6 +835,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 				//render texto
 				if (obj->pegar_componente<render_texto>() != NULL) {
+
 					glDisable(GL_CULL_FACE);
 					//https://learnopengl.com/In-Practice/Text-Rendering
 					shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
@@ -828,9 +875,10 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 					shared_ptr<fonte> font = rt->font;
 					if (font != NULL){
-
-						string texto = rt->texto;
-						mat4 lugar_texto = tf->matrizTransform;
+						#define texto rt->texto
+						//wstring texto = rt->texto;
+						#define lugar_texto tf->matrizTransform
+						//mat4 lugar_texto = tf->matrizTransform;
 
 
 
@@ -840,7 +888,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 						for (int i = 0; i < texto.size(); i++) {
-							char letra = texto.at(i);
+							wchar_t letra = texto.at(i);
 							if (letra == '\n') {
 								altura_linha -= +rt->espaco_entre_linhas;
 								pos_char.x = 0;
@@ -853,21 +901,35 @@ typedef struct mesh_ogl_struct mesh_ogl;
 								}
 							}
 							else {
+								caractere_info char_ = font->chars[letra];
 
-								vec2 qualidade = vec2(font->Characters[letra].res.x,font->Characters[letra].res.y);
+								
+								
+
+								/*
+								vec2 qualidade = vec2(char_.width,char_.height);
 
 								float meia_qualidade = qualidade.x / 2;
-								pos_adi_char.x = ((font->Characters[letra].avancamento + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
-								pos_adi_char.y = (font->Characters[letra].pos_sca.y / (float)qualidade.x) + rt->espaco_entre_letras;
+								pos_adi_char.x = ((char_.adivancement + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
+								pos_adi_char.y = (char_.adivancement / (float)qualidade.x) + rt->espaco_entre_letras;
 
 
-								sca_char.x = font->Characters[letra].pos_sca.z / (float)qualidade.x;
-								sca_char.y = font->Characters[letra].pos_sca.w / (float)qualidade.x;
+								sca_char.x = char_.left / (float)qualidade.x;
+								sca_char.y = char_.top / (float)qualidade.x;
 
 								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x, pos_char.y + pos_adi_char.y + altura_linha, 0));
 								lugar_letra = scale(lugar_letra, vec3(sca_char.x, sca_char.y, 1));
+								*/
+								
+								
+								sca_char = vec2(char_.width,char_.height);
 
+								vec2 bearing  = vec2(char_.left,char_.top);
 
+								pos_adi_char = vec2((char_.adivancement >> 6),0);
+
+								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x,  altura_linha + ((sca_char.y / font->quality)/2) , 0));
+								lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality,sca_char.y / font->quality, 1));
 							
 
 								//textura
