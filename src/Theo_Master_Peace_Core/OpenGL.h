@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <regex>
 #include "RecursosT.h"
 #include "ManusearArquivos.h"
 #include "Config.h"
@@ -750,7 +751,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 
-
 		bool checar_objeto_visivel(mat4 P,mat4 V,mat4 TF, vector<vec3> vertices_visao_render){
 			bool ret = true;
 			vec3 min_max_tp[2];
@@ -767,17 +767,8 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 			if (obj->pegar_componente<transform_>() != NULL && cam->pegar_componente<transform_>() != NULL && cam->pegar_componente<camera>() != NULL) {
-				
 				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-
-
-
-
-
 				shared_ptr<camera> ca = cam->pegar_componente<camera>();
-
-
-
 
 				//render_shader
 				shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
