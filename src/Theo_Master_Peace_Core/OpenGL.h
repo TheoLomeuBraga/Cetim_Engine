@@ -901,6 +901,8 @@ typedef struct mesh_ogl_struct mesh_ogl;
 								}
 							}
 							else {
+								
+
 								caractere_info char_ = font->chars[letra];
 								
 								
