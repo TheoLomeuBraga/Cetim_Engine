@@ -910,22 +910,12 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 								vec2 bearing  = vec2(char_.left,char_.top);
 
-								//pos_adi_char = vec2((char_.adivancement >> 6),0);
-								//pos_adi_char = vec2(1,0);
+								
 								pos_adi_char = vec2((float)char_.adivancement / font->quality,0);
-								
 
-
-								
-								if(i > 0){
-									pos_char.x += pos_adi_char.x;
-								}
+								pos_char.x += pos_adi_char.x;
 								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x ,  altura_linha + (((float)sca_char.y / (float)font->quality)) , 0));
-								lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality,sca_char.y / font->quality, 1));
-
-								//pos_char.x += ((float)char_.adivancement / (float)font->quality);
-
-								
+								lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality,sca_char.y / font->quality, 1));		
 
 								//textura
 								adicionar_fonte(font.get());
@@ -938,12 +928,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 								glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &lugar_letra[0][0]);
 
 								glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-
-
-
-
-
 							
 								pos_char.x += pos_adi_char.x;
 
