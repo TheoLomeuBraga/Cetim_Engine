@@ -980,9 +980,7 @@ namespace funcoes_ponte {
 			ret.setFloat("layer",rt->camada);
 			ret.setString("font",rt->font->path);
 			ret.setFloat("line_size",rt->tamanho_max_linha);
-			ret.setFloat("space_betwen_chars",rt->espaco_entre_letras);
-			ret.setFloat("max_space_betwen_chars",rt->espaco_entre_letras_max);
-			ret.setFloat("min_space_betwen_chars",rt->espaco_entre_letras_min);
+			ret.setFloat("uniform_space_between_characters",rt->uniform_space_between_characters);
 			ret.setTable("material",material_table(rt->mat));
 			std::wstring_convert<codecvt_utf8<wchar_t>, wchar_t> converter;
 			ret.setString("text",converter.to_bytes(rt->texto));
@@ -996,9 +994,7 @@ namespace funcoes_ponte {
 			rt->font = ManuseioDados::carregar_fonte(t.getString("font"));
 			rt->set_text_by_string(t.getString("text"));
 			rt->tamanho_max_linha = t.getFloat("line_size");
-			rt->espaco_entre_letras = t.getFloat("space_betwen_chars");
-			rt->espaco_entre_letras_max = t.getFloat("max_space_betwen_chars");
-			rt->espaco_entre_letras_min = t.getFloat("min_space_betwen_chars");
+			rt->uniform_space_between_characters = t.getFloat("uniform_space_between_characters");
 			rt->mat = table_material(t.getTable("material"));
 			return 0;
 		}

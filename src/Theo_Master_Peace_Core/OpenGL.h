@@ -910,9 +910,14 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 								vec2 bearing  = vec2(char_.left,char_.top);
 
-								
-								pos_adi_char = vec2((float)char_.adivancement / font->quality,0);
+								if(rt->uniform_space_between_characters){
+									pos_adi_char = vec2(1,0);
+								}
+								else{
+									pos_adi_char = vec2((float)char_.adivancement / font->quality,0);
 
+								}
+								
 								pos_char.x += pos_adi_char.x;
 								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x ,  altura_linha + (((float)sca_char.y / (float)font->quality)) , 0));
 								lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality,sca_char.y / font->quality, 1));		

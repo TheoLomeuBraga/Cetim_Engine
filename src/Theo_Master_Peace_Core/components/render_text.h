@@ -16,8 +16,7 @@ class render_texto : public componente {
 		uint8_t camada = 0;
 		float tamanho_max_linha = 34;
 		float tamanho_espaco = 1;
-		float espaco_entre_letras = 0.5f;
-		float espaco_entre_letras_max = 3.0f, espaco_entre_letras_min = 0.0f;
+		bool uniform_space_between_characters = false;
 		float espaco_entre_linhas = 3;
 		//string texto = "";
 		wstring texto;
