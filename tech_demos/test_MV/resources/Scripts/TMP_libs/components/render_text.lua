@@ -18,7 +18,7 @@ function render_text_component:new(object_ptr)
     rs.font = ""
     rs.text = ""
     rs.line_size = 34
-    rs.uniform_space_between_characters = 0
+    rs.uniform_space_between_characters = false
     rs.material = matreial:new()
     function rs:get()
         j = get_set_render_text(get_lua,self.object_ptr)
