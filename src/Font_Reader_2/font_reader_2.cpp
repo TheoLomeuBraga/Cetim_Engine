@@ -79,6 +79,7 @@ std::string storeCharsInfoInJSON(const char* fontFilePath, const char* jsonFileP
 
     fontInfo["pixel_perfect"] = pixel_perfect;
     fontInfo["chars"] = chars_infos;
+    fontInfo["quality"] = quality;
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
