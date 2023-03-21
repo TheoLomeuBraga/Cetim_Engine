@@ -902,35 +902,28 @@ typedef struct mesh_ogl_struct mesh_ogl;
 							}
 							else {
 								caractere_info char_ = font->chars[letra];
-
-								
-								
-
-								/*
-								vec2 qualidade = vec2(char_.width,char_.height);
-
-								float meia_qualidade = qualidade.x / 2;
-								pos_adi_char.x = ((char_.adivancement + meia_qualidade) / qualidade.x ) + rt->espaco_entre_letras;
-								pos_adi_char.y = (char_.adivancement / (float)qualidade.x) + rt->espaco_entre_letras;
-
-
-								sca_char.x = char_.left / (float)qualidade.x;
-								sca_char.y = char_.top / (float)qualidade.x;
-
-								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x, pos_char.y + pos_adi_char.y + altura_linha, 0));
-								lugar_letra = scale(lugar_letra, vec3(sca_char.x, sca_char.y, 1));
-								*/
 								
 								
 								sca_char = vec2(char_.width,char_.height);
 
 								vec2 bearing  = vec2(char_.left,char_.top);
 
-								pos_adi_char = vec2((char_.adivancement >> 6),0);
+								//pos_adi_char = vec2((char_.adivancement >> 6),0);
+								//pos_adi_char = vec2(1,0);
+								pos_adi_char = vec2((float)char_.adivancement / font->quality,0);
+								
 
-								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x + pos_adi_char.x,  altura_linha + ((sca_char.y / font->quality)/2) , 0));
+
+								
+								if(i > 0){
+									pos_char.x += pos_adi_char.x;
+								}
+								mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x ,  altura_linha + (((float)sca_char.y / (float)font->quality)) , 0));
 								lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality,sca_char.y / font->quality, 1));
-							
+
+								//pos_char.x += ((float)char_.adivancement / (float)font->quality);
+
+								
 
 								//textura
 								adicionar_fonte(font.get());
@@ -950,11 +943,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 							
-								float pos_adi = pos_adi_char.x + rt->espaco_entre_letras;
-								pos_adi = std::max(pos_adi, rt->espaco_entre_letras_min);
-								pos_adi = std::min(pos_adi, rt->espaco_entre_letras_max);
-
-								pos_char.x += pos_adi;
+								pos_char.x += pos_adi_char.x;
 
 
 								if (pos_char.x > rt->tamanho_max_linha) {

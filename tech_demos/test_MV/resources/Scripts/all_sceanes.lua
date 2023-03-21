@@ -266,7 +266,7 @@ function sceanes_db.test:load()
     mat = material:new()
     mat.shader = "resources/Shaders/text"
     --create_text(this_sceane.objects_layesrs.hud,true,Vec3:new(-1,0.75,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"AAlL BBBBB","resources/Fonts/arial.json")
-    create_text(this_sceane.objects_layesrs.hud,true,Vec3:new(-0.75,0.75,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"ÃAlL BBbBB","resources/Fonts/Glowworm Regular.json")
+    create_text(this_sceane.objects_layesrs.hud,true,Vec3:new(-0.75,0.75,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"Ãa._AlL BBbBB\nçççççç","resources/Fonts/Glowworm Regular.json")
     
 end
 

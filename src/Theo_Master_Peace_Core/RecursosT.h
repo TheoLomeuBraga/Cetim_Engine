@@ -342,33 +342,25 @@ public:
 //#define NUM_CARACTERES 128
 
 		struct Caractere_info_struct {
-			
 			char letra;
 			ivec2 res;
 			vec4 pos_sca;
 			float avancamento;
 			vector<unsigned char> data;
-
-
 		};
 		typedef struct Caractere_info_struct Caractere_info;
 
 		class caractere_info {
 		public:
 			caractere_info(){}
-			
-			
 			wchar_t char_;
     		int width;
     		int height;
     		int left;
     		int top;
     		int pitch;
-    		int adivancement;
+    		unsigned int adivancement;
     		vector<unsigned char> bitmap;
-			
-			
-
 		};
 
 
@@ -376,23 +368,10 @@ public:
 		void remover_fonte(fonte* f);
 		class fonte : public asset {
 		public:
-			/*
-			string local;
-			fonte(){}
-			int ID = -1;
-			int qualidade;
-			bool pixel_perfeito;
-			float avancamento;
-			Caractere_info Characters[NUM_CARACTERES];
-			void remover_da_api_grafica();
-			*/
-
-			//*
 			string path;
 			int quality;
 			bool pixel_perfect;
     		std::map<wchar_t,caractere_info> chars;
-			//*/
 			
 			void deletar() {
 				remover_fonte(this);
