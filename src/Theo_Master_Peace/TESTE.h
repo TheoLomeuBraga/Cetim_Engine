@@ -246,24 +246,21 @@ void iniciarTeste3() {
 	
 	
 	
-	//cena_objetos_selecionados->adicionar_objeto(test_3D);
+	
 	cena_objetos_selecionados->adicionar_objeto(core);
-	//cena_objetos_selecionados->adicionar_objeto(camera_teste);
 	
+
 	
-	
-	
-	ManuseioDados::mapeamento_imagems.limpar();
 
 }
 
 
 
-imagem* imagem3texte3;
 
 
 
-bool boleanas[10];
+
+
 
 
 

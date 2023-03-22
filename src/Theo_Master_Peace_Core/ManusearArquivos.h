@@ -18,6 +18,7 @@ using namespace std;
 
 #include "Converter_JSON.h"
 #include "sceane.h"
+#include "table.h"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -161,6 +162,7 @@ namespace ManuseioDados {
 
 		}
 		else {
+			cout << "nao foi possivel carregar " << lugar << endl;
 			shared_ptr<fonte> ret;
 			return ret;
 		}
@@ -211,7 +213,7 @@ namespace ManuseioDados {
 		}
 		else
 		{
-			cout << local << " not exist \n";
+			cout << "nao foi possivel carregar " << local << endl;
 			shared_ptr<imagem> ret;
 			return ret;
 		}
@@ -406,6 +408,7 @@ namespace ManuseioDados {
 				return mapeamento_tile_map_infos.pegar(local);
 			}
 			else {
+				cout << "nao foi possivel carregar " << local << endl;
 				shared_ptr<tile_map_info>  ret = mapeamento_tile_map_infos.pegar(local);
 				return ret;
 			}
@@ -618,72 +621,78 @@ shared_ptr<cena_3D> importar_obj(string local) {
 		*ret = importar_obj(local);
 	}
 
-	//gpt sujeriu isso
-	/*
-	#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-
-struct MapVertex {
-    float x, y, z;
-};
-
-struct MapFace {
-    std::vector<MapVertex> vertices;
-};
-
-struct MapEntity {
-    std::string classname;
-    std::vector<MapFace> faces;
-};
-
-std::vector<MapEntity> readMapFile(const std::string& filename) {
-    std::vector<MapEntity> entities;
-    std::ifstream file(filename);
-    std::string line;
-
-    MapEntity entity;
-    MapFace face;
-    bool inEntity = false;
-    bool inFace = false;
-
-    while (std::getline(file, line)) {
-        std::stringstream stream(line);
-        std::string token;
-        stream >> token;
-
-        if (token == "entity") {
-            if (inEntity) {
-                entities.push_back(entity);
-                entity = MapEntity();
-                inEntity = false;
-            }
-            entity.classname = line;
-            inEntity = true;
-        } else if (inEntity && token == "}" && !inFace) {
-            entities.push_back(entity);
-            entity = MapEntity();
-            inEntity = false;
-        } else if (inEntity && token == "patchDef2") {
-            inFace = true;
-        } else if (inFace && token == "(") {
-            MapVertex vertex;
-            stream >> vertex.x >> vertex.y >> vertex.z;
-            face.vertices.push_back(vertex);
-        } else if (inFace && token == ")") {
-            entity.faces.push_back(face);
-            face = MapFace();
-        }
+json table_to_json(Table table){
+	json ret;
+	for (auto& [key, value] : table.m_floatMap) {
+        ret["floatMap"][key] = value;
     }
-
-    if (inEntity) {
-        entities.push_back(entity);
+    for (auto& [key, value] : table.m_stringMap) {
+        ret["stringMap"][key] = value;
     }
-
-    return entities;
+    for (auto& [key, value] : table.m_tableMap) {
+        ret["tableMap"][key] = table_to_json(value);
+    }
+	return ret;
 }
-	*/
+
+void storeTableData( std::string filename,Table table) {
+    json data = table_to_json(table);
+
+    std::ofstream file(filename, std::ios::out | std::ios::binary);
+    if (file.good()) {
+		std::vector<uint8_t> bson_data = json::to_bson(data);
+        file.write((const char*)&bson_data[0],bson_data.size());
+        file.close();
+        std::cout << "Data saved to " << filename << std::endl;
+    } else {
+        std::cerr << "Error: could not save data to " << filename << std::endl;
+    }
+
+	
+}
+
+Table json_to_table(json table){
+	Table ret;
+	for (auto it = table["floatMap"].begin(); it != table["floatMap"].end(); it++) {
+        std::string key = it.key();
+		ret.setFloat(key, it->get<float>());
+	}
+    for (auto it = table["stringMap"].begin(); it != table["stringMap"].end(); it++) {
+		std::string key = it.key();
+        ret.setString(key, it->get<std::string>());
+    }
+	for (auto it = table["tableMap"].begin(); it != table["tableMap"].end(); it++) {
+		std::string key = it.key();
+    	ret.setTable(key, json_to_table(it->get<json>()));
+    }
+    
+	return ret;
+}
+Table readTableData(const std::string& filename) {
+	std::ifstream file(filename, std::ios::in | std::ios::binary);
+
+    // Find the file size
+    file.seekg(0, std::ios::end);
+    std::streampos size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Read the file into a vector
+    std::vector<uint8_t> bson_data(size);
+    file.read((char*)&bson_data[0], size);
+
+	
+
+    // Close the file
+    file.close();
+
+    nlohmann::json json_data = nlohmann::json::from_bson(bson_data);
+	return json_to_table(json_data);
+}
+
+
+
+
+
 
 	shared_ptr<cena_3D> importar_map(string local){
 		//https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
