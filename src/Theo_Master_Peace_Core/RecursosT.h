@@ -570,6 +570,7 @@ public:
 					both = 2,
 				};
 
+				
 				class malha;
 				void remover_malha(malha* ma);
 				class malha : public asset{
