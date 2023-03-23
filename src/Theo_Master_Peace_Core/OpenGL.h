@@ -303,24 +303,37 @@ typedef struct mesh_ogl_struct mesh_ogl;
 			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
 
+
+			vec3 oq_sca;
+			mat4 oq_mat;
+
 			if(tf != NULL && rm != NULL && rm->usar_oclusao){
 
 				
 				
-
 				
 				
 				glBeginQuery(GL_SAMPLES_PASSED, p.second);
 				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 				glUseProgram(shader_s);
-				//transform
-				vec3 tamanho = vec3(0, 0, 0);
+
+				
+
 				for (shared_ptr<malha> m : rm->malhas) {
-					tamanho.x = std::max<float>(tamanho.x, m->tamanho_maximo.x);
-					tamanho.y = std::max<float>(tamanho.y, m->tamanho_maximo.y);
-					tamanho.z = std::max<float>(tamanho.z, m->tamanho_maximo.z);
+					m->pegar_tamanho_maximo();
+					oq_sca.x = std::max<float>(oq_sca.x, m->tamanho_maximo.x);
+					oq_sca.y = std::max<float>(oq_sca.y, m->tamanho_maximo.y);
+					oq_sca.z = std::max<float>(oq_sca.z, m->tamanho_maximo.z);
 				}
-				mat4 transform = scale(tf->matrizTransform, tamanho);
+				oq_mat = translate(oq_mat,tf->pos);
+				oq_mat *= toMat4(tf->quater);
+				oq_mat = scale(oq_mat,oq_sca * tf->esca);
+				
+				//cout << "oq pos: " << tf->pos.x << " " << tf->pos.y << " " << tf->pos.z << endl;
+				//cout << "oq sca: " << oq_sca.x << " " << oq_sca.y << " " << oq_sca.z << endl;
+
+				
+				mat4 transform = scale(oq_mat, oq_sca);
 				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &transform[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
@@ -339,7 +352,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 	void pegar_oclusion_queries() {
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries) {
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
-			//cout << "resultado querie: " << oclusion_queries_resultados[p.first] << endl;
+			cout << "resultado querie: " << oclusion_queries_resultados[p.first] << endl;
 			if(p.first->pegar_componente<render_malha>()->usar_oclusao){
 				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
 			}
@@ -1154,7 +1167,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 				//https://www.youtube.com/watch?v=LMpw7foANNA
-				//map<shared_ptr<objeto_jogo>,unsigned int> oclusion_queries;
 
 				//render_malha
 				
@@ -1375,7 +1387,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 
 
-//AAAAA
+
 
 
 			//aplicar shader
