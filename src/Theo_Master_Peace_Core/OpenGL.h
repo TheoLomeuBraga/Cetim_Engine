@@ -2,6 +2,8 @@
 
 #include <math.h>
 #include <regex>
+#include <utility>
+#include <array>
 #include "RecursosT.h"
 #include "ManusearArquivos.h"
 #include "Config.h"
@@ -823,7 +825,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 				}
 
 
-
+				
 				//render texto
 				if (obj->pegar_componente<render_texto>() != NULL) {
 
@@ -863,13 +865,21 @@ typedef struct mesh_ogl_struct mesh_ogl;
 					glUniform1i(tipo_vertice, 1);
 					glBindVertexArray(quad_array);
 
-
+					std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
+					const std::wregex ANSI_WREGEX(L"\\x1B\\[([0-9;]+)m",std::regex_constants::icase | std::regex_constants::ECMAScript);
+					std::unordered_map<int, vec4> ANSI_colors;
+					ANSI_colors[0] = vec4(1,1,1,1);
+					ANSI_colors[31] = vec4(1,0,0,1);
+					ANSI_colors[32] = vec4(0,1,0,1);
+					ANSI_colors[33] = vec4(1,1,0,1);
+					ANSI_colors[34] = vec4(0,0,1,1);
+					ANSI_colors[35] = vec4(1,0,1,1);
+					ANSI_colors[36] = vec4(0,1,1,1);
 					shared_ptr<fonte> font = rt->font;
+					
 					if (font != NULL){
 						#define texto rt->texto
-						//wstring texto = rt->texto;
 						#define lugar_texto tf->matrizTransform
-						//mat4 lugar_texto = tf->matrizTransform;
 
 
 
@@ -877,6 +887,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 						float altura_linha = 0;
 						float tamanho_linha = 0;
 
+						
 
 						for (int i = 0; i < texto.size(); i++) {
 							wchar_t letra = texto.at(i);
@@ -893,7 +904,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 							}
 							else {
 								
-
+								
 								caractere_info char_ = font->chars[letra];
 								
 								
