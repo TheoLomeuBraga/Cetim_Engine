@@ -28,9 +28,9 @@ using json = nlohmann::json;
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb-master/stb_image_write.h>
 
+#include "read_map_file.h"
 
 
-bool CARREGANDO;
 
 
 namespace ManuseioDados {
@@ -700,7 +700,7 @@ Table readTableData(const std::string& filename) {
 		cena_3D ret;
 		ret.caminho = local;
 
-		
+		Full_Map_Info map_info = read_map_file(local);
 
 		cenas_3D.aplicar(local,ret);
 		return cenas_3D.pegar(local);
