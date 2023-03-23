@@ -151,8 +151,8 @@ std::wstring lua_towstring(lua_State* L, int index) {
 
 void lua_pushwstring(lua_State* L, const std::wstring& ws) {
     // Convert wstring to UTF-8 encoded string
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-    std::string utf8str = conv.to_bytes(ws);
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    std::string utf8str = converter.to_bytes(ws);
 
     // Push the UTF-8 string to the Lua stack
     lua_pushstring(L, utf8str.c_str());
