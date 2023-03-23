@@ -8,10 +8,20 @@
 #include <map>
 #include <glm/vec3.hpp>
 
+/*
+struct Vertex {
+    vec3 position;
+    vec3 normal
+    vec2 uv;
+};
+
+struct Mesh{
+    std::vector<unsigned int> index;
+    std::vector<Vertex> vertex;
+};
 
 
-
-
+*/
 
 struct Entity {
     std::string name;

@@ -580,7 +580,7 @@ public:
 					vector<unsigned int> indice;
 					vector<vertice> vertices;
 					map<string,vector<vertice>> shape_keys;
-					vec3 tamanho_maximo = vec3(0,0,0);
+					vec3 tamanho_maximo = vec3(0,0,0),centro = vec3(0,0,0);
 					malha(vector<unsigned int> indice, vector<vertice> vertices) {
 						this->indice = indice;
 						this->vertices = vertices;
@@ -612,12 +612,25 @@ public:
 					}
 
 					void pegar_tamanho_maximo(){
+						tamanho_maximo = vec3(0,0,0);
+						centro = vec3(0,0,0);
 						for(vertice v : vertices){
-							tamanho_maximo.x = std::max(tamanho_maximo.x,std::abs(v.posicao[0]));
-							tamanho_maximo.y = std::max(tamanho_maximo.y,std::abs(v.posicao[1]));
-							tamanho_maximo.z = std::max(tamanho_maximo.z,std::abs(v.posicao[2]));
+							centro += vec3(v.posicao[0],v.posicao[1],v.posicao[2]);
+
+
+
+							//tamanho_maximo.x = std::max(tamanho_maximo.x,std::abs(v.posicao[0]));
+							//tamanho_maximo.y = std::max(tamanho_maximo.y,std::abs(v.posicao[1]));
+							//tamanho_maximo.z = std::max(tamanho_maximo.z,std::abs(v.posicao[2]));
 						}
-						cout << "adasdafsdsdfsdgsdgfdfggh: " << tamanho_maximo.x << " " << tamanho_maximo.y << " " << tamanho_maximo.z << endl;
+						centro /= vertices.size();
+						for(vertice v : vertices){
+							vec3 pos = vec3(v.posicao[0],v.posicao[1],v.posicao[2]);
+							vec3 pos_relation_center = pos - centro;
+							tamanho_maximo.x = std::max(tamanho_maximo.x,std::abs(pos_relation_center.x));
+							tamanho_maximo.y = std::max(tamanho_maximo.y,std::abs(pos_relation_center.y));
+							tamanho_maximo.z = std::max(tamanho_maximo.z,std::abs(pos_relation_center.z));
+						}
 					}
 
 					~malha(){

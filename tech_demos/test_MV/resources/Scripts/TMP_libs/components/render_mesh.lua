@@ -24,7 +24,7 @@ function render_mesh_component:new(object_ptr)
     rm = {}
     rm.object_ptr = object_ptr
     rm.layer = 1
-    rm.use_oclusion = false
+    rm.use_oclusion = true
     rm.normal_direction = 0
     rm.meshes = {}
     rm.materials = {}
