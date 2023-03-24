@@ -701,6 +701,7 @@ Table readTableData(const std::string& filename) {
 		ret.caminho = local;
 
 		Full_Map_Info map_info = read_map_file(local);
+		
 
 		cenas_3D.aplicar(local,ret);
 		return cenas_3D.pegar(local);
@@ -727,7 +728,6 @@ Table readTableData(const std::string& filename) {
 			pair<string,shared_ptr<cena_3D>(*)(string)>(".gltf",importar_gltf),
 	};
 	shared_ptr<cena_3D> carregar_modelo_3D(string local){
-		
 		return funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
 	}
 	void carregar_modelo_3D(string local, shared_ptr<cena_3D>* ret){

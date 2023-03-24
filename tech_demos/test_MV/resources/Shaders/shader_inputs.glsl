@@ -15,7 +15,6 @@ struct Light {
   vec3 color;
   float streight;
   float angle;
-  float distance;
   
   
 } light[99];
