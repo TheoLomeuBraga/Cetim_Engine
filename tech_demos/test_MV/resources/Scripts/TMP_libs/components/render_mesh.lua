@@ -19,13 +19,19 @@ function mesh_location:new(file,name)
     return ret
 end
 
+normal_direction = {
+    front = 0,
+	back = 1,
+	both = 2,
+}
+
 render_mesh_component = {}
 function render_mesh_component:new(object_ptr)
     rm = {}
     rm.object_ptr = object_ptr
     rm.layer = 1
     rm.use_oclusion = true
-    rm.normal_direction = 0
+    rm.normal_direction = normal_direction.both
     rm.meshes = {}
     rm.materials = {}
     function rm:get()

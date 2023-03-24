@@ -218,10 +218,10 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
             mat = matreial:new()
             mat.shader = "resources/Shaders/mesh"
             mat.color = {r = 1,g = 0,b = 0,a = 1}
-            --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
+            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
             --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/oclusion_box.obj","Cube")})
             
-            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/Leveis 3D/mesh_test.map","0")})
+            --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/Leveis 3D/mesh_test.map","1")})
         end
     end
 end
@@ -244,7 +244,7 @@ function sceanes_db.test:load()
     create_background("resources/Textures/fundo A.png")
 
     --camera
-    this_sceane.camera = create_camera_ortho(this_sceane.objects_layesrs.camera,Vec3:new(-1, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
+    this_sceane.camera = create_camera_ortho(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
     set_lisener_object(this_sceane.camera.object_ptr)
 
     --tilemap
@@ -257,4 +257,28 @@ function sceanes_db.test:load()
 end
 
 
+sceanes_db.test2 = {}
+function sceanes_db.test2:load()
+    print("loading test map")
+    initialize_render_settings()
+    this_sceane.objects_layesrs = layers_table:new_2D()
+    this_sceane.objects_layesrs:create()
+    
+    --create_audio(this_sceane.objects_layesrs.sound,"resources/Audio/teste de audio.wav",true,5)
+    --background
+    
+    create_background("resources/Textures/fundo A.png")
 
+    --camera
+    --this_sceane.camera = create_camera_ortho(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
+    this_sceane.camera = create_camera_perspective(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),90,0.1,100)
+    set_lisener_object(this_sceane.camera.object_ptr)
+
+    mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.color = {r = 1,g = 1,b = 1,a = 1}       
+    pos = Vec3:new(0,0,0)
+    create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(-90,0,0),Vec3:new(1,1,1),2,{mat,mat},{mesh_location:new("resources/Leveis 3D/mesh_test.map","0"),mesh_location:new("resources/Leveis 3D/mesh_test.map","1")})
+    
+    
+end

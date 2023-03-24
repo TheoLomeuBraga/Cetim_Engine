@@ -762,9 +762,9 @@ Table readTableData(const std::string& filename) {
         		// Add vertices for each face of the brush_part
         		for (int i = 0; i < 3; ++i) {
         		    vertice vertex;
-        		    vertex.posicao[0] = brush_part.faces[i].x;
-					vertex.posicao[1] = brush_part.faces[i].y;
-					vertex.posicao[2] = brush_part.faces[i].z;
+        		    vertex.posicao[0] = brush_part.faces[i].x / 16;
+					vertex.posicao[1] = brush_part.faces[i].y / 16;
+					vertex.posicao[2] = brush_part.faces[i].z / 16;
 
         		    vertex.normal[0] = normal.x;
 					vertex.normal[1] = normal.y;
