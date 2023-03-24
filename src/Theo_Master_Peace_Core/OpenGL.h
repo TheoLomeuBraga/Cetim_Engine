@@ -352,7 +352,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 	void pegar_oclusion_queries() {
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries) {
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
-			cout << "resultado querie: " << oclusion_queries_resultados[p.first] << endl;
+			//cout << ": " << oclusion_queries_resultados[p.first] << endl;
 			if(p.first->pegar_componente<render_malha>()->usar_oclusao){
 				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
 			}

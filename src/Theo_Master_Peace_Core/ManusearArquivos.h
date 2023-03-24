@@ -692,7 +692,12 @@ Table readTableData(const std::string& filename) {
 
 
 
-
+	glm::vec3 calculate_normal(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
+	    glm::vec3 edge1 = v2 - v1;
+	    glm::vec3 edge2 = v3 - v1;
+	    glm::vec3 normal = glm::cross(edge1, edge2);
+	    return glm::normalize(normal);
+	}
 
 	shared_ptr<cena_3D> importar_map(string local){
 		//https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
@@ -701,6 +706,7 @@ Table readTableData(const std::string& filename) {
 		ret.caminho = local;
 
 		Full_Map_Info map_info = read_map_file(local);
+		
 		
 
 		cenas_3D.aplicar(local,ret);
