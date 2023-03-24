@@ -189,7 +189,7 @@ namespace print_read_map_file {
         Print_Vec2(bp.scale);
     }
     void Print_structure(Structure s){
-        std::cout << s.name << std::endl;
+        std::cout << "structure name: " << s.name << std::endl;
         for(Brush_Part bp : s.brush){
             Print_Brush_Part(bp);
         }
@@ -201,7 +201,7 @@ namespace print_read_map_file {
         }
     }
     void Print_Entity(Entity e){
-        std::cout << e.name << std::endl;
+        std::cout << "entity name:" << e.name << std::endl;
         for(pair<std::string,std::string> i : e.info){
             std::cout << i.first;
             std::cout << " ";

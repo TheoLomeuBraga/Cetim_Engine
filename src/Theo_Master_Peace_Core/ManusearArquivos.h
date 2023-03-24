@@ -692,12 +692,40 @@ Table readTableData(const std::string& filename) {
 
 
 
-	glm::vec3 calculate_normal(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
+	glm::vec3 mapfile_calculate_normal(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
 	    glm::vec3 edge1 = v2 - v1;
 	    glm::vec3 edge2 = v3 - v1;
 	    glm::vec3 normal = glm::cross(edge1, edge2);
 	    return glm::normalize(normal);
 	}
+
+
+
+	glm::vec2 mapfile_brush_part_to_uv_coordinates(const Brush_Part& brush_part, int vertex_index) {
+	    glm::vec2 uv(0.0f, 0.0f);
+
+	    // Calculate the texture coordinates based on the brush part properties
+	    glm::vec3 vertex_position = brush_part.faces[vertex_index];
+	    float u = glm::dot(vertex_position, glm::vec3(1, 0, 0)); // Project vertex_position onto the U axis
+	    float v = glm::dot(vertex_position, glm::vec3(0, 1, 0)); // Project vertex_position onto the V axis
+
+	    // Apply the offset, rotation, and scale to the texture coordinates
+    	uv.x = u + brush_part.offset.x;
+    	uv.y = v + brush_part.offset.y;
+
+    	// Create a rotation matrix for the given angle
+    	glm::mat2 rotation_matrix = glm::mat2(glm::cos(brush_part.Rotation), -glm::sin(brush_part.Rotation), glm::sin(brush_part.Rotation), glm::cos(brush_part.Rotation));
+
+    	// Apply the rotation matrix to the UV coordinates
+    	uv = rotation_matrix * uv;
+
+    	// Apply the scale to the UV coordinates
+    	uv.x *= brush_part.scale.x;
+    	uv.y *= brush_part.scale.y;
+
+    	return uv;
+	}
+
 
 	shared_ptr<cena_3D> importar_map(string local){
 		//https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
@@ -707,6 +735,46 @@ Table readTableData(const std::string& filename) {
 
 		Full_Map_Info map_info = read_map_file(local);
 		
+		
+		for(Structure structure : map_info.structure){
+			string name = structure.name;
+			malha mesh;
+			for (const Brush_Part& brush_part : structure.brush) {
+        		// Calculate the normal for the brush_part
+        		glm::vec3 normal = mapfile_calculate_normal(brush_part.faces[0], brush_part.faces[1], brush_part.faces[2]);
+
+        		// Add vertices for each face of the brush_part
+        		for (int i = 0; i < 3; ++i) {
+        		    vertice vertex;
+        		    vertex.posicao[0] = brush_part.faces[i].x;
+					vertex.posicao[1] = brush_part.faces[i].y;
+					vertex.posicao[2] = brush_part.faces[i].z;
+
+        		    vertex.normal[0] = normal.x;
+					vertex.normal[1] = normal.y;
+					vertex.normal[2] = normal.z;
+        		    // Note: You need to determine how to convert the Brush_Part's texture, offset, rotation, and scale properties into UV coordinates.
+        		    // The following example assumes you have a function called `brush_part_to_uv_coordinates` that does this conversion.
+					vec2 uv = mapfile_brush_part_to_uv_coordinates(brush_part, i);
+        		    vertex.uv[0] = uv.x;
+					vertex.uv[1] = uv.y;
+
+        		    mesh.vertices.push_back(vertex);
+        		}
+
+        		// Add indices for the brush_part
+        		unsigned int base_index = static_cast<unsigned int>(mesh.vertices.size()) - 3;
+        		mesh.indice.push_back(base_index);
+        		mesh.indice.push_back(base_index + 1);
+        		mesh.indice.push_back(base_index + 2);
+    		}
+
+			ret.malhas.insert(pair<string,shared_ptr<malha>>(name,make_shared<malha>(mesh)));
+
+			Material mat;
+			ret.materiais.insert(pair<string,Material>(name,mat));
+
+		}
 		
 
 		cenas_3D.aplicar(local,ret);

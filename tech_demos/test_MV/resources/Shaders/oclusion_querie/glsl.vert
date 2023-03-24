@@ -12,7 +12,7 @@ uniform mat4 projection,vision,transform;
  void main(){
    
    if(ui){
-   gl_Position =  transform * vec4(p,1); 
+   gl_Position =  transform * vec4(position,1); 
    }else{
    gl_Position = (projection * vision * transform) * vec4(position,1); 
    }

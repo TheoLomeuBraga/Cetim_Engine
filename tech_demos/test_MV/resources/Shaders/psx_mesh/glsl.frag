@@ -15,7 +15,7 @@ in Vertex{
 
 
 // material
- uniform sampler2D textures[6];
+uniform sampler2D textures[6];
 uniform vec4 color;
 uniform vec4 uv_position_scale;
 

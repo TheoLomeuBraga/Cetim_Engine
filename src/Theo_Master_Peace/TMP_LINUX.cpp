@@ -32,7 +32,7 @@
 #include "components/camera.h"
 #include "components/transform.h"
 
-//#include "read_map_file.h"
+#include "read_map_file.h"
 
 #include <bitset>
 
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 
 
 
-    //test_read_map_file();
+    test_read_map_file();
     comecar();
     cout << "volte sempre\n";
 
