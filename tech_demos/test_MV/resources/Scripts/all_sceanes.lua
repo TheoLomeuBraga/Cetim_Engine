@@ -218,24 +218,10 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
             mat = matreial:new()
             mat.shader = "resources/Shaders/mesh"
             mat.color = {r = 1,g = 0,b = 0,a = 1}
-            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
-            --[[
-            obj = game_object:new(create_object(this_sceane.objects_layesrs.background_3D))
-            obj:add_component(components.transform)
-            obj.components[components.transform].position = deepcopy(pos)
-            obj.components[components.transform]:set()
-
-            obj:add_component(components.lua_scripts)
-            obj.components[components.lua_scripts]:add_script("resources/Scripts/test_raycast.lua")
-            obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","father",this_sceane.objects_layesrs.background_3D)
-
-            ray_info = {
-                position = {x=pos.x,y=pos.y},
-                max_distance = 100,
-                angle = 0,
-            }
-            obj.components[components.lua_scripts]:set_variable("resources/Scripts/test_raycast.lua","ray_info",ray_info)
-            ]]
+            --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
+            --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/oclusion_box.obj","Cube")})
+            
+            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/Leveis 3D/mesh_test.map","0")})
         end
     end
 end

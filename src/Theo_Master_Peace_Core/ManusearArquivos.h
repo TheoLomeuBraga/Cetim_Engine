@@ -726,6 +726,21 @@ Table readTableData(const std::string& filename) {
     	return uv;
 	}
 
+	string mostFrequentString(vector<string> vec) {
+    unordered_map<string, int> freqMap;
+    for (string value : vec) {
+        freqMap[value]++;
+    }
+    string mostFrequentValue;
+    int highestFrequency = 0;
+    for (auto it = freqMap.begin(); it != freqMap.end(); it++) {
+        if (it->second > highestFrequency) {
+            highestFrequency = it->second;
+            mostFrequentValue = it->first;
+        }
+    }
+    return mostFrequentValue;
+}
 
 	shared_ptr<cena_3D> importar_map(string local){
 		//https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
@@ -735,10 +750,11 @@ Table readTableData(const std::string& filename) {
 
 		Full_Map_Info map_info = read_map_file(local);
 		
-		
+		int num_meshes = 0;
 		for(Structure structure : map_info.structure){
 			string name = structure.name;
 			malha mesh;
+			vector<string> textures;
 			for (const Brush_Part& brush_part : structure.brush) {
         		// Calculate the normal for the brush_part
         		glm::vec3 normal = mapfile_calculate_normal(brush_part.faces[0], brush_part.faces[1], brush_part.faces[2]);
@@ -767,13 +783,18 @@ Table readTableData(const std::string& filename) {
         		mesh.indice.push_back(base_index);
         		mesh.indice.push_back(base_index + 1);
         		mesh.indice.push_back(base_index + 2);
+
+				textures.push_back(brush_part.texture);
     		}
 
-			ret.malhas.insert(pair<string,shared_ptr<malha>>(name,make_shared<malha>(mesh)));
-
+			ret.malhas.insert(pair<string,shared_ptr<malha>>(to_string(num_meshes),make_shared<malha>(mesh)));
+			
+			string texture = mostFrequentString(textures);
 			Material mat;
-			ret.materiais.insert(pair<string,Material>(name,mat));
+			mat.texturas[0] = ManuseioDados::carregar_Imagem(string("resources/Textures/")+texture+".png");
+			ret.materiais.insert(pair<string,Material>(to_string(num_meshes),mat));
 
+			num_meshes++;
 		}
 		
 

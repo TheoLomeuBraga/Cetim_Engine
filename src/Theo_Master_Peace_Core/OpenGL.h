@@ -39,6 +39,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 
 	class OpenGL_API : public API_grafica_classe {
 	public:
+		bool show_oclusion_querie = false;
 
 		int id_camera;
 
@@ -48,8 +49,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 		unsigned int frame_buffer, deeph_buffer;
 		vector<unsigned int> frame_buffers_texturas = vector<unsigned int>(SAIDAS_SHADER);
 
-		//map<fonte*,  unsigned int*> fontes;
-		//map<fonte*, vector<unsigned char*> > fontes_data;
 		map<fonte*,  map<wchar_t,unsigned int>> fontes;
 		map<fonte*,  map<wchar_t,unsigned char*>> charters_bitmaps;
 
@@ -296,6 +295,8 @@ typedef struct mesh_ogl_struct mesh_ogl;
 		}
 	}
 
+	
+
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam) {
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries) {
 
@@ -304,8 +305,8 @@ typedef struct mesh_ogl_struct mesh_ogl;
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
 
 
-			vec3 oq_sca;
-			mat4 oq_mat;
+			
+			
 
 			if(tf != NULL && rm != NULL && rm->usar_oclusao){
 
@@ -317,28 +318,69 @@ typedef struct mesh_ogl_struct mesh_ogl;
 				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 				glUseProgram(shader_s);
 
-				
+				vec3 oq_sca(1,1,1);
 
 				for (shared_ptr<malha> m : rm->malhas) {
 					m->pegar_tamanho_maximo();
-					oq_sca.x = std::max<float>(oq_sca.x, m->tamanho_maximo.x);
-					oq_sca.y = std::max<float>(oq_sca.y, m->tamanho_maximo.y);
-					oq_sca.z = std::max<float>(oq_sca.z, m->tamanho_maximo.z);
+					oq_sca.x = std::max<float>(oq_sca.x,std::abs(m->tamanho_maximo.x));
+					oq_sca.y = std::max<float>(oq_sca.y, std::abs(m->tamanho_maximo.y));
+					oq_sca.z = std::max<float>(oq_sca.z, std::abs(m->tamanho_maximo.z));
 				}
-				oq_mat = translate(oq_mat,tf->pos);
-				oq_mat *= toMat4(tf->quater);
+				/*
+				mat4 oq_mat = translate(mat4(),tf->pegar_pos_global());
+				oq_mat *= toMat4(tf->pegar_qua_global());
 				oq_mat = scale(oq_mat,oq_sca * tf->esca);
+				*/
+
+				mat4 oq_mat = tf->pegar_matriz();
+				oq_mat = scale(oq_mat, oq_sca);
 				
-				//cout << "oq pos: " << tf->pos.x << " " << tf->pos.y << " " << tf->pos.z << endl;
+				//cout << "oq pos: " << tf->pegar_pos_global().x << " " << tf->pegar_pos_global().y << " " << tf->pegar_pos_global().z << endl;
 				//cout << "oq sca: " << oq_sca.x << " " << oq_sca.y << " " << oq_sca.z << endl;
 
-				
-				mat4 transform = scale(oq_mat, oq_sca);
+				/*
 				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &transform[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &oq_mat[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-				selecionar_desenhar_malha_querie(oclusion_box.get());
+				*/
+				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &oq_mat[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
+
+				if (malhas.find(oclusion_box.get()) != malhas.end()) {
+					glDisable(GL_CULL_FACE);
+					glDisable(GL_DEPTH_TEST);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[oclusion_box.get()].vbo);
+					glBindBuffer(GL_ARRAY_BUFFER, malhas[oclusion_box.get()].malha_buffer);
+
+					for (int i = 0; i < 4; i++) {
+						glEnableVertexAttribArray(i);
+					}
+
+					//posição
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice),reinterpret_cast<void*>(offsetof(vertice, posicao)));
+
+			
+					if(!show_oclusion_querie){glColorMask(false, false, false, false);}
+					glDrawElements(
+						GL_TRIANGLES,      // mode
+							malhas[oclusion_box.get()].tamanho_indice,    // count
+							GL_UNSIGNED_INT,   // type
+							(void*) 0           // element array buffer offset
+							);
+					if (usar_profundidade) {
+						glEnable(GL_DEPTH_TEST);
+					}
+					else {
+						glDisable(GL_DEPTH_TEST);
+					}
+					glColorMask(true, true, true, true);
+
+			
+		}
+				
 				glEndQuery(GL_SAMPLES_PASSED);
 				
 
@@ -352,7 +394,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 	void pegar_oclusion_queries() {
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries) {
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
-			//cout << ": " << oclusion_queries_resultados[p.first] << endl;
+			//cout << "oclusion querie result: " << oclusion_queries_resultados[p.first] << endl;
 			if(p.first->pegar_componente<render_malha>()->usar_oclusao){
 				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
 			}
@@ -367,7 +409,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 				oclusion_queries2.insert(p);
 				oclusion_queries_resultados2.insert(pair<shared_ptr<objeto_jogo>, int>(p.first,0));
 			} else {
-				cout << "querie: " << p.second << " foi deletada" << endl;
+				//cout << "querie: " << p.second << " foi deletada" << endl;
 				glDeleteQueries(1, &p.second);
 			}
 		}
@@ -647,39 +689,7 @@ typedef struct mesh_ogl_struct mesh_ogl;
 			}
 		}
 
-		void selecionar_desenhar_malha_querie(malha *ma) {
-		if (malhas.find(ma) != malhas.end()) {
-			glDisable(GL_CULL_FACE);
-			glDisable(GL_DEPTH_TEST);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma].vbo);
-			glBindBuffer(GL_ARRAY_BUFFER, malhas[ma].malha_buffer);
-
-			for (int i = 0; i < 4; i++) {
-				glEnableVertexAttribArray(i);
-			}
-
-			//posição
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice),reinterpret_cast<void*>(offsetof(vertice, posicao)));
-
-			glDisable(GL_CULL_FACE);
-			glColorMask(false, false, false, false);
-			glDrawElements(
-				GL_TRIANGLES,      // mode
-					malhas[ma].tamanho_indice,    // count
-					GL_UNSIGNED_INT,   // type
-					(void*) 0           // element array buffer offset
-					);
-			if (usar_profundidade) {
-				glEnable(GL_DEPTH_TEST);
-			}
-			else {
-				glDisable(GL_DEPTH_TEST);
-			}
-			glColorMask(true, true, true, true);
-
-			
-		}
-	}
+		
 
 		void selecionar_desenhar_malha(malha* ma,int tipo){
 			if(malhas.find(ma) != malhas.end()){
@@ -1171,8 +1181,6 @@ typedef struct mesh_ogl_struct mesh_ogl;
 				//render_malha
 				
 				shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-				
-				
 				if (RM != NULL && RM->malhas.size() > 0 && RM->ligado && RM->malhas.size() > 0 && RM->mats.size() > 0) {
 
 					//iniciar_teste_tf_teste_cam();

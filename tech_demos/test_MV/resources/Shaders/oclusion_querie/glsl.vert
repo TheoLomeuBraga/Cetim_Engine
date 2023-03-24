@@ -6,7 +6,12 @@ uniform bool ui;
 uniform mat4 projection,vision,transform;
 
 
-
+vec3 quad_data[4] = vec3[4](
+  vec3(1,-1,0),
+  vec3(1,1,0),
+  vec3(-1,-1,0),
+  vec3(-1,1,0)
+  );
   
  
  void main(){
