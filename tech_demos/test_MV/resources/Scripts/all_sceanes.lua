@@ -276,7 +276,7 @@ function sceanes_db.test2:load()
 
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
-    mat.color = {r = 1,g = 1,b = 1,a = 1}       
+    mat.color = {r = 1,g = 0,b = 0,a = 1}       
     pos = Vec3:new(0,0,0)
     create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(-90,0,0),Vec3:new(1,1,1),2,{mat,mat},{mesh_location:new("resources/Leveis 3D/mesh_test.map","0"),mesh_location:new("resources/Leveis 3D/mesh_test.map","1")})
     

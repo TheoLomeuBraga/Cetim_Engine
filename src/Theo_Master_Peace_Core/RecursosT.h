@@ -687,6 +687,75 @@ public:
 					map<string,vector<key_frame>> animacoes;
 
 				};
+					vec3 calculateNormal(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+    	glm::vec3 edge1 = b - a;
+    	glm::vec3 edge2 = c - a;
+    	return glm::normalize(glm::cross(edge1, edge2));
+	}
+
+	string mostFrequentString(vector<string> vec) {
+    unordered_map<string, int> freqMap;
+    for (string value : vec) {
+        freqMap[value]++;
+    }
+    string mostFrequentValue;
+    int highestFrequency = 0;
+    for (auto it = freqMap.begin(); it != freqMap.end(); it++) {
+        if (it->second > highestFrequency) {
+            highestFrequency = it->second;
+            mostFrequentValue = it->first;
+        }
+    }
+    return mostFrequentValue;
+}
+
+void triangulate(const glm::vec3* vertices, size_t vertexCount, std::vector<glm::vec3>& output) {
+    if (vertexCount < 3) return;
+
+    for (size_t i = 1; i < vertexCount - 1; ++i) {
+        output.push_back(vertices[0]);
+        output.push_back(vertices[i]);
+        output.push_back(vertices[i + 1]);
+    }
+}
+
+float distance(glm::vec3 a, glm::vec3 b) {
+  return glm::length(a - b);
+}
+
+// Function to sort the input vector of vec3 points based on the distance from the given point
+std::vector<glm::vec3> vec3_ordenate_by_distance(glm::vec3 point, std::vector<glm::vec3> vec_points) {
+  // Create a vector to store the distances
+  std::vector<float> distances(vec_points.size());
+
+  // Calculate the distances from the given point to each of the points in the input vector
+  for (int i = 0; i < vec_points.size(); i++) {
+    distances[i] = distance(point, vec_points[i]);
+  }
+
+  // Create an index vector and sort it based on the distances
+  std::vector<int> indices(vec_points.size());
+  std::iota(indices.begin(), indices.end(), 0);
+  std::sort(indices.begin(), indices.end(), [&](int i, int j) {return distances[i] < distances[j];});
+
+  // Create a new vector to store the sorted vec3 points
+  std::vector<glm::vec3> sorted_vec_points(vec_points.size());
+
+  // Fill the new vector with the vec3 points in the order determined by the sorted index vector
+  for (int i = 0; i < indices.size(); i++) {
+    sorted_vec_points[i] = vec_points[indices[i]];
+  }
+
+  // Return the sorted vector of vec3 points
+  return sorted_vec_points;
+}
+
+
+
+
+
+
+
 
 
 				

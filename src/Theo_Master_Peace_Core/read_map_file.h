@@ -35,10 +35,11 @@ struct Brush_Part {
     float Rotation;
     glm::vec2 scale;
 };
+typedef std::vector<Brush_Part> Brush;
 
 struct Structure {
     std::string name;
-    std::vector<Brush_Part> brush;
+    Brush brush;
     std::map<std::string,std::string> info;
 };
 
