@@ -685,7 +685,7 @@ namespace ManuseioDados
 		cena_3D ret;
 		ret.caminho = local;
 
-		
+		gltf_loader::GLTFLoader gltf_loader(local);
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);

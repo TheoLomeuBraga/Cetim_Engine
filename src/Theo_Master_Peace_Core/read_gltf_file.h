@@ -64,7 +64,7 @@ namespace gltf_loader
     {
     public:
         GLTFLoader(const std::string &filename);
-        bool load(std::vector<Mesh> &meshes);
+        bool load();
 
         nlohmann::json gltf;
         std::string baseDir;
@@ -88,7 +88,34 @@ namespace gltf_loader
         std::vector<uint8_t> getBufferData(size_t accessorIndex);
     };
 
-    bool GLTFLoader::load(std::vector<Mesh> &meshes)
+    GLTFLoader::GLTFLoader(const std::string &filename)
+    {
+        std::ifstream file(filename);
+        if (!file.is_open())
+        {
+            std::cerr << "Failed to open glTF file: " << filename << std::endl;
+            return;
+        }
+
+        try
+        {
+            file >> gltf;
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Failed to parse glTF file: " << e.what() << std::endl;
+            return;
+        }
+
+        // Get base directory from the file path
+        baseDir = std::filesystem::path(filename).parent_path().string();
+        if (!baseDir.empty())
+        {
+            baseDir += "/";
+        }
+    }
+
+    bool GLTFLoader::load()
     {
         if (!loadBuffers() || !loadBufferViews() || !loadAccessors())
         {
@@ -96,11 +123,6 @@ namespace gltf_loader
         }
 
         if (!loadObjects() || !loadAnimations() || !loadTextures() || !loadMaterials())
-        {
-            return false;
-        }
-
-        if (!loadMeshes(meshes))
         {
             return false;
         }
