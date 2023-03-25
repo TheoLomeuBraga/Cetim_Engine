@@ -680,12 +680,45 @@ namespace ManuseioDados
 		*ret = importar_map(local);
 	}
 
+	malha converter_malha_gltf(gltf_loader::Mesh m){
+		malha ret;
+		ret.indice = m.indices;
+
+		ret.vertices.resize(m.positions.size());
+		for(int i = 0; i < m.positions.size();i++){
+			vertice v;
+
+			unsigned int v_index = m.indices[i];
+
+			v.posicao[0] = m.positions[i].x;
+			v.posicao[1] = m.positions[i].y;
+			v.posicao[2] = m.positions[i].z;
+
+			v.normal[0] = m.normals[i].x;
+			v.normal[1] = m.normals[i].y;
+			v.normal[2] = m.normals[i].z;
+
+			v.uv[0] = m.texcoords[i].x;
+			v.uv[1] = m.texcoords[i].y;
+			
+			ret.vertices[i] = v;
+		}
+		
+		return ret;
+	}
+
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 		cena_3D ret;
 		ret.caminho = local;
 
 		gltf_loader::GLTFLoader gltf_loader(local);
+		gltf_loader.load();
+		
+		for(int i = 0; i < gltf_loader.meshes.size();i++){
+			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name,make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))) );
+			cout << gltf_loader.meshes[i].name << endl;
+		}
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);

@@ -12,10 +12,11 @@ namespace gltf_loader
 
     struct Mesh
     {
+        std::string name;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
-        std::vector<uint32_t> indices;
+        std::vector<unsigned int> indices;
     };
 
     struct BufferView
@@ -71,6 +72,7 @@ namespace gltf_loader
         std::vector<std::vector<uint8_t>> buffersData;
         std::vector<BufferView> bufferViews;
         std::vector<Accessor> accessors;
+        std::vector<Mesh> meshes;
         std::vector<Object> objects;
         std::vector<Animation> animations;
         std::vector<Texture> textures;
@@ -84,7 +86,7 @@ namespace gltf_loader
         bool loadTextures();  // <-- adicionar
         bool loadMaterials(); // <-- adicionar
         std::vector<float> getAttributeData(size_t accessorIndex);
-        bool loadMeshes(std::vector<Mesh> &meshes);
+        bool loadMeshes();
         std::vector<uint8_t> getBufferData(size_t accessorIndex);
     };
 
@@ -99,7 +101,8 @@ namespace gltf_loader
 
         try
         {
-            file >> gltf;
+            // file >> gltf;
+            gltf = json::parse(file);
         }
         catch (const std::exception &e)
         {
@@ -122,7 +125,7 @@ namespace gltf_loader
             return false;
         }
 
-        if (!loadObjects() || !loadAnimations() || !loadTextures() || !loadMaterials())
+        if (!loadMeshes() || !loadObjects() || !loadAnimations() || !loadTextures() || !loadMaterials())
         {
             return false;
         }
@@ -493,13 +496,15 @@ namespace gltf_loader
             for (size_t j = 0; j < numComponents; ++j)
             {
                 float value;
-                if (accessor.componentType == 5126)
-                { // FLOAT
-                    value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
-                }
-                else
+                switch (accessor.componentType)
                 {
-                    // Handle other component types if needed (e.g., normalize integer types)
+                case 5126: // FLOAT
+                    value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
+                    break;
+                case 5123: // UNSIGNED_SHORT
+                    value = static_cast<float>(*reinterpret_cast<const uint16_t *>(&buffer[srcOffset])) / 65535.0f;
+                    break;
+                default:
                     throw std::runtime_error("Unsupported component type for attribute data.");
                 }
                 attributeData[i * numComponents + j] = value;
@@ -511,71 +516,92 @@ namespace gltf_loader
         return attributeData;
     }
 
-    // gltf_loader.cpp
-
-    bool GLTFLoader::loadMeshes(std::vector<Mesh> &meshes)
+    bool GLTFLoader::loadMeshes()
     {
-        if (gltf.find("meshes") == gltf.end())
+        if (!gltf.contains("meshes"))
         {
-            std::cerr << "No meshes found in the glTF file." << std::endl;
             return false;
         }
 
-        for (const auto &meshData : gltf["meshes"])
+        for (const auto &meshJson : gltf["meshes"])
         {
             Mesh mesh;
 
-            for (const auto &primitiveData : meshData["primitives"])
+            if (meshJson.contains("name"))
             {
-                if (primitiveData.find("attributes") == primitiveData.end())
+                mesh.name = meshJson["name"].get<std::string>();
+            }
+
+            for (const auto &primitive : meshJson["primitives"])
+            {
+                if (!primitive.contains("attributes"))
                 {
-                    std::cerr << "No attributes found in the mesh primitive." << std::endl;
-                    return false;
+                    continue;
                 }
 
-                const auto &attributes = primitiveData["attributes"];
+                const auto &attributes = primitive["attributes"];
 
-                if (attributes.find("POSITION") != attributes.end())
+                if (attributes.contains("POSITION"))
                 {
-                    size_t accessorIndex = attributes["POSITION"].get<size_t>();
-                    std::vector<float> positions = getAttributeData(accessorIndex);
+                    size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
+                    std::vector<float> positionData = getAttributeData(positionAccessorIndex);
 
-                    for (size_t i = 0; i < positions.size(); i += 3)
+                    for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        mesh.positions.emplace_back(positions[i], positions[i + 1], positions[i + 2]);
+                        mesh.positions.emplace_back(positionData[i], positionData[i + 1], positionData[i + 2]);
                     }
                 }
 
-                if (attributes.find("NORMAL") != attributes.end())
+                if (attributes.contains("NORMAL"))
                 {
-                    size_t accessorIndex = attributes["NORMAL"].get<size_t>();
-                    std::vector<float> normals = getAttributeData(accessorIndex);
+                    size_t normalAccessorIndex = attributes["NORMAL"].get<size_t>();
+                    std::vector<float> normalData = getAttributeData(normalAccessorIndex);
 
-                    for (size_t i = 0; i < normals.size(); i += 3)
+                    for (size_t i = 0; i < normalData.size(); i += 3)
                     {
-                        mesh.normals.emplace_back(normals[i], normals[i + 1], normals[i + 2]);
+                        mesh.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
                     }
                 }
 
-                if (attributes.find("TEXCOORD_0") != attributes.end())
+                if (attributes.contains("TEXCOORD_0"))
                 {
-                    size_t accessorIndex = attributes["TEXCOORD_0"].get<size_t>();
-                    std::vector<float> texcoords = getAttributeData(accessorIndex);
+                    size_t texcoordAccessorIndex = attributes["TEXCOORD_0"].get<size_t>();
+                    std::vector<float> texcoordData = getAttributeData(texcoordAccessorIndex);
 
-                    for (size_t i = 0; i < texcoords.size(); i += 2)
+                    for (size_t i = 0; i < texcoordData.size(); i += 2)
                     {
-                        mesh.texcoords.emplace_back(texcoords[i], texcoords[i + 1]);
+                        mesh.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
                     }
                 }
 
-                if (primitiveData.find("indices") != primitiveData.end())
+                if (primitive.contains("indices"))
                 {
-                    size_t accessorIndex = primitiveData["indices"].get<size_t>();
-                    std::vector<float> indices = getAttributeData(accessorIndex);
+                    size_t indexAccessorIndex = primitive["indices"].get<size_t>();
+                    const Accessor &indexAccessor = accessors[indexAccessorIndex];
+                    std::vector<uint8_t> indexBufferData = getBufferData(indexAccessorIndex);
 
-                    for (float index : indices)
+                    switch (indexAccessor.componentType)
                     {
-                        mesh.indices.push_back(static_cast<uint32_t>(index));
+                    case 5121:
+                    { // UNSIGNED_BYTE
+                        std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
+                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        break;
+                    }
+                    case 5123:
+                    { // UNSIGNED_SHORT
+                        std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
+                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        break;
+                    }
+                    case 5125:
+                    { // UNSIGNED_INT
+                        std::vector<uint32_t> indices(reinterpret_cast<const uint32_t *>(indexBufferData.data()), reinterpret_cast<const uint32_t *>(indexBufferData.data() + indexBufferData.size()));
+                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        break;
+                    }
+                    default:
+                        throw std::runtime_error("Unsupported index component type.");
                     }
                 }
             }
@@ -598,5 +624,4 @@ namespace gltf_loader
         std::vector<uint8_t> data(buffer.begin() + dataOffset, buffer.begin() + dataOffset + dataSize);
         return data;
     }
-
 };
