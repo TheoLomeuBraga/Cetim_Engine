@@ -629,20 +629,7 @@ namespace funcoes_ponte
 	}
 
 	// input
-
-	void push_input_joystick(lua_State *L, string nome, float precao)
-	{
-		lua_pushstring(L, nome.c_str());
-		lua_pushnumber(L, precao);
-		lua_settable(L, -3);
-	}
-
-	void push_input_mouse_keyboard(lua_State *L, string nome, bool precao)
-	{
-		lua_pushstring(L, nome.c_str());
-		lua_pushboolean(L, precao);
-		lua_settable(L, -3);
-	}
+	
 	int set_cursor_position(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -654,95 +641,31 @@ namespace funcoes_ponte
 	}
 	int get_keyboard_input(lua_State *L)
 	{
-		lua_newtable(L);
-		{
-			for (pair<string, bool> p : Teclado.teclas)
-			{
-				push_input_mouse_keyboard(L, p.first, p.second);
-			}
-		}
-		return 1;
+		return 0;
+		//return 1;
 	}
 	int get_mouse_input(lua_State *L)
 	{
-		lua_newtable(L);
-		{
-			push_input_mouse_keyboard(L, "L", MOUSE.botao[0]);
-			push_input_mouse_keyboard(L, "R", MOUSE.botao[1]);
-			push_input_mouse_keyboard(L, "scroll", MOUSE.botao[2]);
-			push_input_joystick(L, "scroll_rotation", MOUSE.scrolRot);
-
-			lua_pushstring(L, "cursos_position");
-			lua_newtable(L);
-			{
-				push_input_joystick(L, "x", MOUSE.cursorPos[0]);
-				push_input_joystick(L, "y", MOUSE.cursorPos[1]);
-				lua_settable(L, -3);
-			}
-		}
-		return 1;
+		return 0;
+		//return 1;
 	}
 	int get_joystick_input(lua_State *L)
 	{
 
-		lua_newtable(L);
-		{
-			push_input_joystick(L, "A", JOYSTICK[1].botoes[0]);
-			push_input_joystick(L, "B", JOYSTICK[1].botoes[1]);
-			push_input_joystick(L, "X", JOYSTICK[1].botoes[2]);
-			push_input_joystick(L, "Y", JOYSTICK[1].botoes[3]);
-
-			push_input_joystick(L, "RB", JOYSTICK[1].botoes[4]);
-			push_input_joystick(L, "RT", JOYSTICK[1].botoes[5]);
-			push_input_joystick(L, "LB", JOYSTICK[1].botoes[6]);
-			push_input_joystick(L, "RT", JOYSTICK[1].botoes[7]);
-
-			push_input_joystick(L, "START", JOYSTICK[1].botoes[8]);
-			push_input_joystick(L, "BACK", JOYSTICK[1].botoes[9]);
-
-			lua_pushstring(L, "D_PAD");
-			lua_newtable(L);
-			{
-				push_input_joystick(L, "x", JOYSTICK[1].D_PAD.x);
-				push_input_joystick(L, "y", JOYSTICK[1].D_PAD.y);
-
-				lua_settable(L, -3);
-			}
-
-			lua_pushstring(L, "analogL");
-			lua_newtable(L);
-			{
-				push_input_joystick(L, "x", JOYSTICK[1].analogio[0].x);
-				push_input_joystick(L, "y", JOYSTICK[1].analogio[0].y);
-
-				lua_settable(L, -3);
-			}
-
-			lua_pushstring(L, "analogR");
-			lua_newtable(L);
-			{
-				push_input_joystick(L, "x", JOYSTICK[1].analogio[1].x);
-				push_input_joystick(L, "y", JOYSTICK[1].analogio[1].y);
-
-				lua_settable(L, -3);
-			}
-		}
-
-		return 1;
+		
+		return 0;
+		//return 1;
 	}
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		int argumentos = lua_gettop(L);
-		if (argumentos == 1)
-		{
-			TECLADO.pegar_input_texto = lua_toboolean(L, 1);
-		}
+		
 		return 0;
 	}
 	int get_inputs(lua_State *L)
 	{
 		return 0;
+		//return 1;
 	}
 
 	// char control

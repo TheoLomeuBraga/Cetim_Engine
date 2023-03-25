@@ -47,11 +47,8 @@ class input_mouse
 {
 public:
 	input_mouse() {}
-	bool botao[3];
-	float cursorPos[2];
-	float scrolRot;
-	float cursorPos_editor[2];
-	float cursorMov[2];
+	unordered_map<string, int> botoes;
+	unordered_map<string, float> movimentos;
 };
 
 class teclado
@@ -59,43 +56,14 @@ class teclado
 public:
 	bool pegar_input_texto = false;
 	string input_texto = "";
-	map<string, bool> teclas = {
-		pair<string, bool>("w", false),
-		pair<string, bool>("a", false),
-		pair<string, bool>("s", false),
-		pair<string, bool>("d", false),
-
-		pair<string, bool>("r", false),
-		pair<string, bool>("c", false),
-		pair<string, bool>("q", false),
-		pair<string, bool>("e", false),
-		pair<string, bool>("n", false),
-		pair<string, bool>("m", false),
-		pair<string, bool>("f", false),
-		pair<string, bool>("x", false),
-		pair<string, bool>("t", false),
-		pair<string, bool>("g", false),
-		pair<string, bool>("z", false),
-
-		pair<string, bool>("space", false),
-		pair<string, bool>("shift", false),
-		pair<string, bool>("ctrl", false),
-		pair<string, bool>("alt", false),
-		pair<string, bool>("tab", false),
-		pair<string, bool>("esc", false),
-
-	};
+	unordered_map<string, int> teclas;
 };
 
 class joystick
 {
 public:
-	bool botoes[10];
-	vec2 analogio[2];
-	float gatilhos[2];
-	ivec2 D_PAD;
-
-	vec2 VIBRAR;
+	unordered_map<string, int> botoes;
+	unordered_map<string, float> eixos;
 };
 
 class progresso_carregamento
