@@ -8,6 +8,13 @@
 #include <map>
 #include <glm/vec3.hpp>
 
+
+
+struct Entity {
+    std::string name;
+    std::map<std::string,std::string> info;
+};
+
 /*
 struct Vertex {
     vec3 position;
@@ -19,15 +26,7 @@ struct Mesh{
     std::vector<unsigned int> index;
     std::vector<Vertex> vertex;
 };
-
-
 */
-
-struct Entity {
-    std::string name;
-    std::map<std::string,std::string> info;
-};
-
 struct Brush_Part {
     glm::vec3 faces[3];
     std::string texture;

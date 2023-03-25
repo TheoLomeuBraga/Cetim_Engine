@@ -168,9 +168,36 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 
+float tf_distance(glm::vec3 a, shared_ptr<transform_> tf) {
+  return glm::length(a - tf->pos);
+}
 
+// Function to sort the input vector of vec3 points based on the distance from the given point
+std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, std::vector<shared_ptr<objeto_jogo>> objs) {
+  // Create a vector to store the distances
+  std::vector<float> tf_distance(objs.size());
 
+  // Calculate the distances from the given point to each of the points in the input vector
+  for (int i = 0; i < objs.size(); i++) {
+    tf_distance[i] = vec3_distance(point, objs[i]->pegar_componente<transform_>()->pos);
+  }
 
+  // Create an index vector and sort it based on the distances
+  std::vector<int> indices(objs.size());
+  std::iota(indices.begin(), indices.end(), 0);
+  std::sort(indices.begin(), indices.end(), [&](int i, int j) {return tf_distance[i] < tf_distance[j];});
+
+  // Create a new vector to store the sorted vec3 points
+  std::vector<shared_ptr<objeto_jogo>> ret(objs.size());
+
+  // Fill the new vector with the vec3 points in the order determined by the sorted index vector
+  for (int i = 0; i < indices.size(); i++) {
+    ret[i] = objs[indices[i]];
+  }
+
+  // Return the sorted vector of vec3 points
+  return ret;
+}
 
 
 
