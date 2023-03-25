@@ -36,18 +36,18 @@ namespace gltf_loader
         std::string type;
     };
 
-    struct Object
+    struct Node
     {
         std::string name;
         glm::mat4 matrix;
-        std::vector<size_t> meshIndices;
+        std::vector<size_t> meshIndices, childrenIndices;
     };
 
     struct Animation
     {
         std::string name;
         float duration;
-        std::vector<size_t> objectIndices;
+        std::vector<size_t> nodeIndices;
     };
 
     struct Texture
@@ -73,7 +73,7 @@ namespace gltf_loader
         std::vector<BufferView> bufferViews;
         std::vector<Accessor> accessors;
         std::vector<Mesh> meshes;
-        std::vector<Object> objects;
+        std::vector<Node> nodes;
         std::vector<Animation> animations;
         std::vector<Texture> textures;
         std::vector<Material> materials;
@@ -81,7 +81,7 @@ namespace gltf_loader
         bool loadBuffers();
         bool loadBufferViews();
         bool loadAccessors();
-        bool loadObjects();
+        bool loadNodes();
         bool loadAnimations();
         bool loadTextures();  // <-- adicionar
         bool loadMaterials(); // <-- adicionar
@@ -125,7 +125,7 @@ namespace gltf_loader
             return false;
         }
 
-        if (!loadMeshes() || !loadObjects() || !loadAnimations() || !loadTextures() || !loadMaterials())
+        if (!loadMeshes() || !loadNodes() || !loadAnimations() || !loadTextures() || !loadMaterials())
         {
             return false;
         }
@@ -216,6 +216,73 @@ namespace gltf_loader
         return true;
     }
 
+    bool GLTFLoader::loadNodes()
+    {
+        if (!gltf.contains("nodes"))
+        {
+            return false;
+        }
+
+        for (const auto &nodeJson : gltf["nodes"])
+        {
+            Node node;
+
+            if (nodeJson.contains("name"))
+            {
+                node.name = nodeJson["name"].get<std::string>();
+            }
+
+            if (nodeJson.contains("matrix"))
+            {
+                std::vector<float> matrixData = nodeJson["matrix"].get<std::vector<float>>();
+                node.matrix = glm::make_mat4(matrixData.data());
+            }
+            else
+            {
+                glm::mat4 translation(1.0f);
+                glm::mat4 rotation(1.0f);
+                glm::mat4 scale(1.0f);
+
+                if (nodeJson.contains("translation"))
+                {
+                    std::vector<float> translationData = nodeJson["translation"].get<std::vector<float>>();
+                    translation = glm::translate(translation, glm::vec3(translationData[0], translationData[1], translationData[2]));
+                }
+
+                if (nodeJson.contains("rotation"))
+                {
+                    std::vector<float> rotationData = nodeJson["rotation"].get<std::vector<float>>();
+                    rotation = glm::toMat4(glm::quat(rotationData[3], rotationData[0], rotationData[1], rotationData[2]));
+                }
+
+                if (nodeJson.contains("scale"))
+                {
+                    std::vector<float> scaleData = nodeJson["scale"].get<std::vector<float>>();
+                    scale = glm::scale(scale, glm::vec3(scaleData[0], scaleData[1], scaleData[2]));
+                }
+
+                node.matrix = translation * rotation * scale;
+            }
+
+            if (nodeJson.contains("mesh"))
+            {
+                node.meshIndices.push_back(nodeJson["mesh"].get<size_t>());
+            }
+
+            if (nodeJson.contains("children"))
+            {
+                for (const auto &childIndex : nodeJson["children"])
+                {
+                    node.childrenIndices.push_back(childIndex.get<size_t>());
+                }
+            }
+
+            nodes.push_back(node);
+        }
+
+        return true;
+    }
+
     bool GLTFLoader::loadAccessors()
     {
         if (gltf.find("accessors") == gltf.end())
@@ -243,46 +310,6 @@ namespace gltf_loader
             }
 
             accessors[i] = accessor;
-        }
-
-        return true;
-    }
-
-    bool GLTFLoader::loadObjects()
-    {
-        if (gltf.find("nodes") == gltf.end())
-        {
-            return false;
-        }
-
-        const auto &nodes = gltf["nodes"];
-        objects.reserve(nodes.size());
-
-        for (const auto &node : nodes)
-        {
-            Object object;
-
-            if (node.find("name") != node.end())
-            {
-                object.name = node["name"].get<std::string>();
-            }
-
-            if (node.find("matrix") != node.end())
-            {
-                std::vector<float> matrixData = node["matrix"].get<std::vector<float>>();
-                object.matrix = glm::make_mat4(matrixData.data());
-            }
-            else
-            {
-                object.matrix = glm::mat4(1.0f);
-            }
-
-            if (node.find("mesh") != node.end())
-            {
-                object.meshIndices.push_back(node["mesh"].get<size_t>());
-            }
-
-            objects.push_back(std::move(object));
         }
 
         return true;
@@ -322,7 +349,7 @@ namespace gltf_loader
                         if (target.find("node") != target.end())
                         {
                             size_t nodeIndex = target["node"].get<size_t>();
-                            animation.objectIndices.push_back(nodeIndex);
+                            animation.nodeIndices.push_back(nodeIndex);
                         }
                     }
                 }
