@@ -5,7 +5,6 @@ require("TMP_libs.components.component_index")
 require("TMP_libs.objects.game_object")
 require("TMP_libs.objects.time")
 require("TMP_libs.stystems")
-require("TMP_libs.functions.input")
 require("TMP_libs.layers_table")
 require("TMP_libs.objects.render_layer")
 

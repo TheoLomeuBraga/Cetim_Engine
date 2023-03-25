@@ -257,14 +257,14 @@ void loopInput()
 	
 	int joystick_size = controle::countConnectedJoysticks();
 	Joystick.resize(joystick_size);
-	cout << joystick_size << endl;
+	
 	for (int i = 0; i < joystick_size; i++)
 	{
 
 		Joystick[i].botoes = controle::generateJoystickKeyMap(i);
 	
 		Joystick[i].eixos = controle::generateJoystickAxes(i);
-		
+
 	}
 
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
