@@ -58,18 +58,18 @@ namespace gltf_loader
     struct Material
     {
         std::string name;
-        size_t textureIndex;
-        vec4 baseColorFactor;
-        float metallicFactor;
-        float roughnessFactor;
-        size_t metallicRoughnessTextureIndex;
-        size_t normalTextureIndex;
-        size_t occlusionTexture;
-        size_t emissiveTexture;
-        vec3 emissiveFactor;
+        size_t textureIndex = 0;
+        vec4 baseColorFactor = vec4(0,0,0,0);
+        float metallicFactor = 0;
+        float roughnessFactor = 0;
+        size_t metallicRoughnessTextureIndex = 0;
+        size_t normalTextureIndex = 0;
+        size_t occlusionTexture = 0;
+        size_t emissiveTexture = 0;
+        vec3 emissiveFactor = vec3(0,0,0);
         string alphaMode;
-        float alphaCutoff;
-        bool doubleSided;
+        float alphaCutoff = 0;
+        bool doubleSided = 0;
         nlohmann::json extensions;
         nlohmann::json extras;
     };
@@ -133,10 +133,14 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        if (!loadBuffers() || !loadBufferViews() || !loadAccessors() || !loadMeshes() || !loadNodes() || !loadAnimations() || !loadTextures() || !loadMaterials())
-        {
-            return false;
-        }
+        loadBuffers();
+        loadBufferViews();
+        loadAccessors();
+        loadMeshes();
+        loadNodes();
+        loadAnimations();
+        loadTextures();
+        loadMaterials();
 
         return true;
     }
@@ -433,7 +437,7 @@ namespace gltf_loader
     {
         if (gltf.find("materials") == gltf.end())
         {
-            return true;
+            return true; // No materials to load
         }
 
         const auto &materialsJson = gltf["materials"];

@@ -720,9 +720,14 @@ namespace ManuseioDados
 			//cout << gltf_loader.meshes[i].name << endl;
 		}
 
+		
+
 		for(int i = 0; i < gltf_loader.materials.size();i++){
-			string image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
-			
+			string image_location;
+			cout << "gltf_loader.materials[i].textureIndex" << gltf_loader.materials[i].textureIndex << endl;
+			if(gltf_loader.materials[i].textureIndex != 0){
+				image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
+			}
 			Material mat;
 			mat.shad = "resources/Shaders/mesh";
 			mat.cor = gltf_loader.materials[i].baseColorFactor;
