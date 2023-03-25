@@ -720,8 +720,6 @@ namespace ManuseioDados
 			//cout << gltf_loader.meshes[i].name << endl;
 		}
 
-		
-
 		for(int i = 0; i < gltf_loader.materials.size();i++){
 			string image_location;
 			if(gltf_loader.materials[i].textureIndex != 0){
@@ -732,7 +730,6 @@ namespace ManuseioDados
 			mat.cor = gltf_loader.materials[i].baseColorFactor;
 			mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
 			ret.materiais[gltf_loader.materials[i].name] = mat;
-			cout << gltf_loader.materials[i].name << endl;
 		}
 
 		cenas_3D.aplicar(local, ret);

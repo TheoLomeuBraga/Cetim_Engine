@@ -43,11 +43,26 @@ namespace gltf_loader
         std::vector<size_t> meshIndices, childrenIndices;
     };
 
+    struct AnimationChannel
+    {
+        size_t samplerIndex;
+        size_t targetNodeIndex;
+        std::string targetPath;
+    };
+
+    struct AnimationSampler
+    {
+        size_t inputAccessorIndex;
+        size_t outputAccessorIndex;
+        std::string interpolation;
+    };
+
     struct Animation
     {
         std::string name;
         float duration;
-        std::vector<size_t> nodeIndices;
+        std::vector<AnimationChannel> channels;
+        std::vector<AnimationSampler> samplers;
     };
 
     struct Texture
@@ -59,14 +74,14 @@ namespace gltf_loader
     {
         std::string name;
         size_t textureIndex = 0;
-        vec4 baseColorFactor = vec4(0,0,0,0);
+        vec4 baseColorFactor = vec4(0, 0, 0, 0);
         float metallicFactor = 0;
         float roughnessFactor = 0;
         size_t metallicRoughnessTextureIndex = 0;
         size_t normalTextureIndex = 0;
         size_t occlusionTexture = 0;
         size_t emissiveTexture = 0;
-        vec3 emissiveFactor = vec3(0,0,0);
+        vec3 emissiveFactor = vec3(0, 0, 0);
         string alphaMode;
         float alphaCutoff = 0;
         bool doubleSided = 0;
@@ -331,7 +346,7 @@ namespace gltf_loader
     {
         if (gltf.find("animations") == gltf.end())
         {
-            return false;
+            return true;
         }
 
         const auto &animationsJson = gltf["animations"];
@@ -341,53 +356,36 @@ namespace gltf_loader
         {
             Animation animation;
 
-            if (animationJson.find("name") != animationJson.end())
+            if (animationJson.contains("name"))
             {
-                animation.name = animationJson["name"].get<std::string>();
+                animation.name = animationJson["name"];
             }
 
-            if (animationJson.find("channels") != animationJson.end() && animationJson.find("samplers") != animationJson.end())
+            const auto &channelsJson = animationJson["channels"];
+            const auto &samplersJson = animationJson["samplers"];
+
+            animation.channels.reserve(channelsJson.size());
+            animation.samplers.reserve(samplersJson.size());
+
+            for (const auto &channelJson : channelsJson)
             {
-                const auto &channels = animationJson["channels"];
-                const auto &samplers = animationJson["samplers"];
-                float maxTime = 0.0f;
-
-                for (const auto &channel : channels)
-                {
-                    if (channel.find("target") != channel.end())
-                    {
-                        const auto &target = channel["target"];
-
-                        if (target.find("node") != target.end())
-                        {
-                            size_t nodeIndex = target["node"].get<size_t>();
-                            animation.nodeIndices.push_back(nodeIndex);
-                        }
-                    }
-                }
-
-                for (const auto &sampler : samplers)
-                {
-                    if (sampler.find("input") != sampler.end())
-                    {
-                        size_t inputAccessorIndex = sampler["input"].get<size_t>();
-                        const Accessor &inputAccessor = accessors[inputAccessorIndex];
-
-                        if (inputAccessor.type == "SCALAR")
-                        {
-                            std::vector<float> inputTimes = getAttributeData(inputAccessorIndex);
-                            if (!inputTimes.empty())
-                            {
-                                maxTime = std::max(maxTime, inputTimes.back());
-                            }
-                        }
-                    }
-                }
-
-                animation.duration = maxTime;
+                AnimationChannel channel;
+                channel.samplerIndex = channelJson["sampler"];
+                channel.targetNodeIndex = channelJson["target"]["node"];
+                channel.targetPath = channelJson["target"]["path"];
+                animation.channels.push_back(channel);
             }
 
-            animations.push_back(std::move(animation));
+            for (const auto &samplerJson : samplersJson)
+            {
+                AnimationSampler sampler;
+                sampler.inputAccessorIndex = samplerJson["input"];
+                sampler.outputAccessorIndex = samplerJson["output"];
+                sampler.interpolation = samplerJson["interpolation"];
+                animation.samplers.push_back(sampler);
+            }
+
+            animations.push_back(animation);
         }
 
         return true;
