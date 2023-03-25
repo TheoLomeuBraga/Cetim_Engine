@@ -18,7 +18,7 @@ public:
 input_mouse Mouse;
 teclado Teclado;
 bool conectado;
-joystick Joystick[8];
+vector<joystick> Joystick;
 
 input_manager *manuseio_inputs;
 

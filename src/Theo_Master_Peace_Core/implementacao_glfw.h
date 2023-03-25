@@ -12,9 +12,19 @@ bool interromper_loop_input = false;
 namespace mouse
 {
 
+	struct ScrollData
+	{
+		double xoffset;
+		double yoffset;
+	};
+
+	double offsetx = 0;
+	double offsety = 0;
 	static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 	{
-		glfwSetWindowUserPointer(window, (void *)(&yoffset));
+		ScrollData *scrollData = (ScrollData *)glfwGetWindowUserPointer(window);
+		offsetx += xoffset;
+		offsety += yoffset;
 	}
 
 	std::unordered_map<std::string, float> generateMouseInfo(GLFWwindow *window)
@@ -35,11 +45,8 @@ namespace mouse
 		mouseInfo["normalized_y"] = normalizedY;
 
 		// Set up the scroll callback and retrieve scroll offset
-		glfwSetScrollCallback(window, scroll_callback);
-		double yoffset = *(double *)glfwGetWindowUserPointer(window);
 
-		mouseInfo["scroll"] = static_cast<float>(yoffset);
-
+		mouseInfo["scroll"] = static_cast<float>(offsety);
 		return mouseInfo;
 	}
 
@@ -73,8 +80,6 @@ namespace mouse
 namespace teclas
 {
 
-	
-
 	std::unordered_map<std::string, int> generateKeyboardMap(GLFWwindow *window)
 	{
 		std::unordered_map<std::string, int> keyboardMap;
@@ -95,7 +100,7 @@ namespace teclas
 				keyIdentifier = "Key_" + std::to_string(key);
 			}
 
-			//cout << keyIdentifier << endl;
+			// cout << keyIdentifier << endl;
 
 			if (keyState == GLFW_PRESS)
 			{
@@ -146,7 +151,8 @@ namespace teclas
 			}
 			delet_last_frame = true;
 		}
-		else{
+		else
+		{
 			delet_last_frame = false;
 		}
 
@@ -157,6 +163,21 @@ namespace teclas
 
 namespace controle
 {
+
+	int countConnectedJoysticks()
+	{
+		int count = 0;
+
+		for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; ++i)
+		{
+			if (glfwJoystickPresent(i))
+			{
+				++count;
+			}
+		}
+
+		return count;
+	}
 
 	static std::vector<int> prevJoystickButtonsState;
 
@@ -227,23 +248,18 @@ void loopInput()
 	{
 	}
 
-	// Mouse.botoes = mouse::generateMouseMap(janela);
-	// Mouse.movimentos = mouse::generateMouseInfo(janela);
+	Mouse.botoes = mouse::generateMouseMap(janela);
+	Mouse.movimentos = mouse::generateMouseInfo(janela); // < corrigir
 
 	Teclado.teclas = teclas::generateKeyboardMap(janela);
-	teclas::read_input_text = true;//Teclado.pegar_input_texto;
+	teclas::read_input_text = Teclado.pegar_input_texto;
 	Teclado.input_texto = teclas::getTextInput();
-
-	cout << Teclado.input_texto << endl;
 	
-
-	/*
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < controle::countConnectedJoysticks(); i++)
 	{
-		Joystick[i].botoes = controle::generateJoystickKeyMap(i);
-		Joystick[i].eixos = controle::generateJoystickAxes(i);
+		//Joystick[i].botoes = controle::generateJoystickKeyMap(i);
+		//Joystick[i].eixos = controle::generateJoystickAxes(i);
 	}
-	*/
 
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;
