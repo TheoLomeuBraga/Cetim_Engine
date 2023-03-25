@@ -10,15 +10,6 @@
 namespace gltf_loader
 {
 
-    struct Mesh
-    {
-        std::string name;
-        std::vector<glm::vec3> positions;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec2> texcoords;
-        std::vector<unsigned int> indices;
-    };
-
     struct BufferView
     {
         size_t buffer;
@@ -34,6 +25,15 @@ namespace gltf_loader
         size_t componentType;
         size_t count;
         std::string type;
+    };
+
+    struct Mesh
+    {
+        std::string name;
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec2> texcoords;
+        std::vector<unsigned int> indices;
     };
 
     struct Node
