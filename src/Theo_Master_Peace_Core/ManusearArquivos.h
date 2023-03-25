@@ -725,6 +725,7 @@ namespace ManuseioDados
 			
 			Material mat;
 			mat.shad = "resources/Shaders/mesh";
+			mat.cor = gltf_loader.materials[i].baseColorFactor;
 			mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
 			ret.materiais[gltf_loader.materials[i].name] = mat;
 			cout << gltf_loader.materials[i].name << endl;
