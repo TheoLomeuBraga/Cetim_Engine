@@ -59,6 +59,19 @@ namespace gltf_loader
     {
         std::string name;
         size_t textureIndex;
+        vec4 baseColorFactor;
+        float metallicFactor;
+        float roughnessFactor;
+        size_t metallicRoughnessTextureIndex;
+        size_t normalTextureIndex;
+        size_t occlusionTexture;
+        size_t emissiveTexture;
+        vec3 emissiveFactor;
+        string alphaMode;
+        float alphaCutoff;
+        bool doubleSided;
+        nlohmann::json extensions;
+        nlohmann::json extras;
     };
 
     class GLTFLoader
@@ -420,7 +433,7 @@ namespace gltf_loader
     {
         if (gltf.find("materials") == gltf.end())
         {
-            return false;
+            return true;
         }
 
         const auto &materialsJson = gltf["materials"];
@@ -430,27 +443,82 @@ namespace gltf_loader
         {
             Material material;
 
-            if (materialJson.find("name") != materialJson.end())
+            if (materialJson.contains("name"))
             {
                 material.name = materialJson["name"].get<std::string>();
             }
 
-            if (materialJson.find("pbrMetallicRoughness") != materialJson.end())
+            if (materialJson.contains("pbrMetallicRoughness"))
             {
-                const auto &pbrMetallicRoughnessJson = materialJson["pbrMetallicRoughness"];
+                const auto &pbr = materialJson["pbrMetallicRoughness"];
 
-                if (pbrMetallicRoughnessJson.find("baseColorTexture") != pbrMetallicRoughnessJson.end())
+                if (pbr.contains("baseColorFactor"))
                 {
-                    const auto &baseColorTextureJson = pbrMetallicRoughnessJson["baseColorTexture"];
+                    material.baseColorFactor = glm::vec4(pbr["baseColorFactor"][0].get<float>(), pbr["baseColorFactor"][1].get<float>(), pbr["baseColorFactor"][2].get<float>(), pbr["baseColorFactor"][3].get<float>());
+                }
 
-                    if (baseColorTextureJson.find("index") != baseColorTextureJson.end())
-                    {
-                        material.textureIndex = baseColorTextureJson["index"].get<size_t>();
-                    }
+                if (pbr.contains("metallicFactor"))
+                {
+                    material.metallicFactor = pbr["metallicFactor"].get<float>();
+                }
+
+                if (pbr.contains("roughnessFactor"))
+                {
+                    material.roughnessFactor = pbr["roughnessFactor"].get<float>();
+                }
+
+                if (pbr.contains("metallicRoughnessTexture"))
+                {
+                    material.metallicRoughnessTextureIndex = pbr["metallicRoughnessTexture"]["index"].get<size_t>();
                 }
             }
 
-            materials.push_back(std::move(material));
+            if (materialJson.contains("normalTexture"))
+            {
+                material.normalTextureIndex = materialJson["normalTexture"]["index"].get<size_t>();
+            }
+
+            if (materialJson.contains("occlusionTexture"))
+            {
+                material.occlusionTexture = materialJson["occlusionTexture"]["index"].get<size_t>();
+            }
+
+            if (materialJson.contains("emissiveTexture"))
+            {
+                material.emissiveTexture = materialJson["emissiveTexture"]["index"].get<size_t>();
+            }
+
+            if (materialJson.contains("emissiveFactor"))
+            {
+                material.emissiveFactor = glm::vec3(materialJson["emissiveFactor"][0].get<float>(), materialJson["emissiveFactor"][1].get<float>(), materialJson["emissiveFactor"][2].get<float>());
+            }
+
+            if (materialJson.contains("alphaMode"))
+            {
+                material.alphaMode = materialJson["alphaMode"].get<std::string>();
+            }
+
+            if (materialJson.contains("alphaCutoff"))
+            {
+                material.alphaCutoff = materialJson["alphaCutoff"].get<float>();
+            }
+
+            if (materialJson.contains("doubleSided"))
+            {
+                material.doubleSided = materialJson["doubleSided"].get<bool>();
+            }
+
+            if (materialJson.contains("extensions"))
+            {
+                material.extensions = materialJson["extensions"];
+            }
+
+            if (materialJson.contains("extras"))
+            {
+                material.extras = materialJson["extras"];
+            }
+
+            materials.push_back(material);
         }
 
         return true;

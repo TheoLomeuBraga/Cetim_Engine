@@ -276,7 +276,8 @@ function sceanes_db.test2:load()
     mat.shader = "resources/Shaders/mesh"
     mat.color = {r = 1,g = 0,b = 0,a = 1}       
     pos = Vec3:new(0,0,0)
-    create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
-    --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/monkey.gltf","Suzanne")})
+    --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
+    create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cilinder.gltf","Cylinder")})
+    
     
 end
