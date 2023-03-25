@@ -717,7 +717,16 @@ namespace ManuseioDados
 		
 		for(int i = 0; i < gltf_loader.meshes.size();i++){
 			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name,make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))) );
-			cout << gltf_loader.meshes[i].name << endl;
+			//cout << gltf_loader.meshes[i].name << endl;
+		}
+
+		for(int i = 0; i < gltf_loader.materials.size();i++){
+			string image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
+			
+			Material mat;
+			mat.shad = "resources/Shaders/mesh";
+			mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
+			ret.materiais[gltf_loader.materials[i].name] = mat;
 		}
 
 		cenas_3D.aplicar(local, ret);
