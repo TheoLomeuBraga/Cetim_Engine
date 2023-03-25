@@ -120,12 +120,7 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        if (!loadBuffers() || !loadBufferViews() || !loadAccessors())
-        {
-            return false;
-        }
-
-        if (!loadMeshes() || !loadNodes() || !loadAnimations() || !loadTextures() || !loadMaterials())
+        if (!loadBuffers() || !loadBufferViews() || !loadAccessors() || !loadMeshes() || !loadNodes() || !loadAnimations() || !loadTextures() || !loadMaterials())
         {
             return false;
         }
