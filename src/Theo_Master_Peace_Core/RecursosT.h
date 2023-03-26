@@ -95,7 +95,6 @@ public:
 	int ContagemPixels, canais, tamanho;
 	int mip_map;
 
-	// unsigned char* data;
 	vector<unsigned char> data;
 
 	imagem() {}
@@ -122,7 +121,6 @@ public:
 	void deletar()
 	{
 		remover_textura(this);
-		// delete[] data;
 		vector<unsigned char> nada;
 		data.swap(nada);
 	}
@@ -156,11 +154,6 @@ struct tile_struct
 {
 	uint8 sprite_id = 0;
 	string nome = "";
-	// uint8 tipo_colisao = 0;
-	// bool visivel = false;
-	// bool interativel = false;
-	// string script = "";
-	// string comentario = "";
 };
 typedef struct tile_struct tile;
 
