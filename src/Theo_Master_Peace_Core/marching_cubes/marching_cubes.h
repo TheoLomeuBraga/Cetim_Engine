@@ -25,15 +25,13 @@ namespace marching_cubes
 
     class MarchingCubesTerrain
     {
-    private:
+    public:
         int width;               // Width of the terrain grid
         int height;              // Height of the terrain grid
         int depth;               // Depth of the terrain grid
         float isoLevel;          // Iso-surface threshold value
         std::vector<float> grid; // 3D grid of scalar values
         std::vector<unsigned char> typesGrid;
-
-    public:
         std::vector<void (*)(MarchingCubesTerrain *)> callWenChange, callWenDelete;
 
         MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
