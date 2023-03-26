@@ -41,6 +41,7 @@ namespace gltf_loader
         std::string name;
         glm::mat4 matrix;
         std::vector<size_t> meshIndices, childrenIndices;
+        nlohmann::json extensions, extras;
     };
 
     struct AnimationChannel
@@ -85,8 +86,7 @@ namespace gltf_loader
         string alphaMode;
         float alphaCutoff = 0;
         bool doubleSided = 0;
-        nlohmann::json extensions;
-        nlohmann::json extras;
+        nlohmann::json extensions, extras;
     };
 
     class GLTFLoader
@@ -243,68 +243,73 @@ namespace gltf_loader
         return true;
     }
 
+glm::mat4 jsonToMat4(const nlohmann::json &jsonArray)
+{
+    glm::mat4 matrix(1.0f);
+    for (size_t i = 0; i < 4; ++i)
+    {
+        for (size_t j = 0; j < 4; ++j)
+        {
+            matrix[i][j] = jsonArray[i * 4 + j].get<float>();
+        }
+    }
+    return matrix;
+}
+
     bool GLTFLoader::loadNodes()
     {
-        if (!gltf.contains("nodes"))
+        if (gltf.find("nodes") == gltf.end())
         {
             return false;
         }
 
-        for (const auto &nodeJson : gltf["nodes"])
-        {
-            Node node;
+        const auto &gltfNodes = gltf["nodes"];
+        nodes.resize(gltfNodes.size());
 
-            if (nodeJson.contains("name"))
+        for (size_t i = 0; i < gltfNodes.size(); ++i)
+        {
+            const auto &gltfNode = gltfNodes[i];
+            Node &node = nodes[i];
+
+            if (gltfNode.find("name") != gltfNode.end())
             {
-                node.name = nodeJson["name"].get<std::string>();
+                node.name = gltfNode["name"].get<std::string>();
             }
 
-            if (nodeJson.contains("matrix"))
+            if (gltfNode.find("matrix") != gltfNode.end())
             {
-                std::vector<float> matrixData = nodeJson["matrix"].get<std::vector<float>>();
-                node.matrix = glm::make_mat4(matrixData.data());
+                const auto &matrixData = gltfNode["matrix"];
+                glm::mat4 matrix = jsonToMat4(matrixData);
+                node.matrix = matrix;
             }
             else
             {
-                glm::mat4 translation(1.0f);
-                glm::mat4 rotation(1.0f);
-                glm::mat4 scale(1.0f);
-
-                if (nodeJson.contains("translation"))
-                {
-                    std::vector<float> translationData = nodeJson["translation"].get<std::vector<float>>();
-                    translation = glm::translate(translation, glm::vec3(translationData[0], translationData[1], translationData[2]));
-                }
-
-                if (nodeJson.contains("rotation"))
-                {
-                    std::vector<float> rotationData = nodeJson["rotation"].get<std::vector<float>>();
-                    rotation = glm::toMat4(glm::quat(rotationData[3], rotationData[0], rotationData[1], rotationData[2]));
-                }
-
-                if (nodeJson.contains("scale"))
-                {
-                    std::vector<float> scaleData = nodeJson["scale"].get<std::vector<float>>();
-                    scale = glm::scale(scale, glm::vec3(scaleData[0], scaleData[1], scaleData[2]));
-                }
-
-                node.matrix = translation * rotation * scale;
+                node.matrix = glm::mat4(1.0f);
             }
 
-            if (nodeJson.contains("mesh"))
+            if (gltfNode.find("mesh") != gltfNode.end())
             {
-                node.meshIndices.push_back(nodeJson["mesh"].get<size_t>());
+                node.meshIndices.push_back(gltfNode["mesh"].get<size_t>());
             }
 
-            if (nodeJson.contains("children"))
+            if (gltfNode.find("children") != gltfNode.end())
             {
-                for (const auto &childIndex : nodeJson["children"])
+                const auto &children = gltfNode["children"];
+                for (const auto &childIndex : children)
                 {
                     node.childrenIndices.push_back(childIndex.get<size_t>());
                 }
             }
 
-            nodes.push_back(node);
+            if (gltfNode.find("extensions") != gltfNode.end())
+            {
+                node.extensions = gltfNode["extensions"];
+            }
+
+            if (gltfNode.find("extras") != gltfNode.end())
+            {
+                node.extras = gltfNode["extras"];
+            }
         }
 
         return true;
