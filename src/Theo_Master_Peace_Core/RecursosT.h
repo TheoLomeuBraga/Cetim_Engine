@@ -572,6 +572,7 @@ struct objeto_3D_struct
 	quat quaternion;
 	vec3 escala;
 	vector<struct objeto_3D_struct> filhos;
+	Table extras;
 };
 typedef struct objeto_3D_struct objeto_3D;
 
@@ -613,6 +614,7 @@ public:
 	map<string, shared_ptr<imagem>> texturas;
 	objeto_3D objetos;
 	map<string, vector<key_frame>> animacoes;
+	Table extras;
 };
 vec3 calculateNormal(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)
 {
