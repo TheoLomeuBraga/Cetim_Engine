@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <map>
 
 #include "marching_cubes/marching_cubes_tables.h"
 
@@ -32,7 +33,7 @@ namespace marching_cubes
         std::vector<unsigned char> typesGrid;
 
         MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
-            : width(width), height(height), depth(depth), isoLevel(isoLevel), grid(width * height * depth)
+            : width(width), height(height), depth(depth), isoLevel(isoLevel), grid(width * height * depth), typesGrid(width * height * depth)
         {
         }
 
@@ -147,5 +148,58 @@ namespace marching_cubes
 
         return mesh;
     }
+
+    std::map<unsigned int, Mesh> marchingCubesToMeshWithTypes(const MarchingCubesTerrain &terrain)
+{
+    std::map<unsigned int, Mesh> meshes;
+
+    // Iterate through the cells in the terrain grid
+    for (int z = 0; z < terrain.depth - 1; ++z)
+    {
+        for (int y = 0; y < terrain.height - 1; ++y)
+        {
+            for (int x = 0; x < terrain.width - 1; ++x)
+            {
+                // Calculate the cube index and perform marching cubes algorithm
+                unsigned int cubeIndex = 0;
+                glm::vec3 vertList[12];
+
+                // Code for calculating the cube index and vertList
+                // ...
+
+                unsigned char type = terrain.getType(x, y, z);
+
+                // Generate the mesh vertices and indices based on the cubeIndex and type
+                for (int i = 0; triTable[cubeIndex][i] != -1; i += 3)
+                {
+                    vertex v1, v2, v3;
+                    v1.position = vertList[triTable[cubeIndex][i]];
+                    v2.position = vertList[triTable[cubeIndex][i + 1]];
+                    v3.position = vertList[triTable[cubeIndex][i + 2]];
+
+                    v1.normal = computeNormal(terrain, v1.position);
+                    v2.normal = computeNormal(terrain, v2.position);
+                    v3.normal = computeNormal(terrain, v3.position);
+
+                    v1.texcoord = computeTexcoord(v1.position, terrain);
+                    v2.texcoord = computeTexcoord(v2.position, terrain);
+                    v3.texcoord = computeTexcoord(v3.position, terrain);
+
+                    unsigned int index = meshes[type].vertces.size();
+                    meshes[type].vertces.push_back(v1);
+                    meshes[type].vertces.push_back(v2);
+                    meshes[type].vertces.push_back(v3);
+
+                    meshes[type].indices.push_back(index);
+                    meshes[type].indices.push_back(index + 1);
+                    meshes[type].indices.push_back(index + 2);
+                }
+            }
+        }
+    }
+
+    return meshes;
+}
+
 
 };
