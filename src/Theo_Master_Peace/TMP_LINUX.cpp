@@ -115,10 +115,7 @@ int main(int argc, char** argv)
 
 
 
-    //test_read_map_file();
-    //cout << "test load map\n";
-    //ManuseioDados::importar_map("resources/Leveis 3D/mesh_test.map");
-    //cout << "end test load map\n";
+    
 
     comecar();
     cout << "volte sempre\n";
