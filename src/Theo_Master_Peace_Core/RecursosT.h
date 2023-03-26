@@ -19,6 +19,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "table.h"
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 

@@ -16,7 +16,6 @@
 #include "game_object.h"
 #include "components/camera.h"
 #include "components/transform.h"
-#include "components/reder_marching_cubes.h"
 
 struct mesh_ogl_struct
 {

@@ -75,15 +75,15 @@ namespace gltf_loader
     {
         std::string name;
         size_t textureIndex = 0;
-        vec4 baseColorFactor = vec4(0, 0, 0, 0);
+        glm::vec4 baseColorFactor = glm::vec4(0, 0, 0, 0);
         float metallicFactor = 0;
         float roughnessFactor = 0;
         size_t metallicRoughnessTextureIndex = 0;
         size_t normalTextureIndex = 0;
         size_t occlusionTexture = 0;
         size_t emissiveTexture = 0;
-        vec3 emissiveFactor = vec3(0, 0, 0);
-        string alphaMode;
+        glm::vec3 emissiveFactor = glm::vec3(0, 0, 0);
+        std::string alphaMode;
         float alphaCutoff = 0;
         bool doubleSided = 0;
         nlohmann::json extensions, extras;

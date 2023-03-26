@@ -14,7 +14,6 @@ using namespace std;
 #include "components/render_shader.h"
 #include "components/camera.h"
 #include "components/transform.h"
-#include "components/reder_marching_cubes.h"
 #include "game_object.h"
 
 
@@ -157,14 +156,6 @@ vector<shared_ptr<objeto_jogo>> lixeira;
 
 							if (objetos_camadas_render.size() < (RM->camada + 1)) { objetos_camadas_render.resize(RM->camada + 1); }
 							objetos_camadas_render[RM->camada].push_back(obj);
-					}
-					shared_ptr < reder_marching_cubes> RMC = obj->pegar_componente<reder_marching_cubes>();
-					if ((RMC != NULL && RMC->ligado)) {
-						if (objetos_camadas_render_id.size() < (RMC->camada + 1)) { objetos_camadas_render_id.resize(RMC->camada + 1); }
-							objetos_camadas_render_id[RMC->camada].push_back(obj->ID);
-
-							if (objetos_camadas_render.size() < (RMC->camada + 1)) { objetos_camadas_render.resize(RMC->camada + 1); }
-							objetos_camadas_render[RMC->camada].push_back(obj);
 					}
 					shared_ptr <fonte_luz> FL = obj->pegar_componente<fonte_luz>();
 					if ((FL != NULL && FL->ligado)) {

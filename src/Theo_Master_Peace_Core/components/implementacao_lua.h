@@ -14,7 +14,6 @@ using namespace Tempo;
 #include "projetil.h"
 #include "components/render_sprite.h"
 #include "components/render_tilemap.h"
-#include "components/reder_marching_cubes.h"
 
 #include "args.h"
 #include "game_object.h"
