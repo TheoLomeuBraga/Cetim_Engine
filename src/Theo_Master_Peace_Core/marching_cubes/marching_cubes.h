@@ -25,7 +25,7 @@ namespace marching_cubes
 
     class MarchingCubesTerrain
     {
-        public:
+    private:
         int width;               // Width of the terrain grid
         int height;              // Height of the terrain grid
         int depth;               // Depth of the terrain grid
@@ -33,18 +33,24 @@ namespace marching_cubes
         std::vector<float> grid; // 3D grid of scalar values
         std::vector<unsigned char> typesGrid;
 
-        /*
+    public:
+        std::vector<void (*)(MarchingCubesTerrain *)> callWenChange, callWenDelete;
+
         MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
-            : width(width), height(height), depth(depth), isoLevel(isoLevel), grid(width * height * depth), typesGrid(width * height * depth)
         {
+            this->width = width;
+            this->width = height;
+            this->width = depth;
+            this->width = isoLevel;
         }
-        */
-       MarchingCubesTerrain(int width, int height, int depth, float isoLevel){
-        this->width = width;
-        this->width = height;
-        this->width = depth;
-        this->width = isoLevel;
-       }
+
+        void change()
+        {
+            for (int i = 0; i < callWenChange.size(); i++)
+            {
+                callWenChange[i](this);
+            }
+        }
 
         // Get the density value at grid point (x, y, z)
         float getDensity(int x, int y, int z) const
@@ -67,6 +73,14 @@ namespace marching_cubes
         void setType(int x, int y, int z, unsigned char type)
         {
             typesGrid[x + y * width + z * width * height] = type;
+        }
+
+        ~MarchingCubesTerrain()
+        {
+            for (int i = 0; i < callWenDelete.size(); i++)
+            {
+                callWenDelete[i](this);
+            }
         }
     };
 
