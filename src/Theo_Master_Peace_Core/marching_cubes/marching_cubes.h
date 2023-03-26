@@ -60,6 +60,7 @@ namespace marching_cubes
         void setDensity(int x, int y, int z, float density)
         {
             grid[x + y * width + z * width * height] = density;
+            change();
         }
 
         unsigned char getType(int x, int y, int z) const
@@ -71,6 +72,7 @@ namespace marching_cubes
         void setType(int x, int y, int z, unsigned char type)
         {
             typesGrid[x + y * width + z * width * height] = type;
+            change();
         }
 
         ~MarchingCubesTerrain()
