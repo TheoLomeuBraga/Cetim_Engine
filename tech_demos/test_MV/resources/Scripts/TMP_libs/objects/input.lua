@@ -1,3 +1,9 @@
+keyboard_keys  = {}
+
+joystick_keys_axes = {}
+
+mouse_keys_axes = {}
+
 function set_cursor_position(x,y)
 end
 function get_keyboard_input()
@@ -6,7 +12,6 @@ function get_mouse_input()
 end
 function get_joystick_input()
 end
-
 function set_keyboard_text_input(on)
 end
 function get_inputs(device)

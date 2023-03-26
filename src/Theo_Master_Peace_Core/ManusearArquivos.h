@@ -732,6 +732,10 @@ namespace ManuseioDados
 			ret.materiais[gltf_loader.materials[i].name] = mat;
 		}
 
+		for(int i = 0; i < gltf_loader.nodes.size();i++){
+			
+		}
+
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);
 	}

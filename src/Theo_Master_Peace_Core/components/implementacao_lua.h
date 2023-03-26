@@ -658,13 +658,14 @@ namespace funcoes_ponte
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		
+		Teclado.pegar_input_texto = lua_toboolean(L,1);
 		return 0;
 	}
-	int get_inputs(lua_State *L)
+
+	int get_keyboard_text_input(lua_State *L)
 	{
-		return 0;
-		//return 1;
+		lua_pushfstring(L,Teclado.input_texto.c_str());
+		return 1;
 	}
 
 	// char control
@@ -1348,13 +1349,12 @@ namespace funcoes_ponte
 	map<string, lua_function> funcoes_ponte_map = {
 
 		// input
+		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
 		pair<string, lua_function>("get_keyboard_input", funcoes_ponte::get_keyboard_input),
 		pair<string, lua_function>("get_mouse_input", funcoes_ponte::get_mouse_input),
 		pair<string, lua_function>("get_joystick_input", funcoes_ponte::get_joystick_input),
-		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
-
 		pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
-		pair<string, lua_function>("get_inputs", funcoes_ponte::get_inputs),
+		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 
 		// tempo
 		pair<string, lua_function>("get_time", funcoes_ponte::get_time),
