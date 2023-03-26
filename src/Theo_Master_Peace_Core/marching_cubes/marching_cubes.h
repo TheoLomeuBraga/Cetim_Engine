@@ -1,4 +1,4 @@
-
+#pragma once
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
