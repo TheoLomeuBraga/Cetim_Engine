@@ -23,8 +23,9 @@ namespace marching_cubes
         std::vector<unsigned int> indices;
     };
 
-    struct MarchingCubesTerrain
+    class MarchingCubesTerrain
     {
+        public:
         int width;               // Width of the terrain grid
         int height;              // Height of the terrain grid
         int depth;               // Depth of the terrain grid
@@ -32,10 +33,18 @@ namespace marching_cubes
         std::vector<float> grid; // 3D grid of scalar values
         std::vector<unsigned char> typesGrid;
 
+        /*
         MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
             : width(width), height(height), depth(depth), isoLevel(isoLevel), grid(width * height * depth), typesGrid(width * height * depth)
         {
         }
+        */
+       MarchingCubesTerrain(int width, int height, int depth, float isoLevel){
+        this->width = width;
+        this->width = height;
+        this->width = depth;
+        this->width = isoLevel;
+       }
 
         // Get the density value at grid point (x, y, z)
         float getDensity(int x, int y, int z) const
