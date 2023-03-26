@@ -4,6 +4,11 @@
 #include "ManusearArquivos.h"
 #include <algorithm>
 
+#include <nlohmann/json.hpp>
+#include <unordered_map>
+
+using json = nlohmann::json;
+
 //vectors
 
 vec2 table_vec2(Table t){
@@ -242,3 +247,39 @@ Table colis_info_table(colis_info col){
     ret.setTable("normal",vec3_table(col.nor));
     return ret;
 }
+
+Table json_table(const json& j) {
+    Table table;
+    for (auto& el : j.items()) {
+        if (el.value().is_number_float()) {
+            table.setFloat(el.key(), el.value().get<float>());
+        } else if (el.value().is_string()) {
+            table.setString(el.key(), el.value().get<std::string>());
+        } else if (el.value().is_object()) {
+            Table innerTable = json_table(el.value());
+            table.setTable(el.key(), innerTable);
+        }
+    }
+    return table;
+}
+
+json table_json(const Table& table) {
+    json j;
+    for (const auto& kv : table.m_floatMap) {
+        j[kv.first] = kv.second;
+    }
+    for (const auto& kv : table.m_stringMap) {
+        j[kv.first] = kv.second;
+    }
+    for (const auto& kv : table.m_tableMap) {
+        json innerJson = table_json(kv.second);
+        j[kv.first] = innerJson;
+    }
+    return j;
+}
+
+
+
+
+
+
