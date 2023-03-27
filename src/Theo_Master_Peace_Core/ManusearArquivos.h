@@ -439,7 +439,7 @@ namespace ManuseioDados
 		// http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
 		string pasta = pegar_pasta_arquivo(local);
 		cena_3D ret;
-		ret.caminho = local;
+		ret.nome = local;
 		escrever(local);
 
 		Material mat;
@@ -558,12 +558,12 @@ namespace ManuseioDados
 			m.second->comprimir();
 			m.second->pegar_tamanho_maximo();
 			ret.malhas.insert(m);
-			ret.objetos.minhas_malhas.push_back(m.first);
+			ret.objetos.minhas_malhas.push_back(m.second);
 		}
 
 		// adicionar material
 		ret.materiais.insert(pair<string, Material>("material", mat));
-		ret.objetos.meus_materiais.push_back("material");
+		ret.objetos.meus_materiais.push_back(mat);
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);
@@ -666,7 +666,7 @@ namespace ManuseioDados
 		// https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
 		// try this on gpt: make a c++ function that read an .map file (like the ones used on quake)
 		cena_3D ret;
-		ret.caminho = local;
+		ret.nome = local;
 
 		Full_Map_Info map_info = read_map_file(local);
 
@@ -707,10 +707,21 @@ namespace ManuseioDados
 		return ret;
 	}
 
+	objeto_3D node_3D_object(gltf_loader::Node node,cena_3D cena){
+		objeto_3D ret;
+		ret.nome = node.name;
+		return ret;
+	}
+
+	objeto_3D nodes_3D_object_hierarchy(vector<gltf_loader::Node> nodes,cena_3D cena){
+		objeto_3D ret;
+		return ret;
+	}
+
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 		cena_3D ret;
-		ret.caminho = local;
+		ret.nome = local;
 
 		gltf_loader::GLTFLoader gltf_loader(local);
 		gltf_loader.load();
@@ -731,9 +742,12 @@ namespace ManuseioDados
 			ret.materiais[gltf_loader.materials[i].name] = mat;
 		}
 
-		for(int i = 0; i < gltf_loader.nodes.size();i++){
-			
+		for(int i = 0; i < gltf_loader.textures.size();i++){
+			string arquivo_textura = pegar_pasta_arquivo(local) + gltf_loader.textures[i].uri;
+			ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 		}
+
+		ret.objetos = nodes_3D_object_hierarchy(gltf_loader.nodes,ret);
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);

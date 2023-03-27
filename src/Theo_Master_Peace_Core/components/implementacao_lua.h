@@ -540,92 +540,7 @@ namespace funcoes_ponte
 		lua_pushboolean(L, output);
 		return 1;
 	}
-
-	// read assets
-
-	int get_tile_set_size(lua_State *L)
-	{
-		int output = 0;
-		int argumentos = lua_gettop(L);
-		if (argumentos == 1)
-		{
-			output = ManuseioDados::carregar_tile_set(lua_tostring(L, 1))->tiles.size();
-		}
-		lua_pushnumber(L, output);
-		return 1;
-	}
-
-	int get_tile_set_tile(lua_State *L)
-	{
-		tile output;
-		int argumentos = lua_gettop(L);
-
-		if (argumentos == 3 && (int)lua_tonumber(L, 3) > 0 && lua_tonumber(L, 3) < ManuseioDados::carregar_tile_set(lua_tostring(L, 1))->tiles.size())
-		{
-			output = ManuseioDados::carregar_tile_set(lua_tostring(L, 1))->tiles[(int)lua_tonumber(L, 3)];
-		}
-
-		lua_pushnumber(L, output.sprite_id);
-		lua_pushstring(L, output.nome.c_str());
-		// lua_pushnumber(L, output.tipo_colisao);
-		// lua_pushboolean(L, output.visivel);
-		// lua_pushboolean(L, output.interativel);
-		// lua_pushstring(L, output.script.c_str());
-		// lua_pushstring(L, output.comentario.c_str());
-		// return 7;
-		return 3;
-	}
-
-	int get_tilemap_size(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		vec2 output;
-		if (argumentos == 1)
-		{
-			output = ManuseioDados::carregar_info_tile_map(lua_tostring(L, 1))->res;
-		}
-		lua_pushnumber(L, output.x);
-		lua_pushnumber(L, output.y);
-		return 2;
-	}
-
-	int get_tilemap_layer_size(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		int output = 0;
-		if (argumentos == 1)
-		{
-			output = ManuseioDados::carregar_info_tile_map(lua_tostring(L, 1))->info.size();
-		}
-		lua_pushnumber(L, output);
-		return 1;
-	}
-
-	int get_tilemap_data(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		int output = 0;
-		if (argumentos == 3)
-		{
-			output = ManuseioDados::carregar_info_tile_map(lua_tostring(L, 1))->info[lua_tonumber(L, 2)][lua_tonumber(L, 3)];
-		}
-		lua_pushnumber(L, output);
-		return 1;
-	}
-
-	// adicionar lua cena 3D
-	int get_scene_3D_json(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		string output = "";
-		if (argumentos == 1)
-		{
-			output = converter_cena_3D_para_json(ManuseioDados::carregar_modelo_3D(lua_tostring(L, 1)));
-		}
-
-		lua_pushstring(L, output.c_str());
-		return 1;
-	}
+	
 
 	// input
 
@@ -1388,15 +1303,6 @@ namespace funcoes_ponte
 		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
 		pair<string, lua_function>("load_asset", funcoes_ponte::load_asset),
 		pair<string, lua_function>("asset_is_load", funcoes_ponte::asset_is_load),
-
-		// assets
-		pair<string, lua_function>("get_tile_set_size", funcoes_ponte::get_tile_set_size),
-		pair<string, lua_function>("get_tile_set_tile", funcoes_ponte::get_tile_set_tile),
-		pair<string, lua_function>("get_tilemap_size", funcoes_ponte::get_tilemap_size),
-		pair<string, lua_function>("get_tilemap_layer_size", funcoes_ponte::get_tilemap_layer_size),
-		pair<string, lua_function>("get_tilemap_data", funcoes_ponte::get_tilemap_data),
-
-		pair<string, lua_function>("get_scene_3D_json", funcoes_ponte::get_scene_3D_json),
 
 		// objeto
 		pair<string, lua_function>("create_object", funcoes_ponte::create_object),

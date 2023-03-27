@@ -560,14 +560,13 @@ public:
 struct objeto_3D_struct
 {
 	string nome;
-	vector<string> minhas_malhas;
-	vector<string> meus_materiais;
-	map<string, string> variaveis;
+	vector<shared_ptr<malha>> minhas_malhas;
+	vector<Material> meus_materiais;
+	Table variaveis;
 	vec3 posicao;
 	quat quaternion;
 	vec3 escala;
 	vector<struct objeto_3D_struct> filhos;
-	Table extras;
 };
 typedef struct objeto_3D_struct objeto_3D;
 
@@ -603,7 +602,7 @@ class cena_3D : public asset
 {
 public:
 	cena_3D() {}
-	string caminho;
+	string nome;
 	map<string, shared_ptr<malha>> malhas;
 	map<string, Material> materiais;
 	map<string, shared_ptr<imagem>> texturas;
@@ -718,85 +717,6 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 	pegar_primeiros_map_thread<string, shared_ptr<imagem>>(m, ret);
 }
 
-json converter_objeto_3D_para_json(objeto_3D o3D)
-{
-	vector<json> filhos = {};
-
-	for (objeto_3D o3D : o3D.filhos)
-	{
-		filhos.push_back(converter_objeto_3D_para_json(o3D));
-	}
-
-	json ret = {
-		{"name", o3D.nome},
-		{"meshes", o3D.minhas_malhas},
-		{"materials", o3D.meus_materiais},
-		{"variables", o3D.variaveis},
-		{"position", {{"x", o3D.posicao.x}, {"y", o3D.posicao.y}, {"z", o3D.posicao.z}}},
-		{"quaternion", {{"x", o3D.quaternion.x}, {"y", o3D.quaternion.y}, {"z", o3D.quaternion.z}, {"w", o3D.quaternion.w}}},
-		{"escale", {{"x", o3D.escala.x}, {"y", o3D.escala.y}, {"z", o3D.escala.z}}},
-		{"childrens", filhos},
-	};
-	return ret;
-}
-
-void converter_objeto_3D_para_json_thread(objeto_3D o3D, json *ret)
-{
-	*ret = converter_objeto_3D_para_json(o3D);
-}
-
-// adicionar lua cena 3D
-string converter_cena_3D_para_json(shared_ptr<cena_3D> c3D)
-{
-	string ret = "";
-
-	vector<string> malhas;
-	thread ta(pegar_nomes_malhas_thread, c3D->malhas, &malhas);
-
-	vector<string> materiais;
-	thread tb(pegar_nomes_materiais_thread, c3D->materiais, &materiais);
-
-	vector<string> texturas;
-	thread tc(pegar_nomes_texturas_thread, c3D->texturas, &texturas);
-
-	json objetos = {};
-	thread td(converter_objeto_3D_para_json_thread, c3D->objetos, &objetos);
-
-	json animacoes = {};
-	for (pair<string, vector<key_frame>> p : c3D->animacoes)
-	{
-		vector<json> animacao = {};
-
-		for (key_frame kf : p.second)
-		{
-			json key_frame = {};
-
-			key_frame["duration"] = kf.duracao;
-			key_frame["frame"] = converter_objeto_3D_para_json(kf.frame);
-
-			animacao.push_back(key_frame);
-		}
-
-		animacoes[p.first] = animacao;
-	}
-
-	ta.join();
-	tb.join();
-	tc.join();
-	td.join();
-
-	json JSON = {
-		{"name", c3D->caminho},
-		{"meshs", malhas},
-		{"materials", materiais},
-		{"textures", texturas},
-		{"objects", objetos},
-		{"animation", animacoes},
-	};
-
-	ret = JSON.dump();
-	return ret;
-}
 
 #define SAIDAS_SHADER 6
 #define quantidade_fontes_luz 99
