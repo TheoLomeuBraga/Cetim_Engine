@@ -23,7 +23,7 @@ namespace marching_cubes
         std::vector<unsigned int> indices;
     };
 
-    class MarchingCubesTerrain
+    class MarchingCubesChunk
     {
     public:
         int width;               // Width of the terrain grid
@@ -33,14 +33,17 @@ namespace marching_cubes
         std::vector<float> grid; // 3D grid of scalar values
         std::vector<unsigned char> typesGrid;
         bool changed = false;
-        std::vector<void (*)(MarchingCubesTerrain *)> callWenDelete;
+        std::vector<void (*)(MarchingCubesChunk *)> callWenDelete;
 
-        MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
+        MarchingCubesChunk(int width, int height, int depth, float isoLevel)
         {
             this->width = width;
             this->width = height;
             this->width = depth;
             this->width = isoLevel;
+            int size = width * height * depth;
+            grid.resize(size);
+            typesGrid.resize(size);
         }
 
         // Get the density value at grid point (x, y, z)
@@ -68,7 +71,7 @@ namespace marching_cubes
             changed = true;
         }
 
-        ~MarchingCubesTerrain()
+        ~MarchingCubesChunk()
         {
             for (int i = 0; i < callWenDelete.size(); i++)
             {
@@ -83,7 +86,7 @@ namespace marching_cubes
         return p1 + t * (p2 - p1);
     }
 
-    glm::vec3 computeNormal(const MarchingCubesTerrain &terrain, const glm::vec3 &position)
+    glm::vec3 computeNormal(const MarchingCubesChunk &terrain, const glm::vec3 &position)
     {
         glm::vec3 normal(
             terrain.getDensity(position.x + 1, position.y, position.z) - terrain.getDensity(position.x - 1, position.y, position.z),
@@ -93,12 +96,12 @@ namespace marching_cubes
         return glm::normalize(normal);
     }
 
-    glm::vec2 computeTexcoord(const glm::vec3 &position, const MarchingCubesTerrain &terrain)
+    glm::vec2 computeTexcoord(const glm::vec3 &position, const MarchingCubesChunk &terrain)
     {
         return glm::vec2(position.x / terrain.width, position.y / terrain.height);
     }
 
-    Mesh marchingCubesToMesh(const MarchingCubesTerrain &terrain)
+    Mesh marchingCubesToMesh(const MarchingCubesChunk &terrain)
     {
         Mesh mesh;
 
@@ -164,7 +167,7 @@ namespace marching_cubes
         return mesh;
     }
 
-    std::map<unsigned int, Mesh> marchingCubesToMeshWithTypes(const MarchingCubesTerrain &terrain)
+    std::map<unsigned int, Mesh> marchingCubesToMeshWithTypes(const MarchingCubesChunk &terrain)
     {
         std::map<unsigned int, Mesh> meshes;
 
@@ -215,5 +218,91 @@ namespace marching_cubes
 
         return meshes;
     }
+
+    class MarchingCubesMap
+    {
+    public:
+        int width;
+        int height;
+        int depth;
+        int chunkWidth;
+        int chunkHeight;
+        int chunkDepth;
+        std::vector<MarchingCubesChunk> grid;
+        MarchingCubesMap(int width, int height, int depth, int chunkWidth, int chunkHeight, int chunkDepth)
+        {
+            this->width = width;
+            this->width = height;
+            this->width = depth;
+            this->chunkWidth = chunkWidth;
+            this->chunkHeight = chunkHeight;
+            this->chunkDepth = chunkDepth;
+            int size = width * height * depth;
+            grid.resize(size);
+            for (int i = 0; i < size; i++)
+            {
+                grid[i] = MarchingCubesChunk(chunkWidth, chunkHeight, chunkDepth, 1);
+            }
+        }
+
+        MarchingCubesChunk* getChunk(int x, int y, int z)
+        {
+            return &grid[x + y * width + z * width * height];
+        }
+
+        void setChunk(int x, int y, int z, MarchingCubesChunk chunk)
+        {
+            grid[x + y * width + z * width * height] = chunk;
+        }
+
+        float getDensity(int x, int y, int z)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            return getChunk(chunkX, chunkY, chunkZ)->getDensity(localX, localY, localZ);
+        }
+
+        void setDensity(int x, int y, int z, float density)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            getChunk(chunkX, chunkY, chunkZ)->setDensity(localX, localY, localZ, density);
+        }
+
+        unsigned char getType(int x, int y, int z)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            return getChunk(chunkX, chunkY, chunkZ)->getType(localX, localY, localZ);
+        }
+
+        // Set the density value at grid point (x, y, z)
+        void setType(int x, int y, int z, unsigned char type)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            getChunk(chunkX, chunkY, chunkZ)->setType(localX, localY, localZ, type);
+        }
+    };
 
 };
