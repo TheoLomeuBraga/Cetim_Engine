@@ -32,7 +32,8 @@ namespace marching_cubes
         float isoLevel;          // Iso-surface threshold value
         std::vector<float> grid; // 3D grid of scalar values
         std::vector<unsigned char> typesGrid;
-        std::vector<void (*)(MarchingCubesTerrain *)> callWenChange, callWenDelete;
+        bool changed = false;
+        std::vector<void (*)(MarchingCubesTerrain *)> callWenDelete;
 
         MarchingCubesTerrain(int width, int height, int depth, float isoLevel)
         {
@@ -40,14 +41,6 @@ namespace marching_cubes
             this->width = height;
             this->width = depth;
             this->width = isoLevel;
-        }
-
-        void change()
-        {
-            for (int i = 0; i < callWenChange.size(); i++)
-            {
-                callWenChange[i](this);
-            }
         }
 
         // Get the density value at grid point (x, y, z)
@@ -60,7 +53,7 @@ namespace marching_cubes
         void setDensity(int x, int y, int z, float density)
         {
             grid[x + y * width + z * width * height] = density;
-            change();
+            changed = true;
         }
 
         unsigned char getType(int x, int y, int z) const
@@ -72,7 +65,7 @@ namespace marching_cubes
         void setType(int x, int y, int z, unsigned char type)
         {
             typesGrid[x + y * width + z * width * height] = type;
-            change();
+            changed = true;
         }
 
         ~MarchingCubesTerrain()
