@@ -717,7 +717,6 @@ namespace ManuseioDados
 		
 		for(int i = 0; i < gltf_loader.meshes.size();i++){
 			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name,make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))) );
-			//cout << gltf_loader.meshes[i].name << endl;
 		}
 
 		for(int i = 0; i < gltf_loader.materials.size();i++){
