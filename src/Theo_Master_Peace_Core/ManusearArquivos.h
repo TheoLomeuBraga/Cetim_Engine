@@ -767,7 +767,13 @@ namespace ManuseioDados
 			ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 		}
 
-		// ret.objetos = nodes_3D_object_hierarchy(gltf_loader.nodes,ret);
+		for(int a = 0;a < gltf_loader.scenes.size();a++){
+			for(int b = 0;b < gltf_loader.scenes[a].nodesIndices.size();b++){
+				int node_index = gltf_loader.scenes[a].nodesIndices[b];
+				gltf_loader::Node n = gltf_loader.nodes[node_index];
+				ret.objetos.filhos.push_back(node_3D_object(n,gltf_loader.nodes,ret,gltf_loader));
+			}
+		}
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);
