@@ -659,8 +659,6 @@ namespace ManuseioDados
 		}
 	};
 
-	
-
 	shared_ptr<cena_3D> importar_map(string local)
 	{
 		// https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
@@ -670,8 +668,6 @@ namespace ManuseioDados
 
 		Full_Map_Info map_info = read_map_file(local);
 
-		
-
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);
 	}
@@ -680,12 +676,14 @@ namespace ManuseioDados
 		*ret = importar_map(local);
 	}
 
-	malha converter_malha_gltf(gltf_loader::Mesh m){
+	malha converter_malha_gltf(gltf_loader::Mesh m)
+	{
 		malha ret;
 		ret.indice = m.indices;
 
 		ret.vertices.resize(m.positions.size());
-		for(int i = 0; i < m.positions.size();i++){
+		for (int i = 0; i < m.positions.size(); i++)
+		{
 			vertice v;
 
 			unsigned int v_index = m.indices[i];
@@ -700,21 +698,36 @@ namespace ManuseioDados
 
 			v.uv[0] = m.texcoords[i].x;
 			v.uv[1] = m.texcoords[i].y;
-			
+
 			ret.vertices[i] = v;
 		}
-		
+
 		return ret;
 	}
 
-	objeto_3D node_3D_object(gltf_loader::Node node,cena_3D cena){
+	objeto_3D node_3D_object(gltf_loader::Node node, vector<gltf_loader::Node> node_list, cena_3D cena, gltf_loader::GLTFLoader loader)
+	{
 		objeto_3D ret;
 		ret.nome = node.name;
-		return ret;
-	}
 
-	objeto_3D nodes_3D_object_hierarchy(vector<gltf_loader::Node> nodes,cena_3D cena){
-		objeto_3D ret;
+		for (int i = 0; i < node.meshIndices.size(); i++)
+		{
+			int mesh_index = node.meshIndices[i];
+			string mesh_name = loader.meshes[mesh_index].name;
+			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
+
+			int material_index = loader.meshes[mesh_index].material;
+			if (material_index <= loader.materials.size() - 1)
+			{
+				string material_name = loader.materials[material_index].name;
+				ret.meus_materiais.push_back(cena.materiais[material_name]);
+			}
+		}
+
+		for (int i = 0; i < node.childrenIndices.size(); i++)
+		{
+			ret.filhos.push_back(node_3D_object(node_list[i], node_list, cena, loader));
+		}
 		return ret;
 	}
 
@@ -725,14 +738,17 @@ namespace ManuseioDados
 
 		gltf_loader::GLTFLoader gltf_loader(local);
 		gltf_loader.load();
-		
-		for(int i = 0; i < gltf_loader.meshes.size();i++){
-			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name,make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))) );
+
+		for (int i = 0; i < gltf_loader.meshes.size(); i++)
+		{
+			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))));
 		}
 
-		for(int i = 0; i < gltf_loader.materials.size();i++){
+		for (int i = 0; i < gltf_loader.materials.size(); i++)
+		{
 			string image_location;
-			if(gltf_loader.materials[i].textureIndex != 0){
+			if (gltf_loader.materials[i].textureIndex != 0)
+			{
 				image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
 			}
 			Material mat;
@@ -742,12 +758,13 @@ namespace ManuseioDados
 			ret.materiais[gltf_loader.materials[i].name] = mat;
 		}
 
-		for(int i = 0; i < gltf_loader.textures.size();i++){
+		for (int i = 0; i < gltf_loader.textures.size(); i++)
+		{
 			string arquivo_textura = pegar_pasta_arquivo(local) + gltf_loader.textures[i].uri;
 			ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 		}
 
-		ret.objetos = nodes_3D_object_hierarchy(gltf_loader.nodes,ret);
+		// ret.objetos = nodes_3D_object_hierarchy(gltf_loader.nodes,ret);
 
 		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);

@@ -95,6 +95,7 @@
         "cfenv": "cpp",
         "typeindex": "cpp",
         "variant": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "*.def": "cpp"
     }
 }

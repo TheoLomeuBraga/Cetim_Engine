@@ -9,6 +9,11 @@
 
 namespace gltf_loader
 {
+    struct scene
+    {
+        string name;
+        std::vector<size_t> nodesIndices;
+    };
 
     struct BufferView
     {
@@ -34,6 +39,7 @@ namespace gltf_loader
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
+        size_t material;
     };
 
     struct Node
@@ -41,15 +47,6 @@ namespace gltf_loader
         std::string name;
         glm::mat4 matrix;
         std::vector<size_t> meshIndices, childrenIndices;
-        nlohmann::json extensions, extras;
-    };
-
-    struct NodeHierarchy
-    {
-        std::string name;
-        glm::mat4 matrix;
-        std::vector<size_t> meshIndices;
-        std::vector<Node> childrenIndices;
         nlohmann::json extensions, extras;
     };
 
@@ -110,6 +107,7 @@ namespace gltf_loader
         std::vector<BufferView> bufferViews;
         std::vector<Accessor> accessors;
         std::vector<Mesh> meshes;
+        std::vector<scene> scenes;
         std::vector<Node> nodes;
         std::vector<Animation> animations;
         std::vector<Texture> textures;
@@ -118,6 +116,7 @@ namespace gltf_loader
         bool loadBuffers();
         bool loadBufferViews();
         bool loadAccessors();
+        bool loadScenes();
         bool loadNodes();
         bool loadAnimations();
         bool loadTextures();
@@ -161,6 +160,7 @@ namespace gltf_loader
         loadBufferViews();
         loadAccessors();
         loadMeshes();
+        loadScenes();
         loadNodes();
         loadAnimations();
         loadTextures();
@@ -252,73 +252,105 @@ namespace gltf_loader
         return true;
     }
 
-glm::mat4 jsonToMat4(const nlohmann::json &jsonArray)
-{
-    glm::mat4 matrix(1.0f);
-    for (size_t i = 0; i < 4; ++i)
+    glm::mat4 jsonToMat4(const nlohmann::json &jsonArray)
     {
-        for (size_t j = 0; j < 4; ++j)
+        glm::mat4 matrix(1.0f);
+        for (size_t i = 0; i < 4; ++i)
         {
-            matrix[i][j] = jsonArray[i * 4 + j].get<float>();
+            for (size_t j = 0; j < 4; ++j)
+            {
+                matrix[i][j] = jsonArray[i * 4 + j].get<float>();
+            }
         }
+        return matrix;
     }
-    return matrix;
-}
 
-    bool GLTFLoader::loadNodes()
+    bool GLTFLoader::loadScenes()
     {
-        if (gltf.find("nodes") == gltf.end())
+        if (!gltf.contains("scenes"))
         {
+            std::cerr << "GLTF file does not contain scenes." << std::endl;
             return false;
         }
 
-        const auto &gltfNodes = gltf["nodes"];
-        nodes.resize(gltfNodes.size());
+        const auto &scenesArray = gltf["scenes"];
 
-        for (size_t i = 0; i < gltfNodes.size(); ++i)
+        for (const auto &sceneJson : scenesArray)
         {
-            const auto &gltfNode = gltfNodes[i];
-            Node &node = nodes[i];
+            scene sceneData;
 
-            if (gltfNode.find("name") != gltfNode.end())
+            if (sceneJson.contains("name"))
             {
-                node.name = gltfNode["name"].get<std::string>();
+                sceneData.name = sceneJson["name"].get<std::string>();
             }
 
-            if (gltfNode.find("matrix") != gltfNode.end())
+            if (sceneJson.contains("nodes"))
             {
-                const auto &matrixData = gltfNode["matrix"];
-                glm::mat4 matrix = jsonToMat4(matrixData);
-                node.matrix = matrix;
-            }
-            else
-            {
-                node.matrix = glm::mat4(1.0f);
-            }
+                const auto &nodesArray = sceneJson["nodes"];
 
-            if (gltfNode.find("mesh") != gltfNode.end())
-            {
-                node.meshIndices.push_back(gltfNode["mesh"].get<size_t>());
-            }
-
-            if (gltfNode.find("children") != gltfNode.end())
-            {
-                const auto &children = gltfNode["children"];
-                for (const auto &childIndex : children)
+                for (const auto &nodeIndex : nodesArray)
                 {
-                    node.childrenIndices.push_back(childIndex.get<size_t>());
+                    sceneData.nodesIndices.push_back(nodeIndex.get<size_t>());
                 }
             }
 
-            if (gltfNode.find("extensions") != gltfNode.end())
+            scenes.push_back(sceneData);
+        }
+
+        return true;
+    }
+
+    bool GLTFLoader::loadNodes()
+    {
+        if (!gltf.contains("nodes"))
+        {
+            std::cerr << "GLTF file does not contain nodes." << std::endl;
+            return false;
+        }
+
+        const auto &nodesArray = gltf["nodes"];
+
+        for (const auto &nodeJson : nodesArray)
+        {
+            Node nodeData;
+
+            if (nodeJson.contains("name"))
             {
-                node.extensions = gltfNode["extensions"];
+                nodeData.name = nodeJson["name"].get<std::string>();
             }
 
-            if (gltfNode.find("extras") != gltfNode.end())
+            if (nodeJson.contains("matrix"))
             {
-                node.extras = gltfNode["extras"];
+                const auto &matrixData = nodeJson["matrix"];
+                glm::mat4 matrix = jsonToMat4(matrixData);
+                nodeData.matrix = matrix;
             }
+
+            if (nodeJson.contains("mesh"))
+            {
+                nodeData.meshIndices.push_back(nodeJson["mesh"].get<size_t>());
+            }
+
+            if (nodeJson.contains("children"))
+            {
+                const auto &childrenArray = nodeJson["children"];
+                for (const auto &childIndex : childrenArray)
+                {
+                    nodeData.childrenIndices.push_back(childIndex.get<size_t>());
+                }
+            }
+
+            if (nodeJson.contains("extensions"))
+            {
+                nodeData.extensions = nodeJson["extensions"];
+            }
+
+            if (nodeJson.contains("extras"))
+            {
+                nodeData.extras = nodeJson["extras"];
+            }
+
+            nodes.push_back(nodeData);
         }
 
         return true;
@@ -708,6 +740,11 @@ glm::mat4 jsonToMat4(const nlohmann::json &jsonArray)
                     }
                     default:
                         throw std::runtime_error("Unsupported index component type.");
+                    }
+
+                    if (primitive.contains("material"))
+                    {
+                        mesh.material = primitive["material"].get<size_t>();
                     }
                 }
             }
