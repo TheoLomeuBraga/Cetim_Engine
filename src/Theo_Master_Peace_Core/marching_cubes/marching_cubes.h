@@ -245,7 +245,7 @@ namespace marching_cubes
             }
         }
 
-        MarchingCubesChunk* getChunk(int x, int y, int z)
+        MarchingCubesChunk *getChunk(int x, int y, int z)
         {
             return &grid[x + y * width + z * width * height];
         }
@@ -303,6 +303,117 @@ namespace marching_cubes
 
             getChunk(chunkX, chunkY, chunkZ)->setType(localX, localY, localZ, type);
         }
+
+        void setBorderDensity(int x, int y, int z, float density)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            setDensity(x, y, z, density);
+
+            if (localX == 0 && chunkX > 0)
+            {
+                setDensity(x - 1, y, z, density);
+            }
+            if (localX == chunkWidth - 1 && chunkX < width / chunkWidth - 1)
+            {
+                setDensity(x + 1, y, z, density);
+            }
+
+            if (localY == 0 && chunkY > 0)
+            {
+                setDensity(x, y - 1, z, density);
+            }
+            if (localY == chunkHeight - 1 && chunkY < height / chunkHeight - 1)
+            {
+                setDensity(x, y + 1, z, density);
+            }
+
+            if (localZ == 0 && chunkZ > 0)
+            {
+                setDensity(x, y, z - 1, density);
+            }
+            if (localZ == chunkDepth - 1 && chunkZ < height / chunkDepth - 1)
+            {
+                setDensity(x, y, z+ 1, density);
+            }
+        }
+
+        void setBorderType(int x, int y, int z, char type)
+        {
+            int chunkX = x / chunkWidth;
+            int chunkY = y / chunkHeight;
+            int chunkZ = z / chunkDepth;
+            int localX = x % chunkWidth;
+            int localY = y % chunkHeight;
+            int localZ = z % chunkDepth;
+
+            setType(x, y, z, type);
+
+            if (localX == 0 && chunkX > 0)
+            {
+                setType(x - 1, y, z, type);
+            }
+            if (localX == chunkWidth - 1 && chunkX < width / chunkWidth - 1)
+            {
+                setType(x + 1, y, z, type);
+            }
+
+            if (localY == 0 && chunkY > 0)
+            {
+                setType(x, y - 1, z, type);
+            }
+            if (localY == chunkHeight - 1 && chunkY < height / chunkHeight - 1)
+            {
+                setType(x, y + 1, z, type);
+            }
+
+            if (localZ == 0 && chunkZ > 0)
+            {
+                setType(x, y, z - 1, type);
+            }
+            if (localZ == chunkDepth - 1 && chunkZ < height / chunkDepth - 1)
+            {
+                setType(x, y, z+ 1, type);
+            }
+        }
     };
+
+    /*
+    this classe located in MarchingCubesChunk.h
+    "class MarchingCubesChunk
+    {
+    public:
+        int width;
+        int height;
+        int depth;
+        float isoLevel;
+        std::vector<float> grid;
+        MarchingCubesChunk(int width, int height, int depth, float isoLevel);
+        float getDensity(int x, int y, int z);
+        void setDensity(int x, int y, int z, float density);
+    };"
+    and this class located in MarchingCubesMap.h "class MarchingCubesMap
+    {
+    public:
+        int width;
+        int height;
+        int depth;
+        int chunkWidth;
+        int chunkHeight;
+        int chunkDepth;
+        std::vector<MarchingCubesChunk> grid;
+        MarchingCubesMap(int width, int height, int depth, int chunkWidth, int chunkHeight, int chunkDepth);
+        float getDensity(int x, int y, int z);
+        void setDensity(int x, int y, int z, float density);
+        void setBorderDensity(int x, int y, int z, float density);
+
+    };"
+    make the functions setBorderDensity and declare then out of the class from MarchingCubesMap i want that this functions get or set the densitys or types in MarchingCubesChunks relative to the global space and if the density is set on the border of an chunch like the end of one axis the function will set the same value in the begin this axis in the next or previous
+    */
 
 };
