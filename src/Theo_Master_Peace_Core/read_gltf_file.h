@@ -111,8 +111,8 @@ namespace gltf_loader
         bool loadAccessors();
         bool loadNodes();
         bool loadAnimations();
-        bool loadTextures();  // <-- adicionar
-        bool loadMaterials(); // <-- adicionar
+        bool loadTextures();
+        bool loadMaterials();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
         std::vector<uint8_t> getBufferData(size_t accessorIndex);

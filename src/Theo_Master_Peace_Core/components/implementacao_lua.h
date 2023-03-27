@@ -628,7 +628,7 @@ namespace funcoes_ponte
 	}
 
 	// input
-	
+
 	int set_cursor_position(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -640,31 +640,55 @@ namespace funcoes_ponte
 	}
 	int get_keyboard_input(lua_State *L)
 	{
-		return 0;
-		//return 1;
+		Table ret;
+		for (pair<string, int> p : Teclado.teclas)
+		{
+			ret.setFloat(p.first, p.second);
+		}
+		lua_pushtable(L, ret);
+		return 1;
 	}
 	int get_mouse_input(lua_State *L)
 	{
-		return 0;
-		//return 1;
+		Table ret;
+		for (pair<string, int> p : Mouse.botoes)
+		{
+			ret.setFloat(p.first, p.second);
+		}
+		for (pair<string, int> p : Mouse.movimentos)
+		{
+			ret.setFloat(p.first, p.second);
+		}
+		lua_pushtable(L, ret);
+		return 1;
 	}
 	int get_joystick_input(lua_State *L)
 	{
-
-		
-		return 0;
-		//return 1;
+		Table ret;
+		for (int i = 0; i < Joystick.size(); i++)
+		{
+			for (pair<string, int> p : Joystick[i].botoes)
+			{
+				ret.setFloat(p.first, p.second);
+			}
+			for (pair<string, int> p : Joystick[i].eixos)
+			{
+				ret.setFloat(p.first, p.second);
+			}
+		}
+		lua_pushtable(L, ret);
+		return 1;
 	}
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		Teclado.pegar_input_texto = lua_toboolean(L,1);
+		Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		return 0;
 	}
 
 	int get_keyboard_text_input(lua_State *L)
 	{
-		lua_pushfstring(L,Teclado.input_texto.c_str());
+		lua_pushfstring(L, Teclado.input_texto.c_str());
 		return 1;
 	}
 
