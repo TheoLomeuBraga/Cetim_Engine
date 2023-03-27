@@ -44,6 +44,15 @@ namespace gltf_loader
         nlohmann::json extensions, extras;
     };
 
+    struct NodeHierarchy
+    {
+        std::string name;
+        glm::mat4 matrix;
+        std::vector<size_t> meshIndices;
+        std::vector<Node> childrenIndices;
+        nlohmann::json extensions, extras;
+    };
+
     struct AnimationChannel
     {
         size_t samplerIndex;
