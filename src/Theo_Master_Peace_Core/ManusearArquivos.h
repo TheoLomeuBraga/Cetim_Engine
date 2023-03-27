@@ -574,7 +574,7 @@ namespace ManuseioDados
 		*ret = importar_obj(local);
 	}
 
-	json table_to_json(Table table)
+	json table_json(Table table)
 	{
 		json ret;
 		for (auto &[key, value] : table.m_floatMap)
@@ -587,30 +587,12 @@ namespace ManuseioDados
 		}
 		for (auto &[key, value] : table.m_tableMap)
 		{
-			ret["tableMap"][key] = table_to_json(value);
+			ret["tableMap"][key] = table_json(value);
 		}
 		return ret;
 	}
-
-	void storeTableData(std::string filename, Table table)
-	{
-		json data = table_to_json(table);
-
-		std::ofstream file(filename, std::ios::out | std::ios::binary);
-		if (file.good())
-		{
-			std::vector<uint8_t> bson_data = json::to_bson(data);
-			file.write((const char *)&bson_data[0], bson_data.size());
-			file.close();
-			std::cout << "Data saved to " << filename << std::endl;
-		}
-		else
-		{
-			std::cerr << "Error: could not save data to " << filename << std::endl;
-		}
-	}
-
-	Table json_to_table(json table)
+	
+	Table json_table(json table)
 	{
 		Table ret;
 		for (auto it = table["floatMap"].begin(); it != table["floatMap"].end(); it++)
@@ -626,11 +608,30 @@ namespace ManuseioDados
 		for (auto it = table["tableMap"].begin(); it != table["tableMap"].end(); it++)
 		{
 			std::string key = it.key();
-			ret.setTable(key, json_to_table(it->get<json>()));
+			ret.setTable(key, json_table(it->get<json>()));
 		}
 
 		return ret;
 	}
+
+	void storeTableData(std::string filename, Table table)
+	{
+		json data = table_json(table);
+
+		std::ofstream file(filename, std::ios::out | std::ios::binary);
+		if (file.good())
+		{
+			std::vector<uint8_t> bson_data = json::to_bson(data);
+			file.write((const char *)&bson_data[0], bson_data.size());
+			file.close();
+			std::cout << "Data saved to " << filename << std::endl;
+		}
+		else
+		{
+			std::cerr << "Error: could not save data to " << filename << std::endl;
+		}
+	}
+
 	Table readTableData(const std::string &filename)
 	{
 		std::ifstream file(filename, std::ios::in | std::ios::binary);
@@ -648,7 +649,7 @@ namespace ManuseioDados
 		file.close();
 
 		nlohmann::json json_data = nlohmann::json::from_bson(bson_data);
-		return json_to_table(json_data);
+		return json_table(json_data);
 	}
 
 	struct Vec3Comparator
@@ -723,6 +724,8 @@ namespace ManuseioDados
 				ret.meus_materiais.push_back(cena.materiais[material_name]);
 			}
 		}
+
+		ret.variaveis = json_table(node.extras);
 
 		for (int i = 0; i < node.childrenIndices.size(); i++)
 		{
