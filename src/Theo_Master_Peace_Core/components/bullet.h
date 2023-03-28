@@ -87,8 +87,6 @@ namespace physics_3D_test_area
         }
     };
 
-#include <bullet/btBulletDynamicsCommon.h>
-
     class CustomOverlapFilterCallback : public btOverlapFilterCallback
     {
     public:
