@@ -51,7 +51,7 @@ function START()
     
 
     print("divisoria")
-    sceanes_db["test2"]:load()
+    sceanes_db["test3"]:load()
    
     
     

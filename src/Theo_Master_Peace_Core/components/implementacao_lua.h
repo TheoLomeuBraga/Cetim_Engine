@@ -1291,7 +1291,7 @@ namespace funcoes_ponte
 	}
 
 	// audio
-	int get_set_3D_physic(lua_State *L)
+	int get_set_physic_3D(lua_State *L)
 	{
 		if (lua_tonumber(L, 1) == get_lua)
 		{
@@ -1308,6 +1308,7 @@ namespace funcoes_ponte
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
+			bu->aplay();
 			return 0;
 		}
 	}
@@ -1386,7 +1387,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 
-		pair<string, lua_function>("get_set_3D_physic", funcoes_ponte::get_set_3D_physic),
+		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
 
 		// camera
 		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
