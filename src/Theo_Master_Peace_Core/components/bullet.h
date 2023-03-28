@@ -8,25 +8,33 @@
 class bullet : public componente
 {
 public:
-    shared_ptr<objeto_jogo> esse_objeto = NULL;
-    // bool iniciado = false;
+    shared_ptr<malha> collision_mesh;
+    char forma = caixa;
+    float densidade = 1, atrito = 0;
+	bool gatilho = false;
+	char dinamica = estatico;
+    vec3 escala = vec3(1,1,1);
+	float escala_gravidade = 1;
+	bool rotacionar = true;
+    info_camada layer;
+	vector<colis_info> colis_infos;
+	vector<shared_ptr<objeto_jogo>> objects_colidinf;
+    
     bullet() {}
-    virtual void iniciar() {}
-    virtual void atualisar() {}
-    virtual void colidir(colis_info col) {}
-    virtual void finalisar() {}
+    void iniciar() {}
+    void atualisar() {}
+    void colidir(colis_info col) {}
+    void finalisar() {}
 };
 
 class bullet_charter : public componente
 {
 public:
-    shared_ptr<objeto_jogo> esse_objeto = NULL;
-    // bool iniciado = false;
     bullet_charter() {}
-    virtual void iniciar() {}
-    virtual void atualisar() {}
-    virtual void colidir(colis_info col) {}
-    virtual void finalisar() {}
+    void iniciar() {}
+    void atualisar() {}
+    void colidir(colis_info col) {}
+    void finalisar() {}
 };
 
 
