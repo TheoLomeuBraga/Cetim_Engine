@@ -579,19 +579,21 @@ namespace funcoes_ponte
 	}
 	int get_joystick_input(lua_State *L)
 	{
-		Table ret;
+		vector<Table> ret;
 		for (int i = 0; i < Joystick.size(); i++)
 		{
+			Table ret_fragment;
 			for (pair<string, int> p : Joystick[i].botoes)
 			{
-				ret.setFloat(p.first, p.second);
+				ret_fragment.setFloat(p.first, p.second);
 			}
 			for (pair<string, int> p : Joystick[i].eixos)
 			{
-				ret.setFloat(p.first, p.second);
+				ret_fragment.setFloat(p.first, p.second);
 			}
+			ret.push_back(ret_fragment);
 		}
-		lua_pushtable(L, ret);
+		lua_pushtable(L, vTable_table(ret));
 		return 1;
 	}
 
