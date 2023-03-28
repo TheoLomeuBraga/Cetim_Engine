@@ -11,6 +11,39 @@
 namespace physics_3D_test_area
 {
 
+    struct RaycastResult
+    {
+        bool hasHit;
+        btVector3 hitPoint;
+        btVector3 hitNormal;
+        btScalar hitFraction;
+        btCollisionObject *hitObject;
+        int partId;
+        int triangleIndex;
+    };
+
+    RaycastResult raycast_bullet_3D(btDiscreteDynamicsWorld *dynamicsWorld, const btVector3 &rayFrom, const btVector3 &rayTo)
+    {
+        RaycastResult result;
+        result.hasHit = false;
+
+        btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
+        dynamicsWorld->rayTest(rayFrom, rayTo, rayCallback);
+
+        if (rayCallback.hasHit())
+        {
+            result.hasHit = true;
+            result.hitPoint = rayCallback.m_hitPointWorld;
+            result.hitNormal = rayCallback.m_hitNormalWorld;
+            result.hitFraction = rayCallback.m_closestHitFraction;
+            result.hitObject = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
+            result.partId = rayCallback.m_collisionFilterGroup;
+            result.triangleIndex = rayCallback.m_collisionFilterMask;
+        }
+
+        return result;
+    }
+
     btDiscreteDynamicsWorld *dynamicsWorld;
 
     struct bullet_mesh
@@ -169,8 +202,8 @@ namespace physics_3D_test_area
 
     void delete_world(btRigidBody *sphereRigidBody, btRigidBody *groundRigidBody, btDiscreteDynamicsWorld *dynamicsWorld)
     {
-        //delete_bullet_obiject(sphereRigidBody);
-        //delete_bullet_obiject(groundRigidBody);
+        // delete_bullet_obiject(sphereRigidBody);
+        // delete_bullet_obiject(groundRigidBody);
 
         btCollisionDispatcher *dispatcher = static_cast<btCollisionDispatcher *>(dynamicsWorld->getDispatcher());
         btDefaultCollisionConfiguration *collisionConfiguration = static_cast<btDefaultCollisionConfiguration *>(dispatcher->getCollisionConfiguration());
@@ -270,8 +303,8 @@ public:
     void finalisar() {}
 };
 
-float passo_tempo;
-float ultimo_tempo;
+float bullet_passo_tempo;
+float bullet_ultimo_tempo;
 void atualisar_global_bullet()
 {
     if (box_2D_iniciado != true)
@@ -279,15 +312,15 @@ void atualisar_global_bullet()
 
         // mundo.SetContactFilter(new filtro_colisao());
         // mundo.SetContactListener(new m_contactlistener());
-        passo_tempo = 0;
+        bullet_passo_tempo = 0;
 
         box_2D_iniciado = true;
     }
 
     mundo.SetGravity(converter(gravidade));
 
-    passo_tempo = (Tempo::tempo - ultimo_tempo) * Tempo::velocidadeTempo;
-    // mundo.Step(passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
-    // mundo.Step(passo_tempo, velocidade_interacoes, iteracao_posicao);
-    ultimo_tempo = Tempo::tempo;
+    bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
+    // mundo.Step(bullet_passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
+    // mundo.Step(bullet_passo_tempo, velocidade_interacoes, iteracao_posicao);
+    bullet_ultimo_tempo = Tempo::tempo;
 }
