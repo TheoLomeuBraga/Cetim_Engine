@@ -6,18 +6,80 @@
 #include "game_object.h"
 
 #include <btBulletDynamicsCommon.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
-/*
-struct mesh {
-    vector<vec3> vertices;
-    vector<unsigned int> index
-};
-
-
-
-*/
 namespace physics_3D_test_area
 {
+
+    btDiscreteDynamicsWorld *dynamicsWorld;
+
+    struct bullet_mesh
+    {
+        vector<vec3> vertices;
+        vector<unsigned int> indices;
+    };
+
+    struct physics_3D_collisionInfo
+    {
+        btCollisionObject *objectA;
+        btCollisionObject *objectB;
+        btVector3 contactPointA;
+        btVector3 contactPointB;
+        btVector3 normalOnB;
+        btScalar appliedImpulse;
+    };
+    std::vector<physics_3D_collisionInfo> collisionInfos;
+
+    class CustomCollisionCallback : public btCollisionWorld::ContactResultCallback
+    {
+    public:
+        CustomCollisionCallback()
+        {
+        }
+
+        virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
+        {
+            physics_3D_collisionInfo collisionInfo;
+
+            collisionInfo.objectA = const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject());
+            collisionInfo.objectB = const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject());
+            collisionInfo.contactPointA = cp.getPositionWorldOnA();
+            collisionInfo.contactPointB = cp.getPositionWorldOnB();
+            collisionInfo.normalOnB = cp.m_normalWorldOnB;
+            collisionInfo.appliedImpulse = cp.m_appliedImpulse;
+
+            collisionInfos.push_back(collisionInfo);
+
+            return 0; // return 0 to process all collisions
+        }
+    };
+
+#include <bullet/btBulletDynamicsCommon.h>
+
+    class CustomOverlapFilterCallback : public btOverlapFilterCallback
+    {
+    public:
+        virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
+        {
+            // Retrieve the btCollisionObject pointers from the user pointers
+            btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
+            btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
+
+            // Implement your custom logic to decide whether obj0 and obj1 should be allowed to collide
+            // Return true to allow collision, return false to disallow collision
+
+            return true; // By default, allow all collisions
+        }
+    };
+
+    void set_custom_collision_test(btCollisionObject *A, btCollisionObject *B)
+    {
+        CustomCollisionCallback callback;
+        dynamicsWorld->contactPairTest(A, B, callback);
+
+        CustomOverlapFilterCallback filterCallback;
+        dynamicsWorld->getPairCache()->setOverlapFilterCallback(&filterCallback);
+    }
 
     btDiscreteDynamicsWorld *initPhysicsWorld()
     {
@@ -54,13 +116,61 @@ namespace physics_3D_test_area
         return sphereRigidBody;
     }
 
-    void delete_world(btRigidBody *sphereRigidBody,btRigidBody *groundRigidBody,btDiscreteDynamicsWorld *dynamicsWorld){
-        delete sphereRigidBody->getMotionState();
-        delete sphereRigidBody->getCollisionShape();
-        delete sphereRigidBody;
-        delete groundRigidBody->getMotionState();
-        delete groundRigidBody->getCollisionShape();
-        delete groundRigidBody;
+    btRigidBody *addMeshToDynamicsWorld(btDiscreteDynamicsWorld *dynamicsWorld, const bullet_mesh &mesh, float mass, const btVector3 &position)
+    {
+        btTriangleMesh *triangleMesh = new btTriangleMesh();
+
+        for (size_t i = 0; i < mesh.indices.size(); i += 3)
+        {
+            btVector3 vertex0(mesh.vertices[mesh.indices[i]].x, mesh.vertices[mesh.indices[i]].y, mesh.vertices[mesh.indices[i]].z);
+            btVector3 vertex1(mesh.vertices[mesh.indices[i + 1]].x, mesh.vertices[mesh.indices[i + 1]].y, mesh.vertices[mesh.indices[i + 1]].z);
+            btVector3 vertex2(mesh.vertices[mesh.indices[i + 2]].x, mesh.vertices[mesh.indices[i + 2]].y, mesh.vertices[mesh.indices[i + 2]].z);
+
+            triangleMesh->addTriangle(vertex0, vertex1, vertex2);
+        }
+
+        btCollisionShape *meshShape = new btBvhTriangleMeshShape(triangleMesh, true);
+        btDefaultMotionState *meshMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), position));
+        btVector3 meshInertia(0, 0, 0);
+        meshShape->calculateLocalInertia(mass, meshInertia);
+        btRigidBody::btRigidBodyConstructionInfo meshRigidBodyCI(mass, meshMotionState, meshShape, meshInertia);
+        btRigidBody *meshRigidBody = new btRigidBody(meshRigidBodyCI);
+
+        dynamicsWorld->addRigidBody(meshRigidBody);
+        return meshRigidBody;
+    }
+
+    btPairCachingGhostObject *createBoxTrigger(btDiscreteDynamicsWorld *dynamicsWorld, const btVector3 &halfExtents, const btVector3 &position, const btQuaternion &orientation)
+    {
+        btCollisionShape *boxShape = new btBoxShape(halfExtents);
+
+        btTransform triggerTransform;
+        triggerTransform.setIdentity();
+        triggerTransform.setOrigin(position);
+        triggerTransform.setRotation(orientation);
+
+        btPairCachingGhostObject *ghostObject = new btPairCachingGhostObject();
+        ghostObject->setCollisionShape(boxShape);
+        ghostObject->setWorldTransform(triggerTransform);
+        ghostObject->setCollisionFlags(ghostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+        dynamicsWorld->addCollisionObject(ghostObject, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
+
+        return ghostObject;
+    }
+
+    void delete_bullet_obiject(btRigidBody *bullet_obiject)
+    {
+        dynamicsWorld->removeRigidBody(bullet_obiject);
+        delete bullet_obiject->getMotionState();
+        delete bullet_obiject->getCollisionShape();
+        delete bullet_obiject;
+    }
+
+    void delete_world(btRigidBody *sphereRigidBody, btRigidBody *groundRigidBody, btDiscreteDynamicsWorld *dynamicsWorld)
+    {
+        //delete_bullet_obiject(sphereRigidBody);
+        //delete_bullet_obiject(groundRigidBody);
 
         btCollisionDispatcher *dispatcher = static_cast<btCollisionDispatcher *>(dynamicsWorld->getDispatcher());
         btDefaultCollisionConfiguration *collisionConfiguration = static_cast<btDefaultCollisionConfiguration *>(dispatcher->getCollisionConfiguration());
@@ -73,7 +183,7 @@ namespace physics_3D_test_area
 
     void physics_3D_test()
     {
-        btDiscreteDynamicsWorld *dynamicsWorld = initPhysicsWorld();
+        dynamicsWorld = initPhysicsWorld();
 
         btRigidBody *groundRigidBody = createGround(dynamicsWorld);
 
@@ -92,12 +202,19 @@ namespace physics_3D_test_area
             std::cout << "Sphere position: " << spherePosition.getX() << ", " << spherePosition.getY() << ", " << spherePosition.getZ() << std::endl;
         }
 
-        dynamicsWorld->removeRigidBody(sphereRigidBody);
-        dynamicsWorld->removeRigidBody(groundRigidBody);
-
-        delete_world(sphereRigidBody,groundRigidBody,dynamicsWorld);
+        delete_world(sphereRigidBody, groundRigidBody, dynamicsWorld);
     }
 };
+
+btDiscreteDynamicsWorld *dynamicsWorld;
+
+void delete_bullet_obiject(btRigidBody *bullet_obiject)
+{
+    dynamicsWorld->removeRigidBody(bullet_obiject);
+    delete bullet_obiject->getMotionState();
+    delete bullet_obiject->getCollisionShape();
+    delete bullet_obiject;
+}
 
 class bullet : public componente
 {
@@ -117,21 +234,29 @@ public:
     bullet() {}
     void iniciar() {}
 
-    void atualisar() {
-        for (colis_info c : colis_infos) {
-			esse_objeto->colidir(c);
-		}
-		vector<colis_info> vazio;
-		colis_infos.swap(vazio);
+    void atualisar()
+    {
+        for (colis_info c : colis_infos)
+        {
+            esse_objeto->colidir(c);
+        }
+        vector<colis_info> vazio;
+        colis_infos.swap(vazio);
     }
 
     void colidir(colis_info col) {}
-    
+
     void finalisar() {}
-    
-    void aplay(){
+
+    void aplay()
+    {
         finalisar();
         iniciar();
+    }
+
+    ~bullet()
+    {
+        finalisar();
     }
 };
 

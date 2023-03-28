@@ -1299,6 +1299,20 @@ namespace funcoes_ponte
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
+			Table _mesh;
+			_mesh.setString("file",bu->collision_mesh->arquivo_origem );
+			_mesh.setString("name",bu->collision_mesh->nome );
+			ret.setTable("colision_mesh",_mesh);
+
+			Table layer;
+			layer.setFloat("layer",bu->layer.camada );
+			vector<float> camada_colide;
+			for(int i : bu->layer.camada_colide){
+				camada_colide.push_back(i);
+			}
+			layer.setTable("layers_can_colide", vFloat_table(camada_colide) );
+			ret.setTable("colision_layer",layer);
+
 			lua_pushtable(L, ret);
 			return 1;
 		}
