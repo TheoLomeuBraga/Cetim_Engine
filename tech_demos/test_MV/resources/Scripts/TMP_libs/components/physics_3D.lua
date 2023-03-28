@@ -34,7 +34,7 @@ function physics_3D_component:new(object_ptr)
     p.rotate = true
     p.triger = false
     p.friction = 1
-    p.objects_coliding = {}
+    p.density = 1
     p.colision_layer = colision_layer_info:new()
     p.colision_mesh = { file = "", name = "" };
     function p:get()
@@ -45,6 +45,7 @@ function physics_3D_component:new(object_ptr)
         self.rotate = j.rotate
         self.triger = j.triger
         self.friction = j.friction
+        self.density = j.density
         self.objects_coliding = deepcopyjson(j.objects_coliding)
         self.colision_layer = deepcopyjson(j.colision_layer)
         self.colision_mesh = deepcopyjson(j.colision_mesh)

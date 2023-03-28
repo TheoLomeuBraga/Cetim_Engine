@@ -260,7 +260,6 @@ public:
     bool rotacionar = true;
     info_camada layer;
     vector<colis_info> colis_infos;
-    vector<shared_ptr<objeto_jogo>> objects_colidinf;
 
     bullet() {}
     void iniciar() {}

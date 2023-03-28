@@ -1303,15 +1303,16 @@ namespace funcoes_ponte
 			_mesh.setString("file",bu->collision_mesh->arquivo_origem );
 			_mesh.setString("name",bu->collision_mesh->nome );
 			ret.setTable("colision_mesh",_mesh);
+			
+			ret.setTable("colision_layer",info_camada_table(bu->layer));
+			ret.setTable("scale",vec3_table(bu->escala));
+			ret.setFloat("boady_dynamic",bu->dinamica);
+			ret.setFloat("colision_shape",bu->forma);
 
-			Table layer;
-			layer.setFloat("layer",bu->layer.camada );
-			vector<float> camada_colide;
-			for(int i : bu->layer.camada_colide){
-				camada_colide.push_back(i);
-			}
-			layer.setTable("layers_can_colide", vFloat_table(camada_colide) );
-			ret.setTable("colision_layer",layer);
+			ret.setFloat("rotate",bu->rotacionar);
+			ret.setFloat("triger",bu->gatilho);
+			ret.setFloat("friction",bu->densidade);
+			ret.setFloat("density",bu->densidade);
 
 			lua_pushtable(L, ret);
 			return 1;
