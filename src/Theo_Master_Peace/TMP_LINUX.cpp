@@ -31,6 +31,7 @@
 #include "components/box_2d.h"
 #include "components/camera.h"
 #include "components/transform.h"
+#include "components/bullet.h"
 
 #include "read_map_file.h"
 
@@ -56,6 +57,7 @@ void configuracaoInicial(){
 
     Iniciar_Render_Func.push_back(iniciarTeste3);
     Antes_Render_Func.push_back(atualisar_global_box2D);
+    Antes_Render_Func.push_back(atualisar_global_bullet);
     Antes_Render_Func.push_back(teste3);
 
    //Iniciar_Render_Func.push_back(inciar_imgui);

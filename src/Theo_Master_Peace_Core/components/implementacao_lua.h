@@ -14,6 +14,7 @@ using namespace Tempo;
 #include "projetil.h"
 #include "components/render_sprite.h"
 #include "components/render_tilemap.h"
+#include "components/bullet.h"
 
 #include "args.h"
 #include "game_object.h"
@@ -540,7 +541,6 @@ namespace funcoes_ponte
 		lua_pushboolean(L, output);
 		return 1;
 	}
-	
 
 	// input
 
@@ -1816,6 +1816,10 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<box_2D>(box_2D());}else{obj->remover_componente<box_2D>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("character_physics_2D", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<fisica_char_B2D>(fisica_char_B2D());}else{obj->remover_componente<fisica_char_B2D>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("physics_3D", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<bullet>(bullet());}else{obj->remover_componente<bullet>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("character_physics_3D", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<bullet_charter>(bullet_charter());}else{obj->remover_componente<bullet_charter>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("audio_source", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<sfml_audio>(sfml_audio());}else{obj->remover_componente<sfml_audio>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("lua_scripts", [](objeto_jogo *obj, bool add)

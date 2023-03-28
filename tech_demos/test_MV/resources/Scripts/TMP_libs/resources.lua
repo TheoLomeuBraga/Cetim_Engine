@@ -66,6 +66,8 @@ components.render_shader = "render_shader"
 components.render_tile_map = "render_tile_map"
 components.physics_2D = "physics_2D"
 components.character_physics_2D = "character_physics_2D"
+components.physics_2D = "physics_3D"
+components.character_physics_2D = "character_physics_3D"
 components.audio_source = "audio_source"
 components.lua_scripts = "lua_scripts"
 

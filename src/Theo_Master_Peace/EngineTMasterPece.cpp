@@ -42,26 +42,10 @@
 
 
 void configuracaoInicial(){
-
-
-
-
-
-
-
-
-
-
-
     Iniciar_Render_Func.push_back(iniciarTeste3);
     Antes_Render_Func.push_back(atualisar_global_box2D);
+    Antes_Render_Func.push_back(atualisar_global_bullet);
     Antes_Render_Func.push_back(teste3);
-
-   //Iniciar_Render_Func.push_back(inciar_imgui);
-   //Antes_Render_Func.push_back(antes_imgui);
-   //Depois_Render_Func.push_back(depois_imgui);
-
-
 }
 void comecar() {
 

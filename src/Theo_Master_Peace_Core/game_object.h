@@ -12,16 +12,11 @@ using namespace std;
 	class componente {
 	public:
 		shared_ptr<objeto_jogo> esse_objeto = NULL;
-		//bool iniciado = false;
 		componente() {}
 		virtual void iniciar() {}
 		virtual void atualisar() {}
 		virtual void colidir(colis_info col) {}
 		virtual void finalisar() {}
-
-
-
-
 	};
 
 

@@ -711,7 +711,9 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 		
-		glm::decompose(node.matrix,ret.escala,ret.quaternion,ret.posicao,vec3(0,0,0),vec4(0,0,0,0));
+		vec3 nothing;
+		vec4 nothing2;
+		glm::decompose(node.matrix,ret.escala,ret.quaternion,ret.posicao,nothing,nothing2);
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
