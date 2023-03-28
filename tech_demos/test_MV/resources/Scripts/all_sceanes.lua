@@ -281,3 +281,31 @@ function sceanes_db.test2:load()
     
     
 end
+
+
+sceanes_db.test3 = {}
+function sceanes_db.test3:load()
+    print("loading test map")
+    initialize_render_settings()
+    this_sceane.objects_layesrs = layers_table:new_2D()
+    this_sceane.objects_layesrs:create()
+    
+    --create_audio(this_sceane.objects_layesrs.sound,"resources/Audio/teste de audio.wav",true,5)
+    --background
+    
+    create_background("resources/Textures/fundo A.png")
+
+    --camera
+    --this_sceane.camera = create_camera_ortho(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
+    this_sceane.camera = create_camera_perspective(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),90,0.1,100)
+    set_lisener_object(this_sceane.camera.object_ptr)
+
+    mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.color = {r = 1,g = 0,b = 0,a = 1}       
+    pos = Vec3:new(0,0,0)
+    
+    create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
+    
+    
+end
