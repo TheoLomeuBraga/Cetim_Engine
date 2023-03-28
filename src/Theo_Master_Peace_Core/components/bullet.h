@@ -5,6 +5,15 @@
 #include "Tempo.h"
 #include "game_object.h"
 
+#include <btBulletDynamicsCommon.h>
+
+/*
+struct mesh {
+    vector<vec3> vertices;
+    vector<unsigned int> index
+};
+*/
+
 class bullet : public componente
 {
 public:
@@ -39,3 +48,4 @@ public:
 
 
 void atualisar_global_bullet(){}
+
