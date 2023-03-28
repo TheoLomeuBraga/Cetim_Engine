@@ -591,7 +591,7 @@ namespace ManuseioDados
 		}
 		return ret;
 	}
-	
+
 	Table json_table(json table)
 	{
 		Table ret;
@@ -710,6 +710,8 @@ namespace ManuseioDados
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
+		
+		glm::decompose(node.matrix,ret.escala,ret.quaternion,ret.posicao,vec3(0,0,0),vec4(0,0,0,0));
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
@@ -767,11 +769,13 @@ namespace ManuseioDados
 			ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 		}
 
-		for(int a = 0;a < gltf_loader.scenes.size();a++){
-			for(int b = 0;b < gltf_loader.scenes[a].nodesIndices.size();b++){
+		for (int a = 0; a < gltf_loader.scenes.size(); a++)
+		{
+			for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
+			{
 				int node_index = gltf_loader.scenes[a].nodesIndices[b];
 				gltf_loader::Node n = gltf_loader.nodes[node_index];
-				ret.objetos.filhos.push_back(node_3D_object(n,gltf_loader.nodes,ret,gltf_loader));
+				ret.objetos.filhos.push_back(node_3D_object(n, gltf_loader.nodes, ret, gltf_loader));
 			}
 		}
 
