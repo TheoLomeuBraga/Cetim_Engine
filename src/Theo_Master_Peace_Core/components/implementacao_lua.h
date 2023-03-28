@@ -1084,42 +1084,7 @@ namespace funcoes_ponte
 		}
 	}
 
-	// camerareturn
-
-	int get_set_camera(lua_State *L)
-	{
-		if (lua_tonumber(L, 1) == get_lua)
-		{
-			Table ret;
-			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-			shared_ptr<camera> cam = obj->pegar_componente<camera>();
-			ret.setFloat("orthographc", cam->ortografica);
-			ret.setTable("size", vec2_table(cam->tamanho));
-			ret.setFloat("zoom", cam->zoom);
-			ret.setTable("resolution", vec2_table(cam->res));
-			ret.setFloat("fcp", cam->fcp);
-			ret.setFloat("ncp", cam->ncp);
-			lua_pushtable(L, ret);
-			return 1;
-		}
-		else
-		{
-			Table t = lua_totable(L, 2);
-			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-			shared_ptr<camera> cam = obj->pegar_componente<camera>();
-			if (t.getFloat("orthographc"))
-			{
-				vec2 size = table_vec2(t.getTable("size"));
-				cam->configurar_camera(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), size.x, size.y, t.getFloat("ncp"), t.getFloat("fcp"));
-			}
-			else
-			{
-				vec2 res = table_vec2(t.getTable("resolution"));
-				cam->configurar_camera(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), t.getFloat("zoom"), res.x, res.y, t.getFloat("ncp"), t.getFloat("fcp"));
-			}
-			return 0;
-		}
-	}
+	
 
 	// audio
 	int get_set_audio(lua_State *L)
@@ -1287,58 +1252,7 @@ namespace funcoes_ponte
 		return 2;
 	}
 
-	int get_set_physic_2D(lua_State *L)
-	{
-		if (lua_tonumber(L, 1) == get_lua)
-		{
-			Table ret;
-			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
-			ret.setTable("scale", vec2_table(b2d->escala));
-			ret.setFloat("boady_dynamic", b2d->dinamica);
-			ret.setFloat("colision_shape", b2d->forma);
-			ret.setFloat("rotate", b2d->rotacionar);
-			ret.setFloat("triger", b2d->gatilho);
-			ret.setFloat("friction", b2d->atrito);
-			vector<string> objects_coliding;
-			for (shared_ptr<objeto_jogo> obj : b2d->objs_colidindo)
-			{
-				objects_coliding.push_back(ponteiro_string(obj.get()));
-			}
-			ret.setTable("objects_coliding", vString_table(objects_coliding));
-			ret.setTable("colision_layer", info_camada_table(b2d->camada));
-			vector<Table> vertex;
-			for (vec2 v2 : b2d->vertices)
-			{
-				vertex.push_back(vec2_table(v2));
-			}
-			ret.setTable("vertex", vTable_table(vertex));
-			lua_pushtable(L, ret);
-			return 1;
-		}
-		else
-		{
-			Table t = lua_totable(L, 2);
-			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
-			b2d->escala = table_vec2(t.getTable("scale"));
-			b2d->dinamica = t.getFloat("boady_dynamic");
-			b2d->forma = t.getFloat("colision_shape");
-			b2d->rotacionar = t.getFloat("rotate");
-			b2d->gatilho = t.getFloat("triger");
-			b2d->atrito = t.getFloat("friction");
-			b2d->camada = table_info_camada(t.getTable("colision_layer"));
-			vector<vec2> vertex;
-			for (Table tvec2 : table_vTable(t.getTable("vertex")))
-			{
-				vertex.push_back(table_vec2(tvec2));
-			}
-			b2d->vertices = vertex;
-			b2d->aplicar();
-			return 0;
-		}
-	}
-
+	
 	// camerareturn
 
 	int get_set_camera(lua_State *L)

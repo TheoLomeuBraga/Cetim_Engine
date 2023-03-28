@@ -264,12 +264,6 @@ enum formato_colisao
 	tile_suave = 3,
 	volume_tiled = 4,
 };
-enum formato_colisao_3D
-{
-	cubo = 0,
-	esfera = 1,
-	convexo = 2,
-};
 
 // #define NUM_CARACTERES 128
 
