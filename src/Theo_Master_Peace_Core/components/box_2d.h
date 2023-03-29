@@ -256,9 +256,6 @@ public:
 			tf->pos = vec3(pos.x, pos.y,esse_objeto->pegar_componente<transform_>()->pos.z);
 			vec3 rot = tf->pegar_angulo_graus();
 			tf->quater = quat(vec3(rot.x, rot.y, corpo->GetAngle()));
-			//escrever(esse_objeto->pegar_componente<transform_>()->pos.x);
-			//escrever(esse_objeto->pegar_componente<transform_>()->pos.y);
-			//escrever(esse_objeto->pegar_componente<transform_>()->pos.z);
 		}
 	}
 

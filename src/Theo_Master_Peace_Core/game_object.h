@@ -268,7 +268,6 @@ using namespace std;
 		void colidir(colis_info col) {
 			if (em_cena) {
 				
-
 				for (pair<string, shared_ptr<componente>> p : componentes) {
 					p.second->colidir(col);
 				}
@@ -285,10 +284,6 @@ using namespace std;
 				
 				p.second->finalisar();
 			}
-
-			//for (shared_ptr<objeto_jogo> obj : filhos) {
-			//	obj->finalisar();
-			//}
 
 		}
 

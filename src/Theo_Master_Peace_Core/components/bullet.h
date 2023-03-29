@@ -10,26 +10,17 @@
 
 btDiscreteDynamicsWorld *dynamicsWorld;
 
-map<btCollisionObject*, shared_ptr<objeto_jogo>> collisionObject_obj;
+map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
-glm::vec3 btToGlm(const btVector3& v) {
+glm::vec3 btToGlm(const btVector3 &v)
+{
     return glm::vec3(v.getX(), v.getY(), v.getZ());
 }
 
-btVector3 glmToBt(const glm::vec3& v) {
+btVector3 glmToBt(const glm::vec3 &v)
+{
     return btVector3(v.x, v.y, v.z);
 }
-
-struct RaycastResult
-{
-    bool hasHit;
-    btVector3 hitPoint;
-    btVector3 hitNormal;
-    btScalar hitFraction;
-    btCollisionObject *hitObject;
-    int partId;
-    int triangleIndex;
-};
 
 struct physics_3D_collisionInfo
 {
@@ -40,268 +31,41 @@ struct physics_3D_collisionInfo
     btVector3 normalOnB;
     btScalar appliedImpulse;
 };
-std::vector<physics_3D_collisionInfo> collisionInfos;
+std::vector<colis_info> physics_3D_collisionInfos;
 
-class CustomCollisionCallback : public btCollisionWorld::ContactResultCallback
-{
-public:
-    CustomCollisionCallback()
-    {
-    }
+#include <bullet/btBulletDynamicsCommon.h>
 
-    virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
-    {
-        physics_3D_collisionInfo collisionInfo;
+void deleteCollisionObject(btCollisionObject* object) {
+    // Remove the object from the dynamics world
+    dynamicsWorld->removeCollisionObject(object);
 
-        collisionInfo.objectA = const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject());
-        collisionInfo.objectB = const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject());
-        collisionInfo.contactPointA = cp.getPositionWorldOnA();
-        collisionInfo.contactPointB = cp.getPositionWorldOnB();
-        collisionInfo.normalOnB = cp.m_normalWorldOnB;
-        collisionInfo.appliedImpulse = cp.m_appliedImpulse;
-
-        collisionInfos.push_back(collisionInfo);
-
-        return 0; // return 0 to process all collisions
-    }
-};
-
-class CustomOverlapFilterCallback : public btOverlapFilterCallback
-{
-public:
-    virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
-    {
-        // Retrieve the btCollisionObject pointers from the user pointers
-        btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
-        btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
-
-        // Implement your custom logic to decide whether obj0 and obj1 should be allowed to collide
-        // Return true to allow collision, return false to disallow collision
-
-        return true; // By default, allow all collisions
-    }
-};
-
-bool raycast_bullet_3D(btVector3 rayFrom, btVector3 rayTo, RaycastResult &result)
-{
-    result.hasHit = false;
-
-    btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
-    dynamicsWorld->rayTest(rayFrom, rayTo, rayCallback);
-
-    if (rayCallback.hasHit())
-    {
-        result.hasHit = true;
-        result.hitPoint = rayCallback.m_hitPointWorld;
-        result.hitNormal = rayCallback.m_hitNormalWorld;
-        result.hitFraction = rayCallback.m_closestHitFraction;
-        result.hitObject = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
-        result.partId = rayCallback.m_collisionFilterGroup;
-        result.triangleIndex = rayCallback.m_collisionFilterMask;
-        if (result.hasHit)
-        {
-            return true;
+    // Delete the motion state if the object is a rigid body
+    if (btRigidBody::upcast(object)) {
+        btRigidBody* rigidBody = btRigidBody::upcast(object);
+        btMotionState* motionState = rigidBody->getMotionState();
+        if (motionState) {
+            delete motionState;
         }
     }
-    return false;
-}
 
-bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
-{
-
-    btCollisionWorld::ClosestRayResultCallback rayCallback(glmToBt(rayFrom), glmToBt(rayTo));
-    dynamicsWorld->rayTest(glmToBt(rayFrom), glmToBt(rayTo), rayCallback);
-
-    if (rayCallback.hasHit())
-    {
-        result.pos = btToGlm(rayCallback.m_hitPointWorld);
-        result.nor = btToGlm(rayCallback.m_hitNormalWorld);
-        
-        result.cos_obj = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
-        if (rayCallback.hasHit())
-        {
-            return true;
-        }
+    // Delete the collision shape
+    btCollisionShape* shape = object->getCollisionShape();
+    if (shape) {
+        delete shape;
     }
-    return false;
+
+    // Finally, delete the collision object itself
+    delete object;
 }
 
 
-namespace physics_3D_test_area
-{
+void getObjectPositionAndQuaternion(const btCollisionObject* object, glm::vec3& position, glm::quat& quaternion) {
+    btTransform transform = object->getWorldTransform();
+    btVector3 btPosition = transform.getOrigin();
+    btQuaternion btQuaternion = transform.getRotation();
 
-    RaycastResult raycast_bullet_3D(btDiscreteDynamicsWorld *dynamicsWorld, const btVector3 &rayFrom, const btVector3 &rayTo)
-    {
-        RaycastResult result;
-        result.hasHit = false;
-
-        btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
-        dynamicsWorld->rayTest(rayFrom, rayTo, rayCallback);
-
-        if (rayCallback.hasHit())
-        {
-            result.hasHit = true;
-            result.hitPoint = rayCallback.m_hitPointWorld;
-            result.hitNormal = rayCallback.m_hitNormalWorld;
-            result.hitFraction = rayCallback.m_closestHitFraction;
-            result.hitObject = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
-            result.partId = rayCallback.m_collisionFilterGroup;
-            result.triangleIndex = rayCallback.m_collisionFilterMask;
-        }
-
-        return result;
-    }
-
-    btDiscreteDynamicsWorld *dynamicsWorld;
-
-    struct bullet_mesh
-    {
-        vector<vec3> vertices;
-        vector<unsigned int> indices;
-    };
-
-    void set_custom_collision_test(btCollisionObject *A, btCollisionObject *B)
-    {
-        CustomCollisionCallback callback;
-        dynamicsWorld->contactPairTest(A, B, callback);
-
-        CustomOverlapFilterCallback filterCallback;
-        dynamicsWorld->getPairCache()->setOverlapFilterCallback(&filterCallback);
-    }
-
-    btDiscreteDynamicsWorld *initPhysicsWorld()
-    {
-        btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
-        btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        btDbvtBroadphase *broadphase = new btDbvtBroadphase();
-        btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
-        btDiscreteDynamicsWorld *dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
-        return dynamicsWorld;
-    }
-
-    // Create a ground rigid body
-    btRigidBody *createGround(btDiscreteDynamicsWorld *dynamicsWorld)
-    {
-        btCollisionShape *groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-        btDefaultMotionState *groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0)));
-        btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
-        btRigidBody *groundRigidBody = new btRigidBody(groundRigidBodyCI);
-        dynamicsWorld->addRigidBody(groundRigidBody);
-        return groundRigidBody;
-    }
-
-    // Create a sphere rigid body
-    btRigidBody *createSphere(btDiscreteDynamicsWorld *dynamicsWorld, btScalar mass, btScalar radius, const btVector3 &position)
-    {
-        btCollisionShape *sphereShape = new btSphereShape(radius);
-        btDefaultMotionState *sphereMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), position));
-        btVector3 sphereInertia(0, 0, 0);
-        sphereShape->calculateLocalInertia(mass, sphereInertia);
-        btRigidBody::btRigidBodyConstructionInfo sphereRigidBodyCI(mass, sphereMotionState, sphereShape, sphereInertia);
-        btRigidBody *sphereRigidBody = new btRigidBody(sphereRigidBodyCI);
-        dynamicsWorld->addRigidBody(sphereRigidBody);
-        return sphereRigidBody;
-    }
-
-    btRigidBody *addMeshToDynamicsWorld(btDiscreteDynamicsWorld *dynamicsWorld, const bullet_mesh &mesh, float mass, const btVector3 &position)
-    {
-        btTriangleMesh *triangleMesh = new btTriangleMesh();
-
-        for (size_t i = 0; i < mesh.indices.size(); i += 3)
-        {
-            btVector3 vertex0(mesh.vertices[mesh.indices[i]].x, mesh.vertices[mesh.indices[i]].y, mesh.vertices[mesh.indices[i]].z);
-            btVector3 vertex1(mesh.vertices[mesh.indices[i + 1]].x, mesh.vertices[mesh.indices[i + 1]].y, mesh.vertices[mesh.indices[i + 1]].z);
-            btVector3 vertex2(mesh.vertices[mesh.indices[i + 2]].x, mesh.vertices[mesh.indices[i + 2]].y, mesh.vertices[mesh.indices[i + 2]].z);
-
-            triangleMesh->addTriangle(vertex0, vertex1, vertex2);
-        }
-
-        btCollisionShape *meshShape = new btBvhTriangleMeshShape(triangleMesh, true);
-        btDefaultMotionState *meshMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), position));
-        btVector3 meshInertia(0, 0, 0);
-        meshShape->calculateLocalInertia(mass, meshInertia);
-        btRigidBody::btRigidBodyConstructionInfo meshRigidBodyCI(mass, meshMotionState, meshShape, meshInertia);
-        btRigidBody *meshRigidBody = new btRigidBody(meshRigidBodyCI);
-
-        dynamicsWorld->addRigidBody(meshRigidBody);
-        return meshRigidBody;
-    }
-
-    btPairCachingGhostObject *createBoxTrigger(btDiscreteDynamicsWorld *dynamicsWorld, const btVector3 &halfExtents, const btVector3 &position, const btQuaternion &orientation)
-    {
-        btCollisionShape *boxShape = new btBoxShape(halfExtents);
-
-        btTransform triggerTransform;
-        triggerTransform.setIdentity();
-        triggerTransform.setOrigin(position);
-        triggerTransform.setRotation(orientation);
-
-        btPairCachingGhostObject *ghostObject = new btPairCachingGhostObject();
-        ghostObject->setCollisionShape(boxShape);
-        ghostObject->setWorldTransform(triggerTransform);
-        ghostObject->setCollisionFlags(ghostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-
-        dynamicsWorld->addCollisionObject(ghostObject, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
-
-        return ghostObject;
-    }
-
-    void delete_bullet_obiject(btRigidBody *bullet_obiject)
-    {
-        dynamicsWorld->removeRigidBody(bullet_obiject);
-        delete bullet_obiject->getMotionState();
-        delete bullet_obiject->getCollisionShape();
-        delete bullet_obiject;
-    }
-
-    void delete_world(btRigidBody *sphereRigidBody, btRigidBody *groundRigidBody, btDiscreteDynamicsWorld *dynamicsWorld)
-    {
-        // delete_bullet_obiject(sphereRigidBody);
-        // delete_bullet_obiject(groundRigidBody);
-
-        btCollisionDispatcher *dispatcher = static_cast<btCollisionDispatcher *>(dynamicsWorld->getDispatcher());
-        btDefaultCollisionConfiguration *collisionConfiguration = static_cast<btDefaultCollisionConfiguration *>(dispatcher->getCollisionConfiguration());
-        delete dynamicsWorld->getBroadphase();
-        delete dynamicsWorld->getConstraintSolver();
-        delete dispatcher;
-        delete collisionConfiguration;
-        delete dynamicsWorld;
-    }
-
-    void physics_3D_test()
-    {
-        dynamicsWorld = initPhysicsWorld();
-
-        btRigidBody *groundRigidBody = createGround(dynamicsWorld);
-
-        btScalar sphereMass = 1.0;
-        btScalar sphereRadius = 1.0;
-        btVector3 spherePosition(0, 10, 0);
-        btRigidBody *sphereRigidBody = createSphere(dynamicsWorld, sphereMass, sphereRadius, spherePosition);
-
-        for (int i = 0; i < 300; ++i)
-        {
-            dynamicsWorld->stepSimulation(1.0 / 60.0, 10);
-
-            btTransform sphereTransform;
-            sphereRigidBody->getMotionState()->getWorldTransform(sphereTransform);
-            btVector3 spherePosition = sphereTransform.getOrigin();
-            std::cout << "Sphere position: " << spherePosition.getX() << ", " << spherePosition.getY() << ", " << spherePosition.getZ() << std::endl;
-        }
-
-        delete_world(sphereRigidBody, groundRigidBody, dynamicsWorld);
-    }
-};
-
-
-
-void delete_bullet_obiject(btRigidBody *bullet_obiject)
-{
-    dynamicsWorld->removeRigidBody(bullet_obiject);
-    delete bullet_obiject->getMotionState();
-    delete bullet_obiject->getCollisionShape();
-    delete bullet_obiject;
+    position = glm::vec3(btPosition.getX(), btPosition.getY(), btPosition.getZ());
+    quaternion = glm::quat(btQuaternion.getW(), btQuaternion.getX(), btQuaternion.getY(), btQuaternion.getZ());
 }
 
 class bullet : public componente
@@ -316,24 +80,32 @@ public:
     float escala_gravidade = 1;
     bool rotacionarX = true, rotacionarY = true, rotacionarZ = true;
     info_camada layer;
-    vector<colis_info> colis_infos;
+
+    btCollisionObject *bt_obj;
+    btTransform transform;
 
     bullet() {}
     void iniciar() {}
 
     void atualisar()
     {
-        for (colis_info c : colis_infos)
+        shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
+        if (tf != NULL)
         {
-            esse_objeto->colidir(c);
+            getObjectPositionAndQuaternion(bt_obj,tf->pos,tf->quater);
         }
-        vector<colis_info> vazio;
-        colis_infos.swap(vazio);
     }
 
     void colidir(colis_info col) {}
 
-    void finalisar() {}
+    void finalisar()
+    {
+        if (bt_obj != NULL) {
+			deleteCollisionObject(bt_obj);
+			collisionObject_obj.erase(bt_obj);
+		}
+        bt_obj = NULL;
+    }
 
     void aplay()
     {
@@ -347,6 +119,73 @@ public:
     }
 };
 
+class CustomContactResultCallback : public btCollisionWorld::ContactResultCallback
+{
+public:
+    CustomContactResultCallback()
+    {
+    }
+
+    virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
+    {
+        colis_info collisionInfo;
+
+        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        collisionInfo.pos = btToGlm(cp.getPositionWorldOnA());
+        collisionInfo.nor = btToGlm(cp.m_normalWorldOnB);
+        collisionInfo.velocidade = cp.m_appliedImpulse;
+        physics_3D_collisionInfos.push_back(collisionInfo);
+
+        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        physics_3D_collisionInfos.push_back(collisionInfo);
+
+        return 0; // return 0 to process all collisions
+    }
+};
+
+class CustomOverlapFilterCallback : public btOverlapFilterCallback
+{
+public:
+    virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
+    {
+        btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
+        btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
+
+        shared_ptr<bullet> bullet1 = collisionObject_obj[obj0]->pegar_componente<bullet>();
+        shared_ptr<bullet> bullet2 = collisionObject_obj[obj1]->pegar_componente<bullet>();
+        for (int i : bullet1->layer.camada_colide)
+        {
+            if (i == bullet2->layer.camada)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+};
+
+bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
+{
+
+    btCollisionWorld::ClosestRayResultCallback rayCallback(glmToBt(rayFrom), glmToBt(rayTo));
+    dynamicsWorld->rayTest(glmToBt(rayFrom), glmToBt(rayTo), rayCallback);
+
+    if (rayCallback.hasHit())
+    {
+        result.pos = btToGlm(rayCallback.m_hitPointWorld);
+        result.nor = btToGlm(rayCallback.m_hitNormalWorld);
+        result.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(rayCallback.m_collisionObject)].get();
+        if (rayCallback.hasHit())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 class bullet_charter : public componente
 {
 public:
@@ -357,36 +196,63 @@ public:
     void finalisar() {}
 };
 
-float bullet_passo_tempo;
-float bullet_ultimo_tempo;
-
-bool global_bullet_iniciado = false;
-
 void iniciar_global_bullet()
 {
+
+    CustomOverlapFilterCallback filterCallback;
+    dynamicsWorld->getPairCache()->setOverlapFilterCallback(&filterCallback);
 }
+
+void get_3D_collisions()
+{
+    CustomContactResultCallback callback;
+
+    for (int i = 0; i < dynamicsWorld->getNumCollisionObjects(); i++)
+    {
+        btCollisionObject *objA = dynamicsWorld->getCollisionObjectArray()[i];
+        for (int j = i + 1; j < dynamicsWorld->getNumCollisionObjects(); j++)
+        {
+            btCollisionObject *objB = dynamicsWorld->getCollisionObjectArray()[j];
+            if (dynamicsWorld->getDispatcher()->needsCollision(objA, objB))
+            {
+                dynamicsWorld->contactPairTest(objA, objB, callback);
+            }
+        }
+    }
+}
+
+void applay_3D_collisions()
+{
+    for (colis_info ci : physics_3D_collisionInfos)
+    {
+        objeto_jogo *obj = (objeto_jogo *)ci.obj;
+        obj->colidir(ci);
+    }
+}
+
+float bullet_passo_tempo;
+float bullet_ultimo_tempo;
+bool global_bullet_iniciado = false;
 
 void atualisar_global_bullet()
 {
     if (!global_bullet_iniciado)
     {
         iniciar_global_bullet();
+        global_bullet_iniciado = true;
     }
 
-    if (box_2D_iniciado != true)
-    {
+    // colisions
+    get_3D_collisions();
+    applay_3D_collisions();
+    std::vector<colis_info> vazio = {};
+    physics_3D_collisionInfos.swap(vazio);
 
-        // mundo.SetContactFilter(new filtro_colisao());
-        // mundo.SetContactListener(new m_contactlistener());
-        bullet_passo_tempo = 0;
+    bullet_passo_tempo = 0;
 
-        box_2D_iniciado = true;
-    }
-
-    // mundo.SetGravity(converter(gravidade));
+    dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    // mundo.Step(bullet_passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
-    // mundo.Step(bullet_passo_tempo, velocidade_interacoes, iteracao_posicao);
+    dynamicsWorld->stepSimulation(bullet_passo_tempo * Tempo::velocidadeTempo, 10);
     bullet_ultimo_tempo = Tempo::tempo;
 }

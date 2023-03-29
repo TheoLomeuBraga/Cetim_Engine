@@ -1084,8 +1084,6 @@ namespace funcoes_ponte
 		}
 	}
 
-	
-
 	// audio
 	int get_set_audio(lua_State *L)
 	{
@@ -1252,7 +1250,6 @@ namespace funcoes_ponte
 		return 2;
 	}
 
-	
 	// camerareturn
 
 	int get_set_camera(lua_State *L)
@@ -1300,22 +1297,22 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
 			Table _mesh;
-			_mesh.setString("file",bu->collision_mesh->arquivo_origem );
-			_mesh.setString("name",bu->collision_mesh->nome );
-			ret.setTable("colision_mesh",_mesh);
-			
-			ret.setTable("colision_layer",info_camada_table(bu->layer));
-			ret.setTable("scale",vec3_table(bu->escala));
-			ret.setFloat("boady_dynamic",bu->dinamica);
-			ret.setFloat("colision_shape",bu->forma);
+			_mesh.setString("file", bu->collision_mesh->arquivo_origem);
+			_mesh.setString("name", bu->collision_mesh->nome);
+			ret.setTable("colision_mesh", _mesh);
 
-			ret.setFloat("rotate_X",bu->rotacionarX);
-			ret.setFloat("rotate_Y",bu->rotacionarY);
-			ret.setFloat("rotate_Z",bu->rotacionarZ);
+			ret.setTable("colision_layer", info_camada_table(bu->layer));
+			ret.setTable("scale", vec3_table(bu->escala));
+			ret.setFloat("boady_dynamic", bu->dinamica);
+			ret.setFloat("colision_shape", bu->forma);
 
-			ret.setFloat("triger",bu->gatilho);
-			ret.setFloat("friction",bu->atrito);
-			ret.setFloat("density",bu->densidade);
+			ret.setFloat("rotate_X", bu->rotacionarX);
+			ret.setFloat("rotate_Y", bu->rotacionarY);
+			ret.setFloat("rotate_Z", bu->rotacionarZ);
+
+			ret.setFloat("triger", bu->gatilho);
+			ret.setFloat("friction", bu->atrito);
+			ret.setFloat("density", bu->densidade);
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -1327,7 +1324,7 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
 			Table mesh_info = t.getTable("colision_mesh");
-			bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"),mesh_info.getString("name"));
+			bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name"));
 
 			bu->layer = table_info_camada(t.getTable("colision_layer"));
 			bu->escala = table_vec3(t.getTable("scale"));
@@ -1345,6 +1342,17 @@ namespace funcoes_ponte
 			bu->aplay();
 			return 0;
 		}
+	}
+
+	int raycast_3D(lua_State *L)
+	{
+		Table ret;
+		colis_info ci;
+		bool rca = raycast_bullet_3D(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), ci);
+		ret = colis_info_table(ci);
+		lua_pushboolean(L, rca);
+		lua_pushtable(L, ret);
+		return 2;
 	}
 
 	map<string, lua_function> funcoes_ponte_map = {
@@ -1422,6 +1430,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
+		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
 
 		// camera
 		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
