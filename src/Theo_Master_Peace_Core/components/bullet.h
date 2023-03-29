@@ -8,6 +8,18 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
+btDiscreteDynamicsWorld *dynamicsWorld;
+
+map<btCollisionObject*, shared_ptr<objeto_jogo>> collisionObject_obj;
+
+glm::vec3 btToGlm(const btVector3& v) {
+    return glm::vec3(v.getX(), v.getY(), v.getZ());
+}
+
+btVector3 glmToBt(const glm::vec3& v) {
+    return btVector3(v.x, v.y, v.z);
+}
+
 struct RaycastResult
 {
     bool hasHit;
@@ -69,6 +81,51 @@ public:
         return true; // By default, allow all collisions
     }
 };
+
+bool raycast_bullet_3D(btVector3 rayFrom, btVector3 rayTo, RaycastResult &result)
+{
+    result.hasHit = false;
+
+    btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
+    dynamicsWorld->rayTest(rayFrom, rayTo, rayCallback);
+
+    if (rayCallback.hasHit())
+    {
+        result.hasHit = true;
+        result.hitPoint = rayCallback.m_hitPointWorld;
+        result.hitNormal = rayCallback.m_hitNormalWorld;
+        result.hitFraction = rayCallback.m_closestHitFraction;
+        result.hitObject = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
+        result.partId = rayCallback.m_collisionFilterGroup;
+        result.triangleIndex = rayCallback.m_collisionFilterMask;
+        if (result.hasHit)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
+{
+
+    btCollisionWorld::ClosestRayResultCallback rayCallback(glmToBt(rayFrom), glmToBt(rayTo));
+    dynamicsWorld->rayTest(glmToBt(rayFrom), glmToBt(rayTo), rayCallback);
+
+    if (rayCallback.hasHit())
+    {
+        result.pos = btToGlm(rayCallback.m_hitPointWorld);
+        result.nor = btToGlm(rayCallback.m_hitNormalWorld);
+        
+        result.cos_obj = const_cast<btCollisionObject *>(rayCallback.m_collisionObject);
+        if (rayCallback.hasHit())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 namespace physics_3D_test_area
 {
@@ -237,7 +294,7 @@ namespace physics_3D_test_area
     }
 };
 
-btDiscreteDynamicsWorld *dynamicsWorld;
+
 
 void delete_bullet_obiject(btRigidBody *bullet_obiject)
 {
