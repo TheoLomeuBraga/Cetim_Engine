@@ -44,11 +44,12 @@ function physics_3D_component:new(object_ptr)
         self.scale = deepcopyjson(j.scale)
         self.boady_dynamic = j.boady_dynamic
         self.colision_shape = j.colision_shape
-        self.rotate = j.rotate
+        self.rotate_X = j.rotate_X
+        self.rotate_Y = j.rotate_Y
+        self.rotate_Z = j.rotate_Z
         self.triger = j.triger
         self.friction = j.friction
         self.density = j.density
-        self.objects_coliding = deepcopyjson(j.objects_coliding)
         self.colision_layer = deepcopyjson(j.colision_layer)
         self.colision_mesh = deepcopyjson(j.colision_mesh)
     end

@@ -8,7 +8,7 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
-btDiscreteDynamicsWorld *dynamicsWorld;
+btDiscreteDynamicsWorld *dynamicsWorld = NULL;
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
@@ -35,22 +35,26 @@ std::vector<colis_info> physics_3D_collisionInfos;
 
 #include <bullet/btBulletDynamicsCommon.h>
 
-void deleteCollisionObject(btCollisionObject* object) {
+void deleteCollisionObject(btCollisionObject *object)
+{
     // Remove the object from the dynamics world
     dynamicsWorld->removeCollisionObject(object);
 
     // Delete the motion state if the object is a rigid body
-    if (btRigidBody::upcast(object)) {
-        btRigidBody* rigidBody = btRigidBody::upcast(object);
-        btMotionState* motionState = rigidBody->getMotionState();
-        if (motionState) {
+    if (btRigidBody::upcast(object))
+    {
+        btRigidBody *rigidBody = btRigidBody::upcast(object);
+        btMotionState *motionState = rigidBody->getMotionState();
+        if (motionState)
+        {
             delete motionState;
         }
     }
 
     // Delete the collision shape
-    btCollisionShape* shape = object->getCollisionShape();
-    if (shape) {
+    btCollisionShape *shape = object->getCollisionShape();
+    if (shape)
+    {
         delete shape;
     }
 
@@ -58,8 +62,8 @@ void deleteCollisionObject(btCollisionObject* object) {
     delete object;
 }
 
-
-void getObjectPositionAndQuaternion(const btCollisionObject* object, glm::vec3& position, glm::quat& quaternion) {
+void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &position, glm::quat &quaternion)
+{
     btTransform transform = object->getWorldTransform();
     btVector3 btPosition = transform.getOrigin();
     btQuaternion btQuaternion = transform.getRotation();
@@ -71,6 +75,7 @@ void getObjectPositionAndQuaternion(const btCollisionObject* object, glm::vec3& 
 class bullet : public componente
 {
 public:
+
     shared_ptr<malha> collision_mesh;
     char forma = caixa;
     float densidade = 1, atrito = 1;
@@ -81,29 +86,36 @@ public:
     bool rotacionarX = true, rotacionarY = true, rotacionarZ = true;
     info_camada layer;
 
-    btCollisionObject *bt_obj;
-    btTransform transform;
+    btCollisionObject *bt_obj = NULL;
+    //btTransform transform;
 
     bullet() {}
-    void iniciar() {}
+    void iniciar() {
+        
+    }
 
     void atualisar()
     {
+        ///*
+        btTransform transform;
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
-        if (tf != NULL)
+        if (tf != NULL && bt_obj != NULL)
         {
-            getObjectPositionAndQuaternion(bt_obj,tf->pos,tf->quater);
+            getObjectPositionAndQuaternion(bt_obj, tf->pos, tf->quater);
         }
+        //*/
+        
     }
 
     void colidir(colis_info col) {}
 
     void finalisar()
     {
-        if (bt_obj != NULL) {
-			deleteCollisionObject(bt_obj);
-			collisionObject_obj.erase(bt_obj);
-		}
+        if (bt_obj != NULL)
+        {
+            deleteCollisionObject(bt_obj);
+            collisionObject_obj.erase(bt_obj);
+        }
         bt_obj = NULL;
     }
 
@@ -198,7 +210,12 @@ public:
 
 void iniciar_global_bullet()
 {
+    btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+    btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+    btDbvtBroadphase *broadphase = new btDbvtBroadphase();
+    btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 
+    dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     CustomOverlapFilterCallback filterCallback;
     dynamicsWorld->getPairCache()->setOverlapFilterCallback(&filterCallback);
 }
