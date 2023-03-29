@@ -4,7 +4,7 @@ require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
 require("TMP_libs.short_cuts.create_camera")
-require("TMP_libs.short_cuts.fps_counter")
+require("TMP_libs.short_cuts.create_collision_mesh")
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")
@@ -305,7 +305,7 @@ function sceanes_db.test3:load()
     mat.color = {r = 1,g = 0,b = 0,a = 1}       
     pos = Vec3:new(0,0,0)
     
-    create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
-    
+    --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
+    create_collision_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
     
 end

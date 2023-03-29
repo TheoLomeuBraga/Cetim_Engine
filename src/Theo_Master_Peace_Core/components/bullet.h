@@ -302,8 +302,19 @@ public:
 
 float bullet_passo_tempo;
 float bullet_ultimo_tempo;
+
+bool global_bullet_iniciado = false;
+
+void iniciar_global_bullet(){
+
+}
+
 void atualisar_global_bullet()
 {
+    if(!global_bullet_iniciado){
+        iniciar_global_bullet();
+    }
+
     if (box_2D_iniciado != true)
     {
 
