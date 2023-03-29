@@ -252,12 +252,12 @@ class bullet : public componente
 public:
     shared_ptr<malha> collision_mesh;
     char forma = caixa;
-    float densidade = 1, atrito = 0;
+    float densidade = 1, atrito = 1;
     bool gatilho = false;
     char dinamica = estatico;
     vec3 escala = vec3(1, 1, 1);
     float escala_gravidade = 1;
-    bool rotacionar = true;
+    bool rotacionarX = true,rotacionarY = true,rotacionarZ = true;
     info_camada layer;
     vector<colis_info> colis_infos;
 

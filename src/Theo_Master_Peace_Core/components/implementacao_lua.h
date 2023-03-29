@@ -1309,9 +1309,12 @@ namespace funcoes_ponte
 			ret.setFloat("boady_dynamic",bu->dinamica);
 			ret.setFloat("colision_shape",bu->forma);
 
-			ret.setFloat("rotate",bu->rotacionar);
+			ret.setFloat("rotate_X",bu->rotacionarX);
+			ret.setFloat("rotate_Y",bu->rotacionarY);
+			ret.setFloat("rotate_Z",bu->rotacionarZ);
+
 			ret.setFloat("triger",bu->gatilho);
-			ret.setFloat("friction",bu->densidade);
+			ret.setFloat("friction",bu->atrito);
 			ret.setFloat("density",bu->densidade);
 
 			lua_pushtable(L, ret);
@@ -1322,6 +1325,22 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+
+			Table mesh_info = t.getTable("colision_mesh");
+			bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"),mesh_info.getString("name"));
+
+			bu->layer = table_info_camada(t.getTable("colision_layer"));
+			bu->escala = table_vec3(t.getTable("scale"));
+			bu->dinamica = t.getFloat("boady_dynamic");
+			bu->forma = t.getFloat("colision_shape");
+
+			bu->rotacionarX = t.getFloat("rotate_X");
+			bu->rotacionarY = t.getFloat("rotate_Y");
+			bu->rotacionarZ = t.getFloat("rotate_Z");
+
+			bu->gatilho = t.getFloat("triger");
+			bu->atrito = t.getFloat("friction");
+			bu->densidade = t.getFloat("density");
 
 			bu->aplay();
 			return 0;
