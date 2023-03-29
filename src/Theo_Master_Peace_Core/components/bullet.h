@@ -91,7 +91,6 @@ public:
 
     bullet() {}
     void iniciar() {
-        
     }
 
     void atualisar()
