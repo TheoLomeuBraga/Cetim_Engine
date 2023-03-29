@@ -31,7 +31,9 @@ function physics_3D_component:new(object_ptr)
     p.scale = { x = 1, y = 1, z = 1 }
     p.boady_dynamic = boady_dynamics.static
     p.colision_shape = colision_shapes.tile
-    p.rotate = true
+    p.rotate_X = true
+    p.rotate_Y = true
+    p.rotate_Z = true
     p.triger = false
     p.friction = 1
     p.density = 1
