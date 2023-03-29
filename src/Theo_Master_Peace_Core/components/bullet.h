@@ -8,19 +8,70 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
+struct RaycastResult
+{
+    bool hasHit;
+    btVector3 hitPoint;
+    btVector3 hitNormal;
+    btScalar hitFraction;
+    btCollisionObject *hitObject;
+    int partId;
+    int triangleIndex;
+};
+
+struct physics_3D_collisionInfo
+{
+    btCollisionObject *objectA;
+    btCollisionObject *objectB;
+    btVector3 contactPointA;
+    btVector3 contactPointB;
+    btVector3 normalOnB;
+    btScalar appliedImpulse;
+};
+std::vector<physics_3D_collisionInfo> collisionInfos;
+
+class CustomCollisionCallback : public btCollisionWorld::ContactResultCallback
+{
+public:
+    CustomCollisionCallback()
+    {
+    }
+
+    virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
+    {
+        physics_3D_collisionInfo collisionInfo;
+
+        collisionInfo.objectA = const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject());
+        collisionInfo.objectB = const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject());
+        collisionInfo.contactPointA = cp.getPositionWorldOnA();
+        collisionInfo.contactPointB = cp.getPositionWorldOnB();
+        collisionInfo.normalOnB = cp.m_normalWorldOnB;
+        collisionInfo.appliedImpulse = cp.m_appliedImpulse;
+
+        collisionInfos.push_back(collisionInfo);
+
+        return 0; // return 0 to process all collisions
+    }
+};
+
+class CustomOverlapFilterCallback : public btOverlapFilterCallback
+{
+public:
+    virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
+    {
+        // Retrieve the btCollisionObject pointers from the user pointers
+        btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
+        btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
+
+        // Implement your custom logic to decide whether obj0 and obj1 should be allowed to collide
+        // Return true to allow collision, return false to disallow collision
+
+        return true; // By default, allow all collisions
+    }
+};
+
 namespace physics_3D_test_area
 {
-
-    struct RaycastResult
-    {
-        bool hasHit;
-        btVector3 hitPoint;
-        btVector3 hitNormal;
-        btScalar hitFraction;
-        btCollisionObject *hitObject;
-        int partId;
-        int triangleIndex;
-    };
 
     RaycastResult raycast_bullet_3D(btDiscreteDynamicsWorld *dynamicsWorld, const btVector3 &rayFrom, const btVector3 &rayTo)
     {
@@ -50,57 +101,6 @@ namespace physics_3D_test_area
     {
         vector<vec3> vertices;
         vector<unsigned int> indices;
-    };
-
-    struct physics_3D_collisionInfo
-    {
-        btCollisionObject *objectA;
-        btCollisionObject *objectB;
-        btVector3 contactPointA;
-        btVector3 contactPointB;
-        btVector3 normalOnB;
-        btScalar appliedImpulse;
-    };
-    std::vector<physics_3D_collisionInfo> collisionInfos;
-
-    class CustomCollisionCallback : public btCollisionWorld::ContactResultCallback
-    {
-    public:
-        CustomCollisionCallback()
-        {
-        }
-
-        virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
-        {
-            physics_3D_collisionInfo collisionInfo;
-
-            collisionInfo.objectA = const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject());
-            collisionInfo.objectB = const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject());
-            collisionInfo.contactPointA = cp.getPositionWorldOnA();
-            collisionInfo.contactPointB = cp.getPositionWorldOnB();
-            collisionInfo.normalOnB = cp.m_normalWorldOnB;
-            collisionInfo.appliedImpulse = cp.m_appliedImpulse;
-
-            collisionInfos.push_back(collisionInfo);
-
-            return 0; // return 0 to process all collisions
-        }
-    };
-
-    class CustomOverlapFilterCallback : public btOverlapFilterCallback
-    {
-    public:
-        virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
-        {
-            // Retrieve the btCollisionObject pointers from the user pointers
-            btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
-            btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
-
-            // Implement your custom logic to decide whether obj0 and obj1 should be allowed to collide
-            // Return true to allow collision, return false to disallow collision
-
-            return true; // By default, allow all collisions
-        }
     };
 
     void set_custom_collision_test(btCollisionObject *A, btCollisionObject *B)
@@ -257,7 +257,7 @@ public:
     char dinamica = estatico;
     vec3 escala = vec3(1, 1, 1);
     float escala_gravidade = 1;
-    bool rotacionarX = true,rotacionarY = true,rotacionarZ = true;
+    bool rotacionarX = true, rotacionarY = true, rotacionarZ = true;
     info_camada layer;
     vector<colis_info> colis_infos;
 
@@ -305,13 +305,14 @@ float bullet_ultimo_tempo;
 
 bool global_bullet_iniciado = false;
 
-void iniciar_global_bullet(){
-
+void iniciar_global_bullet()
+{
 }
 
 void atualisar_global_bullet()
 {
-    if(!global_bullet_iniciado){
+    if (!global_bullet_iniciado)
+    {
         iniciar_global_bullet();
     }
 
@@ -325,7 +326,7 @@ void atualisar_global_bullet()
         box_2D_iniciado = true;
     }
 
-    mundo.SetGravity(converter(gravidade));
+    // mundo.SetGravity(converter(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     // mundo.Step(bullet_passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
