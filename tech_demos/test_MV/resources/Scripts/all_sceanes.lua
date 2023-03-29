@@ -304,8 +304,13 @@ function sceanes_db.test3:load()
     mat.shader = "resources/Shaders/mesh"
     mat.color = {r = 1,g = 0,b = 0,a = 1}       
     pos = Vec3:new(0,0,0)
+
+    pos1 = Vec3:new(0,5,0)
+    pos2 = Vec3:new(0,-6,0)
     
     --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
-    create_collision_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
+    create_collision_mesh(this_sceane.objects_layesrs.background_3D,pos1,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
+    mat.color = {r = 1,g = 0,b = 1,a = 1}   
+    create_collision_mesh(this_sceane.objects_layesrs.background_3D,pos2,Vec3:new(0,-90,0),Vec3:new(5,1,5),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")})
     
 end
