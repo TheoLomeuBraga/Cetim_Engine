@@ -4,7 +4,7 @@ require("TMP_libs.components.render_mesh")
 require("TMP_libs.components.physics_3D")
 
 
-function create_collision_mesh(father,pos,rot,sca,render_layer,mats,meshes_locations)
+function create_collision_mesh(father,pos,rot,sca,render_layer,mats,meshes_locations,rigid_boady)
     ret = game_object:new(create_object(father))
     
     ret:add_component(components.transform)
