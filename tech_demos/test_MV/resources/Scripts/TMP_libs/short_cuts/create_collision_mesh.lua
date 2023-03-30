@@ -8,11 +8,15 @@ function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes
     ret = game_object:new(create_object(father))
 
     ret:add_component(components.physics_3D)
+    
     if rigid_boady then
         ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     else
         ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
     end
+
+    ret.components[components.physics_3D].colision_shape = colision_shapes.cube
+    ret.components[components.physics_3D].scale = deepcopyjson(sca)
 
     ret.components[components.physics_3D]:set()
 
