@@ -1319,42 +1319,27 @@ namespace funcoes_ponte
 		}
 		else
 		{
-			cout << "22222\n";
 			Table t = lua_totable(L, 2);
-			cout << "11111\n";
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-			cout << "00000\n";
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
 			Table mesh_info = t.getTable("colision_mesh");
-			cout << "AAAAA\n";
 			if(mesh_info.getString("file").compare("") && mesh_info.getString("name").compare("")){
 				bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name"));
 			}
 			
-			cout << "BBBBB\n";
 			bu->layer = table_info_camada(t.getTable("colision_layer"));
-			cout << "CCCCC\n";
 			bu->escala = table_vec3(t.getTable("scale"));
-			cout << "DDDDD\n";
 			bu->dinamica = t.getFloat("boady_dynamic");
-			cout << "EEEEE\n";
 			bu->forma = t.getFloat("colision_shape");
-			cout << "FFFFF\n";
 
 			bu->rotacionarX = t.getFloat("rotate_X");
-			cout << "GGGGG\n";
 			bu->rotacionarY = t.getFloat("rotate_Y");
-			cout << "HHHHH\n";
 			bu->rotacionarZ = t.getFloat("rotate_Z");
-			cout << "IIIII\n";
 
 			bu->gatilho = t.getFloat("triger");
-			cout << "JJJJJ\n";
 			bu->atrito = t.getFloat("friction");
-			cout << "KKKK\n";
 			bu->densidade = t.getFloat("density");
-			cout << "LLLLL\n";
 
 			bu->aplay();
 			return 0;
