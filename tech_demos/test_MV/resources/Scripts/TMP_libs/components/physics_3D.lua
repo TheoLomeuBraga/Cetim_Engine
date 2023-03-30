@@ -3,6 +3,10 @@ require("TMP_libs.components.component_index")
 
 function get_set_physic_3D(get_set, object)
 end
+function get_gravity()
+end
+function set_gravity(x,y,z)
+end
 
 --boady_dynamics
 boady_dynamics = {}
