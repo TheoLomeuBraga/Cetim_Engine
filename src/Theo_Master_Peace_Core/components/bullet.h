@@ -154,30 +154,26 @@ public:
             bt_obj = new btGhostObject();
             bt_obj->setCollisionShape(Shape);
             bt_obj->setWorldTransform(transform);
-            btVector3 Inertia(0, 0, 0);
-            Shape->calculateLocalInertia(densidade, Inertia);
             dynamicsWorld->addCollisionObject(bt_obj);
         }
         else
         {
             if (dinamica == dinamico)
             {
-
+                
                 btDefaultMotionState *MotionState = new btDefaultMotionState(btTransform(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w), glmToBt(position)));
                 btVector3 Inertia(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
                 btRigidBody::btRigidBodyConstructionInfo rb(densidade, MotionState, Shape, Inertia);
-                bt_obj = new btRigidBody(rb);
-                dynamicsWorld->addRigidBody((btRigidBody *)bt_obj);
+                btRigidBody *RigidBody = new btRigidBody(rb);
+                dynamicsWorld->addRigidBody(RigidBody);
+                bt_obj = RigidBody;
             }
             else if (dinamica == estatico)
             {
                 bt_obj = new btCollisionObject();
                 bt_obj->setCollisionShape(Shape);
                 bt_obj->setWorldTransform(transform);
-                // btVector3 Inertia(0, 0, 0);
-                // Shape->calculateLocalInertia(densidade, Inertia);
-
                 dynamicsWorld->addCollisionObject(bt_obj);
             }
         }
@@ -189,6 +185,11 @@ public:
         if (tf != NULL && bt_obj != NULL)
         {
             getObjectPositionAndQuaternion(bt_obj, tf->pos, tf->quater);
+        }
+
+        if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+        {
+            ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(0, -1, 0));
         }
     }
 
@@ -296,7 +297,7 @@ public:
 void iniciar_global_bullet()
 {
     cout << "iniciar global bullet\n";
-
+    /*
     btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
     btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
     btDbvtBroadphase *broadphase = new btDbvtBroadphase();
@@ -304,6 +305,14 @@ void iniciar_global_bullet()
     broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
     btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+    */
+
+    btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+    btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+    btDbvtBroadphase *broadphase = new btDbvtBroadphase();
+    btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
+    dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+    dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 }
 
 void get_3D_collisions()
@@ -356,7 +365,7 @@ void atualisar_global_bullet()
     dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    // dynamicsWorld->stepSimulation(bullet_passo_tempo * Tempo::velocidadeTempo, maxSubSteps);
-    dynamicsWorld->stepSimulation(bullet_passo_tempo * Tempo::velocidadeTempo, maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    // dynamicsWorld->stepSimulation(60 * (bullet_passo_tempo * Tempo::velocidadeTempo) + 1, maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
     bullet_ultimo_tempo = Tempo::tempo;
 }
