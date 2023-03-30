@@ -75,7 +75,6 @@ void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &
 class bullet : public componente
 {
 public:
-
     shared_ptr<malha> collision_mesh;
     char forma = caixa;
     float densidade = 1, atrito = 1;
@@ -87,23 +86,56 @@ public:
     info_camada layer;
 
     btCollisionObject *bt_obj = NULL;
-    //btTransform transform;
 
     bullet() {}
-    void iniciar() {
+    void iniciar()
+    {
+        btCollisionShape *Shape;
+
+        if (forma == caixa)
+        {
+            Shape = new btBoxShape(glmToBt(escala));
+        }
+        else if (forma == esfera)
+        {
+            Shape = new btSphereShape(escala.x);
+        }
+        else if (forma == convexo)
+        {
+            btTriangleMesh *triangleMesh = new btTriangleMesh();
+            for (size_t i = 0; i < collision_mesh->indice.size(); i += 3)
+            {
+                vec3 v1 = vec3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]) * escala;
+                size_t i2 = i + 1;
+                vec3 v2 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
+                i2 = i + 2;
+                vec3 v3 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
+
+                triangleMesh->addTriangle(glmToBt(v1), glmToBt(v2), glmToBt(v3));
+            }
+
+            Shape = new btBvhTriangleMeshShape(triangleMesh, true);
+        }
+
+        btTransform transform;
+        transform.setIdentity();
+        transform.setOrigin(glmToBt(vec3(0,0,0)));
+        shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
+        if (tf != NULL){
+            transform.setOrigin(glmToBt(tf->pos));
+            transform.setRotation(btQuaternion(tf->quater.x,tf->quater.y,tf->quater.z,tf->quater.w));
+        }
+        
     }
 
     void atualisar()
     {
-        ///*
         btTransform transform;
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL && bt_obj != NULL)
         {
             getObjectPositionAndQuaternion(bt_obj, tf->pos, tf->quater);
         }
-        //*/
-        
     }
 
     void colidir(colis_info col) {}
