@@ -78,7 +78,7 @@ void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &
     btVector3 btPosition = transform.getOrigin();
     btQuaternion btQuaternion = transform.getRotation();
     position = glm::vec3(btPosition.getX(), btPosition.getY(), btPosition.getZ());
-    cout << btPosition.getX() << btPosition.getY() << btPosition.getZ() << endl;
+    //cout << btPosition.getX() << btPosition.getY() << btPosition.getZ() << endl;
     quaternion = glm::quat(btQuaternion.getW(), btQuaternion.getX(), btQuaternion.getY(), btQuaternion.getZ());
 }
 
@@ -177,6 +177,7 @@ public:
                 dynamicsWorld->addCollisionObject(bt_obj);
             }
         }
+        collisionObject_obj[bt_obj] = esse_objeto;
     }
 
     void atualisar()
@@ -199,6 +200,7 @@ public:
     {
         if (bt_obj != NULL)
         {
+            dynamicsWorld->removeRigidBody(bt_obj);
             deleteCollisionObject(bt_obj);
             collisionObject_obj.erase(bt_obj);
         }
@@ -297,7 +299,9 @@ public:
 void iniciar_global_bullet()
 {
     cout << "iniciar global bullet\n";
-    /*
+
+    
+    
     btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
     btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
     btDbvtBroadphase *broadphase = new btDbvtBroadphase();
@@ -305,14 +309,17 @@ void iniciar_global_bullet()
     broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
     btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    */
 
+    
+    
+    /*
     btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
     btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
     btDbvtBroadphase *broadphase = new btDbvtBroadphase();
     btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+    */
 }
 
 void get_3D_collisions()
@@ -367,5 +374,6 @@ void atualisar_global_bullet()
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     // dynamicsWorld->stepSimulation(60 * (bullet_passo_tempo * Tempo::velocidadeTempo) + 1, maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    cout << dynamicsWorld->getCollisionObjectArray().size() << endl;
     bullet_ultimo_tempo = Tempo::tempo;
 }
