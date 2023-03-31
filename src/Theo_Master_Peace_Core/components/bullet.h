@@ -68,9 +68,6 @@ void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &
     if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
     {
         ((btRigidBody *)(object))->getMotionState()->getWorldTransform(transform);
-        btVector3 btPosition = transform.getOrigin();
-        btQuaternion btQuaternion = transform.getRotation();
-        position = glm::vec3(btPosition.getX(), btPosition.getY(), btPosition.getZ());
     }
     else
     {
@@ -83,6 +80,19 @@ void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &
     quaternion = glm::quat(btQuaternion.getW(), btQuaternion.getX(), btQuaternion.getY(), btQuaternion.getZ());
 }
 
+btTransform getObjectTransform(const btCollisionObject *object)
+{
+    btTransform transform;
+    if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+    {
+        ((btRigidBody *)(object))->getMotionState()->getWorldTransform(transform);
+    }
+    else
+    {
+        transform = object->getWorldTransform();
+    }
+    return transform;
+}
 void iniciar_global_bullet();
 
 class bullet : public componente
@@ -217,6 +227,36 @@ public:
         iniciar();
     }
 
+    void mudar_pos(vec3 pos)
+    {
+        btTransform tf = getObjectTransform(bt_obj);
+        tf.setOrigin(btVector3(pos.x, pos.y, pos.z));
+        if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+        {
+            ((btRigidBody *)(bt_obj))->getMotionState()->setWorldTransform(tf);
+        }
+        else
+        {
+            bt_obj->setWorldTransform(tf);
+        }
+    }
+    void mudar_rot(quat rot)
+    {
+        btTransform tf = getObjectTransform(bt_obj);
+        tf.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+        if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+        {
+            ((btRigidBody *)(bt_obj))->getMotionState()->setWorldTransform(tf);
+        }
+        else
+        {
+            bt_obj->setWorldTransform(tf);
+        }
+    }
+    void mudar_rot(vec3 rot)
+    {
+        mudar_rot(graus_quat(rot));
+    }
     ~bullet()
     {
     }
@@ -377,5 +417,4 @@ void atualisar_global_bullet()
     // dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
     dynamicsWorld->stepSimulation(1 / 60.f, 10);
     bullet_ultimo_tempo = Tempo::tempo;
-    
 }

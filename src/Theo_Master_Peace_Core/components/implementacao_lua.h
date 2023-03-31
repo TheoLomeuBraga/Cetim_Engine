@@ -772,17 +772,22 @@ namespace funcoes_ponte
 		{
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		}
+		vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 		if (tf != NULL)
 		{
-			vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			tf->pos = v3;
 		}
 		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 		if (b2d != NULL)
 		{
-			vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
+			
 			b2d->mudar_pos(vec2(v3.x, v3.y));
+		}
+		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+		if (bu != NULL)
+		{
+			bu->mudar_pos(v3);
 		}
 		return 0;
 	}
@@ -795,17 +800,21 @@ namespace funcoes_ponte
 		{
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		}
+		vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 		if (tf != NULL)
 		{
-			vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			tf->mudar_angulo_graus(v3);
 		}
 		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 		if (b2d != NULL)
 		{
-			vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			b2d->mudar_rot(v3.x);
+		}
+		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+		if (bu != NULL)
+		{
+			bu->mudar_rot(v3.x);
 		}
 		return 0;
 	}
