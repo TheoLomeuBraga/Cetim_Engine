@@ -174,6 +174,7 @@ public:
                 Shape->calculateLocalInertia(densidade, boxInertia);
                 btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, boxInertia);
                 btRigidBody *RigidBody = new btRigidBody(CI);
+                RigidBody->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 dynamicsWorld->addRigidBody(RigidBody);
                 bt_obj = RigidBody;
                 //*/

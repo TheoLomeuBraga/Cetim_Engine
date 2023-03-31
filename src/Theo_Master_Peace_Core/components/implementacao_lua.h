@@ -814,7 +814,7 @@ namespace funcoes_ponte
 		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 		if (bu != NULL)
 		{
-			bu->mudar_rot(v3.x);
+			bu->mudar_rot(v3);
 		}
 		return 0;
 	}
