@@ -200,7 +200,13 @@ public:
     {
         if (bt_obj != NULL)
         {
-            dynamicsWorld->removeRigidBody(bt_obj);
+            if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY){
+                dynamicsWorld->removeRigidBody((btRigidBody*)bt_obj);
+            }else{
+                dynamicsWorld->removeCollisionObject(bt_obj);
+            }
+            
+            
             deleteCollisionObject(bt_obj);
             collisionObject_obj.erase(bt_obj);
         }
