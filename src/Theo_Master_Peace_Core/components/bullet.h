@@ -177,11 +177,9 @@ public:
                 RigidBody->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 dynamicsWorld->addRigidBody(RigidBody);
                 bt_obj = RigidBody;
-                //*/
             }
             else if (dinamica == estatico)
             {
-
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
                 btRigidBody *RigidBody = new btRigidBody(CI);
                 dynamicsWorld->addRigidBody(RigidBody);
