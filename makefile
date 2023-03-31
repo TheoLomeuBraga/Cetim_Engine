@@ -30,7 +30,7 @@ engine_cpp_linux_path=./src/Theo_Master_Peace/TMP_LINUX.cpp
 
 tags_windows=-std=c++17 -pipe 
 
-libs_path_linux=-L./libs/linux
+libs_path_linux=-L./libs/linux 
 
 libs_linux=-llua -lglfw -lGLEW -lglut -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
@@ -39,3 +39,7 @@ definitions_linux= -D LINUX
 linux:
 	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
 	${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
+
+linux_test:
+	${compiler_linux} ${tags} ./src/tests/bullet.cpp  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/test_bullet
+	

@@ -35,8 +35,6 @@ struct physics_3D_collisionInfo
 };
 std::vector<colis_info> physics_3D_collisionInfos;
 
-#include <bullet/btBulletDynamicsCommon.h>
-
 void deleteCollisionObject(btCollisionObject *object)
 {
     // Remove the object from the dynamics world
@@ -84,6 +82,8 @@ void getObjectPositionAndQuaternion(const btCollisionObject *object, glm::vec3 &
 
 void iniciar_global_bullet();
 
+int num_bullet = 0;
+
 class bullet : public componente
 {
 public:
@@ -99,9 +99,9 @@ public:
 
     btCollisionObject *bt_obj = NULL;
 
-    bullet() {}
     void iniciar()
     {
+        num_bullet++;
         if (!global_bullet_iniciado)
         {
             iniciar_global_bullet();
@@ -160,7 +160,7 @@ public:
         {
             if (dinamica == dinamico)
             {
-                
+
                 btDefaultMotionState *MotionState = new btDefaultMotionState(btTransform(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w), glmToBt(position)));
                 btVector3 Inertia(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
@@ -168,6 +168,7 @@ public:
                 btRigidBody *RigidBody = new btRigidBody(rb);
                 dynamicsWorld->addRigidBody(RigidBody);
                 bt_obj = RigidBody;
+                //cout << "numero corpos dinamicos: " << dynamicsWorld->getNumCollisionObjects() << endl;
             }
             else if (dinamica == estatico)
             {
@@ -175,6 +176,7 @@ public:
                 bt_obj->setCollisionShape(Shape);
                 bt_obj->setWorldTransform(transform);
                 dynamicsWorld->addCollisionObject(bt_obj);
+                //cout << "numero corpos dinamicos: " << dynamicsWorld->getNumCollisionObjects() << endl;
             }
         }
         collisionObject_obj[bt_obj] = esse_objeto;
@@ -198,19 +200,22 @@ public:
 
     void finalisar()
     {
+        num_bullet-=1;
+        cout << "finalizado\n";
         if (bt_obj != NULL)
         {
-            if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY){
-                dynamicsWorld->removeRigidBody((btRigidBody*)bt_obj);
-            }else{
+            if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+            {
+                dynamicsWorld->removeRigidBody((btRigidBody *)bt_obj);
+            }
+            else
+            {
                 dynamicsWorld->removeCollisionObject(bt_obj);
             }
-            
-            
             deleteCollisionObject(bt_obj);
             collisionObject_obj.erase(bt_obj);
+            bt_obj = NULL;
         }
-        bt_obj = NULL;
     }
 
     void aplay()
@@ -221,7 +226,6 @@ public:
 
     ~bullet()
     {
-        finalisar();
     }
 };
 
@@ -306,8 +310,6 @@ void iniciar_global_bullet()
 {
     cout << "iniciar global bullet\n";
 
-    
-    
     btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
     btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
     btDbvtBroadphase *broadphase = new btDbvtBroadphase();
@@ -316,8 +318,6 @@ void iniciar_global_bullet()
     btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
-    
-    
     /*
     btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
     btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -378,8 +378,8 @@ void atualisar_global_bullet()
     dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    // dynamicsWorld->stepSimulation(60 * (bullet_passo_tempo * Tempo::velocidadeTempo) + 1, maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    //dynamicsWorld->stepSimulation(60 * (bullet_passo_tempo * Tempo::velocidadeTempo) + 1, maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
-    cout << dynamicsWorld->getCollisionObjectArray().size() << endl;
+    cout << "numero corpos dinamicos: " << dynamicsWorld->getNumCollisionObjects() << endl;
     bullet_ultimo_tempo = Tempo::tempo;
 }
