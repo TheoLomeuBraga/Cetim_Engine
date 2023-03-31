@@ -302,7 +302,8 @@ function sceanes_db.test3:load()
 
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
-    mat.color = {r = 1,g = 0,b = 0,a = 1}       
+    mat.color = {r = 1,g = 0,b = 0,a = 1}
+    mat.textures = {"resources/Textures/white.png"}  
     pos = Vec3:new(0,0,0)
 
     pos1 = Vec3:new(0,5,0)
