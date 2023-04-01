@@ -40,6 +40,9 @@ linux:
 	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
 	${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
 
+linux_debug:
+	${compiler_linux} ${tags} -Wall -Wextra ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace -g
+
 linux_test:
 	${compiler_linux} ${tags} ./src/tests/bullet.cpp  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/test_bullet
 	

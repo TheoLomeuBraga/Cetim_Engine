@@ -4,13 +4,12 @@ require("TMP_libs.components.render_mesh")
 require("TMP_libs.components.physics_3D")
 
 
-function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes_locations, rigid_boady)
+function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes_locations, rigid_boady,shape,cillision_mesh)
     ret = game_object:new(create_object(father))
 
     
 
     ret:add_component(components.transform)
-    ret.components[components.transform].is_ui = is_ui
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
     ret.components[components.transform].scale = deepcopy(sca)
@@ -23,8 +22,10 @@ function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes
     else
         ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
     end
-
-    ret.components[components.physics_3D].colision_shape = colision_shapes.cube
+    ret.components[components.physics_3D].collision_shape = shape
+    if shape == collision_shapes.convex then
+        ret.components[components.physics_3D].collision_mesh = deepcopyjson(cillision_mesh)
+    end
     ret.components[components.physics_3D].scale = deepcopyjson(sca)
 
     ret.components[components.physics_3D]:set()

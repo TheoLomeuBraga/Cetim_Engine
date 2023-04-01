@@ -1308,12 +1308,12 @@ namespace funcoes_ponte
 			Table _mesh;
 			_mesh.setString("file", bu->collision_mesh->arquivo_origem);
 			_mesh.setString("name", bu->collision_mesh->nome);
-			ret.setTable("colision_mesh", _mesh);
+			ret.setTable("collision_mesh", _mesh);
 
-			ret.setTable("colision_layer", info_camada_table(bu->layer));
+			ret.setTable("collision_layer", info_camada_table(bu->layer));
 			ret.setTable("scale", vec3_table(bu->escala));
 			ret.setFloat("boady_dynamic", bu->dinamica);
-			ret.setFloat("colision_shape", bu->forma);
+			ret.setFloat("collision_shape", bu->forma);
 
 			ret.setFloat("rotate_X", bu->rotacionarX);
 			ret.setFloat("rotate_Y", bu->rotacionarY);
@@ -1332,15 +1332,15 @@ namespace funcoes_ponte
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
-			Table mesh_info = t.getTable("colision_mesh");
+			Table mesh_info = t.getTable("collision_mesh");
 			if(mesh_info.getString("file").compare("") && mesh_info.getString("name").compare("")){
 				bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name"));
 			}
 			
-			bu->layer = table_info_camada(t.getTable("colision_layer"));
+			bu->layer = table_info_camada(t.getTable("collision_layer"));
 			bu->escala = table_vec3(t.getTable("scale"));
 			bu->dinamica = t.getFloat("boady_dynamic");
-			bu->forma = t.getFloat("colision_shape");
+			bu->forma = (char)t.getFloat("collision_shape");
 
 			bu->rotacionarX = t.getFloat("rotate_X");
 			bu->rotacionarY = t.getFloat("rotate_Y");

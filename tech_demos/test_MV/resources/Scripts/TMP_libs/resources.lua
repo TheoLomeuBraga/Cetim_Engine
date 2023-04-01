@@ -8,9 +8,9 @@ this_object_ptr = ""
 
 
 --input
-function get_input(input_divice,input_to_check)
-    
-end 
+function get_input(input_divice, input_to_check)
+
+end
 
 --mouse
 mouse = {}
@@ -28,15 +28,15 @@ mouse.position_y = "position_y"
 joystick = {}
 joystick.name = "joystick"
 
-joystick.A ="A"
-joystick.B ="B"
-joystick.X ="X"
-joystick.Y ="Y"
+joystick.A = "A"
+joystick.B = "B"
+joystick.X = "X"
+joystick.Y = "Y"
 
-joystick.LB ="LB"
-joystick.RB ="RB"
-joystick.LT ="LT"
-joystick.RT ="RT"
+joystick.LB = "LB"
+joystick.RB = "RB"
+joystick.LT = "LT"
+joystick.RT = "RT"
 
 joystick.start = "start"
 joystick.back = "back"
@@ -94,7 +94,8 @@ asset_types.tile_map = "tile_map"
 asset_types.audio = "audio"
 
 --normal direction
-normal_direction = {}
-normal_direction.front = 0
-normal_direction.back = 1
-normal_direction.both = 2
+normal_direction = {
+    front = 0,
+    back = 1,
+    both = 2
+}
