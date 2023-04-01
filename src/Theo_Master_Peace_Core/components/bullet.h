@@ -128,18 +128,27 @@ public:
         else if (forma == convexo)
         {
             btTriangleMesh *triangleMesh = new btTriangleMesh();
-            for (size_t i = 0; i < collision_mesh->indice.size(); i += 3)
+            if (collision_mesh != NULL)
             {
-                vec3 v1 = vec3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]) * escala;
-                size_t i2 = i + 1;
-                vec3 v2 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
-                i2 = i + 2;
-                vec3 v3 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
+                cout << collision_mesh->indice.size() << endl;
+                for (size_t i = 0; i < collision_mesh->indice.size(); i += 3)
+                {
+                    vec3 v1 = vec3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]) * escala;
+                    size_t i2 = i + 1;
+                    vec3 v2 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
+                    i2 = i + 2;
+                    vec3 v3 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
 
-                triangleMesh->addTriangle(glmToBt(v1), glmToBt(v2), glmToBt(v3));
+                    triangleMesh->addTriangle(glmToBt(v1), glmToBt(v2), glmToBt(v3));
+                }
+
+                Shape = new btBvhTriangleMeshShape(triangleMesh, true);
             }
-
-            Shape = new btBvhTriangleMeshShape(triangleMesh, true);
+            else
+            {
+                cout << "fail load collision mesh\n";
+                Shape = new btBoxShape(glmToBt(escala));
+            }
         }
 
         btTransform transform;
@@ -191,7 +200,6 @@ public:
 
     void atualisar()
     {
-
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL && bt_obj != NULL)
         {
@@ -207,7 +215,6 @@ public:
         {
             if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
             {
-                cout << "removendo rb" << endl;
                 dynamicsWorld->removeRigidBody((btRigidBody *)bt_obj);
             }
             else
