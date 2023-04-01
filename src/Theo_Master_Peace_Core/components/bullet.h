@@ -114,7 +114,7 @@ public:
     {
         cout << "iniciar\n";
         iniciar_global_bullet();
-
+        cout << "BBBBB\n";
         btCollisionShape *Shape;
 
         if (forma == caixa)
@@ -150,6 +150,7 @@ public:
                 Shape = new btBoxShape(glmToBt(escala));
             }
         }
+        cout << "BBBBB22222\n";
 
         btTransform transform;
         transform.setIdentity();
@@ -195,7 +196,9 @@ public:
                 bt_obj = RigidBody;
             }
         }
-        collisionObject_obj[bt_obj] = esse_objeto;
+        cout << "CCCCC\n";
+        collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj,esse_objeto));
+        cout << "DDDDDD\n";
     }
 
     void atualisar()
@@ -289,6 +292,7 @@ public:
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
+        
 
         return 0; // return 0 to process all collisions
     }
@@ -350,8 +354,6 @@ void iniciar_global_bullet()
     if (global_bullet_iniciado == 0)
     {
         cout << "iniciar global bullet\n";
-
-        ///*
         btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
         btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
         btDbvtBroadphase *broadphase = new btDbvtBroadphase();
@@ -360,16 +362,6 @@ void iniciar_global_bullet()
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
         dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
-        //*/
-
-        /*
-        btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
-        btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        btBroadphaseInterface *overlappingPairCache = new btDbvtBroadphase();
-        btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-        dynamicsWorld->setGravity(btVector3(0, -10, 0));
-        */
         global_bullet_iniciado++;
     }
 }
@@ -414,6 +406,8 @@ void atualisar_global_bullet()
     applay_3D_collisions();
     std::vector<colis_info> vazio = {};
     physics_3D_collisionInfos.swap(vazio);
+
+    
 
     bullet_passo_tempo = 0;
 

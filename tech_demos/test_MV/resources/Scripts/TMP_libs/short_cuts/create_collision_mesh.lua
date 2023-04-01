@@ -15,8 +15,8 @@ function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes
     ret.components[components.transform].scale = deepcopy(sca)
     ret.components[components.transform]:set()
 
-    ret:add_component(components.physics_3D)
     
+    ret:add_component(components.physics_3D)
     if rigid_boady then
         ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     else
@@ -27,7 +27,6 @@ function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes
         ret.components[components.physics_3D].collision_mesh = deepcopyjson(cillision_mesh)
     end
     ret.components[components.physics_3D].scale = deepcopyjson(sca)
-
     ret.components[components.physics_3D]:set()
 
     ret:add_component(components.render_mesh)
@@ -35,6 +34,8 @@ function create_collision_mesh(father, pos, rot, sca, render_layer, mats, meshes
     ret.components[components.render_mesh].meshes_cout = math.min(tablelength(meshes_locations), tablelength(mats))
     ret.components[components.render_mesh].meshes = deepcopy(meshes_locations)
     ret.components[components.render_mesh].materials = deepcopy(mats)
+    
     ret.components[components.render_mesh]:set()
+    
     return ret
 end

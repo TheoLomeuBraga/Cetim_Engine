@@ -116,7 +116,6 @@ using namespace std;
 			comp.esse_objeto = esse_objeto;
 			if(componentes.find(nome) == componentes.end()){
 				componentes.insert(pair<string, shared_ptr<componente>>(nome, std::make_shared<X>(comp)));
-			
 				if (em_cena) {
 					componentes[nome]->iniciar();
 				}

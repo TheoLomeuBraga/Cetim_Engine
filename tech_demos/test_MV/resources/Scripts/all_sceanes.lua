@@ -310,7 +310,8 @@ function sceanes_db.test3:load()
     
     set_gravity(0,-9,0)
     --create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")})
-    create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")},true,collision_shapes.convex,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
+    create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")},true,collision_shapes.sphere,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
+    create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,7,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Suzanne")},true,collision_shapes.sphere,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
     --create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(0,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},true,colision_shapes.convex,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
     mat.color = {r = 1,g = 0,b = 1,a = 1}
     create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,-6,0),Vec3:new(0,45,0),Vec3:new(5,1,5),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},false,collision_shapes.cube,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
