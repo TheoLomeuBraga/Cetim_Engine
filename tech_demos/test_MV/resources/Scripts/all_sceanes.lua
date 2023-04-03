@@ -310,10 +310,13 @@ function sceanes_db.test3:load()
     suzane = mesh_location:new("resources/3D Models/cube.gltf","Suzanne")
     set_gravity(0,-9,0)
     create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane},true,collision_shapes.convex,suzane)
+    mat.color = {r = 0,g = 0,b = 0,a = 1}
     create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane},true,collision_shapes.convex,suzane)
+    mat.color = {r = 0,g = 1,b = 0,a = 1}
     create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,10,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},true,collision_shapes.cube,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
+    mat.color = {r = 0,g = 0,b = 1,a = 1}
     create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,7,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane},true,collision_shapes.convex,suzane)
-    mat.color = {r = 1,g = 0,b = 1,a = 1}
+    mat.color = {r = 1,g = 1,b = 1,a = 1}
     collis_detect = create_collision_mesh(this_sceane.objects_layesrs.background_3D,Vec3:new(0,-5,0),Vec3:new(0,45,0),Vec3:new(100,1,100),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},false,collision_shapes.cube,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
     --collis_detect:add_component(components.lua_scripts)
     --collis_detect.components[components.lua_scripts]:add_script("resources/Scripts/collision_debuger.lua")
