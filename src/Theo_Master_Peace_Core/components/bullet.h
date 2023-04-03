@@ -176,6 +176,7 @@ public:
             else
             {
                 cout << "fail load collision mesh\n";
+                Bullet_Meshes.erase(esse_objeto);
                 Shape = new btBoxShape(glmToBt(escala));
             }
         }
