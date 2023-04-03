@@ -13,15 +13,14 @@ btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
-struct Bullet_Mesh {
+struct Bullet_Mesh
+{
     std::vector<btVector3> vertices;
     std::vector<int> indices;
 };
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
-
-
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -144,22 +143,35 @@ public:
             {
                 mesh.vertices.push_back(btVector3(v.posicao[0], v.posicao[1], v.posicao[2]));
             }
-            
+
             Bullet_Meshes[esse_objeto] = mesh;
 
             btTriangleMesh *triangleMesh = new btTriangleMesh();
             if (collision_mesh != NULL)
             {
-                btTriangleIndexVertexArray *indexVertexArray = new btTriangleIndexVertexArray(
-                    Bullet_Meshes[esse_objeto].indices.size() / 3,
-                    const_cast<int *>(Bullet_Meshes[esse_objeto].indices.data()),
-                    sizeof(int) * 3,
-                    Bullet_Meshes[esse_objeto].vertices.size(),
-                    const_cast<btScalar *>(reinterpret_cast<const btScalar *>(Bullet_Meshes[esse_objeto].vertices.data())),
-                    sizeof(btVector3));
-                btGImpactMeshShape *meshShape = new btGImpactMeshShape(indexVertexArray);
-                meshShape->updateBound();
-                Shape = meshShape;
+
+                if (dinamica == dinamico)
+                {
+                    btConvexHullShape *convexHullShape = new btConvexHullShape();
+                    for (auto v : Bullet_Meshes[esse_objeto].vertices)
+                    {
+                        convexHullShape->addPoint(v);
+                    }
+                    Shape = convexHullShape;
+                }
+                else if (dinamica == estatico)
+                {
+                    btTriangleIndexVertexArray *indexVertexArray = new btTriangleIndexVertexArray(
+                        Bullet_Meshes[esse_objeto].indices.size() / 3,
+                        const_cast<int *>(Bullet_Meshes[esse_objeto].indices.data()),
+                        sizeof(int) * 3,
+                        Bullet_Meshes[esse_objeto].vertices.size(),
+                        const_cast<btScalar *>(reinterpret_cast<const btScalar *>(Bullet_Meshes[esse_objeto].vertices.data())),
+                        sizeof(btVector3));
+                    btGImpactMeshShape *meshShape = new btGImpactMeshShape(indexVertexArray);
+                    meshShape->updateBound();
+                    Shape = meshShape;
+                }
             }
             else
             {
@@ -431,7 +443,8 @@ void applay_3D_collisions()
         obj->colidir(ci);
     }
 }
-void clean_collisions(){
+void clean_collisions()
+{
     std::vector<colis_info> vazio = {};
     physics_3D_collisionInfos.swap(vazio);
 }
@@ -448,7 +461,6 @@ void atualisar_global_bullet()
     get_3D_collisions();
     applay_3D_collisions();
     clean_collisions();
-    
 
     bullet_passo_tempo = 0;
 
@@ -456,6 +468,6 @@ void atualisar_global_bullet()
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
-    //dynamicsWorld->stepSimulation(1 / 60.f, 10);
+    // dynamicsWorld->stepSimulation(1 / 60.f, 10);
     bullet_ultimo_tempo = Tempo::tempo;
 }
