@@ -7,12 +7,21 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <bullet/BulletCollision/Gimpact/btGImpactShape.h>
 
 btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
+struct Bullet_Mesh {
+    std::vector<btVector3> vertices;
+    std::vector<int> indices;
+};
+
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
+map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
+
+
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -56,6 +65,7 @@ void deleteCollisionObject(btCollisionObject *object)
     if (shape)
     {
         delete shape;
+        Bullet_Meshes.erase(collisionObject_obj[object]);
     }
 
     // Finally, delete the collision object itself
@@ -99,7 +109,7 @@ class bullet : public componente
 {
 public:
     shared_ptr<malha> collision_mesh;
-    char forma = caixa;
+    char forma = 0;
     float densidade = 1, atrito = 1;
     bool gatilho = false;
     char dinamica = estatico;
@@ -112,11 +122,9 @@ public:
 
     void iniciar()
     {
-        cout << "iniciar\n";
         iniciar_global_bullet();
-        cout << "BBBBB\n";
-        btCollisionShape *Shape;
 
+        btCollisionShape *Shape;
         if (forma == caixa)
         {
             Shape = new btBoxShape(glmToBt(escala));
@@ -127,22 +135,31 @@ public:
         }
         else if (forma == convexo)
         {
+            Bullet_Mesh mesh;
+            for (unsigned int i : collision_mesh->indice)
+            {
+                mesh.indices.push_back(i);
+            }
+            for (vertice v : collision_mesh->vertices)
+            {
+                mesh.vertices.push_back(btVector3(v.posicao[0], v.posicao[1], v.posicao[2]));
+            }
+            
+            Bullet_Meshes[esse_objeto] = mesh;
+
             btTriangleMesh *triangleMesh = new btTriangleMesh();
             if (collision_mesh != NULL)
             {
-                cout << collision_mesh->indice.size() << endl;
-                for (size_t i = 0; i < collision_mesh->indice.size(); i += 3)
-                {
-                    vec3 v1 = vec3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]) * escala;
-                    size_t i2 = i + 1;
-                    vec3 v2 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
-                    i2 = i + 2;
-                    vec3 v3 = vec3(collision_mesh->vertices[i2].posicao[0], collision_mesh->vertices[i2].posicao[1], collision_mesh->vertices[i2].posicao[2]) * escala;
-
-                    triangleMesh->addTriangle(glmToBt(v1), glmToBt(v2), glmToBt(v3));
-                }
-
-                Shape = new btBvhTriangleMeshShape(triangleMesh, true);
+                btTriangleIndexVertexArray *indexVertexArray = new btTriangleIndexVertexArray(
+                    Bullet_Meshes[esse_objeto].indices.size() / 3,
+                    const_cast<int *>(Bullet_Meshes[esse_objeto].indices.data()),
+                    sizeof(int) * 3,
+                    Bullet_Meshes[esse_objeto].vertices.size(),
+                    const_cast<btScalar *>(reinterpret_cast<const btScalar *>(Bullet_Meshes[esse_objeto].vertices.data())),
+                    sizeof(btVector3));
+                btGImpactMeshShape *meshShape = new btGImpactMeshShape(indexVertexArray);
+                meshShape->updateBound();
+                Shape = meshShape;
             }
             else
             {
@@ -150,12 +167,11 @@ public:
                 Shape = new btBoxShape(glmToBt(escala));
             }
         }
-        cout << "BBBBB22222\n";
 
         btTransform transform;
         transform.setIdentity();
-        transform.setOrigin(glmToBt(vec3(0, 0, 0)));
         vec3 position = vec3(0, 0, 0);
+        transform.setOrigin(glmToBt(position));
         quat quaternion;
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL)
@@ -179,26 +195,23 @@ public:
             btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
             if (dinamica == dinamico)
             {
-                ///*
-                btVector3 boxInertia(0, 0, 0);
-                Shape->calculateLocalInertia(densidade, boxInertia);
-                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, boxInertia);
-                btRigidBody *RigidBody = new btRigidBody(CI);
-                RigidBody->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
-                dynamicsWorld->addRigidBody(RigidBody);
-                bt_obj = RigidBody;
+                btVector3 Inertia = btVector3(0, 0, 0);
+                Shape->calculateLocalInertia(densidade, Inertia);
+                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
+                btRigidBody *rb = new btRigidBody(CI);
+                rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
+                dynamicsWorld->addRigidBody(rb);
+                bt_obj = rb;
             }
             else if (dinamica == estatico)
             {
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                btRigidBody *RigidBody = new btRigidBody(CI);
-                dynamicsWorld->addRigidBody(RigidBody);
-                bt_obj = RigidBody;
+                btRigidBody *rb = new btRigidBody(CI);
+                dynamicsWorld->addRigidBody(rb);
+                bt_obj = rb;
             }
         }
-        cout << "CCCCC\n";
-        collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj,esse_objeto));
-        cout << "DDDDDD\n";
+        collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj, esse_objeto));
     }
 
     void atualisar()
@@ -292,7 +305,6 @@ public:
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
-        
 
         return 0; // return 0 to process all collisions
     }
@@ -306,16 +318,27 @@ public:
         btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
         btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
 
-        shared_ptr<bullet> bullet1 = collisionObject_obj[obj0]->pegar_componente<bullet>();
-        shared_ptr<bullet> bullet2 = collisionObject_obj[obj1]->pegar_componente<bullet>();
-        for (int i : bullet1->layer.camada_colide)
+        if (collisionObject_obj.find(obj0) != collisionObject_obj.end() && collisionObject_obj.find(obj1) != collisionObject_obj.end())
         {
-            if (i == bullet2->layer.camada)
+            shared_ptr<bullet> bullet1 = collisionObject_obj[obj0]->pegar_componente<bullet>();
+            shared_ptr<bullet> bullet2 = collisionObject_obj[obj1]->pegar_componente<bullet>();
+
+            if (bullet1 != NULL && bullet2 != NULL)
             {
-                return true;
+
+                for (int i : bullet1->layer.camada_colide)
+                {
+                    if (i == bullet2->layer.camada)
+                    {
+                        return true;
+                    }
+                }
             }
         }
-
+        else
+        {
+            return true;
+        }
         return false;
     }
 };
@@ -354,6 +377,7 @@ void iniciar_global_bullet()
     if (global_bullet_iniciado == 0)
     {
         cout << "iniciar global bullet\n";
+        /*
         btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
         btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
         btDbvtBroadphase *broadphase = new btDbvtBroadphase();
@@ -361,7 +385,16 @@ void iniciar_global_bullet()
         broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+        */
+
+        btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+        btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        btDbvtBroadphase *broadphase = new btDbvtBroadphase();
+        CustomOverlapFilterCallback *customFilterCallback = new CustomOverlapFilterCallback();
+        broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
+        btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
+        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+
         global_bullet_iniciado++;
     }
 }
@@ -390,7 +423,17 @@ void applay_3D_collisions()
     {
         objeto_jogo *obj = (objeto_jogo *)ci.obj;
         obj->colidir(ci);
+
+        colis_info ci2 = ci;
+        ci2.obj = ci.cos_obj;
+        ci2.cos_obj = ci.obj;
+        obj = (objeto_jogo *)ci2.obj;
+        obj->colidir(ci);
     }
+}
+void clean_collisions(){
+    std::vector<colis_info> vazio = {};
+    physics_3D_collisionInfos.swap(vazio);
 }
 
 float bullet_passo_tempo;
@@ -404,9 +447,7 @@ void atualisar_global_bullet()
     // colisions
     get_3D_collisions();
     applay_3D_collisions();
-    std::vector<colis_info> vazio = {};
-    physics_3D_collisionInfos.swap(vazio);
-
+    clean_collisions();
     
 
     bullet_passo_tempo = 0;
@@ -414,7 +455,7 @@ void atualisar_global_bullet()
     dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    // dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
-    dynamicsWorld->stepSimulation(1 / 60.f, 10);
+    dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    //dynamicsWorld->stepSimulation(1 / 60.f, 10);
     bullet_ultimo_tempo = Tempo::tempo;
 }
