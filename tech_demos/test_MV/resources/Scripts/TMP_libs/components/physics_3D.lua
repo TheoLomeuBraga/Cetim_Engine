@@ -6,7 +6,6 @@ end
 
 function get_gravity()
 end
-
 function set_gravity(x, y, z)
 end
 

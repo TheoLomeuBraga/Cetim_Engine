@@ -97,7 +97,8 @@ namespace teclas
 			}
 			else
 			{
-				keyIdentifier = "Key_" + std::to_string(key);
+				//keyIdentifier = "Key_" + std::to_string(key);
+				keyIdentifier = std::to_string(key);
 			}
 
 			// cout << keyIdentifier << endl;
