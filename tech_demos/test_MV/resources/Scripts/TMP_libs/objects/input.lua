@@ -1,6 +1,29 @@
-keyboard_keys_dictionary  = {}
+keyboard_keys_dictionary  = {
+    
+}
 
-joystick_keys_axes_dictionary = {}
+joystick_keys_axes_dictionary = {
+    x = 0,
+    a = 1,
+    b = 2,
+    y = 3,
+    lb = 4,
+    rb = 5,
+    back = 6,
+    start = 7,
+    lt = 9,
+    rt = 10,
+    up = 11,
+    down = 12,
+    left = 13,
+    right = 14,
+    rx = "axis_0",
+    ry = "axis_1",
+    lx = "axis_2",
+    ly = "axis_3",
+    rt_axis = "axis_4",
+    lt_axis = "axis_5"
+}
 
 mouse_keys_axes_dictionary = {
     left = 1,
