@@ -337,6 +337,11 @@ namespace funcoes_ponte
 		}
 	}
 
+	int close(lua_State *L){
+		gerente_janela->fechar = true;
+		return 0;
+	}
+
 	// time
 	int get_time(lua_State *L)
 	{
@@ -1511,6 +1516,7 @@ namespace funcoes_ponte
 
 		// janela
 		pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
+		pair<string, lua_function>("close", funcoes_ponte::close),
 
 		// sprite
 		pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),

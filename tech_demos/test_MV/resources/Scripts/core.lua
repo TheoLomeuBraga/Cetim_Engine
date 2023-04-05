@@ -10,6 +10,7 @@ require("TMP_libs.objects.render_layer")
 
 
 
+
 require("math")
 json = require("libs.json")
 
@@ -28,7 +29,7 @@ require("all_sceanes")
 
 require("run_comunication_test")
 
-
+require("TMP_libs.objects.input")
 
 
 

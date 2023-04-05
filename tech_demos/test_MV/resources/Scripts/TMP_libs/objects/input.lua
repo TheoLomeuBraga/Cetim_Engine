@@ -7,26 +7,55 @@ input_devices = {
 
 key_axis_dictionarys = {
     [input_devices.keyboard] = {
-        [0] = 48,
-        ["0"] = 48,
-        [1] = 49,
-        ["1"] = 49,
-        [2] = 50,
-        ["2"] = 50,
-        [3] = 51,
-        ["3"] = 51,
-        [4] = 52,
-        ["4"] = 52,
-        [5] = 53,
-        ["5"] = 53,
-        [6] = 54,
-        ["6"] = 54,
-        [7] = 55,
-        ["7"] = 55,
-        [8] = 56,
-        ["8"] = 56,
-        [9] = 57,
-        ["9"] = 57,
+        [0]=48,["0"]=48,
+        [1]=49,["1"]=49,
+        [2]=50,["2"]=50,
+        [3]=51,["3"]=51,
+        [4]=52,["4"]=52,
+        [5]=53,["5"]=53,
+        [6]=54,["6"]=54,
+        [7]=55,["7"]=55,
+        [8]=56,["8"]=56,
+        [9]=57,["9"]=57,
+        space=32,
+        a=65,
+        b=66,
+        c=67,
+        d=68,
+        e=69,
+        f=70,
+        g=71,
+        h=72,
+        i=73,
+        j=74,
+        k=75,
+        l=76,
+        m=77,
+        n=78,
+        o=79,
+        p=80,
+        q=81,
+        r=82,
+        s=83,
+        t=84,
+        u=85,
+        v=86,
+        w=87,
+        x=88,
+        y=89,
+        z=90,
+        backslash=92,
+        escape=256,
+        enter=257,
+        tab=258,
+        backspace=259,
+        insert=260,
+        delete=261,
+        right=262,
+        left=263,
+        down=264,
+        up=265,
+        caps_locl=280,
 
     },
     [input_devices.joystick] = {
@@ -51,7 +80,7 @@ key_axis_dictionarys = {
         rt_axis = "axis_4",
         lt_axis = "axis_5"
     },
-    [input_devices.mouse] = {{
+    [input_devices.mouse] = { {
         left = 1,
         right = 2,
         scroll_button = 3,
@@ -60,23 +89,29 @@ key_axis_dictionarys = {
         normalized_x = "normalized_x",
         normalized_y = "normalized_y",
         scroll = "scroll",
-    }},
+    } },
 }
 
 
 
-function set_cursor_position(x,y)
+function set_cursor_position(x, y)
 end
+
 function get_keyboard_input()
 end
+
 function get_mouse_input()
 end
+
 function get_joystick_input()
 end
+
 function set_keyboard_text_input(on)
 end
+
 function get_keyboard_text_input()
 end
+
 function get_inputs(device)
 end
 
@@ -86,16 +121,35 @@ keys_axis = {
     [input_devices.mouse] = {},
     [input_devices.keyboard_text] = "",
 }
+
+function keys_axis:set_cursor_position(x,y)
+    set_cursor_position(x, y)
+end
+
+function keys_axis:get_inputs_from_device(device)
+    if device == input_devices.keyboard then
+        keys_axis[input_devices.keyboard] = get_keyboard_input()
+    elseif device == input_devices.joystick then
+        keys_axis[input_devices.joystick] = get_joystick_input()
+    elseif device == input_devices.mouse then
+        keys_axis[input_devices.mouse] = get_mouse_input()
+    elseif device == input_devices.keyboard_text then
+        keys_axis[input_devices.keyboard_text] = get_keyboard_text_input()
+    end
+end
+
 function keys_axis:get_inputs()
     keys_axis[input_devices.keyboard] = get_keyboard_input()
     keys_axis[input_devices.joystick] = get_joystick_input()
     keys_axis[input_devices.mouse] = get_mouse_input()
     keys_axis[input_devices.keyboard_text] = get_keyboard_text_input()
 end
+
 function keys_axis:set_keyboard_text_input_geter(on)
     set_keyboard_text_input(on)
 end
-function keys_axis:get_input_from_device(device,key)
-    key_translation = key_axis_dictionarys[device][key]
+
+function keys_axis:get_input_from_device(device, key)
+    local key_translation = key_axis_dictionarys[device][key]
     return keys_axis[device][key_translation]
 end
