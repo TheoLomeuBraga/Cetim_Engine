@@ -1,8 +1,17 @@
-keyboard_keys  = {}
+keyboard_keys_dictionary  = {}
 
-joystick_keys_axes = {}
+joystick_keys_axes_dictionary = {}
 
-mouse_keys_axes = {}
+mouse_keys_axes_dictionary = {
+    left = 1,
+    right = 2,
+    scroll_button = 3,
+    x = "x",
+    y = "y",
+    normalized_x = "normalized_x",
+    normalized_y = "normalized_y",
+    scroll = "scroll",
+}
 
 function set_cursor_position(x,y)
 end

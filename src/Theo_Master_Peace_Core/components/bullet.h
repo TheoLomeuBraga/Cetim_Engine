@@ -292,6 +292,19 @@ public:
     {
         mudar_rot(graus_quat(rot));
     }
+    void adicionar_forca(vec3 forca){
+        ((btRigidBody *)(bt_obj))->applyCentralForce(btVector3(forca.x,forca.y,forca.z));
+    }
+    void adicionar_impulso(vec3 forca){
+        ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x,forca.y,forca.z));
+    }
+    
+    void adicionar_forca_rotativo(vec3 forca){
+        ((btRigidBody *)(bt_obj))->applyTorque(btVector3(forca.x,forca.y,forca.z));
+    }
+    void adicionar_impulso_rotativo(vec3 forca){
+        ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x,forca.y,forca.z));
+    }
     ~bullet()
     {
     }

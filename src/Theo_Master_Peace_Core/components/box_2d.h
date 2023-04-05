@@ -288,6 +288,18 @@ public:
 	{
 		corpo->ApplyForce(b2Vec2(forca.x, forca.y), corpo->GetWorldCenter(), true);
 	}
+	void adicionar_impulso(vec2 forca)
+	{
+		corpo->ApplyLinearImpulse(b2Vec2(forca.x, forca.y), corpo->GetWorldCenter(), true);
+	}
+	
+	void adicionar_forca_rotativo(float forca){
+		corpo->ApplyTorque(forca,true);
+	}
+	void adicionar_impulso_rotativo(float forca){
+		corpo->ApplyAngularImpulse(forca,true);
+	}
+
 
 	// https://www.iforce2d.net/b2dtut/raycasting
 	static bool ray_cast(vec2 pos, float distancia, float angulo)

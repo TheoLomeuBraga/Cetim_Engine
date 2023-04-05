@@ -60,15 +60,15 @@ namespace mouse
 
 			if (buttonState == GLFW_PRESS)
 			{
-				mouseMap["Mouse Button " + std::to_string(button)] = 2;
+				mouseMap[std::to_string(button)] = 2;
 			}
 			else if (buttonState == GLFW_RELEASE)
 			{
-				mouseMap["Mouse Button " + std::to_string(button)] = 3;
+				mouseMap[std::to_string(button)] = 3;
 			}
 			else
 			{
-				mouseMap["Mouse Button " + std::to_string(button)] = 0;
+				mouseMap[std::to_string(button)] = 0;
 			}
 		}
 
@@ -200,19 +200,19 @@ namespace controle
 			{
 				if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
 				{
-					joystickKeyMap["Button " + std::to_string(i)] = 1;
+					joystickKeyMap[std::to_string(i)] = 1;
 				}
 				else if (buttons[i] == GLFW_PRESS)
 				{
-					joystickKeyMap["Button " + std::to_string(i)] = 2;
+					joystickKeyMap[std::to_string(i)] = 2;
 				}
 				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
 				{
-					joystickKeyMap["Button " + std::to_string(i)] = 3;
+					joystickKeyMap[std::to_string(i)] = 3;
 				}
 				else
 				{
-					joystickKeyMap["Button " + std::to_string(i)] = 0;
+					joystickKeyMap[std::to_string(i)] = 0;
 				}
 
 				prevJoystickButtonsState[i] = buttons[i];
@@ -233,7 +233,7 @@ namespace controle
 
 			for (int i = 0; i < axisCount; ++i)
 			{
-				joystickAxes["Axis " + std::to_string(i)] = axes[i];
+				joystickAxes["Axis_" + std::to_string(i)] = axes[i];
 			}
 		}
 

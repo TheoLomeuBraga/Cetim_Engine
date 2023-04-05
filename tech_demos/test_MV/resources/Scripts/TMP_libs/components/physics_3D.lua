@@ -4,6 +4,17 @@ require("TMP_libs.objects.collision_shapes")
 function get_set_physic_3D(get_set, object)
 end
 
+function add_force(object, force_x, force_y,force_z)
+end
+function add_impulse(object, force_x, force_y,force_z)
+end
+
+function add_rotative_force(object, force_x, force_y,force_z)
+end
+function add_rotative_impulse(object, force_x, force_y,force_z)
+end
+
+
 function get_gravity()
 end
 function set_gravity(x, y, z)
@@ -60,6 +71,19 @@ function physics_3D_component:new(object_ptr)
 
     function p:set()
         get_set_physic_3D(set_lua, deepcopyjson(self))
+    end
+
+    function p:add_force(force_x, force_y,force_z)
+        add_force(self.object_ptr, force_x, force_y,force_z)
+    end
+    function p:add_impulse(force_x, force_y,force_z)
+        add_impulse(self.object_ptr, force_x, force_y,force_z)
+    end
+    function p:add_rotative_force(force_x, force_y,force_z)
+        add_rotative_force(self.object_ptr, force_x, force_y,force_z)
+    end
+    function p:add_rotative_impulse(force_x, force_y,force_z)
+        add_rotative_impulse(self.object_ptr, force_x, force_y,force_z)
     end
 
     function p:delet()

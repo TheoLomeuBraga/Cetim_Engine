@@ -3,6 +3,12 @@ require("TMP_libs.objects.collision_shapes")
 
 function add_force(object, force_x, force_y)
 end
+function add_impulse(object, force_x, force_y)
+end
+function add_rotative_force(object, force)
+end
+function add_rotative_impulse(object, force)
+end
 
 function get_set_physic_2D(get_set, object)
 end
@@ -72,6 +78,16 @@ function physics_2D_component:new(object_ptr)
 
     function p:add_force(force_x, force_y)
         add_force(self.object_ptr, force_x, force_y)
+    end
+    function p:add_impulse(force_x, force_y)
+        add_impulse(self.object_ptr, force_x, force_y)
+    end
+    
+    function p:add_rotative_force(force_x)
+        add_rotative_force(self.object_ptr, force_x)
+    end
+    function p:add_rotative_impulse(force_x)
+        add_rotative_impulse(self.object_ptr, force_x)
     end
 
     function p:delet()

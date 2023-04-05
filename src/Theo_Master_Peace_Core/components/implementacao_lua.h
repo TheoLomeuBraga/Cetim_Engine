@@ -1038,6 +1038,95 @@ namespace funcoes_ponte
 				b2d->adicionar_forca(vec2(lua_tonumber(L, 2), lua_tonumber(L, 3)));
 			}
 		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->adicionar_forca(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+			}
+		}
+		return 0;
+	}
+
+	int add_impulse(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		if (argumentos == 3 && obj != NULL)
+		{
+			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+			if (b2d != NULL)
+			{
+				b2d->adicionar_impulso(vec2(lua_tonumber(L, 2), lua_tonumber(L, 3)));
+			}
+		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->adicionar_impulso(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+			}
+		}
+		return 0;
+	}
+
+	int add_rotative_force(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		if (argumentos == 2 && obj != NULL)
+		{
+			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+			if (b2d != NULL)
+			{
+				b2d->adicionar_forca_rotativo(lua_tonumber(L, 2));
+			}
+		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->adicionar_forca_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+			}
+		}
+		return 0;
+	}
+
+	int add_rotative_impulse(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		if (argumentos == 2 && obj != NULL)
+		{
+			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+			if (b2d != NULL)
+			{
+				b2d->adicionar_impulso_rotativo(lua_tonumber(L, 2));
+			}
+		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->adicionar_impulso_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+			}
+		}
 		return 0;
 	}
 
@@ -1438,6 +1527,10 @@ namespace funcoes_ponte
 		// physic
 		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
 		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
+		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
+		
+		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
+		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
