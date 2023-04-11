@@ -561,7 +561,8 @@ namespace funcoes_ponte
 	int get_keyboard_input(lua_State *L)
 	{
 		Table ret;
-		for (pair<string, int> p : Teclado.teclas)
+		unordered_map<string, int> t = Teclado.teclas;
+		for (pair<string, int> p : t)
 		{
 			ret.setFloat(p.first, p.second);
 		}
@@ -575,7 +576,7 @@ namespace funcoes_ponte
 		{
 			ret.setFloat(p.first, p.second);
 		}
-		for (pair<string, int> p : Mouse.movimentos)
+		for (pair<string, float> p : Mouse.movimentos)
 		{
 			ret.setFloat(p.first, p.second);
 		}
@@ -592,7 +593,7 @@ namespace funcoes_ponte
 			{
 				ret_fragment.setFloat(p.first, p.second);
 			}
-			for (pair<string, int> p : Joystick[i].eixos)
+			for (pair<string, float> p : Joystick[i].eixos)
 			{
 				ret_fragment.setFloat(p.first, p.second);
 			}

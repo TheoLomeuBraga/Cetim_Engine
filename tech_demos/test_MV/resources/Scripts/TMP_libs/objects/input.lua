@@ -97,6 +97,12 @@ key_axis_dictionarys = {
     } },
 }
 
+function printTableElements(tbl)
+    for key, value in ipairs(tbl) do
+      print("Element " , key , ": " , value)
+    end
+  end
+
 
 
 function set_cursor_position(x, y)
@@ -134,6 +140,10 @@ end
 function keys_axis:get_inputs_from_device(device)
     if device == input_devices.keyboard then
         keys_axis[input_devices.keyboard] = get_keyboard_input()
+        print("AAAAA")
+        print(keys_axis[input_devices.keyboard])
+        printTableElements(keys_axis[input_devices.keyboard])
+        print("BBBBB")
     elseif device == input_devices.joystick then
         keys_axis[input_devices.joystick] = get_joystick_input()
     elseif device == input_devices.mouse then
@@ -154,7 +164,14 @@ function keys_axis:set_keyboard_text_input_geter(on)
     set_keyboard_text_input(on)
 end
 
+
+
 function keys_axis:get_input_from_device(device, key)
-    local key_translation = key_axis_dictionarys[device][key]
-    return keys_axis[device][key_translation]
+    key_translation = key_axis_dictionarys[device][key]
+    if device == input_devices.joystick then
+        return keys_axis[device][1][key_translation]
+    else
+        return keys_axis[device][key_translation]
+    end
+    
 end

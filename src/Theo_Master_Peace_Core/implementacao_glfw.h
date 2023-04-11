@@ -88,9 +88,12 @@ namespace teclas
 		{
 			int keyState = glfwGetKey(window, key);
 
-			const char *keyName = glfwGetKeyName(key, 0);
 			std::string keyIdentifier;
+			/*
+			const char *keyName = glfwGetKeyName(key, 0);
+			
 
+			
 			if (keyName != nullptr)
 			{
 				keyIdentifier = keyName;
@@ -100,6 +103,10 @@ namespace teclas
 				//keyIdentifier = "Key_" + std::to_string(key);
 				keyIdentifier = std::to_string(key);
 			}
+			*/
+
+			keyIdentifier = std::to_string(key);
+			//cout << "keyIdentifier: " << keyIdentifier << endl;
 
 			// cout << keyIdentifier << endl;
 
@@ -252,9 +259,9 @@ void loopInput()
 	Mouse.botoes = mouse::generateMouseMap(janela);
 	Mouse.movimentos = mouse::generateMouseInfo(janela); // < corrigir
 
-	Teclado.teclas = teclas::generateKeyboardMap(janela);
+	//Teclado.teclas = teclas::generateKeyboardMap(janela);
 	teclas::read_input_text = Teclado.pegar_input_texto;
-	Teclado.input_texto = teclas::getTextInput();
+	//Teclado.input_texto = teclas::getTextInput();
 	
 	int joystick_size = controle::countConnectedJoysticks();
 	Joystick.resize(joystick_size);
