@@ -253,7 +253,7 @@ void loopInput()
 	{
 	}
 
-	
+	/*
 
 	Teclado.teclas = teclas::generateKeyboardMap(janela);
 
@@ -275,6 +275,7 @@ void loopInput()
 
 	}
 	
+	*/
 
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;
@@ -314,6 +315,15 @@ public:
 			loopInput();
 		}
 	}
+	
+	string get_text_input() {return "";}
+	void set_text_input(bool on) {}
+
+	teclado get_keyboard_input(){return teclado();}
+	input_mouse get_mouse_input() {return input_mouse();}
+	vector<joystick> get_joysticks_input(){vector<joystick> vj; return vj;}
+
+	vec2 set_mouse_position(float x,float y){return vec2(0,0);}
 };
 
 // janela

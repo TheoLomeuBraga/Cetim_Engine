@@ -554,65 +554,24 @@ namespace funcoes_ponte
 		int argumentos = lua_gettop(L);
 		if (argumentos == 2)
 		{
-			gerente_janela->mudar_pos_cursor(lua_tonumber(L, 1), lua_tonumber(L, 2));
+			//gerente_janela->mudar_pos_cursor(lua_tonumber(L, 1), lua_tonumber(L, 2));
+			manuseio_inputs->set_mouse_position(lua_tonumber(L, 1), lua_tonumber(L, 2));
 		}
 		return 0;
 	}
-	int get_keyboard_input(lua_State *L)
-	{
-		Table ret;
-		unordered_map<string, int> t = Teclado.teclas;
-		for (pair<string, int> p : t)
-		{
-			ret.setFloat(p.first, p.second);
-		}
-		lua_pushtable(L, ret);
-		return 1;
-	}
-	int get_mouse_input(lua_State *L)
-	{
-		Table ret;
-		for (pair<string, int> p : Mouse.botoes)
-		{
-			ret.setFloat(p.first, p.second);
-		}
-		for (pair<string, float> p : Mouse.movimentos)
-		{
-			ret.setFloat(p.first, p.second);
-		}
-		lua_pushtable(L, ret);
-		return 1;
-	}
-	int get_joystick_input(lua_State *L)
-	{
-		vector<Table> ret;
-		for (int i = 0; i < Joystick.size(); i++)
-		{
-			Table ret_fragment;
-			for (pair<string, int> p : Joystick[i].botoes)
-			{
-				ret_fragment.setFloat(p.first, p.second);
-			}
-			for (pair<string, float> p : Joystick[i].eixos)
-			{
-				ret_fragment.setFloat(p.first, p.second);
-			}
-			ret.push_back(ret_fragment);
-		}
-		lua_pushtable(L, vTable_table(ret));
-		return 1;
-	}
+	
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		Teclado.pegar_input_texto = lua_toboolean(L, 1);
-		cout << lua_toboolean(L, 1) << endl;
+		//Teclado.pegar_input_texto = lua_toboolean(L, 1);
+		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
 		return 0;
 	}
 
 	int get_keyboard_text_input(lua_State *L)
 	{
-		lua_pushfstring(L, Teclado.input_texto.c_str());
+		//lua_pushfstring(L, Teclado.input_texto.c_str());
+		lua_pushfstring(L,manuseio_inputs->get_text_input().c_str());
 		return 1;
 	}
 
@@ -628,11 +587,10 @@ namespace funcoes_ponte
 
 		if(device == 0){
 			//Teclado.teclas
-			/*
-			if ( Teclado.teclas.find(key) != Teclado.teclas.end() ){
-				ret = Teclado.teclas[key];
-			}
-			*/
+			//if ( Teclado.teclas.find(key) != Teclado.teclas.end() ){
+				//ret = Teclado.teclas[key];
+			//}
+			
 		}else if(device == 1){
 			//Joystick[joystick_no]
 		}else if(device == 2){
@@ -1645,6 +1603,7 @@ namespace funcoes_lua
 		}
 
 		// get_input
+		/*
 		{
 			// controle & mouse
 			{
@@ -1670,6 +1629,7 @@ namespace funcoes_lua
 				}
 			}
 		}
+		*/
 
 		// af.join();
 

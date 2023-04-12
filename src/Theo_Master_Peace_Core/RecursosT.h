@@ -56,6 +56,7 @@ public:
 class teclado
 {
 public:
+	teclado(){}
 	bool pegar_input_texto = false;
 	string input_texto = "";
 	unordered_map<string, int> teclas;
@@ -64,6 +65,7 @@ public:
 class joystick
 {
 public:
+	joystick(){}
 	unordered_map<string, int> botoes;
 	unordered_map<string, float> eixos;
 };

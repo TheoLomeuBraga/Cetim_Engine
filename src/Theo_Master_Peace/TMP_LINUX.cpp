@@ -80,7 +80,9 @@ void comecar() {
     thread grafi(loop_principal::loop_principal);
     //thread grafi(loop_principal::IniciarJanela);
     manuseio_inputs = new glfw_input_manager();
-    thread inpu(loop_input);
+    
+    //thread inpu(loop_input);
+
     //thread fisi(Fisica::iniciar_fisica);
 
     grafi.join();

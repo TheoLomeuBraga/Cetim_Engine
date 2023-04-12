@@ -12,16 +12,26 @@ class input_manager
 {
 public:
 	input_manager() {}
-	virtual void loop() {}
+	//virtual void loop() {}
+
+	virtual string get_text_input() {return "";}
+	virtual void set_text_input(bool on) {}
+
+	virtual teclado get_keyboard_input(){return teclado();}
+	virtual input_mouse get_mouse_input() {return input_mouse();}
+	virtual vector<joystick> get_joysticks_input(){vector<joystick> vj; return vj;}
+
+	virtual vec2 set_mouse_position(float x,float y){return vec2(0,0);}
 };
 
-input_mouse Mouse;
-teclado Teclado;
-bool conectado;
-vector<joystick> Joystick;
+//input_mouse Mouse;
+//teclado Teclado;
+//bool conectado;
+//vector<joystick> Joystick;
 
 input_manager *manuseio_inputs;
 
+/*
 void loop_input()
 {
 
@@ -32,7 +42,8 @@ void loop_input()
 	escrever("iniciando input_manager");
 	manuseio_inputs->loop();
 }
+*/
 
-#define MOUSE Mouse
-#define TECLADO Teclado
-#define JOYSTICK Joystick
+//#define MOUSE Mouse
+//#define TECLADO Teclado
+//#define JOYSTICK Joystick
