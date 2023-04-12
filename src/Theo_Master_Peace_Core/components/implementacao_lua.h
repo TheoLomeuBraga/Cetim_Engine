@@ -615,6 +615,18 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int get_input(lua_State *L)
+	{
+		Table ret;
+		
+		int device = lua_tonumber(L,1);
+		int joystick_no = lua_tonumber(L,2);
+		string key = lua_tostring(L,3);
+		
+		lua_pushtable(L, ret);
+		return 1;
+	}
+
 	// char control
 
 	int to_move(lua_State *L)
@@ -1465,11 +1477,16 @@ namespace funcoes_ponte
 
 		// input
 		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
-		pair<string, lua_function>("get_keyboard_input", funcoes_ponte::get_keyboard_input),
-		pair<string, lua_function>("get_mouse_input", funcoes_ponte::get_mouse_input),
-		pair<string, lua_function>("get_joystick_input", funcoes_ponte::get_joystick_input),
 		pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
+
+		pair<string, lua_function>("get_input", funcoes_ponte::get_input),
+		
+
+		//pair<string, lua_function>("get_keyboard_input", funcoes_ponte::get_keyboard_input),
+		//pair<string, lua_function>("get_mouse_input", funcoes_ponte::get_mouse_input),
+		//pair<string, lua_function>("get_joystick_input", funcoes_ponte::get_joystick_input),
+		
 
 		// tempo
 		pair<string, lua_function>("get_time", funcoes_ponte::get_time),

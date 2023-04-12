@@ -68,14 +68,7 @@ end
 
 
 function UPDATE()
-    --keys_axis:get_inputs_from_device(input_devices.mouse)
-    --keys_axis:get_inputs_from_device(input_devices.keyboard)
-    --keys_axis:get_inputs_from_device(input_devices.joystick)
-
-    --keys_axis:get_inputs()
-    --if keys_axis:get_input_from_device(input_devices.keyboard,1) then
-    --    print("a")
-    --end
+    
     
 end
 

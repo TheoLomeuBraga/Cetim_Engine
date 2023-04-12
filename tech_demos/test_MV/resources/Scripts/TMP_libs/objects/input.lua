@@ -2,7 +2,6 @@ input_devices = {
     keyboard = 0,
     joystick = 1,
     mouse = 2,
-    keyboard_text = 3,
 }
 
 key_axis_dictionarys = {
@@ -123,27 +122,29 @@ end
 function get_keyboard_text_input()
 end
 
+--[[
 function get_inputs(device)
+end
+]]
+
+function get_input(device,joystick_no,key)
 end
 
 keys_axis = {
     [input_devices.keyboard] = {},
     [input_devices.joystick] = {},
     [input_devices.mouse] = {},
-    [input_devices.keyboard_text] = "",
 }
 
 function keys_axis:set_cursor_position(x, y)
     set_cursor_position(x, y)
 end
 
+--[[
 function keys_axis:get_inputs_from_device(device)
     if device == input_devices.keyboard then
         keys_axis[input_devices.keyboard] = get_keyboard_input()
-        print("AAAAA")
-        print(keys_axis[input_devices.keyboard])
         printTableElements(keys_axis[input_devices.keyboard])
-        print("BBBBB")
     elseif device == input_devices.joystick then
         keys_axis[input_devices.joystick] = get_joystick_input()
     elseif device == input_devices.mouse then
@@ -159,19 +160,20 @@ function keys_axis:get_inputs()
     keys_axis[input_devices.mouse] = get_mouse_input()
     keys_axis[input_devices.keyboard_text] = get_keyboard_text_input()
 end
+]]
 
-function keys_axis:set_keyboard_text_input_geter(on)
+
+function keys_axis:get_text_input()
+    return get_keyboard_text_input()
+end
+function keys_axis:set_text_input_geter(on)
     set_keyboard_text_input(on)
 end
 
-
-
-function keys_axis:get_input_from_device(device, key)
-    key_translation = key_axis_dictionarys[device][key]
-    if device == input_devices.joystick then
-        return keys_axis[device][1][key_translation]
-    else
-        return keys_axis[device][key_translation]
-    end
-    
+function keys_axis:get_input(device,key)
+    return get_input(device,0,key_axis_dictionarys[device][key])
 end
+function keys_axis:get_input_joystick(joystick_no,key)
+    return get_input(input_devices.joystick,joystick_no,key_axis_dictionarys[input_devices.joystick][key])
+end
+
