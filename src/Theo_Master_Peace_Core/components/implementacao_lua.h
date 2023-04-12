@@ -606,6 +606,7 @@ namespace funcoes_ponte
 	int set_keyboard_text_input(lua_State *L)
 	{
 		Teclado.pegar_input_texto = lua_toboolean(L, 1);
+		cout << lua_toboolean(L, 1) << endl;
 		return 0;
 	}
 
@@ -617,13 +618,28 @@ namespace funcoes_ponte
 
 	int get_input(lua_State *L)
 	{
-		Table ret;
+		float ret = 0;
 		
 		int device = lua_tonumber(L,1);
 		int joystick_no = lua_tonumber(L,2);
 		string key = lua_tostring(L,3);
 		
-		lua_pushtable(L, ret);
+		//cout << device << " " << joystick_no << " " << key << endl;
+
+		if(device == 0){
+			//Teclado.teclas
+			/*
+			if ( Teclado.teclas.find(key) != Teclado.teclas.end() ){
+				ret = Teclado.teclas[key];
+			}
+			*/
+		}else if(device == 1){
+			//Joystick[joystick_no]
+		}else if(device == 2){
+			//Mouse
+		}
+
+		lua_pushnumber(L, ret);
 		return 1;
 	}
 

@@ -257,13 +257,13 @@ void loopInput()
 
 	Teclado.teclas = teclas::generateKeyboardMap(janela);
 
-	//teclas::read_input_text = Teclado.pegar_input_texto;
-	//Teclado.input_texto = teclas::getTextInput();
+	teclas::read_input_text = Teclado.pegar_input_texto;
+	Teclado.input_texto = teclas::getTextInput();
 
-	//Mouse.botoes = mouse::generateMouseMap(janela);
-	//Mouse.movimentos = mouse::generateMouseInfo(janela); // < corrigir
+	Mouse.botoes = mouse::generateMouseMap(janela);
+	Mouse.movimentos = mouse::generateMouseInfo(janela); // < corrigir
 	
-	/*
+	
 	int joystick_size = controle::countConnectedJoysticks();
 	Joystick.resize(joystick_size);
 	
@@ -274,7 +274,7 @@ void loopInput()
 		Joystick[i].eixos = controle::generateJoystickAxes(i);
 
 	}
-	*/
+	
 
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;

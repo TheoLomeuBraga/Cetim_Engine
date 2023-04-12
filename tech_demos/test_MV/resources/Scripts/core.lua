@@ -70,6 +70,11 @@ end
 function UPDATE()
     
     
+    if keys_axis:get_input(input_devices.keyboard,"a") then
+        print("a",keys_axis:get_input(input_devices.keyboard,"a"))
+    end
+    
+    
 end
 
 function COLLIDE(collision_info)
