@@ -316,14 +316,23 @@ public:
 		}
 	}
 	
-	string get_text_input() {return "";}
-	void set_text_input(bool on) {}
+	string get_text_input() {
+		text_input = teclas::getTextInput();
+		return text_input;
+	}
+	void set_text_input(bool on) {teclas::read_input_text = on;}
 
-	teclado get_keyboard_input(){return teclado();}
+	teclado get_keyboard_input(){
+		teclado t;
+		t.teclas = teclas::generateKeyboardMap(janela);
+		t.input_texto = teclas::getTextInput();
+		keyboard_input = t;
+		return keyboard_input;
+	}
 	input_mouse get_mouse_input() {return input_mouse();}
 	vector<joystick> get_joysticks_input(){vector<joystick> vj; return vj;}
 
-	vec2 set_mouse_position(float x,float y){return vec2(0,0);}
+	void set_mouse_position(float x,float y){mudar_posicao_cursor(x, y);}
 };
 
 // janela
