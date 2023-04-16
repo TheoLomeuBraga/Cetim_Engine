@@ -68,13 +68,14 @@ end
 
 
 function UPDATE()
+    
+    --[[
     keys_axis:set_text_input_geter(true)
     print(keys_axis:get_text_input())
-    --[[
+    ]]
     if keys_axis:get_input(input_devices.keyboard,"a") then
         print("a",keys_axis:get_input(input_devices.keyboard,"a"))
     end
-    ]]
     
     
 end

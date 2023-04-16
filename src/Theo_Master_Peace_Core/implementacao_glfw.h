@@ -288,18 +288,14 @@ void inicioInput()
 	{
 	}
 
-	glfwSetScrollCallback(janela, mouse::scroll_callback);
-
-	teclas::initializeTextInput(janela);
-
-	cout << "Inputs Online" << endl;
-
-	if (glfwRawMouseMotionSupported())
-	{
-		glfwSetInputMode(janela, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-	}
+	
 
 	loopInput();
+}
+
+void mudar_posicao_cursor(float x, float y)
+{
+	glfwSetCursorPos(janela, x, y);
 }
 
 class glfw_input_manager : public input_manager
@@ -317,20 +313,33 @@ public:
 	}
 	
 	string get_text_input() {
-		text_input = teclas::getTextInput();
-		return text_input;
+		teclas::inputText = teclas::getTextInput();
+		return teclas::inputText;
 	}
 	void set_text_input(bool on) {teclas::read_input_text = on;}
 
 	teclado get_keyboard_input(){
 		teclado t;
 		t.teclas = teclas::generateKeyboardMap(janela);
-		t.input_texto = teclas::getTextInput();
+		t.input_texto = get_text_input();
 		keyboard_input = t;
 		return keyboard_input;
 	}
-	input_mouse get_mouse_input() {return input_mouse();}
-	vector<joystick> get_joysticks_input(){vector<joystick> vj; return vj;}
+	input_mouse get_mouse_input() {
+		input_mouse ret;
+		ret.movimentos = mouse::generateMouseInfo(janela);
+		ret.botoes = mouse::generateMouseMap(janela);
+		return ret;
+	}
+	vector<joystick> get_joysticks_input(){
+		vector<joystick> ret = {};
+		ret.resize(controle::countConnectedJoysticks());
+		for(int i = 0; i < ret.size(); i++){
+			ret[i].botoes = controle::generateJoystickKeyMap(i);
+			ret[i].eixos = controle::generateJoystickAxes(i);
+		}
+		return ret;
+	}
 
 	void set_mouse_position(float x,float y){mudar_posicao_cursor(x, y);}
 };
@@ -363,10 +372,7 @@ void mudar_logo_janela(shared_ptr<imagem> img)
 	}
 }
 
-void mudar_posicao_cursor(float x, float y)
-{
-	glfwSetCursorPos(janela, x, y);
-}
+
 
 void mudar_imagem_cursor(shared_ptr<imagem> img)
 {
@@ -501,6 +507,17 @@ void IniciarJanela()
 	cout << "Graficos Online" << endl;
 
 	glfwSetInputMode(janela, GLFW_STICKY_KEYS, GL_TRUE);
+
+	glfwSetScrollCallback(janela, mouse::scroll_callback);
+
+	teclas::initializeTextInput(janela);
+
+	cout << "Inputs Online" << endl;
+
+	if (glfwRawMouseMotionSupported())
+	{
+		glfwSetInputMode(janela, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+	}
 }
 
 void loop_janela()

@@ -565,6 +565,7 @@ namespace funcoes_ponte
 	{
 		//Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
+		cout << lua_toboolean(L, 1) << endl;
 		return 0;
 	}
 
