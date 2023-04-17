@@ -587,14 +587,12 @@ namespace funcoes_ponte
 		//cout << device << " " << joystick_no << " " << key << endl;
 
 		if(device == 0){
-			//Teclado.teclas
+			
 			teclado t = manuseio_inputs->keyboard_input;
-			///*
+			
 			if ( t.teclas.find(key) != t.teclas.end() ){
 				ret = t.teclas[key];
 			}
-			//*/
-			
 		}else if(device == 1){
 			//Joystick[joystick_no]
 		}else if(device == 2){
