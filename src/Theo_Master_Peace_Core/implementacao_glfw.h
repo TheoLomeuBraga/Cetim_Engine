@@ -60,7 +60,7 @@ namespace mouse
 
 			if (buttonState == GLFW_PRESS)
 			{
-				mouseMap[std::to_string(button)] = 2;
+				mouseMap[std::to_string(button)] = 1;
 			}
 			else if (buttonState == GLFW_RELEASE)
 			{
@@ -109,7 +109,7 @@ namespace teclas
 			
 			if (keyState == GLFW_PRESS)
 			{
-				keyboardMap[keyIdentifier] = 2;
+				keyboardMap[keyIdentifier] = 1;
 			}
 			else if (keyState == GLFW_RELEASE)
 			{
@@ -208,7 +208,7 @@ namespace controle
 				}
 				else if (buttons[i] == GLFW_PRESS)
 				{
-					joystickKeyMap[std::to_string(i)] = 2;
+					joystickKeyMap[std::to_string(i)] = 1;
 				}
 				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
 				{
