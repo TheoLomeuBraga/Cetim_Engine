@@ -64,7 +64,7 @@ namespace mouse
 			}
 			else if (buttonState == GLFW_RELEASE)
 			{
-				mouseMap[std::to_string(button)] = 3;
+				mouseMap[std::to_string(button)] = 0;
 			}
 			else
 			{
@@ -113,7 +113,7 @@ namespace teclas
 			}
 			else if (keyState == GLFW_RELEASE)
 			{
-				keyboardMap[keyIdentifier] = 3;
+				keyboardMap[keyIdentifier] = 0;
 			}
 			else
 			{
@@ -212,7 +212,7 @@ namespace controle
 				}
 				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
 				{
-					joystickKeyMap[std::to_string(i)] = 3;
+					joystickKeyMap[std::to_string(i)] = 0;
 				}
 				else
 				{
@@ -313,32 +313,28 @@ public:
 	}
 	
 	string get_text_input() {
-		teclas::inputText = teclas::getTextInput();
-		return teclas::inputText;
+		text_input = teclas::getTextInput();
+		return text_input;
 	}
 	void set_text_input(bool on) {teclas::read_input_text = on;}
 
 	teclado get_keyboard_input(){
-		teclado t;
-		t.teclas = teclas::generateKeyboardMap(janela);
-		t.input_texto = get_text_input();
-		keyboard_input = t;
+		keyboard_input.teclas = teclas::generateKeyboardMap(janela);
+		keyboard_input.input_texto = get_text_input();
 		return keyboard_input;
 	}
 	input_mouse get_mouse_input() {
-		input_mouse ret;
-		ret.movimentos = mouse::generateMouseInfo(janela);
-		ret.botoes = mouse::generateMouseMap(janela);
-		return ret;
+		mouse_input.movimentos = mouse::generateMouseInfo(janela);
+		mouse_input.botoes = mouse::generateMouseMap(janela);
+		return mouse_input;
 	}
 	vector<joystick> get_joysticks_input(){
-		vector<joystick> ret = {};
-		ret.resize(controle::countConnectedJoysticks());
-		for(int i = 0; i < ret.size(); i++){
-			ret[i].botoes = controle::generateJoystickKeyMap(i);
-			ret[i].eixos = controle::generateJoystickAxes(i);
+		joysticks_input.resize(controle::countConnectedJoysticks());
+		for(int i = 0; i < joysticks_input.size(); i++){
+			joysticks_input[i].botoes = controle::generateJoystickKeyMap(i);
+			joysticks_input[i].eixos = controle::generateJoystickAxes(i);
 		}
-		return ret;
+		return joysticks_input;
 	}
 
 	void set_mouse_position(float x,float y){mudar_posicao_cursor(x, y);}

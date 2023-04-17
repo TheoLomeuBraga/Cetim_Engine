@@ -140,28 +140,6 @@ function keys_axis:set_cursor_position(x, y)
     set_cursor_position(x, y)
 end
 
---[[
-function keys_axis:get_inputs_from_device(device)
-    if device == input_devices.keyboard then
-        keys_axis[input_devices.keyboard] = get_keyboard_input()
-        printTableElements(keys_axis[input_devices.keyboard])
-    elseif device == input_devices.joystick then
-        keys_axis[input_devices.joystick] = get_joystick_input()
-    elseif device == input_devices.mouse then
-        keys_axis[input_devices.mouse] = get_mouse_input()
-    elseif device == input_devices.keyboard_text then
-        keys_axis[input_devices.keyboard_text] = get_keyboard_text_input()
-    end
-end
-
-function keys_axis:get_inputs()
-    keys_axis[input_devices.keyboard] = get_keyboard_input()
-    keys_axis[input_devices.joystick] = get_joystick_input()
-    keys_axis[input_devices.mouse] = get_mouse_input()
-    keys_axis[input_devices.keyboard_text] = get_keyboard_text_input()
-end
-]]
-
 
 function keys_axis:get_text_input()
     return get_keyboard_text_input()

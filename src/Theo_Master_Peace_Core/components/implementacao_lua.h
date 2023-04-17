@@ -572,7 +572,7 @@ namespace funcoes_ponte
 	int get_keyboard_text_input(lua_State *L)
 	{
 		//lua_pushfstring(L, Teclado.input_texto.c_str());
-		lua_pushfstring(L,manuseio_inputs->get_text_input().c_str());
+		lua_pushfstring(L,manuseio_inputs->text_input.c_str());
 		return 1;
 	}
 
@@ -588,9 +588,12 @@ namespace funcoes_ponte
 
 		if(device == 0){
 			//Teclado.teclas
-			//if ( Teclado.teclas.find(key) != Teclado.teclas.end() ){
-				//ret = Teclado.teclas[key];
-			//}
+			teclado t = manuseio_inputs->keyboard_input;
+			///*
+			if ( t.teclas.find(key) != t.teclas.end() ){
+				ret = t.teclas[key];
+			}
+			//*/
 			
 		}else if(device == 1){
 			//Joystick[joystick_no]
