@@ -337,7 +337,8 @@ namespace funcoes_ponte
 		}
 	}
 
-	int close(lua_State *L){
+	int close(lua_State *L)
+	{
 		gerente_janela->fechar = true;
 		return 0;
 	}
@@ -474,79 +475,6 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int load_asset(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		if (argumentos == 2 && string(lua_tostring(L, 1)).compare("font") == 0)
-		{
-			ManuseioDados::carregar_fonte(lua_tostring(L, 2));
-		}
-		else if (argumentos == 2 && string(lua_tostring(L, 1)).compare("image") == 0)
-		{
-			ManuseioDados::carregar_Imagem(lua_tostring(L, 2));
-		}
-		else if (argumentos == 3 && string(lua_tostring(L, 1)).compare("tile_set") == 0)
-		{
-			ManuseioDados::carregar_tile_set(lua_tostring(L, 2));
-		}
-		else if (argumentos == 2 && string(lua_tostring(L, 1)).compare("tile_map") == 0)
-		{
-			ManuseioDados::carregar_info_tile_map(lua_tostring(L, 2));
-		}
-		else if (argumentos == 2 && string(lua_tostring(L, 1)).compare("audio") == 0)
-		{
-			carregar_audio_buffer_sfml(lua_tostring(L, 2));
-		}
-
-		return 0;
-	}
-
-	int asset_is_load(lua_State *L)
-	{
-		bool output = false;
-		int argumentos = lua_gettop(L);
-		if (argumentos == 2)
-		{
-			if (string(lua_tostring(L, 1)).compare("font") == 0)
-			{
-				if (ManuseioDados::mapeamento_fontes.pegar(lua_tostring(L, 2)) != NULL)
-				{
-					output = true;
-				}
-			}
-			else if (string(lua_tostring(L, 1)).compare("image") == 0)
-			{
-				if (ManuseioDados::mapeamento_imagems.pegar(lua_tostring(L, 2)) != NULL)
-				{
-					output = true;
-				}
-			}
-			else if (string(lua_tostring(L, 1)).compare("tile_set") == 0)
-			{
-				if (ManuseioDados::mapeamento_tilesets.pegar(lua_tostring(L, 2)) != NULL)
-				{
-					output = true;
-				}
-			}
-			else if (string(lua_tostring(L, 1)).compare("tile_map") == 0)
-			{
-				if (ManuseioDados::mapeamento_tile_map_infos.pegar(lua_tostring(L, 2)) != NULL)
-				{
-					output = true;
-				}
-			}
-			else if (string(lua_tostring(L, 1)).compare("audio") == 0)
-			{
-				if (buffers_som_sfml.pegar(lua_tostring(L, 2)) != NULL)
-				{
-					output = true;
-				}
-			}
-		}
-		lua_pushboolean(L, output);
-		return 1;
-	}
-
 	// input
 
 	int set_cursor_position(lua_State *L)
@@ -554,16 +482,15 @@ namespace funcoes_ponte
 		int argumentos = lua_gettop(L);
 		if (argumentos == 2)
 		{
-			//gerente_janela->mudar_pos_cursor(lua_tonumber(L, 1), lua_tonumber(L, 2));
+			// gerente_janela->mudar_pos_cursor(lua_tonumber(L, 1), lua_tonumber(L, 2));
 			manuseio_inputs->set_mouse_position(lua_tonumber(L, 1), lua_tonumber(L, 2));
 		}
 		return 0;
 	}
-	
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		//Teclado.pegar_input_texto = lua_toboolean(L, 1);
+		// Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
 		cout << lua_toboolean(L, 1) << endl;
 		return 0;
@@ -571,43 +498,61 @@ namespace funcoes_ponte
 
 	int get_keyboard_text_input(lua_State *L)
 	{
-		//lua_pushfstring(L, Teclado.input_texto.c_str());
-		lua_pushfstring(L,manuseio_inputs->text_input.c_str());
+		// lua_pushfstring(L, Teclado.input_texto.c_str());
+		lua_pushfstring(L, manuseio_inputs->text_input.c_str());
 		return 1;
 	}
 
 	int get_input(lua_State *L)
 	{
 		float ret = 0;
-		
-		int device = lua_tonumber(L,1);
-		int joystick_no = lua_tonumber(L,2);
-		string key = lua_tostring(L,3);
-		
-		//cout << device << " " << joystick_no << " " << key << endl;
 
-		
-		if(device == 1){
+		int device = lua_tonumber(L, 1);
+		int joystick_no = lua_tonumber(L, 2);
+		string key = lua_tostring(L, 3);
+
+		// cout << device << " " << joystick_no << " " << key << endl;
+
+		if (device == 1)
+		{
 
 			teclado t = manuseio_inputs->keyboard_input;
-			
-			if ( t.teclas.find(key) != t.teclas.end() ){
+
+			if (t.teclas.find(key) != t.teclas.end())
+			{
 				ret = t.teclas[key];
 			}
-
-		}else if(device == 2){
-
-			joystick j = manuseio_inputs->joysticks_input[joystick_no];
-
-		}else if(device == 3){
+		}
+		else if (device == 2)
+		{
+			
+			if (manuseio_inputs->joysticks_input.size() <= joystick_no)
+			{
+				cout << key << endl;
+				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
+				
+				if (j.botoes.find(key) != j.botoes.end())
+				{
+					ret = j.botoes[key];
+				}
+				else if (j.eixos.find(key) != j.eixos.end())
+				{
+					ret = j.eixos[key];
+				}
+				
+			}
+		}
+		else if (device == 3)
+		{
 			///*
 			input_mouse m = manuseio_inputs->mouse_input;
 
-			if ( m.botoes.find(key) != m.botoes.end() ){
+			if (m.botoes.find(key) != m.botoes.end())
+			{
 				ret = m.botoes[key];
-				
 			}
-			else if ( m.movimentos.find(key) != m.movimentos.end() ){
+			else if (m.movimentos.find(key) != m.movimentos.end())
+			{
 				ret = m.movimentos[key];
 			}
 			//*/
@@ -789,7 +734,7 @@ namespace funcoes_ponte
 		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 		if (b2d != NULL)
 		{
-			
+
 			b2d->mudar_pos(vec2(v3.x, v3.y));
 		}
 		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
@@ -1051,7 +996,7 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 			if (bu != NULL)
 			{
-				bu->adicionar_forca(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+				bu->adicionar_forca(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
 			}
 		}
 		return 0;
@@ -1078,7 +1023,7 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 			if (bu != NULL)
 			{
-				bu->adicionar_impulso(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+				bu->adicionar_impulso(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
 			}
 		}
 		return 0;
@@ -1105,7 +1050,7 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 			if (bu != NULL)
 			{
-				bu->adicionar_forca_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+				bu->adicionar_forca_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
 			}
 		}
 		return 0;
@@ -1132,7 +1077,7 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 			if (bu != NULL)
 			{
-				bu->adicionar_impulso_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3),lua_tonumber(L, 4)));
+				bu->adicionar_impulso_rotativo(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
 			}
 		}
 		return 0;
@@ -1430,10 +1375,11 @@ namespace funcoes_ponte
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
 			Table mesh_info = t.getTable("collision_mesh");
-			if(mesh_info.getString("file").compare("") && mesh_info.getString("name").compare("")){
+			if (mesh_info.getString("file").compare("") && mesh_info.getString("name").compare(""))
+			{
 				bu->collision_mesh = ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name"));
 			}
-			
+
 			bu->layer = table_info_camada(t.getTable("collision_layer"));
 			bu->escala = table_vec3(t.getTable("scale"));
 			bu->dinamica = t.getFloat("boady_dynamic");
@@ -1471,12 +1417,6 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 
 		pair<string, lua_function>("get_input", funcoes_ponte::get_input),
-		
-
-		//pair<string, lua_function>("get_keyboard_input", funcoes_ponte::get_keyboard_input),
-		//pair<string, lua_function>("get_mouse_input", funcoes_ponte::get_mouse_input),
-		//pair<string, lua_function>("get_joystick_input", funcoes_ponte::get_joystick_input),
-		
 
 		// tempo
 		pair<string, lua_function>("get_time", funcoes_ponte::get_time),
@@ -1484,8 +1424,6 @@ namespace funcoes_ponte
 
 		// memoria
 		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
-		pair<string, lua_function>("load_asset", funcoes_ponte::load_asset),
-		pair<string, lua_function>("asset_is_load", funcoes_ponte::asset_is_load),
 
 		// objeto
 		pair<string, lua_function>("create_object", funcoes_ponte::create_object),
@@ -1542,7 +1480,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
 		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
 		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
-		
+
 		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
 		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
@@ -1573,6 +1511,9 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_lua_var", get_lua_var),
 		pair<string, lua_function>("set_lua_var", set_lua_var),
 		pair<string, lua_function>("call_lua_function", call_lua_function),
+
+		//3D sceane
+		
 
 	};
 

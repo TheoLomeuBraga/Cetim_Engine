@@ -237,7 +237,7 @@ namespace controle
 
 			for (int i = 0; i < axisCount; ++i)
 			{
-				joystickAxes["axis_" + std::to_string(i)] = axes[i];
+				joystickAxes[string("axis_") + std::to_string(i)] = axes[i];
 			}
 		}
 
