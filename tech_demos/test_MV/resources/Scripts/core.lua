@@ -41,44 +41,39 @@ function set_resolution()
 end
 
 function START()
-    
-	print("core iniciando")
+    print("core iniciando")
     full_test()
     set_resolution()
 
-    
+
     --objects_layesrs:create()
-    
-    
+
+
 
     print("divisoria")
     sceanes_db["test3"]:load()
-   
-    
-    
-    
-    
-    
-    
-    
-    
-
 end
 
-
+function printTableElements(tbl)
+    for key, value in ipairs(tbl) do
+        print("Element ", key, ": ", value)
+    end
+end
 
 function UPDATE()
-    
     --[[
     keys_axis:set_text_input_geter(true)
     print(keys_axis:get_text_input())
     ]]
-    if keys_axis:get_input(input_devices.keyboard,"a") then
+    --[[
+    if keys_axis:get_input(input_devices.keyboard,"a") == 1 then
         print("a",keys_axis:get_input(input_devices.keyboard,"a"))
     end
+    ]]
     
-    
-    
+    l = keys_axis:get_input(input_devices.mouse, "left")
+    r = keys_axis:get_input(input_devices.mouse, "right")
+    print("mouse movement", l, r)
 end
 
 function COLLIDE(collision_info)
@@ -86,9 +81,3 @@ end
 
 function END()
 end
-
-
-
-
-
-

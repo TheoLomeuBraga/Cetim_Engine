@@ -1,7 +1,7 @@
 input_devices = {
-    keyboard = 0,
-    joystick = 1,
-    mouse = 2,
+    keyboard = 1,
+    joystick = 2,
+    mouse = 3,
 }
 
 key_axis_dictionarys = {
@@ -84,23 +84,19 @@ key_axis_dictionarys = {
         rt_axis = "axis_4",
         lt_axis = "axis_5"
     },
-    [input_devices.mouse] = { {
-        left = 1,
-        right = 2,
-        scroll_button = 3,
+    [input_devices.mouse] = { 
+        left = 0,
+        right = 1,
+        scroll_button = 2,
         x = "x",
         y = "y",
         normalized_x = "normalized_x",
         normalized_y = "normalized_y",
         scroll = "scroll",
-    } },
+    },
 }
 
-function printTableElements(tbl)
-    for key, value in ipairs(tbl) do
-      print("Element " , key , ": " , value)
-    end
-  end
+
 
 
 
