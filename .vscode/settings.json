@@ -99,6 +99,8 @@
         "*.def": "cpp",
         "*.ipp": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "strstream": "cpp",
+        "source_location": "cpp"
     }
 }
