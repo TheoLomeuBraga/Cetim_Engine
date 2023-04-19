@@ -83,10 +83,13 @@ function UPDATE()
         print("a",keys_axis:get_input_joystick(1,"a"))
     end
     ]]
+
+    --[[
     rx = keys_axis:get_input_joystick(1,"rx")
     if rx > 0 then
         print("AAAAA:",rx)
     end
+    ]]
     
 end
 

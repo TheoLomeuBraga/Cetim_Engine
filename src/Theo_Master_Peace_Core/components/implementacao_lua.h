@@ -511,8 +511,6 @@ namespace funcoes_ponte
 		int joystick_no = lua_tonumber(L, 2);
 		string key = lua_tostring(L, 3);
 
-		// cout << device << " " << joystick_no << " " << key << endl;
-
 		if (device == 1)
 		{
 
@@ -528,7 +526,6 @@ namespace funcoes_ponte
 			
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
-				cout << key << endl;
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
 				
 				if (j.botoes.find(key) != j.botoes.end())
@@ -1409,6 +1406,15 @@ namespace funcoes_ponte
 		return 2;
 	}
 
+	int get_scene_3D(lua_State *L){
+		Table ret;
+		string path = lua_tostring(L,1);
+		shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(path);
+		
+		lua_pushtable(L, ret);
+		return 1;
+	}
+
 	map<string, lua_function> funcoes_ponte_map = {
 
 		// input
@@ -1513,7 +1519,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("call_lua_function", call_lua_function),
 
 		//3D sceane
-		
+		pair<string, lua_function>("get_scene_3D", get_scene_3D),
 
 	};
 

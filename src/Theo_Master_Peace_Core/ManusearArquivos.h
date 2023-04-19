@@ -456,116 +456,118 @@ namespace ManuseioDados
 		bool s;
 		string usemtl;
 		vector<unsigned int> f;
-
-		while (getline(arquivo_obj, linha))
+		if (cenas_3D.pegar(local).get() == NULL)
 		{
-
-			stringstream ss;
-			ss << linha;
-
-			vector<string> valor_linha;
-			valor_linha.resize(4);
-			ss >> valor_linha[0] >> valor_linha[1] >> valor_linha[2] >> valor_linha[3];
-			if (!valor_linha[0].compare("o"))
-			{
-				Obj_mesh_index om;
-				instrucoes.insert(pair<string, Obj_mesh_index>(valor_linha[1], om));
-				instrucao_selecionada = valor_linha[1];
-			}
-			else if (!valor_linha[0].compare("v"))
-			{
-				vec3 v3;
-				v3.x = stof(valor_linha[1]);
-				v3.y = stof(valor_linha[2]);
-				v3.z = stof(valor_linha[3]);
-				v.push_back(v3);
-			}
-			else if (!valor_linha[0].compare("vt"))
-			{
-				vec2 v2;
-				v2.x = stof(valor_linha[1]);
-				v2.y = stof(valor_linha[2]);
-				vt.push_back(v2);
-			}
-			else if (!valor_linha[0].compare("vn"))
-			{
-				vec3 v3;
-				v3.x = stof(valor_linha[1]);
-				v3.y = stof(valor_linha[2]);
-				v3.z = stof(valor_linha[3]);
-				vn.push_back(v3);
-			}
-			else if (!valor_linha[0].compare("usemtl"))
-			{
-				usemtl = valor_linha[1];
-			}
-			else if (!valor_linha[0].compare("s"))
-			{
-				map<string, bool> m = {pair<string, bool>("on", true), pair<string, bool>("off", false)};
-				s = m[valor_linha[1]];
-			}
-			else if (!valor_linha[0].compare("f"))
+			while (getline(arquivo_obj, linha))
 			{
 
-				vec3 a = decode_obj_f(valor_linha[1]);
-				vec3 b = decode_obj_f(valor_linha[2]);
-				vec3 c = decode_obj_f(valor_linha[3]);
+				stringstream ss;
+				ss << linha;
 
-				instrucoes[instrucao_selecionada].v_index.push_back(a.x - 1);
-				instrucoes[instrucao_selecionada].v_index.push_back(b.x - 1);
-				instrucoes[instrucao_selecionada].v_index.push_back(c.x - 1);
+				vector<string> valor_linha;
+				valor_linha.resize(4);
+				ss >> valor_linha[0] >> valor_linha[1] >> valor_linha[2] >> valor_linha[3];
+				if (!valor_linha[0].compare("o"))
+				{
+					Obj_mesh_index om;
+					instrucoes.insert(pair<string, Obj_mesh_index>(valor_linha[1], om));
+					instrucao_selecionada = valor_linha[1];
+				}
+				else if (!valor_linha[0].compare("v"))
+				{
+					vec3 v3;
+					v3.x = stof(valor_linha[1]);
+					v3.y = stof(valor_linha[2]);
+					v3.z = stof(valor_linha[3]);
+					v.push_back(v3);
+				}
+				else if (!valor_linha[0].compare("vt"))
+				{
+					vec2 v2;
+					v2.x = stof(valor_linha[1]);
+					v2.y = stof(valor_linha[2]);
+					vt.push_back(v2);
+				}
+				else if (!valor_linha[0].compare("vn"))
+				{
+					vec3 v3;
+					v3.x = stof(valor_linha[1]);
+					v3.y = stof(valor_linha[2]);
+					v3.z = stof(valor_linha[3]);
+					vn.push_back(v3);
+				}
+				else if (!valor_linha[0].compare("usemtl"))
+				{
+					usemtl = valor_linha[1];
+				}
+				else if (!valor_linha[0].compare("s"))
+				{
+					map<string, bool> m = {pair<string, bool>("on", true), pair<string, bool>("off", false)};
+					s = m[valor_linha[1]];
+				}
+				else if (!valor_linha[0].compare("f"))
+				{
 
-				instrucoes[instrucao_selecionada].vt_index.push_back(a.y - 1);
-				instrucoes[instrucao_selecionada].vt_index.push_back(b.y - 1);
-				instrucoes[instrucao_selecionada].vt_index.push_back(c.y - 1);
+					vec3 a = decode_obj_f(valor_linha[1]);
+					vec3 b = decode_obj_f(valor_linha[2]);
+					vec3 c = decode_obj_f(valor_linha[3]);
 
-				instrucoes[instrucao_selecionada].vn_index.push_back(a.z - 1);
-				instrucoes[instrucao_selecionada].vn_index.push_back(b.z - 1);
-				instrucoes[instrucao_selecionada].vn_index.push_back(c.z - 1);
+					instrucoes[instrucao_selecionada].v_index.push_back(a.x - 1);
+					instrucoes[instrucao_selecionada].v_index.push_back(b.x - 1);
+					instrucoes[instrucao_selecionada].v_index.push_back(c.x - 1);
+
+					instrucoes[instrucao_selecionada].vt_index.push_back(a.y - 1);
+					instrucoes[instrucao_selecionada].vt_index.push_back(b.y - 1);
+					instrucoes[instrucao_selecionada].vt_index.push_back(c.y - 1);
+
+					instrucoes[instrucao_selecionada].vn_index.push_back(a.z - 1);
+					instrucoes[instrucao_selecionada].vn_index.push_back(b.z - 1);
+					instrucoes[instrucao_selecionada].vn_index.push_back(c.z - 1);
+				}
 			}
+
+			for (pair<string, Obj_mesh_index> p : instrucoes)
+			{
+
+				pair<string, shared_ptr<malha>> m = pair<string, shared_ptr<malha>>(p.first, make_shared<malha>());
+				// transformar em mesh
+
+				m.second->vertices.resize(p.second.v_index.size());
+				m.second->indice.resize(p.second.v_index.size());
+
+				m.second->nome = p.first;
+
+				for (int i = 0; i < p.second.v_index.size(); i++)
+				{
+
+					m.second->indice[i] = i;
+
+					m.second->vertices[i].posicao[0] = v[p.second.v_index[i]].x;
+					m.second->vertices[i].posicao[1] = v[p.second.v_index[i]].y;
+					m.second->vertices[i].posicao[2] = v[p.second.v_index[i]].z;
+
+					m.second->vertices[i].uv[0] = vt[p.second.vt_index[i]].x;
+					m.second->vertices[i].uv[1] = vt[p.second.vt_index[i]].y;
+
+					m.second->vertices[i].normal[0] = vn[p.second.vn_index[i]].x;
+					m.second->vertices[i].normal[1] = vn[p.second.vn_index[i]].y;
+					m.second->vertices[i].normal[2] = vn[p.second.vn_index[i]].z;
+				}
+
+				// adicionar malha
+				m.second->arquivo_origem = local;
+				m.second->comprimir();
+				m.second->pegar_tamanho_maximo();
+				ret.malhas.insert(m);
+				ret.objetos.minhas_malhas.push_back(m.second);
+			}
+
+			// adicionar material
+			ret.materiais.insert(pair<string, Material>("material", mat));
+			ret.objetos.meus_materiais.push_back(mat);
+			cenas_3D.aplicar(local, ret);
 		}
 
-		for (pair<string, Obj_mesh_index> p : instrucoes)
-		{
-
-			pair<string, shared_ptr<malha>> m = pair<string, shared_ptr<malha>>(p.first, make_shared<malha>());
-			// transformar em mesh
-
-			m.second->vertices.resize(p.second.v_index.size());
-			m.second->indice.resize(p.second.v_index.size());
-
-			m.second->nome = p.first;
-
-			for (int i = 0; i < p.second.v_index.size(); i++)
-			{
-
-				m.second->indice[i] = i;
-
-				m.second->vertices[i].posicao[0] = v[p.second.v_index[i]].x;
-				m.second->vertices[i].posicao[1] = v[p.second.v_index[i]].y;
-				m.second->vertices[i].posicao[2] = v[p.second.v_index[i]].z;
-
-				m.second->vertices[i].uv[0] = vt[p.second.vt_index[i]].x;
-				m.second->vertices[i].uv[1] = vt[p.second.vt_index[i]].y;
-
-				m.second->vertices[i].normal[0] = vn[p.second.vn_index[i]].x;
-				m.second->vertices[i].normal[1] = vn[p.second.vn_index[i]].y;
-				m.second->vertices[i].normal[2] = vn[p.second.vn_index[i]].z;
-			}
-
-			// adicionar malha
-			m.second->arquivo_origem = local;
-			m.second->comprimir();
-			m.second->pegar_tamanho_maximo();
-			ret.malhas.insert(m);
-			ret.objetos.minhas_malhas.push_back(m.second);
-		}
-
-		// adicionar material
-		ret.materiais.insert(pair<string, Material>("material", mat));
-		ret.objetos.meus_materiais.push_back(mat);
-
-		cenas_3D.aplicar(local, ret);
 		return cenas_3D.pegar(local);
 	}
 
@@ -710,10 +712,10 @@ namespace ManuseioDados
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
-		
+
 		vec3 nothing;
 		vec4 nothing2;
-		glm::decompose(node.matrix,ret.escala,ret.quaternion,ret.posicao,nothing,nothing2);
+		glm::decompose(node.matrix, ret.escala, ret.quaternion, ret.posicao, nothing, nothing2);
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
@@ -742,46 +744,49 @@ namespace ManuseioDados
 	{
 		cena_3D ret;
 		ret.nome = local;
-
-		gltf_loader::GLTFLoader gltf_loader(local);
-		gltf_loader.load();
-
-		for (int i = 0; i < gltf_loader.meshes.size(); i++)
+		if (cenas_3D.pegar(local).get() == NULL)
 		{
-			ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))));
-		}
 
-		for (int i = 0; i < gltf_loader.materials.size(); i++)
-		{
-			string image_location;
-			if (gltf_loader.materials[i].textureIndex != 0)
+			gltf_loader::GLTFLoader gltf_loader(local);
+			gltf_loader.load();
+
+			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
+				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))));
 			}
-			Material mat;
-			mat.shad = "resources/Shaders/mesh";
-			mat.cor = gltf_loader.materials[i].baseColorFactor;
-			mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
-			ret.materiais[gltf_loader.materials[i].name] = mat;
-		}
 
-		for (int i = 0; i < gltf_loader.textures.size(); i++)
-		{
-			string arquivo_textura = pegar_pasta_arquivo(local) + gltf_loader.textures[i].uri;
-			ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
-		}
-
-		for (int a = 0; a < gltf_loader.scenes.size(); a++)
-		{
-			for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
+			for (int i = 0; i < gltf_loader.materials.size(); i++)
 			{
-				int node_index = gltf_loader.scenes[a].nodesIndices[b];
-				gltf_loader::Node n = gltf_loader.nodes[node_index];
-				ret.objetos.filhos.push_back(node_3D_object(n, gltf_loader.nodes, ret, gltf_loader));
+				string image_location;
+				if (gltf_loader.materials[i].textureIndex != 0)
+				{
+					image_location = pegar_pasta_arquivo(local) + gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
+				}
+				Material mat;
+				mat.shad = "resources/Shaders/mesh";
+				mat.cor = gltf_loader.materials[i].baseColorFactor;
+				mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
+				ret.materiais[gltf_loader.materials[i].name] = mat;
 			}
-		}
 
-		cenas_3D.aplicar(local, ret);
+			for (int i = 0; i < gltf_loader.textures.size(); i++)
+			{
+				string arquivo_textura = pegar_pasta_arquivo(local) + gltf_loader.textures[i].uri;
+				ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
+			}
+
+			for (int a = 0; a < gltf_loader.scenes.size(); a++)
+			{
+				for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
+				{
+					int node_index = gltf_loader.scenes[a].nodesIndices[b];
+					gltf_loader::Node n = gltf_loader.nodes[node_index];
+					ret.objetos.filhos.push_back(node_3D_object(n, gltf_loader.nodes, ret, gltf_loader));
+				}
+			}
+
+			cenas_3D.aplicar(local, ret);
+		}
 		return cenas_3D.pegar(local);
 	}
 	void importar_gltf_thread(string local, shared_ptr<cena_3D> *ret)
