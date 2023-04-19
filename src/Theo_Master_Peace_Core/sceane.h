@@ -219,6 +219,10 @@ public:
 
 			objs = tf_ordenate_by_distance(pos, objs);
 
+			for(int i = 0; i < objs.size() ; i++){
+				novo_fontes_luzes_id.push_back(objs[i]->ID);
+			}
+
 			fontes_luzes_id.swap(novo_fontes_luzes_id);
 		}
 	}
