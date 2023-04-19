@@ -83,8 +83,11 @@ function UPDATE()
         print("a",keys_axis:get_input_joystick(1,"a"))
     end
     ]]
-
-    print("AAAAA:",keys_axis:get_input_joystick(1,"rx"))
+    rx = keys_axis:get_input_joystick(1,"rx")
+    if rx > 0 then
+        print("AAAAA:",rx)
+    end
+    
 end
 
 function COLLIDE(collision_info)

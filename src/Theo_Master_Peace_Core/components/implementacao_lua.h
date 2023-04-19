@@ -526,7 +526,7 @@ namespace funcoes_ponte
 		else if (device == 2)
 		{
 			
-			if (manuseio_inputs->joysticks_input.size() <= joystick_no)
+			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
 				cout << key << endl;
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];

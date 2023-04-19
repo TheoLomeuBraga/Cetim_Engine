@@ -205,15 +205,22 @@ public:
 		return ret;
 	}
 
-	void ordenar_luzes(){
+	void ordenar_luzes()
+	{
 		std::vector<shared_ptr<objeto_jogo>> objs;
 		vector<int> novo_fontes_luzes_id;
+		if (cameras.size() > 0)
+		{
+			vec3 pos = cameras[0]->pegar_componente<transform_>()->pos;
+			for (int i = 0; i < fontes_luzes_id.size(); i++)
+			{
+				objs.push_back(lista_objetos[fontes_luzes_id[i]]);
+			}
 
-		for(int i = 0; i < fontes_luzes_id.size();i++){
-			objs.push_back(lista_objetos[fontes_luzes_id[i]]);
+			objs = tf_ordenate_by_distance(pos, objs);
+
+			fontes_luzes_id.swap(novo_fontes_luzes_id);
 		}
-		
-		fontes_luzes_id.swap(novo_fontes_luzes_id);
 	}
 
 	void atualisar()
