@@ -1409,8 +1409,10 @@ namespace funcoes_ponte
 	int get_scene_3D(lua_State *L){
 		Table ret;
 		string path = lua_tostring(L,1);
-		shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(path);
+
+		cena_3D scene = *ManuseioDados::carregar_modelo_3D(path).get();
 		
+		ret = scene_3D_table(scene);
 		lua_pushtable(L, ret);
 		return 1;
 	}
@@ -1421,7 +1423,6 @@ namespace funcoes_ponte
 		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
 		pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
-
 		pair<string, lua_function>("get_input", funcoes_ponte::get_input),
 
 		// tempo

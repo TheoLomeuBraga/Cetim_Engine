@@ -278,7 +278,32 @@ json table_json(const Table& table) {
     return j;
 }
 
+Table scene_3D_table(objeto_3D obj){
+    Table ret;
 
+    return ret;
+}
+
+Table scene_3D_table(cena_3D sceane){
+    Table ret;
+
+    for(pair<string, shared_ptr<malha>> p : sceane.malhas){
+
+    }
+
+    for(pair<string, Material> p : sceane.materiais){
+        
+    }
+
+    for(pair<string, shared_ptr<imagem>> p : sceane.texturas){
+        
+    }
+
+
+    ret.setTable("objects",scene_3D_table(sceane.objetos));
+    ret.setTable("extra",sceane.extras);
+    return ret;
+}
 
 
 

@@ -32,7 +32,7 @@ require("run_comunication_test")
 require("TMP_libs.objects.input")
 
 
-
+require("TMP_libs.objects.scene_3D")
 
 function set_resolution()
     window.resolution.x = 720
@@ -40,25 +40,27 @@ function set_resolution()
     window:set()
 end
 
+function printTableElements(tbl)
+    for key, value in ipairs(tbl) do
+        print("Element ", key, ": ", value)
+    end
+end
+
 function START()
+    
     print("core iniciando")
     full_test()
     set_resolution()
 
-
-    --objects_layesrs:create()
-
+    
+    
 
 
     print("divisoria")
     sceanes_db["test3"]:load()
 end
 
-function printTableElements(tbl)
-    for key, value in ipairs(tbl) do
-        print("Element ", key, ": ", value)
-    end
-end
+
 
 function UPDATE()
     --[[
