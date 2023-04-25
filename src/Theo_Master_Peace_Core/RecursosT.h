@@ -605,9 +605,11 @@ class cena_3D : public asset
 public:
 	cena_3D() {}
 	string nome;
+
 	map<string, shared_ptr<malha>> malhas;
 	map<string, Material> materiais;
 	map<string, shared_ptr<imagem>> texturas;
+	
 	objeto_3D objetos;
 	map<string, vector<key_frame>> animacoes;
 	Table extras;

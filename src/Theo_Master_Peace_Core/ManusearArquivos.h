@@ -708,7 +708,7 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	objeto_3D node_3D_object(gltf_loader::Node node, vector<gltf_loader::Node> node_list, cena_3D cena, gltf_loader::GLTFLoader loader)
+	objeto_3D node_3D_object(gltf_loader::Node node, vector<gltf_loader::Node> full_node_list, cena_3D cena, gltf_loader::GLTFLoader loader)
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
@@ -723,6 +723,7 @@ namespace ManuseioDados
 			string mesh_name = loader.meshes[mesh_index].name;
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
 
+			
 			int material_index = loader.meshes[mesh_index].material;
 			if (material_index <= loader.materials.size() - 1)
 			{
@@ -735,7 +736,7 @@ namespace ManuseioDados
 
 		for (int i = 0; i < node.childrenIndices.size(); i++)
 		{
-			ret.filhos.push_back(node_3D_object(node_list[i], node_list, cena, loader));
+			ret.filhos.push_back(node_3D_object(full_node_list[i], full_node_list, cena, loader));
 		}
 		return ret;
 	}

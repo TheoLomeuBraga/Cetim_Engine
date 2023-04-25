@@ -287,19 +287,29 @@ Table scene_3D_table(objeto_3D obj){
 Table scene_3D_table(cena_3D sceane){
     Table ret;
 
+    ret.setString("path",sceane.nome);
+
+    vector<Table> meshes;
     for(pair<string, shared_ptr<malha>> p : sceane.malhas){
-
+        Table this_mesh;
+        this_mesh.setFloat("file",p.second->arquivo_origem);
+        this_mesh.setFloat("name",p.second->nome);
+        meshes.push_back(this_mesh);
     }
+    ret.setTable("meshes",vTable_table(meshes));
 
+    vector<Table> materials;
     for(pair<string, Material> p : sceane.materiais){
-        
+        materials.push_back(material_table(p.second));
     }
+    ret.setTable("materials",vTable_table(materials));
 
+    vector<string> textures;
     for(pair<string, shared_ptr<imagem>> p : sceane.texturas){
-        
+        textures.push_back(p.first);
     }
-
-
+    ret.setTable("textures",vString_table(textures));
+    
     ret.setTable("objects",scene_3D_table(sceane.objetos));
     ret.setTable("extra",sceane.extras);
     return ret;
