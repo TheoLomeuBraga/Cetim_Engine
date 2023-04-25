@@ -42,8 +42,14 @@ end
 
 
 
-
-
+current_scene = {}
+function load_map(file)
+    current_scene = require("game_maps." .. file)
+    current_scene:load()
+end
+function unload_map(file)
+    current_scene:unload()
+end
 
 function START()
     
@@ -56,7 +62,9 @@ function START()
     print("{")
     deepprint(test_get_scene_3D.objects)
     print("}")
-    sceanes_db["test4"]:load()
+
+    --load_map("test_2D_map")
+    load_map("test_3D_physics_map")
 end
 
 

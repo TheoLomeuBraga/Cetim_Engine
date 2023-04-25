@@ -427,14 +427,25 @@ vector<X> remover_elementos_duplicados(vector<X> vec)
 	return ret;
 }
 
+enum lado_render_malha
+{
+	front = 0,
+	back = 1,
+	both = 2,
+};
+
 #define NO_TEXTURAS 6
 #define NO_INPUTS 16
 class Material
 {
 public:
-	string shad = "recursos/Shaders/padr�o";
+	string shad = "";
 
+	char lado_render = lado_render_malha::front;
+
+	bool filtro_bilinear[NO_TEXTURAS];
 	shared_ptr<imagem> texturas[NO_TEXTURAS];
+
 	float inputs[NO_INPUTS];
 	float interpolacao, gama = 1, metalico = 0, suave = 0;
 	vec4 cor = vec4(1, 1, 1, 1);
@@ -477,12 +488,7 @@ void escrever_vertice(vertice v)
 	cout << "}" << endl;
 }
 
-enum lado_render_malha
-{
-	front = 0,
-	back = 1,
-	both = 2,
-};
+
 
 class malha;
 void remover_malha(malha *ma);
