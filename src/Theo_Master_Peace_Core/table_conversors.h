@@ -287,6 +287,21 @@ Table scene_3D_table(objeto_3D obj){
     ret.setTable("rotation",vec3_table(quat_graus(obj.quaternion)));
     ret.setTable("scale",vec3_table(obj.escala));
 
+    vector<Table> meshes;
+    for(shared_ptr<malha> p : obj.minhas_malhas){
+        Table this_mesh;
+        this_mesh.setString("file",p->arquivo_origem);
+        this_mesh.setString("name",p->nome);
+        meshes.push_back(this_mesh);
+    }
+    ret.setTable("meshes",vTable_table(meshes));
+
+    vector<Table> materials;
+    for(Material p : obj.meus_materiais){
+        materials.push_back(material_table(p));
+    }
+    ret.setTable("materials",vTable_table(materials));
+
     ret.setTable("variables",obj.variaveis);
 
     vector<Table> children;
