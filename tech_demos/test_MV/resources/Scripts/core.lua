@@ -40,11 +40,8 @@ function set_resolution()
     window:set()
 end
 
-function printTableElements(tbl)
-    for key, value in ipairs(tbl) do
-        print("Element ", key, ": ", value)
-    end
-end
+
+  
 
 function START()
     
@@ -52,8 +49,8 @@ function START()
     full_test()
     set_resolution()
 
-    
-    
+    test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
+    print("path = ", test_get_scene_3D.path)
 
 
     print("divisoria")
