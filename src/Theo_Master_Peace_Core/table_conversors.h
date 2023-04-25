@@ -281,6 +281,20 @@ json table_json(const Table& table) {
 Table scene_3D_table(objeto_3D obj){
     Table ret;
 
+    ret.setString("name",obj.nome);
+
+    ret.setTable("position",vec3_table(obj.posicao));
+    ret.setTable("rotation",vec3_table(quat_graus(obj.quaternion)));
+    ret.setTable("scale",vec3_table(obj.escala));
+
+    ret.setTable("variables",obj.variaveis);
+
+    vector<Table> children;
+    for(objeto_3D o : obj.filhos){
+        children.push_back(scene_3D_table(o));
+    }
+    ret.setTable("children",vTable_table(children));
+
     return ret;
 }
 
@@ -292,8 +306,8 @@ Table scene_3D_table(cena_3D sceane){
     vector<Table> meshes;
     for(pair<string, shared_ptr<malha>> p : sceane.malhas){
         Table this_mesh;
-        this_mesh.setFloat("file",p.second->arquivo_origem);
-        this_mesh.setFloat("name",p.second->nome);
+        this_mesh.setString("file",p.second->arquivo_origem);
+        this_mesh.setString("name",p.second->nome);
         meshes.push_back(this_mesh);
     }
     ret.setTable("meshes",vTable_table(meshes));

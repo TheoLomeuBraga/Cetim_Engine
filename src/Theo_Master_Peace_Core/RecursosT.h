@@ -562,12 +562,12 @@ public:
 struct objeto_3D_struct
 {
 	string nome;
-	vector<shared_ptr<malha>> minhas_malhas;
-	vector<Material> meus_materiais;
-	Table variaveis;
 	vec3 posicao;
 	quat quaternion;
 	vec3 escala;
+	vector<shared_ptr<malha>> minhas_malhas;
+	vector<Material> meus_materiais;
+	Table variaveis;
 	vector<struct objeto_3D_struct> filhos;
 };
 typedef struct objeto_3D_struct objeto_3D;
@@ -609,7 +609,7 @@ public:
 	map<string, shared_ptr<malha>> malhas;
 	map<string, Material> materiais;
 	map<string, shared_ptr<imagem>> texturas;
-	
+
 	objeto_3D objetos;
 	map<string, vector<key_frame>> animacoes;
 	Table extras;
