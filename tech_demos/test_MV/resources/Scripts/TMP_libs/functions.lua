@@ -14,6 +14,31 @@ function deepcopy(orig)
     return copy
 end
 
+deepprint_space = ""
+function deepprint(tab)
+    local orig_type = type(tab)
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, tab, nil do
+            print(orig_key, orig_value)
+            if type(orig_value) == 'table' then
+                print("{")
+                
+                if deepprint == "" then
+                    deepprint_space = deepprint_space .. " "
+                    deepprint(orig_value)
+                    deepprint_space:sub(1,1)
+                else
+                    deepprint(deepprint_space,orig_value)
+                end
+                
+                print("}")
+            end
+        end
+    else -- number, string, boolean, etc
+        print(tab)
+    end
+end
 
 function deepcopyjson(orig)
     local orig_type = type(orig)

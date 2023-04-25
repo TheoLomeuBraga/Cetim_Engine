@@ -48,7 +48,7 @@ function physics_2D_component:new(object_ptr)
     p.object_ptr = object_ptr
     p.scale = Vec2:new(1, 1)
     p.boady_dynamic = boady_dynamics.static
-    p.colision_shape = colision_shapes.tile
+    p.colision_shape = collision_shapes.tile
     p.rotate = true
     p.triger = false
     p.friction = 1

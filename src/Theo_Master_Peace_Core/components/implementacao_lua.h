@@ -1272,7 +1272,6 @@ namespace funcoes_ponte
 			vector<shared_ptr<malha>> meshes;
 			for (Table mesh : vt)
 			{
-				cout << "file: " << mesh.getString("file") << "name: " << mesh.getString("name") << endl;
 				meshes.push_back(ManuseioDados::carregar_malha(mesh.getString("file"), mesh.getString("name")));
 			}
 			mesh->malhas = meshes;

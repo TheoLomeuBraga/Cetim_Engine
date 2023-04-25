@@ -41,7 +41,9 @@ function set_resolution()
 end
 
 
-  
+
+
+
 
 function START()
     
@@ -50,11 +52,11 @@ function START()
     set_resolution()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    print("path = ", test_get_scene_3D.path)
-
-
-    print("divisoria")
-    sceanes_db["test3"]:load()
+    
+    print("{")
+    deepprint(test_get_scene_3D.objects)
+    print("}")
+    sceanes_db["test4"]:load()
 end
 
 
