@@ -69,16 +69,16 @@ end
 
 
 
-local this_sceane = {}
-this_sceane.camera = nil
-this_sceane.tile_map_info = nil
-this_sceane.background = nil
-this_sceane.objects_layesrs = nil
+local this_map = {}
+this_map.camera = nil
+this_map.tile_map_info = nil
+this_map.background = nil
+this_map.objects_layesrs = nil
 
 
-function this_sceane:unload()
+function this_map:unload()
     print("unloading sceane")
-    this_sceane.objects_layesrs:destroy()
+    this_map.objects_layesrs:destroy()
     clear_memory()
 end
 
@@ -86,11 +86,11 @@ function create_background(image)
     background_material = material:new()
     background_material.shader = "resources/Shaders/background"
     background_material.textures[1] = image
-    this_sceane.background = create_render_shader(this_sceane.objects_layesrs.background_image,false,Vec3:new(0, 0, 0),Vec3:new(0, 0, 0),Vec3:new(1, 1, 1),1,background_material)
+    this_map.background = create_render_shader(this_map.objects_layesrs.background_image,false,Vec3:new(0, 0, 0),Vec3:new(0, 0, 0),Vec3:new(1, 1, 1),1,background_material)
 end
 
 function create_colision_tiled_box_volume(pos,rot,sca,debug)
-    ret = game_object:new(create_object(this_sceane.tile_map_info.map_object.object_ptr))
+    ret = game_object:new(create_object(this_map.tile_map_info.map_object.object_ptr))
 
     
 
@@ -125,7 +125,7 @@ function create_colision_tiled_box_volume(pos,rot,sca,debug)
 end
 
 function create_crate(pos)
-    ret = game_object:new(create_object(this_sceane.tile_map_info.map_object.object_ptr))
+    ret = game_object:new(create_object(this_map.tile_map_info.map_object.object_ptr))
     set_gravity(0,-9,0)
     
 
@@ -164,27 +164,27 @@ end
 function create_tilemap(tilemap_path,tileset_path,image_folder)
     tile_map_material = material:new()
     tile_map_material.shader = "resources/Shaders/sprite"
-    this_sceane.tile_map_info = load_2D_map(this_sceane.objects_layesrs.cenary,Vec3:new(0,0,0),Vec3:new(0,90,0),Vec3:new(1,1,1),tilemap_path,tileset_path,image_folder,tile_map_material)
-    this_sceane.tile_map_info.map_object.components[components.render_tile_map].render_tilemap_only_layer = -1
-    this_sceane.tile_map_info.map_object.components[components.render_tile_map]:set()
+    this_map.tile_map_info = load_2D_map(this_map.objects_layesrs.cenary,Vec3:new(0,0,0),Vec3:new(0,90,0),Vec3:new(1,1,1),tilemap_path,tileset_path,image_folder,tile_map_material)
+    this_map.tile_map_info.map_object.components[components.render_tile_map].render_tilemap_only_layer = -1
+    this_map.tile_map_info.map_object.components[components.render_tile_map]:set()
 
     
 
     --get info
     tile_map_info_size = {
-        x=this_sceane.tile_map_info.tile_map_info.width,
-        y=this_sceane.tile_map_info.tile_map_info.height,
-        tile_x=this_sceane.tile_map_info.tile_map_info.tilewidth,
-        tile_y=this_sceane.tile_map_info.tile_map_info.tileheight,
+        x=this_map.tile_map_info.tile_map_info.width,
+        y=this_map.tile_map_info.tile_map_info.height,
+        tile_x=this_map.tile_map_info.tile_map_info.tilewidth,
+        tile_y=this_map.tile_map_info.tile_map_info.tileheight,
     }
 
     tile_map_layer_info_map = {}
-    for l_id,l in  ipairs(this_sceane.tile_map_info.tile_map_info.layers) do
+    for l_id,l in  ipairs(this_map.tile_map_info.tile_map_info.layers) do
         tile_map_layer_info_map[l.name] = deepcopyjson(l)
     end
     
     tile_set_info_map = {}
-    for t_id,t in ipairs(this_sceane.tile_map_info.tile_set_info.tiles) do
+    for t_id,t in ipairs(this_map.tile_map_info.tile_set_info.tiles) do
         tile_set_info_map[t.id] = deepcopyjson(t)
     end
     
@@ -210,12 +210,12 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
         elseif properties.name == "3D_model" then
             mat = material:new()
             mat.shader = "resources/Shaders/mesh"
-            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,45,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new(properties.model_file,properties.model_name)})
+            create_mesh(this_map.objects_layesrs.background_3D,false,pos,Vec3:new(0,45,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new(properties.model_file,properties.model_name)})
         elseif properties.name == "raycast_test" then
             mat = matreial:new()
             mat.shader = "resources/Shaders/mesh"
             mat.color = {r = 1,g = 0,b = 0,a = 1}
-            create_mesh(this_sceane.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
+            create_mesh(this_map.objects_layesrs.background_3D,false,pos,Vec3:new(0,0,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.obj","Cube")})
             
             
         end
@@ -227,30 +227,30 @@ local test_map_2D = {}
 function test_map_2D:load()
     print("loading test map")
     initialize_render_settings()
-    this_sceane.objects_layesrs = layers_table:new_2D()
-    this_sceane.objects_layesrs:create()
+    this_map.objects_layesrs = layers_table:new_2D()
+    this_map.objects_layesrs:create()
     
-    create_audio(this_sceane.objects_layesrs.sound,"resources/Audio/teste de audio.wav",true,5)
+    create_audio(this_map.objects_layesrs.sound,"resources/Audio/teste de audio.wav",true,5)
     --background
     
     create_background("resources/Textures/fundo A.png")
 
     --camera
-    this_sceane.camera = create_camera_ortho(this_sceane.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
-    set_lisener_object(this_sceane.camera.object_ptr)
+    this_map.camera = create_camera_ortho(this_map.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
+    set_lisener_object(this_map.camera.object_ptr)
 
     --tilemap
     create_tilemap("resources/Leveis 2D/tilemaps/tilemap.json","resources/Leveis 2D/tilesets/tileset.json","resources/Leveis 2D/tilesets")
     mat = material:new()
     mat.shader = "resources/Shaders/text"
-    create_text(this_sceane.objects_layesrs.hud,true,Vec3:new(-0.75,0.75,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"Ãa._AlL BBbBB\nçççççç","resources/Fonts/Glowworm Regular.json")
+    create_text(this_map.objects_layesrs.hud,true,Vec3:new(-0.75,0.75,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"Ãa._AlL BBbBB\nçççççç","resources/Fonts/Glowworm Regular.json")
     
     
 end
 
 function test_map_2D:unload()
     print("unloading sceane")
-    this_sceane.objects_layesrs:destroy()
+    this_map.objects_layesrs:destroy()
     clear_memory()
 end
 
