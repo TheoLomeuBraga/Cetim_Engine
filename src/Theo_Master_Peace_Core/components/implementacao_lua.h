@@ -1187,10 +1187,13 @@ namespace funcoes_ponte
 	// post_processing
 	int get_set_post_processing(lua_State *L)
 	{
+		cout << "get_set_post_processing\n";
 		if (lua_tonumber(L, 1) == get_lua)
 		{
 			Table ret;
+			cout << "get_set_post_processing\n";
 			lua_pushtable(L, material_table(api_grafica->pos_processamento_info));
+			cout << "get_set_post_processing\n";
 			return 1;
 		}
 		else

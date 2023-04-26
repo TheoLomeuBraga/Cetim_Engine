@@ -24,6 +24,8 @@ require("TMP_libs.short_cuts.fps_counter")
 require("TMP_libs.short_cuts.create_render_shader")
 
 require("TMP_libs.material")
+require("TMP_libs.objects.window")
+
 require("all_sceanes")
 
 
@@ -63,8 +65,10 @@ function START()
     deepprint(test_get_scene_3D.objects)
     print("}")
 
-    --load_map("test_2D_map")
-    load_map("test_3D_physics_map")
+    load_map("test_2D_map")
+    --load_map("test_3D_physics_map")
+    --unload_map()
+    --load_map("test_3D_physics_map")
 end
 
 
