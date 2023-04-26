@@ -17,6 +17,7 @@ require("TMP_libs.layers_table")
 
 
 
+local this_sceane = {}
 
 
 
@@ -55,10 +56,17 @@ function initialize_render_settings()
     
 end
 
+function create_background(image)
+    background_material = material:new()
+    background_material.shader = "resources/Shaders/background"
+    background_material.textures[1] = image
+    this_sceane.background = create_render_shader(this_sceane.objects_layesrs.background_image,false,Vec3:new(0, 0, 0),Vec3:new(0, 0, 0),Vec3:new(1, 1, 1),1,background_material)
+end
 
 local test_3D_physics_map = {}
 
 function test_3D_physics_map:load()
+    this_sceane = {}
     print("loading test map")
     initialize_render_settings()
     this_sceane.objects_layesrs = layers_table:new_2D()
@@ -96,9 +104,9 @@ end
 
 function test_3D_physics_map:unload()
     print("unloading sceane")
-    test_3D_physics_map.objects_layesrs:destroy()
+    deepprint(this_sceane)
+    this_sceane.objects_layesrs:destroy()
     clear_memory()
 end
-
 
 return test_3D_physics_map

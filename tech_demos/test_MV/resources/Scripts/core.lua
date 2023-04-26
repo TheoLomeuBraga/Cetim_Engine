@@ -26,7 +26,7 @@ require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.material")
 require("TMP_libs.objects.window")
 
-require("all_sceanes")
+--require("all_sceanes")
 
 
 require("run_comunication_test")
@@ -46,11 +46,18 @@ end
 
 current_scene = {}
 function load_map(file)
+    current_scene = nil
     current_scene = require("game_maps." .. file)
     current_scene:load()
 end
-function unload_map(file)
+function unload_map()
     current_scene:unload()
+end
+
+function test_load_unload(file)
+    load_map(file)
+    unload_map()
+    load_map(file)
 end
 
 function START()
@@ -61,14 +68,14 @@ function START()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
     
+    --[[
     print("{")
     deepprint(test_get_scene_3D.objects)
     print("}")
+    ]]
 
-    load_map("test_2D_map")
-    --load_map("test_3D_physics_map")
-    --unload_map()
-    --load_map("test_3D_physics_map")
+    
+    load_map("test_3D_physics_map")
 end
 
 
