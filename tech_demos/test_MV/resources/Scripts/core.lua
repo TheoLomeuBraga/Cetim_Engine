@@ -55,8 +55,10 @@ end
 
 function test_load_unload(file)
     local i = 0
-    while i < 10 do
+    while i < 2 do
+        print("load_map")
         load_map(file)
+        print("unload_map")
         unload_map()
         i = i + 1
     end
@@ -73,9 +75,11 @@ function START()
 
     --load_map("test_2D_map")
     --load_map("test_3D_physics_map")
+    load_map("test_3D_assets")
 
-    test_load_unload("test_3D_physics_map")
+    
     --test_load_unload("test_2D_map")
+    --test_load_unload("test_3D_physics_map")
 end
 
 function UPDATE()

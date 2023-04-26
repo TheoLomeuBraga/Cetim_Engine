@@ -63,9 +63,9 @@ function create_background(image)
     this_sceane.background = create_render_shader(this_sceane.objects_layesrs.background_image,false,Vec3:new(0, 0, 0),Vec3:new(0, 0, 0),Vec3:new(1, 1, 1),1,background_material)
 end
 
-local test_3D_physics_map = {}
+local test_3D_assets = {}
 
-function test_3D_physics_map:load()
+function test_3D_assets:load()
     this_sceane = {}
     print("loading test map")
     initialize_render_settings()
@@ -102,10 +102,10 @@ function test_3D_physics_map:load()
 
 end
 
-function test_3D_physics_map:unload()
+function test_3D_assets:unload()
     print("unloading sceane")
     this_sceane.objects_layesrs:destroy()
     clear_memory()
 end
 
-return test_3D_physics_map
+return test_3D_assets
