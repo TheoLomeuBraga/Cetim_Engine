@@ -34,16 +34,16 @@ public:
 
 	audio_info info;
 	sf::Sound som;
-	sf::SoundBuffer buffer;
+	shared_ptr<sf::SoundBuffer> buffer;
 	float min_distance = 0, atenuation = 0;
 
-	shared_ptr<transform_> tf;
+	shared_ptr<transform_> tf = NULL;
 
 	void aplicar_info()
 	{
 
-		buffer = *carregar_audio_buffer_sfml(info.nome);
-		som.setBuffer(buffer);
+		buffer = carregar_audio_buffer_sfml(info.nome);
+		som.setBuffer(*buffer.get());
 
 		som.setPlayingOffset(sf::seconds(info.tempo));
 		som.setVolume(info.volume);

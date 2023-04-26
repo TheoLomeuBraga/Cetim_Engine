@@ -42,75 +42,68 @@ function set_resolution()
     window:set()
 end
 
-
-
 current_scene = {}
 function load_map(file)
     current_scene = nil
     current_scene = require("game_maps." .. file)
     current_scene:load()
 end
+
 function unload_map()
     current_scene:unload()
 end
 
 function test_load_unload(file)
-    load_map(file)
-    unload_map()
+    local i = 0
+    while i < 10 do
+        load_map(file)
+        unload_map()
+        i = i + 1
+    end
     load_map(file)
 end
 
 function START()
-    
     print("core iniciando")
     full_test()
     set_resolution()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    
-    --[[
-    print("{")
-    deepprint(test_get_scene_3D.objects)
-    print("}")
-    ]]
 
-    
-    load_map("test_3D_physics_map")
+
+    --load_map("test_2D_map")
+    --load_map("test_3D_physics_map")
+
+    test_load_unload("test_3D_physics_map")
+    --test_load_unload("test_2D_map")
 end
-
-
 
 function UPDATE()
     --[[
     keys_axis:set_text_input_geter(true)
     print(keys_axis:get_text_input())
     ]]
-
     --[[
     if keys_axis:get_input(input_devices.keyboard,"a") == 1 then
         print("a",keys_axis:get_input(input_devices.keyboard,"a"))
     end
     ]]
-    
     --[[
     l = keys_axis:get_input(input_devices.mouse, "left")
     r = keys_axis:get_input(input_devices.mouse, "right")
     print("mouse movement", l, r)
     ]]
-    
     --[[
     if keys_axis:get_input_joystick(1,"a") == 1 then
         print("a",keys_axis:get_input_joystick(1,"a"))
     end
     ]]
-
     --[[
     rx = keys_axis:get_input_joystick(1,"rx")
     if rx > 0 then
         print("AAAAA:",rx)
     end
     ]]
-    
 end
 
 function COLLIDE(collision_info)
