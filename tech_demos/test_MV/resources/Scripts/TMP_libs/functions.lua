@@ -63,7 +63,7 @@ function deepcopyjson(orig)
     return copy
 end
 
-function tablelength(T)
+function tablelen(T)
     local count = 0
     for _ in pairs(T) do count = count + 1 end
     return count
