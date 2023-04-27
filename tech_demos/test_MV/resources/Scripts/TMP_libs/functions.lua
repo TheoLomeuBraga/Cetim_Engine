@@ -34,6 +34,18 @@ function deepprint(tab)
     end
 end
 
+function tableprint(tab)
+    local orig_type = type(tab)
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, tab, nil do
+            print(orig_key, orig_value)
+        end
+    else -- number, string, boolean, etc
+        print(tab)
+    end
+end
+
 function deepcopyjson(orig)
     local orig_type = type(orig)
     local copy

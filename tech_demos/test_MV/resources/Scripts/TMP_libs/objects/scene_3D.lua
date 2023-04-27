@@ -8,6 +8,9 @@ function object_3D_example()
         rotation = {x=0,y=0,z=0},
         scale = {x=0,y=0,z=0},
         
+        meshes = {},
+        materials = {},
+
         variables = {},
         children = {},
     }

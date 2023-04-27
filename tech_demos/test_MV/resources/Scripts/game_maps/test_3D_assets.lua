@@ -51,14 +51,19 @@ function initialize_render_settings()
     post_processing:get()
     post_processing.material.shader = "resources/Shaders/post_processing"
     post_processing:set()
-    
 end
 
 function create_background(image)
     background_material = material:new()
     background_material.shader = "resources/Shaders/background"
-    background_material.textures[1] = image
+    background_material.textures[1] = "resources/Textures/fundo A.png"
     this_map.background = create_render_shader(this_map.objects_layesrs.background_image,false,Vec3:new(0, 0, 0),Vec3:new(0, 0, 0),Vec3:new(1, 1, 1),1,background_material)
+end
+
+function object_3D_to_game_object(object_3D)
+    ret = {}
+
+    return ret
 end
 
 local test_3D_assets = {}
@@ -70,33 +75,16 @@ function test_3D_assets:load()
     this_map.objects_layesrs = layers_table:new_2D()
     this_map.objects_layesrs:create()
     
-    create_background("resources/Textures/fundo A.png")
+    create_background()
 
     --camera
     this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),90,0.1,100)
     set_lisener_object(this_map.camera.object_ptr)
 
-    mat = matreial:new()
-    mat.shader = "resources/Shaders/mesh"
-    mat.color = {r = 1,g = 0,b = 0,a = 1}
-    mat.textures = {"resources/Textures/white.png"}
-    pos = Vec3:new(0,0,0)
+    scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
-    suzane_mesh = mesh_location:new("resources/3D Models/cube.gltf","Suzanne")
-    set_gravity(0,-9,0)
-    create_collision_mesh(this_map.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane_mesh},true,collision_shapes.convex,suzane_mesh)
-
-    mat.color = {r = 0,g = 0,b = 0,a = 1}
-    create_collision_mesh(this_map.objects_layesrs.background_3D,Vec3:new(0,5,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane_mesh},true,collision_shapes.convex,suzane_mesh)
-
-    mat.color = {r = 0,g = 1,b = 0,a = 1}
-    create_collision_mesh(this_map.objects_layesrs.background_3D,Vec3:new(0,10,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},true,collision_shapes.cube,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
-
-    mat.color = {r = 0,g = 0,b = 1,a = 1}
-    create_collision_mesh(this_map.objects_layesrs.background_3D,Vec3:new(0,7,0),Vec3:new(44,-90,0),Vec3:new(1,1,1),2,{mat},{suzane_mesh},true,collision_shapes.convex,suzane_mesh)
-    
-    mat.color = {r = 1,g = 1,b = 1,a = 1}
-    collis_detect = create_collision_mesh(this_map.objects_layesrs.background_3D,Vec3:new(0,-5,0),Vec3:new(0,45,0),Vec3:new(100,1,100),2,{mat},{mesh_location:new("resources/3D Models/cube.gltf","Cube")},false,collision_shapes.cube,mesh_location:new("resources/3D Models/cube.gltf","Cube"))
+    --deepprint(scene_3D)
+    tableprint(scene_3D)
 
 end
 
