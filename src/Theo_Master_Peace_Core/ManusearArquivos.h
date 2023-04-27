@@ -679,10 +679,12 @@ namespace ManuseioDados
 		*ret = importar_map(local);
 	}
 
-	malha converter_malha_gltf(gltf_loader::Mesh m)
+	malha converter_malha_gltf(gltf_loader::Mesh m,string file_path)
 	{
 		malha ret;
 		ret.indice = m.indices;
+		ret.nome = m.name;
+		ret.arquivo_origem = file_path;
 
 		ret.vertices.resize(m.positions.size());
 		for (int i = 0; i < m.positions.size(); i++)
@@ -753,7 +755,7 @@ namespace ManuseioDados
 
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i]))));
+				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i],local))));
 			}
 
 			for (int i = 0; i < gltf_loader.materials.size(); i++)

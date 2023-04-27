@@ -82,17 +82,14 @@ function object_3D_to_game_object(father,render_layer,object_3D)
     ret.components[components.transform]:set()
 
     
-    local mesh_mat_size = math.min(tablelen(object_3D.meshes),tablelen(object_3D.materials))
+    local mesh_mat_size = math.min(tablelength(object_3D.meshes),tablelength(object_3D.materials))
     if mesh_mat_size > 0 then
         ret:add_component(components.render_mesh)
         ret.components[components.render_mesh].layer = render_layer
         ret.components[components.render_mesh].meshes_cout = mesh_mat_size
 
-        local i = 0
-        while i < mesh_mat_size do
-            
-            i = i + 1
-        end
+        ret.components[components.render_mesh].meshes = object_3D.meshes
+        ret.components[components.render_mesh].materials = object_3D.materials
 
         ret.components[components.render_mesh]:set()
     end
@@ -102,6 +99,25 @@ function object_3D_to_game_object(father,render_layer,object_3D)
         object_3D_to_game_object(ret.object_ptr,render_layer,value)
     end
     
+    return ret
+end
+
+function create_sceane_3D_with_tf(father,pos,rot,sca,sceane_3D)
+    ret = game_object:new(create_object(father))
+
+    ret:add_component(components.transform)
+    ret.components[components.transform].position = deepcopy(pos)
+    ret.components[components.transform].rotation = deepcopy(rot)
+    ret.components[components.transform].scale = deepcopy(sca)
+    ret.components[components.transform]:set()
+
+    object_3D_to_game_object(ret.object_ptr,2,scene_3D.objects)
+    return ret
+end
+
+function create_sceane_3D(father,sceane_3D)
+
+    object_3D_to_game_object(father,2,scene_3D.objects)
     return ret
 end
 
@@ -121,7 +137,11 @@ function test_3D_assets:load()
     set_lisener_object(this_map.camera.object_ptr)
 
     scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    object_3D_to_game_object(this_map.objects_layesrs.cenary,2,scene_3D.objects)
+    --object_3D_to_game_object(this_map.objects_layesrs.cenary,2,scene_3D.objects)
+    pos = {x = 0,y = 0,z = 0}
+    rot = {x = 0,y = 0,z = 0}
+    sca = {x = 1,y = 1,z = 1}
+    create_sceane_3D_with_tf(this_map.objects_layesrs,pos,rot,sca,scene_3D)
 
     --deepprint(scene_3D)
     print("scene_3D {")
