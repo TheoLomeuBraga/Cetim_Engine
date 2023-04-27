@@ -13,10 +13,10 @@ end
 
 mesh_location = {}
 function mesh_location:new(file,name)
-    ret = {}
-    ret.file = file
-    ret.name = name
-    return ret
+    return {
+        file = file,
+        name = name
+    }
 end
 
 normal_direction = {
