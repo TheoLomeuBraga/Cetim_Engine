@@ -679,7 +679,7 @@ namespace ManuseioDados
 		*ret = importar_map(local);
 	}
 
-	malha converter_malha_gltf(gltf_loader::Mesh m,string file_path)
+	malha converter_malha_gltf(gltf_loader::Mesh m, string file_path)
 	{
 		malha ret;
 		ret.indice = m.indices;
@@ -715,9 +715,14 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 
+		/*
 		vec3 nothing;
 		vec4 nothing2;
 		glm::decompose(node.matrix, ret.escala, ret.quaternion, ret.posicao, nothing, nothing2);
+		*/
+		ret.posicao = node.translation;
+		ret.quaternion = node.rotation;
+		ret.escala = node.scale;
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
@@ -725,7 +730,6 @@ namespace ManuseioDados
 			string mesh_name = loader.meshes[mesh_index].name;
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
 
-			
 			int material_index = loader.meshes[mesh_index].material;
 			if (material_index <= loader.materials.size() - 1)
 			{
@@ -755,7 +759,7 @@ namespace ManuseioDados
 
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i],local))));
+				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i], local))));
 			}
 
 			for (int i = 0; i < gltf_loader.materials.size(); i++)
@@ -769,6 +773,9 @@ namespace ManuseioDados
 				mat.shad = "resources/Shaders/mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 				mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
+				if(mat.texturas[0] == NULL){
+					mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+				}
 				ret.materiais[gltf_loader.materials[i].name] = mat;
 			}
 

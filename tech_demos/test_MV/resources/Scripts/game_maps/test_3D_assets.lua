@@ -59,7 +59,7 @@ function create_background(image)
     background_material.shader = "resources/Shaders/background"
     background_material.textures[1] = "resources/Textures/fundo A.png"
     this_map.background = create_render_shader(this_map.objects_layesrs.background_image, false, Vec3:new(0, 0, 0),
-    Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
+        Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
 end
 
 function count_parent_objects(object_3D)
@@ -72,34 +72,30 @@ function count_parent_objects(object_3D)
 end
 
 function object_3D_to_game_object(father, render_layer, object_3D)
-    ret = game_object:new(create_object(father))
+    local ret = {}
 
-    ret:add_component(components.transform)
-    ret.components[components.transform].is_ui = false
-    ret.components[components.transform].position = deepcopyjson(object_3D.position)
-    ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
-    ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
-    ret.components[components.transform]:set()
+    local ret_object_ptr = create_object(father)
 
 
     local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
     if mesh_mat_size > 0 then
-        ret:add_component(components.render_mesh)
-        ret.components[components.render_mesh].layer = render_layer
-        ret.components[components.render_mesh].meshes_cout = mesh_mat_size
 
-        local mat = matreial:new()
-        mat.shader = "resources/Shaders/mesh"
-        mat.color = { r = 1, g = 1, b = 1, a = 1 }
-        mat.textures = { "resources/Textures/white.png" }
+        ret = create_mesh(ret_object_ptr, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
+        
+        --ret.components[components.render_mesh].meshes = object_3D.meshes
+        --ret.components[components.render_mesh].materials = object_3D.materials
 
-        ret.components[components.render_mesh].meshes = { mesh_location:new("resources/3D Models/cube.gltf", "Cube") } --object_3D.meshes
-        ret.components[components.render_mesh].materials = { mat } --object_3D.materials
-
-        ret.components[components.render_mesh]:set()
+    else
+        ret = game_object:new(ret_object_ptr)
+        ret:add_component(components.transform)
+        ret.components[components.transform].is_ui = false
+        ret.components[components.transform].position = deepcopyjson(object_3D.position)
+        ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
+        ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
+        ret.components[components.transform]:set()
     end
 
-    print("tablelength(object_3D.children)",tablelength(object_3D.children))
+    print("tablelength(object_3D.children)", tablelength(object_3D.children))
     for index, value in ipairs(object_3D.children) do
         object_3D_to_game_object(ret.object_ptr, render_layer, value)
     end
@@ -119,22 +115,36 @@ function test_3D_assets:load()
     create_background()
 
     --camera
-    this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera, Vec3:new(-10, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
+    this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
     set_lisener_object(this_map.camera.object_ptr)
 
     scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
     scene_3D_game_object = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
-    
-    --scene_3D_game_object.components[components.transform].position = { x = 30, y = 0, z = 0 }
-    --scene_3D_game_object.components[components.transform]:set()
+    scene_3D_game_object.components[components.transform].position = {x=0,y=5,z=0}
+    scene_3D_game_object.components[components.transform].rotation = {x=45,y=45,z=45}
+    scene_3D_game_object.components[components.transform].scale = {x=2,y=2,z=2}
+    scene_3D_game_object.components[components.transform]:set()
+    --remove_object(scene_3D_game_object.object_ptr)
+
+    --[[
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.color = { r = 1, g = 1, b = 1, a = 1 }
+    mat.textures = { "resources/Textures/white.png" }
+    local cube_mesh = mesh_location:new("resources/3D Models/cube.gltf", "Cube")
+    create_mesh(this_map.objects_layesrs.cenary, false, Vec3:new(0, 1, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 2, { mat },{ cube_mesh })
+    ]]
 
     
+
+    --[[
     print("scene_3D {")
     tableprint(scene_3D)
     print("}")
+    ]]
 
     print("scene_3D.objects {")
-    tableprint(scene_3D.objects)
+    tableprint(scene_3D.objects.children[1])
     print("}")
 
     print("count_parent_objects: ", count_parent_objects(scene_3D.objects))
