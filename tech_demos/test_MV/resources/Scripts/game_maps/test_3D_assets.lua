@@ -79,9 +79,6 @@ function object_3D_to_game_object(father, render_layer, object_3D)
     if mesh_mat_size > 0 then
 
         ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
-        
-        --ret.components[components.render_mesh].meshes = object_3D.meshes
-        --ret.components[components.render_mesh].materials = object_3D.materials
 
     else
         ret = game_object:new(father)
@@ -126,6 +123,11 @@ function test_3D_assets:load()
     this_map.map.components[components.transform].rotation = {x=0,y=0,z=0}
     this_map.map.components[components.transform].scale = {x=1,y=1,z=1}
     this_map.map.components[components.transform]:set()
+
+    --print("have transform:",this_map.map:have_component(components.transform))
+    print("this_object_ptr {")
+    deepprint(game_object:recreate(this_map.map.object_ptr))
+    print("}")
     
     --remove_object(this_map.map.object_ptr)
 
@@ -159,6 +161,7 @@ function test_3D_assets:load()
     print("}")
     ]]
     --print("count_parent_objects: ", count_parent_objects(scene_3D.objects))
+
 
 end
 

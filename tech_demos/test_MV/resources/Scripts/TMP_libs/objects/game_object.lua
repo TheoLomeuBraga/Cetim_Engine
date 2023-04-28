@@ -1,3 +1,5 @@
+require("TMP_libs.components.component_index")
+
 --object
 function create_object()
 end
@@ -25,7 +27,7 @@ function game_object:new(object_ptr)
     obj.object_ptr = object_ptr
     obj.components = {}
     obj.father = ""
-    obj.childrens_size = 0
+    --obj.childrens_size = 0
     obj.childrens = {}
     function obj:add_component(component_name)
         add_component(self.object_ptr,component_name)
@@ -36,11 +38,7 @@ function game_object:new(object_ptr)
         self.components[component_name]:delet()
     end
     function obj:have_component(comp)
-        ret = false
-        if have_component(self.object_ptr,comp) == true then
-            ret = true
-        end
-        return ret
+        return have_component(self.object_ptr,comp) == true
     end
     function obj:get_components()
         for key, value in pairs(components) do
@@ -49,24 +47,12 @@ function game_object:new(object_ptr)
             end
         end
     end
-    function obj:get_family()
-        --j = get_object_family_json(self.object_ptr)
+    function obj:get()
         j = get_object_family(self.object_ptr)
         self.father = j.father
         self.childrens = deepcopyjson(j.childrens)
     end
-    function obj:get()
-        self:get_family()
-        --self:get_components()
-    end
     function obj:set()
-    end
-    function obj:delet()
-        for key,value in ipairs(self.components) do 
-            value:delet()
-        end
-        self.components = nil
-        self = nil
     end
     function obj:remove()
         self:get()
@@ -81,6 +67,22 @@ function game_object:new(object_ptr)
     return obj
 end
 
+function game_object:recreate(object_ptr)
+    ret = game_object:new(object_ptr)
 
+    ret:get()
+    
+    print("recreating",tablelength(components))
+
+    
+    for i, v in pairs(components) do
+        if ret:have_component(v) then
+            ret:add_component(v)
+            ret.components[v]:get()
+        end
+    end
+
+    return ret
+end
 
 

@@ -170,7 +170,7 @@ public:
 	bool tem_componente()
 	{
 		shared_ptr<componente> c = pegar_componente<X>();
-		if (c = NULL)
+		if (c == NULL)
 		{
 			return false;
 		}
