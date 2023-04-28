@@ -371,7 +371,7 @@ namespace gltf_loader
 
             if (nodeJson.contains("extras"))
             {
-                nodeData.extras = nodeJson["extras"];
+                nodeData.extras = nodeJson["extras"].get<json>();
             }
 
             nodes.push_back(nodeData);

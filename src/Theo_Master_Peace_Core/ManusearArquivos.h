@@ -581,15 +581,15 @@ namespace ManuseioDados
 		json ret;
 		for (auto &[key, value] : table.m_floatMap)
 		{
-			ret["floatMap"][key] = value;
+			ret[key] = value;
 		}
 		for (auto &[key, value] : table.m_stringMap)
 		{
-			ret["stringMap"][key] = value;
+			ret[key] = value;
 		}
 		for (auto &[key, value] : table.m_tableMap)
 		{
-			ret["tableMap"][key] = table_json(value);
+			ret[key] = table_json(value);
 		}
 		return ret;
 	}
@@ -597,20 +597,35 @@ namespace ManuseioDados
 	Table json_table(json table)
 	{
 		Table ret;
-		for (auto it = table["floatMap"].begin(); it != table["floatMap"].end(); it++)
+		for (auto it = table.begin(); it != table.end(); it++)
 		{
-			std::string key = it.key();
-			ret.setFloat(key, it->get<float>());
-		}
-		for (auto it = table["stringMap"].begin(); it != table["stringMap"].end(); it++)
-		{
-			std::string key = it.key();
-			ret.setString(key, it->get<std::string>());
-		}
-		for (auto it = table["tableMap"].begin(); it != table["tableMap"].end(); it++)
-		{
-			std::string key = it.key();
-			ret.setTable(key, json_table(it->get<json>()));
+			string key = it.key();
+			nlohmann::json::value_t type = it->type();
+
+			if (type == json::value_t::object)
+			{
+				ret.setTable(key, json_table(it->get<json>()));
+			}
+			else if (type == json::value_t::array)
+			{
+				ret.setTable(key, json_table(it->get<json>()));
+			}
+			else if (type == json::value_t::string)
+			{
+				ret.setString(key,it->get<string>());
+			}
+			else if (type == json::value_t::boolean)
+			{
+				ret.setFloat(key,it->get<bool>());
+			}
+			else if (type == json::value_t::number_integer)
+			{
+				ret.setFloat(key,it->get<int>());
+			}
+			else if (type == json::value_t::number_float)
+			{
+				ret.setFloat(key,it->get<float>());
+			}
 		}
 
 		return ret;
@@ -726,7 +741,6 @@ namespace ManuseioDados
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
 
 			int material_index = loader.meshes[mesh_index].material;
-			cout << material_index << endl;
 
 			if (material_index <= loader.materials.size() - 1 && loader.materials.size() != 0)
 			{
@@ -738,7 +752,7 @@ namespace ManuseioDados
 				Material mat;
 				mat.shad = "resources/Shaders/mesh";
 				mat.texturas[0] = carregar_Imagem("resources/Textures/white.png");
-				
+
 				ret.meus_materiais.push_back(mat);
 			}
 		}
