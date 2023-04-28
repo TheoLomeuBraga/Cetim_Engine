@@ -167,6 +167,10 @@ function test_3D_assets:load()
 
 end
 
+function test_3D_assets:update()
+    
+end
+
 function test_3D_assets:unload()
     print("unloading sceane")
     this_map.objects_layesrs:destroy()

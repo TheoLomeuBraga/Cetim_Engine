@@ -248,6 +248,10 @@ function test_map_2D:load()
     
 end
 
+function test_map_2D:update()
+    
+end
+
 function test_map_2D:unload()
     print("unloading sceane")
     this_map.objects_layesrs:destroy()

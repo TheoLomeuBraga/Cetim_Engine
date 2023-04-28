@@ -73,6 +73,10 @@ function test_selection:load()
     terminal = create_text(this_map.objects_layesrs.hud,true,Vec3:new(-0.9,0.9,0.9),Vec3:new(0,0,0),Vec3:new(0.05,0.05,0.05),mat,3,"hello world","resources/Fonts/Glowworm Regular.json")
 end
 
+function test_selection:update()
+    
+end
+
 function test_selection:unload()
     print("unloading sceane")
     this_map.objects_layesrs:destroy()

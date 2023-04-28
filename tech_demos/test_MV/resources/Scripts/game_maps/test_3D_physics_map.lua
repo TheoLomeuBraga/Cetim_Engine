@@ -102,6 +102,10 @@ function test_3D_physics_map:load()
 
 end
 
+function test_3D_physics_map:update()
+    
+end
+
 function test_3D_physics_map:unload()
     print("unloading sceane")
     this_map.objects_layesrs:destroy()

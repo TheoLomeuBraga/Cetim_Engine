@@ -84,6 +84,9 @@ function START()
 end
 
 function UPDATE()
+    if current_scene.update ~= nil then
+        current_scene:update()
+    end
     --[[
     keys_axis:set_text_input_geter(true)
     print(keys_axis:get_text_input())
