@@ -75,8 +75,9 @@ function START()
 
     --load_map("test_2D_map")
     --load_map("test_3D_physics_map")
-    load_map("test_3D_assets")
     --load_map("hello_world")
+    --load_map("test_3D_assets")
+    load_map("test_3D_game")
 
     
     --test_load_unload("test_2D_map")

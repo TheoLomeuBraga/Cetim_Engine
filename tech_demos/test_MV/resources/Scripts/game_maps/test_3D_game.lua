@@ -4,7 +4,6 @@ require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
 require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.short_cuts.create_collision_mesh")
-require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")
 require("TMP_libs.objects.collision_shapes")
@@ -16,11 +15,9 @@ require("TMP_libs.objects.scene_3D")
 
 require("math")
 
-local this_map = {}
+local test_3D_game = {}
 
-
-
-function initialize_render_settings()
+function test_3D_game:initialize_render_settings()
     window.resolution.x = 720
     window.resolution.y = 720
     window:set()
@@ -53,32 +50,25 @@ function initialize_render_settings()
     post_processing:set()
 end
 
-function create_background(image)
+function test_3D_game:create_background()
     background_material = material:new()
     background_material.shader = "resources/Shaders/background"
-    background_material.textures[1] = "resources/Textures/fundo A.png"
-    this_map.background = create_render_shader(this_map.objects_layesrs.background_image, false, Vec3:new(0, 0, 0),
-        Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
+    background_material.textures = {"resources/Textures/white.png"}
+    background_material.color = {r=0.25,g=0.25,b=0.25,a=1}
+    self.objects_layesrs.background_image = create_render_shader(self.objects_layesrs.background_image, false, Vec3:new(0, 0, 0),Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
 end
 
-function count_parent_objects(object_3D)
-    ret = 0
-    for index, value in ipairs(object_3D.children) do
-        ret = ret + 1
-        ret = ret + count_parent_objects(value)
-    end
-    return ret
+function test_3D_game:create_test_camera()
+    self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
 end
 
-function object_3D_to_game_object(father, render_layer, object_3D)
+function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
 
     local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
     if mesh_mat_size > 0 then
-
         ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
-
     else
         ret = game_object:new(father)
         ret:add_component(components.transform)
@@ -92,50 +82,42 @@ function object_3D_to_game_object(father, render_layer, object_3D)
     local obj_script = object_3D.variables.Script
 
     for index, value in ipairs(object_3D.children) do
-        object_3D_to_game_object(ret.object_ptr, render_layer, value)
+        self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
     end
 
     return ret
 end
 
-local test_3D_assets = {}
+function test_3D_game:load_assets(path)
+    local scene_3D = get_scene_3D(path)
+    return self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
+end
 
-function test_3D_assets:load()
-    this_map = {}
-    print("loading test map")
-    initialize_render_settings()
-    this_map.objects_layesrs = layers_table:new_3D()
-    this_map.objects_layesrs:create()
+function test_3D_game:load()
+    self:initialize_render_settings()
+    self.objects_layesrs = layers_table:new_3D()
+    self.objects_layesrs:create()
 
-    create_background()
+    self:create_background()
+    self:create_test_camera()
+    --self:load_assets("resources/3D Models/test_3D_game.gltf")
+    self.assets = self:load_assets("resources/3D Models/test_custom_proprietys.gltf")
 
-    --camera
-    this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
-    set_lisener_object(this_map.camera.object_ptr)
-
-    --local scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    local scene_3D = get_scene_3D("resources/3D Models/test_custom_proprietys.gltf")
-    print("scene_3D")
-    this_map.map = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
-    this_map.map.components[components.transform].position = {x=0,y=0,z=0}
-    this_map.map.components[components.transform].rotation = {x=0,y=0,z=0}
-    this_map.map.components[components.transform].scale = {x=1,y=1,z=1}
-    this_map.map.components[components.transform]:set()
+    self.assets.components[components.transform].position = {x=0,y=-5,z=0}
+    self.assets.components[components.transform].rotation = {x=0,y=0,z=0}
+    self.assets.components[components.transform].scale = {x=1,y=1,z=1}
+    self.assets.components[components.transform]:set()
 
     
-    
-
 
 end
 
-function test_3D_assets:update()
-    
+function test_3D_game:update()
 end
 
-function test_3D_assets:unload()
-    print("unloading sceane")
-    this_map.objects_layesrs:destroy()
+function test_3D_game:unload()
+    self.objects_layesrs:destroy()
     clear_memory()
 end
 
-return test_3D_assets
+return test_3D_game
