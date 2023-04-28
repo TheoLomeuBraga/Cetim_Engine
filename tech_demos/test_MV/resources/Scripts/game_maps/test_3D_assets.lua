@@ -74,19 +74,24 @@ end
 function object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
-    local ret_object_ptr = create_object(father)
-
 
     local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
     if mesh_mat_size > 0 then
 
-        ret = create_mesh(ret_object_ptr, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
+        ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
         
         --ret.components[components.render_mesh].meshes = object_3D.meshes
         --ret.components[components.render_mesh].materials = object_3D.materials
+        print("object_3D.meshes { ")
+        for index, value in ipairs(object_3D.meshes) do
+            print( "    {")
+            deepprint(value)
+            print( "    }")
+        end
+        print("}")
 
     else
-        ret = game_object:new(ret_object_ptr)
+        ret = game_object:new(father)
         ret:add_component(components.transform)
         ret.components[components.transform].is_ui = false
         ret.components[components.transform].position = deepcopyjson(object_3D.position)
@@ -95,8 +100,6 @@ function object_3D_to_game_object(father, render_layer, object_3D)
         ret.components[components.transform]:set()
     end
 
-    
-    print("tablelength(object_3D.children)", tablelength(object_3D.children))
     for index, value in ipairs(object_3D.children) do
         object_3D_to_game_object(ret.object_ptr, render_layer, value)
     end
@@ -119,22 +122,31 @@ function test_3D_assets:load()
     this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
     set_lisener_object(this_map.camera.object_ptr)
 
-    scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
+    local scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
     this_map.map = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
-    this_map.map.components[components.transform].position = {x=0,y=5,z=0}
-    this_map.map.components[components.transform].rotation = {x=45,y=45,z=45}
-    this_map.map.components[components.transform].scale = {x=2,y=2,z=2}
+    this_map.map.components[components.transform].position = {x=0,y=0,z=0}
+    this_map.map.components[components.transform].rotation = {x=0,y=-90,z=0}
+    this_map.map.components[components.transform].scale = {x=1,y=1,z=1}
     this_map.map.components[components.transform]:set()
+    
     --remove_object(this_map.map.object_ptr)
+
 
     --[[
     local mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
-    mat.color = { r = 1, g = 1, b = 1, a = 1 }
+    mat.color = { r = 0, g = 0, b = 1, a = 1 }
     mat.textures = { "resources/Textures/white.png" }
     local cube_mesh = mesh_location:new("resources/3D Models/cube.gltf", "Cube")
-    create_mesh(this_map.objects_layesrs.cenary, false, Vec3:new(0, 1, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 2, { mat },{ cube_mesh })
+    test_obj = create_mesh(this_map.objects_layesrs.cenary, false, Vec3:new(0, 1, 0), Vec3:new(0, 90, 0), Vec3:new(2, 2, 2), 2, { mat },{ cube_mesh })
+
+    mat.color = { r = 1, g = 0, b = 1, a = 1 }
+    test_obj_2 = create_mesh(test_obj.object_ptr, false, Vec3:new(4, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 2, 1), 2, { mat },{ cube_mesh })
+
+    mat.color = { r = 1, g = 0, b = 1, a = 1 }
+    create_mesh(test_obj_2.object_ptr, false, Vec3:new(4, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 2, 1), 2, { mat },{ cube_mesh })
     ]]
+    
 
     
 
@@ -143,12 +155,13 @@ function test_3D_assets:load()
     tableprint(scene_3D)
     print("}")
     ]]
-
+    --[[
     print("scene_3D.objects {")
     tableprint(scene_3D.objects.children[1])
     print("}")
-
+    ]]
     print("count_parent_objects: ", count_parent_objects(scene_3D.objects))
+
 end
 
 function test_3D_assets:unload()
