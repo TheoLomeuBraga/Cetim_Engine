@@ -81,8 +81,10 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
 
     local obj_script = object_3D.variables.Script
 
+    local i = 1
     for index, value in ipairs(object_3D.children) do
-        self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
+        ret.children[i] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
+        i = i + 1
     end
 
     return ret

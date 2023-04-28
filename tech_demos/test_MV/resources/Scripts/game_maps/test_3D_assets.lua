@@ -90,9 +90,10 @@ function object_3D_to_game_object(father, render_layer, object_3D)
     end
 
     local obj_script = object_3D.variables.Script
-
+    
     for index, value in ipairs(object_3D.children) do
-        object_3D_to_game_object(ret.object_ptr, render_layer, value)
+        ret.children.insert(i,object_3D_to_game_object(ret.object_ptr, render_layer, value))
+        
     end
 
     return ret
