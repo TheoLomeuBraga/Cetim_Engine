@@ -124,10 +124,12 @@ function test_3D_assets:load()
     this_map.map.components[components.transform].scale = {x=1,y=1,z=1}
     this_map.map.components[components.transform]:set()
 
-    --print("have transform:",this_map.map:have_component(components.transform))
-    print("this_object_ptr {")
-    deepprint(game_object:recreate(this_map.map.object_ptr))
-    print("}")
+    
+    --print("this_object_ptr {")   
+    --local this_object = game_object:new(this_object_ptr) 
+    --this_object:recreate()
+    --deepprint(this_object)
+    --print("}")
     
     --remove_object(this_map.map.object_ptr)
 

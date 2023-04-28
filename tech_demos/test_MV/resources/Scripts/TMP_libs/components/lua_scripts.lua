@@ -1,15 +1,6 @@
 require("TMP_libs.components.component_index")
 
-function get_script_size(object)
-end
-function get_script_name(object,script_id)
-end
-function get_var_script(object,script,variable,type)
-end
-function set_script_var(object,script,variable,type,value)
-end
-function call_script_function(object,script_name,function_name)
-end
+
 
 
 
@@ -45,15 +36,12 @@ function lua_scripts_component:new(object_ptr)
         remove_script(self.object_ptr,script_name)
     end
     function ls:get_variable(script_name,variable_name)
-        --return get_script_var(self.object_ptr,script_name,variable_name,variable_type)
         return get_lua_var(self.object_ptr,script_name,variable_name)
     end
     function ls:set_variable(script_name,variable_name,value)
-        --set_script_var(self.object_ptr,script_name,variable_name,variable_type,variable_value)
         set_lua_var(self.object_ptr,script_name,variable_name,value)
     end
     function ls:call_function(script_name,function_name,arg)
-        --call_script_function(self.object_ptr,script_name,function_name)
         return call_lua_function(self.object_ptr,script_name,function_name,arg)
     end
     

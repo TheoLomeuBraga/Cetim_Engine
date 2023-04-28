@@ -2187,7 +2187,7 @@ int remove_script(lua_State *L)
 int get_lua_component(lua_State *L)
 {
 	Table ret;
-	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	if (cl != NULL)
 	{
