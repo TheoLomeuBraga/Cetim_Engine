@@ -284,9 +284,7 @@ Table scene_3D_table(objeto_3D obj){
     ret.setString("name",obj.nome);
 
     ret.setTable("position",vec3_table(obj.posicao));
-    cout << "obj.quaternion: " << obj.quaternion.x << " " << obj.quaternion.y << " " << obj.quaternion.z << " " << obj.quaternion.w << endl;
     ret.setTable("rotation",vec3_table(quat_graus(obj.quaternion)));
-    cout << "quat_graus(obj.quaternion): " << quat_graus(obj.quaternion).x << " " << quat_graus(obj.quaternion).y << " " << quat_graus(obj.quaternion).z << endl;
     ret.setTable("scale",vec3_table(obj.escala));
 
     vector<Table> meshes;

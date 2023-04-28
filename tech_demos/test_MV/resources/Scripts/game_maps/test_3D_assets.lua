@@ -116,7 +116,7 @@ function test_3D_assets:load()
     set_lisener_object(this_map.camera.object_ptr)
 
     --local scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    local scene_3D = get_scene_3D("resources/3D Models/test_custom_proprietys.gltf")
+    local scene_3D = get_scene_3D("resources/3D Models/color_test.gltf")
     print("scene_3D")
     this_map.map = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
     this_map.map.components[components.transform].position = {x=0,y=-5,z=0}
