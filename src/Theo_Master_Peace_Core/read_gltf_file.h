@@ -39,7 +39,7 @@ namespace gltf_loader
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
-        size_t material;
+        size_t material = 0;
     };
 
     struct Node
@@ -47,7 +47,7 @@ namespace gltf_loader
         std::string name;
         glm::mat4 matrix = glm::mat4(1);
         glm::vec3 translation = glm::vec3(0,0,0);
-        glm::quat rotation = glm::quat(vec3(0,0,0));
+        glm::quat rotation = glm::quat(1,0,0,0);
         glm::vec3 scale = glm::vec3(1,1,1);
         std::vector<size_t> meshIndices, childrenIndices;
         nlohmann::json extensions, extras;
@@ -339,7 +339,7 @@ namespace gltf_loader
             if (nodeJson.contains("rotation"))
             {
                 const auto &rotation = nodeJson["rotation"];
-                glm::quat q = glm::quat(rotation[0],rotation[1],rotation[2],rotation[3]);
+                glm::quat q = glm::quat(rotation[3],rotation[0],rotation[1],rotation[2]);
                 nodeData.rotation = q;
             }
 

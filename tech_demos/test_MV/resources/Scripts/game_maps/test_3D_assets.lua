@@ -82,13 +82,6 @@ function object_3D_to_game_object(father, render_layer, object_3D)
         
         --ret.components[components.render_mesh].meshes = object_3D.meshes
         --ret.components[components.render_mesh].materials = object_3D.materials
-        print("object_3D.meshes { ")
-        for index, value in ipairs(object_3D.meshes) do
-            print( "    {")
-            deepprint(value)
-            print( "    }")
-        end
-        print("}")
 
     else
         ret = game_object:new(father)
@@ -122,10 +115,12 @@ function test_3D_assets:load()
     this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
     set_lisener_object(this_map.camera.object_ptr)
 
-    local scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
+    --local scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
+    local scene_3D = get_scene_3D("resources/3D Models/test_custom_proprietys.gltf")
+    print("scene_3D")
     this_map.map = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
-    this_map.map.components[components.transform].position = {x=0,y=0,z=0}
-    this_map.map.components[components.transform].rotation = {x=0,y=-90,z=0}
+    this_map.map.components[components.transform].position = {x=0,y=-5,z=0}
+    this_map.map.components[components.transform].rotation = {x=0,y=0,z=0}
     this_map.map.components[components.transform].scale = {x=1,y=1,z=1}
     this_map.map.components[components.transform]:set()
     
@@ -160,7 +155,7 @@ function test_3D_assets:load()
     tableprint(scene_3D.objects.children[1])
     print("}")
     ]]
-    print("count_parent_objects: ", count_parent_objects(scene_3D.objects))
+    --print("count_parent_objects: ", count_parent_objects(scene_3D.objects))
 
 end
 

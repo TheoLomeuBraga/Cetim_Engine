@@ -1408,7 +1408,7 @@ namespace funcoes_ponte
 	int get_scene_3D(lua_State *L){
 		Table ret;
 		string path = lua_tostring(L,1);
-
+		
 		cena_3D scene = *ManuseioDados::carregar_modelo_3D(path).get();
 		
 		ret = scene_3D_table(scene);

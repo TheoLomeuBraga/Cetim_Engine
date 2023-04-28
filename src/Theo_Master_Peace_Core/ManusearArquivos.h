@@ -715,11 +715,6 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 
-		/*
-		vec3 nothing;
-		vec4 nothing2;
-		glm::decompose(node.matrix, ret.escala, ret.quaternion, ret.posicao, nothing, nothing2);
-		*/
 		ret.posicao = node.translation;
 		ret.quaternion = node.rotation;
 		ret.escala = node.scale;
@@ -731,10 +726,20 @@ namespace ManuseioDados
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
 
 			int material_index = loader.meshes[mesh_index].material;
-			if (material_index <= loader.materials.size() - 1)
+			cout << material_index << endl;
+
+			if (material_index <= loader.materials.size() - 1 && loader.materials.size() != 0)
 			{
 				string material_name = loader.materials[material_index].name;
 				ret.meus_materiais.push_back(cena.materiais[material_name]);
+			}
+			else
+			{
+				Material mat;
+				mat.shad = "resources/Shaders/mesh";
+				mat.texturas[0] = carregar_Imagem("resources/Textures/white.png");
+				
+				ret.meus_materiais.push_back(mat);
 			}
 		}
 
@@ -773,7 +778,8 @@ namespace ManuseioDados
 				mat.shad = "resources/Shaders/mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 				mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
-				if(mat.texturas[0] == NULL){
+				if (mat.texturas[0] == NULL)
+				{
 					mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 				}
 				ret.materiais[gltf_loader.materials[i].name] = mat;
@@ -791,7 +797,8 @@ namespace ManuseioDados
 				{
 					int node_index = gltf_loader.scenes[a].nodesIndices[b];
 					gltf_loader::Node n = gltf_loader.nodes[node_index];
-					ret.objetos.filhos.push_back(node_3D_object(n, gltf_loader.nodes, ret, gltf_loader));
+					objeto_3D ob_3D = node_3D_object(n, gltf_loader.nodes, ret, gltf_loader);
+					ret.objetos.filhos.push_back(ob_3D);
 				}
 			}
 
