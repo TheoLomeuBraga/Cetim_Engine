@@ -95,6 +95,7 @@ function object_3D_to_game_object(father, render_layer, object_3D)
         ret.components[components.transform]:set()
     end
 
+    
     print("tablelength(object_3D.children)", tablelength(object_3D.children))
     for index, value in ipairs(object_3D.children) do
         object_3D_to_game_object(ret.object_ptr, render_layer, value)
@@ -119,12 +120,12 @@ function test_3D_assets:load()
     set_lisener_object(this_map.camera.object_ptr)
 
     scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
-    scene_3D_game_object = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
-    scene_3D_game_object.components[components.transform].position = {x=0,y=5,z=0}
-    scene_3D_game_object.components[components.transform].rotation = {x=45,y=45,z=45}
-    scene_3D_game_object.components[components.transform].scale = {x=2,y=2,z=2}
-    scene_3D_game_object.components[components.transform]:set()
-    --remove_object(scene_3D_game_object.object_ptr)
+    this_map.map = object_3D_to_game_object(this_map.objects_layesrs.cenary, 2, scene_3D.objects)
+    this_map.map.components[components.transform].position = {x=0,y=5,z=0}
+    this_map.map.components[components.transform].rotation = {x=45,y=45,z=45}
+    this_map.map.components[components.transform].scale = {x=2,y=2,z=2}
+    this_map.map.components[components.transform]:set()
+    --remove_object(this_map.map.object_ptr)
 
     --[[
     local mat = matreial:new()

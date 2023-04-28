@@ -14,7 +14,7 @@ using namespace std;
 #include <glm/gtx/transform.hpp>
 
 #include "Converter_JSON.h"
-#include "sceane.h"
+#include "scene.h"
 #include "table.h"
 
 #include <nlohmann/json.hpp>

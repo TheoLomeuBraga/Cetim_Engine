@@ -9,7 +9,7 @@
 #include "Config.h"
 #include "input.h"
 #include "Tempo.h"
-#include "sceane.h"
+#include "scene.h"
 #include "LoopPrincipal.h"
 
 #include <GL/glew.h>

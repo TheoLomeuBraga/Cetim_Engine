@@ -46,7 +46,7 @@ using namespace glm;
 #include "Config.h"
 #include "input.h"
 #include "Tempo.h"
-#include "sceane.h"
+#include "scene.h"
 #include "LoopPrincipal.h"
 #include "components/box_2d.h"
 #include "components/implementacao_lua.h"

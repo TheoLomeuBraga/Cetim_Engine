@@ -4,7 +4,7 @@
 #include <SFML/Audio.hpp>
 #include "Config.h"
 #include "RecursosT.h"
-#include "sceane.h"
+#include "scene.h"
 #include "game_object.h"
 #include "components/transform.h"
 
