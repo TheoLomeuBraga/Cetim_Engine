@@ -64,22 +64,27 @@ function test_3D_game:create_test_camera()
     100)
 end
 
+local texture_dictionary = require("game_maps.texture_dictionary")
+
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
     local object_type = object_3D.variables.type
     local object_texture = object_3D.variables.texture
-
-    local texturas = require("game_maps.texture_dictionary")[object_texture]
-    if texturas == nil then
-        texturas = {"resources/Textures/white.png"}
-    end
+    
 
     if object_type == nil then
         local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
         if mesh_mat_size > 0 then
-            ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),
-            deepcopyjson(object_3D.scale), render_layer, object_3D.materials, object_3D.meshes)
+
+            local  materials = {}
+            local i = 1
+            for i, v in ipairs(object_3D.materials) do
+                materials[1] = deepcopy(texture_dictionary(object_texture))
+                i = i + 1
+            end
+
+            ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),deepcopyjson(object_3D.scale), render_layer, materials, object_3D.meshes)
         else
             ret = game_object:new(father)
             ret:add_component(components.transform)
