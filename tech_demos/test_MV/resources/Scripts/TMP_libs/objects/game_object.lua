@@ -77,5 +77,7 @@ function game_object:new(object_ptr)
         end
     end
 
+    obj:recreate()
+
     return obj
 end

@@ -14,14 +14,12 @@ uniform bool ui;
 uniform mat4 projection,vision,transform;
 
 
-vec3 psxVertexPrecision(vec3 vertexPosition) {
-   float precision = 256.0; // Change this to control the level of precision
+vec3 psxVertexPrecision(vec3 vertexPosition,float precision) {
    vec3 quantizedPosition = round(vertexPosition * precision) / precision;
    return quantizedPosition;
 }
 
-vec4 psxVertexPrecision(vec4 vertexPosition) {
-   float precision = 256.0; // Change this to control the level of precision
+vec4 psxVertexPrecision(vec4 vertexPosition,float precision) {
    vec3 quantizedPosition = round(vertexPosition * precision) / precision;
    return vec4(quantizedPosition,vertexPosition.w);
 }
@@ -32,9 +30,9 @@ vec4 psxVertexPrecision(vec4 vertexPosition) {
    vert_out.UV = uv;
    
    if(ui){
-   gl_Position =  psxVertexPrecision(transform * vert_out.POS); 
+   gl_Position =  psxVertexPrecision(transform * vert_out.POS,256.0); 
    }else{
-   gl_Position = psxVertexPrecision((projection * vision * transform) * vert_out.POS); 
+   gl_Position = psxVertexPrecision((projection * vision * transform) * vert_out.POS,256.0); 
    }
 
 

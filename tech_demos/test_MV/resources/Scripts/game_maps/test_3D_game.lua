@@ -53,33 +53,45 @@ end
 function test_3D_game:create_background()
     background_material = material:new()
     background_material.shader = "resources/Shaders/background"
-    background_material.textures = {"resources/Textures/white.png"}
-    background_material.color = {r=0.25,g=0.25,b=0.25,a=1}
-    self.objects_layesrs.background_image = create_render_shader(self.objects_layesrs.background_image, false, Vec3:new(0, 0, 0),Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
+    background_material.textures = { "resources/Textures/white.png" }
+    background_material.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
+    self.objects_layesrs.background_image = create_render_shader(self.objects_layesrs.background_image, false,
+    Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
 end
 
 function test_3D_game:create_test_camera()
-    self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0),90, 0.1, 100)
+    self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0), 90, 0.1,
+    100)
 end
 
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
+    local object_type = object_3D.variables.type
+    local object_texture = object_3D.variables.texture
 
-    local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
-    if mesh_mat_size > 0 then
-        ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation), deepcopyjson(object_3D.scale), render_layer, object_3D.materials,object_3D.meshes)
-    else
-        ret = game_object:new(father)
-        ret:add_component(components.transform)
-        ret.components[components.transform].is_ui = false
-        ret.components[components.transform].position = deepcopyjson(object_3D.position)
-        ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
-        ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
-        ret.components[components.transform]:set()
+    local texturas = require("game_maps.texture_dictionary")[object_texture]
+    if texturas == nil then
+        texturas = {"resources/Textures/white.png"}
     end
 
-    local obj_script = object_3D.variables.Script
+    if object_type == nil then
+        local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
+        if mesh_mat_size > 0 then
+            ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),
+            deepcopyjson(object_3D.scale), render_layer, object_3D.materials, object_3D.meshes)
+        else
+            ret = game_object:new(father)
+            ret:add_component(components.transform)
+            ret.components[components.transform].is_ui = false
+            ret.components[components.transform].position = deepcopyjson(object_3D.position)
+            ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
+            ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
+            ret.components[components.transform]:set()
+        end
+    end
+
+
 
     local i = 1
     for index, value in ipairs(object_3D.children) do
@@ -102,16 +114,12 @@ function test_3D_game:load()
 
     self:create_background()
     self:create_test_camera()
-    --self:load_assets("resources/3D Models/test_3D_game.gltf")
     self.assets = self:load_assets("resources/3D Models/test_custom_proprietys.gltf")
 
-    self.assets.components[components.transform].position = {x=0,y=-5,z=0}
-    self.assets.components[components.transform].rotation = {x=0,y=0,z=0}
-    self.assets.components[components.transform].scale = {x=1,y=1,z=1}
+    self.assets.components[components.transform].position = { x = 0, y = -5, z = 0 }
+    self.assets.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
+    self.assets.components[components.transform].scale = { x = 1, y = 1, z = 1 }
     self.assets.components[components.transform]:set()
-
-    
-
 end
 
 function test_3D_game:update()
