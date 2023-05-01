@@ -23,9 +23,9 @@ uniform mat4 projection,vision,transform;
    vert_out.UV = uv;
    
    if(ui){
-   gl_Position =  transform * vert_out.POS; 
+      gl_Position =  transform * vert_out.POS; 
    }else{
-   gl_Position = (projection * vision * transform) * vert_out.POS; 
+      gl_Position = (projection * vision * transform) * vert_out.POS; 
    }
 
 

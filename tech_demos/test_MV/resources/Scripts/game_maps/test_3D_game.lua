@@ -80,7 +80,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
             local  materials = {}
             local i = 1
             for i, v in ipairs(object_3D.materials) do
-                materials[1] = deepcopy(texture_dictionary(object_texture))
+                materials[i] = deepcopy(texture_dictionary(object_texture))
                 i = i + 1
             end
 

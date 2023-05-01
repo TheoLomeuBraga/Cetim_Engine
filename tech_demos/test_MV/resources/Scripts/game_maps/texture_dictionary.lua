@@ -1,5 +1,8 @@
 
+
+
 local textures_dictionary = {
+
     place_holder = {
         shader = "resources/Shaders/mesh",
         color = {r = 1,g = 1,b = 1,a = 1},
@@ -20,7 +23,7 @@ local textures_dictionary = {
         inputs = {},
     },
 
-    
+
 }
 
 return function (texture)
