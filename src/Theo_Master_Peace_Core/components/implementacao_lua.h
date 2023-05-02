@@ -183,7 +183,7 @@ shared_ptr<string> carregar_script_lua(string local)
 {
 	if (mapeamento_scripts_lua.pegar(local) == NULL)
 	{
-		mapeamento_scripts_lua.aplicar(local, ManuseioDados::Carregar_string(local));
+		mapeamento_scripts_lua.aplicar(local, ManuseioDados::Carregar_script(local));
 	}
 	return mapeamento_scripts_lua.pegar(local);
 	return NULL;

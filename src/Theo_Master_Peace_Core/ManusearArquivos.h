@@ -83,6 +83,35 @@ namespace ManuseioDados
 		return s2;
 	}
 
+	string Carregar_script(string nome)
+	{
+		string s, s2;
+		ifstream file(nome);
+		string possible_path = string("resources/Scripts/") + nome + string(".lua");
+		ifstream file2(possible_path);
+		const char *cc;
+
+		if (Existe(possible_path) && file2.is_open()){
+			while (getline(file2, s))
+			{
+				s2 += s + "\n";
+			}
+		}
+		else if (Existe(nome) && file.is_open())
+		{
+			while (getline(file, s))
+			{
+				s2 += s + "\n";
+			}
+		}
+		else{
+			s2 = "erro";
+		}
+		
+
+		return s2;
+	}
+
 	template <typename X>
 	const char *Carregar(X nome)
 	{

@@ -2,7 +2,6 @@
 require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
-require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.short_cuts.create_collision_mesh")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")
@@ -59,9 +58,10 @@ function test_3D_game:create_background()
     Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
 end
 
+local camera_asset = require("game_assets.free_camera")
 function test_3D_game:create_test_camera()
-    self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0), 90, 0.1,
-    100)
+    --self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0), 90, 0.1,100)
+    self.camera = camera_asset.create(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0))
 end
 
 local texture_dictionary = require("game_maps.texture_dictionary")
