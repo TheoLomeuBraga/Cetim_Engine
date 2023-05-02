@@ -1,3 +1,4 @@
+require("TMP_libs.components.extras")
 require("TMP_libs.definitions")
 
 require("TMP_libs.objects.game_object")

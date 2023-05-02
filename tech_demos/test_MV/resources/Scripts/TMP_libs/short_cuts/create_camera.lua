@@ -1,6 +1,8 @@
+require("TMP_libs.components.extras")
 require("TMP_libs.objects.game_object")
 require("TMP_libs.components.transform")
 require("TMP_libs.components.camera")
+
 
 function create_camera_perspective(father,pos,rot,zoom,ncf,fcp)
     ret = game_object:new(create_object(father)) 

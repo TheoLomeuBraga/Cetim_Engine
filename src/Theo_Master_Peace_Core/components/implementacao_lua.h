@@ -786,6 +786,25 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int get_local_direction_transform(lua_State *L){
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		Table ret;
+		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+		if (tf != NULL)
+		{
+			vec3 dir = vec3(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+			cout << "AAAAA:" << lua_tonumber(L,2)<<lua_tonumber(L,3)<<lua_tonumber(L,4) << endl;
+			ret = vec3_table(tf->pegar_direcao_local(dir));
+		}
+		lua_pushtable(L,ret);
+		return 1;
+	}
+
 	// sprite render
 
 	int get_set_sprite_render(lua_State *L)
@@ -1457,6 +1476,10 @@ namespace funcoes_ponte
 		pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
 		pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
 		pair<string, lua_function>("change_transfotm_scale", funcoes_ponte::change_transfotm_scale),
+
+		pair<string, lua_function>("get_local_direction_transform", funcoes_ponte::get_local_direction_transform),
+
+		
 
 		// pos-procesing
 		pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),

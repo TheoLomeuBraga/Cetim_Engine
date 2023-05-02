@@ -2,6 +2,7 @@
 require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
+require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.short_cuts.create_collision_mesh")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")

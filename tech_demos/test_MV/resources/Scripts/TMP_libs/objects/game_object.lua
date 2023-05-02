@@ -1,4 +1,6 @@
+require("TMP_libs.components.extras")
 require("TMP_libs.components.component_index")
+
 
 --object
 function create_object()

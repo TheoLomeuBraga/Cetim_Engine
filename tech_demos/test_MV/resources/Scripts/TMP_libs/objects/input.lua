@@ -227,7 +227,7 @@ end
 function get_input(device, joystick_no, key)
 end
 
-local keys_axis = {
+keys_axis = {
     [input_devices.keyboard] = {},
     [input_devices.joystick] = {},
     [input_devices.mouse] = {},
