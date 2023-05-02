@@ -443,7 +443,7 @@ public:
 
 	char lado_render = lado_render_malha::front;
 
-	bool filtro_bilinear[NO_TEXTURAS];
+	int filtro[NO_TEXTURAS];
 	shared_ptr<imagem> texturas[NO_TEXTURAS];
 
 	float inputs[NO_INPUTS];

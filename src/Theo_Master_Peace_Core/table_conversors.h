@@ -126,6 +126,7 @@ Table vTable_table(vector<Table> v){
 Material table_material(Table t){
     Material m;
     m.shad = t.getString("shader");
+    m.lado_render = (char)t.getFloat("normal_direction");
 
     Table color = t.getTable("color");
     m.cor = vec4(color.getFloat("r"),color.getFloat("g"),color.getFloat("b"),color.getFloat("a"));
@@ -142,10 +143,17 @@ Material table_material(Table t){
 		m.texturas[i] = ManuseioDados::carregar_Imagem(textures[i]);
 	}
 
+    vector<float> filters = table_vFloat(t.getTable("texture_filter"));
+    for (int i = 0; i < std::min((int)NO_TEXTURAS,(int)filters.size()); i++) {
+		m.filtro[i] = filters[i];
+	}
+
     vector<float> inputs = table_vFloat(t.getTable("inputs"));
 	for (int i = 0; i < std::min((int)NO_INPUTS,(int)inputs.size()); i++) {
         m.inputs[i] = inputs[i];
 	}
+
+    
 
     return m;
 }
@@ -153,6 +161,7 @@ Material table_material(Table t){
 Table material_table(Material m){
     Table t;
     t.setString("shader",m.shad);
+    t.setFloat("normal_direction",(float)m.lado_render);
 
     Table color;
     color.setFloat("r",m.cor.r);
@@ -178,6 +187,12 @@ Table material_table(Material m){
         }
     }
     t.setTable("textures",vString_table(textures));
+
+    vector<float> filters;
+    for (int i = 0; i < NO_TEXTURAS; i++) {
+        filters.push_back(m.filtro[i]);
+    }
+    t.setTable("texture_filter",vFloat_table(filters));
 
     vector<float> inputs;
     for (int i = 0; i < NO_INPUTS; i++) {

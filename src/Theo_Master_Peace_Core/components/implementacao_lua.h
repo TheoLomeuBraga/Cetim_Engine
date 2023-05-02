@@ -1240,7 +1240,6 @@ namespace funcoes_ponte
 			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
 			ret.setFloat("layer", mesh->camada);
 			ret.setFloat("use_oclusion", mesh->usar_oclusao);
-			ret.setFloat("normal_direction", mesh->lado_render);
 			vector<Table> meshes;
 			for (shared_ptr<malha> m : mesh->malhas)
 			{
@@ -1267,7 +1266,6 @@ namespace funcoes_ponte
 			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
 			mesh->camada = t.getFloat("layer");
 			mesh->usar_oclusao = t.getFloat("use_oclusion");
-			mesh->lado_render = t.getFloat("normal_direction");
 			vector<Table> vt = table_vTable(t.getTable("meshes"));
 			vector<shared_ptr<malha>> meshes;
 			for (Table mesh : vt)

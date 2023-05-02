@@ -1113,13 +1113,6 @@ public:
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
 			if (RM != NULL && RM->malhas.size() > 0 && RM->ligado && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
-
-				// iniciar_teste_tf_teste_cam();
-				// teste_desenhar_malha(teste_tf, cam);
-
-				// vec3 p = tf->pegar_pos_global(), r = tf->pegar_graus_global();
-				// cout << "Pos{ " << p.x << " ," << p.y << " ," << p.z << "} Rot{ " << r.x << " ," << r.y << " ," << r.z << "} Sca{ " << tf->esca.x << " ," << tf->esca.y << " ," << tf->esca.z << "}" << endl;
-
 				criar_oclusion_querie(obj);
 
 				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
@@ -1173,7 +1166,9 @@ public:
 						// reindenizar malha
 						// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
 
-						switch (RM->lado_render)
+						
+						//switch (RM->lado_render)
+						switch (RM->mats[i].lado_render)
 						{
 						case lado_render_malha::both:
 							glDisable(GL_CULL_FACE);

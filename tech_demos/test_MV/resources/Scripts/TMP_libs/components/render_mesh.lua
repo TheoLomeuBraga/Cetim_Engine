@@ -19,11 +19,7 @@ function mesh_location:new(file,name)
     }
 end
 
-normal_direction = {
-    front = 0,
-	back = 1,
-	both = 2,
-}
+
 
 render_mesh_component = {}
 function render_mesh_component:new(object_ptr)
@@ -31,11 +27,10 @@ function render_mesh_component:new(object_ptr)
     rm.object_ptr = object_ptr
     rm.layer = 1
     rm.use_oclusion = true
-    rm.normal_direction = normal_direction.both
+    --rm.normal_direction = normal_direction.both
     rm.meshes = {}
     rm.materials = {}
     function rm:get()
-        --j = json.decode(get_mesh_json(self.object_ptr))
         j = get_set_render_mesh(get_lua,self.object_ptr)
         self.layer = j.layer
         self.use_oclusion = j.use_oclusion
