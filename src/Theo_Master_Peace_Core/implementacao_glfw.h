@@ -430,15 +430,9 @@ void MudarTamanhoJanela(GLFWwindow *janela, int x, int y)
 
 void MudarRes(int x, int y)
 {
-
-	// mudar_render_res(x, y);
 	glfwSetWindowSize(janela, x, y);
-	// configuracoes::janelaConfig.X = x;
-	// configuracoes::janelaConfig.Y = y;
-	cout << "tamanho da janela mudado para: " << x << " " << y << endl;
 	int a, b;
 	glfwGetWindowSize(janela, &a, &b);
-	cout << "resolução da janela " << a << " " << b << endl;
 }
 
 bool janelaInteira = false;
@@ -550,7 +544,6 @@ public:
 	{
 		int x, y;
 		glfwGetWindowSize(janela, &x, &y);
-		// cout << "resolução da janela " << x << " " << y << endl;
 		return vec2(x, y);
 	}
 

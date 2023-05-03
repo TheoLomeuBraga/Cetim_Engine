@@ -126,6 +126,18 @@ function run_movement()
 
 end
 
+local full_screen = false
+local zero_pressed_last_frame = 0
+function full_screen_toogle()
+    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard[0]]) == 0 and zero_pressed_last_frame == 1 then
+        window.full_screen = not full_screen
+        full_screen = not full_screen
+        print("full screan: ",full_screen)
+        window:set()
+    end
+    zero_pressed_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard[0]])
+end
+
 function UPDATE()
     Time:get()
     
@@ -133,7 +145,8 @@ function UPDATE()
     
     run_rotation()
     run_movement()
-    
+    full_screen_toogle()
+
 end
 
 function COLLIDE(collision_info)
