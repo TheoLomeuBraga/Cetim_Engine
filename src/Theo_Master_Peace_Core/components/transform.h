@@ -117,6 +117,19 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 			return pos - pegar_pos_global() ;
 		}
 
+		
+		vec3 mover_direcao(vec3 dir) {
+			vec3 nada;
+			vec4 nada2;
+			vec3 escala;
+			vec3 pos;
+			quat qua;
+			glm::decompose(glm::translate(matrizTransform,dir), escala, qua, pos, nada, nada2);
+
+			return pos;
+		}
+		
+
 		void reset(bool ui, transform_* pai, glm::vec3 p, glm::vec3 r, glm::vec3 e) {
 			UI = ui;
 			paiTF = pai;

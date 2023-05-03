@@ -17,6 +17,9 @@ function change_transfotm_scale(object,x,y,z)
 end
 function get_local_direction_transform(object,x,y,z)
 end
+function get_translation_position_transform(object,x,y,z)
+end
+
 
 transform_component = {}
 function transform_component:new(object_ptr)
@@ -59,6 +62,11 @@ function transform_component:new(object_ptr)
     function t:get_local_direction(x,y,z)
         return get_local_direction_transform(self.object_ptr,x,y,z)
     end
+    function t:get_translation_position(x,y,z)
+        return get_translation_position_transform(self.object_ptr,x,y,z)
+    end
+
+    
     function t:delet()
         self.position = nil
         self.rotation = nil
