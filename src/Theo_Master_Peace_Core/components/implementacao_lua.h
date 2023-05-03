@@ -334,9 +334,25 @@ namespace funcoes_ponte
 			loop_principal::mudar_res((int)res.getFloat("x"), (int)res.getFloat("y"));
 			api_grafica->res_interna = ivec2((int)res.getFloat("x"), (int)res.getFloat("y"));
 			loop_principal::setar_tela_inteira_como((bool)t.getFloat("full_screen"));
-			
+
 			return 0;
 		}
+	}
+
+	int set_cursor_image(lua_State *L)
+	{
+		string texture_path = lua_tostring(L, 1);
+
+		if (texture_path.size() == 0)
+		{
+			gerente_janela->mudar_cursor(NULL);
+		}
+		else
+		{
+			gerente_janela->mudar_cursor(ManuseioDados::carregar_Imagem(texture_path));
+		}
+
+		return 0;
 	}
 
 	int close(lua_State *L)
@@ -525,11 +541,11 @@ namespace funcoes_ponte
 		}
 		else if (device == 2)
 		{
-			
+
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
-				
+
 				if (j.botoes.find(key) != j.botoes.end())
 				{
 					ret = j.botoes[key];
@@ -538,7 +554,6 @@ namespace funcoes_ponte
 				{
 					ret = j.eixos[key];
 				}
-				
 			}
 		}
 		else if (device == 3)
@@ -788,7 +803,8 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int get_local_direction_transform(lua_State *L){
+	int get_local_direction_transform(lua_State *L)
+	{
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -799,14 +815,15 @@ namespace funcoes_ponte
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 		if (tf != NULL)
 		{
-			vec3 dir = vec3(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+			vec3 dir = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			ret = vec3_table(tf->pegar_direcao_local(dir));
 		}
-		lua_pushtable(L,ret);
+		lua_pushtable(L, ret);
 		return 1;
 	}
 
-	int get_translation_position_transform(lua_State *L){
+	int get_translation_position_transform(lua_State *L)
+	{
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -817,10 +834,10 @@ namespace funcoes_ponte
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 		if (tf != NULL)
 		{
-			vec3 dir = vec3(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+			vec3 dir = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			ret = vec3_table(tf->mover_direcao(dir));
 		}
-		lua_pushtable(L,ret);
+		lua_pushtable(L, ret);
 		return 1;
 	}
 
@@ -1441,12 +1458,13 @@ namespace funcoes_ponte
 		return 2;
 	}
 
-	int get_scene_3D(lua_State *L){
+	int get_scene_3D(lua_State *L)
+	{
 		Table ret;
-		string path = lua_tostring(L,1);
-		
+		string path = lua_tostring(L, 1);
+
 		cena_3D scene = *ManuseioDados::carregar_modelo_3D(path).get();
-		
+
 		ret = scene_3D_table(scene);
 		lua_pushtable(L, ret);
 		return 1;
@@ -1498,9 +1516,6 @@ namespace funcoes_ponte
 
 		pair<string, lua_function>("get_local_direction_transform", funcoes_ponte::get_local_direction_transform),
 		pair<string, lua_function>("get_translation_position_transform", funcoes_ponte::get_translation_position_transform),
-		
-
-		
 
 		// pos-procesing
 		pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),
@@ -1511,6 +1526,7 @@ namespace funcoes_ponte
 		// janela
 		pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
 		pair<string, lua_function>("close", funcoes_ponte::close),
+		pair<string, lua_function>("set_cursor_image", funcoes_ponte::set_cursor_image),
 
 		// sprite
 		pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),
@@ -1560,7 +1576,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("set_lua_var", set_lua_var),
 		pair<string, lua_function>("call_lua_function", call_lua_function),
 
-		//3D sceane
+		// 3D sceane
 		pair<string, lua_function>("get_scene_3D", get_scene_3D),
 
 	};

@@ -19,6 +19,7 @@ local test_3D_game = {}
 
 function test_3D_game:initialize_render_settings()
 
+    window:set_cursor_image("")
     window.resolution.x = 640
     window.resolution.y = 480
     window:set()
