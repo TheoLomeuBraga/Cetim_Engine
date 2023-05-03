@@ -1217,18 +1217,15 @@ public:
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)configuracoes::janelaConfig.X * res_dinamica, (int)configuracoes::janelaConfig.Y * res_dinamica, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res_interna.x, res_interna.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frame_buffers_texturas[i], 0);
 		}
-		glViewport(0, 0, (int)configuracoes::janelaConfig.X * res_dinamica, (int)configuracoes::janelaConfig.Y * res_dinamica);
+		glViewport(0, 0, res_interna.x, res_interna.y);
 
 		for (int i = 0; i < obj.size(); i++)
 		{
 			if (obj[i] > 0 && cam > 0)
 			{
-				// iniciar_teste_tf_teste_cam();
-				// teste_desenhar_malha(teste_tf, cam);
-				// teste_desenhar_malha(obj[i]->pegar_componente<transform_>(), cam);
 
 				reindenizar_objeto(obj[i], cam);
 			}

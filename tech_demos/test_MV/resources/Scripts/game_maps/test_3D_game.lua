@@ -18,8 +18,8 @@ require("math")
 local test_3D_game = {}
 
 function test_3D_game:initialize_render_settings()
-    window.resolution.x = 720
-    window.resolution.y = 720
+    window.resolution.x = 256
+    window.resolution.y = 256
     window:set()
 
 

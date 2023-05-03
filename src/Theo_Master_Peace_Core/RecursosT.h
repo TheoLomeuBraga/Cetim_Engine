@@ -737,7 +737,6 @@ public:
 
 	string modelo_gpu;
 	bool pixel_perfeito = true;
-	float res_dinamica = 1;
 	ivec2 res_interna = ivec2(256, 256);
 	vector<instrucoes_render> info_render;
 	Material pos_processamento_info;

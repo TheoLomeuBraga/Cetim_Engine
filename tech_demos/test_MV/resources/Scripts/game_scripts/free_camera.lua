@@ -12,6 +12,7 @@ this_object = {}
 
 base_sensivity = 120
 base_speed = 7
+local speed_multplier = 1
 
 local mouse_move = { x = 0, y = 0 }
 local mouse_move_this_frame = { x = 0, y = 0 }
@@ -27,6 +28,7 @@ function START()
     this_object.components[components.transform]:get()
     current_pos = deepcopy(this_object.components[components.transform].position)
     current_rot = { x = this_object.components[components.transform].rotation.x, y = this_object.components[components.transform].rotation.y }
+    this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x,0)
 
     
 end
@@ -64,15 +66,26 @@ function run_rotation()
     
 end
 
+
 function run_movement()
 
     local speed = base_speed * Time.delta
+    
+
+    for index, value in ipairs({1,2,3,4,5,6,7,8,9}) do
+        if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard[value]]) == 1 then
+            speed_multplier = value
+        end
+    end
+
+    speed = speed * speed_multplier
 
     this_object.components[components.transform]:get()
     current_pos = deepcopy(this_object.components[components.transform].position)
 
     local additional_pos = {x=0,y=0,z=0}
 
+    --X
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.w]) == 1 then
         local dir = this_object.components[components.transform]:get_local_direction(0,0,1)
         additional_pos.x = additional_pos.x + (dir.x * speed)
@@ -86,6 +99,7 @@ function run_movement()
         additional_pos.z = additional_pos.z + (dir.z * speed)
     end
 
+    --Y
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.a]) == 1 then
         local dir = this_object.components[components.transform]:get_local_direction(1,0,0)
         additional_pos.x = additional_pos.x + (dir.x * speed)
@@ -99,7 +113,7 @@ function run_movement()
         additional_pos.z = additional_pos.z + (dir.z * speed)
     end
 
-
+    --Z
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.space]) == 1 then
         additional_pos.y = additional_pos.y + (1 * speed)
     end
@@ -107,6 +121,7 @@ function run_movement()
         additional_pos.y = additional_pos.y - (1 * speed)
     end
 
+    --move
     this_object.components[components.transform]:change_position(current_pos.x + additional_pos.x,current_pos.y + additional_pos.y,current_pos.z + additional_pos.z)
 
 end

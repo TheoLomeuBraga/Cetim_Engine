@@ -332,7 +332,9 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			Table res = t.getTable("resolution");
 			loop_principal::mudar_res((int)res.getFloat("x"), (int)res.getFloat("y"));
+			api_grafica->res_interna = ivec2((int)res.getFloat("x"), (int)res.getFloat("y"));
 			loop_principal::setar_tela_inteira_como((bool)t.getFloat("full_screen"));
+			
 			return 0;
 		}
 	}
