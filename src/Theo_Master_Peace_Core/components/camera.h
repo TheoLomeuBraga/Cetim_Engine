@@ -7,6 +7,8 @@ using namespace std;
 #include "RecursosT.h"
 #include "game_object.h"
 
+#include <glm/gtc/matrix_inverse.hpp>
+
 class camera : public componente
 {
 public:
@@ -26,6 +28,59 @@ public:
 	imagem *alvo_render;
 
 	camera() {}
+
+	glm::mat4 getCameraViewMatrix(glm::mat4 transformMatrix)
+	{
+		// Remove a informação de escala da matriz de transformação
+		glm::mat4 viewMatrix = glm::mat4(glm::mat3(transformMatrix));
+
+		// Remove a informação de transladação da matriz de transformação
+		viewMatrix[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+		// Inverte a matriz resultante
+		viewMatrix = glm::affineInverse(viewMatrix);
+
+		return viewMatrix;
+	}
+
+	void atualizar_tf()
+	{
+
+		if (paiTF != NULL)
+		{
+			// matrizVisao
+			
+
+			/*
+			vec3 nada;
+			vec4 nada2;
+
+			vec3 pos, pos_alvo, pos_cima;
+			quat qua;
+			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
+			glm::decompose(translate(paiTF->matrizTransform,alvo), nada, qua, pos_alvo, nada, nada2);
+
+			matrizVisao = glm::lookAt(
+				pos, // World Space
+				pos_alvo,		 // and looks at the origin
+				this->cima		 // Head is up
+			);
+			*/
+
+			/**/
+
+			vec3 nada;
+			vec4 nada2;
+
+			vec3 pos, pos_alvo, pos_cima;
+			quat qua;
+			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
+			
+			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
+			matrizVisao = translate(matrizVisao,pos);
+			
+		}
+	}
 
 	glm::mat4 gerar_matriz_perspectiva(float zoom, int resX, int resY, float ncp, float fcp)
 	{
@@ -55,13 +110,15 @@ public:
 		alvo = a;
 		cima = c;
 
-		matrizVisao = glm::lookAt(p, a, c);
+		//atualizar_tf();
 
 		ortografica = false;
 		zoom = ZooM;
 		this->fcp = fcp;
 		this->ncp = ncp;
 		matrizProjecao = gerar_matriz_perspectiva(ZooM, resX, resY, ncp, fcp);
+
+		atualizar_tf();
 	}
 
 	void configurar_camera(glm::vec3 p, glm::vec3 a, glm::vec3 c, float tamanhoX, float tamanhoY, float ncp, float fcp)
@@ -70,13 +127,16 @@ public:
 		alvo = a;
 		cima = c;
 
-		matrizVisao = glm::lookAt(p, a, c);
+		//atualizar_tf();
+		
 
 		ortografica = true;
-		tamanho = vec2(-tamanhoX, tamanhoY);
+		tamanho = vec2(tamanhoX, tamanhoY);
 		this->fcp = fcp;
 		this->ncp = ncp;
-		matrizProjecao = gerar_matriz_ortografica(-tamanhoX, tamanhoY, ncp, fcp);
+		matrizProjecao = gerar_matriz_ortografica(tamanhoX, tamanhoY, ncp, fcp);
+
+		atualizar_tf();
 	}
 
 	camera(glm::vec3 p, glm::vec3 a, glm::vec3 c, float zoom, int resX, int resY, float ncp, float fcp)
@@ -89,42 +149,5 @@ public:
 		configurar_camera(p, a, c, tamanhoX, tamanhoY, ncp, fcp);
 	}
 
-	void atualizar_tf()
-	{
-
-		if (paiTF != NULL)
-		{
-			// matrizVisao
-			vec3 nada;
-			vec4 nada2;
-
-			vec3 pos, pos_alvo, pos_cima;
-			quat qua;
-			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
-
-			///*
-			glm::decompose(translate(paiTF->matrizTransform,alvo), nada, qua, pos_alvo, nada, nada2);
-
-			matrizVisao = glm::lookAt(
-				pos, // World Space
-				pos_alvo,		 // and looks at the origin
-				this->cima		 // Head is up
-			);
-			//*/
-
-
-			/*
-
-			glm::decompose(translate(paiTF->matrizTransform, vec3(1,0,0)), nada, qua, pos_alvo, nada, nada2);
-
-			matrizVisao = glm::lookAt(
-				pos,	   // World Space
-				pos_alvo,  // and looks at the origin
-				this->cima // Head is up
-			);
-
-			matrizVisao *= toMat4(qua);
-			*/
-		}
-	}
+	
 };

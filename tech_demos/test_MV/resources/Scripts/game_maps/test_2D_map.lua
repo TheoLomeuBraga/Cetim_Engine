@@ -222,7 +222,7 @@ function create_tilemap(tilemap_path,tileset_path,image_folder)
     end
 end
 
-
+local free_camera = false
 local test_map_2D = {}
 function test_map_2D:load()
     print("loading test map")
@@ -236,7 +236,16 @@ function test_map_2D:load()
     create_background("resources/Textures/fundo A.png")
 
     --camera
-    this_map.camera = create_camera_ortho(this_map.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0),150,150,720,720,0.1,100)
+    --this_map.camera = create_camera_ortho(this_map.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(-90, 0, 0),150,150,720,720,0.1,100)
+    --this_map.camera = create_camera_perspective(this_map.objects_layesrs.camera,Vec3:new(-10, 0, 0),Vec3:new(0, 0, 0), 90, 0.1,100)
+    
+
+    if free_camera then
+        this_map.camera = require("game_assets.free_camera").create(this_map.objects_layesrs.camera, Vec3:new(-5, 0, 0), Vec3:new(0, 90, 0))
+    else
+        this_map.camera = create_camera_ortho(this_map.objects_layesrs.camera,Vec3:new(-15, 0, 0),Vec3:new(0, 90, 0),150,150,720,720,0.1,100)
+    end
+
     set_lisener_object(this_map.camera.object_ptr)
 
     --tilemap

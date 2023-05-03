@@ -62,7 +62,7 @@ end
 local camera_asset = require("game_assets.free_camera")
 function test_3D_game:create_test_camera()
     --self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0), 90, 0.1,100)
-    self.camera = camera_asset.create(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0))
+    self.camera = camera_asset.create(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 90))
 end
 
 local texture_dictionary = require("game_maps.texture_dictionary")

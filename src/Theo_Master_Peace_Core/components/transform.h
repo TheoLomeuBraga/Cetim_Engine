@@ -35,7 +35,7 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 		mat4 pai_matriz;
 
 
-		glm::vec3 pos, esca;
+		glm::vec3 pos, esca,rot;
 
 		glm::mat4 matrizTransform;
 		quat quater;
@@ -169,10 +169,12 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 
 		vec3 pegar_angulo_graus() {
-			return quat_graus(quater);
+			rot = quat_graus(quater);
+			return rot;
 
 		}
 		void mudar_angulo_graus(vec3 ang) {
+			rot = ang;
 			quater = graus_quat(ang);
 		}
 

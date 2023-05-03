@@ -302,24 +302,10 @@ public:
 					oq_sca.y = std::max<float>(oq_sca.y, std::abs(m->tamanho_maximo.y));
 					oq_sca.z = std::max<float>(oq_sca.z, std::abs(m->tamanho_maximo.z));
 				}
-				/*
-				mat4 oq_mat = translate(mat4(),tf->pegar_pos_global());
-				oq_mat *= toMat4(tf->pegar_qua_global());
-				oq_mat = scale(oq_mat,oq_sca * tf->esca);
-				*/
 
 				mat4 oq_mat = tf->pegar_matriz();
 				oq_mat = scale(oq_mat, oq_sca);
 
-				// cout << "oq pos: " << tf->pegar_pos_global().x << " " << tf->pegar_pos_global().y << " " << tf->pegar_pos_global().z << endl;
-				// cout << "oq sca: " << oq_sca.x << " " << oq_sca.y << " " << oq_sca.z << endl;
-
-				/*
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &oq_mat[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-				*/
 				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &oq_mat[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
