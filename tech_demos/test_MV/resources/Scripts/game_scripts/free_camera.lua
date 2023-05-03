@@ -12,7 +12,7 @@ this_object = {}
 
 base_sensivity = 120
 base_speed = 7
-local speed_multplier = 1
+local speed_multplier = 4
 
 local mouse_move = { x = 0, y = 0 }
 local mouse_move_this_frame = { x = 0, y = 0 }
@@ -117,7 +117,7 @@ function run_movement()
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.space]) == 1 then
         additional_pos.y = additional_pos.y + (1 * speed)
     end
-    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.ctrl]) == 1 then
+    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.ctrl]) == 1 or keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.c]) == 1 then
         additional_pos.y = additional_pos.y - (1 * speed)
     end
 

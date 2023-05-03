@@ -14,8 +14,6 @@ local textures_dictionary = {
         texture_filter = {0},
         inputs = {},
     },
-
-
 }
 
 return function (texture)
