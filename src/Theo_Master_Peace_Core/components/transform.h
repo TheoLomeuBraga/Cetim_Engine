@@ -114,7 +114,8 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 			quat qua;
 			glm::decompose(m, escala, qua, pos, nada, nada2);
 
-			return pos - pegar_pos_global() ;
+			vec3 ret = pos - pegar_pos_global();
+			return  vec3(ret.x,-ret.y,ret.z);
 		}
 
 		

@@ -48,26 +48,7 @@ public:
 
 		if (paiTF != NULL)
 		{
-			// matrizVisao
-			
 
-			/*
-			vec3 nada;
-			vec4 nada2;
-
-			vec3 pos, pos_alvo, pos_cima;
-			quat qua;
-			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
-			glm::decompose(translate(paiTF->matrizTransform,alvo), nada, qua, pos_alvo, nada, nada2);
-
-			matrizVisao = glm::lookAt(
-				pos, // World Space
-				pos_alvo,		 // and looks at the origin
-				this->cima		 // Head is up
-			);
-			*/
-
-			/**/
 
 			vec3 nada;
 			vec4 nada2;
@@ -77,7 +58,7 @@ public:
 			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
 			
 			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
-			matrizVisao = translate(matrizVisao,pos);
+			matrizVisao = translate(matrizVisao,vec3(pos.x,-pos.y,pos.z));
 			
 		}
 	}
