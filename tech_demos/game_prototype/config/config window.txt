@@ -1,0 +1,2 @@
+720 720 1 1
+resX resY antalising transparency
