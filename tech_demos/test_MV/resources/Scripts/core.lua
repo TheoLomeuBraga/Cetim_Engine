@@ -36,6 +36,8 @@ require("TMP_libs.objects.input")
 
 require("TMP_libs.objects.scene_3D")
 
+require("TMP_libs.objects.global_data")
+
 function set_resolution()
     window.resolution.x = 720
     window.resolution.y = 720
@@ -69,6 +71,8 @@ function START()
     print("core iniciando")
     full_test()
     set_resolution()
+    
+    global_data:set_var("core_object_ptr",this_object_ptr)
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
@@ -80,8 +84,7 @@ function START()
     load_map("test_3D_game")
 
     
-    --test_load_unload("test_2D_map")
-    --test_load_unload("test_3D_physics_map")
+    
 end
 
 function UPDATE()

@@ -5,6 +5,7 @@ require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.time")
 require("TMP_libs.objects.window")
+require("TMP_libs.objects.global_data")
 
 require("math")
 
@@ -21,7 +22,6 @@ local current_pos = { x = 0, y = 0,z = 0 }
 local current_rot = { x = 0, y = 0 }
 
 function START()
-    
 
     this_object = game_object:new(this_object_ptr)
 
