@@ -91,7 +91,8 @@ namespace ManuseioDados
 		ifstream file2(possible_path);
 		const char *cc;
 
-		if (Existe(possible_path) && file2.is_open()){
+		if (Existe(possible_path) && file2.is_open())
+		{
 			while (getline(file2, s))
 			{
 				s2 += s + "\n";
@@ -104,10 +105,10 @@ namespace ManuseioDados
 				s2 += s + "\n";
 			}
 		}
-		else{
+		else
+		{
 			s2 = "erro";
 		}
-		
 
 		return s2;
 	}
@@ -641,19 +642,19 @@ namespace ManuseioDados
 			}
 			else if (type == json::value_t::string)
 			{
-				ret.setString(key,it->get<string>());
+				ret.setString(key, it->get<string>());
 			}
 			else if (type == json::value_t::boolean)
 			{
-				ret.setFloat(key,it->get<bool>());
+				ret.setFloat(key, it->get<bool>());
 			}
 			else if (type == json::value_t::number_integer)
 			{
-				ret.setFloat(key,it->get<int>());
+				ret.setFloat(key, it->get<int>());
 			}
 			else if (type == json::value_t::number_float)
 			{
-				ret.setFloat(key,it->get<float>());
+				ret.setFloat(key, it->get<float>());
 			}
 		}
 
@@ -735,8 +736,6 @@ namespace ManuseioDados
 		{
 			vertice v;
 
-			unsigned int v_index = m.indices[i];
-
 			v.posicao[0] = m.positions[i].x;
 			v.posicao[1] = m.positions[i].y;
 			v.posicao[2] = m.positions[i].z;
@@ -750,6 +749,8 @@ namespace ManuseioDados
 
 			ret.vertices[i] = v;
 		}
+
+		ret.corrigir();
 
 		return ret;
 	}

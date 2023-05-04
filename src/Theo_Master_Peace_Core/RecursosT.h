@@ -56,7 +56,7 @@ public:
 class teclado
 {
 public:
-	teclado(){}
+	teclado() {}
 	bool pegar_input_texto = false;
 	string input_texto = "";
 	unordered_map<string, int> teclas;
@@ -65,7 +65,7 @@ public:
 class joystick
 {
 public:
-	joystick(){}
+	joystick() {}
 	unordered_map<string, int> botoes;
 	unordered_map<string, float> eixos;
 };
@@ -462,10 +462,10 @@ public:
 // 3D
 struct vertice_struct
 {
-	float posicao[3];
-	float uv[2];
-	float normal[3];
-	float cor[3];
+	float posicao[3] = {0, 0, 0};
+	float uv[2] = {0, 0};
+	float normal[3] = {0, 0, 0};
+	float cor[3] = {0, 0, 0};
 
 	bool operator==(const vertice_struct &v) const
 	{
@@ -488,8 +488,6 @@ void escrever_vertice(vertice v)
 	cout << "}" << endl;
 }
 
-
-
 class malha;
 void remover_malha(malha *ma);
 class malha : public asset
@@ -497,9 +495,9 @@ class malha : public asset
 public:
 	malha() {}
 	string arquivo_origem, nome;
-	vector<unsigned int> indice;
-	vector<vertice> vertices;
-	map<string, vector<vertice>> shape_keys;
+	vector<unsigned int> indice = {};
+	vector<vertice> vertices = {};
+	map<string, vector<vertice>> shape_keys = {};
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{
@@ -556,6 +554,23 @@ public:
 			tamanho_maximo.x = std::max(tamanho_maximo.x, std::abs(pos_relation_center.x));
 			tamanho_maximo.y = std::max(tamanho_maximo.y, std::abs(pos_relation_center.y));
 			tamanho_maximo.z = std::max(tamanho_maximo.z, std::abs(pos_relation_center.z));
+		}
+	}
+
+	void corrigir()
+	{
+		vertice vert_vazio;
+		
+		vertices.push_back(vert_vazio);
+		int vert_vazio_pos = vertices.size() -1;
+
+		for (int i = 0; i < indice.size(); i++)
+		{
+			// checa se esta no range
+			if (indice[i] >= vertices.size())
+			{
+				indice[i] = vert_vazio_pos;
+			}
 		}
 	}
 
@@ -727,7 +742,6 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 	pegar_primeiros_map_thread<string, shared_ptr<imagem>>(m, ret);
 }
 
-
 #define SAIDAS_SHADER 6
 #define quantidade_fontes_luz 99
 class API_grafica_classe
@@ -757,10 +771,10 @@ public:
 };
 API_grafica_classe *api_grafica;
 
-class network_api{
+class network_api
+{
 public:
 	network_api();
-
 };
 
 void remover_textura(imagem *img)
@@ -937,7 +951,7 @@ void escrever(X texto)
 
 vec3 quat_graus(quat q)
 {
-	//return degrees(glm::eulerAngles(q) * 3.14159f / 180.f);
+	// return degrees(glm::eulerAngles(q) * 3.14159f / 180.f);
 	return glm::degrees(glm::eulerAngles(q));
 }
 

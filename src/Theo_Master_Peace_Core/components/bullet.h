@@ -13,14 +13,17 @@ btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
+/*
 struct Bullet_Mesh
 {
-    std::vector<btVector3> vertices;
-    std::vector<int> indices;
+    std::vector<btVector3> vertices = {};
+    std::vector<int> indices = {};
 };
+map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
+*/
+map<shared_ptr<objeto_jogo>, btTriangleMesh *> triangleMeshs;
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
-map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -64,7 +67,12 @@ void deleteCollisionObject(btCollisionObject *object)
     if (shape)
     {
         delete shape;
-        Bullet_Meshes.erase(collisionObject_obj[object]);
+
+        if (collisionObject_obj.find(object) != collisionObject_obj.end())
+        {
+            delete triangleMeshs[collisionObject_obj[object]];
+            triangleMeshs.erase(collisionObject_obj[object]);
+        }
     }
 
     // Finally, delete the collision object itself
@@ -121,8 +129,8 @@ public:
 
     void iniciar()
     {
-        iniciar_global_bullet();
 
+        iniciar_global_bullet();
         btCollisionShape *Shape;
         if (forma == caixa)
         {
@@ -134,7 +142,8 @@ public:
         }
         else if (forma == convexo)
         {
-            Bullet_Mesh mesh;
+
+            /*
             for (unsigned int i : collision_mesh->indice)
             {
                 mesh.indices.push_back(i);
@@ -143,40 +152,76 @@ public:
             {
                 mesh.vertices.push_back(btVector3(v.posicao[0], v.posicao[1], v.posicao[2]));
             }
+            */
 
-            Bullet_Meshes[esse_objeto] = mesh;
+            /*
+            for (int i = 0; i < mesh.indices.size(); i += 3)
+            {
+                btVector3 vertex1 = mesh.vertices[mesh.indices[i]];
+                btVector3 vertex2 = mesh.vertices[mesh.indices[i + 1]];
+                btVector3 vertex3 = mesh.vertices[mesh.indices[i + 2]];
 
-            btTriangleMesh *triangleMesh = new btTriangleMesh();
+                triangleMesh->addTriangle(vertex1, vertex2, vertex3);
+            }
+            */
+
             if (collision_mesh != NULL)
             {
 
-                if (dinamica == dinamico)
+                if (dinamica == estatico)
+                {
+                    btTriangleMesh *tm = new btTriangleMesh();
+                    for (int i = 0; i < collision_mesh->indice.size(); i += 3)
+                    {
+
+                        int index = collision_mesh->indice[i];
+                        vertice v = collision_mesh->vertices[index];
+                        btVector3 vertex1 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+
+                        index = collision_mesh->indice[i + 1];
+                        v = collision_mesh->vertices[index];
+                        btVector3 vertex2 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+
+                        index = collision_mesh->indice[i + 2];
+                        v = collision_mesh->vertices[index];
+                        btVector3 vertex3 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+
+                        tm->addTriangle(vertex1, vertex2, vertex3);
+                    }
+
+                    Shape = new btBvhTriangleMeshShape(tm, true);
+
+                    triangleMeshs[esse_objeto] = tm;
+                }
+                else
                 {
                     btConvexHullShape *convexHullShape = new btConvexHullShape();
-                    for (auto v : Bullet_Meshes[esse_objeto].vertices)
+
+                    /*
+                    for (int i = 0; i < collision_mesh->indice.size(); i++)
                     {
-                        convexHullShape->addPoint(v);
+                        int index = collision_mesh->indice[i];
+                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[index].posicao[0],collision_mesh->vertices[index].posicao[1],collision_mesh->vertices[index].posicao[2]));
                     }
+                    */
+
+                    for (int i = 0; i < collision_mesh->vertices.size(); i++)
+                    {
+                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0],collision_mesh->vertices[i].posicao[1],collision_mesh->vertices[i].posicao[2]));
+                    }
+
                     Shape = convexHullShape;
-                }
-                else if (dinamica == estatico)
-                {
-                    btTriangleIndexVertexArray *indexVertexArray = new btTriangleIndexVertexArray(
-                        Bullet_Meshes[esse_objeto].indices.size() / 3,
-                        const_cast<int *>(Bullet_Meshes[esse_objeto].indices.data()),
-                        sizeof(int) * 3,
-                        Bullet_Meshes[esse_objeto].vertices.size(),
-                        const_cast<btScalar *>(reinterpret_cast<const btScalar *>(Bullet_Meshes[esse_objeto].vertices.data())),
-                        sizeof(btVector3));
-                    btGImpactMeshShape *meshShape = new btGImpactMeshShape(indexVertexArray);
-                    meshShape->updateBound();
-                    Shape = meshShape;
                 }
             }
             else
             {
                 cout << "fail load collision mesh\n";
-                Bullet_Meshes.erase(esse_objeto);
+                if (triangleMeshs.find(esse_objeto) != triangleMeshs.end())
+                {
+                    delete triangleMeshs[esse_objeto];
+                    triangleMeshs.erase(esse_objeto);
+                }
+
                 Shape = new btBoxShape(glmToBt(escala));
             }
         }
@@ -224,6 +269,7 @@ public:
                 bt_obj = rb;
             }
         }
+
         collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj, esse_objeto));
     }
 
@@ -242,6 +288,7 @@ public:
     {
         if (bt_obj != NULL)
         {
+            ///*
             if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
             {
                 dynamicsWorld->removeRigidBody((btRigidBody *)bt_obj);
@@ -250,8 +297,12 @@ public:
             {
                 dynamicsWorld->removeCollisionObject(bt_obj);
             }
+            //*/
             deleteCollisionObject(bt_obj);
-            collisionObject_obj.erase(bt_obj);
+            if (collisionObject_obj.find(bt_obj) != collisionObject_obj.end())
+            {
+                collisionObject_obj.erase(bt_obj);
+            }
             bt_obj = NULL;
         }
     }
@@ -292,18 +343,22 @@ public:
     {
         mudar_rot(graus_quat(rot));
     }
-    void adicionar_forca(vec3 forca){
-        ((btRigidBody *)(bt_obj))->applyCentralForce(btVector3(forca.x,forca.y,forca.z));
+    void adicionar_forca(vec3 forca)
+    {
+        ((btRigidBody *)(bt_obj))->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
     }
-    void adicionar_impulso(vec3 forca){
-        ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x,forca.y,forca.z));
+    void adicionar_impulso(vec3 forca)
+    {
+        ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
     }
-    
-    void adicionar_forca_rotativo(vec3 forca){
-        ((btRigidBody *)(bt_obj))->applyTorque(btVector3(forca.x,forca.y,forca.z));
+
+    void adicionar_forca_rotativo(vec3 forca)
+    {
+        ((btRigidBody *)(bt_obj))->applyTorque(btVector3(forca.x, forca.y, forca.z));
     }
-    void adicionar_impulso_rotativo(vec3 forca){
-        ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x,forca.y,forca.z));
+    void adicionar_impulso_rotativo(vec3 forca)
+    {
+        ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
     }
     ~bullet()
     {
@@ -481,7 +536,8 @@ void atualisar_global_bullet()
     dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
-    // dynamicsWorld->stepSimulation(1 / 60.f, 10);
+    // dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
+    // dynamicsWorld->stepSimulation(1 / 60.f, 1);
+    dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 }
