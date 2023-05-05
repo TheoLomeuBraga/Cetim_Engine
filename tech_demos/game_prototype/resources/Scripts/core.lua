@@ -34,27 +34,29 @@ function set_resolution()
 end
 
 current_scene = {}
-function load_map(file)
+function load_map(map)
     current_scene = nil
-    current_scene = require("game_maps.maps." .. file)
+    current_scene = require("game_maps.maps." .. map)
     current_scene:load()
+    global_data:set_var("current_scene_name",map)
 end
+
+
 
 function unload_map()
     current_scene:unload()
 end
 
-function test_load_unload(file)
-    local i = 0
-    while i < 2 do
-        print("load_map")
-        load_map(file)
-        print("unload_map")
-        unload_map()
-        i = i + 1
-    end
-    load_map(file)
+function load_map_from_other(map)
+    unload_map()
+    current_scene = nil
+    current_scene = require("game_maps.maps." .. map[1])
+    current_scene:load()
+    global_data:set_var("current_scene_name",map[1])
+    return {}
 end
+
+
 
 function START()
     print("core iniciando")
@@ -64,7 +66,9 @@ function START()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
-    load_map("test")
+    --load_map("test")
+
+    load_map("test_level")
 
     
     

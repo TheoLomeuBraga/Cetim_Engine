@@ -417,7 +417,6 @@ namespace funcoes_ponte
 		if (argumentos == 1)
 		{
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-			// remover_objeto();
 			obj->excluir();
 		}
 

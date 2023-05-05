@@ -41,8 +41,8 @@ function lua_scripts_component:new(object_ptr)
     function ls:set_variable(script_name,variable_name,value)
         set_lua_var(self.object_ptr,script_name,variable_name,value)
     end
-    function ls:call_function(script_name,function_name,arg)
-        return call_lua_function(self.object_ptr,script_name,function_name,arg)
+    function ls:call_function(script_name,function_name,args_table)
+        return call_lua_function(self.object_ptr,script_name,function_name,args_table)
     end
     
     function ls:delet()

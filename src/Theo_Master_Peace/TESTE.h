@@ -238,7 +238,7 @@ void iniciarTeste3() {
 
 	core = novo_objeto_jogo();
 	core->adicionar_componente<componente_lua>(componente_lua());
-	core->pegar_componente< componente_lua>()->adicionar_script("resources/Scripts/core.lua");
+	core->pegar_componente<componente_lua>()->adicionar_script("core");
 	
 	cena_objetos_selecionados = &cena;
 	

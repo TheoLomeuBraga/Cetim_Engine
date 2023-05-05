@@ -7,7 +7,8 @@ require("TMP_libs.short_cuts.create_collision_mesh")
 require("TMP_libs.objects.post_processing")
 require("TMP_libs.objects.window")
 require("TMP_libs.objects.collision_shapes")
-
+require("TMP_libs.objects.input")
+require("TMP_libs.objects.global_data")
 
 require("TMP_libs.components.component_all")
 require("TMP_libs.layers_table")
@@ -150,7 +151,13 @@ function test_3D_game:load()
     self.assets.components[components.transform]:set()
 end
 
+local R_last_frame = false
 function test_3D_game:update()
+    if R_last_frame == true and keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.r]) == 0 then
+        local core = game_object:new(global_data:get_var("core_object_ptr"))
+        core.components[components.lua_scripts]:call_function("core","load_map_from_other",{"test"})
+    end
+    R_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.r]) == 1
 end
 
 function test_3D_game:unload()
