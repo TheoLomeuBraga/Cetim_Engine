@@ -59,7 +59,6 @@ void start_lua_global_data()
 {
 	cout << "iniciando lua global data" << endl;
 	lua_global_data = luaL_newstate();
-	//luaL_openlibs(lua_global_data);
 }
 
 void lua_pushtable(lua_State *L, Table t)

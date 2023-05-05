@@ -15,6 +15,8 @@ require("TMP_libs.objects.scene_3D")
 
 require("math")
 
+
+
 local test_3D_game = {}
 
 function test_3D_game:initialize_render_settings()
@@ -60,13 +62,12 @@ function test_3D_game:create_background()
         Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, background_material)
 end
 
-local camera_asset = require("game_assets.free_camera")
+
 function test_3D_game:create_test_camera()
-    --self.camera = create_camera_perspective(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(0, 0, 0), 90, 0.1,100)
-    self.camera = camera_asset.create(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
+    self.camera = require("game_maps.assets_dictionarys.test").free_camera(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
 end
 
-local texture_dictionary = require("game_maps.texture_dictionary")
+local texture_dictionary = require("game_maps.material_dictionarys.test")
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
