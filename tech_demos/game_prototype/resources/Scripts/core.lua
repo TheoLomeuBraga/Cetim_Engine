@@ -36,7 +36,7 @@ end
 current_scene = {}
 function load_map(map)
     current_scene = nil
-    current_scene = require("game_maps.maps." .. map)
+    current_scene = require("game_maps.".. map ..".map" )
     current_scene:load()
     global_data:set_var("current_scene_name",map)
 end
@@ -50,9 +50,7 @@ end
 function load_map_from_other(map)
     unload_map()
     current_scene = nil
-    current_scene = require("game_maps.maps." .. map[1])
-    current_scene:load()
-    global_data:set_var("current_scene_name",map[1])
+    load_map(map[1])
     return {}
 end
 
@@ -66,7 +64,7 @@ function START()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
-    load_map("test")
+    load_map("test_level")
 
     --load_map("test_level")
 
