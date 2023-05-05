@@ -19,14 +19,11 @@ require("TMP_libs.short_cuts.load_2D_map")
 require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
---require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.short_cuts.fps_counter")
 require("TMP_libs.short_cuts.create_render_shader")
 
 require("TMP_libs.material")
 require("TMP_libs.objects.window")
-
---require("all_sceanes")
 
 
 require("run_comunication_test")
