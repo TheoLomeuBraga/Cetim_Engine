@@ -1275,7 +1275,7 @@ public:
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
 			string local = string("post_procesing_render_input[") + to_string(i) + "]";
-			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), 0);
+			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), i);
 		}
 		// alicar pos processamento
 		glBindVertexArray(quad_array);

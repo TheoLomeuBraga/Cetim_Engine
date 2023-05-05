@@ -90,7 +90,7 @@ public:
 		{
 			vec3 lpos = listener_transform->pegar_pos_global(), ldir;
 			sf::Listener::setPosition(lpos.x, lpos.y, lpos.z);
-			ldir = listener_transform->pegar_direcao_local(vec3(1, 0, 0));
+			ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
 			sf::Listener::setUpVector(ldir.x, ldir.y, ldir.z);
 
 			vec3 gpos = tf->pegar_pos_global();
