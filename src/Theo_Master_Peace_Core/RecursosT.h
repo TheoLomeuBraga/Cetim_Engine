@@ -559,19 +559,20 @@ public:
 
 	void corrigir()
 	{
-		vertice vert_vazio;
 		
-		vertices.push_back(vert_vazio);
-		int vert_vazio_pos = vertices.size() -1;
-
+		int error_count = 0;
 		for (int i = 0; i < indice.size(); i++)
 		{
 			// checa se esta no range
 			if (indice[i] >= vertices.size())
 			{
-				indice[i] = vert_vazio_pos;
+				indice[i] = 0;
+				//cout << "error in file: " << arquivo_origem << " mesh: " << nome << " index: " << i << endl;
+				error_count++;
 			}
+			
 		}
+		cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
 	}
 
 	~malha()

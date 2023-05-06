@@ -19,7 +19,7 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 
 void main() {
 
-   ret = color * texture(textures[0], vert_out.UV);
+   ret = color * texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale));
  //ret = vec4(0,1,1,1);
 
 }

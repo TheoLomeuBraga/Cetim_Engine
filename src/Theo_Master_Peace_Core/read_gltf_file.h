@@ -46,9 +46,9 @@ namespace gltf_loader
     {
         std::string name;
         glm::mat4 matrix = glm::mat4(1);
-        glm::vec3 translation = glm::vec3(0,0,0);
-        glm::quat rotation = glm::quat(1,0,0,0);
-        glm::vec3 scale = glm::vec3(1,1,1);
+        glm::vec3 translation = glm::vec3(0, 0, 0);
+        glm::quat rotation = glm::quat(1, 0, 0, 0);
+        glm::vec3 scale = glm::vec3(1, 1, 1);
         std::vector<size_t> meshIndices, childrenIndices;
         nlohmann::json extensions, extras;
     };
@@ -332,21 +332,21 @@ namespace gltf_loader
             if (nodeJson.contains("translation"))
             {
                 const auto &translation = nodeJson["translation"];
-                glm::vec3 pos = vec3(translation[0],translation[1],translation[2]);
+                glm::vec3 pos = vec3(translation[0], translation[1], translation[2]);
                 nodeData.translation = pos;
             }
 
             if (nodeJson.contains("rotation"))
             {
                 const auto &rotation = nodeJson["rotation"];
-                glm::quat q = glm::quat(rotation[3],rotation[0],rotation[1],rotation[2]);
+                glm::quat q = glm::quat(rotation[3], rotation[0], rotation[1], rotation[2]);
                 nodeData.rotation = q;
             }
 
             if (nodeJson.contains("scale"))
             {
                 const auto &scale = nodeJson["scale"];
-                glm::vec3 sca = glm::vec3(scale[0],scale[1],scale[2]);
+                glm::vec3 sca = glm::vec3(scale[0], scale[1], scale[2]);
                 nodeData.scale = sca;
             }
 
@@ -746,25 +746,57 @@ namespace gltf_loader
                     {
                     case 5121:
                     { // UNSIGNED_BYTE
-                        std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
-                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        //std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
+                        std::vector<uint8_t> indices;
+                        const uint8_t *data = reinterpret_cast<const uint8_t *>(indexBufferData.data());
+                        size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
+                        indices.assign(data, data + dataSize);
+
+                        indices.resize(indices.size() / sizeof(uint8_t));
+                        for (int i = 0; i < indices.size(); i++)
+                        {
+                            mesh.indices.push_back((int)indices[i]);
+                        }
+
                         break;
                     }
                     case 5123:
                     { // UNSIGNED_SHORT
-                        std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
-                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        //std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
+                        std::vector<uint16_t> indices;
+                        const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
+                        size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
+                        indices.assign(data, data + dataSize);
+
+                        indices.resize(indices.size() / sizeof(uint16_t));
+                        for (int i = 0; i < indices.size(); i++)
+                        {
+                            mesh.indices.push_back((int)indices[i]);
+                        }
+
                         break;
                     }
                     case 5125:
                     { // UNSIGNED_INT
-                        std::vector<uint32_t> indices(reinterpret_cast<const uint32_t *>(indexBufferData.data()), reinterpret_cast<const uint32_t *>(indexBufferData.data() + indexBufferData.size()));
-                        mesh.indices.insert(mesh.indices.end(), indices.begin(), indices.end());
+                        // std::vector<uint32_t> indices(reinterpret_cast<const uint32_t *>(indexBufferData.data()), reinterpret_cast<const uint32_t *>(indexBufferData.data() + indexBufferData.size()));
+                        std::vector<uint32_t> indices;
+                        const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
+                        size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
+                        indices.assign(data, data + dataSize);
+
+                        //indices.resize(indices.size() / sizeof(uint32_t));
+                        for (int i = 0; i < indices.size(); i++)
+                        {
+                            mesh.indices.push_back((int)indices[i]);
+                        }
+
                         break;
                     }
                     default:
                         throw std::runtime_error("Unsupported index component type.");
                     }
+
+                    // cout << "mesh.indices.size() from: " << mesh.name << " " << mesh.indices.size() << endl;
 
                     if (primitive.contains("material"))
                     {

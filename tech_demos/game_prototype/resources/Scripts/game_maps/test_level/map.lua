@@ -21,7 +21,6 @@ require("math")
 local test_3D_game = {}
 
 function test_3D_game:initialize_render_settings()
-    --window:set_cursor_image("resources/Textures/cursor.png")
     window.resolution.x = 640
     window.resolution.y = 480
     window:set()
@@ -68,7 +67,7 @@ function test_3D_game:create_test_camera()
     self.camera = require("game_maps.test.assets").free_camera(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
 end
 
-local texture_dictionary = require("game_maps.test.materials")
+local texture_dictionary = require("game_maps.test_level.materials")
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     local ret = {}
 
@@ -141,8 +140,8 @@ function test_3D_game:load()
     self:create_background()
     self:create_test_camera()
 
-    --self.assets = self:load_assets("resources/3D Models/test_custom_proprietys.gltf")
-    self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
+    --self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
+    self.assets = self:load_assets("resources/3D Models/guns.gltf")
 
 
     self.assets.components[components.transform].position = { x = 0, y = -5, z = 0 }
