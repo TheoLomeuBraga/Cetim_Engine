@@ -611,6 +611,7 @@ public:
 	
 		for (int i = 0; i < indice.size() / 3; i+=3)
 		{
+			
 			if ((indice[i] < vertices.size() && indice[i+1] < vertices.size() && indice[i+2] < vertices.size()) && !has_duplicates({(float)indice[i], (float)indice[i+1], (float)indice[i+2]}) )
 			{
 				new_indice.push_back(indice[i]);
@@ -627,7 +628,7 @@ public:
 		
 		if (error_count > 0)
 		{
-			cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
+			//cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
 		}
 	}
 

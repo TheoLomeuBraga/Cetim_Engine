@@ -736,6 +736,7 @@ namespace gltf_loader
                     }
                 }
 
+                
                 if (primitive.contains("indices"))
                 {
                     size_t indexAccessorIndex = primitive["indices"].get<size_t>();
@@ -746,13 +747,12 @@ namespace gltf_loader
                     {
                     case 5121:
                     { // UNSIGNED_BYTE
-                        //std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
+                        // std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
                         std::vector<uint8_t> indices;
                         const uint8_t *data = reinterpret_cast<const uint8_t *>(indexBufferData.data());
                         size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
                         indices.assign(data, data + dataSize);
 
-                        //indices.resize(dataSize / sizeof(uint8_t));
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
@@ -762,16 +762,17 @@ namespace gltf_loader
                     }
                     case 5123:
                     { // UNSIGNED_SHORT
-                        //std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
+                        // std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
                         size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
                         indices.assign(data, data + dataSize);
 
-                        //indices.resize(dataSize);
+                        // indices.resize(dataSize);
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
+                            print({"INDICE:", (unsigned int)(indices[i])});
                         }
                         break;
                     }
@@ -782,12 +783,12 @@ namespace gltf_loader
                         size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
                         indices.assign(data, data + dataSize);
 
-                        //indices.resize(indices.size() / sizeof(uint32_t));
+                        // indices.resize(indices.size() / sizeof(uint32_t));
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                         }
-                        //mesh.indices.resize(mesh.indices.size() - 3);
+                        // mesh.indices.resize(mesh.indices.size() - 3);
 
                         break;
                     }
@@ -799,9 +800,10 @@ namespace gltf_loader
                     {
                         mesh.material = primitive["material"].get<size_t>();
                     }
-
                 }
+                
 
+                
             }
 
             meshes.push_back(mesh);
@@ -810,6 +812,7 @@ namespace gltf_loader
         return true;
     }
 
+    /*
     std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
     {
         const Accessor &accessor = accessors[accessorIndex];
@@ -820,6 +823,28 @@ namespace gltf_loader
         size_t dataSize = accessor.count * (bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float));
 
         std::vector<uint8_t> data(buffer.begin() + dataOffset, buffer.begin() + dataOffset + dataSize);
+        return data;
+    }
+    */
+
+    std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
+    {
+        const Accessor &accessor = accessors[accessorIndex];
+        const BufferView &bufferView = bufferViews[accessor.bufferView];
+        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+
+        size_t byteOffset = bufferView.byteOffset + accessor.byteOffset;
+        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float);
+
+        std::vector<uint8_t> data(accessor.count * byteStride);
+
+        for (size_t i = 0; i < accessor.count; ++i)
+        {
+            size_t srcOffset = byteOffset + i * byteStride;
+            size_t dstOffset = i * byteStride;
+            std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+        }
+
         return data;
     }
 };
