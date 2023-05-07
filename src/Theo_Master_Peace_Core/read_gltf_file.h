@@ -742,6 +742,8 @@ namespace gltf_loader
                     const Accessor &indexAccessor = accessors[indexAccessorIndex];
                     std::vector<uint8_t> indexBufferData = getBufferData(indexAccessorIndex);
 
+                    
+
                     switch (indexAccessor.componentType)
                     {
                     case 5121:
@@ -755,7 +757,8 @@ namespace gltf_loader
                         indices.resize(indices.size() / sizeof(uint8_t));
                         for (int i = 0; i < indices.size(); i++)
                         {
-                            mesh.indices.push_back((int)indices[i]);
+                            mesh.indices.push_back((unsigned int)indices[i]);
+                            
                         }
 
                         break;
@@ -771,14 +774,18 @@ namespace gltf_loader
                         indices.resize(indices.size() / sizeof(uint16_t));
                         for (int i = 0; i < indices.size(); i++)
                         {
-                            mesh.indices.push_back((int)indices[i]);
+                            mesh.indices.push_back((unsigned int)indices[i]);
+                            
                         }
+
+                        
+                        
+                        
 
                         break;
                     }
                     case 5125:
                     { // UNSIGNED_INT
-                        // std::vector<uint32_t> indices(reinterpret_cast<const uint32_t *>(indexBufferData.data()), reinterpret_cast<const uint32_t *>(indexBufferData.data() + indexBufferData.size()));
                         std::vector<uint32_t> indices;
                         const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
                         size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
@@ -787,8 +794,9 @@ namespace gltf_loader
                         //indices.resize(indices.size() / sizeof(uint32_t));
                         for (int i = 0; i < indices.size(); i++)
                         {
-                            mesh.indices.push_back((int)indices[i]);
+                            mesh.indices.push_back((unsigned int)indices[i]);
                         }
+                        //mesh.indices.resize(mesh.indices.size() - 3);
 
                         break;
                     }
@@ -796,12 +804,13 @@ namespace gltf_loader
                         throw std::runtime_error("Unsupported index component type.");
                     }
 
-                    // cout << "mesh.indices.size() from: " << mesh.name << " " << mesh.indices.size() << endl;
+                    
 
                     if (primitive.contains("material"))
                     {
                         mesh.material = primitive["material"].get<size_t>();
                     }
+
                 }
             }
 

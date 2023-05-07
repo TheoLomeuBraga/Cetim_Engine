@@ -18,6 +18,8 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include <any>
+		
 
 #include "table.h"
 
@@ -572,7 +574,10 @@ public:
 			}
 			
 		}
-		cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
+		if(error_count > 0){
+			cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
+		}
+		
 	}
 
 	~malha()
@@ -948,6 +953,32 @@ template <typename X>
 void escrever(X texto)
 {
 	cout << texto << endl;
+}
+
+struct printable_any {
+  template <class T>
+  printable_any(T&& t) : m_val(std::forward<T>(t)) {
+    m_print_fn = [](std::ostream& os, const std::any& val) {
+      os << std::any_cast<std::decay_t<T>>(val);
+    };
+  }
+
+private:
+  using print_fn_t = void(*)(std::ostream&, const std::any&);
+  std::any m_val;
+  print_fn_t m_print_fn;
+  
+  friend std::ostream& operator<<(std::ostream& os, const printable_any& val) {
+    val.m_print_fn(os, val.m_val);
+    return os;
+  }
+};
+
+void print(const std::vector<printable_any>& data) {
+    for (auto& v : data) {
+        std::cout << v << "	";
+    }
+    std::cout << '\n';
 }
 
 vec3 quat_graus(quat q)

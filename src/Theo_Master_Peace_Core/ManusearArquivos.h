@@ -731,7 +731,6 @@ namespace ManuseioDados
 		ret.nome = m.name;
 		ret.arquivo_origem = file_path;
 
-		ret.vertices.resize(m.positions.size());
 		for (int i = 0; i < m.positions.size(); i++)
 		{
 			vertice v;
@@ -747,10 +746,10 @@ namespace ManuseioDados
 			v.uv[0] = m.texcoords[i].x;
 			v.uv[1] = m.texcoords[i].y;
 
-			ret.vertices[i] = v;
+			ret.vertices.push_back(v);
 		}
 
-		ret.corrigir();
+		//ret.corrigir();
 
 		return ret;
 	}
