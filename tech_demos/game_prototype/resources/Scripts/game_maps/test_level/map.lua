@@ -140,8 +140,8 @@ function test_3D_game:load()
     self:create_background()
     self:create_test_camera()
 
-    --self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
-    self.assets = self:load_assets("resources/3D Models/guns.gltf")
+    self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
+    --self.assets = self:load_assets("resources/3D Models/guns.gltf")
 
 
     self.assets.components[components.transform].position = { x = 0, y = -5, z = 0 }

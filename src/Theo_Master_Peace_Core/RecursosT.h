@@ -19,7 +19,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <any>
-		
+#include <unordered_set>
 
 #include "table.h"
 
@@ -39,6 +39,38 @@ using namespace std;
 
 vec3 gravidade = vec3(0, -9.8f, 0);
 // vec3 gravidade = vec3(0, 0, 0);
+
+struct printable_any
+{
+	template <class T>
+	printable_any(T &&t) : m_val(std::forward<T>(t))
+	{
+		m_print_fn = [](std::ostream &os, const std::any &val)
+		{
+			os << std::any_cast<std::decay_t<T>>(val);
+		};
+	}
+
+private:
+	using print_fn_t = void (*)(std::ostream &, const std::any &);
+	std::any m_val;
+	print_fn_t m_print_fn;
+
+	friend std::ostream &operator<<(std::ostream &os, const printable_any &val)
+	{
+		val.m_print_fn(os, val.m_val);
+		return os;
+	}
+};
+
+void print(const std::vector<printable_any> &data)
+{
+	for (auto &v : data)
+	{
+		std::cout << v << "	";
+	}
+	std::cout << '\n';
+}
 
 class asset
 {
@@ -490,6 +522,18 @@ void escrever_vertice(vertice v)
 	cout << "}" << endl;
 }
 
+bool has_duplicates(const std::vector<float>& values) {
+    std::unordered_set<float> unique_values;
+    for (const auto& value : values) {
+        // Verifica se o valor já está no conjunto de valores únicos
+        if (unique_values.count(value) > 0) {
+            return true; // Valor duplicado encontrado
+        }
+        unique_values.insert(value); // Adiciona o valor ao conjunto de valores únicos
+    }
+    return false; // Nenhum valor duplicado encontrado
+}
+
 class malha;
 void remover_malha(malha *ma);
 class malha : public asset
@@ -561,23 +605,30 @@ public:
 
 	void corrigir()
 	{
-		
+		/**/
 		int error_count = 0;
-		for (int i = 0; i < indice.size(); i++)
+		vector<unsigned int> new_indice;
+	
+		for (int i = 0; i < indice.size() / 3; i+=3)
 		{
-			// checa se esta no range
-			if (indice[i] >= vertices.size())
+			if ((indice[i] < vertices.size() && indice[i+1] < vertices.size() && indice[i+2] < vertices.size()) && !has_duplicates({(float)indice[i], (float)indice[i+1], (float)indice[i+2]}) )
 			{
-				indice[i] = 0;
-				//cout << "error in file: " << arquivo_origem << " mesh: " << nome << " index: " << i << endl;
+				new_indice.push_back(indice[i]);
+				new_indice.push_back(indice[i+1]);
+				new_indice.push_back(indice[i+2]);
+				
+				//print({indice[i] , indice[i+1] , indice[i+2] });
+			}else{
 				error_count++;
 			}
-			
 		}
-		if(error_count > 0){
+		indice = new_indice;
+
+		
+		if (error_count > 0)
+		{
 			cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
 		}
-		
 	}
 
 	~malha()
@@ -955,31 +1006,7 @@ void escrever(X texto)
 	cout << texto << endl;
 }
 
-struct printable_any {
-  template <class T>
-  printable_any(T&& t) : m_val(std::forward<T>(t)) {
-    m_print_fn = [](std::ostream& os, const std::any& val) {
-      os << std::any_cast<std::decay_t<T>>(val);
-    };
-  }
 
-private:
-  using print_fn_t = void(*)(std::ostream&, const std::any&);
-  std::any m_val;
-  print_fn_t m_print_fn;
-  
-  friend std::ostream& operator<<(std::ostream& os, const printable_any& val) {
-    val.m_print_fn(os, val.m_val);
-    return os;
-  }
-};
-
-void print(const std::vector<printable_any>& data) {
-    for (auto& v : data) {
-        std::cout << v << "	";
-    }
-    std::cout << '\n';
-}
 
 vec3 quat_graus(quat q)
 {

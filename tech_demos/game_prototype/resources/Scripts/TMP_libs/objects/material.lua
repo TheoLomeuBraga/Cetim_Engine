@@ -1,8 +1,8 @@
 require("TMP_libs.vectors")
 
 normal_direction = {
-    back = 0,
-    front = 1,
+    front = 0,
+    back = 1,
 	both = 2,
 }
 

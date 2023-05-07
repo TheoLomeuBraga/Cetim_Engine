@@ -730,7 +730,7 @@ namespace ManuseioDados
 		ret.indice = m.indices;
 		ret.nome = m.name;
 		ret.arquivo_origem = file_path;
-
+		
 		for (int i = 0; i < m.positions.size(); i++)
 		{
 			vertice v;
@@ -749,7 +749,11 @@ namespace ManuseioDados
 			ret.vertices.push_back(v);
 		}
 
-		//ret.corrigir();
+		ret.corrigir();
+
+		
+		//print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
+		//print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
 
 		return ret;
 	}

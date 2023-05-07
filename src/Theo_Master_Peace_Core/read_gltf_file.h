@@ -754,8 +754,8 @@ namespace gltf_loader
                         size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
                         indices.assign(data, data + dataSize);
 
-                        indices.resize(indices.size() / sizeof(uint8_t));
-                        for (int i = 0; i < indices.size(); i++)
+                        //indices.resize(dataSize / sizeof(uint8_t));
+                        for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                             
@@ -771,8 +771,8 @@ namespace gltf_loader
                         size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
                         indices.assign(data, data + dataSize);
 
-                        indices.resize(indices.size() / sizeof(uint16_t));
-                        for (int i = 0; i < indices.size(); i++)
+                        //indices.resize(dataSize);
+                        for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                             
@@ -792,7 +792,7 @@ namespace gltf_loader
                         indices.assign(data, data + dataSize);
 
                         //indices.resize(indices.size() / sizeof(uint32_t));
-                        for (int i = 0; i < indices.size(); i++)
+                        for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                         }
