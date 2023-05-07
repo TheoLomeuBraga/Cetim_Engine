@@ -742,8 +742,6 @@ namespace gltf_loader
                     const Accessor &indexAccessor = accessors[indexAccessorIndex];
                     std::vector<uint8_t> indexBufferData = getBufferData(indexAccessorIndex);
 
-                    
-
                     switch (indexAccessor.componentType)
                     {
                     case 5121:
@@ -758,7 +756,6 @@ namespace gltf_loader
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
-                            
                         }
 
                         break;
@@ -775,13 +772,7 @@ namespace gltf_loader
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
-                            
                         }
-
-                        
-                        
-                        
-
                         break;
                     }
                     case 5125:
@@ -804,14 +795,13 @@ namespace gltf_loader
                         throw std::runtime_error("Unsupported index component type.");
                     }
 
-                    
-
                     if (primitive.contains("material"))
                     {
                         mesh.material = primitive["material"].get<size_t>();
                     }
 
                 }
+
             }
 
             meshes.push_back(mesh);

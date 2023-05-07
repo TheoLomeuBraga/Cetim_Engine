@@ -16,7 +16,7 @@ require("TMP_libs.objects.scene_3D")
 
 require("math")
 
-
+assets_from_map = require("game_maps.test_level.assets")
 
 local test_3D_game = {}
 
@@ -64,7 +64,7 @@ end
 
 
 function test_3D_game:create_test_camera()
-    self.camera = require("game_maps.test.assets").free_camera(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
+    self.camera = assets_from_map.charter(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
 end
 
 local texture_dictionary = require("game_maps.test_level.materials")

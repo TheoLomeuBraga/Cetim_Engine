@@ -15,5 +15,5 @@ return {
         ret:add_component(components.lua_scripts)
         ret.components[components.lua_scripts]:add_script("game_scripts/free_camera")
         return ret
-    end
+    end,
 }
