@@ -730,7 +730,7 @@ namespace ManuseioDados
 		ret.indice = m.indices;
 		ret.nome = m.name;
 		ret.arquivo_origem = file_path;
-		
+
 		for (int i = 0; i < m.positions.size(); i++)
 		{
 			vertice v;
@@ -751,9 +751,8 @@ namespace ManuseioDados
 
 		ret.corrigir();
 
-		
-		//print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
-		//print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
+		// print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
+		// print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
 
 		return ret;
 	}
@@ -763,7 +762,6 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 		//print({node.name});
-		
 
 		ret.posicao = node.translation;
 		ret.quaternion = node.rotation;
@@ -771,7 +769,7 @@ namespace ManuseioDados
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
-			
+
 			int mesh_index = node.meshIndices[i];
 			string mesh_name = loader.meshes[mesh_index].name;
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
@@ -792,23 +790,21 @@ namespace ManuseioDados
 			}
 		}
 
-		//print({"ret.nome",ret.nome,"node.childrenIndices.size()",node.childrenIndices.size()});
+		// print({"ret.nome",ret.nome,"node.childrenIndices.size()",node.childrenIndices.size()});
 
 		ret.variaveis = json_table(node.extras);
 
-		//print({node.name});
-
 		for (int i = 0; i < node.childrenIndices.size(); i++)
 		{
-			ret.filhos.push_back(node_3D_object(full_node_list[i], full_node_list, cena, loader));
+			ret.filhos.push_back(node_3D_object(full_node_list[node.childrenIndices[i]], full_node_list, cena, loader));
 		}
+
 		return ret;
 	}
 
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 		cena_3D ret;
-		ret.nome = local;
 		if (cenas_3D.pegar(local).get() == NULL)
 		{
 
@@ -844,6 +840,7 @@ namespace ManuseioDados
 				ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 			}
 
+			
 			for (int a = 0; a < gltf_loader.scenes.size(); a++)
 			{
 				for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
@@ -852,9 +849,9 @@ namespace ManuseioDados
 					gltf_loader::Node n = gltf_loader.nodes[node_index];
 					objeto_3D ob_3D = node_3D_object(n, gltf_loader.nodes, ret, gltf_loader);
 					ret.objetos.filhos.push_back(ob_3D);
+					
 				}
 			}
-
 			
 
 			cenas_3D.aplicar(local, ret);

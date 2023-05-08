@@ -361,9 +361,8 @@ namespace gltf_loader
                 vector<int> childrenArray = nodeJson["children"].get<vector<int>>();
                 for (size_t childIndex : childrenArray)
                 {
-                    nodeData.childrenIndices.push_back(childIndex);
+                    nodeData.childrenIndices.push_back((size_t)childIndex);
                 }
-                //print({"nodeData.name",nodeData.name,"childrenArray.size()",childrenArray.size()});
             }
 
             if (nodeJson.contains("extensions"))
