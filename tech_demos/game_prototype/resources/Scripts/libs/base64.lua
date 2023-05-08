@@ -1,4 +1,4 @@
-base64 = {}
+local base64 = {}
 
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
 -- encoding
@@ -30,3 +30,5 @@ function base64:decode(data)
             return string.char(c)
     end))
 end
+
+return base64

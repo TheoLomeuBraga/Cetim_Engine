@@ -27,6 +27,9 @@ private:
 
 public:
 	static int instancias;
+
+	shared_ptr<objeto_jogo> get_this_object() {return esse_objeto;}
+
 	void setar_esse_objeto(shared_ptr<objeto_jogo> objeto)
 	{
 		esse_objeto = objeto;

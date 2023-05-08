@@ -78,38 +78,48 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
 
     -- print("name",object_3D.name)
 
-    -- local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
-    local materials = {}
-    local i = 1
-    for i, v in ipairs(object_3D.materials) do
-        materials[i] = texture_dictionary(object_type)
-        i = i + 1
+    if tablelength(object_3D.meshes) then
+
+        -- local mesh_mat_size = math.min(tablelength(object_3D.meshes), tablelength(object_3D.materials))
+        local materials = {}
+        local i = 1
+        for i, v in ipairs(object_3D.materials) do
+            materials[i] = texture_dictionary(object_type)
+            i = i + 1
+        end
+
+        -- print(object_3D.name, object_3D.position.x, object_3D.position.y, object_3D.position.x)
+
+        ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),
+            deepcopyjson(object_3D.scale), render_layer, materials, object_3D.meshes)
+
+        if object_type == "test_rb" then
+            ret:add_component(components.physics_3D)
+            ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+
+            ret.components[components.physics_3D].collision_shape = collision_shapes.convex
+            ret.components[components.physics_3D].collision_mesh = object_3D.meshes[1]
+
+            ret.components[components.physics_3D]:set()
+        elseif object_type == "test_sb" then
+            ret:add_component(components.physics_3D)
+            ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
+
+            ret.components[components.physics_3D].collision_shape = collision_shapes.convex
+            ret.components[components.physics_3D].collision_mesh = object_3D.meshes[1]
+
+            ret.components[components.physics_3D]:set()
+        end
+    else
+        ret = game_object:new(create_object(father))
+        ret:add_component(components.transform)
+        ret.components[components.transform].position = deepcopyjson(object_3D.position)
+        ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
+        ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
+        ret.components[components.transform]:set()
     end
 
-    --print(object_3D.name, object_3D.position.x, object_3D.position.y, object_3D.position.x)
-
-    ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),
-        deepcopyjson(object_3D.scale), render_layer, materials, object_3D.meshes)
-
-    if object_type == "test_rb" then
-        ret:add_component(components.physics_3D)
-        ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-
-        ret.components[components.physics_3D].collision_shape = collision_shapes.convex
-        ret.components[components.physics_3D].collision_mesh = object_3D.meshes[1]
-
-        ret.components[components.physics_3D]:set()
-    elseif object_type == "test_sb" then
-        ret:add_component(components.physics_3D)
-        ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
-
-        ret.components[components.physics_3D].collision_shape = collision_shapes.convex
-        ret.components[components.physics_3D].collision_mesh = object_3D.meshes[1]
-
-        ret.components[components.physics_3D]:set()
-    end
-
-    --print(object_3D.name,"tablelength(object_3D.children)",tablelength(object_3D.children))
+    -- print(object_3D.name,"tablelength(object_3D.children)",tablelength(object_3D.children))
 
     for index, value in ipairs(object_3D.children) do
         ret.children[index] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
@@ -120,7 +130,12 @@ end
 
 function test_3D_game:load_assets(path)
     local scene_3D = get_scene_3D(path)
-    return self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
+    local ret = self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
+    ret.components[components.transform].position = Vec3:new(0, 0, 0)
+    ret.components[components.transform].rotation = Vec3:new(0, 0, 0)
+    ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+    ret.components[components.transform]:set()
+    return ret
 end
 
 function test_3D_game:load()
@@ -134,22 +149,6 @@ function test_3D_game:load()
     -- self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
     self.assets = self:load_assets("resources/3D Models/guns.gltf")
 
-    self.assets.components[components.transform].position = {
-        x = 0,
-        y = -5,
-        z = 0
-    }
-    self.assets.components[components.transform].rotation = {
-        x = 0,
-        y = 0,
-        z = 0
-    }
-    self.assets.components[components.transform].scale = {
-        x = 1,
-        y = 1,
-        z = 1
-    }
-    self.assets.components[components.transform]:set()
 end
 
 local R_last_frame = false

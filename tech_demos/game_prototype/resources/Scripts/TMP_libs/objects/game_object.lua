@@ -3,13 +3,14 @@ require("TMP_libs.components.component_index")
 
 
 --object
+
 function create_object()
 end
 
-function get_object_with_name(name)
+function create_object(parent)
 end
 
-function create_object(parent)
+function get_object_with_name(name)
 end
 
 function remove_object(object)
@@ -24,16 +25,17 @@ end
 function remove_component(object, component)
 end
 
-function get_object_family_json(object)
-end
+--function get_object_family(object)
+--end
 
-function get_object_family(object)
+function get_set_object(get_set,object)
 end
 
 game_object = {}
 function game_object:new(object_ptr)
     obj = {}
     obj.object_ptr = object_ptr
+    obj.name = ""
     obj.components = {}
     obj.father = ""
     obj.children_ptr = {}
@@ -61,10 +63,17 @@ function game_object:new(object_ptr)
     end
 
     function obj:get()
-        j = get_object_family(self.object_ptr)
+        local j = get_set_object(lua_get,self.object_ptr)
+        self.name = j.name
         self.father = j.father
         self.children_ptr = deepcopyjson(j.childrens)
     end
+
+    
+    function obj:set()
+        get_set_object(lua_set,self)
+    end
+    
 
     function obj:recreate()
         self:get()

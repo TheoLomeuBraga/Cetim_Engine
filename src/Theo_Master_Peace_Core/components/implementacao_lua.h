@@ -435,36 +435,7 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int get_object_family_json(lua_State *L)
-	{
-		int argumentos = lua_gettop(L);
-		string output = "";
-		objeto_jogo *obj = NULL;
-		if (argumentos > 0)
-		{
-			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-		}
-		if (obj != NULL)
-		{
-			vector<string> criancas;
-
-			for (shared_ptr<objeto_jogo> p : obj->filhos)
-			{
-				criancas.push_back(ponteiro_string(p.get()));
-			}
-
-			json JSON = {
-				{"father", ponteiro_string(obj->pai)},
-				{"childrens", criancas},
-			};
-
-			output = JSON.dump();
-		}
-
-		lua_pushstring(L, output.c_str());
-		return 1;
-	}
-
+	/*
 	int get_object_family(lua_State *L)
 	{
 		Table ret;
@@ -484,6 +455,58 @@ namespace funcoes_ponte
 		ret.setTable("childrens", vString_table(criancas));
 		lua_pushtable(L, ret);
 		return 1;
+	}
+	*/
+
+	int get_set_object(lua_State *L)
+	{
+		
+		
+		int argumentos = lua_gettop(L);
+		string output = "";
+		objeto_jogo *obj = NULL;
+		int get_set = lua_tonumber(L, 1);
+		
+		
+		if (get_set == get_lua)
+		{
+
+			Table ret;
+
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+
+			ret.setString("name", obj->nome.c_str());
+
+			ret.setString("father", ponteiro_string(obj->pai));
+
+			vector<string> criancas;
+			for (shared_ptr<objeto_jogo> p : obj->filhos)
+			{
+				criancas.push_back(ponteiro_string(p.get()));
+			}
+
+			ret.setTable("childrens", vString_table(criancas));
+			lua_pushtable(L, ret);
+			return 1;
+		}
+		else
+		{
+			Table t = lua_totable(L, 2);
+
+			obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
+
+			obj->nome = t.getString("name");
+
+			vector<string> criancas = table_vString(t.getTable("childrens"));
+			obj->filhos = {};
+			for(string s : criancas){
+				obj->filhos.push_back(string_ponteiro<objeto_jogo>(s)->get_this_object());
+			}
+
+			obj->pai = string_ponteiro<objeto_jogo>(t.getString("father"));
+
+			return 0;
+		}
 	}
 
 	// memory
@@ -1484,7 +1507,7 @@ namespace funcoes_ponte
 		}
 		else if (lua_type_id == LUA_TTABLE)
 		{
-			lua_pushtable(L,lua_totable(lua_global_data, -2));	
+			lua_pushtable(L, lua_totable(lua_global_data, -2));
 		}
 		else if (lua_type_id == LUA_TNIL)
 		{
@@ -1543,7 +1566,6 @@ namespace funcoes_ponte
 			lua_pushtable(lua_global_data, lua_totable(L, 2));
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
-		
 
 		return 0;
 	}
@@ -1584,8 +1606,8 @@ namespace funcoes_ponte
 		pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
 		pair<string, lua_function>("have_component", have_component),
 
-		pair<string, lua_function>("get_object_family_json", funcoes_ponte::get_object_family_json),
-		pair<string, lua_function>("get_object_family", funcoes_ponte::get_object_family),
+		// pair<string, lua_function>("get_object_family", funcoes_ponte::get_object_family),
+		pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
 
 		// movimento
 		pair<string, lua_function>("to_move", funcoes_ponte::to_move),
