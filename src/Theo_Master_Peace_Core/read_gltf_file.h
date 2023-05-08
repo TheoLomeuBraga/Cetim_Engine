@@ -316,10 +316,11 @@ namespace gltf_loader
         for (const auto &nodeJson : nodesArray)
         {
             Node nodeData;
-
+            
             if (nodeJson.contains("name"))
             {
                 nodeData.name = nodeJson["name"].get<std::string>();
+                //print({nodeData.name});
             }
 
             if (nodeJson.contains("matrix"))
@@ -357,11 +358,12 @@ namespace gltf_loader
 
             if (nodeJson.contains("children"))
             {
-                const auto &childrenArray = nodeJson["children"];
-                for (const auto &childIndex : childrenArray)
+                vector<int> childrenArray = nodeJson["children"].get<vector<int>>();
+                for (size_t childIndex : childrenArray)
                 {
-                    nodeData.childrenIndices.push_back(childIndex.get<size_t>());
+                    nodeData.childrenIndices.push_back(childIndex);
                 }
+                //print({"nodeData.name",nodeData.name,"childrenArray.size()",childrenArray.size()});
             }
 
             if (nodeJson.contains("extensions"))
@@ -772,7 +774,6 @@ namespace gltf_loader
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
-                            print({"INDICE:", (unsigned int)(indices[i])});
                         }
                         break;
                     }

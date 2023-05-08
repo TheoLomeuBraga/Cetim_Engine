@@ -293,7 +293,7 @@ json table_json(const Table& table) {
     return j;
 }
 
-Table scene_3D_table(objeto_3D obj){
+Table object_3D_table(objeto_3D obj){
     Table ret;
 
     ret.setString("name",obj.nome);
@@ -321,9 +321,11 @@ Table scene_3D_table(objeto_3D obj){
 
     vector<Table> children;
     for(objeto_3D o : obj.filhos){
-        children.push_back(scene_3D_table(o));
+        children.push_back(object_3D_table(o));
     }
     ret.setTable("children",vTable_table(children));
+
+    
 
     return ret;
 }
@@ -354,7 +356,7 @@ Table scene_3D_table(cena_3D sceane){
     }
     ret.setTable("textures",vString_table(textures));
     
-    ret.setTable("objects",scene_3D_table(sceane.objetos));
+    ret.setTable("objects",object_3D_table(sceane.objetos));
     ret.setTable("extra",sceane.extras);
     return ret;
 }

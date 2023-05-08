@@ -762,6 +762,8 @@ namespace ManuseioDados
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
+		//print({node.name});
+		
 
 		ret.posicao = node.translation;
 		ret.quaternion = node.rotation;
@@ -769,6 +771,7 @@ namespace ManuseioDados
 
 		for (int i = 0; i < node.meshIndices.size(); i++)
 		{
+			
 			int mesh_index = node.meshIndices[i];
 			string mesh_name = loader.meshes[mesh_index].name;
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
@@ -785,12 +788,15 @@ namespace ManuseioDados
 				Material mat;
 				mat.shad = "resources/Shaders/mesh";
 				mat.texturas[0] = carregar_Imagem("resources/Textures/white.png");
-
 				ret.meus_materiais.push_back(mat);
 			}
 		}
 
+		//print({"ret.nome",ret.nome,"node.childrenIndices.size()",node.childrenIndices.size()});
+
 		ret.variaveis = json_table(node.extras);
+
+		//print({node.name});
 
 		for (int i = 0; i < node.childrenIndices.size(); i++)
 		{
@@ -848,6 +854,8 @@ namespace ManuseioDados
 					ret.objetos.filhos.push_back(ob_3D);
 				}
 			}
+
+			
 
 			cenas_3D.aplicar(local, ret);
 		}
