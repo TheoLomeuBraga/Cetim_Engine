@@ -53,6 +53,16 @@ namespace gltf_loader
         nlohmann::json extensions, extras;
     };
 
+    struct AnimationKeyFrame
+    {
+        size_t targetNodeIndex;
+        std::string targetNodeName;
+        bool has_position = false, has_scale = false, has_rotation = false;
+        vec3 position = glm::vec3(0, 0, 0);
+        vec3 scale = glm::vec3(1, 1, 1);
+        quat rotation = glm::quat(1, 0, 0, 0);
+    };
+
     struct AnimationChannel
     {
         size_t samplerIndex;
@@ -73,6 +83,7 @@ namespace gltf_loader
         float duration;
         std::vector<AnimationChannel> channels;
         std::vector<AnimationSampler> samplers;
+        std::vector<AnimationKeyFrame> keyFrames;
     };
 
     struct Texture
@@ -122,6 +133,7 @@ namespace gltf_loader
         bool loadScenes();
         bool loadNodes();
         bool loadAnimations();
+        AnimationKeyFrame getAnimationKeyFrame(const AnimationChannel &channel, float time);
         bool loadTextures();
         bool loadMaterials();
         std::vector<float> getAttributeData(size_t accessorIndex);
@@ -316,11 +328,11 @@ namespace gltf_loader
         for (const auto &nodeJson : nodesArray)
         {
             Node nodeData;
-            
+
             if (nodeJson.contains("name"))
             {
                 nodeData.name = nodeJson["name"].get<std::string>();
-                //print({nodeData.name});
+                // print({nodeData.name});
             }
 
             if (nodeJson.contains("matrix"))
@@ -456,10 +468,100 @@ namespace gltf_loader
                 animation.samplers.push_back(sampler);
             }
 
+            float time = 0;
+            for (int i = 0; i < animation.channels.size(); i++)
+            {
+                time = (animation.duration / animation.channels.size()) * i;
+                animation.keyFrames.push_back(getAnimationKeyFrame(animation.channels[i],time)); //<-- possivel erro aqui
+            }
+
             animations.push_back(animation);
         }
 
         return true;
+    }
+
+    AnimationKeyFrame GLTFLoader::getAnimationKeyFrame(const AnimationChannel &channel, float time)
+    {
+        print({"AAAAA"});
+        AnimationSampler &sampler = animations[channel.samplerIndex].samplers[0]; // assuming only 1 sampler for simplicity
+        print({"BBBBB"});
+        Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+        print({"CCCCC"});
+        Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+        print({"DDDDD"});
+        std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+        print({"EEEEE"});
+        std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+        print({"FFFFF"});
+        std::string interpolation = sampler.interpolation;
+        print({"GGGGG"});
+        size_t count = inputAccessor.count;
+        print({"HHHHH"});
+        AnimationKeyFrame keyFrame;
+
+        
+        // interpolate position
+        if (channel.targetPath == "translation")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+            glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
+            glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
+            keyFrame.position = glm::mix(pos1, pos2, t);
+            keyFrame.has_position = true;
+        }
+
+        // interpolate rotation
+        if (channel.targetPath == "rotation")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+            glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
+            glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
+            keyFrame.rotation = glm::slerp(rot1, rot2, t);
+            keyFrame.has_rotation = true;
+        }
+
+        // interpolate scale
+        if (channel.targetPath == "scale")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+            glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
+            glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
+            keyFrame.scale = glm::mix(scale1, scale2, t);
+            keyFrame.has_scale = true;
+        }
+
+        return keyFrame;
     }
 
     bool GLTFLoader::loadTextures()
@@ -737,7 +839,6 @@ namespace gltf_loader
                     }
                 }
 
-                
                 if (primitive.contains("indices"))
                 {
                     size_t indexAccessorIndex = primitive["indices"].get<size_t>();
@@ -751,7 +852,8 @@ namespace gltf_loader
                         // std::vector<uint8_t> indices(indexBufferData.begin(), indexBufferData.end());
                         std::vector<uint8_t> indices;
                         const uint8_t *data = reinterpret_cast<const uint8_t *>(indexBufferData.data());
-                        size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
+                        // size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
+                        size_t dataSize = indexAccessor.count * sizeof(uint8_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         for (int i = 0; i < dataSize; i++)
@@ -763,10 +865,11 @@ namespace gltf_loader
                     }
                     case 5123:
                     { // UNSIGNED_SHORT
-                        // std::vector<uint16_t> indices(reinterpret_cast<const uint16_t *>(indexBufferData.data()), reinterpret_cast<const uint16_t *>(indexBufferData.data() + indexBufferData.size()));
+
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
-                        size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
+                        // size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
+                        size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
@@ -774,21 +877,22 @@ namespace gltf_loader
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                         }
+
+                        //print({"mesh.name", mesh.name, "indexAccessor.count", indexAccessor.count, "mesh.indices.size()", mesh.indices.size(), "sizeof(uint16_t)", sizeof(uint16_t)});
                         break;
                     }
                     case 5125:
                     { // UNSIGNED_INT
                         std::vector<uint32_t> indices;
                         const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
-                        size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
+                        // size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
+                        size_t dataSize = indexAccessor.count * sizeof(uint32_t) * 2;
                         indices.assign(data, data + dataSize);
 
-                        // indices.resize(indices.size() / sizeof(uint32_t));
                         for (int i = 0; i < dataSize; i++)
                         {
                             mesh.indices.push_back((unsigned int)indices[i]);
                         }
-                        // mesh.indices.resize(mesh.indices.size() - 3);
 
                         break;
                     }
@@ -796,14 +900,27 @@ namespace gltf_loader
                         throw std::runtime_error("Unsupported index component type.");
                     }
 
+                    // corect mesh
+                    vector<unsigned int> new_indice;
+                    for (int i = 0; i < mesh.indices.size() / 3; i += 3)
+                    {
+
+                        if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
+                        {
+                            new_indice.push_back(mesh.indices[i]);
+                            new_indice.push_back(mesh.indices[i + 1]);
+                            new_indice.push_back(mesh.indices[i + 2]);
+
+                            // print({indice[i] , indice[i+1] , indice[i+2] });
+                        }
+                    }
+                    mesh.indices = new_indice;
+
                     if (primitive.contains("material"))
                     {
                         mesh.material = primitive["material"].get<size_t>();
                     }
                 }
-                
-
-                
             }
 
             meshes.push_back(mesh);

@@ -522,16 +522,19 @@ void escrever_vertice(vertice v)
 	cout << "}" << endl;
 }
 
-bool has_duplicates(const std::vector<float>& values) {
-    std::unordered_set<float> unique_values;
-    for (const auto& value : values) {
-        // Verifica se o valor já está no conjunto de valores únicos
-        if (unique_values.count(value) > 0) {
-            return true; // Valor duplicado encontrado
-        }
-        unique_values.insert(value); // Adiciona o valor ao conjunto de valores únicos
-    }
-    return false; // Nenhum valor duplicado encontrado
+bool has_duplicates(const std::vector<float> &values)
+{
+	std::unordered_set<float> unique_values;
+	for (const auto &value : values)
+	{
+		// Verifica se o valor já está no conjunto de valores únicos
+		if (unique_values.count(value) > 0)
+		{
+			return true; // Valor duplicado encontrado
+		}
+		unique_values.insert(value); // Adiciona o valor ao conjunto de valores únicos
+	}
+	return false; // Nenhum valor duplicado encontrado
 }
 
 class malha;
@@ -603,35 +606,6 @@ public:
 		}
 	}
 
-	void corrigir()
-	{
-		/**/
-		int error_count = 0;
-		vector<unsigned int> new_indice;
-	
-		for (int i = 0; i < indice.size() / 3; i+=3)
-		{
-			
-			if ((indice[i] < vertices.size() && indice[i+1] < vertices.size() && indice[i+2] < vertices.size()) && !has_duplicates({(float)indice[i], (float)indice[i+1], (float)indice[i+2]}) )
-			{
-				new_indice.push_back(indice[i]);
-				new_indice.push_back(indice[i+1]);
-				new_indice.push_back(indice[i+2]);
-				
-				//print({indice[i] , indice[i+1] , indice[i+2] });
-			}else{
-				error_count++;
-			}
-		}
-		indice = new_indice;
-
-		
-		if (error_count > 0)
-		{
-			//cout << "tamanho indice do mesh: " << indice.size() << " erros no mesh: " << nome << " " << error_count << endl;
-		}
-	}
-
 	~malha()
 	{
 		remover_malha(this);
@@ -653,10 +627,20 @@ typedef struct objeto_3D_struct objeto_3D;
 
 struct key_frame_struct
 {
-	float duracao;
-	objeto_3D frame;
+	bool has_position = false, has_scale = false, has_rotation = false;
+	vec3 position = glm::vec3(0, 0, 0);
+	vec3 scale = glm::vec3(1, 1, 1);
+	quat rotation = glm::quat(1, 0, 0, 0);
 };
 typedef struct key_frame_struct key_frame;
+
+struct animacao_struct
+{
+	string nome;
+	float duration;
+	std::vector<key_frame> keyFrames;
+};
+typedef struct animacao_struct animacao;
 
 float transicionar(float temp, float A, float B)
 {
@@ -690,7 +674,7 @@ public:
 	map<string, shared_ptr<imagem>> texturas;
 
 	objeto_3D objetos;
-	map<string, vector<key_frame>> animacoes;
+	map<string, animacao> animacoes;
 	Table extras;
 };
 vec3 calculateNormal(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)
@@ -1006,8 +990,6 @@ void escrever(X texto)
 {
 	cout << texto << endl;
 }
-
-
 
 vec3 quat_graus(quat q)
 {

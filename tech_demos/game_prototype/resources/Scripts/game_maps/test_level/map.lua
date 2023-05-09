@@ -93,6 +93,8 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
         ret = create_mesh(father, false, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation),
             deepcopyjson(object_3D.scale), render_layer, materials, object_3D.meshes)
 
+        ret.name = object_3D.name
+
         if object_type == "test_rb" then
             ret:add_component(components.physics_3D)
             ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
@@ -112,6 +114,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
         end
     else
         ret = game_object:new(create_object(father))
+        ret.name = object_3D.name
         ret:add_component(components.transform)
         ret.components[components.transform].position = deepcopyjson(object_3D.position)
         ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
@@ -147,7 +150,8 @@ function test_3D_game:load()
     self:create_test_camera()
 
     -- self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
-    self.assets = self:load_assets("resources/3D Models/guns.gltf")
+    --self.assets = self:load_assets("resources/3D Models/guns.gltf")
+    self.assets = self:load_assets("resources/3D Models/test_level.gltf")
 
 end
 
