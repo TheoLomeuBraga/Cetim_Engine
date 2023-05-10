@@ -749,9 +749,7 @@ namespace ManuseioDados
 			ret.vertices.push_back(v);
 		}
 
-		//ret.corrigir();
-
-		print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
+		//print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
 		//print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
 
 		return ret;
