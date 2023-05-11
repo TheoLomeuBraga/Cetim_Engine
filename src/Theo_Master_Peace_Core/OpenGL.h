@@ -12,7 +12,12 @@
 #include "scene.h"
 #include "LoopPrincipal.h"
 
+
 #include <GL/glew.h>
+
+
+
+
 #include "game_object.h"
 #include "components/camera.h"
 #include "components/transform.h"

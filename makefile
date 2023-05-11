@@ -7,6 +7,8 @@ engine_cpp_windows_path=./src/Theo_Master_Peace/EngineTMasterPece.cpp
 #font_reader_cpp_path=./src/Font_Reader/leitor_de_fontes_TMP_linux.cpp
 font_reader_cpp_path=./src/Font_Reader_2/font_reader_2.cpp
 
+font_reader_cpp_ui_path=./src/font_reader_gtk/font_reader_gtk.cpp
+
 tags_windows=-std=c++17 -pipe -Wa,-mbig-obj
 
 includes=-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./include -I./include/freetype -I./include/bullet3
@@ -34,11 +36,13 @@ libs_path_linux=-L./libs/linux
 
 libs_linux=-llua -lglfw -lGLEW -lglut -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
-definitions_linux= -D LINUX
+definitions_linux= -D LINUX 
 
 linux:
-	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
-	${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
+	#${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
+	#${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
+	cp ./src/font_reader_gtk/font_reader_gtk.glade ${built_path}/font_reader_gtk.glade
+	${compiler_linux} ${tags} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_gtk
 
 linux_debug:
 	${compiler_linux} -g ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
