@@ -546,7 +546,7 @@ public:
 	string arquivo_origem, nome;
 	vector<unsigned int> indice = {};
 	vector<vertice> vertices = {};
-	map<string, vector<vertice>> shape_keys = {};
+	//map<string, vector<vertice>> shape_keys = {};
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{
@@ -558,10 +558,12 @@ public:
 	void comprimir()
 	{
 		// comprimir shape keys
+		/*
 		for (pair<string, vector<vertice>> p : shape_keys)
 		{
 			shape_keys.insert(pair<string, vector<vertice>>(p.first, remover_elementos_duplicados<vertice>(p.second)));
 		}
+		*/
 
 		// comprimir malha e gerar index
 		vector<vertice> novos_vertices = remover_elementos_duplicados<vertice>(vertices);
@@ -604,6 +606,29 @@ public:
 			tamanho_maximo.y = std::max(tamanho_maximo.y, std::abs(pos_relation_center.y));
 			tamanho_maximo.z = std::max(tamanho_maximo.z, std::abs(pos_relation_center.z));
 		}
+	}
+
+	malha operator+(const malha &other) const
+	{
+		malha ret = *this;
+		for(unsigned int i : other.indice){
+			ret.indice.push_back(i + vertices.size());
+		}
+		for(vertice v : other.vertices){
+			ret.vertices.push_back(v);
+		}
+		return ret;
+	}
+
+	malha &operator+=(const malha &other)
+	{
+		for(unsigned int i : other.indice){
+			this->indice.push_back(i + vertices.size());
+		}
+		for(vertice v : other.vertices){
+			this->vertices.push_back(v);
+		}
+		return *this;
 	}
 
 	~malha()
