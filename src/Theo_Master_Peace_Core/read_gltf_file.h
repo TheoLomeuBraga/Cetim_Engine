@@ -45,6 +45,7 @@ namespace gltf_loader
     struct Node
     {
         std::string name;
+        size_t id;
         glm::mat4 matrix = glm::mat4(1);
         glm::vec3 translation = glm::vec3(0, 0, 0);
         glm::quat rotation = glm::quat(1, 0, 0, 0);
@@ -324,9 +325,14 @@ namespace gltf_loader
 
         const auto &nodesArray = gltf["nodes"];
 
-        for (const auto &nodeJson : nodesArray)
+        int i = 0;
+        for (const auto &nodeJson :  nodesArray)
         {
+            
+
             Node nodeData;
+
+            nodeData.id = i;
 
             if (nodeJson.contains("name"))
             {
@@ -386,6 +392,8 @@ namespace gltf_loader
             }
 
             nodes.push_back(nodeData);
+
+            i++;
         }
 
         return true;

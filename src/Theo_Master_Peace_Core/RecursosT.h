@@ -640,6 +640,7 @@ public:
 struct objeto_3D_struct
 {
 	string nome;
+	unsigned int id;
 	vec3 posicao;
 	quat quaternion;
 	vec3 escala;

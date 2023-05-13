@@ -298,6 +298,8 @@ Table object_3D_table(objeto_3D obj){
 
     ret.setString("name",obj.nome);
 
+    ret.setFloat("id",(int)obj.id);
+
     ret.setTable("position",vec3_table(obj.posicao));
     ret.setTable("rotation",vec3_table(quat_graus(obj.quaternion)));
     ret.setTable("scale",vec3_table(obj.escala));

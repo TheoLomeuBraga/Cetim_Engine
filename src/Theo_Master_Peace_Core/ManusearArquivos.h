@@ -759,6 +759,7 @@ namespace ManuseioDados
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
+		ret.id = node.id;
 		//print({node.name});
 
 		ret.posicao = node.translation;
