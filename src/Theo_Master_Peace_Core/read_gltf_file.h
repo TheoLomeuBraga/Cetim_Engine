@@ -855,7 +855,7 @@ namespace gltf_loader
                         std::vector<uint8_t> indices;
                         const uint8_t *data = reinterpret_cast<const uint8_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint8_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint8_t) * 2;
+                        size_t dataSize = indexAccessor.count * sizeof(uint8_t);
                         indices.assign(data, data + dataSize);
 
                         for (int i = 0; i < dataSize; i++)
@@ -886,7 +886,7 @@ namespace gltf_loader
                         std::vector<uint32_t> indices;
                         const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint32_t) * 2;
+                        size_t dataSize = indexAccessor.count * sizeof(uint32_t) * 4;
                         indices.assign(data, data + dataSize);
 
                         for (int i = 0; i < dataSize; i++)

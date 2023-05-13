@@ -25,9 +25,9 @@ function START()
     this_object = game_object:new(this_object_ptr)
 
     this_object.components[components.transform]:get()
-    current_pos = deepcopy(this_object.components[components.transform].position)
-    current_rot = { x = this_object.components[components.transform].rotation.x,
-        y = this_object.components[components.transform].rotation.y }
+    --current_pos = deepcopy(this_object.components[components.transform].position)
+    --current_rot = { x = this_object.components[components.transform].rotation.x,
+    --    y = this_object.components[components.transform].rotation.y }
     this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
 
     

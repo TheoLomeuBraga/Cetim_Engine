@@ -67,7 +67,7 @@ function test_3D_game:create_background()
 end
 
 function test_3D_game:create_test_camera()
-    self.camera = assets_from_map.charter(self.objects_layesrs.camera, Vec3:new(-20, 0, 0), Vec3:new(90, 0, 0))
+    self.camera = assets_from_map.free_camera(self.objects_layesrs.camera, Vec3:new(0, 20, 0), Vec3:new(45, 0, 0))
 end
 
 local texture_dictionary = require("game_maps.test_level.materials")
