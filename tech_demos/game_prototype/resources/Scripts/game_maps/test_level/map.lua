@@ -133,6 +133,7 @@ end
 
 function test_3D_game:load_assets(path)
     local scene_3D = get_scene_3D(path)
+    --deepprint(scene_3D)
     local ret = self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
     ret.components[components.transform].position = Vec3:new(0, 0, 0)
     ret.components[components.transform].rotation = Vec3:new(0, 0, 0)
@@ -149,7 +150,7 @@ function test_3D_game:load()
     self:create_background()
     self:create_test_camera()
 
-    -- self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
+    --self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
     --self.assets = self:load_assets("resources/3D Models/guns.gltf")
     self.assets = self:load_assets("resources/3D Models/test_level.gltf")
 
