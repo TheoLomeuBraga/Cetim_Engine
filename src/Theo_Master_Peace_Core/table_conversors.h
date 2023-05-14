@@ -365,7 +365,15 @@ Table scene_3D_table(cena_3D sceane){
         for(key_frame kf : p.second.keyFrames){
             Table kf_table;
 
-            
+            kf_table.setFloat("object_id",kf.object_id);
+
+            kf_table.setFloat("has_position",kf.has_position);
+            kf_table.setFloat("has_scale",kf.has_scale);
+            kf_table.setFloat("has_rotation",kf.has_rotation);
+
+            kf_table.setTable("position",vec3_table(kf.position));
+            kf_table.setTable("scale",vec3_table(kf.scale));
+            kf_table.setTable("rotation",quat_table(kf.rotation));
 
             key_frames.push_back(kf_table);
         }
