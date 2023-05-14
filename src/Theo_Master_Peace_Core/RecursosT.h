@@ -653,6 +653,7 @@ typedef struct objeto_3D_struct objeto_3D;
 
 struct key_frame_struct
 {
+	unsigned int object_id;
 	bool has_position = false, has_scale = false, has_rotation = false;
 	vec3 position = glm::vec3(0, 0, 0);
 	vec3 scale = glm::vec3(1, 1, 1);

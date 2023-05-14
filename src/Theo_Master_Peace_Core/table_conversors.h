@@ -327,8 +327,6 @@ Table object_3D_table(objeto_3D obj){
     }
     ret.setTable("children",vTable_table(children));
 
-    
-
     return ret;
 }
 
@@ -357,6 +355,26 @@ Table scene_3D_table(cena_3D sceane){
         textures.push_back(p.first);
     }
     ret.setTable("textures",vString_table(textures));
+
+    vector<Table> animations;
+    for(pair<string, animacao> p : sceane.animacoes){
+        Table animation_table;
+        animation_table.setFloat("duration",p.second.duration);
+
+        vector<Table> key_frames;
+        for(key_frame kf : p.second.keyFrames){
+            Table kf_table;
+
+            
+
+            key_frames.push_back(kf_table);
+        }
+
+        animation_table.setTable("key_frames",vTable_table(key_frames));
+
+        animations.push_back(animation_table);
+    }
+    ret.setTable("animations",vTable_table(animations));
     
     ret.setTable("objects",object_3D_table(sceane.objetos));
     ret.setTable("extra",sceane.extras);

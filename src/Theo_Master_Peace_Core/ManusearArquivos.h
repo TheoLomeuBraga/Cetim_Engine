@@ -849,6 +849,8 @@ namespace ManuseioDados
 				for(gltf_loader::AnimationKeyFrame kf : a.keyFrames){
 					key_frame kfr;
 
+					kfr.object_id = kf.targetNodeIndex;
+
 					kfr.has_position = kf.has_position;
 					kfr.has_rotation = kf.has_rotation;
 					kfr.has_scale = kf.has_scale;
