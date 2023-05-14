@@ -143,28 +143,6 @@ public:
         else if (forma == convexo)
         {
 
-            /*
-            for (unsigned int i : collision_mesh->indice)
-            {
-                mesh.indices.push_back(i);
-            }
-            for (vertice v : collision_mesh->vertices)
-            {
-                mesh.vertices.push_back(btVector3(v.posicao[0], v.posicao[1], v.posicao[2]));
-            }
-            */
-
-            /*
-            for (int i = 0; i < mesh.indices.size(); i += 3)
-            {
-                btVector3 vertex1 = mesh.vertices[mesh.indices[i]];
-                btVector3 vertex2 = mesh.vertices[mesh.indices[i + 1]];
-                btVector3 vertex3 = mesh.vertices[mesh.indices[i + 2]];
-
-                triangleMesh->addTriangle(vertex1, vertex2, vertex3);
-            }
-            */
-
             if (collision_mesh != NULL)
             {
 
@@ -196,14 +174,6 @@ public:
                 else
                 {
                     btConvexHullShape *convexHullShape = new btConvexHullShape();
-
-                    /*
-                    for (int i = 0; i < collision_mesh->indice.size(); i++)
-                    {
-                        int index = collision_mesh->indice[i];
-                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[index].posicao[0],collision_mesh->vertices[index].posicao[1],collision_mesh->vertices[index].posicao[2]));
-                    }
-                    */
 
                     for (int i = 0; i < collision_mesh->vertices.size(); i++)
                     {
@@ -446,6 +416,9 @@ bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
 class bullet_charter : public componente
 {
 public:
+    shared_ptr<objeto_jogo> roof_cheker,floor_cheker;
+    bool in_roof,in_floor;
+    
     bullet_charter() {}
     void iniciar() {}
     void atualisar() {}

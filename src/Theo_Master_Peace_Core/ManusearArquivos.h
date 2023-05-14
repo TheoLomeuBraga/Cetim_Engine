@@ -839,6 +839,30 @@ namespace ManuseioDados
 				ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 			}
 
+			for(gltf_loader::Animation a : gltf_loader.animations){
+				animacao ani;
+
+				//print({"ani.nome: ",a.name});
+
+				ani.nome = a.name;
+				ani.duration = a.duration;
+				for(gltf_loader::AnimationKeyFrame kf : a.keyFrames){
+					key_frame kfr;
+
+					kfr.has_position = kf.has_position;
+					kfr.has_rotation = kf.has_rotation;
+					kfr.has_scale = kf.has_scale;
+
+					kfr.position = kf.position;
+					kfr.rotation = kf.rotation;
+					kfr.scale = kf.scale;
+
+					ani.keyFrames.push_back(kfr);
+				}
+
+				ret.animacoes.insert(pair<string,animacao>(a.name,ani));
+			}
+
 			
 			for (int a = 0; a < gltf_loader.scenes.size(); a++)
 			{
