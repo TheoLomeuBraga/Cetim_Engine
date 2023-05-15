@@ -298,7 +298,7 @@ Table object_3D_table(objeto_3D obj){
 
     ret.setString("name",obj.nome);
 
-    ret.setFloat("id",(int)obj.id);
+    ret.setFloat("id",(int)obj.id + 1);
 
     ret.setTable("position",vec3_table(obj.posicao));
     ret.setTable("rotation",vec3_table(quat_graus(obj.quaternion)));
@@ -359,13 +359,15 @@ Table scene_3D_table(cena_3D sceane){
     vector<Table> animations;
     for(pair<string, animacao> p : sceane.animacoes){
         Table animation_table;
+
+        animation_table.setString("name",p.second.nome);
         animation_table.setFloat("duration",p.second.duration);
 
         vector<Table> key_frames;
         for(key_frame kf : p.second.keyFrames){
             Table kf_table;
-
-            kf_table.setFloat("object_id",kf.object_id);
+            
+            kf_table.setFloat("target_id",kf.object_id + 1);
 
             kf_table.setFloat("has_position",kf.has_position);
             kf_table.setFloat("has_scale",kf.has_scale);
@@ -373,7 +375,7 @@ Table scene_3D_table(cena_3D sceane){
 
             kf_table.setTable("position",vec3_table(kf.position));
             kf_table.setTable("scale",vec3_table(kf.scale));
-            kf_table.setTable("rotation",quat_table(kf.rotation));
+            kf_table.setTable("rotation",vec3_table(quat_graus(kf.rotation)));
 
             key_frames.push_back(kf_table);
         }
