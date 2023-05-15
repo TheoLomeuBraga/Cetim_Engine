@@ -749,8 +749,8 @@ namespace ManuseioDados
 			ret.vertices.push_back(v);
 		}
 
-		//print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
-		//print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
+		// print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
+		// print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
 
 		return ret;
 	}
@@ -760,7 +760,7 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 		ret.id = node.id;
-		//print({node.name});
+		// print({node.name});
 
 		ret.posicao = node.translation;
 		ret.quaternion = node.rotation;
@@ -839,13 +839,18 @@ namespace ManuseioDados
 				ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 			}
 
-			for(gltf_loader::Animation a : gltf_loader.animations){
+			for (gltf_loader::Animation a : gltf_loader.animations)
+			{
 				animacao ani;
 
-				//print({"ani.nome: ",a.name});
+				// print({"ani.nome: ",a.name});
 
 				ani.nome = a.name;
 				ani.duration = a.duration;
+				ani.start_time = a.start_time;
+				
+
+				/*
 				for(gltf_loader::AnimationKeyFrame kf : a.keyFrames){
 					key_frame kfr;
 
@@ -861,11 +866,11 @@ namespace ManuseioDados
 
 					ani.keyFrames.push_back(kfr);
 				}
+				*/
 
-				ret.animacoes.insert(pair<string,animacao>(a.name,ani));
+				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
 
-			
 			for (int a = 0; a < gltf_loader.scenes.size(); a++)
 			{
 				for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
@@ -874,10 +879,8 @@ namespace ManuseioDados
 					gltf_loader::Node n = gltf_loader.nodes[node_index];
 					objeto_3D ob_3D = node_3D_object(n, gltf_loader.nodes, ret, gltf_loader);
 					ret.objetos.filhos.push_back(ob_3D);
-					
 				}
 			}
-			
 
 			cenas_3D.aplicar(local, ret);
 		}

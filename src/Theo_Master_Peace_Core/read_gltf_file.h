@@ -7,6 +7,8 @@
 #include <vector>
 #include "base64.h"
 
+const unsigned int animation_fps_count = 20;
+
 namespace gltf_loader
 {
     struct scene
@@ -80,10 +82,11 @@ namespace gltf_loader
     struct Animation
     {
         std::string name = "";
-        float duration = 0;
+        float start_time = 0, duration = 0;
         std::vector<AnimationChannel> channels = {};
         std::vector<AnimationSampler> samplers = {};
-        std::vector<AnimationKeyFrame> keyFrames = {};
+        // std::vector<AnimationKeyFrame> keyFrames = {};
+        std::vector<std::vector<AnimationKeyFrame>> keyFrames = {};
     };
 
     struct Texture
@@ -132,6 +135,7 @@ namespace gltf_loader
         bool loadAccessors();
         bool loadScenes();
         bool loadNodes();
+        glm::vec2 getAnimationTimeDuration(const AnimationChannel &channel);
         bool loadAnimations();
         AnimationKeyFrame getAnimationKeyFrame(const AnimationChannel &channel, float time);
         bool loadTextures();
@@ -326,9 +330,8 @@ namespace gltf_loader
         const auto &nodesArray = gltf["nodes"];
 
         int i = 0;
-        for (const auto &nodeJson :  nodesArray)
+        for (const auto &nodeJson : nodesArray)
         {
-            
 
             Node nodeData;
 
@@ -431,6 +434,19 @@ namespace gltf_loader
         return true;
     }
 
+    glm::vec2 GLTFLoader::getAnimationTimeDuration(const AnimationChannel &channel)
+    {
+        const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
+        const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+
+        std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
+
+        float startTime = inputTimes[0];                   // Tempo inicial
+        float endTime = inputTimes[inputTimes.size() - 1]; // Tempo final
+
+        return glm::vec2(startTime, endTime);
+    }
+
     bool GLTFLoader::loadAnimations()
     {
         if (gltf.find("animations") == gltf.end())
@@ -477,15 +493,26 @@ namespace gltf_loader
             animations.push_back(animation);
         }
 
-        for (int i = 0; i < animations.size(); i++)
+        for (int a = 0; a < animations.size(); a++)
         {
-            Animation &animation = animations[i];
-            float time = 0;
-            for (int i = 0; i < animation.channels.size(); i++)
+            Animation &animation = animations[a];
+
+            int kfps = (1 / animation_fps_count);
+            int samples_number = kfps * animation.duration;
+
+            for (int a = 0; a < samples_number; a++)
             {
-                time = (animation.duration / animation.channels.size()) * i;
-                animation.keyFrames.push_back(getAnimationKeyFrame(animation.channels[i], time));
+                float time = (animation.duration / samples_number) * a;
+                print({"time: ", time});
             }
+
+            /*
+            for (int b = 0; b < animation.channels.size(); b++)
+            {
+                time = (animation.duration / animation.channels.size()) * b;
+                animation.keyFrames.push_back(getAnimationKeyFrame(animation.channels[b], time));
+            }
+            */
         }
 
         return true;

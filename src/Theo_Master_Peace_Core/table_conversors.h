@@ -356,6 +356,7 @@ Table scene_3D_table(cena_3D sceane){
     }
     ret.setTable("textures",vString_table(textures));
 
+    /*
     vector<Table> animations;
     for(pair<string, animacao> p : sceane.animacoes){
         Table animation_table;
@@ -385,6 +386,7 @@ Table scene_3D_table(cena_3D sceane){
         animations.push_back(animation_table);
     }
     ret.setTable("animations",vTable_table(animations));
+    */
     
     ret.setTable("objects",object_3D_table(sceane.objetos));
     ret.setTable("extra",sceane.extras);
