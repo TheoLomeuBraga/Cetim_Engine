@@ -74,6 +74,7 @@ namespace gltf_loader
 
     struct AnimationSampler
     {
+        float start_time = 0, duration = 0;
         size_t inputAccessorIndex = 0;
         size_t outputAccessorIndex = 0;
         std::string interpolation = "";
@@ -436,13 +437,24 @@ namespace gltf_loader
 
     glm::vec2 GLTFLoader::getAnimationTimeDuration(const AnimationChannel &channel)
     {
+
+        print({"AAAAA"});
+
         const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
         const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
 
+        print({"BBBBB"});
+
+        print({"sampler.inputAccessorIndex", sampler.inputAccessorIndex});
+
         std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
+
+        print({"CCCCC"});
 
         float startTime = inputTimes[0];                   // Tempo inicial
         float endTime = inputTimes[inputTimes.size() - 1]; // Tempo final
+
+        print({"DDDDD"});
 
         return glm::vec2(startTime, endTime);
     }
@@ -475,6 +487,7 @@ namespace gltf_loader
             for (const auto &channelJson : channelsJson)
             {
                 AnimationChannel channel;
+                // print({"channelJson[sampler]",channelJson["sampler"]});
                 channel.samplerIndex = channelJson["sampler"];
                 channel.targetNodeIndex = channelJson["target"]["node"];
                 channel.targetPath = channelJson["target"]["path"];
@@ -487,6 +500,20 @@ namespace gltf_loader
                 sampler.inputAccessorIndex = samplerJson["input"];
                 sampler.outputAccessorIndex = samplerJson["output"];
                 sampler.interpolation = samplerJson["interpolation"];
+
+                
+                Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+                Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+                std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+                std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+
+                if(input.size() > 0){
+                    sampler.start_time = input[0];
+                    sampler.duration = input[input.size() - 1];
+                    //print({"sampler.start_time:",sampler.start_time,"sampler.duration:",sampler.duration});
+                }
+                
+
                 animation.samplers.push_back(sampler);
             }
 
@@ -496,15 +523,7 @@ namespace gltf_loader
         for (int a = 0; a < animations.size(); a++)
         {
             Animation &animation = animations[a];
-
-            int kfps = (1 / animation_fps_count);
-            int samples_number = kfps * animation.duration;
-
-            for (int a = 0; a < samples_number; a++)
-            {
-                float time = (animation.duration / samples_number) * a;
-                print({"time: ", time});
-            }
+            float time = 0;
 
             /*
             for (int b = 0; b < animation.channels.size(); b++)
