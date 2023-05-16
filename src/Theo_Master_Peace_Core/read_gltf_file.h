@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "base64.h"
+//#include <math>
+
 
 const unsigned int animation_fps_count = 20;
 
@@ -522,14 +524,18 @@ namespace gltf_loader
 
         for (int a = 0; a < animations.size(); a++)
         {
-            Animation &animation = animations[a];
-            float start_time = 0,duration_time = 0 time = 0;
+            float start_time = 0,duration_time = 0, time = 0;
+
+            for(AnimationSampler as : animations[a].samplers){
+                start_time = std::min(start_time,as.start_time);
+                duration_time = std::max(duration_time,as.duration);
+            }
             
             /*
-            for (int b = 0; b < animation.channels.size(); b++)
+            for (int b = 0; b < animations[a].channels.size(); b++)
             {
-                time = (animation.duration / animation.channels.size()) * b;
-                animation.keyFrames.push_back(getAnimationKeyFrame(animation.channels[b], time));
+                time = (animations[a].duration / animations[a].channels.size()) * b;
+                animations[a].keyFrames.push_back(getAnimationKeyFrame(animations[a].channels[b], time));
             }
             */
 
