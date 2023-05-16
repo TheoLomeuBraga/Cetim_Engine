@@ -523,8 +523,8 @@ namespace gltf_loader
         for (int a = 0; a < animations.size(); a++)
         {
             Animation &animation = animations[a];
-            float time = 0;
-
+            float start_time = 0,duration_time = 0 time = 0;
+            
             /*
             for (int b = 0; b < animation.channels.size(); b++)
             {
@@ -532,6 +532,10 @@ namespace gltf_loader
                 animation.keyFrames.push_back(getAnimationKeyFrame(animation.channels[b], time));
             }
             */
+
+           animations[a].start_time = start_time;
+           animations[a].duration = duration_time;
+
         }
 
         return true;
