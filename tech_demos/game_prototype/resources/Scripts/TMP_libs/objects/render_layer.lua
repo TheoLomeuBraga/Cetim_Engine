@@ -14,10 +14,10 @@ function render_layer:new()
     ret.camera_selected = 0
     ret.start_render = true
     ret.clean_color = true
-    ret.clean_deph = true
+    ret.clean_deep = true
     ret.enable = true
     ret.end_render = true
-    ret.use_deeph = true
+    ret.use_deep = true
     
     return ret
 end

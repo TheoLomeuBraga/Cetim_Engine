@@ -84,8 +84,8 @@ void set_quality(GtkEntry* text_input, gpointer user_data){
     std::cout << quality << std::endl;
 }
 
-void set_pixel_perfect(GtkSwitch* switch_, gpointer user_data){
-    pixel_perfect = gtk_switch_get_active(switch_);
+void set_pixel_perfect(GtkWidget* widget, gpointer data){
+    pixel_perfect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
     std::cout << pixel_perfect << std::endl;
 }
 

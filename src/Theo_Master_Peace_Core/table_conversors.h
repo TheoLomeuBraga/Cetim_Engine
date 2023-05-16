@@ -244,10 +244,10 @@ instrucoes_render table_instrucoes_render(Table t)
     ret.camera = t.getFloat("camera_selected");
     ret.iniciar_render = t.getFloat("start_render");
     ret.limpar_buffer_cores = t.getFloat("clean_color");
-    ret.limpar_buffer_profundidade = t.getFloat("clean_deph");
+    ret.limpar_buffer_profundidade = t.getFloat("clean_deep");
     ret.desenhar_objetos = t.getFloat("enable");
     ret.terminar_render = t.getFloat("end_render");
-    ret.usar_profundidade = t.getFloat("use_deeph");
+    ret.usar_profundidade = t.getFloat("use_deep");
     return ret;
 }
 
@@ -257,10 +257,10 @@ Table table_instrucoes_render(instrucoes_render ir)
     ret.setFloat("camera_selected", ir.camera);
     ret.setFloat("start_render", ir.iniciar_render);
     ret.setFloat("clean_color", ir.limpar_buffer_cores);
-    ret.setFloat("clean_deph", ir.limpar_buffer_profundidade);
+    ret.setFloat("clean_deep", ir.limpar_buffer_profundidade);
     ret.setFloat("enable", ir.desenhar_objetos);
     ret.setFloat("end_render", ir.terminar_render);
-    ret.setFloat("use_deeph", ir.usar_profundidade);
+    ret.setFloat("use_deep", ir.usar_profundidade);
     return ret;
 }
 
@@ -425,15 +425,29 @@ Table scene_3D_table(cena_3D sceane)
         animation.setFloat("start_time", p.second.start_time);
         animation.setFloat("duration", p.second.duration);
 
-        Table kfs_table;
+        vector<Table> key_frame_set_table;
         for (vector<key_frame> kfs : p.second.keyFrames)
         {
+            vector<Table> key_frames_table;
             for (key_frame kf : kfs)
             {
+                Table kf_table;
 
+                kf_table.setFloat("target_id", kf.object_id + 1);
+
+                kf_table.setFloat("has_position", kf.has_position);
+                kf_table.setFloat("has_scale", kf.has_scale);
+                kf_table.setFloat("has_rotation", kf.has_rotation);
+
+                kf_table.setTable("position", vec3_table(kf.position));
+                kf_table.setTable("scale", vec3_table(kf.scale));
+                kf_table.setTable("rotation", vec3_table(quat_graus(kf.rotation)));
+
+                key_frames_table.push_back(kf_table);
             }
+            key_frame_set_table.push_back(vTable_table(key_frames_table));
         }
-        animation.setTable("key_frames",kfs_table);
+        animation.setTable("key_frames", vTable_table(key_frame_set_table));
 
         animations.push_back(animation);
     }

@@ -41,6 +41,8 @@ definitions_linux= -D LINUX
 linux:
 	${compiler_linux} ${tags} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
 	#${compiler_linux} ${tags} ${font_reader_cpp_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_2
+
+	rm ${built_path}/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ${built_path}/font_reader_gtk.glade
 	${compiler_linux} ${tags} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_gtk
 

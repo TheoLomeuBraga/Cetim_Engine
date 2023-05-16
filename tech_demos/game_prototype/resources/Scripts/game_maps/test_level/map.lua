@@ -29,19 +29,19 @@ function test_3D_game:initialize_render_settings()
 
     renders_layers.layers[1] = render_layer:new()
     renders_layers.layers[1].end_render = false
-    renders_layers.layers[1].use_deeph = true
+    renders_layers.layers[1].use_deep = true
     renders_layers.layers[1].clean_color = false
     renders_layers.layers[1].start_render = true
 
     renders_layers.layers[2] = render_layer:new()
     renders_layers.layers[2].end_render = false
-    renders_layers.layers[2].use_deeph = true
+    renders_layers.layers[2].use_deep = true
     renders_layers.layers[2].clean_color = false
     renders_layers.layers[2].start_render = false
 
     renders_layers.layers[3] = render_layer:new()
     renders_layers.layers[3].end_render = true
-    renders_layers.layers[3].use_deeph = true
+    renders_layers.layers[3].use_deep = true
     renders_layers.layers[3].clean_color = false
     renders_layers.layers[3].start_render = false
 
@@ -141,7 +141,7 @@ end
 
 function test_3D_game:load_assets(path)
     local scene_3D = get_scene_3D(path)
-    --deepprint(scene_3D)
+    deepprint(scene_3D)
     local ret = self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
     ret.components[components.transform].position = Vec3:new(0, 0, 0)
     ret.components[components.transform].rotation = Vec3:new(0, 0, 0)

@@ -135,17 +135,6 @@ quality:</property>
           </packing>
         </child>
         <child>
-          <object class="GtkSwitch" id="pixel_perfect">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="active">True</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">9</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkEntry" id="quality">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
@@ -192,6 +181,20 @@ pixel perfect:</property>
           <packing>
             <property name="left-attach">0</property>
             <property name="top-attach">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="pixel_perfect">
+            <property name="label" translatable="yes"> </property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="halign">center</property>
+            <property name="draw-indicator">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">9</property>
           </packing>
         </child>
       </object>
