@@ -848,7 +848,29 @@ namespace ManuseioDados
 				ani.nome = a.name;
 				ani.duration = a.duration;
 				ani.start_time = a.start_time;
-				
+
+				ani.keyFrames = {};
+				for (vector<gltf_loader::AnimationKeyFrame> kfs : a.keyFrames)
+				{
+					vector<key_frame> okfs;
+					for (gltf_loader::AnimationKeyFrame kf : kfs)
+					{
+						key_frame okf;
+
+						okf.object_id = kf.targetNodeIndex;
+
+						okf.has_position = kf.has_position;
+						okf.has_rotation = kf.has_rotation;
+						okf.has_scale = kf.has_scale;
+
+						okf.position = kf.position;
+						okf.rotation = kf.rotation;
+						okf.scale = kf.scale;
+
+						okfs.push_back(okf);
+					}
+					ani.keyFrames.push_back(okfs);
+				}
 
 				/*
 				for(gltf_loader::AnimationKeyFrame kf : a.keyFrames){

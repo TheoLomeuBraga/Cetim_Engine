@@ -9,7 +9,11 @@
 //#include <math>
 
 
-const unsigned int animation_fps_count = 20;
+//const unsigned int ANIMATION_FPS_COUNT = 20;
+
+#ifndef ANIMATION_FPS_COUNT
+    #define ANIMATION_FPS_COUNT 20
+#endif
 
 namespace gltf_loader
 {
@@ -531,9 +535,18 @@ namespace gltf_loader
                 duration_time = std::max(duration_time,as.duration);
             }
 
-            for(float t = start_time; t < start_time + duration_time ; t += 1.0 / animation_fps_count){
+            /**/
+            for(float t = start_time; t < start_time + duration_time ; t += 1.0 / ANIMATION_FPS_COUNT){
                 t = std::min(t,start_time + duration_time);
-                print({"t: ",t});
+                
+                vector<AnimationKeyFrame> key_frames;
+                for(AnimationChannel ac : animations[a].channels){
+                    AnimationKeyFrame akf = getAnimationKeyFrame(ac, t);
+                    if(akf.targetNodeIndex != -1){
+                        key_frames.push_back(akf);
+                    }
+                }
+                animations[a].keyFrames.push_back(key_frames);
             }
             
             /*
@@ -554,6 +567,7 @@ namespace gltf_loader
 
     AnimationKeyFrame GLTFLoader::getAnimationKeyFrame(const AnimationChannel &channel, float time)
     {
+        //print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
         if (channel.samplerIndex < animations.size())
         {
             AnimationSampler &sampler = animations[channel.samplerIndex].samplers[0]; // assuming only 1 sampler for simplicity
@@ -631,7 +645,9 @@ namespace gltf_loader
         }
         else
         {
-            return {};
+            AnimationKeyFrame akf;
+            akf.targetNodeIndex = -1;
+            return akf;
         }
     }
 
