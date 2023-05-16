@@ -530,6 +530,11 @@ namespace gltf_loader
                 start_time = std::min(start_time,as.start_time);
                 duration_time = std::max(duration_time,as.duration);
             }
+
+            for(float t = start_time; t < start_time + duration_time ; t += 1.0 / animation_fps_count){
+                t = std::min(t,start_time + duration_time);
+                print({"t: ",t});
+            }
             
             /*
             for (int b = 0; b < animations[a].channels.size(); b++)

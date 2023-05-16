@@ -70,8 +70,12 @@ function test_3D_game:create_test_camera()
     self.camera = assets_from_map.free_camera(self.objects_layesrs.camera, Vec3:new(0, 20, 0), Vec3:new(45, 0, 0))
 end
 
+game_objects_in_cene = {}
+
 local texture_dictionary = require("game_maps.test_level.materials")
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
+    game_objects_in_cene = {}
+
     local ret = {}
 
     local object_type = object_3D.variables.type
@@ -112,6 +116,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
 
             ret.components[components.physics_3D]:set()
         end
+
     else
         ret = game_object:new(create_object(father))
         ret.name = object_3D.name
@@ -120,6 +125,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
         ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
         ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
         ret.components[components.transform]:set()
+
     end
 
     -- print(object_3D.name,"tablelength(object_3D.children)",tablelength(object_3D.children))
@@ -127,6 +133,8 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     for index, value in ipairs(object_3D.children) do
         ret.children[index] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
     end
+
+    game_objects_in_cene[object_3D.id] = deepcopy(ret)
 
     return ret
 end
