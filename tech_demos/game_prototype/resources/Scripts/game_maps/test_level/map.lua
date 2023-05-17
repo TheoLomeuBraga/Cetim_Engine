@@ -70,11 +70,9 @@ function test_3D_game:create_test_camera()
     self.camera = assets_from_map.free_camera(self.objects_layesrs.camera, Vec3:new(0, 20, 0), Vec3:new(45, 0, 0))
 end
 
-game_objects_in_cene = {}
-
+local game_objects_in_cene_ret = {}
 local texture_dictionary = require("game_maps.test_level.materials")
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
-    game_objects_in_cene = {}
 
     local ret = {}
 
@@ -137,22 +135,30 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
     -- print(object_3D.name,"tablelength(object_3D.children)",tablelength(object_3D.children))
 
     for index, value in ipairs(object_3D.children) do
-        ret.children[index] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)
+        ret.children[index] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)[1]
     end
 
-    game_objects_in_cene[object_3D.id] = deepcopy(ret)
+    
+    game_objects_in_cene_ret[object_3D.id] = deepcopy(ret)
 
-    return ret
+    return {ret,deepcopy(game_objects_in_cene_ret)}
 end
 
 function test_3D_game:load_assets(path)
     local scene_3D = get_scene_3D(path)
-    -- deepprint(scene_3D)
+
+    --print("scene_3D.animations", tablelength( scene_3D.animations))
+    --print("scene_3D.animations[1].key_frames", tablelength( scene_3D.animations[1].key_frames))
+
+    game_objects_in_cene_ret = {}
     local ret = self:object_3D_to_game_object(self.objects_layesrs.cenary, 2, scene_3D.objects)
-    ret.components[components.transform].position = Vec3:new(0, 0, 0)
-    ret.components[components.transform].rotation = Vec3:new(0, 0, 0)
-    ret.components[components.transform].scale = Vec3:new(1, 1, 1)
-    ret.components[components.transform]:set()
+    ret[1].components[components.transform].position = Vec3:new(0, 0, 0)
+    ret[1].components[components.transform].rotation = Vec3:new(0, 0, 0)
+    ret[1].components[components.transform].scale = Vec3:new(1, 1, 1)
+    ret[1].components[components.transform]:set()
+
+    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[50])
+
     return ret
 end
 

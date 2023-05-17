@@ -52,8 +52,8 @@ namespace gltf_loader
 
     struct Node
     {
-        std::string name;
-        size_t id;
+        std::string name = "";
+        size_t id = -1;
         glm::mat4 matrix = glm::mat4(1);
         glm::vec3 translation = glm::vec3(0, 0, 0);
         glm::quat rotation = glm::quat(1, 0, 0, 0);
