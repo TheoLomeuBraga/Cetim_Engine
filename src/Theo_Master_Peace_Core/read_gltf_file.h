@@ -572,6 +572,8 @@ namespace gltf_loader
                 animations[a].keyFrames.push_back(key_frames);
             }
 
+            animations[a].keyFrames.erase(animations[a].keyFrames.begin());
+
             /*
             for (int b = 0; b < animations[a].channels.size(); b++)
             {
