@@ -102,12 +102,25 @@ function sceane_3D_example()
     }
 end
 
-
-function apply_key_frame(game_objects_list,key_frame)
+function apply_key_frame(game_objects_list, key_frame)
     --print("game_objects_list",game_objects_list,"key_frame",key_frame)
+    print("tablelength(key_frame)",tablelength(key_frame))
     for k, kfn in pairs(key_frame) do
-        --print("key",kfn.target_id)
-        local kfo = deepcopy(game_objects_list[kfn.target_id])
-        print("tablelength(game_objects_list)",tablelength(game_objects_list))
+
+        if kfn.has_position == 1 then
+            game_objects_list[kfn.target_id].components[components.transform].position = deepcopy(kfn.position)
+            print(kfn.position.y)
+        end
+
+        if kfn.has_rotation == 1 then
+            game_objects_list[kfn.target_id].components[components.transform].rotation = deepcopy(kfn.rotation)
+        end
+        
+        if kfn.has_scale == 1 then
+            game_objects_list[kfn.target_id].components[components.transform].scale = deepcopy(kfn.scale)
+        end
+
+        game_objects_list[kfn.target_id].components[components.transform]:set()
+
     end
 end

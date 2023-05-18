@@ -435,6 +435,8 @@ Table scene_3D_table(cena_3D sceane)
 
                 kf_table.setFloat("target_id", kf.object_id + 1);
 
+                //print({"has",kf.has_position,kf.has_scale,kf.has_rotation});
+
                 kf_table.setFloat("has_position", kf.has_position);
                 kf_table.setFloat("has_scale", kf.has_scale);
                 kf_table.setFloat("has_rotation", kf.has_rotation);

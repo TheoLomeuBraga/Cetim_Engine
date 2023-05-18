@@ -157,7 +157,8 @@ function test_3D_game:load_assets(path)
     ret[1].components[components.transform].scale = Vec3:new(1, 1, 1)
     ret[1].components[components.transform]:set()
 
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[50])
+    --print("AAAAA")
+    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[51])
 
     return ret
 end
