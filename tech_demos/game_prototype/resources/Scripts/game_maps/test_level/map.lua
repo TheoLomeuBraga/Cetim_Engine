@@ -158,7 +158,9 @@ function test_3D_game:load_assets(path)
     ret[1].components[components.transform]:set()
 
     --print("AAAAA")
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[50])
+    print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations))
+    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[25])
+    apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
 
     return ret
 end
