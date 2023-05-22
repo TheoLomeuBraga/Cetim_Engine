@@ -35,6 +35,8 @@ namespace marching_cubes
         bool changed = false;
         std::vector<void (*)(MarchingCubesChunk *)> callWenDelete;
 
+        MarchingCubesChunk(){}
+
         MarchingCubesChunk(int width, int height, int depth, float isoLevel)
         {
             this->width = width;
@@ -228,7 +230,8 @@ namespace marching_cubes
         int chunkWidth;
         int chunkHeight;
         int chunkDepth;
-        std::vector<MarchingCubesChunk> grid;
+        std::vector<MarchingCubesChunk> grid = {};
+        MarchingCubesMap(){}
         MarchingCubesMap(int width, int height, int depth, int chunkWidth, int chunkHeight, int chunkDepth)
         {
             this->width = width;
@@ -241,7 +244,7 @@ namespace marching_cubes
             grid.resize(size);
             for (int i = 0; i < size; i++)
             {
-                grid[i] = MarchingCubesChunk(chunkWidth, chunkHeight, chunkDepth, 1);
+                grid[i] = MarchingCubesChunk(chunkWidth, chunkHeight, chunkDepth, 1.0);
             }
         }
 
