@@ -25,7 +25,11 @@ using json = nlohmann::json;
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb-master/stb_image_write.h>
 
+
+
 #include "read_map_file.h"
+
+#define ANIMATION_FPS_COUNT 20
 #include "read_gltf_file.h"
 
 namespace ManuseioDados

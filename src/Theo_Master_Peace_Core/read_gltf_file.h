@@ -534,26 +534,6 @@ namespace gltf_loader
                 duration_time = std::max(duration_time, as.duration);
             }
 
-            /*
-            for (float t = start_time; t < start_time + duration_time; t += 1.0 / ANIMATION_FPS_COUNT)
-            {
-                t = std::min(t, start_time + duration_time);
-
-                vector<AnimationKeyFrame> key_frames;
-                AnimationKeyFrame akf;
-                for (AnimationChannel ac : animations[a].channels)
-                {
-                    getAnimationKeyFrame(ac, t,akf);
-                }
-
-                if (akf.targetNodeIndex != -1)
-                {
-                    key_frames.push_back(akf);
-                }
-                animations[a].keyFrames.push_back(key_frames);
-            }
-            */
-
             for(float t = start_time; t < start_time + duration_time ; t += 1.0 / ANIMATION_FPS_COUNT){
                 t = std::min(t,start_time + duration_time);
                 
@@ -561,7 +541,7 @@ namespace gltf_loader
                 for(AnimationChannel ac : animations[a].channels){
                     AnimationKeyFrame akf;
 
-                    print({"ac.targetPath",ac.targetPath});
+                    //print({"ac.targetPath",ac.targetPath});
                     getAnimationKeyFrame(animations[a],ac, t,akf);
                     
 
@@ -572,15 +552,7 @@ namespace gltf_loader
                 animations[a].keyFrames.push_back(key_frames);
             }
 
-            animations[a].keyFrames.erase(animations[a].keyFrames.begin());
-
-            /*
-            for (int b = 0; b < animations[a].channels.size(); b++)
-            {
-                time = (animations[a].duration / animations[a].channels.size()) * b;
-                animations[a].keyFrames.push_back(getAnimationKeyFrame(animations[a].channels[b], time));
-            }
-            */
+            //animations[a].keyFrames.erase(animations[a].keyFrames.begin());
 
             animations[a].start_time = start_time;
             animations[a].duration = duration_time;
@@ -592,7 +564,7 @@ namespace gltf_loader
     void GLTFLoader::getAnimationKeyFrame(Animation animation,const AnimationChannel &channel, float time,AnimationKeyFrame &keyFrame)
     {
         
-        print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
+        //print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
 
         if (true)
         {
@@ -606,7 +578,7 @@ namespace gltf_loader
 
             keyFrame.targetNodeIndex = channel.targetNodeIndex;
 
-            print({"channel.targetPath",channel.targetPath});
+            //print({"channel.targetPath",channel.targetPath});
 
             // interpolate position
             if (channel.targetPath == "translation")
@@ -1039,21 +1011,6 @@ namespace gltf_loader
 
         return true;
     }
-
-    /*
-    std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
-    {
-        const Accessor &accessor = accessors[accessorIndex];
-        const BufferView &bufferView = bufferViews[accessor.bufferView];
-        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
-
-        size_t dataOffset = bufferView.byteOffset + accessor.byteOffset;
-        size_t dataSize = accessor.count * (bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float));
-
-        std::vector<uint8_t> data(buffer.begin() + dataOffset, buffer.begin() + dataOffset + dataSize);
-        return data;
-    }
-    */
 
     std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
     {

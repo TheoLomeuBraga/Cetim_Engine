@@ -132,8 +132,6 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
 
     end
 
-    -- print(object_3D.name,"tablelength(object_3D.children)",tablelength(object_3D.children))
-
     for index, value in ipairs(object_3D.children) do
         ret.children[index] = self:object_3D_to_game_object(ret.object_ptr, render_layer, value)[1]
     end
@@ -158,9 +156,11 @@ function test_3D_game:load_assets(path)
     ret[1].components[components.transform]:set()
 
     --print("AAAAA")
-    print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations))
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[25])
-    apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
+    
+    print(scene_3D.animations[1].key_frames[1])
+    print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations[1].key_frames))
+    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[19])
+    --apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
 
     return ret
 end
@@ -175,7 +175,8 @@ function test_3D_game:load()
 
     -- self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
     -- self.assets = self:load_assets("resources/3D Models/guns.gltf")
-    self.assets = self:load_assets("resources/3D Models/test_level.gltf")
+    --self.assets = self:load_assets("resources/3D Models/test_level.gltf")
+    self.assets = self:load_assets("resources/3D Models/test_bones.gltf")
 
 end
 
