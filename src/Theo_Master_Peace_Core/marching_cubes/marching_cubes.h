@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include "marching_cubes/marching_cubes_tables.h"
 
@@ -35,14 +36,14 @@ namespace marching_cubes
         bool changed = false;
         std::vector<void (*)(MarchingCubesChunk *)> callWenDelete;
 
-        MarchingCubesChunk(){}
+        MarchingCubesChunk() {}
 
         MarchingCubesChunk(int width, int height, int depth, float isoLevel)
         {
             this->width = width;
-            this->width = height;
-            this->width = depth;
-            this->width = isoLevel;
+            this->height = height;
+            this->depth = depth;
+            this->isoLevel = isoLevel;
             int size = width * height * depth;
             grid.resize(size);
             typesGrid.resize(size);
@@ -51,7 +52,15 @@ namespace marching_cubes
         // Get the density value at grid point (x, y, z)
         float getDensity(int x, int y, int z) const
         {
-            return grid[x + y * width + z * width * height];
+
+            if (x < 0 || x > width - 1 || y < 0 || y > height - 1 || z < 0 || z > depth - 1)
+            {
+                return 0;
+            }
+            else
+            {
+                return grid[x + y * width + z * width * height];
+            }
         }
 
         // Set the density value at grid point (x, y, z)
@@ -169,30 +178,92 @@ namespace marching_cubes
         return mesh;
     }
 
+    int calculateCubeIndex(const MarchingCubesChunk &terrain, int x, int y, int z)
+    {
+        // cout << "X " << x  << "Y " << y  << "Z " << z << endl;
+
+        int cubeIndex = 0;
+
+        // Determine the state of each vertex within the cube
+        float density[8];
+        density[0] = terrain.getDensity(x, y, z);
+        density[1] = terrain.getDensity(x + 1, y, z);
+        density[2] = terrain.getDensity(x + 1, y, z + 1);
+        density[3] = terrain.getDensity(x, y, z + 1);
+        density[4] = terrain.getDensity(x, y + 1, z);
+        density[5] = terrain.getDensity(x + 1, y + 1, z);
+        density[6] = terrain.getDensity(x + 1, y + 1, z + 1);
+        density[7] = terrain.getDensity(x, y + 1, z + 1);
+
+        // Determine the state of each vertex and update the cubeIndex accordingly
+        if (density[0] > terrain.isoLevel)
+            cubeIndex |= 1;
+        if (density[1] > terrain.isoLevel)
+            cubeIndex |= 2;
+        if (density[2] > terrain.isoLevel)
+            cubeIndex |= 4;
+        if (density[3] > terrain.isoLevel)
+            cubeIndex |= 8;
+        if (density[4] > terrain.isoLevel)
+            cubeIndex |= 16;
+        if (density[5] > terrain.isoLevel)
+            cubeIndex |= 32;
+        if (density[6] > terrain.isoLevel)
+            cubeIndex |= 64;
+        if (density[7] > terrain.isoLevel)
+            cubeIndex |= 128;
+
+        return cubeIndex;
+    }
+
+    glm::vec3 VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float valp1, float valp2)
+    {
+        float mu;
+        glm::vec3 p;
+
+        if (glm::abs(isolevel - valp1) < 0.00001)
+            return (p1);
+        if (glm::abs(isolevel - valp2) < 0.00001)
+            return (p2);
+        if (glm::abs(valp1 - valp2) < 0.00001)
+            return (p1);
+        mu = (isolevel - valp1) / (valp2 - valp1);
+        p.x = p1.x + mu * (p2.x - p1.x);
+        p.y = p1.y + mu * (p2.y - p1.y);
+        p.z = p1.z + mu * (p2.z - p1.z);
+
+        return p;
+    }
+
     std::map<unsigned int, Mesh> marchingCubesToMeshWithTypes(const MarchingCubesChunk &terrain)
     {
         std::map<unsigned int, Mesh> meshes;
 
+        // cout << terrain.depth << " " << terrain.height << " " << terrain.width << endl;
+
         // Iterate through the cells in the terrain grid
         for (int z = 0; z < terrain.depth - 1; ++z)
         {
+
             for (int y = 0; y < terrain.height - 1; ++y)
             {
                 for (int x = 0; x < terrain.width - 1; ++x)
                 {
                     // Calculate the cube index and perform marching cubes algorithm
-                    unsigned int cubeIndex = 0;
-                    glm::vec3 vertList[12];
-
+                    unsigned int cubeIndex = calculateCubeIndex(terrain, x, y, z);
+                    vec3 vertList[12];
                     // Code for calculating the cube index and vertList
                     // ...
 
                     unsigned char type = terrain.getType(x, y, z);
 
+                    // std::cout << "index\n";
+
                     // Generate the mesh vertices and indices based on the cubeIndex and type
                     for (int i = 0; triTable[cubeIndex][i] != -1; i += 3)
                     {
                         vertex v1, v2, v3;
+
                         v1.position = vertList[triTable[cubeIndex][i]];
                         v2.position = vertList[triTable[cubeIndex][i + 1]];
                         v3.position = vertList[triTable[cubeIndex][i + 2]];
@@ -213,6 +284,10 @@ namespace marching_cubes
                         meshes[type].indices.push_back(index);
                         meshes[type].indices.push_back(index + 1);
                         meshes[type].indices.push_back(index + 2);
+
+                        // cout << v1.position.x << v1.position.y << v1.position.z << endl;
+                        // cout << v2.position.x << v2.position.y << v2.position.z << endl;
+                        // cout << v3.position.x << v3.position.y << v3.position.z << endl;
                     }
                 }
             }
@@ -231,12 +306,12 @@ namespace marching_cubes
         int chunkHeight;
         int chunkDepth;
         std::vector<MarchingCubesChunk> grid = {};
-        MarchingCubesMap(){}
+        MarchingCubesMap() {}
         MarchingCubesMap(int width, int height, int depth, int chunkWidth, int chunkHeight, int chunkDepth)
         {
             this->width = width;
-            this->width = height;
-            this->width = depth;
+            this->height = height;
+            this->depth = depth;
             this->chunkWidth = chunkWidth;
             this->chunkHeight = chunkHeight;
             this->chunkDepth = chunkDepth;
@@ -342,7 +417,7 @@ namespace marching_cubes
             }
             if (localZ == chunkDepth - 1 && chunkZ < height / chunkDepth - 1)
             {
-                setDensity(x, y, z+ 1, density);
+                setDensity(x, y, z + 1, density);
             }
         }
 
@@ -381,7 +456,7 @@ namespace marching_cubes
             }
             if (localZ == chunkDepth - 1 && chunkZ < height / chunkDepth - 1)
             {
-                setType(x, y, z+ 1, type);
+                setType(x, y, z + 1, type);
             }
         }
     };

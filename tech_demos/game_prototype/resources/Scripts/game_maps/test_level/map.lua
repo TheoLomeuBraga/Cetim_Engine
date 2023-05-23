@@ -126,7 +126,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
             ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
             ret.components[components.transform]:set()
         elseif object_type == "player_start" then
-            print("player_start")
+            --print("player_start")
             test_3D_game.camera = assets_from_map.free_camera(test_3D_game.objects_layesrs.camera, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation))
         end
 
@@ -157,9 +157,9 @@ function test_3D_game:load_assets(path)
 
     --print("AAAAA")
     
-    print(scene_3D.animations[1].key_frames[1])
-    print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations[1].key_frames))
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[19])
+    --print(scene_3D.animations[1].key_frames[1])
+    --print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations[1].key_frames))
+    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[20])
     --apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
 
     return ret

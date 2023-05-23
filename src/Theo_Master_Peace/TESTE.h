@@ -156,18 +156,17 @@ void iniciarTeste3()
 
 	
 	
-	/*
+	///*
 	Material mat;
 	mat.shad = "resources/Shaders/mesh";
 	mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
-	marching_cubes::Mesh mcm = marching_cubes_test2()[0];
+	marching_cubes::Mesh mcm = marching_cubes_test();//marching_cubes_test2()[0];
 	malha m;
-
-	print({"mcm.indices.size()",mcm.indices.size()});
 
 	for(unsigned int i : mcm.indices){
 		m.indice.push_back(i);
+		print({"mcm.indices",i});
 	}
 
 	for(marching_cubes::vertex v : mcm.vertces){
@@ -185,18 +184,28 @@ void iniciarTeste3()
 		vert.normal[2] = v.normal.z;
 
 		m.vertices.push_back(vert);
+
+		print({"vert.posicao ",vert.posicao[0],vert.posicao[1],vert.posicao[2]});
 	}
+
+	print({"m.indices.size()",m.indice.size()});
+	print({"m.vertices.size()",m.vertices.size()});
 
 	test_marching_cube = novo_objeto_jogo();
 	test_marching_cube->adicionar_componente<transform_>();
+	test_marching_cube->pegar_componente<transform_>()->pos = vec3(0,0,0);
+	test_marching_cube->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0,0,0));
+	test_marching_cube->pegar_componente<transform_>()->esca = vec3(1,1,1);
 
 	test_marching_cube->adicionar_componente<render_malha>();
 	shared_ptr<render_malha> rmp = test_marching_cube->pegar_componente<render_malha>();
-
-	rmp->malhas = {};
+	rmp->malhas = {make_shared<malha>(m)};
 	rmp->mats = {mat};
+	rmp->usar_oclusao = false;
+	rmp->camada = 1;
+
 	cena_objetos_selecionados->adicionar_objeto(test_marching_cube);
-	*/
+	//*/
 }
 
 shared_ptr<objeto_jogo> obj;
