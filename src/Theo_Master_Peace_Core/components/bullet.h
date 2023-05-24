@@ -394,7 +394,7 @@ public:
     }
 };
 
-bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
+bool raycast_dir_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
 {
 
     btCollisionWorld::ClosestRayResultCallback rayCallback(glmToBt(rayFrom), glmToBt(rayTo));
@@ -404,7 +404,7 @@ bool raycast_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
     {
         result.pos = btToGlm(rayCallback.m_hitPointWorld);
         result.nor = btToGlm(rayCallback.m_hitNormalWorld);
-        result.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(rayCallback.m_collisionObject)].get();
+        result.cos_obj = collisionObject_obj[const_cast<btCollisionObject*>(rayCallback.m_collisionObject)].get();
         if (rayCallback.hasHit())
         {
             return true;
