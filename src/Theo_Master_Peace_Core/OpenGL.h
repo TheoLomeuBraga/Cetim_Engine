@@ -771,8 +771,7 @@ public:
 				// input
 				for (int i = 0; i < NO_INPUTS; i++)
 				{
-					string nome_veriavel = "inputs[";
-					nome_veriavel + to_string(i) + "]";
+					string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 					glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
 				}
 
