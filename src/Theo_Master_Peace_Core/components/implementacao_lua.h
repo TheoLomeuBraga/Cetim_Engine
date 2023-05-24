@@ -1476,11 +1476,11 @@ namespace funcoes_ponte
 		}
 	}
 
-	int raycast_3D(lua_State *L)
+	int raycast_direction_3D(lua_State *L)
 	{
 		Table ret;
 		colis_info ci;
-		bool rca = raycast_bullet_3D(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), ci);
+		bool rca = raycast_dir_bullet_3D(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), ci);
 		ret = colis_info_table(ci);
 		lua_pushboolean(L, rca);
 		lua_pushtable(L, ret);
@@ -1662,7 +1662,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
-		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
+		pair<string, lua_function>("raycast_direction_3D", funcoes_ponte::raycast_direction_3D),
 
 		// camera
 		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),

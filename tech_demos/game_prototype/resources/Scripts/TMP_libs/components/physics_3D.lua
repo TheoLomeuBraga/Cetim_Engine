@@ -20,6 +20,9 @@ end
 function set_gravity(x, y, z)
 end
 
+function raycast_direction_3D(ray_from,ray_to)
+end
+
 --boady_dynamics
 boady_dynamics = {
     static = 0,

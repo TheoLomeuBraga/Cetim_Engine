@@ -156,7 +156,7 @@ void iniciarTeste3()
 
 	
 	
-	///*
+	/*
 	Material mat;
 	mat.shad = "resources/Shaders/mesh";
 	mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
@@ -205,7 +205,7 @@ void iniciarTeste3()
 	rmp->camada = 1;
 
 	cena_objetos_selecionados->adicionar_objeto(test_marching_cube);
-	//*/
+	*/
 }
 
 shared_ptr<objeto_jogo> obj;
