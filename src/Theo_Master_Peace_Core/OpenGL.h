@@ -762,8 +762,7 @@ public:
 						ogl_adicionar_textura(rs->mat.texturas[i].get());
 						glActiveTexture(GL_TEXTURE0 + i);
 						glBindTexture(GL_TEXTURE_2D, texturas[rs->mat.texturas[i].get()]);
-						string nome_veriavel = "textures[";
-						nome_veriavel + to_string(i) + "]";
+						string nome_veriavel = string("textures[") + to_string(i) + string("]");
 						glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
 					}
 				}
@@ -1139,8 +1138,7 @@ public:
 								ogl_adicionar_textura(RM->mats[i].texturas[a].get());
 								glActiveTexture(GL_TEXTURE0 + a);
 								glBindTexture(GL_TEXTURE_2D, texturas[RM->mats[i].texturas[a].get()]);
-								string nome_veriavel = "textures[";
-								nome_veriavel + to_string(a) + "]";
+								string nome_veriavel = string("textures[") + to_string(a) + string("]");
 								glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), a);
 							}
 						}
@@ -1148,8 +1146,7 @@ public:
 						// input
 						for (int a = 0; a < NO_INPUTS; a++)
 						{
-							string nome_veriavel = "inputs[";
-							nome_veriavel + to_string(a) + "]";
+							string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 							glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), RM->mats[i].inputs[a]);
 						}
 
@@ -1278,7 +1275,7 @@ public:
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
-			string local = string("post_procesing_render_input[") + to_string(i) + "]";
+			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), i);
 		}
 		// alicar pos processamento
@@ -1298,8 +1295,7 @@ public:
 				ogl_adicionar_textura(pos_processamento_info.texturas[i].get());
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, texturas[pos_processamento_info.texturas[i].get()]);
-				string nome_veriavel = "textures[";
-				nome_veriavel + to_string(i) + "]";
+				string nome_veriavel = string("textures[") + to_string(i) + string("]");
 				glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), i);
 			}
 		}
@@ -1307,8 +1303,7 @@ public:
 		// input
 		for (int i = 0; i < NO_INPUTS; i++)
 		{
-			string nome_veriavel = "inputs[";
-			nome_veriavel + to_string(i) + "]";
+			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), pos_processamento_info.inputs[i]);
 		}
 
