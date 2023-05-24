@@ -7,7 +7,7 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <bullet/BulletCollision/Gimpact/btGImpactShape.h>
+#include <BulletCollision/Gimpact/btGImpactShape.h>
 
 btDiscreteDynamicsWorld *dynamicsWorld;
 
