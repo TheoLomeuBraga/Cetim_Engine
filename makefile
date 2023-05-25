@@ -19,7 +19,7 @@ built_path=./built
 
 libs_path_windows=-L./libs/windows
 
-definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE 
+definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE=0 
 
 libs_windows=-llua54 -lglfw3dll  -lglew32 -lopengl32 -lbox2d.dll -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
