@@ -34,7 +34,7 @@ windows:
 	${compiler_windows} ${tags_windows} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_gtk
 
 
-engine_cpp_linux_path=./src/Theo_Master_Peace/TMP_LINUX.cpp 
+engine_cpp_linux_path=./src/Theo_Master_Peace/TMP.cpp 
 
 libs_path_linux=-L./libs/linux 
 
