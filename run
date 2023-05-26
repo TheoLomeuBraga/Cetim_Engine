@@ -1,2 +1,2 @@
 #!/bin/sh
-$(pwd)/built/engine_theo_master_peace $(pwd)/tech_demos/game_prototype
+LD_LIBRARY_PATH=$(pwd)/linux/so ; $(pwd)/built/engine_theo_master_peace $(pwd)/tech_demos/game_prototype
