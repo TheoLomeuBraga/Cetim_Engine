@@ -240,8 +240,8 @@ public:
 		objetos_camadas_render.clear();
 
 		adicionar_objeto_lista(objeto_cena);
-
 		ordenar_luzes();
+		
 	}
 
 	void atualisar_transform_objeto(shared_ptr<objeto_jogo> obj)
