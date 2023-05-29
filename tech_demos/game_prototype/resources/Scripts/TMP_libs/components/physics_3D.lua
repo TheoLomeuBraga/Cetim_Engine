@@ -56,7 +56,8 @@ function physics_3D_component:new(object_ptr)
     p.friction = 1
     p.density = 1
     p.collision_layer = colision_layer_info:new()
-    p.collision_mesh = { file = "", name = "" };
+    p.collision_mesh = { file = "", name = "" }
+    p.objects_coliding = {}
     function p:get()
         j = get_set_physic_3D(get_lua, self.object_ptr)
         self.scale = deepcopyjson(j.scale)
@@ -70,7 +71,9 @@ function physics_3D_component:new(object_ptr)
         self.density = j.density
         self.collision_layer = deepcopyjson(j.collision_layer)
         self.collision_mesh = deepcopyjson(j.collision_mesh)
+        self.objects_coliding = deepcopyjson(j.objects_coliding)
     end
+    
 
     function p:set()
         get_set_physic_3D(set_lua, deepcopyjson(self))

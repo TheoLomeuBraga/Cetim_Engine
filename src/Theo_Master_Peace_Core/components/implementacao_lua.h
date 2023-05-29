@@ -1443,6 +1443,13 @@ namespace funcoes_ponte
 			ret.setFloat("friction", bu->atrito);
 			ret.setFloat("density", bu->densidade);
 
+			vector<string> objects_coliding;
+			for (objeto_jogo* obj : bu_colisions_no_per_object[obj])
+			{
+				objects_coliding.push_back(ponteiro_string(obj));
+			}
+			ret.setTable("objects_coliding", vString_table(objects_coliding));
+
 			lua_pushtable(L, ret);
 			return 1;
 		}

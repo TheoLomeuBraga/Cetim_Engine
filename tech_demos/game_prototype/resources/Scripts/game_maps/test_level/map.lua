@@ -159,8 +159,9 @@ function test_3D_game:load_assets(path)
     
     --print(scene_3D.animations[1].key_frames[1])
     --print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations[1].key_frames))
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[20])
     --apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
+
+    --apply_key_frame(ret[2],scene_3D.animations[1].key_frames[20])
 
     return ret
 end
@@ -173,10 +174,10 @@ function test_3D_game:load()
     self:create_background()
     --self:create_test_camera()
 
-    -- self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
-    -- self.assets = self:load_assets("resources/3D Models/guns.gltf")
-    --self.assets = self:load_assets("resources/3D Models/test_level.gltf")
-    self.assets = self:load_assets("resources/3D Models/test_bones.gltf")
+    --self.assets = self:load_assets("resources/3D Models/test_collision.gltf")
+    --self.assets = self:load_assets("resources/3D Models/guns.gltf")
+    self.assets = self:load_assets("resources/3D Models/test_level.gltf")
+    --self.assets = self:load_assets("resources/3D Models/test_bones.gltf")
 
 end
 

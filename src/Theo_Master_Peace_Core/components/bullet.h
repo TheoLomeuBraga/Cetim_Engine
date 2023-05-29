@@ -25,6 +25,8 @@ map<shared_ptr<objeto_jogo>, btTriangleMesh *> triangleMeshs;
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
+map<objeto_jogo*,vector<objeto_jogo*>> bu_colisions_no_per_object;
+
 glm::vec3 btToGlm(const btVector3 &v)
 {
     return glm::vec3(v.getX(), v.getY(), v.getZ());
@@ -127,9 +129,11 @@ public:
 
     btCollisionObject *bt_obj = NULL;
 
+    
+
     void iniciar()
     {
-
+        bu_colisions_no_per_object[esse_objeto.get()] = {};
         iniciar_global_bullet();
         btCollisionShape *Shape;
         if (forma == caixa)
@@ -256,6 +260,14 @@ public:
 
     void finalisar()
     {
+        if(bu_colisions_no_per_object.find(esse_objeto.get()) != bu_colisions_no_per_object.end()){
+            for(objeto_jogo* obj : bu_colisions_no_per_object[esse_objeto.get()]){
+                vector<objeto_jogo*> vazio = {};
+                bu_colisions_no_per_object[esse_objeto.get()].swap(vazio);
+            }
+            bu_colisions_no_per_object.erase(esse_objeto.get());
+        }
+        
         if (bt_obj != NULL)
         {
             ///*
@@ -491,6 +503,20 @@ void clean_collisions()
     physics_3D_collisionInfos.swap(vazio);
 }
 
+void clean_bu_colisions_no_per_object(){
+    for(pair<objeto_jogo *, std::vector<objeto_jogo *>> p : bu_colisions_no_per_object){
+        vector<objeto_jogo*> empt;
+        //print({"bu_colisions_no_per_object[p.first].size()",bu_colisions_no_per_object[p.first].size()});
+        bu_colisions_no_per_object[p.first].swap(empt);
+    }
+}
+
+void get_bu_colisions_no_per_object(){
+    for(colis_info ci : physics_3D_collisionInfos){
+        bu_colisions_no_per_object[(objeto_jogo*)ci.obj].push_back((objeto_jogo*)ci.cos_obj);
+    }
+}
+
 float bullet_passo_tempo;
 float bullet_ultimo_tempo;
 int maxSubSteps = 10;
@@ -502,6 +528,8 @@ void atualisar_global_bullet()
     // colisions
     get_3D_collisions();
     applay_3D_collisions();
+    clean_bu_colisions_no_per_object();
+    get_bu_colisions_no_per_object();
     clean_collisions();
 
     bullet_passo_tempo = 0;
@@ -514,3 +542,5 @@ void atualisar_global_bullet()
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 }
+
+
