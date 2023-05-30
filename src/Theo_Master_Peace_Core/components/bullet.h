@@ -425,6 +425,18 @@ bool raycast_dir_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
     return false;
 }
 
+bool shapecast_dir_bullet_3D(char shape,shared_ptr<malha> convex_shape,vec3 pos,vec3 rot,vec3 sca, colis_info &result)
+{
+    
+    return false;
+}
+
+bool shapecast_dir_bullet_3D(char shape,vec3 pos,vec3 rot,vec3 sca, colis_info &result)
+{
+    return shapecast_dir_bullet_3D( shape,NULL, pos, rot, sca,result);
+}
+
+
 class bullet_charter : public componente
 {
 public:

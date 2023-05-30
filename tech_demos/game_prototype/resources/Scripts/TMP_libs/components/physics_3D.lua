@@ -20,7 +20,10 @@ end
 function set_gravity(x, y, z)
 end
 
-function raycast_direction_3D(ray_from,ray_to)
+function raycas_3D(ray_from,ray_to)
+end
+function shapecast_3D(shape,convex_shape,position,rotation,scale)
+    
 end
 
 --boady_dynamics
