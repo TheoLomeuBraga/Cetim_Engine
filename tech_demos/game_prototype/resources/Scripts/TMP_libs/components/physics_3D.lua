@@ -23,7 +23,6 @@ end
 function raycas_3D(ray_from,ray_to)
 end
 function shapecast_3D(shape,convex_shape,position,rotation,scale)
-    
 end
 
 --boady_dynamics
