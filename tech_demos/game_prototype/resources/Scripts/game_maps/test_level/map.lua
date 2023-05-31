@@ -126,7 +126,7 @@ function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
             ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
             ret.components[components.transform]:set()
         elseif object_type == "player_start" then
-            test_3D_game.camera = assets_from_map.free_camera(test_3D_game.objects_layesrs.camera, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation))
+            test_3D_game.camera = assets_from_map.player(test_3D_game.objects_layesrs.camera, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation))
             --test_3D_game.camera = assets_from_map.free_camera(test_3D_game.objects_layesrs.camera, Vec3:new(-object_3D.position.x,object_3D.position.y,-object_3D.position.z), deepcopyjson(object_3D.rotation))
         end
 
