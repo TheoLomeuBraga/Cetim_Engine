@@ -1494,21 +1494,7 @@ namespace funcoes_ponte
 
 	int shapecast_3D(lua_State *L)
 	{
-		vector<colis_info> cis;
-		bool rca;
-
-		Table mesh = lua_totable(L,2);
-		shared_ptr<malha> m = ManuseioDados::carregar_malha(mesh.getString("file"), mesh.getString("name"));
-		shapecast_dir_bullet_3D((char)lua_tonumber(L,1),m,table_vec3(lua_totable(L, 3)),table_vec3(lua_totable(L, 4)),table_vec3(lua_totable(L, 5)), cis);
-
-		vector<Table> vret;
-		for(colis_info ci : cis){
-			vret.push_back(colis_info_table(ci));
-		}
-
-		lua_pushboolean(L, rca);
-		lua_pushtable(L, vTable_table(vret));
-		return 2;
+		return 0;
 	}
 
 	int global_data_get_var(lua_State *L)

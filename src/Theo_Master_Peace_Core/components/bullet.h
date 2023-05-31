@@ -25,7 +25,7 @@ map<shared_ptr<objeto_jogo>, btTriangleMesh *> triangleMeshs;
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
-map<objeto_jogo*,vector<objeto_jogo*>> bu_colisions_no_per_object;
+map<objeto_jogo *, vector<objeto_jogo *>> bu_colisions_no_per_object;
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -129,8 +129,6 @@ public:
 
     btCollisionObject *bt_obj = NULL;
 
-    
-
     void iniciar()
     {
         bu_colisions_no_per_object[esse_objeto.get()] = {};
@@ -181,7 +179,7 @@ public:
 
                     for (int i = 0; i < collision_mesh->vertices.size(); i++)
                     {
-                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0],collision_mesh->vertices[i].posicao[1],collision_mesh->vertices[i].posicao[2]));
+                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]));
                     }
 
                     Shape = convexHullShape;
@@ -260,14 +258,16 @@ public:
 
     void finalisar()
     {
-        if(bu_colisions_no_per_object.find(esse_objeto.get()) != bu_colisions_no_per_object.end()){
-            for(objeto_jogo* obj : bu_colisions_no_per_object[esse_objeto.get()]){
-                vector<objeto_jogo*> vazio = {};
+        if (bu_colisions_no_per_object.find(esse_objeto.get()) != bu_colisions_no_per_object.end())
+        {
+            for (objeto_jogo *obj : bu_colisions_no_per_object[esse_objeto.get()])
+            {
+                vector<objeto_jogo *> vazio = {};
                 bu_colisions_no_per_object[esse_objeto.get()].swap(vazio);
             }
             bu_colisions_no_per_object.erase(esse_objeto.get());
         }
-        
+
         if (bt_obj != NULL)
         {
             ///*
@@ -416,7 +416,7 @@ bool raycast_dir_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
     {
         result.pos = btToGlm(rayCallback.m_hitPointWorld);
         result.nor = btToGlm(rayCallback.m_hitNormalWorld);
-        result.cos_obj = collisionObject_obj[const_cast<btCollisionObject*>(rayCallback.m_collisionObject)].get();
+        result.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(rayCallback.m_collisionObject)].get();
         if (rayCallback.hasHit())
         {
             return true;
@@ -425,30 +425,12 @@ bool raycast_dir_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
     return false;
 }
 
-bool shapecast_dir_bullet_3D(char shape,shared_ptr<malha> convex_shape,vec3 pos,vec3 rot,vec3 sca, vector<colis_info> &result)
-{
-    if(shape == formato_colisao::caixa){
-
-    }else if(shape == formato_colisao::esfera){
-
-    }else if(shape == formato_colisao::convexo){
-
-    }
-    return false;
-}
-
-bool shapecast_dir_bullet_3D(char shape,vec3 pos,vec3 rot,vec3 sca, vector<colis_info> &result)
-{
-    return shapecast_dir_bullet_3D( shape,NULL, pos, rot, sca,result);
-}
-
-
 class bullet_charter : public componente
 {
 public:
-    shared_ptr<objeto_jogo> roof_cheker,floor_cheker;
-    bool in_roof,in_floor;
-    
+    shared_ptr<objeto_jogo> roof_cheker, floor_cheker;
+    bool in_roof, in_floor;
+
     bullet_charter() {}
     void iniciar() {}
     void atualisar() {}
@@ -461,15 +443,6 @@ void iniciar_global_bullet()
     if (global_bullet_iniciado == 0)
     {
         cout << "iniciar global bullet\n";
-        /*
-        btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
-        btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        btDbvtBroadphase *broadphase = new btDbvtBroadphase();
-        CustomOverlapFilterCallback *customFilterCallback = new CustomOverlapFilterCallback();
-        broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
-        btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-        */
 
         btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
         btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -521,17 +494,21 @@ void clean_collisions()
     physics_3D_collisionInfos.swap(vazio);
 }
 
-void clean_bu_colisions_no_per_object(){
-    for(pair<objeto_jogo *, std::vector<objeto_jogo *>> p : bu_colisions_no_per_object){
-        vector<objeto_jogo*> empt;
-        //print({"bu_colisions_no_per_object[p.first].size()",bu_colisions_no_per_object[p.first].size()});
+void clean_bu_colisions_no_per_object()
+{
+    for (pair<objeto_jogo *, std::vector<objeto_jogo *>> p : bu_colisions_no_per_object)
+    {
+        vector<objeto_jogo *> empt;
+        // print({"bu_colisions_no_per_object[p.first].size()",bu_colisions_no_per_object[p.first].size()});
         bu_colisions_no_per_object[p.first].swap(empt);
     }
 }
 
-void get_bu_colisions_no_per_object(){
-    for(colis_info ci : physics_3D_collisionInfos){
-        bu_colisions_no_per_object[(objeto_jogo*)ci.obj].push_back((objeto_jogo*)ci.cos_obj);
+void get_bu_colisions_no_per_object()
+{
+    for (colis_info ci : physics_3D_collisionInfos)
+    {
+        bu_colisions_no_per_object[(objeto_jogo *)ci.obj].push_back((objeto_jogo *)ci.cos_obj);
     }
 }
 
@@ -560,5 +537,3 @@ void atualisar_global_bullet()
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 }
-
-
