@@ -12,7 +12,6 @@ using namespace std;
 class camera : public componente
 {
 private:
-	bool paiTF_processed = false;
 public:
 	transform_ *paiTF;
 
@@ -51,10 +50,6 @@ public:
 		if (paiTF != NULL)
 		{
 
-			if(paiTF_processed == false){
-				paiTF_processed = true;
-			}
-
 			vec3 nada;
 			vec4 nada2;
 
@@ -67,8 +62,6 @@ public:
 
 			
 			
-		}else{
-			paiTF_processed = false;
 		}
 	}
 
