@@ -793,7 +793,11 @@ namespace ManuseioDados
 			}
 		}
 
-		// print({"ret.nome",ret.nome,"node.childrenIndices.size()",node.childrenIndices.size()});
+		//correct position in objects with no nodes
+		if(node.meshIndices.size() == 0){
+			ret.posicao.x = -node.translation.x;
+			ret.posicao.z = -node.translation.z;
+		}
 
 		ret.variaveis = json_table(node.extras);
 
@@ -843,6 +847,17 @@ namespace ManuseioDados
 				ret.texturas[arquivo_textura] = carregar_Imagem(arquivo_textura);
 			}
 
+			for (int a = 0; a < gltf_loader.scenes.size(); a++)
+			{
+				for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
+				{
+					int node_index = gltf_loader.scenes[a].nodesIndices[b];
+					gltf_loader::Node n = gltf_loader.nodes[node_index];
+					objeto_3D ob_3D = node_3D_object(n, gltf_loader.nodes, ret, gltf_loader);
+					ret.objetos.filhos.push_back(ob_3D);
+				}
+			}
+
 			for (gltf_loader::Animation a : gltf_loader.animations)
 			{
 				animacao ani;
@@ -868,6 +883,11 @@ namespace ManuseioDados
 						okf.has_scale = kf.has_scale;
 
 						okf.position = kf.position;
+						//correct possition
+						if(gltf_loader.nodes[okf.object_id].meshIndices.size() == 0){
+							okf.position.x = -okf.position.x;
+							okf.position.z = -okf.position.z;
+						}
 						okf.rotation = kf.rotation;
 						okf.scale = kf.scale;
 
@@ -876,37 +896,10 @@ namespace ManuseioDados
 					ani.keyFrames.push_back(okfs);
 				}
 
-				/*
-				for(gltf_loader::AnimationKeyFrame kf : a.keyFrames){
-					key_frame kfr;
-
-					kfr.object_id = kf.targetNodeIndex;
-
-					kfr.has_position = kf.has_position;
-					kfr.has_rotation = kf.has_rotation;
-					kfr.has_scale = kf.has_scale;
-
-					kfr.position = kf.position;
-					kfr.rotation = kf.rotation;
-					kfr.scale = kf.scale;
-
-					ani.keyFrames.push_back(kfr);
-				}
-				*/
-
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
 
-			for (int a = 0; a < gltf_loader.scenes.size(); a++)
-			{
-				for (int b = 0; b < gltf_loader.scenes[a].nodesIndices.size(); b++)
-				{
-					int node_index = gltf_loader.scenes[a].nodesIndices[b];
-					gltf_loader::Node n = gltf_loader.nodes[node_index];
-					objeto_3D ob_3D = node_3D_object(n, gltf_loader.nodes, ret, gltf_loader);
-					ret.objetos.filhos.push_back(ob_3D);
-				}
-			}
+			
 
 			cenas_3D.aplicar(local, ret);
 		}
