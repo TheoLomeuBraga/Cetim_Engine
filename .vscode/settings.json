@@ -102,6 +102,7 @@
         "span": "cpp",
         "strstream": "cpp",
         "source_location": "cpp",
-        "hash_map": "cpp"
+        "hash_map": "cpp",
+        "*.inc": "cpp"
     }
 }

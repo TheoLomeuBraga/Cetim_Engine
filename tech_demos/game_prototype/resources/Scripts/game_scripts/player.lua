@@ -10,6 +10,10 @@ require("TMP_libs.objects.global_data")
 require("math")
 
 this_object = {}
+camera = {}
+floor_cheker = {}
+ceiling_cheker = {}
+ 
 
 base_sensivity = 120
 base_speed = 7
@@ -25,9 +29,6 @@ function START()
     this_object = game_object:new(this_object_ptr)
 
     this_object.components[components.transform]:get()
-    --current_pos = deepcopy(this_object.components[components.transform].position)
-    --current_rot = { x = this_object.components[components.transform].rotation.x,
-    --    y = this_object.components[components.transform].rotation.y }
     this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
 
     
