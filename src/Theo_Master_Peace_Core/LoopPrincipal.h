@@ -157,13 +157,10 @@ namespace loop_principal {
 
 
 	void loop_principal() {
-		iniciar();
-		do {
-			loop();
-		} while (gerente_janela->fechar == false);
+		
 		
 
-		
+		gerente_janela->loop();
 		
 	}
 

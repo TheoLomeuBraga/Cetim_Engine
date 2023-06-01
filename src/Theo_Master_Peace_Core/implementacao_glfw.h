@@ -91,9 +91,9 @@ namespace teclas
 			std::string keyIdentifier;
 			/*
 			const char *keyName = glfwGetKeyName(key, 0);
-			
 
-			
+
+
 			if (keyName != nullptr)
 			{
 				keyIdentifier = keyName;
@@ -106,7 +106,7 @@ namespace teclas
 			*/
 
 			keyIdentifier = std::to_string(key);
-			
+
 			if (keyState == GLFW_PRESS)
 			{
 				keyboardMap[keyIdentifier] = 1;
@@ -252,31 +252,6 @@ void loopInput()
 	while (interromper_loop_input)
 	{
 	}
-
-	/*
-
-	Teclado.teclas = teclas::generateKeyboardMap(janela);
-
-	teclas::read_input_text = Teclado.pegar_input_texto;
-	Teclado.input_texto = teclas::getTextInput();
-
-	Mouse.botoes = mouse::generateMouseMap(janela);
-	Mouse.movimentos = mouse::generateMouseInfo(janela); // < corrigir
-	
-	
-	int joystick_size = controle::countConnectedJoysticks();
-	Joystick.resize(joystick_size);
-	
-	for (int i = 0; i < joystick_size; i++)
-	{
-
-		Joystick[i].botoes = controle::generateJoystickKeyMap(i);
-		Joystick[i].eixos = controle::generateJoystickAxes(i);
-
-	}
-	
-	*/
-
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;
 }
@@ -287,8 +262,6 @@ void inicioInput()
 	while (janela == NULL)
 	{
 	}
-
-	
 
 	loopInput();
 }
@@ -311,33 +284,38 @@ public:
 			loopInput();
 		}
 	}
-	
-	string get_text_input() {
+
+	string get_text_input()
+	{
 		text_input = teclas::getTextInput();
 		return text_input;
 	}
-	void set_text_input(bool on) {teclas::read_input_text = on;}
+	void set_text_input(bool on) { teclas::read_input_text = on; }
 
-	teclado get_keyboard_input(){
+	teclado get_keyboard_input()
+	{
 		keyboard_input.teclas = teclas::generateKeyboardMap(janela);
 		keyboard_input.input_texto = get_text_input();
 		return keyboard_input;
 	}
-	input_mouse get_mouse_input() {
+	input_mouse get_mouse_input()
+	{
 		mouse_input.movimentos = mouse::generateMouseInfo(janela);
 		mouse_input.botoes = mouse::generateMouseMap(janela);
 		return mouse_input;
 	}
-	vector<joystick> get_joysticks_input(){
+	vector<joystick> get_joysticks_input()
+	{
 		joysticks_input.resize(controle::countConnectedJoysticks());
-		for(int i = 0; i < joysticks_input.size(); i++){
+		for (int i = 0; i < joysticks_input.size(); i++)
+		{
 			joysticks_input[i].botoes = controle::generateJoystickKeyMap(i);
 			joysticks_input[i].eixos = controle::generateJoystickAxes(i);
 		}
 		return joysticks_input;
 	}
 
-	void set_mouse_position(float x,float y){mudar_posicao_cursor(x, y);}
+	void set_mouse_position(float x, float y) { mudar_posicao_cursor(x, y); }
 };
 
 // janela
@@ -367,8 +345,6 @@ void mudar_logo_janela(shared_ptr<imagem> img)
 		glfwSetWindowIcon(janela, 2, icones);
 	}
 }
-
-
 
 void mudar_imagem_cursor(shared_ptr<imagem> img)
 {
@@ -547,16 +523,23 @@ public:
 		return vec2(x, y);
 	}
 
-	void loop()
-	{
-		fechar = glfwWindowShouldClose(janela) == 1;
-		loop_janela();
-	}
 	void iniciar()
 	{
 		interromper_loop_input = false;
 		IniciarJanela();
 	}
+
+	void loop()
+	{
+
+		iniciar();
+		do
+		{
+			fechar = glfwWindowShouldClose(janela) == 1;
+			loop_janela();
+		} while (fechar == false);
+	}
+
 	void encerrar()
 	{
 		interromper_loop_input = true;
