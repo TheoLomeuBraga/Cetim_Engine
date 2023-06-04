@@ -19,15 +19,16 @@ libs_path_windows=
 
 definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE=0 
 
-libs_windows=-llua -lglfw  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
+libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
 
 windows:
+	
 	${compiler_windows} ${tags_windows} ${engine_cpp_windows_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/engine_theo_master_peace.exe 
-	#${compiler_windows} ${tags_windows} ${engine_cpp_windows_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/engine_theo_master_peace.exe 
-	#${compiler_windows} ${tags_windows} ${font_reader_cpp_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_2.exe
-	#cp ./src/font_reader_gtk/font_reader_gtk.glade ${built_path}/font_reader_gtk.glade
-	#${compiler_linux} ${tags} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/font_reader_gtk
+
+	rm ${built_path}/font_reader_gtk.glade
+	cp ./src/font_reader_gtk/font_reader_gtk.glade ${built_path}/font_reader_gtk.glade
+	${compiler_linux} ${tags_windows} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_gtk.exe
 
 
 engine_cpp_linux_path=./src/Theo_Master_Peace/TMP.cpp 
