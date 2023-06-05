@@ -24,11 +24,11 @@ libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio 
 
 windows:
 	
-	${compiler_windows} ${tags_windows} ${engine_cpp_windows_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/engine_theo_master_peace.exe 
+	${compiler_windows} -static ${tags_windows} ${engine_cpp_windows_path}  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/engine_theo_master_peace.exe 
 
 	rm ${built_path}/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ${built_path}/font_reader_gtk.glade
-	${compiler_linux} ${tags_windows} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_gtk.exe
+	${compiler_linux} -static ${tags_windows} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_gtk.exe
 
 
 engine_cpp_linux_path=./src/Theo_Master_Peace/TMP.cpp 
