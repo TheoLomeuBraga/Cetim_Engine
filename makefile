@@ -33,7 +33,7 @@ windows:
 
 engine_cpp_linux_path=./src/Theo_Master_Peace/TMP.cpp 
 
-libs_path_linux=-L./libs/linux 
+libs_path_linux=-L./usr/local/lib
 
 libs_linux=-llua -lglfw -lGLEW -lglut -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
