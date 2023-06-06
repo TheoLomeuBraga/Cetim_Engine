@@ -17,9 +17,9 @@ built_path=./built
 
 libs_path_windows=-L./libs/windows
 
-definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE=0 
+definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE=0  -DSFML_STATIC
 
-libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lBulletDynamics -lBulletCollision -lLinearMath
+libs_windows=-llua -lglfw3  -lglut -lopengl32 -lbox2d -lfreetype -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lBulletDynamics -lBulletCollision -lLinearMath
 
 
 windows:
@@ -31,15 +31,16 @@ windows:
 	${compiler_linux}  ${tags_windows} ${font_reader_cpp_ui_path} `pkg-config --cflags --libs gtk+-3.0`  ${includes} ${definitions_windows} ${libs_path_windows} ${libs_windows} -o ${built_path}/font_reader_gtk.exe
 
 
-tags_linux=
+tags_linux=-static
 
 engine_cpp_linux_path=./src/Theo_Master_Peace/TMP.cpp 
 
 libs_path_linux=-L./libs/linux
 
-libs_linux=-llua -lglfw -lGLEW -lglut -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
-definitions_linux=-DLINUX 
+libs_linux=-llua -lglfw3 -lglut -lGL -lGLU  -lfreetype -lbox2d -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lBulletDynamics -lBulletCollision -lLinearMath 
+
+definitions_linux=-DLINUX -DSFML_STATIC
 
 linux:
 	${compiler_linux} ${tags_linux} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
