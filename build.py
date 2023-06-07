@@ -28,9 +28,14 @@ windows_config={
 
 def build_windows():
     print("build windows")
+
+    print("building engine")
     run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],windows_config["libs_path"],includes,windows_config["definitions"],engine_cpp_path,"-o " + built_path + "e/ngine_theo_master_peace.exe"])
+
+    print("building font reader")
     run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + built_path + "/font_reader_gtk.glade"])
     run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",windows_config["libs_path"],includes,windows_config["definitions"],font_reader_cpp_ui_path,"-o " + built_path + "/font_reader_gtk.exe"])
+    
     print("finished")
 
 #linux
@@ -45,9 +50,14 @@ linux_config={
 
 def build_linux():
     print("build linux")
+
+    print("building engine")
     run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],linux_config["libs_path"],includes,linux_config["definitions"],engine_cpp_path,"-o " + built_path + "e/ngine_theo_master_peace"])
+
+    print("building font reader")
     run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + built_path + "/font_reader_gtk.glade"])
     run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",linux_config["libs_path"],includes,linux_config["definitions"],font_reader_cpp_ui_path,"-o " + built_path + "/font_reader_gtk"])
+
     print("finished")
 
 
@@ -61,8 +71,7 @@ def build():
     os = platform.system()
     if os == "Windows":
         build_windows()
-
-    if os == "Linux":
+    elif os == "Linux":
         build_linux()
 
 build()
