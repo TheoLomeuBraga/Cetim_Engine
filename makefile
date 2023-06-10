@@ -7,7 +7,7 @@ font_reader_cpp_path=./src/Font_Reader_2/font_reader_2.cpp
 
 font_reader_cpp_ui_path=./src/font_reader_gtk/font_reader_gtk.cpp
 
-tags_windows=-std=c++17 -pipe -Wa,-mbig-obj -static
+tags_windows=-std=c++17 -pipe -Wa,-mbig-obj
 
 includes=-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./include -I./include/freetype -I./include/bullet3 
 
