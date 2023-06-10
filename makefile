@@ -7,7 +7,7 @@ font_reader_cpp_path=./src/Font_Reader_2/font_reader_2.cpp
 
 font_reader_cpp_ui_path=./src/font_reader_gtk/font_reader_gtk.cpp
 
-tags_windows=-std=c++17 -pipe -Wa,-mbig-obj -static
+tags_windows=-std=c++17 -pipe -Wa,-mbig-obj
 
 includes=-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./include -I./include/freetype -I./include/bullet3 
 
@@ -17,10 +17,11 @@ built_path=./built
 
 libs_path_windows=-L./libs/windows
 
-definitions_windows=-DGLEW_STATIC -D_HAS_STD_BYTE=0 -DSFML_STATIC -DSFML_USE_STATIC_STD_LIBS -DAL_LIBTYPE_STATIC
+definitions_windows=-DWINDOWS -D_HAS_STD_BYTE=0
 
-libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lBulletDynamics -lBulletCollision -lLinearMath
+libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
+	${compiler_linux} ${tags_linux} ./src/tests/bullet.cpp  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_lin
 
 windows:
 	
@@ -49,6 +50,5 @@ linux:
 linux_debug:
 	${compiler_linux} -g ${tags_linux} ${engine_cpp_linux_path}  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/engine_theo_master_peace 
 
-linux_test:
-	${compiler_linux} ${tags_linux} ./src/tests/bullet.cpp  ${includes} ${definitions_linux} ${libs_path_linux} ${libs_linux} -o ${built_path}/test_bullet
+linux_test:ux} -o ${built_path}/test_bullet
 	
