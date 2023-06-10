@@ -19,10 +19,10 @@ def run_commands(commands):
 
 windows_config={
     "compiler": "g++",
-    "tags": "-std=c++17 -pipe -Wa,-mbig-obj -static",
-    "libs": "-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lBulletDynamics -lBulletCollision -lLinearMath",
+    "tags": "-std=c++17 -pipe -Wa,-mbig-obj",
+    "libs": "-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath",
     "libs_path": "-L./libs/windows",
-    "definitions": "-DGLEW_STATIC -D_HAS_STD_BYTE=0 -DSFML_STATIC -DSFML_USE_STATIC_STD_LIBS -DAL_LIBTYPE_STATIC",
+    "definitions": "-DWINDOWS -D_HAS_STD_BYTE=0",
 }
 
 
