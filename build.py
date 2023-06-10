@@ -19,7 +19,7 @@ def run_commands(commands):
 
 windows_config={
     "compiler": "g++",
-    "tags": "-std=c++17 -pipe -Wa,-mbig-obj -static",
+    "tags": "-std=c++17 -pipe -Wa,-mbig-obj",
     "libs": "-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath",
     "libs_path": "-L./libs/windows",
     "definitions": "-DWINDOWS -D_HAS_STD_BYTE=0",
