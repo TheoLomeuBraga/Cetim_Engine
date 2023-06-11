@@ -30,7 +30,7 @@ def build_windows():
     print("build windows")
 
     print("building engine")
-    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],windows_config["libs_path"],includes,windows_config["definitions"],engine_cpp_path,"-o " + built_path + "e/ngine_theo_master_peace.exe"])
+    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],windows_config["libs_path"],includes,windows_config["definitions"],engine_cpp_path,"-o " + built_path + "/engine_theo_master_peace.exe"])
 
     print("building font reader")
     run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + built_path + "/font_reader_gtk.glade"])
