@@ -6,7 +6,7 @@ import platform
 engine_cpp_path = "./src/Theo_Master_Peace/TMP.cpp"
 font_reader_cpp_ui_path="./src/font_reader_gtk/font_reader_gtk.cpp"
 includes="-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./include -I./include/freetype -I./include/bullet3 "
-built_path="./built"
+build_path="./build"
 
 def run_commands(commands):
     command = ""
@@ -30,11 +30,11 @@ def build_windows():
     print("build windows")
 
     print("building engine")
-    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],windows_config["libs_path"],includes,windows_config["definitions"],engine_cpp_path,"-o " + built_path + "/engine_theo_master_peace.exe"])
+    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],windows_config["libs_path"],includes,windows_config["definitions"],engine_cpp_path,"-o " + build_path + "/engine_theo_master_peace.exe"])
 
     print("building font reader")
-    run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + built_path + "/font_reader_gtk.glade"])
-    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",windows_config["libs_path"],includes,windows_config["definitions"],font_reader_cpp_ui_path,"-o " + built_path + "/font_reader_gtk.exe"])
+    run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + build_path + "/font_reader_gtk.glade"])
+    run_commands([windows_config["compiler"],windows_config["tags"],windows_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",windows_config["libs_path"],includes,windows_config["definitions"],font_reader_cpp_ui_path,"-o " + build_path + "/font_reader_gtk.exe"])
     
     print("finished")
 
@@ -52,11 +52,11 @@ def build_linux():
     print("build linux")
 
     print("building engine")
-    run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],linux_config["libs_path"],includes,linux_config["definitions"],engine_cpp_path,"-o " + built_path + "e/ngine_theo_master_peace"])
+    run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],linux_config["libs_path"],includes,linux_config["definitions"],engine_cpp_path,"-o " + build_path + "e/ngine_theo_master_peace"])
 
     print("building font reader")
-    run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + built_path + "/font_reader_gtk.glade"])
-    run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",linux_config["libs_path"],includes,linux_config["definitions"],font_reader_cpp_ui_path,"-o " + built_path + "/font_reader_gtk"])
+    run_commands(["cp ./src/font_reader_gtk/font_reader_gtk.glade " + build_path + "/font_reader_gtk.glade"])
+    run_commands([linux_config["compiler"],linux_config["tags"],linux_config["libs"],"`pkg-config --cflags --libs gtk+-3.0`",linux_config["libs_path"],includes,linux_config["definitions"],font_reader_cpp_ui_path,"-o " + build_path + "/font_reader_gtk"])
 
     print("finished")
 
