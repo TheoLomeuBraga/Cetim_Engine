@@ -49,6 +49,18 @@
         <property name="can-focus">False</property>
         <property name="column-homogeneous">True</property>
         <child>
+          <object class="GtkFileChooserButton" id="output_folder">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="action">select-folder</property>
+            <property name="title" translatable="yes"/>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -70,31 +82,6 @@ font file:</property>
           <packing>
             <property name="left-attach">0</property>
             <property name="top-attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label" translatable="yes">
-output folder:</property>
-            <property name="justify">center</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFileChooserButton" id="output_folder">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="action">select-folder</property>
-            <property name="title" translatable="yes"/>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">3</property>
           </packing>
         </child>
         <child>
@@ -132,18 +119,6 @@ quality:</property>
           <packing>
             <property name="left-attach">0</property>
             <property name="top-attach">6</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="quality">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="text" translatable="yes">40</property>
-            <property name="input-purpose">number</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">7</property>
           </packing>
         </child>
         <child>
@@ -197,6 +172,12 @@ pixel perfect:</property>
             <property name="left-attach">0</property>
             <property name="top-attach">11</property>
           </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>

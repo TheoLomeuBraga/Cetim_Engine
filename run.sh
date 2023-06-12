@@ -1,1 +1,0 @@
-$(pwd)/built/engine_theo_master_peace $(pwd)/tech_demos/game_prototype

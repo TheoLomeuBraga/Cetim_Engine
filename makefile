@@ -35,7 +35,7 @@ tags_linux=
 
 libs_path_linux=-L./libs/linux
 
-libs_linux=-llua -lglfw3 -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+libs_linux=-llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 
 definitions_linux=-DLINUX
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 export LD_LIBRARY_PATH=$(pwd)/libs/linux/so
-$(pwd)/built/engine_theo_master_peace $(pwd)/tech_demos/game_prototype
+$(pwd)/build/engine_theo_master_peace $(pwd)/tech_demos/game_prototype
