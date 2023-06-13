@@ -19,7 +19,7 @@ libs_path_windows=-L./libs/windows
 
 definitions_windows=-DWINDOWS -D_HAS_STD_BYTE=0 
 
-libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio-s -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
+libs_windows=-llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 
 
 windows:
