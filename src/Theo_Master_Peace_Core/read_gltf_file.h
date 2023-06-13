@@ -855,22 +855,27 @@ namespace gltf_loader
 
     std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
     {
+	    //print({"AAAAA"});
         const Accessor &accessor = accessors[accessorIndex];
         const BufferView &bufferView = bufferViews[accessor.bufferView];
         const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
-
+	    //print({"BBBBB"});
         size_t byteOffset = bufferView.byteOffset + accessor.byteOffset;
         size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float);
-
+	    //print({"CCCCC"});
         std::vector<uint8_t> data(accessor.count * byteStride);
-
+	    //print({"DDDDD"});
         for (size_t i = 0; i < accessor.count; ++i)
         {
             size_t srcOffset = byteOffset + i * byteStride;
             size_t dstOffset = i * byteStride;
-            std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+            //std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+            if (srcOffset >= 0 && dstOffset >= 0 && srcOffset < buffer.size() && dstOffset < data.size() && byteStride <= buffer.size() - srcOffset && byteStride <= data.size() - dstOffset && buffer.data() && data.data())
+            {
+                std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+            }
         }
-
+	    //print({"EEEEE"});
         return data;
     }
 
