@@ -5,7 +5,7 @@ using namespace std;
 
 #include "Config.h"
 #include "Tempo.h"
-#include "vibrar_controle.cpp"
+//#include "vibrar_controle.cpp"
 #include "RecursosT.h"
 
 class input_manager
