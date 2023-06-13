@@ -179,21 +179,6 @@ namespace gltf_loader
         }
     }
 
-    bool GLTFLoader::load()
-    {
-        loadBuffers();
-        loadBufferViews();
-        loadAccessors();
-        loadMeshes();
-        loadScenes();
-        loadNodes();
-        loadAnimations();
-        loadTextures();
-        loadMaterials();
-
-        return true;
-    }
-
     bool GLTFLoader::loadBuffers()
     {
         if (gltf.find("buffers") == gltf.end())
@@ -868,6 +853,27 @@ namespace gltf_loader
         return attributeData;
     }
 
+    std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
+    {
+        const Accessor &accessor = accessors[accessorIndex];
+        const BufferView &bufferView = bufferViews[accessor.bufferView];
+        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+
+        size_t byteOffset = bufferView.byteOffset + accessor.byteOffset;
+        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float);
+
+        std::vector<uint8_t> data(accessor.count * byteStride);
+
+        for (size_t i = 0; i < accessor.count; ++i)
+        {
+            size_t srcOffset = byteOffset + i * byteStride;
+            size_t dstOffset = i * byteStride;
+            std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+        }
+
+        return data;
+    }
+
     bool GLTFLoader::loadMeshes()
     {
         if (!gltf.contains("meshes"))
@@ -1012,24 +1018,20 @@ namespace gltf_loader
         return true;
     }
 
-    std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
+    bool GLTFLoader::load()
     {
-        const Accessor &accessor = accessors[accessorIndex];
-        const BufferView &bufferView = bufferViews[accessor.bufferView];
-        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+        loadBuffers();
+        loadBufferViews();
+        loadAccessors();
+        loadMeshes();
+        loadScenes();
+        loadNodes();
+        loadAnimations();
+        loadTextures();
+        loadMaterials();
 
-        size_t byteOffset = bufferView.byteOffset + accessor.byteOffset;
-        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float);
-
-        std::vector<uint8_t> data(accessor.count * byteStride);
-
-        for (size_t i = 0; i < accessor.count; ++i)
-        {
-            size_t srcOffset = byteOffset + i * byteStride;
-            size_t dstOffset = i * byteStride;
-            std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
-        }
-
-        return data;
+        return true;
     }
+
+    
 };
