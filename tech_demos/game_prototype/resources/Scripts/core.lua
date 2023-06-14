@@ -64,7 +64,7 @@ function START()
 
     test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
-    load_map("test_level_2")
+    load_map("test_level_first_person")
 
     --load_map("test_level")
 

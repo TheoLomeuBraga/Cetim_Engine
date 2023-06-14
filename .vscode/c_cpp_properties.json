@@ -8,7 +8,8 @@
                 "${workspaceFolder}/src/Theo_Master_Peace_Core",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/freetype",
-                "${workspaceFolder}/include/bullet3"
+                "${workspaceFolder}/include/bullet3",
+                "${workspaceFolder}/src/Theo_Master_Peace_Core"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
