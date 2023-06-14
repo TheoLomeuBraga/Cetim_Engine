@@ -23,8 +23,20 @@ LIBS_LINUX := -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -ls
 
 
 
-headers:
-	$(COMPILER) $(FLAGS_LINUX) $(DEFINITIONS_LINUX) $(INCLUDE_DIRS) -o $(HEADERS)
+
+	
+OBJ := $(SRC:.cpp=.o)
+
+all: $(TARGET_ENGINE_LINUX)
+
+$(TARGET_ENGINE_LINUX): $(OBJ)
+	$(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX) $(OBJ) -o $(TARGET_ENGINE_LINUX)
+
+%.o: %.cpp
+	$(COMPILER) $(FLAGS_LINUX) $(DEFINITIONS_LINUX) $(LIBS_LINUX) -c $< -o $@
+
+clean:
+	rm -f $(OBJ) $(TARGET_ENGINE_WINDOWS) $(TARGET_ENGINE_LINUX) $(TARGET_READER_WINDOWS) $(TARGET_READER_LINUX)
 
 
 print_headers:
