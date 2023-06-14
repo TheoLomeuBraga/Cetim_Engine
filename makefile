@@ -25,10 +25,6 @@ LIBS_ENGINE_LINUX := -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-au
 LIBS_FONT_READER_WINDOWS := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 LIBS_FONT_READER_LINUX := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 
-
-	
-
-
 windows: 
 	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) 
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade

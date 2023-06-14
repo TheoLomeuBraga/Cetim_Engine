@@ -27,7 +27,7 @@ function test_3D_game:initialize_render_settings()
 
     renders_layers.layers_size = 4
 
-    renders_layers.layers[1] = render_layer:new()
+    renders_layers.layers[1] = {}
     renders_layers.layers[1].end_render = false
     renders_layers.layers[1].use_deep = true
     renders_layers.layers[1].clean_color = false
@@ -159,9 +159,6 @@ function test_3D_game:load_assets(path)
     
     --print(scene_3D.animations[1].key_frames[1])
     --print("tablelength(scene_3D.animations)",tablelength(scene_3D.animations[1].key_frames))
-    
-    apply_key_frame(ret[2],scene_3D.animations[2].key_frames[50])
-    apply_key_frame(ret[2],scene_3D.animations[1].key_frames[20])
 
     return ret
 end
@@ -183,12 +180,13 @@ end
 
 local R_last_frame = false
 function test_3D_game:update()
-    if R_last_frame == true and keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.r]) ==
-        0 then
+    --restart level
+    if R_last_frame == true and keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.r]) == 0 then
         local core = game_object:new(global_data:get_var("core_object_ptr"))
-        core.components[components.lua_scripts]:call_function("core", "load_map_from_other", {"test"})
+        core.components[components.lua_scripts]:call_function("core", "load_map_from_other", {"test_level_first_person"})
     end
     R_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.r]) == 1
+
 end
 
 function test_3D_game:unload()
