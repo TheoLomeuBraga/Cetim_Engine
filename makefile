@@ -7,16 +7,16 @@ FLAGS_LINUX := -std=c++17
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
 DEFINITIONS_LINUX := -DLINUX
 
-TARGET_ENGINE_WINDOWS := ./build/engine_theo_master_peace.exe
-TARGET_ENGINE_LINUX := ./build/engine_theo_master_peace
+TARGET_ENGINE_WINDOWS := ./build/engine_theo_master_pice.exe
+TARGET_ENGINE_LINUX := ./build/engine_theo_master_pice
 
 TARGET_FONT_READER_WINDOWS := ./build/font_reader_gtk.exe
 TARGET_FONT_READER_LINUX := ./build/font_reader_gtk
 
-SRC_ENGINE := ./src/Theo_Master_Peace/TMP.cpp
+SRC_ENGINE := ./src/Theo_Master_Pice/TMP.cpp
 SRC_READER := ./src/font_reader_gtk/font_reader_gtk.cpp
 
-INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./src/Theo_Master_Peace_Core/components -I./include -I./include/freetype -I./include/bullet3
+INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Pice -I./src/Theo_Master_Pice_Core -I./src/Theo_Master_Pice_Core/components -I./include -I./include/freetype -I./include/bullet3
 HEADERS := $(wildcard $(addsuffix /*.h,$(INCLUDE_DIRS)))
 
 LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d  -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
