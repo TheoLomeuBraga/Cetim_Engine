@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "RecursosT.h"
 #include "scene.h"
-#include "components/box_2d.h"
+#include "box_2d.h"
 
 class projetil : public componente {
 private:

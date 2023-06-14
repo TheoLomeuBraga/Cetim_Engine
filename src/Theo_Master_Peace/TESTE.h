@@ -36,18 +36,18 @@ using namespace glm;
 #include "Tempo.h"
 #include "scene.h"
 #include "LoopPrincipal.h"
-#include "components/box_2d.h"
-#include "components/implementacao_lua.h"
+#include "box_2d.h"
+#include "implementacao_lua.h"
 #include "implementacao_windows.cpp"
 
 // APIs
 #include "OpenGL.h"
 #include "implementacao_glfw.h"
-#include "components/sfml_audio.h"
+#include "sfml_audio.h"
 #include "game_object.h"
 
-#include "components/camera.h"
-#include "components/transform.h"
+#include "camera.h"
+#include "transform.h"
 // #include "Box2D_classe.h"
 // #include  "box2D_antigo.h"
 

@@ -20,8 +20,8 @@
 
 
 #include "game_object.h"
-#include "components/camera.h"
-#include "components/transform.h"
+#include "camera.h"
+#include "transform.h"
 
 struct mesh_ogl_struct
 {

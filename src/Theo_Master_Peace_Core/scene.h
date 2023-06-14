@@ -5,14 +5,14 @@
 using namespace std;
 
 #include "RecursosT.h"
-#include "components/light.h"
-#include "components/render_mesh.h"
-#include "components/render_sprite.h"
-#include "components/render_tilemap.h"
-#include "components/render_text.h"
-#include "components/render_shader.h"
-#include "components/camera.h"
-#include "components/transform.h"
+#include "light.h"
+#include "render_mesh.h"
+#include "render_sprite.h"
+#include "render_tilemap.h"
+#include "render_text.h"
+#include "render_shader.h"
+#include "camera.h"
+#include "transform.h"
 #include "game_object.h"
 
 vector<shared_ptr<objeto_jogo>> lixeira;

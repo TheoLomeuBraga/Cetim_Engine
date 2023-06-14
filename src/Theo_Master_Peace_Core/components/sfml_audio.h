@@ -6,7 +6,7 @@
 #include "RecursosT.h"
 #include "scene.h"
 #include "game_object.h"
-#include "components/transform.h"
+#include "transform.h"
 
 mapeamento_assets<sf::SoundBuffer> buffers_som_sfml;
 

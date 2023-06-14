@@ -6,6 +6,7 @@
                 "${workspaceFolder}/src/Font_Reader",
                 "${workspaceFolder}/src/Theo_Master_Peace",
                 "${workspaceFolder}/src/Theo_Master_Peace_Core",
+                "${workspaceFolder}/src/Theo_Master_Peace_Core/components",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/freetype",
                 "${workspaceFolder}/include/bullet3",

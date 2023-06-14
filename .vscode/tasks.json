@@ -10,6 +10,7 @@
                 "-I${workspaceFolder}/src/Font_Reader",
                 "-I${workspaceFolder}/src/Theo_Master_Peace",
                 "-I${workspaceFolder}/src/Theo_Master_Peace_Core",
+                "-I${workspaceFolder}/src/Theo_Master_Peace_Core/components",
                 "-I${workspaceFolder}/include",
                 "-I${workspaceFolder}/include/freetype",
                 "-I${workspaceFolder}/include/bullet3",

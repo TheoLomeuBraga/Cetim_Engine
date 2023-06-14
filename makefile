@@ -16,17 +16,14 @@ SRC_ENGINE := ./src/Theo_Master_Peace/TMP.cpp
 SRC_READER := ./src/font_reader_gtk/font_reader_gtk.cpp
 
 INCLUDE_DIRS := ./src/Font_Reader ./src/Theo_Master_Peace ./src/Theo_Master_Peace_Core ./include ./include/freetype ./include/bullet3
-HEADERS := HEADERS := $(wildcard $(addsuffix /*.h,$(INCLUDE_DIRS)))
-
-LIB_DIRS := -L./src/Font_Reader -L./src/Theo_Master_Peace -L./src/Theo_Master_Peace_Core -L./include -L./include/freetype -L./include/bullet3
+HEADERS := $(wildcard $(addsuffix /*.h,$(INCLUDE_DIRS)))
 
 LIBS_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath
 LIBS_LINUX := -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 
 
 
-headers:
-    $(COMPILER) $(FLAGS_LINUX) $(DEFINITIONS_LINUX) -I$(INCLUDE_DIRS) -c $(HEADERS)
+
 
 
 print_headers:

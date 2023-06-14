@@ -5,7 +5,7 @@ import platform
 
 engine_cpp_path = "./src/Theo_Master_Peace/TMP.cpp"
 font_reader_cpp_ui_path="./src/font_reader_gtk/font_reader_gtk.cpp"
-includes="-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./include -I./include/freetype -I./include/bullet3 "
+includes="-I./src/Font_Reader -I./src/Theo_Master_Peace -I./src/Theo_Master_Peace_Core -I./src/Theo_Master_Peace_Core/components -I./include -I./include/freetype -I./include/bullet3 "
 build_path="./build"
 
 def run_commands(commands):
