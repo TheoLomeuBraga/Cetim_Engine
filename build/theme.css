@@ -1,0 +1,22 @@
+/* Custom GTK theme */
+
+/* Button styling */
+
+* {
+    /* Modify the properties for all GTK elements */
+    font-family: Arial;
+    font-size: 14px;
+    color: #00ff15;
+    background-color: #1e0046;
+    border-color: #000000;
+    outline-width: 0px;
+    border-radius: 0;
+}
+
+
+button {
+    color: #00ff15;
+    background-color: #1e0046;
+    border-color: #000000;
+    outline-width: 0px;
+}

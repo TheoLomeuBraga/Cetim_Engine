@@ -27,33 +27,37 @@ LIBS_FONT_READER_WINDOWS := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 LIBS_FONT_READER_LINUX := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 
 windows: 
-	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) 
+	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) ./build/font_reader_gtk.glade ./build/theme.css
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
+	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
 	$(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_WINDOWS) $(DEFINITIONS_WINDOWS) $(LIBS_ENGINE_WINDOWS) -o $(TARGET_ENGINE_WINDOWS)
 	$(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
 
 windows_debug: 
-	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) 
+	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS)  ./build/font_reader_gtk.glade ./build/theme.css
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
+	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
 	$(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_WINDOWS_DEBUG) $(DEFINITIONS_WINDOWS) $(LIBS_ENGINE_WINDOWS) -o $(TARGET_ENGINE_WINDOWS)
 	$(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS_DEBUG) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
 
 arch:
+	rm -f $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_LINUX) ./build/font_reader_gtk.glade ./build/theme.css
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
-	rm -f $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_LINUX)
+	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
 	$(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_ENGINE_ARCH) -o $(TARGET_ENGINE_LINUX)
 	$(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
 
 debian:
+	rm -f $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_LINUX) ./build/font_reader_gtk.glade ./build/theme.css
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
-	rm -f $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_LINUX)
+	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
 	$(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_ENGINE_DEBIAN) -o $(TARGET_ENGINE_LINUX)
 	$(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
 
 clean:
-	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_WINDOWS) $(TARGET_FONT_READER_LINUX) ./build/font_reader_gtk.glade
+	rm -f $(TARGET_ENGINE_WINDOWS) $(TARGET_ENGINE_LINUX) $(TARGET_FONT_READER_WINDOWS) $(TARGET_FONT_READER_LINUX) ./build/font_reader_gtk.glade ./build/theme.css
 
