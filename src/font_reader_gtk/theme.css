@@ -2,6 +2,17 @@
 
 /* Button styling */
 
+.titlebar button.titlebutton {
+    background-color: #1e0046;
+    /* Customize the background color of the buttons */
+    border: none;
+    /* Remove the button borders */
+    padding: 5px;
+    /* Adjust the padding around the buttons */
+    color: #1eff00;
+    /* Customize the button text color */
+}
+
 * {
     /* Modify the properties for all GTK elements */
     font-family: Arial;
@@ -27,4 +38,4 @@ button:hover {
     /* Change the border color on hover */
     background-color: #6f00ff;
     background: #6f00ff;
-  }
+}

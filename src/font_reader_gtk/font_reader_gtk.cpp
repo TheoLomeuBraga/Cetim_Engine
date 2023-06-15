@@ -105,6 +105,9 @@ int main(int argc, char *argv[])
     // Criando o builder a partir do arquivo Glade
     builder = gtk_builder_new_from_file("font_reader_gtk.glade");
 
+    // Obtendo um objeto GtkWidget do builder
+    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+
     if (file_exists("theme.css"))
     {
         GtkCssProvider *provider = gtk_css_provider_new();
@@ -112,10 +115,10 @@ int main(int argc, char *argv[])
         GdkScreen *screen = gdk_display_get_default_screen(display);
         gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         gtk_css_provider_load_from_path(provider, "theme.css", NULL);
-    }
 
-    // Obtendo um objeto GtkWidget do builder
-    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+        //gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
+        
+    }
 
     GtkWidget *font_file_input_fild = GTK_WIDGET(gtk_builder_get_object(builder, "font_file"));
     g_signal_connect(font_file_input_fild, "file-set", G_CALLBACK(set_fontFilePath), NULL);
@@ -130,7 +133,7 @@ int main(int argc, char *argv[])
     g_signal_connect(set_quality_fild, "changed", G_CALLBACK(set_quality), NULL);
 
     GtkWidget *pixel_perfect_fild = GTK_WIDGET(gtk_builder_get_object(builder, "pixel_perfect"));
-    g_signal_connect(pixel_perfect_fild, "state-set", G_CALLBACK(set_pixel_perfect), NULL);
+    g_signal_connect(pixel_perfect_fild, "toggled", G_CALLBACK(set_pixel_perfect), NULL);
 
     GtkWidget *apply_button = GTK_WIDGET(gtk_builder_get_object(builder, "apply"));
     g_signal_connect(apply_button, "clicked", G_CALLBACK(apply), NULL);
