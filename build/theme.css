@@ -8,15 +8,23 @@
     font-size: 14px;
     color: #00ff15;
     background-color: #1e0046;
-    border-color: #000000;
     outline-width: 0px;
     border-radius: 0;
 }
 
-
 button {
+    /* Modify the properties for all GTK elements */
+    font-family: Arial;
+    font-size: 14px;
     color: #00ff15;
     background-color: #1e0046;
-    border-color: #000000;
+    background: #1e0046;
     outline-width: 0px;
+    border-radius: 0;
 }
+
+button:hover {
+    /* Change the border color on hover */
+    background-color: #6f00ff;
+    background: #6f00ff;
+  }
