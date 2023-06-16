@@ -2,40 +2,62 @@
 
 /* Button styling */
 
-.titlebar button.titlebutton {
-    background-color: #1e0046;
-    /* Customize the background color of the buttons */
-    border: none;
-    /* Remove the button borders */
-    padding: 5px;
-    /* Adjust the padding around the buttons */
-    color: #1eff00;
-    /* Customize the button text color */
-}
+
 
 * {
     /* Modify the properties for all GTK elements */
+    border: none;
+    margin: 0;
+    
+    
     font-family: Arial;
     font-size: 14px;
     color: #00ff15;
     background-color: #1e0046;
+    background: #1e0046;
+    
     outline-width: 0px;
-    border-radius: 0;
 }
+
+
 
 button {
     /* Modify the properties for all GTK elements */
+    
     font-family: Arial;
+    outline:0;
     font-size: 14px;
     color: #00ff15;
     background-color: #1e0046;
     background: #1e0046;
     outline-width: 0px;
     border-radius: 0;
+    box-shadow: inset 0 0 0 1px #8000b3;
 }
+
+
 
 button:hover {
     /* Change the border color on hover */
+    
     background-color: #6f00ff;
     background: #6f00ff;
 }
+
+
+
+entry  {
+    /* Modify the properties for all GTK elements */
+    
+    font-family: Arial;
+    outline:0;
+    font-size: 14px;
+    color: #00ff15;
+    background-color: #1e0046;
+    background: #1e0046;
+    outline-width: 0px;
+    border-radius: 0;
+    box-shadow: inset 0 0 0 1px #8000b3;
+    
+}
+
