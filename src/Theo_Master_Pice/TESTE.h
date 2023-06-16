@@ -75,7 +75,7 @@ void inciar_imgui()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplGlfw_InitForOpenGL(janela, true);
-	ImGui_ImplOpenGL3_Init((const char*)"#version 460 core");
+	ImGui_ImplOpenGL3_Init((const char*)"#version 330 core");
 	ImGui::StyleColorsDark();
 	*/
 }
