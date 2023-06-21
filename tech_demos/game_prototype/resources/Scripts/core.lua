@@ -57,6 +57,7 @@ end
 
 
 function START()
+    
     print("core iniciando")
     set_resolution()
     
