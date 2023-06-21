@@ -14,6 +14,8 @@ require("TMP_libs.components.component_all")
 require("TMP_libs.layers_table")
 require("TMP_libs.objects.scene_3D")
 
+require("functions.load_3D_asset")
+
 require("math")
 
 assets_from_map = require("game_maps.test_level_first_person.assets")
@@ -72,6 +74,7 @@ end
 
 local game_objects_in_cene_ret = {}
 local texture_dictionary = require("game_maps.test_level_first_person.materials")
+
 function test_3D_game:object_3D_to_game_object(father, render_layer, object_3D)
 
     local ret = {}
