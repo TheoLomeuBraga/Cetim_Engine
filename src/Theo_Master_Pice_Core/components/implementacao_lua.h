@@ -460,14 +460,12 @@ namespace funcoes_ponte
 
 	int get_set_object(lua_State *L)
 	{
-		
-		
+
 		int argumentos = lua_gettop(L);
 		string output = "";
 		objeto_jogo *obj = NULL;
 		int get_set = lua_tonumber(L, 1);
-		
-		
+
 		if (get_set == get_lua)
 		{
 
@@ -499,7 +497,8 @@ namespace funcoes_ponte
 
 			vector<string> criancas = table_vString(t.getTable("childrens"));
 			obj->filhos = {};
-			for(string s : criancas){
+			for (string s : criancas)
+			{
 				obj->filhos.push_back(string_ponteiro<objeto_jogo>(s)->get_this_object());
 			}
 
@@ -1444,7 +1443,7 @@ namespace funcoes_ponte
 			ret.setFloat("density", bu->densidade);
 
 			vector<string> objects_coliding;
-			for (objeto_jogo* obj : bu_colisions_no_per_object[obj])
+			for (objeto_jogo *obj : bu_colisions_no_per_object[obj])
 			{
 				objects_coliding.push_back(ponteiro_string(obj));
 			}
@@ -1877,6 +1876,8 @@ public:
 
 	void adicionar_script(string s)
 	{
+
+		
 		if (estados_lua.find(s) != estados_lua.end())
 		{
 			lua_getglobal(estados_lua[s], "END");
@@ -1907,9 +1908,11 @@ public:
 
 	void iniciar()
 	{
+
 		iniciado = true;
 		for (pair<string, lua_State *> p : estados_lua)
 		{
+
 			// esse objetoget_tile_set_tile
 			lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
 			lua_setglobal(p.second, "this_object_ptr");

@@ -5,7 +5,7 @@ FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj
 FLAGS_LINUX := -std=c++17
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
-DEFINITIONS_LINUX := -DLINUX
+DEFINITIONS_LINUX := -DLINUX -DUNIX
 
 TARGET_ENGINE_WINDOWS := ./build/engine_theo_master_pice.exe
 TARGET_ENGINE_LINUX := ./build/engine_theo_master_pice

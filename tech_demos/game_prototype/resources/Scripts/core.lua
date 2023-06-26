@@ -27,6 +27,8 @@ require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 
+--require("adsasdasda")
+
 function set_resolution()
     window.resolution.x = 720
     window.resolution.y = 720
