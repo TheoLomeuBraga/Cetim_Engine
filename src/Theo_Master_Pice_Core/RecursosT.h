@@ -902,18 +902,6 @@ shared_ptr<imagem> rodar_compute_shader(Material mat, int resx, int resy, int ch
 	return api_grafica->rodar_compute_shader(mat, resx, resy, chanels);
 }
 
-class funcoes_OS_classe
-{
-private:
-public:
-	virtual string nome_OS(string s) { return ""; }
-	virtual vector<string> pegar_arquivos_em_diretorio(string s) { return {}; }
-	virtual vector<string> pegar_diretorios_em_diretorio(string s) { return {}; }
-	virtual void criar_diretorio(string s) {}
-	virtual void vibrar_controle(vec2 v) {}
-};
-funcoes_OS_classe *funcoes_OS;
-
 class network_conection
 {
 private:

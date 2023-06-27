@@ -17,7 +17,6 @@ SRC_ENGINE := ./src/Theo_Master_Pice/TMP.cpp
 SRC_READER := ./src/font_reader_gtk/font_reader_gtk.cpp
 
 INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Pice -I./src/Theo_Master_Pice_Core -I./src/Theo_Master_Pice_Core/components -I./include -I./include/freetype -I./include/bullet3
-HEADERS := $(wildcard $(addsuffix /*.h,$(INCLUDE_DIRS)))
 
 LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d  -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 LIBS_ENGINE_DEBIAN := -llua5.4 -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 

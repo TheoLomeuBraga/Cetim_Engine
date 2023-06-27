@@ -22,7 +22,7 @@
 #include "Config.h"
 #include "Console_Comando.h"
 #include "ManusearArquivos.h"
-#include "TESTE.h"
+#include "core.h"
 #include "box_2d.h"
 #include "camera.h"
 #include "transform.h"
@@ -30,6 +30,8 @@
 #include "input.h"
 
 #include "read_map_file.h"
+
+#include "init_lib_functions.h"
 
 #include <bitset>
 
@@ -56,15 +58,10 @@ void comecar()
 
     thread temp(Tempo::IniciarTempo);
 
-    gerente_janela = new gerenciador_janela_glfw(true);
+    //gerente_janela = new gerenciador_janela_glfw(true);
+    start_window_lib();
 
     thread grafi(loop_principal::loop_principal);
-    // thread grafi(loop_principal::IniciarJanela);
-    manuseio_inputs = new glfw_input_manager();
-
-    // thread inpu(loop_input);
-
-    // thread fisi(Fisica::iniciar_fisica);
 
     grafi.join();
 }

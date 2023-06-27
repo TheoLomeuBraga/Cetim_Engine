@@ -1,3 +1,5 @@
+#pragma once
+
 #include "RecursosT.h"
 #include "input.h"
 #include "LoopPrincipal.h"
