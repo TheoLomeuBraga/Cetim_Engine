@@ -112,11 +112,7 @@ end
 function to_move(object, x, y, z)
 end
 
--- gravity
-function get_gravity()
-end
-function set_gravity(x, y, z)
-end
+
 
 -- physic
 function get_physic_2D(object)
