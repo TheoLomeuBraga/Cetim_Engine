@@ -1,12 +1,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "implementacao_glfw.h"
 #include "OpenGL.h"
 #include "implementacao_glfw.h"
 
 #include "shared_library_loader.h"
+
+std::vector<Shared_Library_Loader> slls;
 
 typedef void(*init_lib_function)(void);
 
