@@ -27,9 +27,7 @@ layout(location = 0) in struct Vertex
   vec3 color;
 } vertex;
 
-
-//https://stackoverflow.com/questions/19081734/passing-custom-vertex-structure-to-glsl-shaders
-layout(location = 0) in struct Vertex
+layout(location = 0) out struct Vertex
 {
   vec3 position;
   vec2 uv;
