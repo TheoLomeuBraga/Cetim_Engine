@@ -64,7 +64,7 @@ function run_rotation()
 end
 
 function run_movement()
-    local speed = base_speed * Time.delta
+    local speed = base_speed * time.delta
 
 
     for index, value in ipairs({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }) do
@@ -134,7 +134,7 @@ function full_screen_toogle()
 end
 
 function UPDATE()
-    Time:get()
+    time:get()
 
 
 

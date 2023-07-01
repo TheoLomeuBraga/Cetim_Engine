@@ -10,8 +10,8 @@ function animation:new()
         self.time = 0
     end
     function a:to_progress(speed)
-        Time:get()
-        self.time = self.time + (Time.delta * speed)
+        time:get()
+        self.time = self.time + (time.delta * speed)
         if self.loop == true and self.time > self.duration then
             self.time = self.time - self.duration
         end
