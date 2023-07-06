@@ -277,14 +277,14 @@ struct colis_info_struct
 };
 typedef struct colis_info_struct colis_info;
 
-struct info_camada_colision_struct
+struct info_camada_collision_struct
 {
 	int camada = 1;
 	vector<int> camada_colide = {
 		1,
 	};
 };
-typedef info_camada_colision_struct info_camada;
+typedef info_camada_collision_struct info_camada;
 
 enum tipo_dinamica_corpo
 {

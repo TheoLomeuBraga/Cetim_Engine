@@ -1172,7 +1172,7 @@ namespace funcoes_ponte
 			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 			ret.setTable("scale", vec2_table(b2d->escala));
 			ret.setFloat("boady_dynamic", b2d->dinamica);
-			ret.setFloat("colision_shape", b2d->forma);
+			ret.setFloat("collision_shape", b2d->forma);
 			ret.setFloat("rotate", b2d->rotacionar);
 			ret.setFloat("triger", b2d->gatilho);
 			ret.setFloat("friction", b2d->atrito);
@@ -1182,7 +1182,7 @@ namespace funcoes_ponte
 				objects_coliding.push_back(ponteiro_string(obj.get()));
 			}
 			ret.setTable("objects_coliding", vString_table(objects_coliding));
-			ret.setTable("colision_layer", info_camada_table(b2d->camada));
+			ret.setTable("collision_layer", info_camada_table(b2d->camada));
 			vector<Table> vertex;
 			for (vec2 v2 : b2d->vertices)
 			{
@@ -1199,11 +1199,11 @@ namespace funcoes_ponte
 			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 			b2d->escala = table_vec2(t.getTable("scale"));
 			b2d->dinamica = t.getFloat("boady_dynamic");
-			b2d->forma = t.getFloat("colision_shape");
+			b2d->forma = t.getFloat("collision_shape");
 			b2d->rotacionar = t.getFloat("rotate");
 			b2d->gatilho = t.getFloat("triger");
 			b2d->atrito = t.getFloat("friction");
-			b2d->camada = table_info_camada(t.getTable("colision_layer"));
+			b2d->camada = table_info_camada(t.getTable("collision_layer"));
 			vector<vec2> vertex;
 			for (Table tvec2 : table_vTable(t.getTable("vertex")))
 			{
@@ -1443,7 +1443,7 @@ namespace funcoes_ponte
 			ret.setFloat("density", bu->densidade);
 
 			vector<string> objects_coliding;
-			for (objeto_jogo *obj : bu_colisions_no_per_object[obj])
+			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
 			{
 				objects_coliding.push_back(ponteiro_string(obj));
 			}

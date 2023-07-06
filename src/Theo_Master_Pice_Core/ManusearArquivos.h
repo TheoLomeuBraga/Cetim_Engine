@@ -331,7 +331,7 @@ namespace ManuseioDados
 							{
 								t.nome = propriedades_json[b]["value"].get<string>();
 							}
-							// else if (name.compare("colision_type") == 0) {
+							// else if (name.compare("collision_type") == 0) {
 							//	t.tipo_colisao = propriedades_json[b]["value"].get<int>();
 							// }
 							// else if (name.compare("visible") == 0) {
