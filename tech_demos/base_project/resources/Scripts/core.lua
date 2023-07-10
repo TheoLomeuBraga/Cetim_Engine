@@ -26,24 +26,17 @@ require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 
---require("adsasdasda")
-
-function set_resolution()
-    window.resolution.x = 720
-    window.resolution.y = 720
-    window:set()
-end
-
 
 
 function START()
     
     print("core iniciando")
-    set_resolution()
+    
+    window.resolution.x = 720
+    window.resolution.y = 720
+    window:set()
     
     global_data:set_var("core_object_ptr",this_object_ptr)
-
-    test_get_scene_3D = get_scene_3D("resources/3D Models/cube.gltf")
 
     
 end
