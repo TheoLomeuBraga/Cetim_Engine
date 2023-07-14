@@ -26,7 +26,11 @@ require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 
+demos = {}
 
+function load_demo(demo_name)
+    demos[tablelength(demos) + 1] = require("tech_demos." .. demo_name)
+end
 
 function START()
     
@@ -38,10 +42,17 @@ function START()
     
     global_data:set_var("core_object_ptr",this_object_ptr)
 
+    for index, value in ipairs(demos) do
+        value:START()
+    end
     
 end
 
 function UPDATE()
+
+    for index, value in ipairs(demos) do
+        value:UPDATE()
+    end
 
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1  then
         window:close()
@@ -52,5 +63,10 @@ function COLLIDE(collision_info)
 end
 
 function END()
+
+    for index, value in ipairs(demos) do
+        value:END()
+    end
+
     window:close()
 end
