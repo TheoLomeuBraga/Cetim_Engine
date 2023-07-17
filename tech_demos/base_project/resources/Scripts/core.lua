@@ -27,6 +27,7 @@ require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 
 require("TMP_libs.short_cuts.create_camera")
+require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.layers_table")
 require("TMP_libs.objects.vectors")
 
@@ -56,6 +57,9 @@ function START()
 
     cam = create_camera_perspective(layers.camera,{x=0,y=0,z=0},{x=0,y=0,z=0},90,0.1,100)
     cam:add_component(components.lua_scripts)
+    cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
+
+
 
     for index, value in ipairs(demos) do
         value:START()
