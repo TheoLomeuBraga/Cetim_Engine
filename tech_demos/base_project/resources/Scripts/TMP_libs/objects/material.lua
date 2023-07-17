@@ -1,4 +1,4 @@
-require("TMP_libs.vectors")
+require("TMP_libs.objects.gravity")
 
 normal_direction = {
     front = 0,

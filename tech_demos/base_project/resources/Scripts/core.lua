@@ -4,7 +4,7 @@ require("TMP_libs.components.component_all")
 require("TMP_libs.components.component_index")
 require("TMP_libs.objects.game_object")
 require("TMP_libs.objects.time")
-require("TMP_libs.layers_table")
+require("TMP_libs.objects.layers_table")
 require("TMP_libs.objects.render_layer")
 
 
@@ -20,11 +20,13 @@ require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
 require("TMP_libs.short_cuts.fps_counter")
 require("TMP_libs.short_cuts.create_render_shader")
-require("TMP_libs.material")
+require("TMP_libs.objects.material")
 require("TMP_libs.objects.window")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
+
+require("TMP_libs.objects.layers_table")
 
 demos = {}
 
@@ -41,6 +43,8 @@ function START()
     window:set()
     
     global_data:set_var("core_object_ptr",this_object_ptr)
+
+    
 
     for index, value in ipairs(demos) do
         value:START()
