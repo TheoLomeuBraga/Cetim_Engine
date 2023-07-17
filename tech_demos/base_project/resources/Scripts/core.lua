@@ -26,9 +26,17 @@ require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 
+require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.objects.layers_table")
+require("TMP_libs.objects.vectors")
+
+cam = {}
+layers = layers_table:new_3D()
+
 
 demos = {}
+
+
 
 function load_demo(demo_name)
     demos[tablelength(demos) + 1] = require("tech_demos." .. demo_name)
@@ -44,7 +52,10 @@ function START()
     
     global_data:set_var("core_object_ptr",this_object_ptr)
 
-    
+    layers:create()
+
+    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=0},{x=0,y=0,z=0},90,0.1,100)
+    cam:add_component(components.lua_scripts)
 
     for index, value in ipairs(demos) do
         value:START()

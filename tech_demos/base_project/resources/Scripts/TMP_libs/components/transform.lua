@@ -1,4 +1,5 @@
 require("TMP_libs.components.component_index")
+require("TMP_libs.objects.vectors")
 
 --transform
 function get_set_transform(get_set,object)
