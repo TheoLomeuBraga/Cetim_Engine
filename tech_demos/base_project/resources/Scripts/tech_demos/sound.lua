@@ -1,3 +1,5 @@
+require("TMP_libs.short_cuts.create_sound")
+require("TMP_libs.short_cuts.create_mesh")
 
 local demo = {}
 

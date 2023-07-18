@@ -15,14 +15,14 @@ json = require("libs.json")
 
 
 require("TMP_libs.short_cuts.load_2D_map")
-require("TMP_libs.short_cuts.create_sound")
-require("TMP_libs.short_cuts.create_mesh")
-require("TMP_libs.short_cuts.fps_counter")
+
+
+
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.material")
 require("TMP_libs.objects.window")
-require("TMP_libs.objects.input")
-require("TMP_libs.objects.scene_3D")
+
+
 
 
 
@@ -73,6 +73,7 @@ function START()
     
 end
 
+require("TMP_libs.objects.input")
 function UPDATE()
 
     for index, value in ipairs(demos) do

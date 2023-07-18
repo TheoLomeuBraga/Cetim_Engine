@@ -1,3 +1,5 @@
+require("TMP_libs.short_cuts.create_mesh")
+require("TMP_libs.objects.scene_3D")
 
 local demo = {}
 
