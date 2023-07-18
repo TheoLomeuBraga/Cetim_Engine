@@ -58,7 +58,7 @@ function START()
 
     layers:create()
 
-    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=0},{x=0,y=0,z=0},90,0.1,100)
+    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,100)
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
 
