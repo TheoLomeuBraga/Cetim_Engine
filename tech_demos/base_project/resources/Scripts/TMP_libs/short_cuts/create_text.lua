@@ -4,7 +4,8 @@ require("TMP_libs.components.transform")
 require("TMP_libs.components.render_text")
 
 function create_text(father,is_ui,pos,rot,sca,material,layer,text,font)
-    ret = game_object:new(father)
+
+    ret = game_object:new(create_object(father))
     ret:add_component(components.transform)
     ret.components[components.transform].is_ui = is_ui
     ret.components[components.transform].position = deepcopy(pos)

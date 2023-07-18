@@ -78,6 +78,10 @@ function START()
 end
 
 require("TMP_libs.objects.input")
+
+keys_pressed = { q = false, e = false}
+keys_pressed_last_frame = { q = false, e = false}
+
 function UPDATE()
 
     demo:UPDATE()
