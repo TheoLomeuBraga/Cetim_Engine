@@ -829,22 +829,13 @@ public:
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
 
-				std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
-				const std::wregex ANSI_WREGEX(L"\\x1B\\[([0-9;]+)m", std::regex_constants::icase | std::regex_constants::ECMAScript);
-				std::unordered_map<int, vec4> ANSI_colors;
-				ANSI_colors[0] = vec4(1, 1, 1, 1);
-				ANSI_colors[31] = vec4(1, 0, 0, 1);
-				ANSI_colors[32] = vec4(0, 1, 0, 1);
-				ANSI_colors[33] = vec4(1, 1, 0, 1);
-				ANSI_colors[34] = vec4(0, 0, 1, 1);
-				ANSI_colors[35] = vec4(1, 0, 1, 1);
-				ANSI_colors[36] = vec4(0, 1, 1, 1);
+				
 				shared_ptr<fonte> font = rt->font;
 
 				if (font != NULL)
 				{
-#define texto rt->texto
-#define lugar_texto tf->matrizTransform
+					#define texto rt->texto
+					#define lugar_texto tf->matrizTransform
 
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
@@ -886,7 +877,7 @@ public:
 							}
 
 							pos_char.x += pos_adi_char.x;
-							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x, altura_linha + (((float)sca_char.y / (float)font->quality)), 0));
+							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)), 0));
 							lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
 
 							// textura

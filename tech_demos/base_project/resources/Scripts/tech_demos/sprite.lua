@@ -1,4 +1,4 @@
-require("TMP_libs.short_cuts.load_2D_map")
+
 
 local demo = {}
 
