@@ -15,7 +15,6 @@ json = require("libs.json")
 
 
 require("TMP_libs.short_cuts.load_2D_map")
-require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.short_cuts.create_mesh")
 require("TMP_libs.short_cuts.fps_counter")
@@ -24,25 +23,29 @@ require("TMP_libs.objects.material")
 require("TMP_libs.objects.window")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.scene_3D")
-require("TMP_libs.objects.global_data")
 
-require("TMP_libs.short_cuts.create_camera")
-require("TMP_libs.short_cuts.create_render_shader")
-require("TMP_libs.objects.layers_table")
-require("TMP_libs.objects.vectors")
 
-cam = {}
-layers = layers_table:new_3D()
+
+
+
+
+
+
 
 
 demos = {}
-
-
-
 function load_demo(demo_name)
     demos[tablelength(demos) + 1] = require("tech_demos." .. demo_name)
 end
 
+
+require("TMP_libs.objects.global_data")
+require("TMP_libs.short_cuts.create_camera")
+require("TMP_libs.short_cuts.create_render_shader")
+require("TMP_libs.objects.layers_table")
+require("TMP_libs.objects.vectors")
+cam = {}
+layers = layers_table:new_3D()
 function START()
     
     print("core iniciando")
@@ -59,10 +62,13 @@ function START()
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
 
-
+    load_demo("text")
+    load_demo("2D")
+    load_demo("3D")
+    load_demo("sound")
 
     for index, value in ipairs(demos) do
-        value:START()
+        value:START(deepcopy(layers))
     end
     
 end
