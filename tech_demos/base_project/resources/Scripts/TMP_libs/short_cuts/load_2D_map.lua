@@ -10,7 +10,7 @@ require("math")
 require("io")
 json = require "libs.json"
 
-function load_2D_map(father,pos,rot,sca,tile_map_path,tile_set_path,tile_set_images_folder,mat)
+function load_2D_map(father,pos,rot,sca,tile_map_path,tile_set_path,mat)
     ret = {tile_map_info={},tile_set_info={},map_object={}}
 
     --tile_map_info
@@ -39,7 +39,6 @@ function load_2D_map(father,pos,rot,sca,tile_map_path,tile_set_path,tile_set_ima
     ret.map_object.components[components.render_tile_map].render_tilemap_only_layer = -1
     ret.map_object.components[components.render_tile_map].tile_map_local = tile_map_path
     ret.map_object.components[components.render_tile_map].tile_set_local = tile_set_path
-    ret.map_object.components[components.render_tile_map].tile_set_image_folder = tile_set_images_folder
     ret.map_object.components[components.render_tile_map].material = deepcopy(mat)
     ret.map_object.components[components.render_tile_map]:set()
 
