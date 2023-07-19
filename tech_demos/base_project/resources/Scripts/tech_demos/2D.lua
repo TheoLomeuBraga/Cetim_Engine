@@ -6,10 +6,16 @@ local demo = {}
 demo.map_data = {}
 demo.map_objects = {}
 
-function demo:load_objects(layer_data)
+function demo:load_objects(layer_data,map_size_pixels)
+    for key, value in pairs(layer_data.objects) do
+        
+    end
 end
 
-function demo:load_collision(layer_data)
+function demo:load_collision(layer_data,map_size_pixels)
+    for key, value in pairs(layer_data.objects) do
+        
+    end
 end
 
 function demo:START(layers)
@@ -22,11 +28,13 @@ function demo:START(layers)
     demo.map_data = deepcopy(data.tile_map_info)
     demo.map_objects = deepcopy(data.map_object)
 
+
+    local map_size_pixels = {x = demo.map_data.width * demo.map_data.tilewidth,y = demo.map_data.height * demo.map_data.tileheight}
     for index, value in pairs(demo.map_data.layers) do
         if value.name == "objects" then
-            demo:load_objects(value)
+            demo:load_objects(value,map_size_pixels)
         elseif value.name == "collision" then
-            demo:load_collision(value)
+            demo:load_collision(value,map_size_pixels)
         end
     end
 

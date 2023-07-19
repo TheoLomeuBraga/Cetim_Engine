@@ -49,10 +49,10 @@ function physics_3D_component:new(object_ptr)
     p.scale = { x = 1, y = 1, z = 1 }
     p.boady_dynamic = boady_dynamics.static
     p.collision_shape = collision_shapes.cube
-    p.rotate_X = true
-    p.rotate_Y = true
-    p.rotate_Z = true
-    p.triger = false
+    p.rotate_X = 1
+    p.rotate_Y = 1
+    p.rotate_Z = 1
+    p.triger = 0
     p.friction = 1
     p.density = 1
     p.collision_layer = collision_layer_info:new()
