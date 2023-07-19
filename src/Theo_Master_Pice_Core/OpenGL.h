@@ -12,12 +12,8 @@
 #include "scene.h"
 #include "LoopPrincipal.h"
 
-
 #include <GL/glew.h>
-//#include <GL/glut.h>
-
-
-
+// #include <GL/glut.h>
 
 #include "game_object.h"
 #include "camera.h"
@@ -733,8 +729,8 @@ public:
 		return ret;
 	}
 
-	void apply_material(unsigned int shader,Material mat){
-		
+	void apply_material(unsigned int shader, Material mat)
+	{
 	}
 
 	void reindenizar_objeto(shared_ptr<objeto_jogo> obj, shared_ptr<objeto_jogo> cam)
@@ -833,13 +829,12 @@ public:
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
 
-				
 				shared_ptr<fonte> font = rt->font;
 
 				if (font != NULL)
 				{
-					#define texto rt->texto
-					#define lugar_texto tf->matrizTransform
+#define texto rt->texto
+#define lugar_texto tf->matrizTransform
 
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
@@ -960,19 +955,47 @@ public:
 						for (int b = 0; b < rtm->map_info->res.x; b++)
 						{
 
-							// otimizar
-							bool visivel = true;
-							ivec3 local_tile_selecionado = vec3(b, 0, 0) * vec3(2, 0, 0);
-							mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado);
-							vec3 pos_tela = ca->matrizProjecao * ca->matrizVisao * mat_tile * vec4(0, 0, 0, 1);
-
-							float tacha_erro = 1.5f;
-							if (pos_tela.x < -tacha_erro || pos_tela.x > tacha_erro)
+							if (cam->pegar_componente<camera>()->ortografica)
 							{
-								visivel = false;
-							}
 
-							if (visivel)
+								// otimizar
+								bool visivel = true;
+								ivec3 local_tile_selecionado = vec3(b, 0, 0) * vec3(2, 0, 0);
+								mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado);
+								vec3 pos_tela = ca->matrizProjecao * ca->matrizVisao * mat_tile * vec4(0, 0, 0, 1);
+
+								float tacha_erro = 1.5f;
+								if (pos_tela.x < -tacha_erro || pos_tela.x > tacha_erro)
+								{
+									visivel = false;
+								}
+
+								if (visivel)
+								{
+									// para cada tile Y
+									for (int c = 0; c < rtm->map_info->res.y; c++)
+									{
+										int tile_id = rtm->map_info->info[a][(c * rtm->map_info->res.x) + b];
+
+										if (tile_id != 0)
+										{
+											ivec3 local_tile_selecionado = vec3(b, c, a);
+											mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(2, -2, -0.001));
+											ivec2 quant_t = rtm->tiles->quant_tiles;
+											ivec2 tile_selecionado((tile_id % quant_t.x) - 1, (float)(int)tile_id / quant_t.x);
+
+											glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"),
+														(float)(tile_selecionado.x) / quant_t.x,
+														(float)(tile_selecionado.y) / quant_t.y,
+														(float)1 / quant_t.x,
+														(float)1 / quant_t.y);
+											glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &mat_tile[0][0]);
+											glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+										}
+									}
+								}
+							}
+							else
 							{
 								// para cada tile Y
 								for (int c = 0; c < rtm->map_info->res.y; c++)
@@ -1149,8 +1172,7 @@ public:
 						// reindenizar malha
 						// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
 
-						
-						//switch (RM->lado_render)
+						// switch (RM->lado_render)
 						switch (RM->mats[i].lado_render)
 						{
 						case lado_render_malha::both:
