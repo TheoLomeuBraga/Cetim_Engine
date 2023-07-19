@@ -2113,7 +2113,7 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 	pair<string, void (*)(objeto_jogo *, bool)>("camera", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<camera>(camera());}else{obj->remover_componente<camera>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_text", [](objeto_jogo *obj, bool add)
-												{if(add){obj->adicionar_componente<render_texto>(render_texto()); print({"render_texto adicionado"});}else{obj->remover_componente<render_texto>();} }),
+												{if(add){obj->adicionar_componente<render_texto>(render_texto());}else{obj->remover_componente<render_texto>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_sprite", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<render_sprite>(render_sprite());}else{obj->remover_componente<render_sprite>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_shader", [](objeto_jogo *obj, bool add)

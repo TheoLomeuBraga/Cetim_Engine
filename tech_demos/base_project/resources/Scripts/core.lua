@@ -55,12 +55,11 @@ function load_demo(demo_name)
     demo = nil
 
     demo = require("tech_demos." .. demo_name)
+    print(demo_name)
     demo:START(layers)
 end
 
 function START()
-    
-    print("core iniciando")
     
     window.resolution.x = 720
     window.resolution.y = 720
@@ -108,14 +107,12 @@ function UPDATE()
     keys_pressed.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
     keys_pressed.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
 
-    if keys_pressed.q == 1 and keys_pressed_last_frame.q ~= 0 then
+    if keys_pressed.q == 1 and keys_pressed_last_frame.q == 0 then
         previous_demo()
-        print("q")
     end
 
-    if keys_pressed.e == 1 and keys_pressed_last_frame.e ~= 0 then
+    if keys_pressed.e == 1 and keys_pressed_last_frame.e == 0 then
         next_demo()
-        print("e")
     end
 
     keys_pressed_last_frame.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])

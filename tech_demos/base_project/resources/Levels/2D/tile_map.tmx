@@ -1,83 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="143">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="154">
+ <editorsettings>
+  <export target="tile_map.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" source="tile_set.tsx"/>
- <objectgroup id="2" name="collision" offsetx="7.625" offsety="1.875">
-  <object id="1" x="0" y="0" width="512" height="16"/>
-  <object id="4" x="496" y="16" width="16" height="496"/>
-  <object id="5" x="0" y="496" width="496" height="16"/>
-  <object id="6" x="0" y="16" width="16" height="480"/>
-  <object id="118" name="box" x="323.542" y="262.958">
-   <point/>
-  </object>
-  <object id="119" name="box" x="371.542" y="262.958">
-   <point/>
-  </object>
-  <object id="120" name="box" x="355.542" y="262.958">
-   <point/>
-  </object>
-  <object id="121" name="box" x="339.542" y="246.958">
-   <point/>
-  </object>
-  <object id="122" name="sphere" x="371.542" y="246.958">
-   <point/>
-  </object>
-  <object id="123" name="sphere" x="339.542" y="230.958">
-   <point/>
-  </object>
-  <object id="124" name="sphere" x="355.542" y="230.958">
-   <point/>
-  </object>
-  <object id="125" name="sphere" x="346.042" y="214.958">
-   <point/>
-  </object>
-  <object id="126" name="box" x="377.792" y="196.458">
-   <point/>
-  </object>
-  <object id="127" name="box" x="425.792" y="196.458">
-   <point/>
-  </object>
-  <object id="128" name="box" x="409.792" y="196.458">
-   <point/>
-  </object>
-  <object id="129" name="box" x="393.792" y="180.458">
-   <point/>
-  </object>
-  <object id="130" name="sphere" x="425.792" y="180.458">
-   <point/>
-  </object>
-  <object id="131" name="sphere" x="393.792" y="164.458">
-   <point/>
-  </object>
-  <object id="132" name="sphere" x="409.792" y="164.458">
-   <point/>
-  </object>
-  <object id="133" name="sphere" x="400.292" y="148.458">
-   <point/>
-  </object>
-  <object id="134" name="box" x="266.542" y="145.458">
-   <point/>
-  </object>
-  <object id="135" name="box" x="314.542" y="145.458">
-   <point/>
-  </object>
-  <object id="136" name="box" x="298.542" y="145.458">
-   <point/>
-  </object>
-  <object id="137" name="box" x="282.542" y="129.458">
-   <point/>
-  </object>
-  <object id="138" name="sphere" x="314.542" y="129.458">
-   <point/>
-  </object>
-  <object id="139" name="sphere" x="282.542" y="113.458">
-   <point/>
-  </object>
-  <object id="140" name="sphere" x="298.542" y="113.458">
-   <point/>
-  </object>
-  <object id="141" name="sphere" x="289.042" y="97.4583">
-   <point/>
-  </object>
+ <objectgroup id="4" name="collision">
+  <object id="148" x="0" y="0" width="16" height="512"/>
+  <object id="149" x="16" y="0" width="496" height="16"/>
+  <object id="150" x="496" y="16" width="16" height="496"/>
+  <object id="151" x="16" y="496" width="480" height="16"/>
+  <object id="153" x="48" y="176" width="112" height="16"/>
  </objectgroup>
  <objectgroup id="3" name="objects">
   <object id="22" name="box" x="174" y="451.5">
