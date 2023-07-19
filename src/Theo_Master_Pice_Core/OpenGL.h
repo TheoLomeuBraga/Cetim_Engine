@@ -605,13 +605,12 @@ public:
 		}
 		fontes.erase(f);
 		
-		
 		for (pair<wchar_t, unsigned char *> bm : charters_bitmaps[f])
 		{
 			delete[] bm.second;
 		}
 		charters_bitmaps.erase(f);
-		
+
 	}
 
 	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
