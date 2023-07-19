@@ -76,7 +76,6 @@ public:
 
 	void adicionar_objeto_lista(shared_ptr<objeto_jogo> obj)
 	{
-		int render_texts = 0;
 		if (obj != NULL)
 		{
 			obj->remove_childrens_to_remove();
@@ -191,7 +190,6 @@ public:
 				}
 			}
 		}
-		print({"render_texts",render_texts});
 	}
 
 	shared_ptr<objeto_jogo> pegar_objeto_nome(string n)

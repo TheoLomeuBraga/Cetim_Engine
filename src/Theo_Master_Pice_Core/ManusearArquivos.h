@@ -271,10 +271,9 @@ namespace ManuseioDados
 	}
 
 	mapeamento_assets<tile_set> mapeamento_tilesets;
-	// remover pasta_imagems
 	shared_ptr<tile_set> carregar_tile_set(string local)
 	{
-		string pasta_imagems = pegar_pasta_arquivo(local);
+		//string pasta_imagems = pegar_pasta_arquivo(local);
 		if (Existe(local.c_str()))
 		{
 			if (mapeamento_tilesets.pegar(local).get() == NULL)
@@ -289,7 +288,8 @@ namespace ManuseioDados
 
 				if (j.find("image") != j.end())
 				{
-					ret.local_imagem = pasta_imagems + j["image"].get<string>();
+					//ret.local_imagem = pasta_imagems + j["image"].get<string>();
+					ret.local_imagem = j["image"].get<string>();
 					ret.tiles_img = carregar_Imagem(ret.local_imagem);
 				}
 				else

@@ -733,6 +733,10 @@ public:
 		return ret;
 	}
 
+	void apply_material(unsigned int shader,Material mat){
+		
+	}
+
 	void reindenizar_objeto(shared_ptr<objeto_jogo> obj, shared_ptr<objeto_jogo> cam)
 	{
 

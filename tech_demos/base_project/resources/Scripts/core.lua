@@ -45,7 +45,8 @@ require("TMP_libs.objects.vectors")
 cam = {}
 layers = layers_table:new_3D()
 
-demos_list = {"text","2D","3D","sound","sprite"}
+demo_selected = 1
+demos_list = {"text","2D","3D","sound"}
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
@@ -73,8 +74,26 @@ function START()
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
 
-    load_demo(demos_list[1])
+    load_demo(demos_list[demo_selected])
     
+end
+
+
+
+function next_demo()
+    demo_selected = demo_selected + 1
+    if demo_selected > tablelength(demos_list) then
+        demo_selected = 1
+    end
+    load_demo(demos_list[demo_selected])
+end
+
+function previous_demo()
+    demo_selected = demo_selected - 1
+    if demo_selected < 1 then
+        demo_selected = tablelength(demos_list)
+    end
+    load_demo(demos_list[demo_selected])
 end
 
 require("TMP_libs.objects.input")
@@ -86,12 +105,26 @@ function UPDATE()
 
     demo:UPDATE()
 
-    keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
-    keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
+    keys_pressed.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
+    keys_pressed.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
+
+    if keys_pressed.q == 1 and keys_pressed_last_frame.q ~= 0 then
+        previous_demo()
+        print("q")
+    end
+
+    if keys_pressed.e == 1 and keys_pressed_last_frame.e ~= 0 then
+        next_demo()
+        print("e")
+    end
+
+    keys_pressed_last_frame.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
+    keys_pressed_last_frame.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
 
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1  then
         window:close()
     end
+
 end
 
 function COLLIDE(collision_info)
