@@ -12,7 +12,7 @@ function demo:UPDATE()
 end
 
 function demo:END()
-    
+    clear_memory()
 end
 
 return demo

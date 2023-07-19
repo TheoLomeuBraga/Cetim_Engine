@@ -32,8 +32,12 @@ using json = nlohmann::json;
 #define ANIMATION_FPS_COUNT 20
 #include "read_gltf_file.h"
 
+
+
 namespace ManuseioDados
 {
+
+	unsigned int loading_requests = 0;
 
 	string diretorio;
 
@@ -185,7 +189,9 @@ namespace ManuseioDados
 
 	void carregar_fonte_thread(string local, shared_ptr<fonte> *ret)
 	{
+		loading_requests++;
 		*ret = carregar_fonte(local);
+		loading_requests-=1;
 	}
 
 	mapeamento_assets<imagem> mapeamento_imagems;
@@ -230,7 +236,9 @@ namespace ManuseioDados
 
 	void carregar_Imagem_thread(string local, shared_ptr<imagem> *ret)
 	{
+		loading_requests++;
 		*ret = carregar_Imagem(local);
+		loading_requests-=1;
 	}
 
 	void salvar_imagem(unsigned char *data, ivec2 res, int canais, string local)
@@ -370,7 +378,9 @@ namespace ManuseioDados
 
 	void carregar_tile_set_thread(string local, shared_ptr<tile_set> *ret)
 	{
+		loading_requests++;
 		*ret = carregar_tile_set(local);
+		loading_requests-=1;
 	}
 
 	mapeamento_assets<tile_map_info> mapeamento_tile_map_infos;
@@ -431,15 +441,12 @@ namespace ManuseioDados
 
 	void carregar_info_tile_map_thread(string local, shared_ptr<tile_map_info> *ret)
 	{
+		loading_requests++;
 		*ret = carregar_info_tile_map(local);
+		loading_requests-=1;
 	}
 
-	// https://github.com/Biendeo/Doom-WAD-Reader
-	// https://github.com/id-Software/DOOM/tree/master/linuxdoom-1.10
-
 	mapeamento_assets<cena_3D> cenas_3D;
-
-	// http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
 
 	vec3 decode_obj_f(string s)
 	{
@@ -607,7 +614,9 @@ namespace ManuseioDados
 
 	void importar_obj_thread(string local, string local_mtl, shared_ptr<cena_3D> *ret)
 	{
+		loading_requests++;
 		*ret = importar_obj(local);
+		loading_requests-=1;
 	}
 
 	json table_json(Table table)
@@ -725,7 +734,9 @@ namespace ManuseioDados
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
 	{
+		loading_requests++;
 		*ret = importar_map(local);
+		loading_requests-=1;
 	}
 
 	malha converter_malha_gltf(gltf_loader::Mesh m, string file_path)
@@ -907,7 +918,9 @@ namespace ManuseioDados
 	}
 	void importar_gltf_thread(string local, shared_ptr<cena_3D> *ret)
 	{
+		loading_requests++;
 		*ret = importar_gltf(local);
+		loading_requests-=1;
 	}
 
 	// arquivo_origem

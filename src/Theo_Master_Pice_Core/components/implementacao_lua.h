@@ -31,6 +31,8 @@ using namespace Tempo;
 const int get_lua = 0;
 const int set_lua = 1;
 
+bool parallel_loading = false;
+
 bool isNumber(const std::string &str)
 {
 	std::istringstream iss(str);
@@ -518,6 +520,26 @@ namespace funcoes_ponte
 		ManuseioDados::mapeamento_tile_map_infos.limpar_lixo();
 		ManuseioDados::cenas_3D.limpar_lixo();
 		mapeamento_scripts_lua.limpar_lixo();
+		return 0;
+	}
+
+	
+	int get_set_parallel_loading(lua_State *L)
+	{
+		if (lua_tonumber(L, 1) == get_lua)
+		{
+			lua_pushboolean(L, parallel_loading);
+			return 1;
+		}
+		else
+		{
+			parallel_loading = lua_toboolean(L,2);
+			return 0;
+		}
+	}
+
+	int loading_requests_number(lua_State *L){
+		lua_pushnumber(L,ManuseioDados::loading_requests);
 		return 0;
 	}
 
@@ -1605,6 +1627,10 @@ namespace funcoes_ponte
 
 		// memoria
 		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
+		pair<string, lua_function>("get_set_parallel_loading", funcoes_ponte::get_set_parallel_loading),
+		
+		pair<string, lua_function>("loading_requests_number", funcoes_ponte::loading_requests_number),
+		
 
 		// objeto
 		pair<string, lua_function>("create_object", funcoes_ponte::create_object),

@@ -83,6 +83,12 @@ end
 function clear_memory()
 end
 
+function loading_requests_number()
+end
+
+function get_set_parallel_loading(get_set,value)
+end
+
 function asset_is_load(asset_type, path)
 end
 

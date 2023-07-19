@@ -26,6 +26,7 @@ function demo:END()
     remove_object(demo.text1.object_ptr)
     remove_object(demo.text2.object_ptr)
     remove_object(demo.text3.object_ptr)
+    clear_memory()
 end
 
 return demo
