@@ -6,6 +6,12 @@ local demo = {}
 demo.map_data = {}
 demo.map_objects = {}
 
+function demo:load_objects(layer_data)
+end
+
+function demo:load_collision(layer_data)
+end
+
 function demo:START(layers)
 
     --"resources/Levels/2D/tile_map.json"
@@ -13,9 +19,16 @@ function demo:START(layers)
     mat.shader = "resources/Shaders/sprite"
     mat.color = {r=0,g=0,b=1,a=1}
     local data = load_2D_map(layers.cenary,{x=0,y=0,z=0},{x=0,y=0,z=0},{x=1,y=1,z=1},"resources/Levels/2D/tile_map.json","resources/Levels/2D/tile_set.json",mat)
-    demo.map_data = deepcopy(data.tile_set_info)
+    demo.map_data = deepcopy(data.tile_map_info)
     demo.map_objects = deepcopy(data.map_object)
 
+    for index, value in pairs(demo.map_data.layers) do
+        if value.name == "objects" then
+            demo:load_objects(value)
+        elseif value.name == "collision" then
+            demo:load_collision(value)
+        end
+    end
 
 end
 
@@ -24,6 +37,7 @@ function demo:UPDATE()
 end
 
 function demo:END()
+    remove_object(demo.map_objects.object_ptr)
     clear_memory()
 end
 

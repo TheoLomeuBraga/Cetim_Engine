@@ -598,28 +598,20 @@ public:
 
 	void remover_fonte(fonte *f)
 	{
-		/*
-		if(fontes.find(f) != fontes.end())
-		for (int i = 0; i < NUM_CARACTERES; i++) {
-			glDeleteTextures(1, &fontes[f][i]);
-			delete[] fontes[f];
-			delete[] fontes_data[f][i];
 
-			fontes.erase(f);
-			fontes_data.erase(f);
-		}
-		map<fonte*,  map<wchar_t,unsigned char*>> charters_bitmaps
-		*/
 		for (pair<wchar_t, unsigned int> wc_ui : fontes[f])
 		{
 			glDeleteTextures(1, &wc_ui.second);
-			fontes.erase(f);
 		}
+		fontes.erase(f);
+		
+		
 		for (pair<wchar_t, unsigned char *> bm : charters_bitmaps[f])
 		{
 			delete[] bm.second;
-			charters_bitmaps.erase(f);
 		}
+		charters_bitmaps.erase(f);
+		
 	}
 
 	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/

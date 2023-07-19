@@ -513,12 +513,19 @@ namespace funcoes_ponte
 	// memory
 	int clear_memory(lua_State *L)
 	{
+		print({"buffers_som_sfml"});
 		buffers_som_sfml.limpar_lixo();
+		print({"mapeamento_fontes"});
 		ManuseioDados::mapeamento_fontes.limpar_lixo();
+		print({"mapeamento_imagems"});
 		ManuseioDados::mapeamento_imagems.limpar_lixo();
+		print({"mapeamento_tilesets"});
 		ManuseioDados::mapeamento_tilesets.limpar_lixo();
+		print({"mapeamento_tile_map_infos"});
 		ManuseioDados::mapeamento_tile_map_infos.limpar_lixo();
+		print({"cenas_3D"});
 		ManuseioDados::cenas_3D.limpar_lixo();
+		print({"mapeamento_scripts_lua"});
 		mapeamento_scripts_lua.limpar_lixo();
 		return 0;
 	}

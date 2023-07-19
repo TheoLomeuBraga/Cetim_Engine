@@ -337,13 +337,10 @@ public:
 	bool pixel_perfect;
 	std::map<wchar_t, caractere_info> chars;
 
-	void deletar()
-	{
-		remover_fonte(this);
-	}
 	~fonte()
 	{
-		deletar();
+		
+		remover_fonte(this);
 	}
 };
 
