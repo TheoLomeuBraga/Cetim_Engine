@@ -4,6 +4,7 @@ require("TMP_libs.components.transform")
 require("TMP_libs.components.render_mesh")
 require("TMP_libs.components.physics_3D")
 require("TMP_libs.components.physics_2D")
+require("TMP_libs.objects.collision_shapes")
 
 
 function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_mesh,triger)
@@ -34,7 +35,7 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     return ret
 end
 
-function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,triger)
+function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_data,triger)
     ret = game_object:new(create_object(father))
 
     ret:add_component(components.transform)
@@ -43,8 +44,22 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,triger)
     ret.components[components.transform].scale = deepcopy(sca)
     ret.components[components.transform]:set()
 
-    
-    
+    ret:add_component(components.physics_2D)
+
+    ret.components[components.physics_2D].scale = {x = sca.x,y = sca.y}
+    if rigid_boady then
+        ret.components[components.physics_2D].boady_dynamic = boady_dynamics.dynamic
+    else
+        ret.components[components.physics_2D].boady_dynamic = boady_dynamics.static
+    end
+    ret.components[components.physics_2D].collision_shape = shape
+    if shape == collision_shapes.convex then
+        ret.components[components.physics_2D].vertex = deepcopyjson(vertex_data)
+    end
+    ret.components[components.physics_2D].triger = triger
+
+
+    ret.components[components.physics_2D]:set()
     
     return ret
 end

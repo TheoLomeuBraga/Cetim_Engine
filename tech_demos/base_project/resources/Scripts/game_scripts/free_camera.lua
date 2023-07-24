@@ -4,15 +4,14 @@ require("TMP_libs.components.component_index")
 require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.time")
-require("TMP_libs.objects.window")
 require("TMP_libs.objects.global_data")
-
+require("TMP_libs.objects.window")
 require("math")
 
-this_object = {}
+local this_object = {}
 
-base_sensivity = 120
-base_speed = 7
+local base_sensivity = 120
+local base_speed = 7
 local speed_multplier = 4
 
 local mouse_move = { x = 0, y = 0 }
@@ -21,7 +20,11 @@ local mouse_move_this_frame = { x = 0, y = 0 }
 local current_pos = { x = 0, y = 0, z = 0 }
 local current_rot = { x = 0, y = 0 }
 
+local is_free = false
+
 function START()
+    global_data:set_var("camera_object_ptr",this_object_ptr)
+
     this_object = game_object:new(this_object_ptr)
 
     this_object.components[components.transform]:get()
@@ -50,17 +53,21 @@ function run_rotation()
         y = mouse_move_this_frame.y - 0.5,
     }
 
+    --[[
     if keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.scroll_button]) == 1 then
         current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
         current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
-
         current_rot.y = math.max(-90, math.min(90, current_rot.y))
-
         this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
-
-
         keys_axis:set_cursor_position(screan_center.x, screan_center.y)
     end
+    ]]
+    current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
+    current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
+    current_rot.y = math.max(-90, math.min(90, current_rot.y))
+    this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
+    keys_axis:set_cursor_position(screan_center.x, screan_center.y)
+
 end
 
 function run_movement()
@@ -133,14 +140,30 @@ function full_screen_toogle()
     zero_pressed_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard[0]])
 end
 
+
+local scroll_button_pressed = 0
+local scroll_button_pressed_last_frame = 0
+function get_is_free()
+    scroll_button_pressed = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.scroll_button])
+
+    if scroll_button_pressed == 1 and scroll_button_pressed_last_frame == 0 then
+        is_free = not is_free
+    end
+
+    scroll_button_pressed_last_frame = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.scroll_button])
+end
+
 function UPDATE()
     time:get()
 
+    get_is_free()
 
-
-    run_rotation()
-    run_movement()
-    full_screen_toogle()
+    if is_free then
+        run_rotation()
+        run_movement()
+        full_screen_toogle()
+    end
+    
 end
 
 function COLLIDE(collision_info)

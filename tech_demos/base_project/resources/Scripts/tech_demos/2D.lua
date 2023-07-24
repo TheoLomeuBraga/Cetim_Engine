@@ -14,7 +14,7 @@ end
 
 function demo:load_collision(layer_data,map_size_pixels)
     for key, value in pairs(layer_data.objects) do
-        
+        --create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_data,triger)
     end
 end
 
