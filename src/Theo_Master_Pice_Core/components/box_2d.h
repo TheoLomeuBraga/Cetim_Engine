@@ -12,41 +12,44 @@ int32 iteracao_posicao = 2;
 float passo_tempo;
 float ultimo_tempo;
 
-static b2Vec2 converter(vec3 v)
+static b2Vec2 converter_b2D(vec3 v)
 {
 	return b2Vec2(v.x, v.y);
 }
-static b2Vec2 converter(vec2 v)
+static b2Vec2 converter_b2D(vec2 v)
 {
 	return b2Vec2(v.x, v.y);
 }
-vector<b2Vec2> converter(vector<vec2> vs)
+vector<b2Vec2> converter_b2D(vector<vec2> vs)
 {
+	
 	vector<b2Vec2> ret;
-	ret.resize(vs.size());
+	//ret.resize(vs.size());
 
 	for (int i = 0; i < vs.size(); i++)
 	{
-		ret[i] = converter(vs[i]);
+		ret.push_back(converter_b2D(vs[i]));
+		//print({"b2Vec2",vs[i].x,vs[i].y});
 	}
 
 	return ret;
 }
-vector<b2Vec2> converter(vector<vec2> vs, vec2 escala)
+vector<b2Vec2> converter_b2D(vector<vec2> vs, vec2 escala)
 {
 	vector<b2Vec2> ret;
-	ret.resize(vs.size());
+	//ret.resize(vs.size());
 
 	for (int i = 0; i < vs.size(); i++)
 	{
 		b2Vec2 b2v = b2Vec2(vs[i].x * escala.x, vs[i].y * escala.y);
-		ret[i] = b2v;
+		ret.push_back(b2v);
+		//print({"b2Vec2",ret[i].x,ret[i].y});
 	}
 
 	return ret;
 }
 
-b2World mundo(converter(gravidade));
+b2World mundo(converter_b2D(gravidade));
 
 map<b2Body *, shared_ptr<objeto_jogo>> corpo_obj;
 
@@ -157,7 +160,7 @@ public:
 		}
 		if (esse_objeto->pegar_componente<transform_>() != NULL)
 		{
-			BodyDef.position = converter(esse_objeto->pegar_componente<transform_>()->pegar_pos_global());
+			BodyDef.position = converter_b2D(esse_objeto->pegar_componente<transform_>()->pegar_pos_global());
 			vec3 rot = glm::radians(quat_graus(esse_objeto->pegar_componente<transform_>()->pegar_graus_global()));
 			BodyDef.angle = rot.z;
 		}
@@ -179,12 +182,14 @@ public:
 		{
 			if (esse_objeto->pegar_componente<transform_>() != NULL)
 			{
-				vertices_B2 = converter(vertices, escala);
-				Vertex_shape.Set(&vertices_B2[0], vertices_B2.size());
+				vertices_B2 = converter_b2D(vertices, escala);
+				vertices_B2.pop_back();
+				Vertex_shape.Set(&vertices_B2[0], 8);
 			}
 			else
 			{
-				vertices_B2 = converter(vertices);
+				vertices_B2 = converter_b2D(vertices);
+				vertices_B2.pop_back();
 				Vertex_shape.Set(&vertices_B2[0], vertices_B2.size());
 			}
 			fixtureDef.shape = &Vertex_shape;
@@ -422,7 +427,7 @@ void atualisar_global_box2D()
 		box_2D_iniciado = true;
 	}
 
-	mundo.SetGravity(converter(gravidade));
+	mundo.SetGravity(converter_b2D(gravidade));
 
 	passo_tempo = (Tempo::tempo - ultimo_tempo) * Tempo::velocidadeTempo;
 	// mundo.Step(passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);

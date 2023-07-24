@@ -40,6 +40,16 @@ function demo:load_collision(layer_data,tile_size_pixels)
         local shape = collision_shapes.tiled_volume
         local vertex_data = {}
 
+        if value.polyline ~= nil then
+            local i = 1
+            shape = collision_shapes.convex
+            for index, value in ipairs(value.polyline) do
+                vertex_data[i] = {x = value.x / tile_size_pixels.x, y = -value.y / tile_size_pixels.y}
+                --print("vertex_data[",i,"]",vertex_data[i].x,vertex_data[i].y)
+                i = i + 1
+            end
+        end
+
         local pos = Vec3:new(value.x / tile_size_pixels.x,-value.y / tile_size_pixels.y,0)
         local rot = Vec3:new(value.rotation,0,0)
         local sca = Vec3:new(value.width / tile_size_pixels.x,value.height / tile_size_pixels.y,1)
