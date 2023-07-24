@@ -20,7 +20,7 @@ local mouse_move_this_frame = { x = 0, y = 0 }
 local current_pos = { x = 0, y = 0, z = 0 }
 local current_rot = { x = 0, y = 0 }
 
-local is_free = false
+is_free = false
 
 function START()
     global_data:set_var("camera_object_ptr",this_object_ptr)
