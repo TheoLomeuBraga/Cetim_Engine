@@ -1,4 +1,6 @@
 require("TMP_libs.short_cuts.load_2D_map")
+require("TMP_libs.short_cuts.create_collision")
+require("TMP_libs.components.render_sprite")
 
 json = require("libs.json")
 
@@ -8,13 +10,44 @@ demo.map_objects = {}
 
 function demo:load_objects(layer_data,map_size_pixels)
     for key, value in pairs(layer_data.objects) do
-        
+
+        local selected_tile = 1
+        local shape = collision_shapes.box
+        local vertex_data = {}
+
+        local pos = Vec3:new(0,0,0)
+        local rot = Vec3:new(0,0,0)
+        local sca = Vec3:new(1,1,1)
+
+
+
+        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, true,shape,vertex_data,false)
+        local mat  = matreial:new()
+        mat.shader = "resources/Shaders/sprite"
+        obj:add_component(components.render_sprite)
+        obj.components[components.render_sprite].material = deepcopy(mat)
+        obj.components[components.render_sprite].layer = 2
+        obj.components[components.render_sprite].selected_tile = selected_tile
+        obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
+        obj.components[components.render_sprite]:set()
+
     end
 end
 
 function demo:load_collision(layer_data,map_size_pixels)
     for key, value in pairs(layer_data.objects) do
-        --create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_data,triger)
+
+        local shape = collision_shapes.box
+        local vertex_data = {}
+
+        local pos = Vec3:new(0,0,0)
+        local rot = Vec3:new(0,0,0)
+        local sca = Vec3:new(1,1,1)
+
+        
+
+        create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, false,shape,vertex_data,false)
+
     end
 end
 
@@ -23,7 +56,7 @@ function demo:START(layers)
     --"resources/Levels/2D/tile_map.json"
     local mat = matreial:new()
     mat.shader = "resources/Shaders/sprite"
-    mat.color = {r=0,g=0,b=1,a=1}
+    mat.color = {r=0,g=1,b=0,a=1}
     local data = load_2D_map(layers.cenary,{x=0,y=0,z=0},{x=0,y=0,z=0},{x=1,y=1,z=1},"resources/Levels/2D/tile_map.json","resources/Levels/2D/tile_set.json",mat)
     demo.map_data = deepcopy(data.tile_map_info)
     demo.map_objects = deepcopy(data.map_object)

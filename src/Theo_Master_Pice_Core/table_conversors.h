@@ -195,17 +195,17 @@ Table material_table(Material m)
     t.setFloat("normal_direction", (float)m.lado_render);
 
     Table color;
-    color.setFloat("r", m.cor.r);
-    color.setFloat("g", m.cor.g);
-    color.setFloat("b", m.cor.b);
-    color.setFloat("a", m.cor.a);
+    color.setFloat("r", m.cor.x);
+    color.setFloat("g", m.cor.y);
+    color.setFloat("b", m.cor.z);
+    color.setFloat("a", m.cor.w);
     t.setTable("color", color);
 
     Table position_scale;
-    position_scale.setFloat("x", m.cor.r);
-    position_scale.setFloat("y", m.cor.g);
-    position_scale.setFloat("z", m.cor.b);
-    position_scale.setFloat("w", m.cor.a);
+    position_scale.setFloat("x", m.uv_pos_sca.r);
+    position_scale.setFloat("y", m.uv_pos_sca.g);
+    position_scale.setFloat("z", m.uv_pos_sca.b);
+    position_scale.setFloat("w", m.uv_pos_sca.a);
     t.setTable("position_scale", position_scale);
 
     t.setFloat("metallic", m.metalico);

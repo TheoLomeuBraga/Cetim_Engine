@@ -3,7 +3,7 @@ uniform sampler2D texturas[6];
 uniform sampler2D post_procesing_render_input[6];
 uniform float inputs[16];
 uniform vec4 color;
-uniform float gama,time;
+uniform float gama,time,metallic,softness;
 uniform bool ui;
 uniform mat4 projection,vision,transform;
 uniform vec4 uv_position_scale;

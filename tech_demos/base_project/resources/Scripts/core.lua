@@ -8,33 +8,12 @@ require("TMP_libs.objects.time")
 require("TMP_libs.objects.layers_table")
 require("TMP_libs.objects.render_layer")
 
-
-
-
 require("math")
 json = require("libs.json")
-
-
-
-
-
 
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.material")
 require("TMP_libs.objects.window")
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 require("TMP_libs.objects.global_data")
 require("TMP_libs.short_cuts.create_camera")
@@ -46,7 +25,7 @@ cam = {}
 layers = layers_table:new_3D()
 
 demo_selected = 1
-demos_list = {"text","2D","3D","sound"}
+demos_list = {"text","2D","3D"}
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then

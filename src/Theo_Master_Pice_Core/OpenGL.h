@@ -604,13 +604,12 @@ public:
 			glDeleteTextures(1, &wc_ui.second);
 		}
 		fontes.erase(f);
-		
+
 		for (pair<wchar_t, unsigned char *> bm : charters_bitmaps[f])
 		{
 			delete[] bm.second;
 		}
 		charters_bitmaps.erase(f);
-
 	}
 
 	// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
@@ -720,8 +719,38 @@ public:
 		return ret;
 	}
 
-	void apply_material(unsigned int shader, Material mat)
+	void apply_material(unsigned int shader_s, Material mat)
 	{
+		glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
+		glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
+		glUniform1f(glGetUniformLocation(shader_s, "softness"), mat.suave);
+		glUniform1f(glGetUniformLocation(shader_s, "metallic"), mat.metalico);
+
+		// texturas
+		for (int i = 0; i < NO_TEXTURAS; i++)
+		{
+			if (mat.texturas[i] != NULL)
+			{
+				ogl_adicionar_textura(mat.texturas[i].get());
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
+				string nome_veriavel = string("textures[") + to_string(i) + string("]");
+				glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
+			}
+		}
+
+		// input
+		for (int i = 0; i < NO_INPUTS; i++)
+		{
+			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
+			glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), mat.inputs[i]);
+		}
+
+		// cor
+		glUniform4f(glGetUniformLocation(shader_s, "color"), mat.cor.x, mat.cor.y, mat.cor.z, mat.cor.w);
+
+		// uv
+		glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), mat.uv_pos_sca.x, mat.uv_pos_sca.y, mat.uv_pos_sca.z, mat.uv_pos_sca.w);
 	}
 
 	void reindenizar_objeto(shared_ptr<objeto_jogo> obj, shared_ptr<objeto_jogo> cam)
@@ -924,8 +953,8 @@ public:
 				// cor
 				glUniform4f(glGetUniformLocation(shader_s, "color"),
 							rtm->mat.cor.x,
-							rtm->mat.cor.z,
 							rtm->mat.cor.y,
+							rtm->mat.cor.z,
 							rtm->mat.cor.w);
 
 				vector<vec3> vertices_visao_render_tile_map = {
