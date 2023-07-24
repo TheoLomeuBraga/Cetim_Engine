@@ -51,24 +51,24 @@ b2World mundo(converter(gravidade));
 map<b2Body *, shared_ptr<objeto_jogo>> corpo_obj;
 
 b2Vec2 tile_vertex[] = {
-	b2Vec2(0, 1.01),
-	b2Vec2(1, 1),
-	b2Vec2(1.01, 0),
-	b2Vec2(1, -1),
-	b2Vec2(0, -1.01),
-	b2Vec2(-1, -1),
+	b2Vec2(0, 0.51),
+	b2Vec2(0.5, 0.5),
+	b2Vec2(0.51, 0),
+	b2Vec2(0.5, -0.5),
+	b2Vec2(0, -0.51),
+	b2Vec2(-0.5, -0.5),
 	b2Vec2(0, 0),
-	b2Vec2(-1, 1),
+	b2Vec2(-0.5, 0.5),
 };
 b2Vec2 tile_vertex2[] = {
-	b2Vec2(0, 1.01),
-	b2Vec2(1, 1),
-	b2Vec2(1.01, 0),
-	b2Vec2(1, -1),
-	b2Vec2(0, -1.01),
-	b2Vec2(-1, -1),
+	b2Vec2(0, 0.51),
+	b2Vec2(0.5, 0.5),
+	b2Vec2(0.51, 0),
+	b2Vec2(0.5, -0.5),
+	b2Vec2(0, -0.51),
+	b2Vec2(-0.5, -0.5),
 	b2Vec2(0, 0),
-	b2Vec2(-1, 1),
+	b2Vec2(-0.5, 0.5),
 };
 
 b2Vec2 tiled_volume[] = {
@@ -129,10 +129,13 @@ public:
 
 	void mudar_pos(vec2 pos)
 	{
-		if (iniciado)
-		{
-			corpo->SetTransform(b2Vec2(pos.x, pos.y), corpo->GetAngle());
-		}
+		
+		corpo->SetTransform(b2Vec2(pos.x, pos.y), corpo->GetAngle());
+	}
+
+	void mudar_rot(float angulo)
+	{
+		corpo->SetTransform(corpo->GetPosition(), angulo);
 	}
 
 	void iniciar()
@@ -219,9 +222,12 @@ public:
 
 		if (esse_objeto->pegar_componente<transform_>() != NULL)
 		{
-			vec3 pos = esse_objeto->pegar_componente<transform_>()->pegar_pos_global();
-			float rot = esse_objeto->pegar_componente<transform_>()->pegar_graus_global().z;
+			//vec3 pos = esse_objeto->pegar_componente<transform_>()->pegar_pos_global();
+			//float rot = esse_objeto->pegar_componente<transform_>()->pegar_graus_global().z;
+			vec3 pos = esse_objeto->pegar_componente<transform_>()->pos;
+			float rot = quat_graus(esse_objeto->pegar_componente<transform_>()->quater).z;
 			mudar_pos(vec2(pos.x, pos.y));
+			mudar_rot(rot);
 		}
 	}
 
@@ -274,10 +280,7 @@ public:
 		}
 	}
 
-	void mudar_rot(float angulo)
-	{
-		corpo->SetTransform(corpo->GetPosition(), angulo);
-	}
+	
 
 	void mover(vec2 forca)
 	{
@@ -476,6 +479,7 @@ public:
 		}
 
 		vec3 pos = esse_objeto->pegar_componente<transform_>()->pos;
+		
 
 		detec_chao->pegar_componente<box_2D>()->mudar_pos(vec2(pos.x, pos.y - escala.y));
 		detec_teto->pegar_componente<box_2D>()->mudar_pos(vec2(pos.x, pos.y + escala.y));

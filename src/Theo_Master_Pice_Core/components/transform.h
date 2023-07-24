@@ -92,19 +92,6 @@ mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
 			return quat_graus(pegar_qua_global());
 		}
 
-		void matriz_transform(glm::mat4 mat) {
-			vec3 nada;
-			vec4 nada2;
-
-			vec3 escala;
-			vec3 pos;
-			quat qua;
-			glm::decompose(paiTF->matrizTransform, escala, qua, pos, nada, nada2);
-
-
-
-		}
-
 		vec3 pegar_direcao_local(vec3 dir) {
 			mat4 m = glm::translate(matrizTransform,dir);
 			vec3 nada;

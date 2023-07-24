@@ -1000,7 +1000,7 @@ public:
 										if (tile_id != 0)
 										{
 											ivec3 local_tile_selecionado = vec3(b, c, a);
-											mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(2, -2, -0.001));
+											mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(1, -1, -0.001));
 											ivec2 quant_t = rtm->tiles->quant_tiles;
 											ivec2 tile_selecionado((tile_id % quant_t.x) - 1, (float)(int)tile_id / quant_t.x);
 
@@ -1025,7 +1025,7 @@ public:
 									if (tile_id != 0)
 									{
 										ivec3 local_tile_selecionado = vec3(b, c, a);
-										mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(2, -2, -0.001));
+										mat4 mat_tile = translate(tf->matrizTransform, ((vec3)local_tile_selecionado * vec3(1, -1, -0.001)) + vec3(0.5,-0.5,0));
 										ivec2 quant_t = rtm->tiles->quant_tiles;
 										ivec2 tile_selecionado((tile_id % quant_t.x) - 1, (float)(int)tile_id / quant_t.x);
 

@@ -60,10 +60,10 @@ uniform mat4 projection,vision,transform;
  void main(){
   //tela
    
-   POS =vec4( quad_data[gl_VertexID].x,-quad_data[gl_VertexID].y,quad_data[gl_VertexID].z,1);
+   POS = vec4( quad_data[gl_VertexID].x / 2,-quad_data[gl_VertexID].y / 2,quad_data[gl_VertexID].z / 2,1);
    
    
-   UV= vec2(max(0,quad_data[gl_VertexID].x),max(0,quad_data[gl_VertexID].y));
+   UV = vec2(max(0,quad_data[gl_VertexID].x),max(0,quad_data[gl_VertexID].y));
 
    //gl_Position = POS;
    

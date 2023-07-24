@@ -805,7 +805,6 @@ namespace funcoes_ponte
 		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
 		if (b2d != NULL)
 		{
-
 			b2d->mudar_pos(vec2(v3.x, v3.y));
 		}
 		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();

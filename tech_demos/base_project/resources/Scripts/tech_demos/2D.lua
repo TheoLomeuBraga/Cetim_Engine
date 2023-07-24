@@ -8,18 +8,18 @@ local demo = {}
 demo.map_data = {}
 demo.map_objects = {}
 
-function demo:load_objects(layer_data,map_size_pixels)
+function demo:load_objects(layer_data,tile_size_pixels)
     for key, value in pairs(layer_data.objects) do
 
         local selected_tile = 1
-        local shape = collision_shapes.box
+        local shape = collision_shapes.tile
         local vertex_data = {}
 
-        local pos = Vec3:new(0,0,0)
+        local pos = Vec3:new(value.x / tile_size_pixels.x,-value.y / tile_size_pixels.y,0)
         local rot = Vec3:new(0,0,0)
         local sca = Vec3:new(1,1,1)
 
-
+        
 
         local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, true,shape,vertex_data,false)
         local mat  = matreial:new()
@@ -34,19 +34,19 @@ function demo:load_objects(layer_data,map_size_pixels)
     end
 end
 
-function demo:load_collision(layer_data,map_size_pixels)
+function demo:load_collision(layer_data,tile_size_pixels)
     for key, value in pairs(layer_data.objects) do
 
-        local shape = collision_shapes.box
+        local shape = collision_shapes.tiled_volume
         local vertex_data = {}
 
-        local pos = Vec3:new(0,0,0)
-        local rot = Vec3:new(0,0,0)
-        local sca = Vec3:new(1,1,1)
+        local pos = Vec3:new(value.x / tile_size_pixels.x,-value.y / tile_size_pixels.y,0)
+        local rot = Vec3:new(value.rotation,0,0)
+        local sca = Vec3:new(value.width / tile_size_pixels.x,value.height / tile_size_pixels.y,1)
+
+        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, false,shape,vertex_data,false)
 
         
-
-        create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, false,shape,vertex_data,false)
 
     end
 end
@@ -62,12 +62,12 @@ function demo:START(layers)
     demo.map_objects = deepcopy(data.map_object)
 
 
-    local map_size_pixels = {x = demo.map_data.width * demo.map_data.tilewidth,y = demo.map_data.height * demo.map_data.tileheight}
+    local tile_size_pixels = {x = demo.map_data.tilewidth,y =  demo.map_data.tileheight}
     for index, value in pairs(demo.map_data.layers) do
         if value.name == "objects" then
-            demo:load_objects(value,map_size_pixels)
+            demo:load_objects(value,tile_size_pixels)
         elseif value.name == "collision" then
-            demo:load_collision(value,map_size_pixels)
+            demo:load_collision(value,tile_size_pixels)
         end
     end
 
