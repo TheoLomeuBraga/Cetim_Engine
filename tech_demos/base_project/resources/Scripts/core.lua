@@ -20,6 +20,7 @@ require("TMP_libs.short_cuts.create_camera")
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.layers_table")
 require("TMP_libs.objects.vectors")
+require("TMP_libs.objects.input")
 
 cam = {}
 layers = layers_table:new_3D()
@@ -74,7 +75,7 @@ function previous_demo()
     load_demo(demos_list[demo_selected])
 end
 
-require("TMP_libs.objects.input")
+
 
 keys_pressed = { q = false, e = false}
 keys_pressed_last_frame = { q = false, e = false}

@@ -175,7 +175,7 @@ public:
 		else if (forma == esfera)
 		{
 			Circle.m_p.Set(0.0f, 0.0f);
-			Circle.m_radius = escala.x;
+			Circle.m_radius = escala.x / 2;
 			fixtureDef.shape = &Circle;
 		}
 		else if (forma == convexo)

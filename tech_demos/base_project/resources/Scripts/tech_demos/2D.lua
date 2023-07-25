@@ -11,25 +11,46 @@ demo.map_objects = {}
 function demo:load_objects(layer_data,tile_size_pixels)
     for key, value in pairs(layer_data.objects) do
 
-        local selected_tile = 11
+        local selected_tile = 4
         local shape = collision_shapes.tile
         local vertex_data = {}
-
         local pos = Vec3:new(value.x / tile_size_pixels.x,-value.y / tile_size_pixels.y,0)
-        local rot = Vec3:new(0,0,0)
+        local rot = Vec3:new(value.rotation,0,0)
         local sca = Vec3:new(1,1,1)
-
-        
-
-        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, true,shape,vertex_data,false)
+        local tile_set_local = "resources/Levels/2D/tile_set.json"
         local mat  = matreial:new()
         mat.shader = "resources/Shaders/sprite"
+
+        if value.name == "box" then
+
+            selected_tile = 4
+            shape = collision_shapes.tile
+
+            
+
+        elseif value.name == "sphere" then
+
+            selected_tile = 5
+            shape = collision_shapes.sphere
+
+
+        elseif value.name == "player_start" then
+            selected_tile = 1
+            tile_set_local = "resources/Sprites/chartes_2D/charter_2D.json"
+        end
+
+        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, true,shape,vertex_data,false)
         obj:add_component(components.render_sprite)
         obj.components[components.render_sprite].material = deepcopy(mat)
         obj.components[components.render_sprite].layer = 2
         obj.components[components.render_sprite].selected_tile = selected_tile
-        obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
+        obj.components[components.render_sprite].tile_set_local = tile_set_local
         obj.components[components.render_sprite]:set()
+
+        if value.name == "player_start" then
+            cam:add_component(components.lua_scripts)
+            cam.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+        end
 
     end
 end
