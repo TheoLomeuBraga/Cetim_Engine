@@ -546,7 +546,7 @@ namespace funcoes_ponte
 	}
 
 	int loading_requests_number(lua_State *L){
-		lua_pushnumber(L,ManuseioDados::loading_requests);
+		lua_pushnumber(L,ManuseioDados::loading_requests_no);
 		return 0;
 	}
 

@@ -37,7 +37,26 @@ using json = nlohmann::json;
 namespace ManuseioDados
 {
 
-	unsigned int loading_requests = 0;
+	int loading_requests_no = 0;
+
+	std::map<std::string,char> loading_requests_files = {};
+
+	bool has_loading_request(std::string file){
+		if(loading_requests_files.find(file) != loading_requests_files.end()){
+			return true;
+		}
+		return false;
+	}
+
+	void add_loading_request(std::string file){
+		loading_requests_no+=1;
+		loading_requests_files.insert(pair<std::string,char>(file,0));
+	}
+
+	void remove_loading_request(std::string file){
+		loading_requests_files.erase(file);
+		loading_requests_no-=1;
+	}
 
 	string diretorio;
 
@@ -138,9 +157,9 @@ namespace ManuseioDados
 		if (file)
 		{
 
-			if (mapeamento_fontes.pegar(lugar).get() == NULL)
+			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
 			{
-
+				add_loading_request(lugar);
 				string S;
 				file >> S;
 
@@ -172,10 +191,13 @@ namespace ManuseioDados
 				f.chars = chars;
 				f.path = lugar;
 				mapeamento_fontes.aplicar(lugar, f);
+
+				remove_loading_request(lugar);
 				return mapeamento_fontes.pegar(lugar);
 			}
 			else
 			{
+				while(has_loading_request(lugar)){}
 				return mapeamento_fontes.pegar(lugar);
 			}
 		}
@@ -189,9 +211,14 @@ namespace ManuseioDados
 
 	void carregar_fonte_thread(string local, shared_ptr<fonte> *ret)
 	{
-		loading_requests++;
 		*ret = carregar_fonte(local);
-		loading_requests-=1;
+	}
+
+	void carregar_fonte_thread(string local, vector<shared_ptr<fonte>*> ret)
+	{
+		for(shared_ptr<fonte>* r : ret){
+			carregar_fonte_thread(local,r);
+		}
 	}
 
 	mapeamento_assets<imagem> mapeamento_imagems;
@@ -206,8 +233,9 @@ namespace ManuseioDados
 
 		if (Existe(local))
 		{
-			if (mapeamento_imagems.pegar(local).get() == NULL)
+			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
+				add_loading_request(local);
 				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
 				imagem image = imagem(X, Y, canais, data);
@@ -219,10 +247,12 @@ namespace ManuseioDados
 				escrever(local);
 				escrever(mapeamento_imagems.pegar(local));
 
+				remove_loading_request(local);
 				return mapeamento_imagems.pegar(local);
 			}
 			else
 			{
+				while(has_loading_request(local)){}
 				return mapeamento_imagems.pegar(local);
 			}
 		}
@@ -236,9 +266,13 @@ namespace ManuseioDados
 
 	void carregar_Imagem_thread(string local, shared_ptr<imagem> *ret)
 	{
-		loading_requests++;
 		*ret = carregar_Imagem(local);
-		loading_requests-=1;
+	}
+
+	void carregar_Imagem_thread(string local, vector<shared_ptr<imagem>*> ret)
+	{
+		for(shared_ptr<imagem>* r : ret)
+		carregar_Imagem_thread(local,ret);
 	}
 
 	void salvar_imagem(unsigned char *data, ivec2 res, int canais, string local)
@@ -284,8 +318,9 @@ namespace ManuseioDados
 		string pasta_imagems = pegar_pasta_arquivo(local);
 		if (Existe(local.c_str()))
 		{
-			if (mapeamento_tilesets.pegar(local).get() == NULL)
+			if (mapeamento_tilesets.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
+				add_loading_request(local);
 				cout << "criando tile_set" << endl;
 				// pegar info tile_set
 				tile_set ret = tile_set();
@@ -360,11 +395,12 @@ namespace ManuseioDados
 
 				mapeamento_tilesets.aplicar(local, ret);
 
+				remove_loading_request(local);
 				return mapeamento_tilesets.pegar(local);
 			}
 			else
 			{
-
+				while(has_loading_request(local)){}
 				return mapeamento_tilesets.pegar(local);
 			}
 		}
@@ -378,9 +414,18 @@ namespace ManuseioDados
 
 	void carregar_tile_set_thread(string local, shared_ptr<tile_set> *ret)
 	{
-		loading_requests++;
+		
 		*ret = carregar_tile_set(local);
-		loading_requests-=1;
+		
+	}
+
+	void carregar_tile_set_thread(string local, vector<shared_ptr<tile_set>*> ret)
+	{
+		
+		for(shared_ptr<tile_set>* r : ret){
+			carregar_tile_set_thread(local,r);
+		}
+		
 	}
 
 	mapeamento_assets<tile_map_info> mapeamento_tile_map_infos;
@@ -390,9 +435,9 @@ namespace ManuseioDados
 		if (Existe(local.c_str()))
 		{
 
-			if (mapeamento_tile_map_infos.pegar(local).get() == NULL)
+			if (mapeamento_tile_map_infos.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
-
+				add_loading_request(local);
 				tile_map_info ret = tile_map_info();
 				ret.local = local;
 				ifstream arquivo(local);
@@ -422,14 +467,13 @@ namespace ManuseioDados
 				}
 
 				mapeamento_tile_map_infos.aplicar(local, ret);
-				// cout << "quantidade camadas: " << ret->info.size() << endl;
+				remove_loading_request(local);
 				return mapeamento_tile_map_infos.pegar(local);
 			}
 			else
 			{
-				cout << "nao foi possivel carregar " << local << endl;
-				shared_ptr<tile_map_info> ret = mapeamento_tile_map_infos.pegar(local);
-				return ret;
+				while(has_loading_request(local)){}
+				return mapeamento_tile_map_infos.pegar(local);
 			}
 		}
 		else
@@ -441,9 +485,18 @@ namespace ManuseioDados
 
 	void carregar_info_tile_map_thread(string local, shared_ptr<tile_map_info> *ret)
 	{
-		loading_requests++;
+		
 		*ret = carregar_info_tile_map(local);
-		loading_requests-=1;
+		
+	}
+
+	void carregar_info_tile_map_thread(string local, vector<shared_ptr<tile_map_info> *> ret)
+	{
+		
+		for(shared_ptr<tile_map_info> * r : ret){
+			carregar_info_tile_map_thread(local,r);
+		}
+		
 	}
 
 	mapeamento_assets<cena_3D> cenas_3D;
@@ -607,16 +660,21 @@ namespace ManuseioDados
 			ret.materiais.insert(pair<string, Material>("material", mat));
 			ret.objetos.meus_materiais.push_back(mat);
 			cenas_3D.aplicar(local, ret);
+
+			return cenas_3D.pegar(local);
+		}else{
+			while(has_loading_request(local)){}
+			return cenas_3D.pegar(local);
 		}
 
-		return cenas_3D.pegar(local);
+		
 	}
 
 	void importar_obj_thread(string local, string local_mtl, shared_ptr<cena_3D> *ret)
 	{
-		loading_requests++;
+		
 		*ret = importar_obj(local);
-		loading_requests-=1;
+		
 	}
 
 	json table_json(Table table)
@@ -734,9 +792,18 @@ namespace ManuseioDados
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
 	{
-		loading_requests++;
+		
 		*ret = importar_map(local);
-		loading_requests-=1;
+		
+	}
+
+	void importar_map_thread(string local, vector<shared_ptr<cena_3D> *> ret)
+	{
+		
+		for(shared_ptr<cena_3D> * r : ret){
+			importar_map_thread(local,r);
+		}
+		
 	}
 
 	malha converter_malha_gltf(gltf_loader::Mesh m, string file_path)
@@ -823,9 +890,9 @@ namespace ManuseioDados
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 		cena_3D ret;
-		if (cenas_3D.pegar(local).get() == NULL)
+		if (cenas_3D.pegar(local).get() == NULL  && has_loading_request(local) == false)
 		{
-
+			add_loading_request(local);
 			gltf_loader::GLTFLoader gltf_loader(local);
 			gltf_loader.load();
 
@@ -913,14 +980,19 @@ namespace ManuseioDados
 			
 
 			cenas_3D.aplicar(local, ret);
+			remove_loading_request(local);
+			return cenas_3D.pegar(local);
+		}else{
+			while(has_loading_request(local)){}
+			return cenas_3D.pegar(local);
 		}
-		return cenas_3D.pegar(local);
+		
 	}
 	void importar_gltf_thread(string local, shared_ptr<cena_3D> *ret)
 	{
-		loading_requests++;
+		
 		*ret = importar_gltf(local);
-		loading_requests-=1;
+		
 	}
 
 	// arquivo_origem
