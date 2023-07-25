@@ -183,13 +183,11 @@ public:
 			if (esse_objeto->pegar_componente<transform_>() != NULL)
 			{
 				vertices_B2 = converter_b2D(vertices, escala);
-				vertices_B2.pop_back();
 				Vertex_shape.Set(&vertices_B2[0], 8);
 			}
 			else
 			{
 				vertices_B2 = converter_b2D(vertices);
-				vertices_B2.pop_back();
 				Vertex_shape.Set(&vertices_B2[0], vertices_B2.size());
 			}
 			fixtureDef.shape = &Vertex_shape;

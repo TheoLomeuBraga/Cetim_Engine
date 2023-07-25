@@ -11,7 +11,7 @@ demo.map_objects = {}
 function demo:load_objects(layer_data,tile_size_pixels)
     for key, value in pairs(layer_data.objects) do
 
-        local selected_tile = 1
+        local selected_tile = 11
         local shape = collision_shapes.tile
         local vertex_data = {}
 
@@ -45,9 +45,9 @@ function demo:load_collision(layer_data,tile_size_pixels)
             shape = collision_shapes.convex
             for index, value in ipairs(value.polyline) do
                 vertex_data[i] = {x = value.x / tile_size_pixels.x, y = -value.y / tile_size_pixels.y}
-                --print("vertex_data[",i,"]",vertex_data[i].x,vertex_data[i].y)
                 i = i + 1
             end
+            vertex_data[tablelength(vertex_data)] = nil
         end
 
         local pos = Vec3:new(value.x / tile_size_pixels.x,-value.y / tile_size_pixels.y,0)
