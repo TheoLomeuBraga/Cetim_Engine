@@ -54,6 +54,7 @@ function demo:load_objects(layer_data,tile_size_pixels)
             obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
             obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_type","2D")
             obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","layers",this_layers)
+            obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_size",{x=1,y=1,z=1})
         end
 
     end

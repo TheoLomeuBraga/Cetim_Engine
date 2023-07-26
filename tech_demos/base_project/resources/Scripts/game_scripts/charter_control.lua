@@ -10,6 +10,7 @@ require("math")
 
 layers = {}
 charter_type = "2D"
+charter_size = {x=1,y=1,z=1}
 
 local this_object = {}
 
@@ -22,9 +23,16 @@ local detect_down = {}
 
 function START()
     this_object = game_object:new(this_object_ptr)
-    detect_top = game_object:new(create_object(layers.cenary))
-    detect_down = game_object:new(create_object(layers.cenary))
 
+    detect_top = game_object:new(create_object(layers.cenary))
+    detect_top:add_component(components.transform)
+    detect_top.components[components.transform]:set()
+
+    detect_down = game_object:new(create_object(layers.cenary))
+    detect_down:add_component(components.transform)
+    detect_down.components[components.transform]:set()
+
+    
     if charter_type == "2D" then
 
     elseif charter_type == "3D" then

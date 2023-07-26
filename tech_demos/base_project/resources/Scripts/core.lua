@@ -40,6 +40,8 @@ function load_demo(demo_name)
 end
 
 function START()
+
+    --get_set_parallel_loading(set_lua, true)
     
     window.resolution.x = 720
     window.resolution.y = 720

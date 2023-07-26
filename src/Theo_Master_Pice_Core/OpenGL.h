@@ -734,8 +734,19 @@ public:
 				ogl_adicionar_textura(mat.texturas[i].get());
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
+				if (mat.filtro[i] > 0)
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
+				else
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				}
 				string nome_veriavel = string("textures[") + to_string(i) + string("]");
 				glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
+				
 			}
 		}
 
@@ -1025,7 +1036,7 @@ public:
 									if (tile_id != 0)
 									{
 										ivec3 local_tile_selecionado = vec3(b, c, a);
-										mat4 mat_tile = translate(tf->matrizTransform, ((vec3)local_tile_selecionado * vec3(1, -1, -0.001)) + vec3(0.5,-0.5,0));
+										mat4 mat_tile = translate(tf->matrizTransform, ((vec3)local_tile_selecionado * vec3(1, -1, -0.001)) + vec3(0.5, -0.5, 0));
 										ivec2 quant_t = rtm->tiles->quant_tiles;
 										ivec2 tile_selecionado((tile_id % quant_t.x) - 1, (float)(int)tile_id / quant_t.x);
 
