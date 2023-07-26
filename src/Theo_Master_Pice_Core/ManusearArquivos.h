@@ -67,10 +67,7 @@ namespace ManuseioDados
 		{
 			return false;
 		}
-		else
-		{
-			return true;
-		}
+		return true;
 	}
 
 	bool Existe(string nome)
@@ -214,7 +211,7 @@ namespace ManuseioDados
 		*ret = carregar_fonte(local);
 	}
 
-	void carregar_fonte_thread(string local, vector<shared_ptr<fonte>*> ret)
+	void carregar_fontes_thread(string local, vector<shared_ptr<fonte>*> ret)
 	{
 		for(shared_ptr<fonte>* r : ret){
 			carregar_fonte_thread(local,r);
@@ -269,10 +266,10 @@ namespace ManuseioDados
 		*ret = carregar_Imagem(local);
 	}
 
-	void carregar_Imagem_thread(string local, vector<shared_ptr<imagem>*> ret)
+	void carregar_Imagems_thread(string local, vector<shared_ptr<imagem>*> ret)
 	{
 		for(shared_ptr<imagem>* r : ret)
-		carregar_Imagem_thread(local,ret);
+		carregar_Imagem_thread(local,r);
 	}
 
 	void salvar_imagem(unsigned char *data, ivec2 res, int canais, string local)
@@ -419,7 +416,7 @@ namespace ManuseioDados
 		
 	}
 
-	void carregar_tile_set_thread(string local, vector<shared_ptr<tile_set>*> ret)
+	void carregar_tile_sets_thread(string local, vector<shared_ptr<tile_set>*> ret)
 	{
 		
 		for(shared_ptr<tile_set>* r : ret){
@@ -490,7 +487,7 @@ namespace ManuseioDados
 		
 	}
 
-	void carregar_info_tile_map_thread(string local, vector<shared_ptr<tile_map_info> *> ret)
+	void carregar_info_tile_maps_thread(string local, vector<shared_ptr<tile_map_info> *> ret)
 	{
 		
 		for(shared_ptr<tile_map_info> * r : ret){
@@ -677,6 +674,13 @@ namespace ManuseioDados
 		
 	}
 
+	void importar_objs_thread(string local, string local_mtl, vector<shared_ptr<cena_3D>*> ret)
+	{
+		for(shared_ptr<cena_3D>* r : ret){
+			importar_obj_thread(local,local_mtl,r);
+		}
+	}
+
 	json table_json(Table table)
 	{
 		json ret;
@@ -797,7 +801,7 @@ namespace ManuseioDados
 		
 	}
 
-	void importar_map_thread(string local, vector<shared_ptr<cena_3D> *> ret)
+	void importar_maps_thread(string local, vector<shared_ptr<cena_3D> *> ret)
 	{
 		
 		for(shared_ptr<cena_3D> * r : ret){
@@ -995,6 +999,15 @@ namespace ManuseioDados
 		
 	}
 
+	void importar_gltfs_thread(string local, vector<shared_ptr<cena_3D>*> ret)
+	{
+		for(shared_ptr<cena_3D>* r : ret){
+			importar_gltf_thread(local,r);
+		}
+		
+		
+	}
+
 	// arquivo_origem
 	map<string, shared_ptr<cena_3D> (*)(string)> funcoes_abrir_modelos_3D = {
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".obj", importar_obj),
@@ -1017,6 +1030,13 @@ namespace ManuseioDados
 	void carregar_malha_thread(string local, string nome, shared_ptr<malha> *ret)
 	{
 		*ret = carregar_malha(local, nome);
+	}
+	void carregar_malhas_thread(string local, string nome, vector<shared_ptr<malha>*> ret)
+	{
+		for(shared_ptr<malha>* r : ret){
+			carregar_malha_thread(local, nome, r);
+		}
+		
 	}
 
 }

@@ -8,6 +8,8 @@ local demo = {}
 demo.map_data = {}
 demo.map_objects = {}
 
+local this_layers = {}
+
 function demo:load_objects(layer_data,tile_size_pixels)
     for key, value in pairs(layer_data.objects) do
 
@@ -48,8 +50,10 @@ function demo:load_objects(layer_data,tile_size_pixels)
         obj.components[components.render_sprite]:set()
 
         if value.name == "player_start" then
-            cam:add_component(components.lua_scripts)
-            cam.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+            obj:add_component(components.lua_scripts)
+            obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+            obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_type","2D")
+            obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","layers",this_layers)
         end
 
     end
@@ -83,6 +87,8 @@ function demo:load_collision(layer_data,tile_size_pixels)
 end
 
 function demo:START(layers)
+
+    this_layers = deepcopy(layers)
 
     --"resources/Levels/2D/tile_map.json"
     local mat = matreial:new()
