@@ -200,7 +200,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			cout << "nao foi possivel carregar " << lugar << endl;
+			print({"nao foi possivel carregar", lugar});
 			shared_ptr<fonte> ret;
 			return ret;
 		}
@@ -255,7 +255,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			cout << "nao foi possivel carregar " << local << endl;
+			print({"nao foi possivel carregar " , local});
 			shared_ptr<imagem> ret;
 			return ret;
 		}
@@ -318,7 +318,6 @@ namespace ManuseioDados
 			if (mapeamento_tilesets.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
-				cout << "criando tile_set" << endl;
 				// pegar info tile_set
 				tile_set ret = tile_set();
 				ret.local = local;
@@ -331,10 +330,6 @@ namespace ManuseioDados
 					ret.local_imagem = pasta_imagems + j["image"].get<string>();
 					//ret.local_imagem = j["image"].get<string>();
 					ret.tiles_img = carregar_Imagem(ret.local_imagem);
-				}
-				else
-				{
-					cout << "tile_set " << local << "n�o posui imagem" << endl;
 				}
 
 				if (j.find("tilewidth") != j.end() && j.find("tileheight") != j.end())
@@ -385,10 +380,6 @@ namespace ManuseioDados
 						ret.tiles[a + 1] = t;
 					}
 				}
-				else
-				{
-					cout << "nao tem tiles\n";
-				}
 
 				mapeamento_tilesets.aplicar(local, ret);
 
@@ -403,7 +394,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			cout << "nao foi possivel carregar " << local << endl;
+			print({"nao foi possivel carregar " , local});
 			shared_ptr<tile_set> ret;
 			return ret;
 		}
@@ -746,11 +737,11 @@ namespace ManuseioDados
 			std::vector<uint8_t> bson_data = json::to_bson(data);
 			file.write((const char *)&bson_data[0], bson_data.size());
 			file.close();
-			std::cout << "Data saved to " << filename << std::endl;
+			print({"Data saved to " , filename});
 		}
 		else
 		{
-			std::cerr << "Error: could not save data to " << filename << std::endl;
+			print({"Error: could not save data to " , filename});
 		}
 	}
 

@@ -6,54 +6,139 @@ require("TMP_libs.objects.input")
 require("TMP_libs.objects.time")
 require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
+require("TMP_libs.short_cuts.create_collision")
 require("math")
 
 layers = {}
 charter_type = "2D"
-charter_size = {x=1,y=1,z=1}
+charter_size = { x = 1, y = 1, z = 1 }
 
 local this_object = {}
+local camera_man_object = {}
 
 local detect_top = {}
 local detect_down = {}
 
+local hit_top = false
+local hit_down = false
+local speed = 7
+local y_power = 30
+local y_inpulse = 0
 
+local control_last_frame = {
+    left = false,
+    right = false,
+    top = false,
+    down = false,
+    jump = false,
+    action = false,
+}
 
+local control = {
+    left = false,
+    right = false,
+    top = false,
+    down = false,
+    jump = false,
+    action = false,
+}
 
+function get_control()
+
+    if camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera", "is_free") then
+
+        control.top = false
+        control.down = false
+        control.left = false
+        control.right = false
+        control.jump = false
+        control.action = false
+        control_last_frame = deepcopy(control)
+
+    else
+
+        control_last_frame = deepcopy(control)
+        control.top = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.w]) > 0
+        control.down = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.s]) > 0
+        control.left = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.a]) > 0
+        control.right = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.d]) > 0
+        control.jump = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.space]) > 0
+        control.action = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) > 0
+
+    end
+
+end
 
 function START()
+    camera_man_object = game_object:new(global_data:get_var("camera_object_ptr"))
+
     this_object = game_object:new(this_object_ptr)
 
-    detect_top = game_object:new(create_object(layers.cenary))
-    detect_top:add_component(components.transform)
-    detect_top.components[components.transform]:set()
-
-    detect_down = game_object:new(create_object(layers.cenary))
-    detect_down:add_component(components.transform)
-    detect_down.components[components.transform]:set()
-
-    
     if charter_type == "2D" then
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+
+        detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z ),Vec3:new(0, 0, 0), Vec3:new(charter_size.x, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+
+        detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+
+        --[[
+        local mat  = matreial:new()
+        mat.shader = "resources/Shaders/sprite"
+        detect_down:add_component(components.render_sprite)
+        detect_down.components[components.render_sprite].material = deepcopy(mat)
+        detect_down.components[components.render_sprite].layer = 2
+        detect_down.components[components.render_sprite].selected_tile = 4
+        detect_down.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
+        detect_down.components[components.render_sprite]:set()
+        ]]
 
     elseif charter_type == "3D" then
 
     end
+end
 
+function get_floor_cealing_hit()
+
+    this_object.components[components.transform]:get()
+    local pos = deepcopy(this_object.components[components.transform].position)
+
+    if charter_type == "2D" then
+
+        detect_top.components[components.transform]:change_position(pos.x, pos.y + (charter_size.y / 2) + 0.05, pos.z)
+        detect_top.components[components.physics_2D]:get()
+        hit_top = tablelength(detect_top.components[components.physics_2D].objs_touching) > 1
+
+        detect_down.components[components.transform]:change_position(pos.x, pos.y - (charter_size.y / 2) - 0.05, pos.z)
+        detect_down.components[components.physics_2D]:get()
+        hit_down = tablelength(detect_down.components[components.physics_2D].objs_touching) > 1
+
+        --print("objs_touching",tablelength(detect_down.components[components.physics_2D].objs_touching))
+
+
+    elseif charter_type == "3D" then
+
+    end
+    
 end
 
 function UPDATE()
 
+    get_control()
+
+    get_floor_cealing_hit()
+
     if charter_type == "2D" then
 
     elseif charter_type == "3D" then
 
     end
-
 end
 
 function END()
+
     remove_object(detect_top.object_ptr)
-    detect_top = nil 
+    detect_top = nil
 
     remove_object(detect_down.object_ptr)
     detect_down = nil

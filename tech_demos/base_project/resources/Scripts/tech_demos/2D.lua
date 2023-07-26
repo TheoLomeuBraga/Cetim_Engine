@@ -26,7 +26,7 @@ function demo:load_objects(layer_data,tile_size_pixels)
         if value.name == "box" then
 
             selected_tile = 4
-            shape = collision_shapes.tile
+            shape = collision_shapes.box
 
             
 

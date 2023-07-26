@@ -19,7 +19,7 @@ end
 function set_gravity(x, y, z)
 end
 
-function raycast_2D(position, distance, angle)
+function raycast_2D(position, target)
 end
 
 --boady_dynamics
@@ -52,7 +52,7 @@ function physics_2D_component:new(object_ptr)
     p.rotate = true
     p.triger = false
     p.friction = 1
-    p.objects_coliding = {}
+    p.objs_touching = {}
     p.collision_layer = collision_layer_info:new()
     p.vertex = {}
     function p:get()
@@ -63,7 +63,7 @@ function physics_2D_component:new(object_ptr)
         self.rotate = j.rotate
         self.triger = j.triger
         self.friction = j.friction
-        self.objects_coliding = deepcopyjson(j.objects_coliding)
+        self.objs_touching = deepcopyjson(j.objs_touching)
         self.collision_layer = deepcopyjson(j.collision_layer)
         self.vertex = deepcopyjson(j.vertex)
     end
@@ -92,7 +92,7 @@ function physics_2D_component:new(object_ptr)
 
     function p:delet()
         self.scale = nil
-        self.objects_coliding = nil
+        self.objs_touching = nil
         self = nil
     end
 

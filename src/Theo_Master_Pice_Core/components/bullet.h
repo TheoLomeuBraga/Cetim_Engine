@@ -126,8 +126,8 @@ public:
     float escala_gravidade = 1;
     bool rotacionarX = true, rotacionarY = true, rotacionarZ = true;
     info_camada layer;
-
     btCollisionObject *bt_obj = NULL;
+    vector<shared_ptr<objeto_jogo>> objs_touching;
 
     void iniciar()
     {
@@ -397,10 +397,6 @@ public:
                     }
                 }
             }
-        }
-        else
-        {
-            return true;
         }
         return false;
     }

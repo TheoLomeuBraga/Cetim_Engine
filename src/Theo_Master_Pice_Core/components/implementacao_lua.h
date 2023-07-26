@@ -1204,12 +1204,12 @@ namespace funcoes_ponte
 			ret.setFloat("rotate", b2d->rotacionar);
 			ret.setFloat("triger", b2d->gatilho);
 			ret.setFloat("friction", b2d->atrito);
-			vector<string> objects_coliding;
-			for (shared_ptr<objeto_jogo> obj : b2d->objs_colidindo)
+			vector<string> objs_touching;
+			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
 			{
-				objects_coliding.push_back(ponteiro_string(obj.get()));
+				objs_touching.push_back(ponteiro_string(obj.get()));
 			}
-			ret.setTable("objects_coliding", vString_table(objects_coliding));
+			ret.setTable("objs_touching", vString_table(objs_touching));
 			ret.setTable("collision_layer", info_camada_table(b2d->camada));
 			vector<Table> vertex;
 			for (vec2 v2 : b2d->vertices)
@@ -1399,7 +1399,7 @@ namespace funcoes_ponte
 	{
 		Table ret;
 		colis_info ci;
-		bool rca = box_2D::ray_cast(table_vec2(lua_totable(L, 1)), lua_tonumber(L, 2), lua_tonumber(L, 3), ci);
+		bool rca = box_2D::ray_cast(table_vec2(lua_totable(L, 1)), table_vec2(lua_totable(L, 2)), ci);
 		ret = colis_info_table(ci);
 		lua_pushboolean(L, rca);
 		lua_pushtable(L, ret);
@@ -1470,12 +1470,12 @@ namespace funcoes_ponte
 			ret.setFloat("friction", bu->atrito);
 			ret.setFloat("density", bu->densidade);
 
-			vector<string> objects_coliding;
+			vector<string> objs_touching;
 			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
 			{
-				objects_coliding.push_back(ponteiro_string(obj));
+				objs_touching.push_back(ponteiro_string(obj));
 			}
-			ret.setTable("objects_coliding", vString_table(objects_coliding));
+			ret.setTable("objs_touching", vString_table(objs_touching));
 
 			lua_pushtable(L, ret);
 			return 1;

@@ -22,14 +22,14 @@ static b2Vec2 converter_b2D(vec2 v)
 }
 vector<b2Vec2> converter_b2D(vector<vec2> vs)
 {
-	
+
 	vector<b2Vec2> ret;
-	//ret.resize(vs.size());
+	// ret.resize(vs.size());
 
 	for (int i = 0; i < vs.size(); i++)
 	{
 		ret.push_back(converter_b2D(vs[i]));
-		//print({"b2Vec2",vs[i].x,vs[i].y});
+		// print({"b2Vec2",vs[i].x,vs[i].y});
 	}
 
 	return ret;
@@ -37,13 +37,13 @@ vector<b2Vec2> converter_b2D(vector<vec2> vs)
 vector<b2Vec2> converter_b2D(vector<vec2> vs, vec2 escala)
 {
 	vector<b2Vec2> ret;
-	//ret.resize(vs.size());
+	// ret.resize(vs.size());
 
 	for (int i = 0; i < vs.size(); i++)
 	{
 		b2Vec2 b2v = b2Vec2(vs[i].x * escala.x, vs[i].y * escala.y);
 		ret.push_back(b2v);
-		//print({"b2Vec2",ret[i].x,ret[i].y});
+		// print({"b2Vec2",ret[i].x,ret[i].y});
 	}
 
 	return ret;
@@ -126,13 +126,13 @@ public:
 
 	info_camada camada;
 	vector<colis_info> colis_infos;
-	vector<shared_ptr<objeto_jogo>> objs_colidindo;
+	vector<shared_ptr<objeto_jogo>> objs_touching;
 
 	box_2D() {}
 
 	void mudar_pos(vec2 pos)
 	{
-		
+
 		corpo->SetTransform(b2Vec2(pos.x, pos.y), corpo->GetAngle());
 	}
 
@@ -146,30 +146,41 @@ public:
 		iniciado = true;
 
 		// BodyDef
-		if (dinamica == estatico)
-		{
-			BodyDef.type = b2_staticBody;
-		}
-		else if (dinamica == cinematico)
-		{
-			BodyDef.type = b2_kinematicBody;
-		}
-		else if (dinamica == dinamico)
+		if (gatilho)
 		{
 			BodyDef.type = b2_dynamicBody;
 		}
+		else
+		{
+			if (dinamica == estatico)
+			{
+				// BodyDef.type = b2_staticBody;
+				BodyDef.type = b2_kinematicBody;
+			}
+			else if (dinamica == cinematico)
+			{
+				BodyDef.type = b2_kinematicBody;
+			}
+			else if (dinamica == dinamico)
+			{
+				BodyDef.type = b2_dynamicBody;
+			}
+		}
+
 		if (esse_objeto->pegar_componente<transform_>() != NULL)
 		{
 			BodyDef.position = converter_b2D(esse_objeto->pegar_componente<transform_>()->pegar_pos_global());
 			vec3 rot = glm::radians(quat_graus(esse_objeto->pegar_componente<transform_>()->pegar_graus_global()));
 			BodyDef.angle = rot.z;
 		}
-		BodyDef.fixedRotation = !rotacionar;
+
+		BodyDef.fixedRotation = !(rotacionar && dinamica == dinamico);
+		
 
 		// b2FixtureDef
 		if (forma == caixa)
 		{
-			Vertex_shape.SetAsBox(escala.x, escala.y);
+			Vertex_shape.SetAsBox(escala.x / 2, escala.y / 2);
 			fixtureDef.shape = &Vertex_shape;
 		}
 		else if (forma == esfera)
@@ -225,13 +236,21 @@ public:
 
 		if (esse_objeto->pegar_componente<transform_>() != NULL)
 		{
-			//vec3 pos = esse_objeto->pegar_componente<transform_>()->pegar_pos_global();
-			//float rot = esse_objeto->pegar_componente<transform_>()->pegar_graus_global().z;
+			// vec3 pos = esse_objeto->pegar_componente<transform_>()->pegar_pos_global();
+			// float rot = esse_objeto->pegar_componente<transform_>()->pegar_graus_global().z;
 			vec3 pos = esse_objeto->pegar_componente<transform_>()->pos;
 			float rot = quat_graus(esse_objeto->pegar_componente<transform_>()->quater).z;
 			mudar_pos(vec2(pos.x, pos.y));
 			mudar_rot(rot);
 		}
+
+		if(dinamica == dinamico){
+			corpo->SetGravityScale(escala_gravidade);
+		}else{
+			corpo->SetGravityScale(0);
+		}
+		
+
 	}
 
 	void atualisar()
@@ -243,7 +262,12 @@ public:
 		vector<colis_info> vazio;
 		colis_infos.swap(vazio);
 
-		corpo->SetGravityScale(escala_gravidade);
+		if(dinamica == dinamico){
+			corpo->SetGravityScale(escala_gravidade);
+		}else{
+			corpo->SetGravityScale(0);
+		}
+
 		shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
 		if (tf != NULL)
 		{
@@ -272,7 +296,7 @@ public:
 		colis_infos.swap(vazioA);
 
 		vector<shared_ptr<objeto_jogo>> vazioB;
-		objs_colidindo.swap(vazioB);
+		objs_touching.swap(vazioB);
 	}
 	void aplicar()
 	{
@@ -282,8 +306,6 @@ public:
 			iniciar();
 		}
 	}
-
-	
 
 	void mover(vec2 forca)
 	{
@@ -298,22 +320,24 @@ public:
 	{
 		corpo->ApplyLinearImpulse(b2Vec2(forca.x, forca.y), corpo->GetWorldCenter(), true);
 	}
-	
-	void adicionar_forca_rotativo(float forca){
-		corpo->ApplyTorque(forca,true);
-	}
-	void adicionar_impulso_rotativo(float forca){
-		corpo->ApplyAngularImpulse(forca,true);
-	}
 
+	void adicionar_forca_rotativo(float forca)
+	{
+		corpo->ApplyTorque(forca, true);
+	}
+	void adicionar_impulso_rotativo(float forca)
+	{
+		corpo->ApplyAngularImpulse(forca, true);
+	}
 
 	// https://www.iforce2d.net/b2dtut/raycasting
-	static bool ray_cast(vec2 pos, float distancia, float angulo)
+	static bool ray_cast(vec2 pos, vec2 target)
 	{
 		bool ret = false;
 
 		raycast_retorno cb;
-		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
+		//mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
+		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(target.x, target.y));
 		if (cb.ci.cos_obj != NULL)
 		{
 			ret = true;
@@ -321,12 +345,13 @@ public:
 		return ret;
 	}
 
-	static bool ray_cast(vec2 pos, float distancia, float angulo, colis_info &colis)
+	static bool ray_cast(vec2 pos, vec2 target, colis_info &colis)
 	{
 		bool ret = false;
 
 		raycast_retorno cb;
-		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
+		//mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
+		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(target.x, target.y));
 
 		colis = cb.ci;
 
@@ -346,19 +371,18 @@ public:
 	bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB)
 	{
 
-		bool ret = false;
 		b2Body *corpoA = fixtureA->GetBody();
 		b2Body *corpoB = fixtureB->GetBody();
 		for (int i : corpo_obj[corpoA]->pegar_componente<box_2D>()->camada.camada_colide)
 		{
 			if (i == corpo_obj[corpoB]->pegar_componente<box_2D>()->camada.camada)
 			{
-				ret = true;
+				return true;
 				break;
 			}
 		}
 
-		return ret;
+		return false;
 	};
 };
 
@@ -369,8 +393,17 @@ public:
 	{
 		b2Body *corpoA = contact->GetFixtureA()->GetBody();
 		b2Body *corpoB = contact->GetFixtureB()->GetBody();
-		corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_colidindo.push_back(corpo_obj[corpoB]);
-		corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_colidindo.push_back(corpo_obj[corpoA]);
+
+		if (std::find(corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.begin(), corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.end(), corpo_obj[corpoA]) == corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.end())
+		{
+			corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.push_back(corpo_obj[corpoB]);
+		}
+
+		// corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.push_back(corpo_obj[corpoA]);
+		if (std::find(corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.begin(), corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.end(), corpo_obj[corpoB]) == corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.end())
+		{
+			corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.push_back(corpo_obj[corpoA]);
+		}
 
 		colis_info ci;
 
@@ -380,10 +413,12 @@ public:
 
 		ci.obj = corpo_obj[corpoA].get();
 		ci.cos_obj = corpo_obj[corpoB].get();
+		ci.sensor = corpo_obj[corpoB]->pegar_componente<box_2D>()->gatilho;
 		corpo_obj[corpoA]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
 
 		ci.obj = corpo_obj[corpoB].get();
 		ci.cos_obj = corpo_obj[corpoA].get();
+		ci.sensor = corpo_obj[corpoA]->pegar_componente<box_2D>()->gatilho;
 		corpo_obj[corpoB]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
 	}
 
@@ -392,19 +427,19 @@ public:
 		b2Body *corpoA = contact->GetFixtureA()->GetBody();
 		b2Body *corpoB = contact->GetFixtureB()->GetBody();
 
-		for (int i = 0; i < corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_colidindo.size(); i++)
+		for (int i = 0; i < corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.size(); i++)
 		{
-			if (corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_colidindo[i] == corpo_obj[corpoB])
+			if (corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching[i] == corpo_obj[corpoB])
 			{
-				corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_colidindo.erase(corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_colidindo.begin() + i);
+				corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.erase(corpo_obj[corpoA]->pegar_componente<box_2D>()->objs_touching.begin() + i);
 				break;
 			}
 		}
-		for (int i = 0; i < corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_colidindo.size(); i++)
+		for (int i = 0; i < corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.size(); i++)
 		{
-			if (corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_colidindo[i] == corpo_obj[corpoA])
+			if (corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching[i] == corpo_obj[corpoA])
 			{
-				corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_colidindo.erase(corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_colidindo.begin() + i);
+				corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.erase(corpo_obj[corpoB]->pegar_componente<box_2D>()->objs_touching.begin() + i);
 				break;
 			}
 		}
@@ -482,15 +517,14 @@ public:
 		}
 
 		vec3 pos = esse_objeto->pegar_componente<transform_>()->pos;
-		
 
 		detec_chao->pegar_componente<box_2D>()->mudar_pos(vec2(pos.x, pos.y - escala.y));
 		detec_teto->pegar_componente<box_2D>()->mudar_pos(vec2(pos.x, pos.y + escala.y));
 
-		// chao = (detec_chao->pegar_componente<box_2D>()->objs_colidindo.size() > 1);
-		// teto = (detec_teto->pegar_componente<box_2D>()->objs_colidindo.size() > 1);
+		// chao = (detec_chao->pegar_componente<box_2D>()->objs_touching.size() > 1);
+		// teto = (detec_teto->pegar_componente<box_2D>()->objs_touching.size() > 1);
 		int numero_colisoes = 0;
-		for (shared_ptr<objeto_jogo> obj : detec_chao->pegar_componente<box_2D>()->objs_colidindo)
+		for (shared_ptr<objeto_jogo> obj : detec_chao->pegar_componente<box_2D>()->objs_touching)
 		{
 			if (obj->pegar_componente<box_2D>() != NULL && obj->pegar_componente<box_2D>()->gatilho == false)
 			{
@@ -501,7 +535,7 @@ public:
 
 		numero_colisoes = 0;
 
-		for (shared_ptr<objeto_jogo> obj : detec_teto->pegar_componente<box_2D>()->objs_colidindo)
+		for (shared_ptr<objeto_jogo> obj : detec_teto->pegar_componente<box_2D>()->objs_touching)
 		{
 			if (obj->pegar_componente<box_2D>() != NULL && obj->pegar_componente<box_2D>()->gatilho == false)
 			{
