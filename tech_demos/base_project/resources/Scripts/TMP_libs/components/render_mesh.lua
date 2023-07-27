@@ -1,5 +1,6 @@
 require("TMP_libs.components.component_index")
 require("TMP_libs.components.extras")
+require("TMP_libs.objects.material")
 
 --mesh
 function get_mesh_json(object)

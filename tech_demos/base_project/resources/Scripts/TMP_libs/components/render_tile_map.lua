@@ -1,4 +1,5 @@
 require("TMP_libs.components.component_index")
+require("TMP_libs.objects.material")
 
 --tilemap
 function get_set_render_tilemap(get_set,object)

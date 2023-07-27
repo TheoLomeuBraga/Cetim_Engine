@@ -1,4 +1,5 @@
 require("TMP_libs.components.component_index")
+require("TMP_libs.objects.material")
 
 --sprite
 function set_tileset(object,tileset)

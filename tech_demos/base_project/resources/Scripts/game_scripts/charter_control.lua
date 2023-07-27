@@ -4,6 +4,7 @@ require("TMP_libs.components.component_index")
 require("TMP_libs.objects.game_object")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.time")
+require("TMP_libs.objects.gravity")
 require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
 require("TMP_libs.short_cuts.create_collision")
@@ -21,9 +22,8 @@ local detect_down = {}
 
 local hit_top = false
 local hit_down = false
-local speed = 7
-local y_power = 30
-local y_inpulse = 0
+
+
 
 local control_last_frame = {
     left = false,
@@ -78,12 +78,13 @@ function START()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
-        detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z ),Vec3:new(0, 0, 0), Vec3:new(charter_size.x, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+        detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z ),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
 
-        detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+        detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
 
         this_object.components[components.physics_2D].rotate = false
         this_object.components[components.physics_2D].gravity_scale = 0
+        this_object.components[components.physics_2D].friction = 0
         this_object.components[components.physics_2D]:set()
 
         --[[
@@ -124,9 +125,20 @@ function get_floor_cealing_hit()
     
 end
 
+function set_sprite(id)
+    this_object.components[components.render_sprite].selected_tile = id
+    this_object.components[components.render_sprite]:set()
+end
+
 local movement = Vec3:new(0,0,0)
 
+local speed = 7
+local y_power = 10
+
 function UPDATE()
+
+    gravity:get()
+    time:get()
 
     get_control()
 
@@ -136,12 +148,16 @@ function UPDATE()
 
         
 
-        if control.jump and not control_last_frame.jump then
-            y_inpulse = y_power
+        if control.jump and not control_last_frame.jump and hit_down then
+            movement.y = y_power
         end
 
-        if hit_top then
-            y_inpulse = 0
+        if hit_top and movement.y > 0 then
+            movement.y = 0
+        end
+        movement.y = movement.y + (gravity.force.y * time.delta)
+        if hit_down and movement.y < 0 then
+            movement.y = 0
         end
 
         if control.left then

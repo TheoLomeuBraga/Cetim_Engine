@@ -15,6 +15,7 @@ using namespace Tempo;
 #include "render_sprite.h"
 #include "render_tilemap.h"
 #include "bullet.h"
+#include "light.h"
 
 #include "args.h"
 #include "game_object.h"
@@ -2228,6 +2229,9 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<render_tilemap>(render_tilemap());}else{obj->remover_componente<render_tilemap>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_mesh", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<render_malha>(render_malha());}else{obj->remover_componente<render_malha>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("light", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<fonte_luz>();} }),
+												
 };
 
 int add_component(lua_State *L)
@@ -2307,6 +2311,10 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 										  { return obj->tem_componente<render_tilemap>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("render_mesh", [](objeto_jogo *obj)
 										  { return obj->tem_componente<render_malha>(); }),
+	pair<string, bool (*)(objeto_jogo *)>("light", [](objeto_jogo *obj)
+										  { return obj->tem_componente<fonte_luz>(); }),
+
+										  
 };
 int have_component(lua_State *L)
 {
