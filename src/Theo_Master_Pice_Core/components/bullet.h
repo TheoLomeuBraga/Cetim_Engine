@@ -333,6 +333,12 @@ public:
     {
         ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
     }
+    void adicionar_velocidade(vec3 forca){
+        ((btRigidBody *)(bt_obj))->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+    }
+
+    void adicionar_veaplicar_velocidade_rotativalocidade(vec3 forca){
+    }
 
     void adicionar_forca_rotativo(vec3 forca)
     {
@@ -341,6 +347,10 @@ public:
     void adicionar_impulso_rotativo(vec3 forca)
     {
         ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
+    }
+    void aplicar_velocidade_rotativa(vec3 forca)
+    {
+        ((btRigidBody *)(bt_obj))->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
     }
     ~bullet()
     {

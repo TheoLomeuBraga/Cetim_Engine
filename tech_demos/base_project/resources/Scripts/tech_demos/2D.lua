@@ -22,6 +22,7 @@ function demo:load_objects(layer_data,tile_size_pixels)
         local tile_set_local = "resources/Levels/2D/tile_set.json"
         local mat  = matreial:new()
         mat.shader = "resources/Shaders/sprite"
+        local rigid_boady = true
 
         if value.name == "box" then
 
@@ -39,9 +40,10 @@ function demo:load_objects(layer_data,tile_size_pixels)
         elseif value.name == "player_start" then
             selected_tile = 1
             tile_set_local = "resources/Sprites/chartes_2D/charter_2D.json"
+            rigid_boady = true
         end
 
-        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, true,shape,vertex_data,false)
+        local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, rigid_boady,shape,vertex_data,false)
         obj:add_component(components.render_sprite)
         obj.components[components.render_sprite].material = deepcopy(mat)
         obj.components[components.render_sprite].layer = 2

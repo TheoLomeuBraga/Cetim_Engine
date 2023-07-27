@@ -1137,6 +1137,60 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int set_linear_velocity(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		if (argumentos == 3 && obj != NULL)
+		{
+			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+			if (b2d != NULL)
+			{
+				b2d->adicionar_velocidade(vec2(lua_tonumber(L, 2), lua_tonumber(L, 3)));
+			}
+		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->adicionar_velocidade(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
+			}
+		}
+		return 0;
+	}
+
+	int set_angular_velocity(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		if (argumentos == 2 && obj != NULL)
+		{
+			shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+			if (b2d != NULL)
+			{
+				b2d->aplicar_velocidade_rotativa(lua_tonumber(L, 2));
+			}
+		}
+		if (argumentos == 4 && obj != NULL)
+		{
+			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+			if (bu != NULL)
+			{
+				bu->aplicar_velocidade_rotativa(vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)));
+			}
+		}
+		return 0;
+	}
+
 	int add_rotative_force(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1204,6 +1258,8 @@ namespace funcoes_ponte
 			ret.setFloat("rotate", b2d->rotacionar);
 			ret.setFloat("triger", b2d->gatilho);
 			ret.setFloat("friction", b2d->atrito);
+			ret.setFloat("density", b2d->densidade);
+			ret.setFloat("gravity_scale", b2d->escala_gravidade);
 			vector<string> objs_touching;
 			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
 			{
@@ -1231,6 +1287,8 @@ namespace funcoes_ponte
 			b2d->rotacionar = t.getFloat("rotate");
 			b2d->gatilho = t.getFloat("triger");
 			b2d->atrito = t.getFloat("friction");
+			b2d->densidade = t.getFloat("density");
+			b2d->escala_gravidade = t.getFloat("gravity_scale");
 			b2d->camada = table_info_camada(t.getTable("collision_layer"));
 			vector<vec2> vertex;
 			for (Table tvec2 : table_vTable(t.getTable("vertex")))
@@ -1697,6 +1755,10 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
 		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
 		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
+		pair<string, lua_function>("set_linear_velocity", funcoes_ponte::set_linear_velocity),
+		pair<string, lua_function>("set_angular_velocity", funcoes_ponte::set_angular_velocity),
+		
+		
 
 		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
 		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),

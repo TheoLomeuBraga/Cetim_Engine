@@ -14,14 +14,19 @@ end
 function add_rotative_impulse(object, force_x, force_y,force_z)
 end
 
+function set_linear_velocity(x,y,z)
+end
+function set_angular_velocity(object, force_x,force_y,force_z)
+end
 
 function get_gravity()
 end
-function set_gravity(x, y, z)
+function set_gravity(object,x, y, z)
 end
 
 function raycas_3D(ray_from,ray_to)
 end
+
 
 --boady_dynamics
 boady_dynamics = {
@@ -85,12 +90,19 @@ function physics_3D_component:new(object_ptr)
     function p:add_impulse(force_x, force_y,force_z)
         add_impulse(self.object_ptr, force_x, force_y,force_z)
     end
+    function p:set_linear_velocity(force_x, force_y,force_z)
+        set_linear_velocity(self.object_ptr, force_x, force_y,force_z)
+    end
     function p:add_rotative_force(force_x, force_y,force_z)
         add_rotative_force(self.object_ptr, force_x, force_y,force_z)
     end
     function p:add_rotative_impulse(force_x, force_y,force_z)
         add_rotative_impulse(self.object_ptr, force_x, force_y,force_z)
     end
+    function p:set_angular_velocity(force_x, force_y,force_z)
+        set_angular_velocity(self.object_ptr, force_x,force_y,force_z)
+    end
+    
 
     function p:delet()
     end

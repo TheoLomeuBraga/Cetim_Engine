@@ -114,7 +114,7 @@ public:
 	char forma = caixa;
 	b2CircleShape Circle;
 	b2PolygonShape Vertex_shape;
-	float densidade = 1, atrito = 0;
+	float densidade = 1, atrito = 1;
 	bool gatilho = false;
 	char dinamica = estatico;
 	b2BodyDef BodyDef;
@@ -320,6 +320,10 @@ public:
 	{
 		corpo->ApplyLinearImpulse(b2Vec2(forca.x, forca.y), corpo->GetWorldCenter(), true);
 	}
+	void adicionar_velocidade(vec2 forca)
+	{
+		corpo->SetLinearVelocity(b2Vec2(forca.x, forca.y));
+	}
 
 	void adicionar_forca_rotativo(float forca)
 	{
@@ -328,6 +332,10 @@ public:
 	void adicionar_impulso_rotativo(float forca)
 	{
 		corpo->ApplyAngularImpulse(forca, true);
+	}
+	void aplicar_velocidade_rotativa(float forca)
+	{
+		corpo->SetAngularVelocity(forca);
 	}
 
 	// https://www.iforce2d.net/b2dtut/raycasting

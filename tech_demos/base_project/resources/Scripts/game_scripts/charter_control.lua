@@ -82,6 +82,10 @@ function START()
 
         detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
 
+        this_object.components[components.physics_2D].rotate = false
+        this_object.components[components.physics_2D].gravity_scale = 0
+        this_object.components[components.physics_2D]:set()
+
         --[[
         local mat  = matreial:new()
         mat.shader = "resources/Shaders/sprite"
@@ -113,14 +117,14 @@ function get_floor_cealing_hit()
         detect_down.components[components.physics_2D]:get()
         hit_down = tablelength(detect_down.components[components.physics_2D].objs_touching) > 1
 
-        --print("objs_touching",tablelength(detect_down.components[components.physics_2D].objs_touching))
-
 
     elseif charter_type == "3D" then
 
     end
     
 end
+
+local movement = Vec3:new(0,0,0)
 
 function UPDATE()
 
@@ -129,6 +133,27 @@ function UPDATE()
     get_floor_cealing_hit()
 
     if charter_type == "2D" then
+
+        
+
+        if control.jump and not control_last_frame.jump then
+            y_inpulse = y_power
+        end
+
+        if hit_top then
+            y_inpulse = 0
+        end
+
+        if control.left then
+            movement.x = -speed
+        elseif control.right then
+            movement.x = speed
+        else
+            movement.x = 0
+        end
+
+        this_object.components[components.physics_2D]:set_linear_velocity(movement.x,movement.y)
+        
 
     elseif charter_type == "3D" then
 
