@@ -1,7 +1,6 @@
 require("TMP_libs.functions")
 
-function get_scene_3D(path)
-end
+
 
 function object_3D_example()
     return {
@@ -133,7 +132,7 @@ function example_animations()
     return {
         name = "",
         duration = 1,
-        key_frames = {key_frame_example_1(), key_frame_example_2()}
+        key_frames = {key_frame_set_example_1(), key_frame_set_example_2()}
     }
 end
 
@@ -144,6 +143,9 @@ function sceane_3D_example()
         animations = {example_animations()},
         extra = {}
     }
+end
+
+function get_scene_3D(path)
 end
 
 function lerp_key_frame(key_frame_A, key_frame_B, time)
