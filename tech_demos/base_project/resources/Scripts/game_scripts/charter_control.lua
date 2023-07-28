@@ -144,6 +144,19 @@ function UPDATE()
 
     get_floor_cealing_hit()
 
+    
+    if movement.x < 0 then
+        set_sprite(4)
+    elseif movement.x > 0 then
+        set_sprite(3)
+    elseif movement.y > 0 then
+        set_sprite(2)
+    elseif movement.y < 0 then
+        set_sprite(5)
+    else
+        set_sprite(1)
+    end
+
     if charter_type == "2D" then
 
         
