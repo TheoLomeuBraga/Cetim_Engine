@@ -4,9 +4,10 @@ require("TMP_libs.components.render_sprite")
 
 json = require("libs.json")
 
-local demo = {}
-demo.map_data = {}
-demo.map_objects = {}
+local demo = {
+    map_data = {},
+    map_objects = {}
+}
 
 local this_layers = {}
 
