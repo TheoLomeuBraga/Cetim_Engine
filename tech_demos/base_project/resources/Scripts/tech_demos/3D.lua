@@ -29,6 +29,9 @@ function demo:START(layers)
 
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
     demo.map_objects = create_ceane(layers.cenary,demo.map_data)
+
+    demo.player_data = get_scene_3D("resources/Levels/3D/test_charter.gltf")
+    demo.player_object = create_player_ceane(layers.cenary,demo.map_data)
     
 end
 
