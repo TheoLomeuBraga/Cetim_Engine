@@ -27,7 +27,7 @@ function create_game_object(layer,obj_data)
 
 end
 function create_ceane(layer,ceane_data)
-
+    return create_game_object(layer,ceane_data.objects)
 end
 
 function demo:START(layers)
@@ -35,6 +35,7 @@ function demo:START(layers)
     this_layers = deepcopy(layers)
 
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
+    print("demo.map_data",demo.map_data)
     demo.map_objects = create_ceane(layers.cenary,demo.map_data)
 
     

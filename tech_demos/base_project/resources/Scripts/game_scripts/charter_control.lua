@@ -14,6 +14,8 @@ layers = {}
 charter_type = "2D"
 charter_size = { x = 1, y = 1, z = 1 }
 
+local test_rc_obj = {}
+
 local this_object = {}
 local camera_man_object = {}
 
@@ -90,13 +92,14 @@ function START()
         --[[
         local mat  = matreial:new()
         mat.shader = "resources/Shaders/sprite"
-        detect_down:add_component(components.render_sprite)
-        detect_down.components[components.render_sprite].material = deepcopy(mat)
-        detect_down.components[components.render_sprite].layer = 2
-        detect_down.components[components.render_sprite].selected_tile = 4
-        detect_down.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
-        detect_down.components[components.render_sprite]:set()
+        test_rc_obj:add_component(components.render_sprite)
+        test_rc_obj.components[components.render_sprite].material = deepcopy(mat)
+        test_rc_obj.components[components.render_sprite].layer = 2
+        test_rc_obj.components[components.render_sprite].selected_tile = 4
+        test_rc_obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
+        test_rc_obj.components[components.render_sprite]:set()
         ]]
+        
 
     elseif charter_type == "3D" then
 
@@ -133,15 +136,29 @@ end
 local direction_x_2D = 1
 
 function action()
-    print("action")
+    
     if charter_type == "2D" then
         this_object.components[components.transform]:get()
-        local target_pos = deepcopy(this_object.components[components.transform].position)
-        local hit = false
-        local hit_data = false
-        hit,hit_data = raycast_2D(this_object.components[components.transform].position,{target_pos.x * direction_x_2D * 10,target_pos.y})
+        local pos = deepcopy(this_object.components[components.transform].position)
+        local target_pos = {x=pos.x + (direction_x_2D * 10),y=pos.y }
 
-        
+        local hit,hit_data = raycast_2D({x=pos.x+(direction_x_2D * 1.01),y=pos.y},target_pos)
+
+        if hit then
+            
+            local hit_obj = game_object:new(hit_data.collision_object)
+            hit_obj.components[components.physics_2D]:get()
+
+            print(hit_obj.components[components.physics_2D].boady_dynamic)
+            
+            if hit_obj.components[components.physics_2D].boady_dynamic == boady_dynamics.dynamic then
+
+                print("hit")
+                hit_obj.components[components.physics_2D]:add_impulse(0,1000)
+                
+            end
+        end
+
         
     elseif charter_type == "3D" then
 

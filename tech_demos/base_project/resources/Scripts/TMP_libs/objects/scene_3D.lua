@@ -145,8 +145,8 @@ function sceane_3D_example()
     }
 end
 
-function get_scene_3D(path)
-end
+--function get_scene_3D(path)
+--end
 
 function lerp_key_frame(key_frame_A, key_frame_B, time)
     local ret = {}
