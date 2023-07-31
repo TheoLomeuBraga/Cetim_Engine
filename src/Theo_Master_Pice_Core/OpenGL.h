@@ -282,6 +282,72 @@ public:
 
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam)
 	{
+
+		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
+		{
+
+			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
+			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
+
+			if (tf != NULL && rm != NULL && rm->usar_oclusao)
+			{
+				glBeginQuery(GL_SAMPLES_PASSED, p.second);
+
+				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
+				glUseProgram(shader_s);
+
+				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->pegar_matriz()[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
+
+				glDisable(GL_CULL_FACE);
+				glDisable(GL_DEPTH_TEST);
+
+				if (!show_oclusion_querie)
+				{
+					glColorMask(false, false, false, false);
+				}
+
+				for (int i = 0; i < 4; i++)
+				{
+					glEnableVertexAttribArray(i);
+				}
+
+				
+
+				for (shared_ptr<malha> m : rm->malhas)
+				{
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[m.get()].vbo);
+					glBindBuffer(GL_ARRAY_BUFFER, malhas[m.get()].malha_buffer);
+
+					// posição
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
+
+					glDrawElements(
+						GL_TRIANGLES,					// mode
+						malhas[m.get()].tamanho_indice, // count
+						GL_UNSIGNED_INT,				// type
+						(void *)0						// element array buffer offset
+					);
+				}
+
+				if (usar_profundidade)
+				{
+					glEnable(GL_DEPTH_TEST);
+				}
+				else
+				{
+					glDisable(GL_DEPTH_TEST);
+				}
+
+				glColorMask(true, true, true, true);
+				glEndQuery(GL_SAMPLES_PASSED);
+			}
+		}
+
+		/*
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 
@@ -352,6 +418,7 @@ public:
 				glEndQuery(GL_SAMPLES_PASSED);
 			}
 		}
+		*/
 	}
 
 	void pegar_oclusion_queries()
@@ -359,7 +426,9 @@ public:
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
-			// cout << "oclusion querie result: " << oclusion_queries_resultados[p.first] << endl;
+
+			//print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
+			
 			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
 			{
 				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
