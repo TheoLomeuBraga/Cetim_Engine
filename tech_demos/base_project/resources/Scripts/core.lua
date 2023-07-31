@@ -21,6 +21,7 @@ require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.objects.layers_table")
 require("TMP_libs.objects.vectors")
 require("TMP_libs.objects.input")
+require("TMP_libs.objects.gravity")
 
 cam = {}
 layers = layers_table:new_3D()
@@ -53,6 +54,8 @@ function START()
     window.resolution.x = 720
     window.resolution.y = 720
     window:set()
+    
+    gravity:set()
     
     global_data:set_var("core_object_ptr",this_object_ptr)
 

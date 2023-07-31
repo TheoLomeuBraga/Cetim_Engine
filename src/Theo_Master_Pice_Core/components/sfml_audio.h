@@ -106,8 +106,9 @@ public:
 		}
 		else
 		{
-			sf::Listener::setPosition(0, 0, 0);
-			sf::Listener::setUpVector(1, 0, 0);
+			sf::Listener::setPosition(0,0,0);
+			sf::Listener::setUpVector(0,1,0);
+			sf::Listener::setDirection(0,0,-1);
 			som.setPosition(0,0,0);
 		}
 	}

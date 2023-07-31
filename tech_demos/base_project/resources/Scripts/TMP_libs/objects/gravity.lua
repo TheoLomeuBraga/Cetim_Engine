@@ -1,4 +1,4 @@
-gravity = {force = {x = 0,y = 0, z = 0}}
+gravity = {force = {x = 0,y = -9.8, z = 0}}
 
 function get_gravity()
 end
