@@ -638,9 +638,9 @@ struct objeto_3D_struct
 {
 	string nome;
 	unsigned int id = -1;
-	vec3 posicao;
-	quat quaternion;
-	vec3 escala;
+	vec3 posicao = glm::vec3(0, 0, 0);
+	quat quaternion = glm::quat(1, 0, 0, 0);
+	vec3 escala = glm::vec3(1, 1, 1);
 	vector<shared_ptr<malha>> minhas_malhas;
 	vector<Material> meus_materiais;
 	Table variaveis;

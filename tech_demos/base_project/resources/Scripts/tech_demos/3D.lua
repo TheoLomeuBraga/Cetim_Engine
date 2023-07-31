@@ -31,7 +31,11 @@ function create_game_object(father,obj_data)
     ret:add_component(components.transform)
     ret.components[components.transform].position = deepcopy(obj_data.position)
     ret.components[components.transform].rotation = deepcopy(obj_data.rotation)
-    ret.components[components.transform].scale = deepcopy(obj_data.scale)
+    if obj_data.scale.x == 0 and obj_data.scale.x == 0 and obj_data.scale.x == 0 then
+        ret.components[components.transform].scale = Vec3:new(1,1,1)
+    else
+        ret.components[components.transform].scale = deepcopy(obj_data.scale)
+    end
     ret.components[components.transform]:set()
 
     local add_mesh = function ()
@@ -45,7 +49,7 @@ function create_game_object(father,obj_data)
         end
     end
 
-    
+
 
     local type = obj_data.variables.type
     if type == nil then
@@ -57,16 +61,12 @@ function create_game_object(father,obj_data)
     elseif type == "music" then
 
     elseif type == "player_start" then
-        create_player_ceane(layer,get_scene_3D("resources/Levels/3D/test_charter.gltf"))
+        create_player_ceane(father,get_scene_3D("resources/Levels/3D/test_charter.gltf"))
     end
 
-    --demo.player_data = get_scene_3D("resources/Levels/3D/test_charter.gltf")
-    --demo.player_object = create_player_ceane(layers.cenary,demo.map_data)
-
-    
-
     for key, value in pairs(obj_data.children) do
-        create_game_object(father,value)
+        --create_game_object(father,value)
+        create_game_object(ret.object_ptr,value)
     end
 
     ceane_object_list[obj_data.id] = deepcopy(ret)
@@ -84,7 +84,8 @@ function demo:START(layers)
 
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
     demo.map_objects = create_ceane(layers.cenary,demo.map_data)
-    demo.map_objects.components[components.transform]:change_position(0,-10,0)
+    demo.map_objects.components[components.transform].position = Vec3:new(0,-10,0)
+    demo.map_objects.components[components.transform]:set()
     
     
 end
