@@ -1,4 +1,6 @@
 require("TMP_libs.short_cuts.create_mesh")
+require("TMP_libs.short_cuts.create_collision")
+require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.objects.scene_3D")
 
 local demo = {}
@@ -25,7 +27,7 @@ function create_game_object(layer,obj_data)
 
 end
 function create_ceane(layer,ceane_data)
-    
+
 end
 
 function demo:START(layers)
@@ -45,6 +47,7 @@ end
 
 function demo:END()
     --remove_object(demo.map_objects.object_ptr)
+    --remove_object(demo.player_object.object_ptr)
     clear_memory()
 end
 

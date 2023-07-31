@@ -1569,7 +1569,7 @@ namespace funcoes_ponte
 		}
 	}
 
-	int raycas_3D(lua_State *L)
+	int raycast_3D(lua_State *L)
 	{
 		colis_info ci;
 		bool rca = raycast_dir_bullet_3D(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), ci);
@@ -1766,7 +1766,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
-		pair<string, lua_function>("raycas_3D", funcoes_ponte::raycas_3D),
+		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
 		pair<string, lua_function>("shapecast_3D", funcoes_ponte::shapecast_3D),
 
 		// camera

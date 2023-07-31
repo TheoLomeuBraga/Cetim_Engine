@@ -89,16 +89,17 @@ b2Vec2 tiled_volume2[] = {
 class raycast_retorno : public b2RayCastCallback
 {
 public:
-	raycast_retorno() {}
 
 	colis_info ci;
 
-	float ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float fraction)
+	raycast_retorno() {}
+
+	float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override
 	{
 		ci.cos_obj = corpo_obj[fixture->GetBody()].get();
 		ci.pos = vec3(point.x, point.y, 0);
 		ci.nor = vec3(normal.x, normal.y, 0);
-		return 0;
+		return fraction;
 	};
 };
 
@@ -339,35 +340,35 @@ public:
 	}
 
 	// https://www.iforce2d.net/b2dtut/raycasting
+	/*
 	static bool ray_cast(vec2 pos, vec2 target)
 	{
-		bool ret = false;
 
 		raycast_retorno cb;
 		//mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
 		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(target.x, target.y));
 		if (cb.ci.cos_obj != NULL)
 		{
-			ret = true;
+			return true;
 		}
-		return ret;
+		return false;
 	}
+	*/
 
 	static bool ray_cast(vec2 pos, vec2 target, colis_info &colis)
 	{
-		bool ret = false;
-
 		raycast_retorno cb;
 		//mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
 		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(target.x, target.y));
+		
 
 		colis = cb.ci;
 
 		if (cb.ci.cos_obj != NULL)
 		{
-			ret = true;
+			return true;
 		}
-		return ret;
+		return false;
 	}
 };
 

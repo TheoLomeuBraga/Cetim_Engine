@@ -24,7 +24,7 @@ end
 function set_gravity(object,x, y, z)
 end
 
-function raycas_3D(ray_from,ray_to)
+function raycast_3D(ray_from,ray_to)
 end
 
 

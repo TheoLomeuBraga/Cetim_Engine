@@ -130,10 +130,29 @@ function set_sprite(id)
     this_object.components[components.render_sprite]:set()
 end
 
+local direction_x_2D = 1
+
+function action()
+    print("action")
+    if charter_type == "2D" then
+        this_object.components[components.transform]:get()
+        local target_pos = deepcopy(this_object.components[components.transform].position)
+        local hit = false
+        local hit_data = false
+        hit,hit_data = raycast_2D(this_object.components[components.transform].position,{target_pos.x * direction_x_2D * 10,target_pos.y})
+
+        
+        
+    elseif charter_type == "3D" then
+
+    end
+end
+
 local movement = Vec3:new(0,0,0)
 
 local speed = 7
 local y_power = 10
+
 
 function UPDATE()
 
@@ -157,9 +176,11 @@ function UPDATE()
         set_sprite(1)
     end
 
-    if charter_type == "2D" then
+    if control.action and not control_last_frame.action then
+        action()
+    end
 
-        
+    if charter_type == "2D" then
 
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
@@ -175,8 +196,10 @@ function UPDATE()
 
         if control.left then
             movement.x = -speed
+            direction_x_2D = -1
         elseif control.right then
             movement.x = speed
+            direction_x_2D = 1
         else
             movement.x = 0
         end
