@@ -61,6 +61,8 @@ function START()
     cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,1000)
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
+    set_lisener_object(cam.object_ptr)
+    set_global_volume(50)
 
     load_demo(demos_list[demo_selected])
     

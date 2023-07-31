@@ -27,6 +27,8 @@ void carregar_audio_buffer_thread(string local, shared_ptr<sf::SoundBuffer> *ret
 
 shared_ptr<transform_> listener_transform = NULL;
 
+void set_global_volume_sfml(float vol){sf::Listener::setGlobalVolume(vol);}
+
 class sfml_audio : public componente
 {
 public:
@@ -35,7 +37,6 @@ public:
 	audio_info info;
 	sf::Sound som;
 	shared_ptr<sf::SoundBuffer> buffer;
-	float min_distance = 0, atenuation = 0;
 
 	shared_ptr<transform_> tf = NULL;
 
@@ -49,6 +50,8 @@ public:
 		som.setVolume(info.volume);
 		som.setLoop(info.loop);
 		som.setPitch(info.velocidade);
+		som.setMinDistance(info.min_distance);
+		som.setAttenuation(info.atenuation);
 		if (info.pausa)
 		{
 			som.pause();
@@ -57,8 +60,6 @@ public:
 		{
 			som.play();
 		}
-		som.setMinDistance(info.min_distance);
-		som.setAttenuation(info.atenuation);
 		tf = esse_objeto->pegar_componente<transform_>();
 	}
 
@@ -86,23 +87,28 @@ public:
 	{
 		// cout << pegar_info().volume << endl;
 
+		tf = esse_objeto->pegar_componente<transform_>();
+
 		if (listener_transform != NULL && tf != NULL)
 		{
-			vec3 lpos = listener_transform->pegar_pos_global(), ldir;
+
+			vec3 lpos = listener_transform->pegar_pos_global();
+			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
+			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
+
 			sf::Listener::setPosition(lpos.x, lpos.y, lpos.z);
-			ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
-			sf::Listener::setUpVector(ldir.x, ldir.y, ldir.z);
+			sf::Listener::setUpVector(lup.x, lup.y, lup.z);
+			sf::Listener::setDirection(ldir.x, ldir.y, ldir.z);
 
 			vec3 gpos = tf->pegar_pos_global();
-			som.setPosition(gpos.x, gpos.y, gpos.z);
+			som.setPosition(-gpos.x, gpos.y, -gpos.z);
 
-			sf::Listener::setPosition(0, 0, 0);
-			sf::Listener::setUpVector(0, 0, 0);
 		}
 		else
 		{
 			sf::Listener::setPosition(0, 0, 0);
 			sf::Listener::setUpVector(1, 0, 0);
+			som.setPosition(0,0,0);
 		}
 	}
 

@@ -1340,6 +1340,11 @@ namespace funcoes_ponte
 		}
 	}
 
+	int set_global_volume(lua_State *L){
+		set_global_volume_sfml(lua_tonumber(L,1));
+		return 0;
+	}
+
 	int set_lisener_object(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1774,6 +1779,8 @@ namespace funcoes_ponte
 
 		// audio
 		pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
+		pair<string, lua_function>("set_global_volume", funcoes_ponte::set_global_volume),
+		
 
 		pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
 

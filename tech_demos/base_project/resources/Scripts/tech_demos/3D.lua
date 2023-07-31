@@ -59,7 +59,14 @@ function create_game_object(father,obj_data)
     elseif type == "sb" then
         add_mesh()
     elseif type == "music" then
-
+        add_mesh()
+        ret:add_component(components.audio_source)
+        ret.components[components.audio_source].path = "resources/Audio/music/" .. obj_data.variables.sound_source ..".wav"
+        ret.components[components.audio_source].loop = true
+        ret.components[components.audio_source].volume = 5
+        ret.components[components.audio_source].min_distance = 5
+        ret.components[components.audio_source].atenuation = 1
+        ret.components[components.audio_source]:set()
     elseif type == "player_start" then
         create_player_ceane(father,get_scene_3D("resources/Levels/3D/test_charter.gltf"))
     end
@@ -84,7 +91,7 @@ function demo:START(layers)
 
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
     demo.map_objects = create_ceane(layers.cenary,demo.map_data)
-    demo.map_objects.components[components.transform].position = Vec3:new(0,-10,0)
+    demo.map_objects.components[components.transform].position = Vec3:new(0,0,0)
     demo.map_objects.components[components.transform]:set()
     
     

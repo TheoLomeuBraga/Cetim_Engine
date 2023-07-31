@@ -12,6 +12,8 @@ function get_set_audio(get_set,object)
 end
 function set_lisener_object(object)
 end
+function set_global_volume(vol)
+end
 
 audio_component = {}
 function audio_component:new(object_ptr)
