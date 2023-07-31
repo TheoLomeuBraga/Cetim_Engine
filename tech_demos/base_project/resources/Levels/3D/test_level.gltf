@@ -39,8 +39,7 @@
 				28,
 				29,
 				30,
-				31,
-				32
+				31
 			]
 		}
 	],
@@ -388,60 +387,47 @@
 		},
 		{
 			"extras":{
-				"sound_source":"",
-				"type":"sound"
-			},
-			"mesh":7,
-			"name":"Sphere.001",
-			"translation":[
-				0,
-				36,
-				0
-			]
-		},
-		{
-			"extras":{
-				"sound_source":"",
-				"type":"sound"
+				"sound_source":"music_test_2",
+				"type":"music"
 			},
 			"mesh":7,
 			"name":"Sphere.002",
 			"translation":[
-				-55,
+				-26,
 				36,
-				41
+				23
 			]
 		},
 		{
 			"extras":{
-				"sound_source":"",
-				"type":"sound"
+				"sound_source":"music_test_3",
+				"type":"music"
 			},
 			"mesh":7,
 			"name":"Sphere.003",
 			"translation":[
-				-51,
+				-32,
 				36,
-				-15
+				-7
 			]
 		},
 		{
 			"extras":{
-				"sound_source":"",
-				"type":"sound"
+				"sound_source":"music_test_1",
+				"type":"music"
 			},
 			"mesh":7,
 			"name":"Sphere.004",
 			"translation":[
-				41.221771240234375,
+				43.221771240234375,
 				6.014965057373047,
-				35.51643753051758
+				23.516437530517578
 			]
 		},
 		{
 			"extras":{
-				"sound_source":"",
-				"type":"sound"
+				"sound_source":"music_test_2",
+				"type":"music"
 			},
 			"mesh":7,
 			"name":"Sphere.005",

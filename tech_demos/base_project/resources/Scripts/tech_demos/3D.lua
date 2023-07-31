@@ -13,14 +13,19 @@ local demo = {
 
 local this_layers = {}
 
-function create_game_object(layer,obj_data)
-end
-function create_ceane(layer,ceane_data)
-end
-
 function create_player_part(layer,obj_data)
 end
 function create_player_ceane(layer,ceane_data)
+end
+
+function create_game_object(layer,obj_data)
+
+    --demo.player_data = get_scene_3D("resources/Levels/3D/test_charter.gltf")
+    --demo.player_object = create_player_ceane(layers.cenary,demo.map_data)
+
+end
+function create_ceane(layer,ceane_data)
+    
 end
 
 function demo:START(layers)
@@ -30,8 +35,7 @@ function demo:START(layers)
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
     demo.map_objects = create_ceane(layers.cenary,demo.map_data)
 
-    demo.player_data = get_scene_3D("resources/Levels/3D/test_charter.gltf")
-    demo.player_object = create_player_ceane(layers.cenary,demo.map_data)
+    
     
 end
 
