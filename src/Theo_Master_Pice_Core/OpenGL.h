@@ -719,6 +719,10 @@ public:
 		return ret;
 	}
 
+	void apply_light(unsigned int shader_s)
+	{
+	}
+
 	void apply_material(unsigned int shader_s, Material mat)
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
@@ -746,8 +750,25 @@ public:
 				}
 				string nome_veriavel = string("textures[") + to_string(i) + string("]");
 				glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
-				
 			}
+		}
+
+		switch (mat.lado_render)
+		{
+		case lado_render_malha::both:
+			glDisable(GL_CULL_FACE);
+			break;
+
+		case lado_render_malha::front:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			break;
+
+		case lado_render_malha::back:
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+
+			break;
 		}
 
 		// input

@@ -5,15 +5,22 @@ local demo = {}
 
 local demo = {
     map_data = {},
-    map_objects = {}
+    map_objects = {},
+
+    player_data = {},
+    player_object = {}
 }
 
 local this_layers = {}
 
 function create_game_object(layer,obj_data)
 end
-
 function create_ceane(layer,ceane_data)
+end
+
+function create_player_part(layer,obj_data)
+end
+function create_player_ceane(layer,ceane_data)
 end
 
 function demo:START(layers)
