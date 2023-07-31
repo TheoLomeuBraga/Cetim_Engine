@@ -42,6 +42,13 @@ end
 function START()
 
     --get_set_parallel_loading(set_lua, true)
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/background"
+    mat.textures[1] = "resources/Textures/white.png"
+    mat.color.r = 0.5
+    mat.color.g = 0.5
+    mat.color.b = 0.5
+    create_render_shader(create_object(),true,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),1,mat)
     
     window.resolution.x = 720
     window.resolution.y = 720
@@ -51,7 +58,7 @@ function START()
 
     layers:create()
 
-    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,100)
+    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,1000)
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
 

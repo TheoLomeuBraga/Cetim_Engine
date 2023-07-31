@@ -45,6 +45,7 @@ local control = {
     action = false,
 }
 
+
 function get_control()
 
     if camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera", "is_free") then
@@ -169,7 +170,6 @@ local movement = Vec3:new(0,0,0)
 
 local speed = 7
 local y_power = 10
-
 
 function UPDATE()
 

@@ -861,7 +861,7 @@ namespace ManuseioDados
 			{
 				Material mat;
 				mat.shad = "resources/Shaders/mesh";
-				mat.texturas[0] = carregar_Imagem("resources/Textures/white.png");
+				mat.texturas[0] = carregar_Imagem("resources/Textures/null.png");
 				ret.meus_materiais.push_back(mat);
 			}
 		}
@@ -909,7 +909,7 @@ namespace ManuseioDados
 				mat.texturas[0] = ManuseioDados::carregar_Imagem(image_location);
 				if (mat.texturas[0] == NULL)
 				{
-					mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+					mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.png");
 				}
 				ret.materiais[gltf_loader.materials[i].name] = mat;
 			}

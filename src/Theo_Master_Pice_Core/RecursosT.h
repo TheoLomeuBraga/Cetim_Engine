@@ -472,7 +472,7 @@ class Material
 public:
 	string shad = "";
 
-	char lado_render = lado_render_malha::front;
+	char lado_render = lado_render_malha::both;
 
 	int filtro[NO_TEXTURAS];
 	shared_ptr<imagem> texturas[NO_TEXTURAS];

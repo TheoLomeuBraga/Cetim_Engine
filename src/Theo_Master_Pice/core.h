@@ -164,7 +164,7 @@ void iniciarTeste3()
 	/*
 	Material mat;
 	mat.shad = "resources/Shaders/mesh";
-	mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+	mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.png");
 
 	marching_cubes::Mesh mcm = marching_cubes_test();//marching_cubes_test2()[0];
 	malha m;
