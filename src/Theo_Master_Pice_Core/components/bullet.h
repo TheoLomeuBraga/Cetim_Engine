@@ -134,15 +134,23 @@ public:
         bu_collisions_no_per_object[esse_objeto.get()] = {};
         iniciar_global_bullet();
         btCollisionShape *Shape;
-        if (forma == caixa)
+        if (forma == formato_colisao::caixa)
         {
             Shape = new btBoxShape(glmToBt(escala));
         }
-        else if (forma == esfera)
+        else if (forma == formato_colisao::esfera)
         {
             Shape = new btSphereShape(escala.x);
         }
-        else if (forma == convexo)
+        else if (forma == formato_colisao::cilindro)
+        {
+            Shape = new btCylinderShape(glmToBt(escala));
+        }
+        else if (forma == formato_colisao::capsula)
+        {
+            Shape = new btCapsuleShape(escala.x,escala.y);
+        }
+        else if (forma == formato_colisao::convexo)
         {
 
             if (collision_mesh != NULL)

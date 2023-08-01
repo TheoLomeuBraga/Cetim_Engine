@@ -5,4 +5,6 @@ collision_shapes = {
     convex = 2,
     tile = 3,
     tiled_volume = 4,
+    cylinder = 5,
+    capsule = 6
 }

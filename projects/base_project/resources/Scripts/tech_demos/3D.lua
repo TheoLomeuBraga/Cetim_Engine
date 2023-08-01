@@ -19,7 +19,6 @@ ceane_object_list = {}
 
 local charter_object_list = {}
 function create_player_part(father, obj_data)
-
     local ret = game_object:new(create_object(father))
 
     ret:add_component(components.transform)
@@ -30,37 +29,62 @@ function create_player_part(father, obj_data)
 
     if obj_data.meshes ~= nil and obj_data.materials ~= nil then
         for key, value in pairs(obj_data.materials) do
-            value.color = {r=1,g=0,b=0,a=1}
+            value.color = { r = 1, g = 0, b = 0, a = 1 }
             obj_data.materials[key] = deepcopy(value)
         end
 
         ret:add_component(components.render_mesh)
         ret.components[components.render_mesh].layer = 2
-        ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),tablelength(obj_data.materials))
+        ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),
+            tablelength(obj_data.materials))
         ret.components[components.render_mesh].meshes = deepcopy(obj_data.meshes)
         ret.components[components.render_mesh].materials = deepcopy(obj_data.materials)
         ret.components[components.render_mesh]:set()
     end
 
-    charter_object_list[obj_data.id] = deepcopy(ret)
     
+
+    charter_object_list[obj_data.id] = deepcopy(ret)
+
     for key, value in pairs(obj_data.children) do
         create_player_part(ret.object_ptr, value)
     end
 
+    return ret
 end
 
 function create_player(player_obj, ceane_data)
-    
-    create_player_part(player_obj.object_ptr,ceane_data.objects)    
-    
+    player_obj.components[components.transform].scale = Vec3:new(0.25, 0.25, 0.25)
+    player_obj.components[components.transform]:set()
+
+    for key, value in pairs(ceane_data.animations) do
+        print("animation name", value.name)
+        print("animation duration", value.duration)
+    end
+
+    player_obj:add_component(components.physics_3D)
+    player_obj.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+    player_obj.components[components.physics_3D].collision_shape = collision_shapes.capsule
+    player_obj.components[components.physics_3D].scale = Vec3:new(0.5, 2, 1)
+    player_obj.components[components.physics_3D]:set()
+
     player_obj:add_component(components.lua_scripts)
+    --[[
     player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_type","3D")
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","layers",this_layers)
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_size",{x=1,y=2,z=1})
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","armature_data",{ceane_data = deepcopy(ceane_data),object_list = deepcopy(charter_object_list)})
-    
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_type", "3D")
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "layers", this_layers)
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",{ x = 1, y = 2, z = 1 })
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "armature_data",{ ceane_data = deepcopy(ceane_data), object_list = deepcopy(charter_object_list) })
+    ]]
+
+    local armature = create_player_part(player_obj.object_ptr, ceane_data.objects)
+    armature.components[components.transform]:get()
+    local position = deepcopy(armature.components[components.transform].position)
+    position.y = position.y -6.0
+    armature.components[components.transform].position = position
+    armature.components[components.transform]:set()
+
+    return deepcopy(player_obj)
 end
 
 function create_game_object(father, obj_data)
@@ -84,10 +108,11 @@ function create_game_object(father, obj_data)
                     obj_data.materials[key] = deepcopy(value)
                 end
             end
-            
+
             ret:add_component(components.render_mesh)
             ret.components[components.render_mesh].layer = 2
-            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),tablelength(obj_data.materials))
+            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),
+                tablelength(obj_data.materials))
             ret.components[components.render_mesh].meshes = deepcopy(obj_data.meshes)
             ret.components[components.render_mesh].materials = deepcopy(obj_data.materials)
             ret.components[components.render_mesh]:set()
@@ -116,23 +141,23 @@ function create_game_object(father, obj_data)
     if type == nil then
         add_mesh(nil)
     elseif type == "rb" then
-        add_mesh({r=0,g=1,b=0,a=1})
+        add_mesh({ r = 0, g = 1, b = 0, a = 1 })
         add_physics(true)
     elseif type == "sb" then
-        add_mesh({r=0,g=0,b=1,a=1})
+        add_mesh({ r = 0, g = 0, b = 1, a = 1 })
         add_physics(false)
     elseif type == "music" then
-        add_mesh({r=1,g=0,b=1,a=1})
+        add_mesh({ r = 1, g = 0, b = 1, a = 1 })
         ret:add_component(components.audio_source)
         ret.components[components.audio_source].path = "resources/Audio/music/" ..
-        obj_data.variables.sound_source .. ".wav"
+            obj_data.variables.sound_source .. ".wav"
         ret.components[components.audio_source].loop = true
         ret.components[components.audio_source].volume = 5
         ret.components[components.audio_source].min_distance = 5
         ret.components[components.audio_source].atenuation = 1
         ret.components[components.audio_source]:set()
     elseif type == "player_start" then
-        create_player(ret, get_scene_3D("resources/Levels/3D/test_charter.gltf"))
+        ret = create_player(ret, get_scene_3D("resources/Levels/3D/test_charter.gltf"))
     end
 
     ceane_object_list[obj_data.id] = deepcopy(ret)

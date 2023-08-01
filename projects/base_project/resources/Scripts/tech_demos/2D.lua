@@ -30,18 +30,17 @@ function demo:load_objects(layer_data,tile_size_pixels)
             selected_tile = 4
             shape = collision_shapes.box
 
-            
-
         elseif value.name == "sphere" then
 
             selected_tile = 5
             shape = collision_shapes.sphere
 
-
         elseif value.name == "player_start" then
+
             selected_tile = 1
             tile_set_local = "resources/Sprites/chartes_2D/charter_2D.json"
             rigid_boady = true
+            
         end
 
         local obj = create_collision_2D(demo.map_objects.object_ptr, pos, rot, sca, rigid_boady,shape,vertex_data,false)

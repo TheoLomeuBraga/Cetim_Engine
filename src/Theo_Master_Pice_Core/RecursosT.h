@@ -299,6 +299,8 @@ enum formato_colisao
 	convexo = 2,
 	tile_suave = 3,
 	volume_tiled = 4,
+	cilindro = 5,
+	capsula = 6,
 };
 
 // #define NUM_CARACTERES 128
