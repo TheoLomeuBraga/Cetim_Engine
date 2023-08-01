@@ -2,7 +2,8 @@
 
 typedef void* (*Shared_Library_Loader_Function)(void*);
 
-#ifdef WINDOWS
+#if defined(WINDOWS)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 class Shared_Library_Loader
 {
@@ -15,7 +16,6 @@ public:
     void *call_function(std::string function_name, void *arg)
     {
         Shared_Library_Loader_Function MyFunction = reinterpret_cast<Shared_Library_Loader_Function>(GetProcAddress(hDLL, function_name.c_str()));
-
 
         if (MyFunction != nullptr)
         {
@@ -30,7 +30,7 @@ public:
 };
 #endif
 
-#ifdef UNIX
+#if defined(UNIX)
 #include <dlfcn.h>
 class Shared_Library_Loader
 {
