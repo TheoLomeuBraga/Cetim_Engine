@@ -47,9 +47,7 @@ local control = {
 
 
 function get_control()
-
     if camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera", "is_free") then
-
         control.top = false
         control.down = false
         control.left = false
@@ -57,9 +55,7 @@ function get_control()
         control.jump = false
         control.action = false
         control_last_frame = deepcopy(control)
-
     else
-
         control_last_frame = deepcopy(control)
         control.top = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.w]) > 0
         control.down = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.s]) > 0
@@ -67,9 +63,7 @@ function get_control()
         control.right = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.d]) > 0
         control.jump = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.space]) > 0
         control.action = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) > 0
-
     end
-
 end
 
 function START()
@@ -81,9 +75,13 @@ function START()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
-        detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z ),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+        detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil,
+            true)
 
-        detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil, true)
+        detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil,
+            true)
 
         this_object.components[components.physics_2D].rotate = false
         this_object.components[components.physics_2D].gravity_scale = 0
@@ -100,20 +98,16 @@ function START()
         test_rc_obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
         test_rc_obj.components[components.render_sprite]:set()
         ]]
-        
-
     elseif charter_type == "3D" then
 
     end
 end
 
 function get_floor_cealing_hit()
-
     this_object.components[components.transform]:get()
     local pos = deepcopy(this_object.components[components.transform].position)
 
     if charter_type == "2D" then
-
         detect_top.components[components.transform]:change_position(pos.x, pos.y + (charter_size.y / 2) + 0.05, pos.z)
         detect_top.components[components.physics_2D]:get()
         hit_top = tablelength(detect_top.components[components.physics_2D].objs_touching) > 1
@@ -121,12 +115,9 @@ function get_floor_cealing_hit()
         detect_down.components[components.transform]:change_position(pos.x, pos.y - (charter_size.y / 2) - 0.05, pos.z)
         detect_down.components[components.physics_2D]:get()
         hit_down = tablelength(detect_down.components[components.physics_2D].objs_touching) > 1
-
-
     elseif charter_type == "3D" then
 
     end
-    
 end
 
 function set_sprite(id)
@@ -137,46 +128,39 @@ end
 local direction_x_2D = 1
 
 function action()
-    
     if charter_type == "2D" then
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
-        local target_pos = {x=pos.x + (direction_x_2D * 10),y=pos.y }
+        local target_pos = { x = pos.x + (direction_x_2D * 10), y = pos.y }
 
-        local hit,hit_data = raycast_2D({x=pos.x+(direction_x_2D * 1.01),y=pos.y},target_pos)
+        local hit, hit_data = raycast_2D({ x = pos.x + (direction_x_2D * 1.01), y = pos.y }, target_pos)
 
         if hit then
-            
             local hit_obj = game_object:new(hit_data.collision_object)
             hit_obj.components[components.physics_2D]:get()
 
             print(hit_obj.components[components.physics_2D].boady_dynamic)
-            
+
             if hit_obj.components[components.physics_2D].boady_dynamic == boady_dynamics.dynamic then
-                
-                hit_obj.components[components.physics_2D]:add_impulse(0,1000)
-                
+                hit_obj.components[components.physics_2D]:add_impulse(0, 1000)
             end
         end
-
-        
     elseif charter_type == "3D" then
 
     end
 end
 
-local movement = Vec3:new(0,0,0)
+local movement = Vec3:new(0, 0, 0)
 
 local speed = 7
 local y_power = 10
 
 armature_data = {
-    sceane_data = {},
+    ceane_data = {},
     object_list = {}
 }
 
 function UPDATE()
-
     gravity:get()
     time:get()
 
@@ -184,24 +168,25 @@ function UPDATE()
 
     get_floor_cealing_hit()
 
-    
-    if movement.x < 0 then
-        set_sprite(4)
-    elseif movement.x > 0 then
-        set_sprite(3)
-    elseif movement.y > 0 then
-        set_sprite(2)
-    elseif movement.y < 0 then
-        set_sprite(5)
-    else
-        set_sprite(1)
-    end
-
     if control.action and not control_last_frame.action then
         action()
     end
 
     if charter_type == "2D" then
+
+        
+
+        if movement.x < 0 then
+            set_sprite(4)
+        elseif movement.x > 0 then
+            set_sprite(3)
+        elseif movement.y > 0 then
+            set_sprite(2)
+        elseif movement.y < 0 then
+            set_sprite(5)
+        else
+            set_sprite(1)
+        end
 
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
@@ -225,36 +210,30 @@ function UPDATE()
             movement.x = 0
         end
 
-        this_object.components[components.physics_2D]:set_linear_velocity(movement.x,movement.y)
-        
-
+        this_object.components[components.physics_2D]:set_linear_velocity(movement.x, movement.y)
     elseif charter_type == "3D" then
 
     end
 end
 
 function END()
-
-    remove_object(detect_top.object_ptr)
-    detect_top = nil
-
-    remove_object(detect_down.object_ptr)
-    detect_down = nil
-
     if charter_type == "2D" then
+
+        remove_object(detect_top.object_ptr)
+        detect_top = nil
+
+        remove_object(detect_down.object_ptr)
+        detect_down = nil
 
     elseif charter_type == "3D" then
 
     end
-
 end
 
 function COLLIDE(collision_info)
-
     if charter_type == "2D" then
 
     elseif charter_type == "3D" then
 
     end
-
 end
