@@ -1,1 +1,2 @@
-C:\Theo_Master_Pice\build\engine_theo_master_pice.exe C:\Theo_Master_Pice\projects\base_project
+
+%cd%\build\engine_theo_master_pice.exe %cd%\projects\base_project
