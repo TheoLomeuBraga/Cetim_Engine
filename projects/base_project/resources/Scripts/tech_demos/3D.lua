@@ -66,11 +66,14 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     player_obj.components[components.physics_3D].collision_shape = collision_shapes.capsule
     player_obj.components[components.physics_3D].scale = Vec3:new(0.5, 2, 1)
+    player_obj.components[components.physics_3D].rotacionarX = false
+    player_obj.components[components.physics_3D].rotacionarY = false
+    player_obj.components[components.physics_3D].rotacionarZ = false
     player_obj.components[components.physics_3D]:set()
 
     player_obj:add_component(components.lua_scripts)
-    --[[
     player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+    --[[
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_type", "3D")
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "layers", this_layers)
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",{ x = 1, y = 2, z = 1 })

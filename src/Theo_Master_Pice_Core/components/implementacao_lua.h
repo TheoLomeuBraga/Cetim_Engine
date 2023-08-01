@@ -531,7 +531,6 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	
 	int get_set_parallel_loading(lua_State *L)
 	{
 		if (lua_tonumber(L, 1) == get_lua)
@@ -541,13 +540,14 @@ namespace funcoes_ponte
 		}
 		else
 		{
-			parallel_loading = lua_toboolean(L,2);
+			parallel_loading = lua_toboolean(L, 2);
 			return 0;
 		}
 	}
 
-	int loading_requests_number(lua_State *L){
-		lua_pushnumber(L,ManuseioDados::loading_requests_no);
+	int loading_requests_number(lua_State *L)
+	{
+		lua_pushnumber(L, ManuseioDados::loading_requests_no);
 		return 0;
 	}
 
@@ -1340,8 +1340,9 @@ namespace funcoes_ponte
 		}
 	}
 
-	int set_global_volume(lua_State *L){
-		set_global_volume_sfml(lua_tonumber(L,1));
+	int set_global_volume(lua_State *L)
+	{
+		set_global_volume_sfml(lua_tonumber(L, 1));
 		return 0;
 	}
 
@@ -1512,14 +1513,24 @@ namespace funcoes_ponte
 	{
 		if (lua_tonumber(L, 1) == get_lua)
 		{
+
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
 			Table _mesh;
-			_mesh.setString("file", bu->collision_mesh->arquivo_origem);
-			_mesh.setString("name", bu->collision_mesh->nome);
-			ret.setTable("collision_mesh", _mesh);
+			if (bu->collision_mesh != NULL)
+			{
+				_mesh.setString("file", bu->collision_mesh->arquivo_origem);
+				_mesh.setString("name", bu->collision_mesh->nome);
+				ret.setTable("collision_mesh", _mesh);
+			}
+			else
+			{
+				_mesh.setString("file", "");
+				_mesh.setString("name", "");
+				ret.setTable("collision_mesh", _mesh);
+			}
 
 			ret.setTable("collision_layer", info_camada_table(bu->layer));
 			ret.setTable("scale", vec3_table(bu->escala));
@@ -1539,7 +1550,7 @@ namespace funcoes_ponte
 			{
 				objs_touching.push_back(ponteiro_string(obj));
 			}
-			ret.setTable("objs_touching", vString_table(objs_touching));
+			ret.setTable("objs_touching", vString_table(stringRemoveDuplicates(objs_touching)));
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -1698,9 +1709,8 @@ namespace funcoes_ponte
 		// memoria
 		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
 		pair<string, lua_function>("get_set_parallel_loading", funcoes_ponte::get_set_parallel_loading),
-		
+
 		pair<string, lua_function>("loading_requests_number", funcoes_ponte::loading_requests_number),
-		
 
 		// objeto
 		pair<string, lua_function>("create_object", funcoes_ponte::create_object),
@@ -1763,8 +1773,6 @@ namespace funcoes_ponte
 		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
 		pair<string, lua_function>("set_linear_velocity", funcoes_ponte::set_linear_velocity),
 		pair<string, lua_function>("set_angular_velocity", funcoes_ponte::set_angular_velocity),
-		
-		
 
 		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
 		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
@@ -1780,7 +1788,6 @@ namespace funcoes_ponte
 		// audio
 		pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
 		pair<string, lua_function>("set_global_volume", funcoes_ponte::set_global_volume),
-		
 
 		pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
 
@@ -1979,7 +1986,6 @@ public:
 	void adicionar_script(string s)
 	{
 
-		
 		if (estados_lua.find(s) != estados_lua.end())
 		{
 			lua_getglobal(estados_lua[s], "END");
@@ -2238,7 +2244,7 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<render_malha>(render_malha());}else{obj->remover_componente<render_malha>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("light", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<fonte_luz>();} }),
-												
+
 };
 
 int add_component(lua_State *L)
@@ -2321,7 +2327,6 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 	pair<string, bool (*)(objeto_jogo *)>("light", [](objeto_jogo *obj)
 										  { return obj->tem_componente<fonte_luz>(); }),
 
-										  
 };
 int have_component(lua_State *L)
 {

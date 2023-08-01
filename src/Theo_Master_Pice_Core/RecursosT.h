@@ -1191,3 +1191,13 @@ class lista_ponteiros
 		items_vazios.push_back(i);
 	}
 };
+
+std::vector<std::string> stringRemoveDuplicates(const std::vector<std::string>& vec) {
+    std::vector<std::string> result;
+    for (const std::string& str : vec) {
+        if (std::find(result.begin(), result.end(), str) == result.end()) {
+            result.push_back(str);
+        }
+    }
+    return result;
+}

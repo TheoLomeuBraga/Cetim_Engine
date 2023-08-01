@@ -376,16 +376,17 @@ public:
     {
         colis_info collisionInfo;
 
-        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         collisionInfo.pos = btToGlm(cp.getPositionWorldOnA());
         collisionInfo.nor = btToGlm(cp.m_normalWorldOnB);
         collisionInfo.velocidade = cp.m_appliedImpulse;
+
+        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
 
-        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-        physics_3D_collisionInfos.push_back(collisionInfo);
+        //collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        //collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        //physics_3D_collisionInfos.push_back(collisionInfo);
 
         return 0; // return 0 to process all collisions
     }
@@ -495,11 +496,13 @@ void applay_3D_collisions()
         objeto_jogo *obj = (objeto_jogo *)ci.obj;
         obj->colidir(ci);
 
+        /*
         colis_info ci2 = ci;
         ci2.obj = ci.cos_obj;
         ci2.cos_obj = ci.obj;
         obj = (objeto_jogo *)ci2.obj;
-        obj->colidir(ci);
+        obj->colidir(ci2);
+        */
     }
 }
 void clean_collisions()
@@ -513,7 +516,6 @@ void clean_bu_collisions_no_per_object()
     for (pair<objeto_jogo *, std::vector<objeto_jogo *>> p : bu_collisions_no_per_object)
     {
         vector<objeto_jogo *> empt;
-        // print({"bu_collisions_no_per_object[p.first].size()",bu_collisions_no_per_object[p.first].size()});
         bu_collisions_no_per_object[p.first].swap(empt);
     }
 }

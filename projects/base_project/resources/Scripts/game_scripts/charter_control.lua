@@ -11,7 +11,7 @@ require("TMP_libs.short_cuts.create_collision")
 require("math")
 
 layers = {}
-charter_type = "2D"
+charter_type = ""
 charter_size = { x = 1, y = 1, z = 1 }
 
 local test_rc_obj = {}
@@ -67,6 +67,7 @@ function get_control()
 end
 
 function START()
+
     camera_man_object = game_object:new(global_data:get_var("camera_object_ptr"))
 
     this_object = game_object:new(this_object_ptr)
@@ -98,12 +99,15 @@ function START()
         test_rc_obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
         test_rc_obj.components[components.render_sprite]:set()
         ]]
+        
     elseif charter_type == "3D" then
 
     end
+    
 end
 
 function get_floor_cealing_hit()
+    
     this_object.components[components.transform]:get()
     local pos = deepcopy(this_object.components[components.transform].position)
 
@@ -163,6 +167,8 @@ armature_data = {
 function UPDATE()
     gravity:get()
     time:get()
+
+    this_object.components[components.physics_3D]:get()
 
     get_control()
 
