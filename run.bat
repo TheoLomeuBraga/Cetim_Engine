@@ -1,1 +1,1 @@
-C:\Theo_Master_Pice\build\engine_theo_master_pice.exe C:\Theo_Master_Pice\tech_demos\base_project
+C:\Theo_Master_Pice\build\engine_theo_master_pice.exe C:\Theo_Master_Pice\projects\base_project
