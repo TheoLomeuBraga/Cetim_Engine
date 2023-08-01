@@ -1,4 +1,5 @@
 linux so:
+        
         liblua.so.5.4 => /usr/lib/liblua.so.5.4 
         libglfw.so.3 => /usr/lib/libglfw.so.3 
         libGLEW.so.2.2 => /usr/lib/libGLEW.so.2.2 
