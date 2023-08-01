@@ -16,11 +16,22 @@ local demo = {
 local this_layers = {}
 
 ceane_object_list = {}
-ceane_object_list = {}
 
-function create_player_part(player_obj, obj_data)
+local charter_object_list = {}
+function create_player_part(father, obj_data)
 end
 function create_player(player_obj, ceane_data)
+    
+    create_player_part(player_obj.object_ptr,ceane_data.objects)
+
+    player_obj:add_component(components.lua_scripts)
+    --[[
+    player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_type","3D")
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","layers",this_layers)
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_size",{x=1,y=1,z=1})
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","armature_data",{sceane_data = deepcopy(ceane_data),object_list = deepcopy(charter_object_list)})
+    ]]
     
 end
 
@@ -41,8 +52,7 @@ function create_game_object(father, obj_data)
         if obj_data.meshes ~= nil and obj_data.materials ~= nil then
             ret:add_component(components.render_mesh)
             ret.components[components.render_mesh].layer = 2
-            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),
-                tablelength(obj_data.materials))
+            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(obj_data.meshes),tablelength(obj_data.materials))
             ret.components[components.render_mesh].meshes = deepcopy(obj_data.meshes)
             ret.components[components.render_mesh].materials = deepcopy(obj_data.materials)
             ret.components[components.render_mesh]:set()

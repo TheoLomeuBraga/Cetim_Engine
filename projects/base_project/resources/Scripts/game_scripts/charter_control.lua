@@ -171,6 +171,11 @@ local movement = Vec3:new(0,0,0)
 local speed = 7
 local y_power = 10
 
+armature_data = {
+    sceane_data = {},
+    object_list = {}
+}
+
 function UPDATE()
 
     gravity:get()
