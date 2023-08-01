@@ -19,6 +19,7 @@ ceane_object_list = {}
 
 local charter_object_list = {}
 function create_player_part(father, obj_data)
+    
 end
 function create_player(player_obj, ceane_data)
     
@@ -29,7 +30,7 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_type","3D")
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","layers",this_layers)
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_size",{x=1,y=1,z=1})
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","charter_size",{x=1,y=2,z=1})
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control","armature_data",{sceane_data = deepcopy(ceane_data),object_list = deepcopy(charter_object_list)})
     ]]
     

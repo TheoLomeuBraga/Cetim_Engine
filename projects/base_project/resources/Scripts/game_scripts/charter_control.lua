@@ -153,8 +153,7 @@ function action()
             print(hit_obj.components[components.physics_2D].boady_dynamic)
             
             if hit_obj.components[components.physics_2D].boady_dynamic == boady_dynamics.dynamic then
-
-                print("hit")
+                
                 hit_obj.components[components.physics_2D]:add_impulse(0,1000)
                 
             end
