@@ -155,7 +155,6 @@ public:
 		{
 			if (dinamica == estatico)
 			{
-				// BodyDef.type = b2_staticBody;
 				BodyDef.type = b2_kinematicBody;
 			}
 			else if (dinamica == cinematico)

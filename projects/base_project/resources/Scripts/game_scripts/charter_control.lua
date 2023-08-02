@@ -67,21 +67,21 @@ function get_control()
 end
 
 function START()
-
     camera_man_object = game_object:new(global_data:get_var("camera_object_ptr"))
 
     this_object = game_object:new(this_object_ptr)
 
     if charter_type == "2D" then
+        
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
         detect_top = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),
-            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil,
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.05, charter_size.y), false, collision_shapes.box, nil,
             true)
 
         detect_down = create_collision_2D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),
-            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.1, charter_size.y), false, collision_shapes.box, nil,
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.05, charter_size.y), false, collision_shapes.box, nil,
             true)
 
         this_object.components[components.physics_2D].rotate = false
@@ -99,15 +99,24 @@ function START()
         test_rc_obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
         test_rc_obj.components[components.render_sprite]:set()
         ]]
-        
     elseif charter_type == "3D" then
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
 
+        detect_top = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,true)
+
+        detect_down = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1,0.5, charter_size.y), true, collision_shapes.cube, nil,
+            true)
+
+        this_object.components[components.physics_3D].rotate_X = 0
+        this_object.components[components.physics_3D].rotate_Y = 0
+        this_object.components[components.physics_3D].rotate_Z = 0
+        this_object.components[components.physics_3D]:set()
     end
-    
 end
 
 function get_floor_cealing_hit()
-    
     this_object.components[components.transform]:get()
     local pos = deepcopy(this_object.components[components.transform].position)
 
@@ -120,6 +129,19 @@ function get_floor_cealing_hit()
         detect_down.components[components.physics_2D]:get()
         hit_down = tablelength(detect_down.components[components.physics_2D].objs_touching) > 1
     elseif charter_type == "3D" then
+
+        
+        detect_top.components[components.transform]:change_position(pos.x, pos.y + (charter_size.y / 2) + 0.5, pos.z)
+        detect_top.components[components.physics_3D]:get()
+        hit_top = tablelength(detect_top.components[components.physics_3D].objs_touching) > 1
+        --print("hit_top",hit_top)
+
+        detect_down.components[components.transform]:change_position(pos.x, pos.y - (charter_size.y / 2) - 0.5, pos.z)
+        detect_down.components[components.physics_3D]:get()
+        hit_down = tablelength(detect_down.components[components.physics_3D].objs_touching) > 1
+        --print("hit_down",hit_down)
+
+        this_object.components[components.physics_3D]:get()
 
     end
 end
@@ -168,8 +190,7 @@ function UPDATE()
     gravity:get()
     time:get()
 
-    this_object.components[components.physics_3D]:get()
-
+        
     get_control()
 
     get_floor_cealing_hit()
@@ -179,9 +200,6 @@ function UPDATE()
     end
 
     if charter_type == "2D" then
-
-        
-
         if movement.x < 0 then
             set_sprite(4)
         elseif movement.x > 0 then
@@ -224,13 +242,11 @@ end
 
 function END()
     if charter_type == "2D" then
-
         remove_object(detect_top.object_ptr)
         detect_top = nil
 
         remove_object(detect_down.object_ptr)
         detect_down = nil
-
     elseif charter_type == "3D" then
 
     end

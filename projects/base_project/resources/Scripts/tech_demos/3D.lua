@@ -58,8 +58,8 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.transform]:set()
 
     for key, value in pairs(ceane_data.animations) do
-        print("animation name", value.name)
-        print("animation duration", value.duration)
+        --print("animation name", value.name)
+        --print("animation duration", value.duration)
     end
 
     player_obj:add_component(components.physics_3D)
@@ -73,12 +73,11 @@ function create_player(player_obj, ceane_data)
 
     player_obj:add_component(components.lua_scripts)
     player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
-    --[[
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_type", "3D")
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "layers", this_layers)
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",{ x = 1, y = 2, z = 1 })
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",Vec3:new(0.5, 2, 0.5))
     player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "armature_data",{ ceane_data = deepcopy(ceane_data), object_list = deepcopy(charter_object_list) })
-    ]]
+    
 
     local armature = create_player_part(player_obj.object_ptr, ceane_data.objects)
     armature.components[components.transform]:get()

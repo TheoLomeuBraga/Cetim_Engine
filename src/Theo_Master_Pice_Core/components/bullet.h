@@ -195,7 +195,7 @@ public:
             }
             else
             {
-                cout << "fail load collision mesh\n";
+                print({"fail load collision mesh"});
                 if (triangleMeshs.find(esse_objeto) != triangleMeshs.end())
                 {
                     delete triangleMeshs[esse_objeto];
@@ -224,7 +224,8 @@ public:
         {
             bt_obj = new btGhostObject();
             bt_obj->setCollisionShape(Shape);
-            bt_obj->setCollisionFlags(bt_obj->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+            //bt_obj->setCollisionFlags(bt_obj->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+            bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
         }
@@ -384,9 +385,9 @@ public:
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
 
-        //collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-        //collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        //physics_3D_collisionInfos.push_back(collisionInfo);
+        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        physics_3D_collisionInfos.push_back(collisionInfo);
 
         return 0; // return 0 to process all collisions
     }
