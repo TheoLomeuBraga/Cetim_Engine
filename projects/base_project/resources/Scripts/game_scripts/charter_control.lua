@@ -237,6 +237,9 @@ function UPDATE()
         this_object.components[components.physics_2D]:set_linear_velocity(movement.x, movement.y)
     elseif charter_type == "3D" then
 
+        local mouse_rot = camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera", "current_rot")
+        this_object.components[components.transform]:change_rotation(0,mouse_rot.x + 90,0)
+        
     end
 end
 

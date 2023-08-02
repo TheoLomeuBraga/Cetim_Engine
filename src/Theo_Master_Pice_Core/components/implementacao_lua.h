@@ -783,7 +783,9 @@ namespace funcoes_ponte
 		if (tf != NULL)
 		{
 
-			vec3 v3a = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4)), v3b = tf->pegar_angulo_graus(), v3c = vec3(v3a.x + v3b.x, v3a.y + v3b.y, v3a.z + v3b.z);
+			vec3 v3a = vec3(lua_tonumber(L, 2),lua_tonumber(L, 3), lua_tonumber(L, 4));
+			vec3 v3b = tf->pegar_angulo_graus();
+			vec3 v3c = vec3(v3a.x + v3b.x, v3a.y + v3b.y, v3a.z + v3b.z);
 			tf->mudar_angulo_graus(v3c);
 		}
 		return 0;

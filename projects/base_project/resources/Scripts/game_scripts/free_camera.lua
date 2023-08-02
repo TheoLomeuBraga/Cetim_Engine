@@ -18,7 +18,7 @@ local mouse_move = { x = 0, y = 0 }
 local mouse_move_this_frame = { x = 0, y = 0 }
 
 local current_pos = { x = 0, y = 0, z = 0 }
-local current_rot = { x = 0, y = 0 }
+current_rot = { x = 0, y = 0 }
 
 is_free = false
 
@@ -66,6 +66,7 @@ function run_rotation()
     current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
     current_rot.y = math.max(-90, math.min(90, current_rot.y))
     this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
+    this_object.components[components.transform]:get()
     keys_axis:set_cursor_position(screan_center.x, screan_center.y)
 
 end
