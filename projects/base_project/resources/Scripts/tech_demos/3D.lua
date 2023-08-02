@@ -70,13 +70,6 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.physics_3D].rotacionarY = false
     player_obj.components[components.physics_3D].rotacionarZ = false
     player_obj.components[components.physics_3D]:set()
-
-    player_obj:add_component(components.lua_scripts)
-    player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_type", "3D")
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "layers", this_layers)
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",Vec3:new(0.5, 2, 0.5))
-    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "armature_data",{ ceane_data = deepcopy(ceane_data), object_list = deepcopy(charter_object_list) })
     
 
     local armature = create_player_part(player_obj.object_ptr, ceane_data.objects)
@@ -85,6 +78,18 @@ function create_player(player_obj, ceane_data)
     position.y = position.y -6.0
     armature.components[components.transform].position = position
     armature.components[components.transform]:set()
+
+    local charter_object_list_ptr = {}
+    for key, value in pairs(charter_object_list) do
+        charter_object_list_ptr[key] = value.object_ptr
+    end
+
+    player_obj:add_component(components.lua_scripts)
+    player_obj.components[components.lua_scripts]:add_script("game_scripts/charter_control")
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_type", "3D")
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "layers", this_layers)
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "charter_size",Vec3:new(0.5, 2, 0.5))
+    player_obj.components[components.lua_scripts]:set_variable("game_scripts/charter_control", "armature_data",{ ceane_data = deepcopy(ceane_data), object_list_ptr = deepcopy(charter_object_list_ptr),object_list = {} })
 
     return deepcopy(player_obj)
 end

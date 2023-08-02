@@ -8,6 +8,7 @@ require("TMP_libs.objects.gravity")
 require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
 require("TMP_libs.short_cuts.create_collision")
+require("TMP_libs.objects.scene_3D")
 require("math")
 
 layers = {}
@@ -66,13 +67,19 @@ function get_control()
     end
 end
 
+armature_data = {
+    ceane_data = {},
+    object_list = {},
+    object_list_ptr = {}
+}
+
+
 function START()
     camera_man_object = game_object:new(global_data:get_var("camera_object_ptr"))
 
     this_object = game_object:new(this_object_ptr)
 
     if charter_type == "2D" then
-        
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
@@ -100,13 +107,21 @@ function START()
         test_rc_obj.components[components.render_sprite]:set()
         ]]
     elseif charter_type == "3D" then
+
+        armature_data.object_list = {}
+        for key, value in pairs(armature_data.object_list_ptr) do
+            armature_data.object_list[key] = game_object:new(value)
+        end
+
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
-        detect_top = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,true)
+        detect_top = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,
+            true)
 
         detect_down = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),
-            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1,0.5, charter_size.y), true, collision_shapes.cube, nil,
+            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,
             true)
 
         this_object.components[components.physics_3D].rotate_X = 0
@@ -129,20 +144,15 @@ function get_floor_cealing_hit()
         detect_down.components[components.physics_2D]:get()
         hit_down = tablelength(detect_down.components[components.physics_2D].objs_touching) > 1
     elseif charter_type == "3D" then
-
-        
         detect_top.components[components.transform]:change_position(pos.x, pos.y + (charter_size.y / 2) + 0.5, pos.z)
         detect_top.components[components.physics_3D]:get()
         hit_top = tablelength(detect_top.components[components.physics_3D].objs_touching) > 1
-        --print("hit_top",hit_top)
 
         detect_down.components[components.transform]:change_position(pos.x, pos.y - (charter_size.y / 2) - 0.5, pos.z)
         detect_down.components[components.physics_3D]:get()
         hit_down = tablelength(detect_down.components[components.physics_3D].objs_touching) > 1
-        --print("hit_down",hit_down)
 
         this_object.components[components.physics_3D]:get()
-
     end
 end
 
@@ -165,8 +175,6 @@ function action()
             local hit_obj = game_object:new(hit_data.collision_object)
             hit_obj.components[components.physics_2D]:get()
 
-            print(hit_obj.components[components.physics_2D].boady_dynamic)
-
             if hit_obj.components[components.physics_2D].boady_dynamic == boady_dynamics.dynamic then
                 hit_obj.components[components.physics_2D]:add_impulse(0, 1000)
             end
@@ -181,16 +189,13 @@ local movement = Vec3:new(0, 0, 0)
 local speed = 7
 local y_power = 10
 
-armature_data = {
-    ceane_data = {},
-    object_list = {}
-}
+
 
 function UPDATE()
     gravity:get()
     time:get()
 
-        
+
     get_control()
 
     get_floor_cealing_hit()
@@ -236,10 +241,13 @@ function UPDATE()
 
         this_object.components[components.physics_2D]:set_linear_velocity(movement.x, movement.y)
     elseif charter_type == "3D" then
+        local mouse_rot = camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera",
+            "current_rot")
+        this_object.components[components.transform]:change_rotation(0, mouse_rot.x + 90, 0)
 
-        local mouse_rot = camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera", "current_rot")
-        this_object.components[components.transform]:change_rotation(0,mouse_rot.x + 90,0)
-        
+        --print("AAAAA")
+        --deepprint(armature_data.object_list)
+        apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
     end
 end
 
