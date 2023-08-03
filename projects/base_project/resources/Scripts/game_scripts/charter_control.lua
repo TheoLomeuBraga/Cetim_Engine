@@ -276,12 +276,13 @@ function UPDATE()
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
         end
-        if hit_down and movement.y < 0 then
-            movement.y = 0
-        end
         if not hit_down then
             movement.y = movement.y + (gravity.force.y * time.delta)
         end
+        if hit_down and movement.y < 0 then
+            movement.y = 0
+        end
+        
         
         
 
@@ -301,10 +302,11 @@ function UPDATE()
             movement.z = 0
         end
 
-        print(control.top)
+        local local_direction = this_object.components[components.transform]:get_local_direction(movement.x, movement.y,movement.z)
 
+        this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
         
-        this_object.components[components.physics_3D]:set_linear_velocity(movement.x, movement.y,movement.z)
+        
         
         play_3D_animation()
     end

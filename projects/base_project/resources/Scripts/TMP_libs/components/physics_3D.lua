@@ -14,7 +14,7 @@ end
 function add_rotative_impulse(object, force_x, force_y,force_z)
 end
 
-function set_linear_velocity(x,y,z)
+function set_linear_velocity(object,x,y,z)
 end
 function set_angular_velocity(object, force_x,force_y,force_z)
 end

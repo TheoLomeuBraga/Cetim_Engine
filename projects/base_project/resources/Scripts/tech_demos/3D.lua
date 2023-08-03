@@ -54,7 +54,7 @@ function create_player_part(father, obj_data)
 end
 
 function create_player(player_obj, ceane_data)
-    player_obj.components[components.transform].scale = Vec3:new(0.25, 0.25, 0.25)
+    player_obj.components[components.transform].scale = Vec3:new(1, 1, 1)
     player_obj.components[components.transform]:set()
 
     for key, value in pairs(ceane_data.animations) do
@@ -76,8 +76,9 @@ function create_player(player_obj, ceane_data)
     local armature = create_player_part(player_obj.object_ptr, ceane_data.objects)
     armature.components[components.transform]:get()
     local position = deepcopy(armature.components[components.transform].position)
-    position.y = position.y -6.0
+    position.y = position.y -(6.0 * 0.25)
     armature.components[components.transform].position = position
+    armature.components[components.transform].scale = Vec3:new( 0.25, 0.25, 0.25)
     armature.components[components.transform]:set()
 
     local charter_object_list_ptr = {}
