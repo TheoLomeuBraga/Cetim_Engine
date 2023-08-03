@@ -69,6 +69,7 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.physics_3D].rotacionarX = false
     player_obj.components[components.physics_3D].rotacionarY = false
     player_obj.components[components.physics_3D].rotacionarZ = false
+    player_obj.components[components.physics_3D].friction = 0
     player_obj.components[components.physics_3D]:set()
     
 

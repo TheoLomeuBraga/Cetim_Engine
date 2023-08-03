@@ -127,6 +127,7 @@ function START()
         this_object.components[components.physics_3D].rotate_X = 0
         this_object.components[components.physics_3D].rotate_Y = 0
         this_object.components[components.physics_3D].rotate_Z = 0
+        this_object.components[components.physics_3D].friction = 0
         this_object.components[components.physics_3D]:set()
     end
 end
@@ -191,7 +192,21 @@ local animation_selected = "walk"
 local animation_advancement = 0
 
 function play_3D_animation()
-    apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
+    if hit_down then
+        if (movement.x + movement.y) ~= 0 then
+            animation_selected = "walk"
+        else
+            animation_selected = "stop"
+        end
+        
+    else 
+        animation_selected = "jump"
+    end
+
+    --apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
+
+    animation_selected_last_frame = animation_selected
+
 end
 
 local speed = 7
@@ -225,6 +240,8 @@ function UPDATE()
             set_sprite(1)
         end
 
+        --movement
+
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
         end
@@ -248,13 +265,46 @@ function UPDATE()
         end
 
         this_object.components[components.physics_2D]:set_linear_velocity(movement.x, movement.y)
+
     elseif charter_type == "3D" then
         local mouse_rot = camera_man_object.components[components.lua_scripts]:get_variable("game_scripts/free_camera",
             "current_rot")
         this_object.components[components.transform]:change_rotation(0, mouse_rot.x + 90, 0)
 
-        --print("AAAAA")
-        --deepprint(armature_data.object_list)
+        --movement
+
+        if control.jump and not control_last_frame.jump and hit_down then
+            movement.y = y_power
+        end
+        if hit_down and movement.y < 0 then
+            movement.y = 0
+        end
+        if not hit_down then
+            movement.y = movement.y + (gravity.force.y * time.delta)
+        end
+        
+        
+
+        if control.left then
+            movement.x = -speed
+        elseif control.right then
+            movement.x = speed
+        else
+            movement.x = 0
+        end
+
+        if control.top then
+            movement.z = -speed
+        elseif control.down then
+            movement.z = speed
+        else
+            movement.z = 0
+        end
+
+        print(control.top)
+
+        
+        this_object.components[components.physics_3D]:set_linear_velocity(movement.x, movement.y,movement.z)
         
         play_3D_animation()
     end
