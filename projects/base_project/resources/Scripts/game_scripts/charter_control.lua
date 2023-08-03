@@ -193,7 +193,7 @@ local animation_advancement = 0
 
 function play_3D_animation()
     if hit_down then
-        if (movement.x + movement.y) ~= 0 then
+        if control.top or control.down or control.left or control.right then
             animation_selected = "walk"
         else
             animation_selected = "stop"
@@ -203,7 +203,32 @@ function play_3D_animation()
         animation_selected = "jump"
     end
 
-    --apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
+    if animation_selected_last_frame ~= animation_selected then
+        animation_advancement = 0
+    end
+
+    animation_advancement = animation_advancement + ((time.delta / armature_data.ceane_data.animations[animation_selected].duration) * 2)
+
+    if animation_advancement > 1 then
+        if animation_selected == "walk" then
+            animation_advancement = 0
+        elseif animation_selected == "stop" then
+            animation_advancement = 0
+        elseif animation_selected == "jump" then
+            animation_advancement = 1
+        end
+    end
+
+    --print(animation_advancement)
+
+    --tablelength(armature_data.ceane_data.animations[animation_selected].key_frames)
+
+    local selected_frame = math.floor(animation_advancement * tablelength(armature_data.ceane_data.animations[animation_selected].key_frames))
+    if selected_frame == 0 then
+        selected_frame = 1
+    end
+
+    apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations[animation_selected].key_frames[selected_frame])
 
     animation_selected_last_frame = animation_selected
 
@@ -282,9 +307,6 @@ function UPDATE()
         if hit_down and movement.y < 0 then
             movement.y = 0
         end
-        
-        
-        
 
         if control.left then
             movement.x = -speed
@@ -306,9 +328,8 @@ function UPDATE()
 
         this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
         
-        
-        
         play_3D_animation()
+
     end
 end
 
