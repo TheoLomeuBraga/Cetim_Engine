@@ -186,6 +186,14 @@ end
 
 local movement = Vec3:new(0, 0, 0)
 
+local animation_selected_last_frame = "walk"
+local animation_selected = "walk"
+local animation_advancement = 0
+
+function play_3D_animation()
+    apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
+end
+
 local speed = 7
 local y_power = 10
 
@@ -247,7 +255,8 @@ function UPDATE()
 
         --print("AAAAA")
         --deepprint(armature_data.object_list)
-        apply_key_frame(armature_data.object_list,armature_data.ceane_data.animations["walk"].key_frames[15])
+        
+        play_3D_animation()
     end
 end
 
