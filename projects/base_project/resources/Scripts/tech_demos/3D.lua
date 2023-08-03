@@ -140,6 +140,7 @@ function create_game_object(father, obj_data)
             ret.components[components.physics_3D].collision_mesh = deepcopyjson(obj_data.meshes[1])
             ret.components[components.physics_3D].triger = false
             ret.components[components.physics_3D].scale = deepcopyjson(obj_data.scale)
+            ret.components[components.physics_3D].friction = 10
             ret.components[components.physics_3D]:set()
         end
     end

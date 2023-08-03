@@ -239,6 +239,7 @@ public:
                 btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
                 btRigidBody *rb = new btRigidBody(CI);
                 rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
+                rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(rb);
                 bt_obj = rb;
             }
@@ -336,13 +337,16 @@ public:
     }
     void adicionar_forca(vec3 forca)
     {
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_impulso(vec3 forca)
     {
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_velocidade(vec3 forca){
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
     }
 
@@ -351,14 +355,17 @@ public:
 
     void adicionar_forca_rotativo(vec3 forca)
     {
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->applyTorque(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_impulso_rotativo(vec3 forca)
     {
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
     }
     void aplicar_velocidade_rotativa(vec3 forca)
     {
+        ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
     }
     ~bullet()
