@@ -117,11 +117,11 @@ function START()
         local pos = deepcopy(this_object.components[components.transform].position)
 
         detect_top = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y + (charter_size.y / 2), pos.z),
-            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,
+            Vec3:new(0, 0, 0), Vec3:new(0.1, 0.5, 0.1), true, collision_shapes.cube, nil,
             true)
 
         detect_down = create_collision_3D(layers.cenary, Vec3:new(pos.x, pos.y - (charter_size.y / 2), pos.z),
-            Vec3:new(0, 0, 0), Vec3:new(charter_size.x - 0.1, 0.5, charter_size.y), true, collision_shapes.cube, nil,
+            Vec3:new(0, 0, 0), Vec3:new(0.1, 0.5, 0.1), true, collision_shapes.cube, nil,
             true)
 
         this_object.components[components.physics_3D].rotate_X = 0
@@ -301,9 +301,7 @@ function UPDATE()
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
         end
-        if not hit_down then
-            movement.y = movement.y + (gravity.force.y * time.delta)
-        end
+        movement.y = movement.y + (gravity.force.y * time.delta)
         if hit_down and movement.y < 0 then
             movement.y = 0
         end
