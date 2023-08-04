@@ -142,16 +142,16 @@ function full_screen_toogle()
 end
 
 
-local scroll_button_pressed = 0
-local scroll_button_pressed_last_frame = 0
+local right_pressed = 0
+local right_pressed_last_frame = 0
 function get_is_free()
-    scroll_button_pressed = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.scroll_button])
+    right_pressed = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.right])
 
-    if scroll_button_pressed == 1 and scroll_button_pressed_last_frame == 0 then
+    if right_pressed == 1 and right_pressed_last_frame == 0 then
         is_free = not is_free
     end
 
-    scroll_button_pressed_last_frame = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.scroll_button])
+    right_pressed_last_frame = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.right])
 end
 
 function UPDATE()

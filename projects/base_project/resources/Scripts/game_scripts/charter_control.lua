@@ -9,6 +9,7 @@ require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
 require("TMP_libs.short_cuts.create_collision")
 require("TMP_libs.objects.scene_3D")
+require("TMP_libs.short_cuts.create_mesh")
 require("math")
 
 layers = {}
@@ -162,15 +163,23 @@ function set_sprite(id)
     this_object.components[components.render_sprite]:set()
 end
 
-local direction_x_2D = 1
+function create_test_cube(pos)
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.textures[1] = "resources/Textures/white.png"
+    create_mesh(layers.cenary,false,pos,{x=0,y=0,z=0},{x=1,y=1,z=1},2,{mat},{mesh_location:new("resources/Levels/3D/test_level.gltf","Cube.003")})
+
+end
+
+local last_direction_2D = 1
 
 function action()
     if charter_type == "2D" then
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
-        local target_pos = { x = pos.x + (direction_x_2D * 10), y = pos.y }
+        local target_pos = { x = pos.x + (last_direction_2D * 10), y = pos.y }
 
-        local hit, hit_data = raycast_2D({ x = pos.x + (direction_x_2D * 1.01), y = pos.y }, target_pos)
+        local hit, hit_data = raycast_2D({ x = pos.x + (last_direction_2D * 1.01), y = pos.y }, target_pos)
 
         if hit then
             local hit_obj = game_object:new(hit_data.collision_object)
@@ -181,7 +190,26 @@ function action()
             end
         end
     elseif charter_type == "3D" then
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+        local target = this_object.components[components.transform]:get_local_direction(50,0,0)
 
+        local hit = false  
+        local hit_data = {}
+        hit , hit_data = raycast_3D(pos,target)
+        
+        if hit then
+            local hit_obj = game_object:new(hit_data.collision_object)
+            hit_obj.components[components.physics_3D]:get()
+
+            if hit_obj.components[components.physics_3D].boady_dynamic == boady_dynamics.dynamic then
+                hit_obj.components[components.physics_3D]:add_impulse(0, 50,0)
+            end
+
+            --create_test_cube(hit_data.position)
+
+        end
+        print("hit",hit)
     end
 end
 
@@ -281,10 +309,10 @@ function UPDATE()
 
         if control.left then
             movement.x = -speed
-            direction_x_2D = -1
+            last_direction_2D = -1
         elseif control.right then
             movement.x = speed
-            direction_x_2D = 1
+            last_direction_2D = 1
         else
             movement.x = 0
         end
@@ -298,6 +326,8 @@ function UPDATE()
 
         --movement
 
+        local direction = Vec3:new(0,0,0)
+
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
         end
@@ -307,24 +337,37 @@ function UPDATE()
         end
 
         if control.left then
+            direction.x = -1
             movement.x = -speed
         elseif control.right then
+            direction.x = 1
             movement.x = speed
         else
+            direction.x = 0
             movement.x = 0
         end
 
         if control.top then
+            direction.z = -1
             movement.z = -speed
         elseif control.down then
+            direction.z = 1
             movement.z = speed
         else
+            direction.z = 0
             movement.z = 0
         end
 
         local local_direction = this_object.components[components.transform]:get_local_direction(movement.x, movement.y,movement.z)
 
         this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
+        
+
+        
+        
+        
+        
+        
         
         play_3D_animation()
 
