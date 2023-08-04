@@ -201,18 +201,13 @@ function action()
 
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
-        local target = this_object.components[components.transform]:get_local_direction(50,0,0)
-
-        --[[
-        print("target",target.x + pos.x,target.y + pos.y,target.z + pos.z)
-        test_rc_obj.components[components.transform]:change_position(target.x + pos.x,target.y + pos.y,target.z + pos.z)
-        ]]
+        local target = this_object.components[components.transform]:get_global_position(50,0,0)
 
        
 
         local hit = false  
         local hit_data = {}
-        hit , hit_data = raycast_3D(pos,Vec3:new(target.x + pos.x,target.y + pos.y,target.z + pos.z))
+        hit , hit_data = raycast_3D(pos,Vec3:new(target.x,target.y,target.z))
         
         if hit then
             local hit_obj = game_object:new(hit_data.collision_object)
@@ -224,7 +219,7 @@ function action()
 
             --test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
 
-            print("target",hit_data.position.x,hit_data.position.y,hit_data.position.z)
+            print("target",target.x,target.y,target.z)
             test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
             
 

@@ -54,16 +54,6 @@ public:
 
 	glm::vec3 pegar_pos_global()
 	{
-		/*
-		vec3 nada;
-		vec4 nada2;
-		vec3 pos;
-		quat nada3;
-		glm::decompose(matrizTransform, nada, nada3, pos, nada, nada2);
-		return pos;
-		*/
-
-		// Extract the translation vector from the matrix
 		return glm::vec3(matrizTransform[3]); //
 	}
 	glm::quat pegar_qua_global()
@@ -82,18 +72,6 @@ public:
 
 	vec3 pegar_direcao_local(vec3 dir)
 	{
-		/*
-		mat4 m = glm::translate(matrizTransform, dir);
-		vec3 nada;
-		vec4 nada2;
-		vec3 escala;
-		vec3 pos;
-		quat qua;
-		glm::decompose(m, escala, qua, pos, nada, nada2);
-
-		vec3 ret = pos - pegar_pos_global();
-		return vec3(ret.x, -ret.y, ret.z);
-		*/
 		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - pegar_pos_global();
 		return glm::vec3(ret.x,-ret.y,ret.z); //
@@ -102,21 +80,9 @@ public:
 
 	vec3 pegar_direcao_global(vec3 dir)
 	{
-		/*
-		mat4 m = glm::translate(matrizTransform, dir);
-		vec3 nada;
-		vec4 nada2;
-		vec3 escala;
-		vec3 pos;
-		quat qua;
-		glm::decompose(m, escala, qua, pos, nada, nada2);
-
-		vec3 ret = pos - pegar_pos_global();
-		return vec3(ret.x, -ret.y, ret.z);
-		*/
 		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
-		return glm::vec3(ret.x,-ret.y,ret.z); //
+		return glm::vec3(ret.x,ret.y,ret.z); //
 	}
 
 	vec3 mover_direcao(vec3 dir)
