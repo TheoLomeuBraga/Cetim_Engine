@@ -881,6 +881,25 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int get_global_position_transform(lua_State *L)
+	{
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		Table ret;
+		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+		if (tf != NULL)
+		{
+			vec3 dir = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
+			ret = vec3_table(tf->pegar_direcao_global(dir));
+		}
+		lua_pushtable(L, ret);
+		return 1;
+	}
+
 	int get_translation_position_transform(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1596,11 +1615,6 @@ namespace funcoes_ponte
 		return 2;
 	}
 
-	int shapecast_3D(lua_State *L)
-	{
-		return 0;
-	}
-
 	int global_data_get_var(lua_State *L)
 	{
 		string var_name = lua_tostring(L, 1);
@@ -1744,6 +1758,7 @@ namespace funcoes_ponte
 		pair<string, lua_function>("change_transfotm_scale", funcoes_ponte::change_transfotm_scale),
 
 		pair<string, lua_function>("get_local_direction_transform", funcoes_ponte::get_local_direction_transform),
+		pair<string, lua_function>("get_global_position_transform", funcoes_ponte::get_global_position_transform),
 		pair<string, lua_function>("get_translation_position_transform", funcoes_ponte::get_translation_position_transform),
 
 		// pos-procesing
@@ -1782,7 +1797,6 @@ namespace funcoes_ponte
 
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
 		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
-		pair<string, lua_function>("shapecast_3D", funcoes_ponte::shapecast_3D),
 
 		// camera
 		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),

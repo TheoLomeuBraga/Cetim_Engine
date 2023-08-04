@@ -74,6 +74,13 @@ armature_data = {
     object_list_ptr = {}
 }
 
+function create_test_cube(pos)
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.textures[1] = "resources/Textures/white.png"
+    return create_mesh(layers.cenary,false,pos,{x=0,y=0,z=0},{x=1,y=1,z=1},2,{mat},{mesh_location:new("resources/Levels/3D/test_level.gltf","Cube.003")})
+
+end
 
 function START()
     camera_man_object = game_object:new(global_data:get_var("camera_object_ptr"))
@@ -107,6 +114,8 @@ function START()
         test_rc_obj.components[components.render_sprite].tile_set_local = "resources/Levels/2D/tile_set.json"
         test_rc_obj.components[components.render_sprite]:set()
         ]]
+        
+
     elseif charter_type == "3D" then
 
         armature_data.object_list = {}
@@ -130,6 +139,9 @@ function START()
         this_object.components[components.physics_3D].rotate_Z = 0
         this_object.components[components.physics_3D].friction = 0
         this_object.components[components.physics_3D]:set()
+
+        test_rc_obj = create_test_cube(Vec3:new(0,0,0))
+
     end
 end
 
@@ -163,13 +175,7 @@ function set_sprite(id)
     this_object.components[components.render_sprite]:set()
 end
 
-function create_test_cube(pos)
-    local mat = matreial:new()
-    mat.shader = "resources/Shaders/mesh"
-    mat.textures[1] = "resources/Textures/white.png"
-    create_mesh(layers.cenary,false,pos,{x=0,y=0,z=0},{x=1,y=1,z=1},2,{mat},{mesh_location:new("resources/Levels/3D/test_level.gltf","Cube.003")})
 
-end
 
 local last_direction_2D = 1
 
@@ -178,6 +184,8 @@ function action()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
         local target_pos = { x = pos.x + (last_direction_2D * 10), y = pos.y }
+
+        print("target",pos.x,pos.y,pos.z)
 
         local hit, hit_data = raycast_2D({ x = pos.x + (last_direction_2D * 1.01), y = pos.y }, target_pos)
 
@@ -190,13 +198,21 @@ function action()
             end
         end
     elseif charter_type == "3D" then
+
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
         local target = this_object.components[components.transform]:get_local_direction(50,0,0)
 
+        --[[
+        print("target",target.x + pos.x,target.y + pos.y,target.z + pos.z)
+        test_rc_obj.components[components.transform]:change_position(target.x + pos.x,target.y + pos.y,target.z + pos.z)
+        ]]
+
+       
+
         local hit = false  
         local hit_data = {}
-        hit , hit_data = raycast_3D(pos,target)
+        hit , hit_data = raycast_3D(pos,Vec3:new(target.x + pos.x,target.y + pos.y,target.z + pos.z))
         
         if hit then
             local hit_obj = game_object:new(hit_data.collision_object)
@@ -206,10 +222,14 @@ function action()
                 hit_obj.components[components.physics_3D]:add_impulse(0, 50,0)
             end
 
-            --create_test_cube(hit_data.position)
+            --test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
+
+            print("target",hit_data.position.x,hit_data.position.y,hit_data.position.z)
+            test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
+            
 
         end
-        print("hit",hit)
+        
     end
 end
 
@@ -326,8 +346,6 @@ function UPDATE()
 
         --movement
 
-        local direction = Vec3:new(0,0,0)
-
         if control.jump and not control_last_frame.jump and hit_down then
             movement.y = y_power
         end
@@ -337,30 +355,25 @@ function UPDATE()
         end
 
         if control.left then
-            direction.x = -1
-            movement.x = -speed
+            movement.z = -speed
         elseif control.right then
-            direction.x = 1
-            movement.x = speed
+            movement.z = speed
         else
-            direction.x = 0
-            movement.x = 0
+            movement.z = 0
         end
 
         if control.top then
-            direction.z = -1
-            movement.z = -speed
+            movement.x = speed
         elseif control.down then
-            direction.z = 1
-            movement.z = speed
+            movement.x = -speed
         else
-            direction.z = 0
-            movement.z = 0
+            movement.x = 0
         end
 
         local local_direction = this_object.components[components.transform]:get_local_direction(movement.x, movement.y,movement.z)
 
-        this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
+        --this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
+        this_object.components[components.physics_3D]:set_linear_velocity(local_direction.x, movement.y,local_direction.z)
         
 
         
