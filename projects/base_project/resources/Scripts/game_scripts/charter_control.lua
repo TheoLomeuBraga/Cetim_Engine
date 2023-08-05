@@ -140,7 +140,7 @@ function START()
         this_object.components[components.physics_3D].friction = 0
         this_object.components[components.physics_3D]:set()
 
-        test_rc_obj = create_test_cube(Vec3:new(0,0,0))
+        --test_rc_obj = create_test_cube(Vec3:new(0,0,0))
 
     end
 end
@@ -185,8 +185,6 @@ function action()
         local pos = deepcopy(this_object.components[components.transform].position)
         local target_pos = { x = pos.x + (last_direction_2D * 10), y = pos.y }
 
-        print("target",pos.x,pos.y,pos.z)
-
         local hit, hit_data = raycast_2D({ x = pos.x + (last_direction_2D * 1.01), y = pos.y }, target_pos)
 
         if hit then
@@ -218,10 +216,6 @@ function action()
             end
 
             --test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
-
-            print("target",target.x,target.y,target.z)
-            test_rc_obj.components[components.transform]:change_position(hit_data.position.x,hit_data.position.y,hit_data.position.z)
-            
 
         end
         
@@ -367,15 +361,7 @@ function UPDATE()
 
         local local_direction = this_object.components[components.transform]:get_local_direction(movement.x, movement.y,movement.z)
 
-        --this_object.components[components.physics_3D]:set_linear_velocity(-local_direction.z, movement.y,local_direction.x)
         this_object.components[components.physics_3D]:set_linear_velocity(local_direction.x, movement.y,local_direction.z)
-        
-
-        
-        
-        
-        
-        
         
         play_3D_animation()
 
