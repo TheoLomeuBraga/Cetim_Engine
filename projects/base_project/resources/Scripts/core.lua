@@ -46,9 +46,9 @@ function START()
     local mat = matreial:new()
     mat.shader = "resources/Shaders/background"
     mat.textures[1] = "resources/Textures/white.png"
-    mat.color.r = 0.5
-    mat.color.g = 0.5
-    mat.color.b = 0.5
+    mat.color.r = 0.2
+    mat.color.g = 0.2
+    mat.color.b = 0.2
     create_render_shader(create_object(),true,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),1,mat)
     
     window.resolution.x = 720

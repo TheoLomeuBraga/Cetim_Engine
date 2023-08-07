@@ -91,21 +91,6 @@ namespace teclas
 			int keyState = glfwGetKey(window, key);
 
 			std::string keyIdentifier;
-			/*
-			const char *keyName = glfwGetKeyName(key, 0);
-
-
-
-			if (keyName != nullptr)
-			{
-				keyIdentifier = keyName;
-			}
-			else
-			{
-				//keyIdentifier = "Key_" + std::to_string(key);
-				keyIdentifier = std::to_string(key);
-			}
-			*/
 
 			keyIdentifier = std::to_string(key);
 

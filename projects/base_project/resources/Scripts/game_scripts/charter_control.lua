@@ -365,6 +365,12 @@ function UPDATE()
         
         play_3D_animation()
 
+        --[[
+        local test = create_collision_3D(layers.cenary, Vec3:new(0,0,0),Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), true, collision_shapes.cube, nil,false)
+        print(test.object_ptr)
+        remove_object(test.object_ptr)
+        ]]
+
     end
 end
 

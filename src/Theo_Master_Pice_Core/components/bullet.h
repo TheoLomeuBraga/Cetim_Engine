@@ -186,7 +186,7 @@ public:
         }
         else if (forma == formato_colisao::esfera)
         {
-            mesh_shape_address = get_mesh_shape_address("sphere:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            mesh_shape_address = get_mesh_shape_address("sphere:" + std::to_string(escala.x));
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
@@ -214,7 +214,7 @@ public:
         }
         else if (forma == formato_colisao::capsula)
         {
-            mesh_shape_address = get_mesh_shape_address("capsule:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            mesh_shape_address = get_mesh_shape_address("capsule:" + std::to_string(escala.x) + ":" + std::to_string(escala.y));
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
