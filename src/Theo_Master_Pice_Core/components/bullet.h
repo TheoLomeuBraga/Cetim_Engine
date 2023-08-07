@@ -13,21 +13,41 @@ btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
-std::map<shared_ptr<std::string>,btCollisionShape *> meshes_shapes;
-void clean_meshes_shapes(){
+int btMeshes_shapes_count = 0;
+std::map<shared_ptr<std::string>, btCollisionShape *> btMeshes_shapes;
+std::map<string, shared_ptr<std::string>> btMeshes_shapes_addresses;
+void btClean_Meshes_shapes()
+{
 
-    std::map<shared_ptr<std::string>,btCollisionShape *> mapa2;
+    std::map<shared_ptr<std::string>, btCollisionShape *> mapa2;
+    std::map<string, shared_ptr<std::string>> mapa3;
 
-    for(pair<shared_ptr<std::string>,btCollisionShape *> p : meshes_shapes){
+    for (pair<shared_ptr<std::string>, btCollisionShape *> p : btMeshes_shapes)
+    {
 
-        if (p.first.use_count() > 2){
+        if (p.first.use_count() > 3)
+        {
             mapa2.insert(p);
-        }else{
-            delete p.second;
+            mapa3.insert(pair<string, shared_ptr<std::string>>(*p.first.get(),p.first));
         }
-
+        else
+        {
+            delete p.second;
+            btMeshes_shapes_count -= 1;
+        }
     }
-    meshes_shapes.swap(mapa2);
+    btMeshes_shapes.swap(mapa2);
+    btMeshes_shapes_addresses.swap(mapa3);
+}
+
+shared_ptr<std::string> get_mesh_shape_address(std::string addres){
+    if(btMeshes_shapes_addresses.find(addres) != btMeshes_shapes_addresses.end()){
+        return btMeshes_shapes_addresses[addres];
+    }else{
+        shared_ptr<std::string> ret = make_shared<std::string>(addres);
+        btMeshes_shapes_addresses.insert(pair<string, shared_ptr<std::string>>(addres,ret));
+        return ret;
+    }
 }
 
 /*
@@ -38,7 +58,6 @@ struct Bullet_Mesh
 };
 map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
 */
-map<shared_ptr<objeto_jogo>, btTriangleMesh *> triangleMeshs;
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
@@ -82,17 +101,16 @@ void deleteCollisionObject(btCollisionObject *object)
     }
 
     // Delete the collision shape
+
+    /*
     btCollisionShape *shape = object->getCollisionShape();
     if (shape)
     {
         delete shape;
-
-        if (collisionObject_obj.find(object) != collisionObject_obj.end())
-        {
-            delete triangleMeshs[collisionObject_obj[object]];
-            triangleMeshs.erase(collisionObject_obj[object]);
-        }
     }
+    */
+
+    btClean_Meshes_shapes();
 
     // Finally, delete the collision object itself
     delete object;
@@ -154,19 +172,59 @@ public:
         btCollisionShape *Shape;
         if (forma == formato_colisao::caixa)
         {
-            Shape = new btBoxShape(glmToBt(escala));
+            mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
+            {
+                Shape = btMeshes_shapes[mesh_shape_address];
+            }
+            else
+            {
+                Shape = new btBoxShape(glmToBt(escala));
+                btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                btMeshes_shapes_count++;
+            }
         }
         else if (forma == formato_colisao::esfera)
         {
-            Shape = new btSphereShape(escala.x);
+            mesh_shape_address = get_mesh_shape_address("sphere:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
+            {
+                Shape = btMeshes_shapes[mesh_shape_address];
+            }
+            else
+            {
+                Shape = new btSphereShape(escala.x);
+                btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                btMeshes_shapes_count++;
+            }
         }
         else if (forma == formato_colisao::cilindro)
         {
-            Shape = new btCylinderShape(glmToBt(escala));
+            mesh_shape_address = get_mesh_shape_address("cylinder:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
+            {
+                Shape = btMeshes_shapes[mesh_shape_address];
+            }
+            else
+            {
+                Shape = new btCylinderShape(glmToBt(escala));
+                btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                btMeshes_shapes_count++;
+            }
         }
         else if (forma == formato_colisao::capsula)
         {
-            Shape = new btCapsuleShape(escala.x,escala.y);
+            mesh_shape_address = get_mesh_shape_address("capsule:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
+            {
+                Shape = btMeshes_shapes[mesh_shape_address];
+            }
+            else
+            {
+                Shape = new btCapsuleShape(escala.x, escala.y);
+                btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                btMeshes_shapes_count++;
+            }
         }
         else if (forma == formato_colisao::convexo)
         {
@@ -176,55 +234,78 @@ public:
 
                 if (dinamica == estatico)
                 {
-                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static");
+                    mesh_shape_address = get_mesh_shape_address(collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
 
-                    btTriangleMesh *tm = new btTriangleMesh();
-                    for (int i = 0; i < collision_mesh->indice.size(); i += 3)
+                    if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                     {
+                        Shape = btMeshes_shapes[mesh_shape_address];
+                    }
+                    else
+                    {
+                        btTriangleMesh *tm = new btTriangleMesh();
+                        for (int i = 0; i < collision_mesh->indice.size(); i += 3)
+                        {
 
-                        int index = collision_mesh->indice[i];
-                        vertice v = collision_mesh->vertices[index];
-                        btVector3 vertex1 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+                            int index = collision_mesh->indice[i];
+                            vertice v = collision_mesh->vertices[index];
+                            btVector3 vertex1 = btVector3(v.posicao[0] * escala.x, v.posicao[1] * escala.y, v.posicao[2] * escala.z);
 
-                        index = collision_mesh->indice[i + 1];
-                        v = collision_mesh->vertices[index];
-                        btVector3 vertex2 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+                            index = collision_mesh->indice[i + 1];
+                            v = collision_mesh->vertices[index];
+                            btVector3 vertex2 = btVector3(v.posicao[0] * escala.x, v.posicao[1] * escala.y, v.posicao[2] * escala.z);
 
-                        index = collision_mesh->indice[i + 2];
-                        v = collision_mesh->vertices[index];
-                        btVector3 vertex3 = btVector3(v.posicao[0], v.posicao[1], v.posicao[2]);
+                            index = collision_mesh->indice[i + 2];
+                            v = collision_mesh->vertices[index];
+                            btVector3 vertex3 = btVector3(v.posicao[0] * escala.x, v.posicao[1] * escala.y, v.posicao[2] * escala.z);
 
-                        tm->addTriangle(vertex1, vertex2, vertex3);
+                            tm->addTriangle(vertex1, vertex2, vertex3);
+                        }
+
+                        Shape = new btBvhTriangleMeshShape(tm, true);
+                        btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                        btMeshes_shapes_count++;
                     }
 
-                    Shape = new btBvhTriangleMeshShape(tm, true);
-
-                    triangleMeshs[esse_objeto] = tm;
+                    // triangleMeshs[esse_objeto] = tm;
                 }
                 else
                 {
-                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic");
+                    mesh_shape_address = get_mesh_shape_address(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic");
 
-                    btConvexHullShape *convexHullShape = new btConvexHullShape();
-
-                    for (int i = 0; i < collision_mesh->vertices.size(); i++)
+                    if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                     {
-                        convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0], collision_mesh->vertices[i].posicao[1], collision_mesh->vertices[i].posicao[2]));
+                        Shape = btMeshes_shapes[mesh_shape_address];
                     }
+                    else
+                    {
+                        btConvexHullShape *convexHullShape = new btConvexHullShape();
 
-                    Shape = convexHullShape;
+                        for (int i = 0; i < collision_mesh->vertices.size(); i++)
+                        {
+                            convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0] * escala.x, collision_mesh->vertices[i].posicao[1] * escala.y, collision_mesh->vertices[i].posicao[2] * escala.z));
+                        }
+
+                        Shape = convexHullShape;
+                        btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                        btMeshes_shapes_count++;
+                    }
                 }
             }
             else
             {
                 print({"fail load collision mesh"});
-                if (triangleMeshs.find(esse_objeto) != triangleMeshs.end())
-                {
-                    delete triangleMeshs[esse_objeto];
-                    triangleMeshs.erase(esse_objeto);
-                }
 
-                Shape = new btBoxShape(glmToBt(escala));
+                mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+                if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
+                {
+                    Shape = btMeshes_shapes[mesh_shape_address];
+                }
+                else
+                {
+                    Shape = new btBoxShape(glmToBt(escala));
+                    btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
+                    btMeshes_shapes_count++;
+                }
             }
         }
 
@@ -246,7 +327,7 @@ public:
         {
             bt_obj = new btGhostObject();
             bt_obj->setCollisionShape(Shape);
-            //bt_obj->setCollisionFlags(bt_obj->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+            // bt_obj->setCollisionFlags(bt_obj->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
@@ -303,6 +384,7 @@ public:
         if (bt_obj != NULL)
         {
             ///*
+            mesh_shape_address = NULL;
             if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
             {
                 dynamicsWorld->removeRigidBody((btRigidBody *)bt_obj);
@@ -318,7 +400,6 @@ public:
                 collisionObject_obj.erase(bt_obj);
             }
             bt_obj = NULL;
-            mesh_shape_address = NULL;
         }
     }
 
@@ -368,12 +449,14 @@ public:
         ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
     }
-    void adicionar_velocidade(vec3 forca){
+    void adicionar_velocidade(vec3 forca)
+    {
         ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
     }
 
-    void adicionar_veaplicar_velocidade_rotativalocidade(vec3 forca){
+    void adicionar_veaplicar_velocidade_rotativalocidade(vec3 forca)
+    {
     }
 
     void adicionar_forca_rotativo(vec3 forca)
@@ -524,16 +607,10 @@ void applay_3D_collisions()
 {
     for (colis_info ci : physics_3D_collisionInfos)
     {
+
         objeto_jogo *obj = (objeto_jogo *)ci.obj;
         obj->colidir(ci);
 
-        /*
-        colis_info ci2 = ci;
-        ci2.obj = ci.cos_obj;
-        ci2.cos_obj = ci.obj;
-        obj = (objeto_jogo *)ci2.obj;
-        obj->colidir(ci2);
-        */
     }
 }
 void clean_collisions()
@@ -579,8 +656,17 @@ void atualisar_global_bullet()
     dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    // dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps, bullet_passo_tempo * Tempo::velocidadeTempo);
-    // dynamicsWorld->stepSimulation(1 / 60.f, 1);
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
+
+    /*
+    print({"btMeshes_shapes_count", btMeshes_shapes_count});
+    if (btMeshes_shapes_count == 1)
+    {
+        for (pair<shared_ptr<std::string>, btCollisionShape *> p : btMeshes_shapes)
+        {
+            print({*p.first.get()});
+        }
+    }
+    */
 }

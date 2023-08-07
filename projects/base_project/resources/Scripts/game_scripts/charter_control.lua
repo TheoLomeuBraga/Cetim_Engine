@@ -376,7 +376,11 @@ function END()
         remove_object(detect_down.object_ptr)
         detect_down = nil
     elseif charter_type == "3D" then
+        remove_object(detect_top.object_ptr)
+        detect_top = nil
 
+        remove_object(detect_down.object_ptr)
+        detect_down = nil
     end
 end
 
