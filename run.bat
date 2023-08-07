@@ -1,2 +1,2 @@
 set PATH=%cd%/libs/windows/dll
-%cd%\build\engine_theo_master_pice.exe %cd%\projects\base_project
+%cd%\build\engine_theo_master_pice.exe %cd%\projects\Slash_Blast_Run
