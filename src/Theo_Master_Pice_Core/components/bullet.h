@@ -176,7 +176,7 @@ public:
 
                 if (dinamica == estatico)
                 {
-                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome);
+                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static");
 
                     btTriangleMesh *tm = new btTriangleMesh();
                     for (int i = 0; i < collision_mesh->indice.size(); i += 3)
@@ -203,7 +203,7 @@ public:
                 }
                 else
                 {
-                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome);
+                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic");
 
                     btConvexHullShape *convexHullShape = new btConvexHullShape();
 
