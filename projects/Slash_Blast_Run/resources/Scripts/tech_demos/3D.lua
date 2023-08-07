@@ -57,11 +57,6 @@ function create_player(player_obj, ceane_data)
     player_obj.components[components.transform].scale = Vec3:new(1, 1, 1)
     player_obj.components[components.transform]:set()
 
-    for key, value in pairs(ceane_data.animations) do
-        --print("animation name", value.name)
-        --print("animation duration", value.duration)
-    end
-
     player_obj:add_component(components.physics_3D)
     player_obj.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     player_obj.components[components.physics_3D].collision_shape = collision_shapes.capsule

@@ -488,6 +488,11 @@ public:
 		for (int i = 0; i < NO_TEXTURAS; i++)
 		{
 			texturas[i] = NULL;
+			filtro[i] = 0;
+		}
+		for (int i = 0; i < NO_INPUTS; i++)
+		{
+			inputs[i] = 0;
 		}
 	}
 };

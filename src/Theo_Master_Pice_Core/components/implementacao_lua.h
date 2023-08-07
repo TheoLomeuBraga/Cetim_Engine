@@ -60,7 +60,7 @@ std::string floatToString(float value)
 lua_State *lua_global_data;
 void start_lua_global_data()
 {
-	cout << "iniciando lua global data" << endl;
+	print({"iniciando lua global data"});
 	lua_global_data = luaL_newstate();
 }
 
@@ -317,14 +317,6 @@ namespace funcoes_ponte
 	}
 	*/
 
-	int hello_world(lua_State *L)
-	{
-		cout << "hello world\n";
-		int ret = 0;
-		lua_pushinteger(L, ret);
-		return ret;
-	}
-
 	// screen
 
 	int get_set_window(lua_State *L)
@@ -561,7 +553,7 @@ namespace funcoes_ponte
 	{
 		// Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
-		cout << lua_toboolean(L, 1) << endl;
+		//cout << lua_toboolean(L, 1) << endl;
 		return 0;
 	}
 

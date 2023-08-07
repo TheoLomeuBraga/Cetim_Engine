@@ -792,6 +792,14 @@ public:
 	{
 	}
 
+	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf,shared_ptr<camera> ca)
+	{
+		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+	}
+
 	void apply_material(unsigned int shader_s, Material mat)
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
@@ -807,6 +815,7 @@ public:
 				ogl_adicionar_textura(mat.texturas[i].get());
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
+				
 				if (mat.filtro[i] > 0)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -853,7 +862,6 @@ public:
 		// uv
 		glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), mat.uv_pos_sca.x, mat.uv_pos_sca.y, mat.uv_pos_sca.z, mat.uv_pos_sca.w);
 	}
-
 	void reindenizar_objeto(shared_ptr<objeto_jogo> obj, shared_ptr<objeto_jogo> cam)
 	{
 
@@ -919,33 +927,20 @@ public:
 			if (obj->pegar_componente<render_texto>() != NULL)
 			{
 
-				glDisable(GL_CULL_FACE);
+				
 				// https://learnopengl.com/In-Practice/Text-Rendering
 				shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
 				// shader
 				unsigned int shader_s = pegar_shader(obj->pegar_componente<render_texto>()->mat.shad);
 				glUseProgram(shader_s);
 
-				glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
-
 				// transform
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+				apply_transform(shader_s,tf,ca);
 
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+				apply_material(shader_s,rt->mat);
 
-				// tempo
-				glUniform1f(glGetUniformLocation(shader_s, "tempo"), Tempo::tempo);
-
-				// cor
-				glUniform4f(glGetUniformLocation(shader_s, "color"),
-							rt->mat.cor.x,
-							rt->mat.cor.y,
-							rt->mat.cor.z,
-							rt->mat.cor.w);
-
-				// uv
-				glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), 0, 0, 1, 1);
+				glDisable(GL_CULL_FACE);
+				
 
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
@@ -1209,6 +1204,16 @@ public:
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texturas[RS->tiles->tiles_img.get()]);
 				glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
+				if (RS->mat.inputs[0] > 0)
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
+				else
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				}
 
 				// cor
 				vec4 cor = obj->pegar_componente<render_sprite>()->mat.cor;
@@ -1225,11 +1230,7 @@ public:
 							(float)1 / quant_t.y);
 
 				// transform
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				// glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+				apply_transform(shader_s,tf,ca);
 
 				// render
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -1259,65 +1260,11 @@ public:
 						unsigned int shader_s = pegar_shader(mat.shad);
 						glUseProgram(shader_s);
 
-						// tempo
-						glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
+						apply_transform(shader_s,tf,ca);
 
-						// cor
-						vec4 cor = RM->mats[i].cor;
-						glUniform4f(glGetUniformLocation(shader_s, "color"), cor.x, cor.y, cor.z, cor.w);
+						apply_material(shader_s,mat);
 
-						// pos_sca
-						vec4 pos_sca = RM->mats[i].uv_pos_sca;
-						glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), pos_sca.x, pos_sca.y, pos_sca.z, pos_sca.w);
-
-						// texturas
-						for (int a = 0; a < NO_TEXTURAS; a++)
-						{
-							if (RM->mats[i].texturas[a] != NULL)
-							{
-								ogl_adicionar_textura(RM->mats[i].texturas[a].get());
-								glActiveTexture(GL_TEXTURE0 + a);
-								glBindTexture(GL_TEXTURE_2D, texturas[RM->mats[i].texturas[a].get()]);
-								string nome_veriavel = string("textures[") + to_string(a) + string("]");
-								glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), a);
-							}
-						}
-
-						// input
-						for (int a = 0; a < NO_INPUTS; a++)
-						{
-							string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-							glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), RM->mats[i].inputs[a]);
-						}
-
-						// reindenizar malha
-						// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
-
-						// switch (RM->lado_render)
-						switch (RM->mats[i].lado_render)
-						{
-						case lado_render_malha::both:
-							glDisable(GL_CULL_FACE);
-							break;
-
-						case lado_render_malha::front:
-							glEnable(GL_CULL_FACE);
-							glCullFace(GL_BACK);
-							break;
-
-						case lado_render_malha::back:
-							glEnable(GL_CULL_FACE);
-							glCullFace(GL_FRONT);
-
-							break;
-						}
-
-						// transform
-
-						glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-						glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
-						glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-						glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+				
 
 						selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 					}

@@ -16,7 +16,7 @@ function matreial:new()
         metallic = 0 ,
         softness = 0,
         textures = {},
-        texture_filter = {},
+        texture_filter = {0,0,0,0,0,0,0,0,0,0},
         inputs = {},
     }
 end

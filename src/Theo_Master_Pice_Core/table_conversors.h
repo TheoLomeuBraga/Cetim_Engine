@@ -176,7 +176,7 @@ Material table_material(Table t)
     vector<float> filters = table_vFloat(t.getTable("texture_filter"));
     for (int i = 0; i < std::min((int)NO_TEXTURAS, (int)filters.size()); i++)
     {
-        m.filtro[i] = filters[i];
+        m.filtro[i] = (int)filters[i];
     }
 
     vector<float> inputs = table_vFloat(t.getTable("inputs"));
@@ -435,8 +435,6 @@ Table scene_3D_table(cena_3D sceane)
                 Table kf_table;
 
                 kf_table.setFloat("target_id", kf.object_id + 1);
-
-                //print({"has",kf.has_position,kf.has_scale,kf.has_rotation});
 
                 kf_table.setFloat("has_position", kf.has_position);
                 kf_table.setFloat("has_scale", kf.has_scale);
