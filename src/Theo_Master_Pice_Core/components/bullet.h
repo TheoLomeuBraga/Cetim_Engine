@@ -13,6 +13,23 @@ btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
+std::map<shared_ptr<std::string>,btCollisionShape *> meshes_shapes;
+void clean_meshes_shapes(){
+
+    std::map<shared_ptr<std::string>,btCollisionShape *> mapa2;
+
+    for(pair<shared_ptr<std::string>,btCollisionShape *> p : meshes_shapes){
+
+        if (p.first.use_count() > 2){
+            mapa2.insert(p);
+        }else{
+            delete p.second;
+        }
+
+    }
+    meshes_shapes.swap(mapa2);
+}
+
 /*
 struct Bullet_Mesh
 {
@@ -128,6 +145,7 @@ public:
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
     vector<shared_ptr<objeto_jogo>> objs_touching;
+    shared_ptr<std::string> mesh_shape_address = NULL;
 
     void iniciar()
     {
@@ -158,6 +176,8 @@ public:
 
                 if (dinamica == estatico)
                 {
+                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome);
+
                     btTriangleMesh *tm = new btTriangleMesh();
                     for (int i = 0; i < collision_mesh->indice.size(); i += 3)
                     {
@@ -183,6 +203,8 @@ public:
                 }
                 else
                 {
+                    mesh_shape_address = make_shared<std::string>(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome);
+
                     btConvexHullShape *convexHullShape = new btConvexHullShape();
 
                     for (int i = 0; i < collision_mesh->vertices.size(); i++)
@@ -296,6 +318,7 @@ public:
                 collisionObject_obj.erase(bt_obj);
             }
             bt_obj = NULL;
+            mesh_shape_address = NULL;
         }
     }
 
