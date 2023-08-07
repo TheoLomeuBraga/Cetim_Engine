@@ -27,7 +27,7 @@ cam = {}
 layers = layers_table:new_3D()
 
 demo_selected = 1
-demos_list = {"text","2D","3D"}
+demos_list = {"test_level","text","2D","3D"}
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
@@ -64,8 +64,9 @@ function START()
     cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,1000)
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
+    
     set_lisener_object(cam.object_ptr)
-    set_global_volume(50)
+    set_global_volume(100)
 
     load_demo(demos_list[demo_selected])
     
