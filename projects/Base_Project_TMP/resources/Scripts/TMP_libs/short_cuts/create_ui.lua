@@ -42,8 +42,7 @@ local ui_object_example = {
 
 }
 
-function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
-
+function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_function)
     --object
     local core_obj_ptr = create_object(father)
     local button_obj_ptr = create_object(core_obj_ptr)
@@ -66,8 +65,7 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
     ret.core_obj:add_component(components.transform)
     ret.button_obj:add_component(components.transform)
     ret.text_obj:add_component(components.transform)
-    function ret:set_transform(is_ui,pos,sca)
-
+    function ret:set_transform(is_ui, pos, sca)
         self.core_obj.components[components.transform].is_ui = is_ui
         self.button_obj.components[components.transform].is_ui = is_ui
         self.text_obj.components[components.transform].is_ui = is_ui
@@ -78,28 +76,14 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
         self.core_obj.components[components.transform]:set()
         self.button_obj.components[components.transform]:set()
         self.text_obj.components[components.transform]:set()
-        
     end
-    ret:set_transform(is_ui,pos,sca)
+
+    ret:set_transform(is_ui, pos, sca)
 
     --style
     ret.button_obj:add_component(components.render_shader)
 
-    function ret:set_primary_button_color(color)
-        self.button_obj.components[components.render_shader].color = deepcopy(color)
-        self.button_obj.components[components.render_shader]:set()
-    end
-
-    function ret:set_secundary_button_color(color)
-        self.button_obj.components[components.render_shader].material.inputs[3] = color.r
-        self.button_obj.components[components.render_shader].material.inputs[4] = color.g
-        self.button_obj.components[components.render_shader].material.inputs[5] = color.b
-        self.button_obj.components[components.render_shader].material.inputs[6] = color.a
-        self.button_obj.components[components.render_shader]:set()
-    end
-
     function ret:set_style(style)
-
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
         render_shader_mat.color = deepcopy(style.color)
@@ -128,71 +112,60 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
             render_text_mat.shader = "resources/Shaders/text"
         end
         ]]
-
     end
+
     ret:set_style(style)
 
     function ret:UPDATE()
+        window:get()
+        local mouse_pos = {
+            x = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.normalized_x]),
+            y = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.normalized_y]),
+        }
+
+        self.core_obj.components[components.transform]:get()
+        local pos  = deepcopy(self.core_obj.components[components.transform].position)
+        pos.x      = (pos.x + 1) / 2
+        pos.y      = (pos.y + 1) / 2
+        local sca  = deepcopy(self.core_obj.components[components.transform].scale)
+        sca.x      = sca.x / 2
+        sca.y      = sca.y / 2
+
+        self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and
+        (mouse_pos.y < pos.y and mouse_pos.y > (pos.y - sca.y))
+
+        self.click = self.hover and
+        keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
+
+        if  not self.hover then
+            print("not hover")
+            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color)
+            self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color.r
+            self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color.g
+            self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color.b
+            self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color.a
+        elseif  self.hover and not self.click then
+            print("hover")
+            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color_hover)
+            self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_hover.r
+            self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.g
+            self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.b
+            self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_hover.a
+            deepprint(self.style.color_hover)
+        elseif self.click then
+            print("click")
+            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color_click)
+            self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.r
+            self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.g
+            self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_click.b
+            self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_click.a
+        end
+        self.button_obj.components[components.render_shader]:set()
 
         if self.click and click_function ~= nil then
             self.click_function()
         end
-
     end
-
-    return ret
-end
-
-function create_button(father, is_ui, pos, rot, sca, layer, mat)
-    ret = game_object:new(create_object(father))
-
-    ret:add_component(components.transform)
-    ret.components[components.transform].is_ui = is_ui
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
-    ret.components[components.transform]:set()
-
-    ret:add_component(components.render_shader)
-    ret.components[components.render_shader].layer = layer
-    ret.components[components.render_shader].material = deepcopy(mat)
-    ret.components[components.render_shader]:set()
-
-    return ret
-end
-
-function create_text_ui(father, is_ui, pos, rot, sca, layer, mat)
-    ret = game_object:new(create_object(father))
-
-    ret:add_component(components.transform)
-    ret.components[components.transform].is_ui = is_ui
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
-    ret.components[components.transform]:set()
-
-    ret:add_component(components.render_shader)
-    ret.components[components.render_shader].layer = layer
-    ret.components[components.render_shader].material = deepcopy(mat)
-    ret.components[components.render_shader]:set()
-
-    return ret
-end
-
-function create_input_fild(father, is_ui, pos, rot, sca, layer, mat)
-    ret = game_object:new(create_object(father))
-
-    ret:add_component(components.transform)
-    ret.components[components.transform].is_ui = is_ui
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
-    ret.components[components.transform]:set()
-
-    ret:add_component(components.render_shader)
-    ret.components[components.render_shader].layer = layer
-    ret.components[components.render_shader].material = deepcopy(mat)
-    ret.components[components.render_shader]:set()
 
     return ret
 end
