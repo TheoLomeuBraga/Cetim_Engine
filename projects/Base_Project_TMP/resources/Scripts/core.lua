@@ -27,6 +27,8 @@ require("TMP_libs.objects.render_layer")
 cam = {}
 layers = layers_table:new_3D()
 
+back_ground = {}
+
 demo_selected = 1
 demos_list = { "buttons_test", "text", "2D", "3D" }
 demo = nil
@@ -94,7 +96,7 @@ function START()
     mat.color.r = 0.2
     mat.color.g = 0.2
     mat.color.b = 0.2
-    create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    back_ground = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
 
     window.resolution.x = 720
     window.resolution.y = 720

@@ -84,16 +84,18 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
     ret.button_obj:add_component(components.render_shader)
 
     function ret:set_style(style)
+        self.style = deepcopy(self.style)
+
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
-        render_shader_mat.color = deepcopy(style.color)
-        render_shader_mat.inputs[3] = style.border_color.r
-        render_shader_mat.inputs[4] = style.border_color.g
-        render_shader_mat.inputs[5] = style.border_color.b
-        render_shader_mat.inputs[6] = style.border_color.a
+        render_shader_mat.color = deepcopy(self.style.color)
+        render_shader_mat.inputs[3] = self.style.border_color.r
+        render_shader_mat.inputs[4] = self.style.border_color.g
+        render_shader_mat.inputs[5] = self.style.border_color.b
+        render_shader_mat.inputs[6] = self.style.border_color.a
 
-        render_shader_mat.inputs[1] = style.border_size
-        render_shader_mat.inputs[2] = style.border_roundnes
+        render_shader_mat.inputs[1] = self.style.border_size
+        render_shader_mat.inputs[2] = self.style.border_roundnes
 
         --colors
 
@@ -138,23 +140,19 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
 
         if  not self.hover then
-            print("not hover")
-            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color)
+            self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
             self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color.r
             self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color.g
             self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color.b
             self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color.a
         elseif  self.hover and not self.click then
-            print("hover")
-            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color_hover)
+            self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_hover)
             self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_hover.r
             self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.g
             self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.b
             self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_hover.a
-            deepprint(self.style.color_hover)
         elseif self.click then
-            print("click")
-            self.button_obj.components[components.render_shader].color = deepcopy(self.style.color_click)
+            self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_click)
             self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.r
             self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.g
             self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_click.b
@@ -165,6 +163,8 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         if self.click and click_function ~= nil then
             self.click_function()
         end
+
+        
     end
 
     return ret

@@ -911,10 +911,13 @@ public:
 				glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), uv.x, uv.y, uv.z, uv.w);
 
 				// transform
+				/*
 				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+				*/
+				apply_transform(shader_s,tf,ca);
 
 				for (int i = 0; i < NO_INPUTS; i++)
 				{
