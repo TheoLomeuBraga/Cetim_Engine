@@ -42,11 +42,20 @@ local ui_object_example = {
 
 }
 
-function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_function)
+function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image, click_function)
     --object
     local core_obj_ptr = create_object(father)
+    
     local button_obj_ptr = create_object(core_obj_ptr)
     local text_obj_ptr = create_object(core_obj_ptr)
+
+    --[[
+        ret.components[components.render_text].layer = layer
+        ret.components[components.render_text].material = deepcopy(material)
+        ret.components[components.render_text].font = font
+        ret.components[components.render_text].text = text
+    ]]
+    
 
     local ret = {
         core_obj = game_object:new(core_obj_ptr),
@@ -58,6 +67,7 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         style = style,
 
         hover = false,
+        click_last_frame = false,
         click = false,
     }
 
@@ -73,6 +83,8 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         self.core_obj.components[components.transform].position = deepcopy(pos)
         self.core_obj.components[components.transform].scale = deepcopy(sca)
 
+        self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
+
         self.core_obj.components[components.transform]:set()
         self.button_obj.components[components.transform]:set()
         self.text_obj.components[components.transform]:set()
@@ -82,6 +94,16 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
 
     --style
     ret.button_obj:add_component(components.render_shader)
+    ret.text_obj:add_component(components.render_text)
+    
+    ret.text_obj.components[components.render_text].text = text
+    ret.text_obj.components[components.render_text].layer = layer
+    ret.text_obj.components[components.render_text]:set()
+
+    ret.button_obj.components[components.render_shader].layer = layer
+    ret.button_obj.components[components.render_shader]:set()
+
+    ret.button_obj.components[components.render_shader]:set()
 
     function ret:set_style(style)
         self.style = deepcopy(self.style)
@@ -108,12 +130,20 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         self.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
         self.button_obj.components[components.render_shader]:set()
 
-        --[[
+        
         if text ~= nil and text ~= "" then
             local render_text_mat = matreial:new()
             render_text_mat.shader = "resources/Shaders/text"
+            render_text_mat.color = deepcopy(self.style.text_color)
+
+            
+            self.text_obj.components[components.render_text].material = deepcopy(render_text_mat)
+            self.text_obj.components[components.render_text].font = self.style.text_font
+            
+
+            self.text_obj.components[components.render_text]:set()
         end
-        ]]
+        
     end
 
     ret:set_style(style)
@@ -160,9 +190,11 @@ function create_ui(father, is_ui, pos, sca, layer, style, text, image, click_fun
         end
         self.button_obj.components[components.render_shader]:set()
 
-        if self.click and click_function ~= nil then
+        if self.click and not self.click_last_frame and click_function ~= nil then
             self.click_function()
         end
+
+        self.click_last_frame = self.click
 
         
     end

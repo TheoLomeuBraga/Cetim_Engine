@@ -27,17 +27,20 @@ function demo:START(layers)
     local font = "resources/Fonts/Glowworm Regular.json"
     local mat = matreial:new()
 
+    mat.color = {r=1,g=0,b=0,a=1}
+    mat.shader = "resources/Shaders/button"
+    mat.textures[1] = "resources/Textures/white.png"
+    demo.button_test = create_render_shader(demo.menu.object_ptr,true,{x=-1,y=1,z=0},{x=0,y=0,z=0},{x=1,y=1,z=1},4,mat)
+
+    
     mat.shader = "resources/Shaders/text"
     mat.color = {r=0,g=1,b=0,a=1}
     demo.text1 = create_text(demo.menu.object_ptr,true,{x=-1,y=0.8,z=0},{x=0,y=0,z=0},{x=0.1,y=0.1,z=0.1},mat,4,"just test the \nui buttons",font)
 
     
-    --[[
-    mat.color = {r=1,g=0,b=0,a=1}
-    mat.shader = "resources/Shaders/button"
-    mat.textures[1] = "resources/Textures/white.png"
-    demo.button_test = create_button(demo.menu.object_ptr,true,{x=-1,y=1,z=0},{x=0,y=0,z=0},{x=1,y=1,z=1},4,mat)
-    ]]
+    
+    
+
 
     
     local style = ui_style:new()
@@ -48,7 +51,10 @@ function demo:START(layers)
     style.border_color = {r=0,g=0,b=0,a=0}
     style.border_color_hover = {r=0,g=0,b=1,a=1}
     style.border_color_click = {r=0,g=1,b=0,a=1}
-    demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-0.5,y=0.5,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
+
+    style.text_color = {r=0,g=1,b=1,a=1}
+
+    demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-0.5,y=0.5,z=0},{x=1,y=1,z=1},4,style,"hello world",0.05,"resources/Textures/null.png",print_hello_world)
 
     --demo.button_2 = create_ui(demo.menu.object_ptr,true,{x=0,y=0,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
 

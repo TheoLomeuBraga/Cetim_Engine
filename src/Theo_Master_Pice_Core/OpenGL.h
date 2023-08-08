@@ -999,7 +999,7 @@ public:
 							}
 
 							pos_char.x += pos_adi_char.x;
-							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)), 0));
+							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)) - 1, 0));
 							lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
 
 							// textura
