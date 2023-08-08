@@ -22,23 +22,71 @@ require("TMP_libs.objects.vectors")
 require("TMP_libs.objects.input")
 require("TMP_libs.objects.gravity")
 
+require("TMP_libs.objects.render_layer")
+
 cam = {}
 layers = layers_table:new_3D()
 
 demo_selected = 1
-demos_list = {"buttons_test","text","2D","3D"}
+demos_list = { "buttons_test", "text", "2D", "3D" }
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
         demo:END()
     end
     demo = nil
-    demo = require("tech_demos." .. demo_name)
+    demo = require("level_loaders." .. demo_name)
     demo:START(layers)
 end
 
-function START()
+function set_render_layers()
+    renders_layers.layers = { render_layer:new(), render_layer:new(), render_layer:new() }
 
+    renders_layers.layers[1] = {
+        camera_selected = 0,
+        start_render = true,
+        clean_color = true,
+        clean_deep = true,
+        enable = true,
+        end_render = false,
+        use_deep = true,
+    }
+
+    renders_layers.layers[2] = {
+        camera_selected = 0,
+        start_render = false,
+        clean_color = false,
+        clean_deep = true,
+        enable = true,
+        end_render = false,
+        use_deep = true,
+    }
+
+    renders_layers.layers[3] = {
+        camera_selected = 0,
+        start_render = false,
+        clean_color = false,
+        clean_deep = true,
+        enable = true,
+        end_render = false,
+        use_deep = true,
+    }
+
+    renders_layers.layers[4] = {
+        camera_selected = 0,
+        start_render = false,
+        clean_color = false,
+        clean_deep = true,
+        enable = true,
+        end_render = true,
+        use_deep = false,
+    }
+
+    renders_layers:set()
+end
+
+function START()
+    set_render_layers()
     --get_set_parallel_loading(set_lua, true)
     local mat = matreial:new()
     mat.shader = "resources/Shaders/background"
@@ -46,29 +94,26 @@ function START()
     mat.color.r = 0.2
     mat.color.g = 0.2
     mat.color.b = 0.2
-    create_render_shader(create_object(),true,Vec3:new(0,0,0),Vec3:new(0,0,0),Vec3:new(1,1,1),1,mat)
-    
+    create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+
     window.resolution.x = 720
     window.resolution.y = 720
     window:set()
-    
+
     gravity:set()
-    
-    global_data:set_var("core_object_ptr",this_object_ptr)
+
+    global_data:set_var("core_object_ptr", this_object_ptr)
 
     layers:create()
 
-    cam = create_camera_perspective(layers.camera,{x=0,y=0,z=-10},{x=0,y=0,z=0},90,0.1,1000)
+    cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
     set_lisener_object(cam.object_ptr)
     set_global_volume(50)
 
     load_demo(demos_list[demo_selected])
-    
 end
-
-
 
 function next_demo()
     demo_selected = demo_selected + 1
@@ -86,13 +131,10 @@ function previous_demo()
     load_demo(demos_list[demo_selected])
 end
 
-
-
-keys_pressed = { q = false, e = false}
-keys_pressed_last_frame = { q = false, e = false}
+keys_pressed = { q = false, e = false }
+keys_pressed_last_frame = { q = false, e = false }
 
 function UPDATE()
-
     demo:UPDATE()
 
     keys_pressed.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
@@ -109,16 +151,14 @@ function UPDATE()
     keys_pressed_last_frame.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
     keys_pressed_last_frame.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
 
-    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1  then
+    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1 then
         window:close()
     end
-
 end
 
 function COLLIDE(collision_info)
 end
 
 function END()
-
     window:close()
 end

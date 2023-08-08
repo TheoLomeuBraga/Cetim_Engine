@@ -15,7 +15,7 @@ render_text_component = {}
 function render_text_component:new(object_ptr)
     rs = {}
     rs.object_ptr = object_ptr
-    rs.layer = 1
+    rs.layer = 2
     rs.font = ""
     rs.text = ""
     rs.line_size = 34

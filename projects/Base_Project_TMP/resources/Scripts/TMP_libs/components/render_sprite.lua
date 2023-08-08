@@ -18,7 +18,7 @@ render_sprite_component = {}
 function render_sprite_component:new(object_ptr)
     rs = {}
     rs.object_ptr = object_ptr
-    rs.layer = 1
+    rs.layer = 2
     rs.selected_tile = 0
     rs.tile_set_local = ""
     rs.material = matreial:new()

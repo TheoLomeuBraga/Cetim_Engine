@@ -23,11 +23,10 @@ function render_layer:new()
 end
 
 renders_layers = {}
-renders_layers.layers_size = 0
 renders_layers.layers = {render_layer:new()}
 function renders_layers:get()
     renders_layers.layers = deepcopy(get_set_render_layer_instruction(get_lua))
 end
 function renders_layers:set()
-    get_set_render_layer_instruction(get_lua,renders_layers.layers)
+    get_set_render_layer_instruction(set_lua,renders_layers.layers)
 end

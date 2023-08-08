@@ -913,7 +913,7 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_sprite> rs = obj->pegar_componente<render_sprite>();
-			ret.setFloat("layer", rs->camada);
+			ret.setFloat("layer", rs->camada + 1);
 			ret.setFloat("selected_tile", rs->tile_selecionado);
 			ret.setString("tile_set_local", rs->tiles->local);
 			ret.setTable("material", material_table(rs->mat));
@@ -925,7 +925,7 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<render_sprite> rs = obj->pegar_componente<render_sprite>();
-			rs->camada = t.getFloat("layer");
+			rs->camada = t.getFloat("layer") - 1;
 			rs->tile_selecionado = t.getFloat("selected_tile");
 			rs->tiles = ManuseioDados::carregar_tile_set(t.getString("tile_set_local"));
 			rs->mat = table_material(t.getTable("material"));
@@ -1008,7 +1008,7 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_tilemap> rtm = obj->pegar_componente<render_tilemap>();
-			ret.setFloat("layer", rtm->camada);
+			ret.setFloat("layer", rtm->camada + 1);
 			ret.setTable("material", material_table(rtm->mat));
 			ret.setFloat("render_tilemap_only_layer", rtm->apenas_camada);
 			ret.setString("tile_set_local", rtm->tiles->local);
@@ -1021,7 +1021,7 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<render_tilemap> rtm = obj->pegar_componente<render_tilemap>();
-			rtm->camada = t.getFloat("layer");
+			rtm->camada = t.getFloat("layer") - 1;
 			rtm->mat = table_material(t.getTable("material"));
 			rtm->apenas_camada = t.getFloat("render_tilemap_only_layer");
 			rtm->tiles = ManuseioDados::carregar_tile_set(t.getString("tile_set_local"));
@@ -1038,7 +1038,7 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
-			ret.setFloat("layer", rt->camada);
+			ret.setFloat("layer", rt->camada + 1);
 			ret.setString("font", rt->font->path);
 			ret.setFloat("line_size", rt->tamanho_max_linha);
 			ret.setFloat("uniform_space_between_characters", rt->uniform_space_between_characters);
@@ -1053,7 +1053,7 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
-			rt->camada = t.getFloat("layer");
+			rt->camada = t.getFloat("layer") - 1;
 			rt->font = ManuseioDados::carregar_fonte(t.getString("font"));
 			rt->set_text_by_string(t.getString("text"));
 			rt->tamanho_max_linha = t.getFloat("line_size");
@@ -1070,7 +1070,7 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_shader> rt = obj->pegar_componente<render_shader>();
-			ret.setFloat("layer", rt->camada);
+			ret.setFloat("layer", rt->camada + 1);
 			ret.setFloat("vertex_size", rt->tamanho);
 			ret.setTable("material", material_table(rt->mat));
 			lua_pushtable(L, ret);
@@ -1081,7 +1081,7 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<render_shader> rt = obj->pegar_componente<render_shader>();
-			rt->camada = t.getFloat("layer");
+			rt->camada = t.getFloat("layer") - 1;
 			rt->tamanho = t.getFloat("vertex_size");
 			rt->mat = table_material(t.getTable("material"));
 			return 0;
@@ -1420,7 +1420,7 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
-			ret.setFloat("layer", mesh->camada);
+			ret.setFloat("layer", mesh->camada + 1);
 			ret.setFloat("use_oclusion", mesh->usar_oclusao);
 			vector<Table> meshes;
 			for (shared_ptr<malha> m : mesh->malhas)
@@ -1446,7 +1446,7 @@ namespace funcoes_ponte
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
-			mesh->camada = t.getFloat("layer");
+			mesh->camada = t.getFloat("layer") - 1;
 			mesh->usar_oclusao = t.getFloat("use_oclusion");
 			vector<Table> vt = table_vTable(t.getTable("meshes"));
 			vector<shared_ptr<malha>> meshes;

@@ -9,7 +9,7 @@ render_tile_map_component = {}
 function render_tile_map_component:new(object_ptr)
     rtm = {}
     rtm.object_ptr = object_ptr
-    rtm.layer = 1
+    rtm.layer = 2
     rtm.material = matreial:new()
     rtm.render_tilemap_only_layer = -1
     rtm.tile_set_local = ""

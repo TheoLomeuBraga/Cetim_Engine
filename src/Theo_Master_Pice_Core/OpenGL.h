@@ -283,6 +283,9 @@ public:
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam)
 	{
 
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 
@@ -301,9 +304,6 @@ public:
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
-				glDisable(GL_CULL_FACE);
-				glDisable(GL_DEPTH_TEST);
-
 				if (!show_oclusion_querie)
 				{
 					glColorMask(false, false, false, false);
@@ -313,8 +313,6 @@ public:
 				{
 					glEnableVertexAttribArray(i);
 				}
-
-				
 
 				for (shared_ptr<malha> m : rm->malhas)
 				{
@@ -333,17 +331,17 @@ public:
 					);
 				}
 
-				if (usar_profundidade)
-				{
-					glEnable(GL_DEPTH_TEST);
-				}
-				else
-				{
-					glDisable(GL_DEPTH_TEST);
-				}
-
 				glColorMask(true, true, true, true);
 				glEndQuery(GL_SAMPLES_PASSED);
+			}
+
+			if (usar_profundidade)
+			{
+				glEnable(GL_DEPTH_TEST);
+			}
+			else
+			{
+				glDisable(GL_DEPTH_TEST);
 			}
 		}
 
@@ -427,8 +425,8 @@ public:
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
 
-			//print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
-			
+			// print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
+
 			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
 			{
 				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
@@ -792,7 +790,7 @@ public:
 	{
 	}
 
-	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf,shared_ptr<camera> ca)
+	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
@@ -815,7 +813,7 @@ public:
 				ogl_adicionar_textura(mat.texturas[i].get());
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
-				
+
 				if (mat.filtro[i] > 0)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -927,7 +925,6 @@ public:
 			if (obj->pegar_componente<render_texto>() != NULL)
 			{
 
-				
 				// https://learnopengl.com/In-Practice/Text-Rendering
 				shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
 				// shader
@@ -935,12 +932,11 @@ public:
 				glUseProgram(shader_s);
 
 				// transform
-				apply_transform(shader_s,tf,ca);
+				apply_transform(shader_s, tf, ca);
 
-				apply_material(shader_s,rt->mat);
+				apply_material(shader_s, rt->mat);
 
 				glDisable(GL_CULL_FACE);
-				
 
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
@@ -1096,7 +1092,7 @@ public:
 										if (tile_id != 0)
 										{
 											ivec3 local_tile_selecionado = vec3(b, c, a);
-											mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(1, -1, -0.001));
+											mat4 mat_tile = translate(tf->matrizTransform, (vec3)local_tile_selecionado * vec3(1, -1, 0));
 											ivec2 quant_t = rtm->tiles->quant_tiles;
 											ivec2 tile_selecionado((tile_id % quant_t.x) - 1, (float)(int)tile_id / quant_t.x);
 
@@ -1230,7 +1226,7 @@ public:
 							(float)1 / quant_t.y);
 
 				// transform
-				apply_transform(shader_s,tf,ca);
+				apply_transform(shader_s, tf, ca);
 
 				// render
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -1260,11 +1256,9 @@ public:
 						unsigned int shader_s = pegar_shader(mat.shad);
 						glUseProgram(shader_s);
 
-						apply_transform(shader_s,tf,ca);
+						apply_transform(shader_s, tf, ca);
 
-						apply_material(shader_s,mat);
-
-				
+						apply_material(shader_s, mat);
 
 						selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 					}

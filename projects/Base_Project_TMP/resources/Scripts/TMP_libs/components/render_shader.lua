@@ -9,7 +9,7 @@ render_shader_component = {}
 function render_shader_component:new(object_ptr)
     rs = {}
     rs.object_ptr = object_ptr
-    rs.layer = 1
+    rs.layer = 2
     rs.vertex_size = 6
     rs.material = matreial:new()
     function rs:get()
