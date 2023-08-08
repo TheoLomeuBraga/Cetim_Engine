@@ -1063,6 +1063,13 @@ namespace funcoes_ponte
 		}
 	}
 
+	int get_text_size(lua_State *L){
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+		shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
+		lua_pushtable(L, vec2_table(rt->text_size));
+		return 1;
+	}
+
 	int get_set_render_shader(lua_State *L)
 	{
 		if (lua_tonumber(L, 1) == get_lua)
