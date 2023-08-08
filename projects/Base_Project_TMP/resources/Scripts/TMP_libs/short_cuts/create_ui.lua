@@ -4,6 +4,9 @@ require("TMP_libs.components.transform")
 require("TMP_libs.components.render_shader")
 require("TMP_libs.short_cuts.create_render_shader")
 
+require("TMP_libs.objects.input")
+require("TMP_libs.objects.window")
+
 ui_style = {}
 function ui_style:new()
     return {
@@ -54,6 +57,9 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
         image = image,
         click_function = click_function,
         style = style,
+
+        hover = false,
+        click = false,
     }
 
     --transform
@@ -78,15 +84,34 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
 
     --style
     ret.button_obj:add_component(components.render_shader)
-    --ret.text_obj:add_component(components.render_text)
+
+    function ret:set_primary_button_color(color)
+        self.button_obj.components[components.render_shader].color = deepcopy(color)
+        self.button_obj.components[components.render_shader]:set()
+    end
+
+    function ret:set_secundary_button_color(color)
+        self.button_obj.components[components.render_shader].material.inputs[3] = color.r
+        self.button_obj.components[components.render_shader].material.inputs[4] = color.g
+        self.button_obj.components[components.render_shader].material.inputs[5] = color.b
+        self.button_obj.components[components.render_shader].material.inputs[6] = color.a
+        self.button_obj.components[components.render_shader]:set()
+    end
+
     function ret:set_style(style)
 
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
         render_shader_mat.color = deepcopy(style.color)
+        render_shader_mat.inputs[3] = style.border_color.r
+        render_shader_mat.inputs[4] = style.border_color.g
+        render_shader_mat.inputs[5] = style.border_color.b
+        render_shader_mat.inputs[6] = style.border_color.a
 
-        --render_shader_mat.inputs[1] = style.border_size
-        --render_shader_mat.inputs[2] = style.border_roundnes
+        render_shader_mat.inputs[1] = style.border_size
+        render_shader_mat.inputs[2] = style.border_roundnes
+
+        --colors
 
         if image == nil or image == "" then
             render_shader_mat.textures[1] = "resources/Textures/white.png"
@@ -94,8 +119,8 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
             render_shader_mat.textures[1] = image
         end
 
-        ret.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
-        ret.button_obj.components[components.render_shader]:set()
+        self.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
+        self.button_obj.components[components.render_shader]:set()
 
         --[[
         if text ~= nil and text ~= "" then
@@ -107,7 +132,13 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
     end
     ret:set_style(style)
 
-    
+    function ret:UPDATE()
+
+        if self.click and click_function ~= nil then
+            self.click_function()
+        end
+
+    end
 
     return ret
 end

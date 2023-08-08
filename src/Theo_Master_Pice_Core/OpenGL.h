@@ -425,7 +425,7 @@ public:
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
 
-			//print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
+			// print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
 
 			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
 			{
@@ -851,7 +851,7 @@ public:
 		for (int i = 0; i < NO_INPUTS; i++)
 		{
 			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-			glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), mat.inputs[i]);
+			glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), mat.inputs[i]);
 		}
 
 		// cor
@@ -899,7 +899,7 @@ public:
 				for (int i = 0; i < NO_INPUTS; i++)
 				{
 					string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-					glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
+					glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
 				}
 
 				// cor
@@ -916,6 +916,12 @@ public:
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
+				for (int i = 0; i < NO_INPUTS; i++)
+				{
+					string nome_veriavel = string("inputs[") + to_string(i) + string("]");
+					glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
+				}
+
 				// render
 				glBindVertexArray(quad_array);
 				glDrawArrays(GL_TRIANGLES, 0, rs->tamanho);
@@ -927,7 +933,7 @@ public:
 			{
 
 				// https://learnopengl.com/In-Practice/Text-Rendering
-				
+
 				// shader
 				unsigned int shader_s = pegar_shader(rt->mat.shad);
 				glUseProgram(shader_s);
@@ -949,8 +955,7 @@ public:
 #define texto rt->texto
 #define lugar_texto tf->matrizTransform
 
-
-					rt->text_size = vec2(0,0);
+					rt->text_size = vec2(0, 0);
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
 					float tamanho_linha = 0;
@@ -1001,6 +1006,12 @@ public:
 
 							glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
 
+							for (int i = 0; i < NO_INPUTS; i++)
+							{
+								string nome_veriavel = string("inputs[") + to_string(i) + string("]");
+								glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rt->mat.inputs[i]);
+							}
+
 							// transform
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &lugar_letra[0][0]);
 
@@ -1008,15 +1019,14 @@ public:
 
 							pos_char.x += pos_adi_char.x;
 
-							rt->text_size.x = std::max(rt->text_size.x,(pos_char.x + (sca_char.x / font->quality)) / 2);
-							rt->text_size.y = std::max(rt->text_size.y,(pos_char.y + (sca_char.y / font->quality)) / 2);
+							rt->text_size.x = std::max(rt->text_size.x, (pos_char.x + (sca_char.x / font->quality)) / 2);
+							rt->text_size.y = std::max(rt->text_size.y, (pos_char.y + (sca_char.y / font->quality)) / 2);
 
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
 								altura_linha -= +rt->espaco_entre_linhas;
 								pos_char.x = 0;
 							}
-							
 						}
 					}
 				}
@@ -1234,6 +1244,8 @@ public:
 
 				// transform
 				apply_transform(shader_s, tf, ca);
+
+				
 
 				// render
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

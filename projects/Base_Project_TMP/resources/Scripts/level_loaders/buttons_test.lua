@@ -40,6 +40,12 @@ function demo:START(layers)
     
     local style = ui_style:new()
     style.color = {r=1,g=0,b=0,a=1}
+    style.color_hover = {r=0,g=1,b=0,a=0}
+    style.color_click = {r=0,g=0,b=1,a=0}
+
+    style.border_color = {r=0,g=0,b=0,a=0}
+    style.border_color_hover = {r=0,g=0,b=1,a=0}
+    style.border_color_click = {r=0,g=1,b=0,a=0}
     demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-1,y=0,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
 
     --demo.button_2 = create_ui(demo.menu.object_ptr,true,{x=0,y=0,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
@@ -49,7 +55,7 @@ function demo:START(layers)
 end
 
 function demo:UPDATE()
-
+    demo.button_1:UPDATE()
 end
 
 function demo:END()
