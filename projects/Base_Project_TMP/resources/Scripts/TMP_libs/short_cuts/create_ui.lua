@@ -44,10 +44,10 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
     --object
     local core_obj_ptr = create_object(father)
     local button_obj_ptr = create_object(core_obj_ptr)
-    local text_obj_ptr = create_object(button_obj_ptr)
+    local text_obj_ptr = create_object(core_obj_ptr)
 
     local ret = {
-        obj = game_object:new(core_obj_ptr),
+        core_obj = game_object:new(core_obj_ptr),
         button_obj = game_object:new(button_obj_ptr),
         text_obj = game_object:new(text_obj_ptr),
         text = text,
@@ -57,13 +57,22 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
     }
 
     --transform
+    ret.core_obj:add_component(components.transform)
     ret.button_obj:add_component(components.transform)
     ret.text_obj:add_component(components.transform)
     function ret:set_transform(is_ui,pos,sca)
+
+        self.core_obj.components[components.transform].is_ui = is_ui
         self.button_obj.components[components.transform].is_ui = is_ui
-        self.button_obj.components[components.transform].position = deepcopy(pos)
-        self.button_obj.components[components.transform].scale = deepcopy(sca)
+        self.text_obj.components[components.transform].is_ui = is_ui
+
+        self.core_obj.components[components.transform].position = deepcopy(pos)
+        self.core_obj.components[components.transform].scale = deepcopy(sca)
+
+        self.core_obj.components[components.transform]:set()
         self.button_obj.components[components.transform]:set()
+        self.text_obj.components[components.transform]:set()
+        
     end
     ret:set_transform(is_ui,pos,sca)
 
