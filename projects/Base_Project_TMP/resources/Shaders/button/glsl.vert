@@ -66,7 +66,7 @@ uniform mat4 projection,vision,transform;
    POS =vec4( top_side_box_data[gl_VertexID].x,-top_side_box_data[gl_VertexID].y,top_side_box_data[gl_VertexID].z,1);
    
    
-   UV= vec2((POS.x + 1) / 2,(POS.y + 1) / 2);
+   UV = vec2(top_side_box_data[gl_VertexID].x,top_side_box_data[gl_VertexID].y);
 
    //gl_Position = POS;
    

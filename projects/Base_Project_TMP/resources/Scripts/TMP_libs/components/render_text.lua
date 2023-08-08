@@ -11,9 +11,12 @@ end
 function get_set_render_text(get_set,object)
 end
 
+function get_text_size(object)
+end
+
 render_text_component = {}
 function render_text_component:new(object_ptr)
-    rs = {}
+    local rs = {}
     rs.object_ptr = object_ptr
     rs.layer = 2
     rs.font = ""
@@ -35,6 +38,9 @@ function render_text_component:new(object_ptr)
     end
     function rs:set()
         get_set_render_text(set_lua,deepcopyjson(self))
+    end
+    function rs:get_text_size()
+        return get_text_size(self.object_ptr)
     end
     function rs:delet()
     end

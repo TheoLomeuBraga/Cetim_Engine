@@ -4,14 +4,13 @@ require("TMP_libs.components.transform")
 require("TMP_libs.components.render_shader")
 require("TMP_libs.short_cuts.create_render_shader")
 
-style = {}
-function style:new()
+ui_style = {}
+function ui_style:new()
     return {
 
         color = { r = 1, g = 0, b = 0, a = 1 },
         color_hover = { r = 0, g = 0, b = 1, a = 1 },
         color_click = { r = 0, g = 0, b = 1, a = 1 },
-        background_image = "resources/Textures/white.png",
 
         text_font = "resources/Fonts/Glowworm Regular.json",
         text_color = { r = 0, g = 1, b = 0, a = 1 },
@@ -29,37 +28,74 @@ end
 
 local ui_object_example = {
 
-    obj = {},
+    button_obj = {},
+    text_obj = {},
 
     text = "hello world",
 
+    image = "resources/Textures/white.png",
+
     click_function = nil,
 
-    style = style:new()
+    style = ui_style:new()
 
 }
 
-function create_ui(father,is_ui,pos,sca,text,click_function,style)
+function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
 
     --object
-    ret = {
-        obj = game_object:new(create_object(father)),
+    local core_obj_ptr = create_object(father)
+    local button_obj_ptr = create_object(core_obj_ptr)
+    local text_obj_ptr = create_object(button_obj_ptr)
+
+    local ret = {
+        obj = game_object:new(core_obj_ptr),
+        button_obj = game_object:new(button_obj_ptr),
+        text_obj = game_object:new(text_obj_ptr),
         text = text,
+        image = image,
         click_function = click_function,
-        style = style
+        style = style,
     }
 
     --transform
-    ret.obj:add_component(components.transform)
+    ret.button_obj:add_component(components.transform)
+    ret.text_obj:add_component(components.transform)
     function ret:set_transform(is_ui,pos,sca)
-        ret.obj.components[components.transform].is_ui = is_ui
-        ret.obj.components[components.transform].position = deepcopy(pos)
-        ret.obj.components[components.transform].scale = deepcopy(sca)
-        ret.obj.components[components.transform]:set()
+        self.button_obj.components[components.transform].is_ui = is_ui
+        self.button_obj.components[components.transform].position = deepcopy(pos)
+        self.button_obj.components[components.transform].scale = deepcopy(sca)
+        self.button_obj.components[components.transform]:set()
     end
     ret:set_transform(is_ui,pos,sca)
-    
-    --button
+
+    --style
+    ret.button_obj:add_component(components.render_shader)
+    --ret.text_obj:add_component(components.render_text)
+    function ret:set_style(style)
+
+        local render_shader_mat = matreial:new()
+        render_shader_mat.shader = "resources/Shaders/button"
+        render_shader_mat.color = deepcopy(style.color)
+
+        if image == nil or image == "" then
+            render_shader_mat.textures[1] = "resources/Textures/white.png"
+        else
+            render_shader_mat.textures[1] = image
+        end
+
+        ret.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
+        ret.button_obj.components[components.render_shader]:set()
+
+        --[[
+        if text ~= nil and text ~= "" then
+            local render_text_mat = matreial:new()
+            render_text_mat.shader = "resources/Shaders/text"
+        end
+        ]]
+
+    end
+    ret:set_style(style)
 
     
 

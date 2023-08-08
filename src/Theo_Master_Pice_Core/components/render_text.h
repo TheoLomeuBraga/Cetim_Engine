@@ -18,7 +18,7 @@ class render_texto : public componente {
 		float tamanho_espaco = 1;
 		bool uniform_space_between_characters = false;
 		float espaco_entre_linhas = 3;
-		//string texto = "";
+		vec2 text_size = vec2(0,0);
 		wstring texto;
 
 		void set_text_by_string(string text){

@@ -923,7 +923,7 @@ public:
 
 			// render texto
 			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
-			if (rt != NULL)
+			if (rt != NULL && rt->font != NULL)
 			{
 
 				// https://learnopengl.com/In-Practice/Text-Rendering
@@ -949,6 +949,8 @@ public:
 #define texto rt->texto
 #define lugar_texto tf->matrizTransform
 
+
+					rt->text_size = vec2(0,0);
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
 					float tamanho_linha = 0;
@@ -1006,11 +1008,15 @@ public:
 
 							pos_char.x += pos_adi_char.x;
 
+							rt->text_size.x = std::max(rt->text_size.x,(pos_char.x + (sca_char.x / font->quality)) / 2);
+							rt->text_size.y = std::max(rt->text_size.y,(pos_char.y + (sca_char.y / font->quality)) / 2);
+
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
 								altura_linha -= +rt->espaco_entre_linhas;
 								pos_char.x = 0;
 							}
+							
 						}
 					}
 				}
