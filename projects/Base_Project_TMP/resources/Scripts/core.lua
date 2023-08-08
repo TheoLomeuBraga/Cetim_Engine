@@ -48,7 +48,7 @@ function set_render_layers()
         clean_color = true,
         clean_deep = true,
         enable = true,
-        end_render = false,
+        end_render = true,
         use_deep = true,
     }
 
@@ -58,7 +58,7 @@ function set_render_layers()
         clean_color = false,
         clean_deep = true,
         enable = true,
-        end_render = false,
+        end_render = true,
         use_deep = true,
     }
 
@@ -68,7 +68,7 @@ function set_render_layers()
         clean_color = false,
         clean_deep = true,
         enable = true,
-        end_render = false,
+        end_render = true,
         use_deep = true,
     }
 

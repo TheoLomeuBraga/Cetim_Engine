@@ -199,7 +199,7 @@ end
 
 function demo:END()
     remove_object(demo.map_objects.object_ptr)
-    --remove_object(demo.player_object.object_ptr)
+    
     clear_memory()
 end
 

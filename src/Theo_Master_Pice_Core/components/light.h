@@ -23,7 +23,7 @@ public:
 	float angulo;
 	float alcance;
 
-	bool ligado = false;
+	bool ligado = true;
 	fonte_luz() {}
 };
 

@@ -117,6 +117,7 @@ public:
 					}
 					objetos_camadas_render[rs->camada].push_back(obj);
 				}
+				
 				shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
 				if ((RT != NULL && RT->ligado))
 				{

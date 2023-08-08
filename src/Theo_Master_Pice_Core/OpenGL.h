@@ -283,11 +283,15 @@ public:
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam)
 	{
 
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
+			glDisable(GL_CULL_FACE);
+			glDisable(GL_DEPTH_TEST);
+
+			if (!show_oclusion_querie)
+			{
+				glColorMask(false, false, false, false);
+			}
 
 			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
@@ -303,11 +307,6 @@ public:
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->pegar_matriz()[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-
-				if (!show_oclusion_querie)
-				{
-					glColorMask(false, false, false, false);
-				}
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -330,14 +329,15 @@ public:
 						(void *)0						// element array buffer offset
 					);
 				}
-
-				glColorMask(true, true, true, true);
-				glEndQuery(GL_SAMPLES_PASSED);
 			}
+
+			glColorMask(true, true, true, true);
+			glEndQuery(GL_SAMPLES_PASSED);
 
 			if (usar_profundidade)
 			{
 				glEnable(GL_DEPTH_TEST);
+				glDepthFunc(GL_LESS);
 			}
 			else
 			{
@@ -425,7 +425,7 @@ public:
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
 
-			// print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
+			//print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
 
 			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
 			{
@@ -922,13 +922,14 @@ public:
 			}
 
 			// render texto
-			if (obj->pegar_componente<render_texto>() != NULL)
+			shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
+			if (rt != NULL)
 			{
 
 				// https://learnopengl.com/In-Practice/Text-Rendering
-				shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
+				
 				// shader
-				unsigned int shader_s = pegar_shader(obj->pegar_componente<render_texto>()->mat.shad);
+				unsigned int shader_s = pegar_shader(rt->mat.shad);
 				glUseProgram(shader_s);
 
 				// transform
@@ -1237,30 +1238,34 @@ public:
 			// render_malha
 
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-			if (RM != NULL && RM->malhas.size() > 0 && RM->ligado && RM->malhas.size() > 0 && RM->mats.size() > 0)
+			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
+
 				criar_oclusion_querie(obj);
 
-				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
+				if (RM->ligado)
 				{
-
-					shared_ptr<malha> ma = RM->malhas[i];
-					Material mat = RM->mats[i];
-					if (malhas.find(ma.get()) == malhas.end())
+					for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
 					{
-						adicionar_malha(ma.get());
-					}
-					if (ma != NULL)
-					{
-						// aplicar material
-						unsigned int shader_s = pegar_shader(mat.shad);
-						glUseProgram(shader_s);
 
-						apply_transform(shader_s, tf, ca);
+						shared_ptr<malha> ma = RM->malhas[i];
+						Material mat = RM->mats[i];
+						if (malhas.find(ma.get()) == malhas.end())
+						{
+							adicionar_malha(ma.get());
+						}
+						if (ma != NULL)
+						{
+							// aplicar material
+							unsigned int shader_s = pegar_shader(mat.shad);
+							glUseProgram(shader_s);
 
-						apply_material(shader_s, mat);
+							apply_transform(shader_s, tf, ca);
 
-						selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+							apply_material(shader_s, mat);
+
+							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+						}
 					}
 				}
 			}
@@ -1464,10 +1469,13 @@ public:
 
 			rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
 
+			/*
 			if (info_render[a].terminar_render)
 			{
 				ogl_aplicar_pos_processamento();
 			}
+			*/
+			ogl_aplicar_pos_processamento();
 		}
 	}
 };
