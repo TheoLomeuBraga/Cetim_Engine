@@ -42,10 +42,10 @@ void main(){
 
     float border_size = inputs[0];
     float border_roundnes = inputs[1];
-    vec4 border_color = vec4(inputs[2],inputs[3],inputs[4],inputs[5]); 
+    vec4 border_color = vec4(inputs[2],inputs[3],inputs[4],inputs[5]);
 
-    //ret = color * texture(textures[0], re_pos_uv(uv, uv_position_scale));
+    vec4 ret2 = color * texture(textures[0], re_pos_uv(uv, uv_position_scale));
 
-    ret = mix(color,border_color,isInCenter(uv, 0.4,0.5));
+    ret = mix(ret2,border_color,isInCenter(uv, 0.4,0.5));
   
 }
