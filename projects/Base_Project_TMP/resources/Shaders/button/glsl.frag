@@ -17,6 +17,7 @@ layout(location = 0) out vec4 ret;
 
 // material
 uniform sampler2D textures[6];
+uniform float inputs[16];
 uniform vec4 color;
 uniform vec4 uv_position_scale;
 

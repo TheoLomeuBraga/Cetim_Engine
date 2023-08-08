@@ -14,8 +14,6 @@ function ui_style:new()
 
         text_font = "resources/Fonts/Glowworm Regular.json",
         text_color = { r = 0, g = 1, b = 0, a = 1 },
-        text_color_hover = { r = 0, g = 0, b = 1, a = 1 },
-        text_color_click = { r = 0, g = 0, b = 1, a = 1 },
 
         border_size = 0.5,
         border_roundnes = 0.5,
@@ -77,6 +75,9 @@ function create_ui(father,is_ui,pos,sca,layer,style,text,image,click_function)
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
         render_shader_mat.color = deepcopy(style.color)
+
+        --render_shader_mat.inputs[1] = style.border_size
+        --render_shader_mat.inputs[2] = style.border_roundnes
 
         if image == nil or image == "" then
             render_shader_mat.textures[1] = "resources/Textures/white.png"
