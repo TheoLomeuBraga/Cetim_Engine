@@ -65,7 +65,6 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         image = image,
         click_function = click_function,
         style = style,
-
         hover = false,
         click_last_frame = false,
         click = false,
@@ -148,6 +147,12 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
 
     ret:set_style(style)
 
+    function ret:set_text(new_text)
+        self.text_obj.components[components.render_text].text = new_text
+        self.text_obj.components[components.render_text]:set()
+        self.text = new_text
+    end
+
     function ret:UPDATE()
         window:get()
         local mouse_pos = {
@@ -195,6 +200,7 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         end
 
         self.click_last_frame = self.click
+        
 
         
     end
