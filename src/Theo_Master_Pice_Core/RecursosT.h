@@ -467,8 +467,8 @@ enum lado_render_malha
 	both = 2,
 };
 
-#define NO_TEXTURAS 6
-#define NO_INPUTS 16
+#define NO_TEXTURAS 12
+#define NO_INPUTS 32
 class Material
 {
 public:

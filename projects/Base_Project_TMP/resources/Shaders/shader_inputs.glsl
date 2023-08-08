@@ -1,7 +1,7 @@
 uniform bool shedow_mode;
-uniform sampler2D texturas[6];
+uniform sampler2D texturas[12];
 uniform sampler2D post_procesing_render_input[6];
-uniform float inputs[16];
+uniform float inputs[32];
 uniform vec4 color;
 uniform float gama,time,metallic,softness;
 uniform bool ui;
