@@ -50,19 +50,12 @@ local ui_object_example = {
 
 
 
-function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image, click_function,category)
+function create_ui(father, pos, sca, layer, style, text,text_size, image, click_function,category)
     --object
     local core_obj_ptr = create_object(father)
     
     local button_obj_ptr = create_object(core_obj_ptr)
     local text_obj_ptr = create_object(core_obj_ptr)
-
-    --[[
-        ret.components[components.render_text].layer = layer
-        ret.components[components.render_text].material = deepcopy(material)
-        ret.components[components.render_text].font = font
-        ret.components[components.render_text].text = text
-    ]]
     
 
     local ret = {
@@ -87,10 +80,10 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
     ret.core_obj:add_component(components.transform)
     ret.button_obj:add_component(components.transform)
     ret.text_obj:add_component(components.transform)
-    function ret:set_transform(is_ui, pos, sca)
-        self.core_obj.components[components.transform].is_ui = is_ui
-        self.button_obj.components[components.transform].is_ui = is_ui
-        self.text_obj.components[components.transform].is_ui = is_ui
+    function ret:set_transform( pos, sca)
+        self.core_obj.components[components.transform].is_ui = true
+        self.button_obj.components[components.transform].is_ui = true
+        self.text_obj.components[components.transform].is_ui = true
 
         self.button_obj.components[components.transform].position = deepcopy(pos)
         self.button_obj.components[components.transform].scale = deepcopy(sca)
@@ -103,7 +96,7 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         self.text_obj.components[components.transform]:set()
     end
 
-    ret:set_transform(is_ui, pos, sca)
+    ret:set_transform( pos, sca)
 
     --style
     ret.button_obj:add_component(components.render_shader)
@@ -261,5 +254,24 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         
     end
 
+    return ret
+end
+
+ui_element_for_list = {}
+function ui_element_for_list:new()
+    return {
+        pos_y = {x=1,y=1}, 
+        sca = {x=1,y=1}, 
+        layer = 2, 
+        text = "",
+        text_size = 0.05, 
+        image = "resources/Textures/white.png",
+        click_function = nil,
+        category = ui_category.display
+    }
+end
+
+function create_ui_list(father,style,ui_elements)
+    local ret = {}
     return ret
 end
