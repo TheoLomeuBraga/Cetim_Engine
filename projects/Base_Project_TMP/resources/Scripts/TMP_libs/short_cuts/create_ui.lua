@@ -31,6 +31,7 @@ ui_category = {
     display = 0,
     button = 1,
     input_fild = 2,
+    progrecive_text_fild = 3,
 }
 
 local ui_object_example = {
@@ -88,7 +89,12 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         self.button_obj.components[components.transform].position = deepcopy(pos)
         self.button_obj.components[components.transform].scale = deepcopy(sca)
 
-        self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
+        if category == 3 then
+            self.text_obj.components[components.transform].position = {x= pos.x+(sca.x * style.border_size / 2),y=pos.y + (sca.y * style.border_size / 2),z=0}
+        else
+            self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
+        end
+        
         self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
 
         self.core_obj.components[components.transform]:set()
@@ -101,10 +107,17 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     --style
     ret.button_obj:add_component(components.render_shader)
     ret.text_obj:add_component(components.render_text)
+
+    if category == 3 then
+        ret.text_obj.components[components.render_text].text_location_x = render_text_location.right
+        ret.text_obj.components[components.render_text].text_location_y = render_text_location.down
+    else
+        ret.text_obj.components[components.render_text].text_location_x = render_text_location.center
+        ret.text_obj.components[components.render_text].text_location_y = render_text_location.center
+    end
     
     ret.text_obj.components[components.render_text].text = text
     ret.text_obj.components[components.render_text].layer = layer
-    --ret.text_obj.components[components.render_text].line_size =  ret.core_obj.components[components.transform].scale.x / text_size
     ret.text_obj.components[components.render_text]:set()
 
     ret.button_obj.components[components.render_shader].layer = layer
@@ -207,7 +220,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         end
         
 
-        if self.category == 1 then
+        if self.category == 1 or self.category == 3 then
             if self.hover and  self.click and not self.click_last_frame and click_function ~= nil then
                 self.click_function()
             end
