@@ -1015,17 +1015,19 @@ public:
 
 							if (rt->text_location_x == render_text_location::CENTER)
 							{
-								//tamanho_linhas[no_linha]
-								pos_letra.x = pos_letra.x - (tamanho_texto.x * 2);
+								pos_letra.x = (pos_letra.x - tamanho_texto.x) + ( tamanho_texto.x - tamanho_linhas[no_linha].x );
 							}
 							else if (rt->text_location_x == render_text_location::LEFT)
 							{
-								pos_letra.x = pos_letra.x - (tamanho_texto.x * 2);
+								
+								pos_letra.x = pos_letra.x + (( -tamanho_texto.x - (tamanho_linhas[no_linha].x *2)) + tamanho_texto.x  ) ;
 							}
+							/*	
 							else if (rt->text_location_x == render_text_location::RIGHT)
 							{
 								pos_letra.x = pos_letra.x;
 							}
+							*/
 
 							if (rt->text_location_y == render_text_location::CENTER)
 							{
@@ -1033,9 +1035,11 @@ public:
 							}
 							else if (rt->text_location_y == render_text_location::TOP)
 							{
+								pos_letra.y = pos_letra.y - tamanho_texto.y;
 							}
 							else if (rt->text_location_y == render_text_location::DOWN)
 							{
+								pos_letra.y = pos_letra.y - rt->espaco_entre_linhas;
 							}
 
 							mat4 lugar_letra = translate(lugar_texto, pos_letra);

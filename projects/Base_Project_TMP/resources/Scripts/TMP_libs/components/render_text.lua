@@ -4,12 +4,12 @@ require("TMP_libs.objects.material")
 --text
 
 render_text_location = {
-    NONE = 0,
-	CENTER = 1,
-	TOP = 2,
-	DOWN = 3,
-	LEFT = 4,
-	RIGHT = 5
+    none = 0,
+	center = 1,
+	top = 2,
+	down = 3,
+	left = 4,
+	right = 5
 }
 
 function get_text_json(object)
@@ -33,8 +33,8 @@ function render_text_component:new(object_ptr)
     rs.line_size = 34
     rs.uniform_space_between_characters = false
     rs.material = matreial:new()
-    rs.text_location_x = 1
-    rs.text_location_y = 1
+    rs.text_location_x = render_text_location.center
+    rs.text_location_y = render_text_location.center
     function rs:get()
         j = get_set_render_text(get_lua,self.object_ptr)
 

@@ -97,6 +97,8 @@ public:
 				}
 			}
 		}
+		ret.x = std::max(ret.x,pos_char.x);
+		ret.y = std::min(ret.y,altura_linha);
 		return ret;
 	}
 
@@ -115,7 +117,8 @@ public:
 			if (letra == '\n')
 			{
 				altura_linha -= +espaco_entre_linhas;
-				ret.push_back(vec2(pos_char.x,espaco_entre_linhas));
+				ret[no_linha] = vec2(pos_char.x,espaco_entre_linhas);
+				ret.push_back(vec2(0,0));
 				no_linha++;
 				pos_char.x = 0;
 			}
@@ -125,7 +128,8 @@ public:
 				if (pos_char.x > tamanho_max_linha)
 				{
 					altura_linha -= +espaco_entre_linhas;
-					ret.push_back(vec2(pos_char.x,espaco_entre_linhas));
+					ret[no_linha] = vec2(pos_char.x,espaco_entre_linhas);
+					ret.push_back(vec2(0,0));
 					no_linha++;
 					pos_char.x = 0;
 				}
@@ -152,20 +156,18 @@ public:
 
 				pos_char.y += pos_adi_char.y;
 
-				ret[no_linha].x = std::max(ret[no_linha].x, (pos_char.x + (sca_char.x / font->quality)));
-				ret[no_linha].y = std::min(ret[no_linha].y, (pos_char.y + (sca_char.y / font->quality)));
-
-				
-
 				if (pos_char.x > tamanho_max_linha)
 				{
 					altura_linha -= +espaco_entre_linhas;
-					ret.push_back(vec2(pos_char.x,espaco_entre_linhas));
+					ret[no_linha] = vec2(pos_char.x,espaco_entre_linhas);
+					ret.push_back(vec2(0,0));
 					no_linha++;
 					pos_char.x = 0;
 				}
 			}
 		}
+		ret[no_linha] = vec2(pos_char.x,espaco_entre_linhas);
+		ret.push_back(vec2(0,0));
 		return ret;
 	}
 
