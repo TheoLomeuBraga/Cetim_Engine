@@ -236,12 +236,18 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 
             end
 
+            local text = ""
+
             if self.insertion_mode then
-                self.text = keys_axis:get_text_input()
+                text = keys_axis:get_text_input()
             end
             
-
-            self.text_obj.components[components.render_text].text = self.text
+            if text ~= "" then
+                self.text_obj.components[components.render_text].text = text
+            else
+                self.text_obj.components[components.render_text].text = self.text
+            end
+            
             self.text_obj.components[components.render_text]:set()
 
             self.insertion_mode_last_frame = self.insertion_mode
@@ -260,7 +266,7 @@ end
 ui_element_for_list = {}
 function ui_element_for_list:new()
     return {
-        pos_y = {x=1,y=1}, 
+        pos = {x=1,y=1}, 
         sca = {x=1,y=1}, 
         layer = 2, 
         text = "",
@@ -271,7 +277,7 @@ function ui_element_for_list:new()
     }
 end
 
-function create_ui_list(father,style,ui_elements)
+function create_ui_list(father,pos, sca, layer, style,ui_elements)
     local ret = {}
     return ret
 end
