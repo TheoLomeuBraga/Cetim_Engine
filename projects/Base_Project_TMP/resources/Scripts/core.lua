@@ -112,7 +112,7 @@ function START()
     cam:add_component(components.lua_scripts)
     cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
     set_lisener_object(cam.object_ptr)
-    set_global_volume(50)
+    set_global_volume(100)
 
     load_demo(demos_list[demo_selected])
 end
