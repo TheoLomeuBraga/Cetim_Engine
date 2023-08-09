@@ -1007,7 +1007,7 @@ public:
 							}
 							else
 							{
-								pos_adi_char = vec2((float)char_.adivancement / font->quality, 0);
+								pos_adi_char = vec2((float)char_.adivancement / font->quality, 1 / font->quality);
 							}
 
 							pos_char.x += pos_adi_char.x;

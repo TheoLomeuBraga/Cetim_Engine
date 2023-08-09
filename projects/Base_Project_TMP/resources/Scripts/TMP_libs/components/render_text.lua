@@ -30,7 +30,7 @@ function render_text_component:new(object_ptr)
     rs.layer = 2
     rs.font = ""
     rs.text = ""
-    rs.line_size = 34
+    rs.line_size = 1000
     rs.uniform_space_between_characters = false
     rs.material = matreial:new()
     rs.text_location_x = render_text_location.center
