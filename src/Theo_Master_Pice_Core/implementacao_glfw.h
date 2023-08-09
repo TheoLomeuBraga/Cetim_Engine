@@ -82,6 +82,12 @@ namespace mouse
 namespace teclas
 {
 
+	std::string inputText;
+
+	bool delet_last_frame = false;
+
+	bool read_input_text = false;
+
 	std::unordered_map<std::string, int> generateKeyboardMap(GLFWwindow *window)
 	{
 		std::unordered_map<std::string, int> keyboardMap;
@@ -94,13 +100,17 @@ namespace teclas
 
 			keyIdentifier = std::to_string(key);
 
-			if (keyState == GLFW_PRESS)
+			if (keyState == GLFW_PRESS && !read_input_text)
 			{
 				keyboardMap[keyIdentifier] = 1;
 			}
 			else if (keyState == GLFW_RELEASE)
 			{
 				keyboardMap[keyIdentifier] = 0;
+			}
+			else if (key == GLFW_KEY_ENTER && keyState == GLFW_PRESS)
+			{
+				keyboardMap[keyIdentifier] = 1;
 			}
 			else
 			{
@@ -111,11 +121,7 @@ namespace teclas
 		return keyboardMap;
 	}
 
-	std::string inputText;
-
-	bool delet_last_frame = false;
-
-	bool read_input_text = false;
+	
 
 	void charCallback(GLFWwindow *window, unsigned int codepoint)
 	{
@@ -147,6 +153,8 @@ namespace teclas
 		{
 			delet_last_frame = false;
 		}
+
+		
 
 		return inputText;
 	}

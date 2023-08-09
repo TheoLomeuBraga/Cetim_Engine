@@ -188,8 +188,7 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
             self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and
             (mouse_pos.y < pos.y and mouse_pos.y > (pos.y - sca.y))
     
-            self.click = self.hover and
-            keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
+            self.click = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
     
             if  not self.hover then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
@@ -203,7 +202,7 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
                 self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.g
                 self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.b
                 self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_hover.a
-            elseif self.click then
+            elseif self.hover and  self.click then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_click)
                 self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.r
                 self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.g
@@ -215,21 +214,33 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         
 
         if self.category == 1 then
-            if self.click and not self.click_last_frame and click_function ~= nil then
+            if self.hover and  self.click and not self.click_last_frame and click_function ~= nil then
                 self.click_function()
             end
             self.click_last_frame = self.click
         end
 
         if self.category == 2 then
-            if self.click and not self.click_last_frame and click_function ~= nil then
-                keys_axis:set_text_input_geter(not self.insertion_mode)
-                self.insertion_mode = not self.insertion_mode
+            
+            if self.hover and self.click and not self.click_last_frame and click_function ~= nil then
                 
+                self.insertion_mode = not self.insertion_mode
+                keys_axis:set_text_input_geter(self.insertion_mode)
                 
                 if keys_axis:get_text_input() ~= "" then
                     self.click_function(keys_axis:get_text_input())
                 end
+                
+            end
+
+            if (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1 then
+
+                if keys_axis:get_text_input() ~= "" then
+                    self.click_function(keys_axis:get_text_input())
+                end
+
+                self.insertion_mode = false
+                keys_axis:set_text_input_geter(self.insertion_mode)
                 
             end
 

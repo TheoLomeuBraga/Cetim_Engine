@@ -17,7 +17,12 @@ demo.button_3 = {}
 
 
 function print_hello_world(a)
-    print("hello world" .. a)
+    if a ~= nil then
+        print(a)
+    else
+        print("hello world")
+    end
+    
 end
 
 function demo:START(layers)
@@ -49,11 +54,8 @@ function demo:START(layers)
 
     style.text_color = {r=0,g=1,b=1,a=1}
 
-    demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-0.5,y=0.5,z=0},{x=1,y=1,z=1},4,style,"click here\nto say\nhello world",0.05,"resources/Textures/null.png",print_hello_world,ui_category.input_fild)
-
-    --demo.button_2 = create_ui(demo.menu.object_ptr,true,{x=0,y=0,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
-
-    --demo.button_3 = create_ui(demo.menu.object_ptr,true,{x=0,y=0,z=0},{x=1,y=1,z=1},4,style,"hello world","resources/Textures/null.png",print_hello_world)
+    demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-0.5,y=0.5,z=0},{x=1,y=1,z=1},4,style,"click here\nto put\nsome text",0.05,"resources/Textures/null.png",print_hello_world,ui_category.input_fild)
+    
     
 end
 
