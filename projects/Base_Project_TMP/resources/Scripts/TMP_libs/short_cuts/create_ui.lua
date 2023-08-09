@@ -92,10 +92,10 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
         self.button_obj.components[components.transform].is_ui = is_ui
         self.text_obj.components[components.transform].is_ui = is_ui
 
-        self.core_obj.components[components.transform].position = deepcopy(pos)
-        self.core_obj.components[components.transform].scale = deepcopy(sca)
+        self.button_obj.components[components.transform].position = deepcopy(pos)
+        self.button_obj.components[components.transform].scale = deepcopy(sca)
 
-        self.text_obj.components[components.transform].position = {x=0.5,y=-0.5,z=0}
+        self.text_obj.components[components.transform].position = {x=(sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
         self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
 
         self.core_obj.components[components.transform]:set()
@@ -177,16 +177,15 @@ function create_ui(father, is_ui, pos, sca, layer, style, text,text_size, image,
                 y = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.normalized_y]),
             }
     
-            self.core_obj.components[components.transform]:get()
-            local pos  = deepcopy(self.core_obj.components[components.transform].position)
+            self.button_obj.components[components.transform]:get()
+            local pos  = deepcopy(self.button_obj.components[components.transform].position)
             pos.x      = (pos.x + 1) / 2
-            pos.y      = (pos.y + 1) / 2
-            local sca  = deepcopy(self.core_obj.components[components.transform].scale)
+            pos.y      = 1 - ((pos.y + 1) / 2) 
+            local sca  = deepcopy(self.button_obj.components[components.transform].scale)
             sca.x      = sca.x / 2
             sca.y      = sca.y / 2
     
-            self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and
-            (mouse_pos.y < pos.y and mouse_pos.y > (pos.y - sca.y))
+            self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and (mouse_pos.y > pos.y and mouse_pos.y < (pos.y + sca.y))
     
             self.click = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
     
