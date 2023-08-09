@@ -88,7 +88,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         self.button_obj.components[components.transform].position = deepcopy(pos)
         self.button_obj.components[components.transform].scale = deepcopy(sca)
 
-        self.text_obj.components[components.transform].position = {x=(sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
+        self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
         self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
 
         self.core_obj.components[components.transform]:set()
@@ -202,6 +202,9 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_click.a
             end
             self.button_obj.components[components.render_shader]:set()
+        else
+            self.text_obj.components[components.render_text].text = self.text
+            self.text_obj.components[components.render_text]:set()
         end
         
 
@@ -210,6 +213,9 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 self.click_function()
             end
             self.click_last_frame = self.click
+
+            self.text_obj.components[components.render_text].text = self.text
+            self.text_obj.components[components.render_text]:set()
         end
 
         if self.category == 2 then
@@ -219,7 +225,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 self.insertion_mode = not self.insertion_mode
                 keys_axis:set_text_input_geter(self.insertion_mode)
                 
-                if keys_axis:get_text_input() ~= "" then
+                if keys_axis:get_text_input() ~= "" and keys_axis:get_text_input() ~= "" then
                     self.click_function(keys_axis:get_text_input())
                 end
                 
@@ -227,7 +233,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
             if (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1 then
 
-                if keys_axis:get_text_input() ~= "" then
+                if keys_axis:get_text_input() ~= "" and keys_axis:get_text_input() ~= "" then
                     self.click_function(keys_axis:get_text_input())
                 end
 
@@ -236,14 +242,16 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 
             end
 
-            local text = ""
+            local keyboard_text = ""
 
             if self.insertion_mode then
-                text = keys_axis:get_text_input()
+                keyboard_text = keys_axis:get_text_input()
             end
+
             
-            if text ~= "" then
-                self.text_obj.components[components.render_text].text = text
+            
+            if keyboard_text ~= "" then
+                self.text_obj.components[components.render_text].text = keyboard_text
             else
                 self.text_obj.components[components.render_text].text = self.text
             end

@@ -10,19 +10,21 @@ demo.text1 = {}
 demo.text2 = {}
 
 demo.button_test = {}
+demo.input_fild_1 = {}
+
 demo.button_1 = {}
 demo.button_2 = {}
 demo.button_3 = {}
 
+demo.display_1 = {}
 
+local example_text = ""
+function set_text(text)
+    example_text = text
+end
 
-function print_some_thing(a)
-    if a ~= nil then
-        print(a)
-    else
-        print("hello world")
-    end
-    
+function ok()
+    demo.display_1.text = example_text
 end
 
 function demo:START(layers)
@@ -54,13 +56,23 @@ function demo:START(layers)
 
     style.text_color = {r=0,g=1,b=1,a=1}
 
-    demo.button_1 = create_ui(demo.menu.object_ptr,{x=-0.5,y=0.5,z=0},{x=1,y=1,z=1},4,style,"click here\nto put\nsome text",0.05,"resources/Textures/null.png",print_some_thing,ui_category.input_fild)
-    --demo.button_1 = create_ui(demo.menu.object_ptr,true,{x=-1,y=0.5,z=0},{x=2,y=0.25,z=1},4,style,"click here\nto put\nsome text",0.05,"resources/Textures/null.png",print_some_thing,ui_category.input_fild)
+    demo.input_fild_1 = create_ui(demo.menu.object_ptr,{x=-1,y=0.7,z=0},{x=1.5,y=0.25,z=1},4,style,"click here to put some text",0.04,"resources/Textures/null.png",set_text,ui_category.input_fild)
+    
+    style.color = {r=0,g=1,b=0,a=1}
+    style.color_hover = {r=1,g=0,b=0,a=1}
+    demo.button_1 = create_ui(demo.menu.object_ptr,{x=0.5,y=0.7,z=0},{x=0.5,y=0.25,z=1},4,style,"ok",0.04,"resources/Textures/null.png",ok,ui_category.button)
+
+    style.color = {r=0,g=0,b=0,a=1}
+    demo.display_1 = create_ui(demo.menu.object_ptr,{x=-1,y=0.45,z=0},{x=2,y=0.25,z=1},4,style,"ok",0.04,"resources/Textures/null.png",ok,ui_category.display)
     
 end
 
 function demo:UPDATE()
+    demo.input_fild_1:UPDATE()
     demo.button_1:UPDATE()
+    demo.display_1:UPDATE()
+
+    demo.input_fild_1.text = example_text
 end
 
 function demo:END()
