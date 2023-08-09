@@ -1045,6 +1045,8 @@ namespace funcoes_ponte
 			ret.setTable("material", material_table(rt->mat));
 			std::wstring_convert<codecvt_utf8<wchar_t>, wchar_t> converter;
 			ret.setString("text", converter.to_bytes(rt->texto));
+			ret.setFloat("text_location_x", (char)rt->text_location_x);
+			ret.setFloat("text_location_y", (char)rt->text_location_y);
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1059,6 +1061,8 @@ namespace funcoes_ponte
 			rt->tamanho_max_linha = t.getFloat("line_size");
 			rt->uniform_space_between_characters = t.getFloat("uniform_space_between_characters");
 			rt->mat = table_material(t.getTable("material"));
+			rt->text_location_x = (char)t.getFloat("text_location_x");
+			rt->text_location_y = (char)t.getFloat("text_location_y");
 			return 0;
 		}
 	}
@@ -1066,7 +1070,7 @@ namespace funcoes_ponte
 	int get_text_size(lua_State *L){
 		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 		shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
-		lua_pushtable(L, vec2_table(rt->text_size));
+		lua_pushtable(L, vec2_table(rt->get_text_size()));
 		return 1;
 	}
 
@@ -1772,6 +1776,8 @@ namespace funcoes_ponte
 
 		// text
 		pair<string, lua_function>("get_set_render_text", funcoes_ponte::get_set_render_text),
+		pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
+		
 
 		// shader
 		pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),

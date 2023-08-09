@@ -18,6 +18,7 @@ function create_text(father,is_ui,pos,rot,sca,material,layer,text,font)
     ret.components[components.render_text].material = deepcopy(material)
     ret.components[components.render_text].font = font
     ret.components[components.render_text].text = text
+    --ret.components[components.render_text].text_location = 1
     ret.components[components.render_text]:set()
     
     return ret

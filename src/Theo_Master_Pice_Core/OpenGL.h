@@ -917,7 +917,7 @@ public:
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 				*/
-				apply_transform(shader_s,tf,ca);
+				apply_transform(shader_s, tf, ca);
 
 				for (int i = 0; i < NO_INPUTS; i++)
 				{
@@ -956,11 +956,21 @@ public:
 				if (font != NULL)
 				{
 #define texto rt->texto
-#define lugar_texto tf->matrizTransform
 
-					rt->text_size = vec2(0, 0);
+					
+					vec2 tamanho_texto = vec2(0, 0);
+					vector<vec2> tamanho_linhas = {};
+					if (rt->text_location_x != 0 && rt->text_location_y != 0)
+					{
+						tamanho_texto = rt->get_text_size();
+						tamanho_linhas = rt->get_lines_size();
+					}
+
+					mat4 lugar_texto = tf->matrizTransform;
+
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
+					int no_linha = 0;
 					float tamanho_linha = 0;
 
 					for (int i = 0; i < texto.size(); i++)
@@ -969,6 +979,7 @@ public:
 						if (letra == '\n')
 						{
 							altura_linha -= +rt->espaco_entre_linhas;
+							no_linha++;
 							pos_char.x = 0;
 						}
 						else if (letra == ' ')
@@ -977,6 +988,7 @@ public:
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
 								altura_linha -= +rt->espaco_entre_linhas;
+								no_linha++;
 								pos_char.x = 0;
 							}
 						}
@@ -999,7 +1011,34 @@ public:
 							}
 
 							pos_char.x += pos_adi_char.x;
-							mat4 lugar_letra = translate(lugar_texto, vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)) - 1, 0));
+							vec3 pos_letra = vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)), 0);
+
+							if (rt->text_location_x == render_text_location::CENTER)
+							{
+								//tamanho_linhas[no_linha]
+								pos_letra.x = pos_letra.x - (tamanho_texto.x * 2);
+							}
+							else if (rt->text_location_x == render_text_location::LEFT)
+							{
+								pos_letra.x = pos_letra.x - (tamanho_texto.x * 2);
+							}
+							else if (rt->text_location_x == render_text_location::RIGHT)
+							{
+								pos_letra.x = pos_letra.x;
+							}
+
+							if (rt->text_location_y == render_text_location::CENTER)
+							{
+								pos_letra.y = pos_letra.y - (tamanho_texto.y / 2);
+							}
+							else if (rt->text_location_y == render_text_location::TOP)
+							{
+							}
+							else if (rt->text_location_y == render_text_location::DOWN)
+							{
+							}
+
+							mat4 lugar_letra = translate(lugar_texto, pos_letra);
 							lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
 
 							// textura
@@ -1022,12 +1061,13 @@ public:
 
 							pos_char.x += pos_adi_char.x;
 
-							rt->text_size.x = std::max(rt->text_size.x, (pos_char.x + (sca_char.x / font->quality)) / 2);
-							rt->text_size.y = std::max(rt->text_size.y, (pos_char.y + (sca_char.y / font->quality)) / 2);
+							// rt->text_size.x = std::max(rt->text_size.x, (pos_char.x + (sca_char.x / font->quality)) / 2);
+							// rt->text_size.y = std::max(rt->text_size.y, (pos_char.y + (sca_char.y / font->quality)) / 2);
 
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
 								altura_linha -= +rt->espaco_entre_linhas;
+								no_linha++;
 								pos_char.x = 0;
 							}
 						}
@@ -1247,8 +1287,6 @@ public:
 
 				// transform
 				apply_transform(shader_s, tf, ca);
-
-				
 
 				// render
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
