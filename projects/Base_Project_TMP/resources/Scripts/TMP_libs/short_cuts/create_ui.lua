@@ -18,7 +18,7 @@ function ui_style:new()
         text_font = "resources/Fonts/Glowworm Regular.json",
         text_color = { r = 0, g = 1, b = 0, a = 1 },
 
-        border_size = 0.5,
+        border_size = 0.1,
         border_roundnes = 0.5,
         border_color = { r = 0, g = 0, b = 1, a = 1 },
         border_color_hover = { r = 0, g = 0, b = 1, a = 1 },
@@ -118,13 +118,12 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
         render_shader_mat.color = deepcopy(self.style.color)
-        render_shader_mat.inputs[3] = self.style.border_color.r
-        render_shader_mat.inputs[4] = self.style.border_color.g
-        render_shader_mat.inputs[5] = self.style.border_color.b
-        render_shader_mat.inputs[6] = self.style.border_color.a
+        render_shader_mat.inputs[2] = self.style.border_color.r
+        render_shader_mat.inputs[3] = self.style.border_color.g
+        render_shader_mat.inputs[4] = self.style.border_color.b
+        render_shader_mat.inputs[5] = self.style.border_color.a
 
         render_shader_mat.inputs[1] = self.style.border_size
-        render_shader_mat.inputs[2] = self.style.border_roundnes
 
         --colors
 
@@ -184,22 +183,22 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     
             if  not self.hover then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color.r
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color.g
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color.b
-                self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color.a
+                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color.r
+                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color.g
+                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color.b
+                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color.a
             elseif  self.hover and not self.click then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_hover)
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_hover.r
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.g
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.b
-                self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_hover.a
+                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color_hover.r
+                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_hover.g
+                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.b
+                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.a
             elseif self.hover and  self.click then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_click)
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.r
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.g
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_click.b
-                self.button_obj.components[components.render_shader].material.inputs[6] = self.style.border_color_click.a
+                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color_click.r
+                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.g
+                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.b
+                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_click.a
             end
             self.button_obj.components[components.render_shader]:set()
         else
@@ -274,9 +273,8 @@ end
 ui_element_for_list = {}
 function ui_element_for_list:new()
     return {
-        pos = {x=1,y=1}, 
-        sca = {x=1,y=1}, 
-        layer = 2, 
+        --pos = {x=1,y=1}, 
+        --sca = {x=1,y=1}, 
         text = "",
         text_size = 0.05, 
         image = "resources/Textures/white.png",
@@ -285,7 +283,25 @@ function ui_element_for_list:new()
     }
 end
 
-function create_ui_list(father,pos, sca, layer, style,ui_elements)
+function ui_element_matrix_example()
+    local a = ui_element_for_list:new()
+    a.text = "a"
+
+    local b = ui_element_for_list:new()
+    b.text = "b"
+
+    local c = ui_element_for_list:new()
+    c.text = "a"
+
+    return {
+        {deepcopy(a)},
+        {deepcopy(a)},{deepcopy(b)},
+        {deepcopy(a)},{deepcopy(b)},{deepcopy(c)},
+    }
+end
+
+
+function create_ui_list(father,pos, sca, layer, style,ui_element_matrix)
     local ret = {}
     return ret
 end

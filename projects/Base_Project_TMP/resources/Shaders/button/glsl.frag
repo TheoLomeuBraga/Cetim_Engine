@@ -26,26 +26,39 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
    return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
-float isInCenter(vec2 uv, float borderSize, float roundness) {
-    // Calculate the distance from the center of the UV coordinates
-    vec2 center = vec2(0.5, 0.5);
-    vec2 dist = abs(uv - center) - (1.0 - roundness) * borderSize;
-
-    // Calculate the distance from the border edge
-    float borderDistance = length(max(dist, 0.0));
-
-    // Check if the point is in the center range or border range
-    return step(borderSize, borderDistance);
+float checkSquareBorder(vec2 uv, float borderSize) {
+    // Calculate half size of the center square
+    float centerHalfSize = 0.5 - borderSize;
+    
+    // Calculate half size of the border squares
+    float borderHalfSize = borderSize;
+    
+    // Define the coordinates of the center square
+    vec2 centerMin = vec2(0.5 - centerHalfSize);
+    vec2 centerMax = vec2(0.5 + centerHalfSize);
+    
+    // Define the coordinates of the border squares
+    vec2 borderMin = vec2(0.5 - borderHalfSize);
+    vec2 borderMax = vec2(0.5 + borderHalfSize);
+    
+    // Check if the UV point is within the center square
+    if (all(greaterThanEqual(uv, centerMin)) && all(lessThanEqual(uv, centerMax))) {
+        return 0.0;  // UV point is in the center square
+    } else if (all(greaterThanEqual(uv, borderMin)) && all(lessThanEqual(uv, borderMax))) {
+        return 1.0;  // UV point is in the border squares
+    } else {
+        return 1.0;  // UV point is outside both center and border squares
+    }
 }
+
 
 void main(){
 
-    float border_size = inputs[0];
-    float border_roundnes = inputs[1];
-    vec4 border_color = vec4(inputs[2],inputs[3],inputs[4],inputs[5]);
+    float border_size = inputs[0] / 2;
+    vec4 border_color = vec4(inputs[1],inputs[2],inputs[3],inputs[4]);
 
     vec4 ret2 = color * texture(textures[0], re_pos_uv(uv, uv_position_scale));
 
-    ret = mix(ret2,border_color,isInCenter(uv, 0.4,0.5));
+    ret = mix(ret2,border_color,checkSquareBorder(uv, border_size));
   
 }
