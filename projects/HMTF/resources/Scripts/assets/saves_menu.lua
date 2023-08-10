@@ -2,6 +2,7 @@ require("TMP_libs.short_cuts.create_text")
 require("TMP_libs.short_cuts.create_render_shader")
 require("TMP_libs.short_cuts.create_ui")
 require("TMP_libs.short_cuts.create_mesh")
+require("TMP_libs.short_cuts.create_sound")
 
 local menu = {
     menu_obj = {},
