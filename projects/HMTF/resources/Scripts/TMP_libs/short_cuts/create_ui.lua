@@ -92,7 +92,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         if category == 3 then
             self.text_obj.components[components.transform].position = {x= pos.x+(sca.x * style.border_size / 2),y=pos.y + (sca.y * style.border_size / 2),z=0}
         else
-            self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y,z=0}
+            self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y - (text_size / 2),z=0}
         end
         
         self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
@@ -126,7 +126,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     ret.button_obj.components[components.render_shader]:set()
 
     function ret:set_style(style)
-        self.style = deepcopy(self.style)
+        self.style = deepcopy(style)
 
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
@@ -149,6 +149,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         self.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
         self.button_obj.components[components.render_shader]:set()
 
+        self.text_obj.components[components.render_text].font = self.style.text_font
         
         if text ~= nil and text ~= "" then
             local render_text_mat = matreial:new()
@@ -157,7 +158,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
             
             self.text_obj.components[components.render_text].material = deepcopy(render_text_mat)
-            self.text_obj.components[components.render_text].font = self.style.text_font
+            
             
 
             self.text_obj.components[components.render_text]:set()
@@ -288,6 +289,7 @@ function ui_element_for_list:new()
     return {
         --pos = {x=1,y=1}, 
         --sca = {x=1,y=1}, 
+        style = ui_style:new(),
         text = "",
         text_size = 0.05, 
         image = "resources/Textures/white.png",
@@ -314,7 +316,7 @@ function ui_element_matrix_example()
 end
 
 
-function create_ui_list(father,pos, sca, layer, style,ui_element_matrix)
+function create_ui_list(father,pos, sca, layer,ui_element_matrix)
     local ret = {}
     return ret
 end

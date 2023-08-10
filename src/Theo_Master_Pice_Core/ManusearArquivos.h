@@ -200,7 +200,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar", lugar});
+			print({"nao foi possivel carregar fonte em", lugar});
 			shared_ptr<fonte> ret;
 			return ret;
 		}
@@ -255,7 +255,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar " , local});
+			print({"nao foi possivel carregar imagem" , local});
 			shared_ptr<imagem> ret;
 			return ret;
 		}
@@ -394,7 +394,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar " , local});
+			print({"nao foi possivel carregar tile_set em" , local});
 			shared_ptr<tile_set> ret;
 			return ret;
 		}

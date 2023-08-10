@@ -43,14 +43,7 @@ function load_demo(demo_name)
 end
 
 function load_sceane(demo_name)
-    if demo ~= nil then
-        demo:END()
-        demo = nil
-    end
-    
-    demo = require("level_loaders." .. demo_name.name)
-    print(demo)
-    demo:START(layers)
+    load_demo(demo_name.demo)
 end
 
 function set_render_layers()
@@ -121,10 +114,15 @@ function START()
     layers:create()
 
     cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
-    cam:add_component(components.lua_scripts)
-    cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
     set_lisener_object(cam.object_ptr)
     set_global_volume(100)
+
+    --[[
+    cam:add_component(components.lua_scripts)
+    cam.components[components.lua_scripts]:add_script("game_scripts/free_camera")
+    ]]
+    
+    
 
     load_demo(demos_list[demo_selected])
 end
@@ -151,6 +149,8 @@ keys_pressed_last_frame = { q = false, e = false }
 function UPDATE()
     demo:UPDATE()
 
+    --[[
+
     keys_pressed.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
     keys_pressed.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
 
@@ -164,6 +164,8 @@ function UPDATE()
 
     keys_pressed_last_frame.q = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.q])
     keys_pressed_last_frame.e = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.e])
+
+    ]]
 
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1 then
         window:close()
