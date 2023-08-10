@@ -30,7 +30,7 @@ layers = layers_table:new_3D()
 back_ground = {}
 
 demo_selected = 1
-demos_list = { "buttons_test", "text", "2D", "3D" }
+demos_list = { "3D", "text", "2D", "buttons_test" }
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
