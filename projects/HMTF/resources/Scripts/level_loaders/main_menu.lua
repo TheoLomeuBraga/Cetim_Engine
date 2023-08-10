@@ -26,7 +26,7 @@ local core_obj = {}
 
 function start()
     local core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("load_sceane",{name="3D"})
+    core_obj.components[components.lua_scripts]:call_function("core","load_sceane",{name="text"})
 end
 
 function config()
@@ -52,7 +52,11 @@ function menu:START(layers)
     menu.style.color = {r=0,g=0,b=0,a=0}
     menu.title = create_ui(menu.menu_obj.object_ptr, {x=-1,y=1.75,z=0}, {x=2,y=2,z=2}, 4, menu.style, "HMTF",0.2, "resources/Textures/null.png", nil,ui_category.display)
 
+    menu.style.color_hover = {r=0,g=0,b=0,a=0}
     menu.style.text_color  = {r=0.25,g=1,b=1,a=1}
+    menu.style.border_size = 0.1
+    menu.style.border_color = {r=0,g=0,b=0,a=0}
+    menu.style.border_color_hover = {r=1,g=1,b=1,a=1}
     menu.start = create_ui(menu.menu_obj.object_ptr, {x=-0.25,y=0.5,z=0}, {x=0.5,y=0.25,z=2}, 4, menu.style, "START",0.075, "resources/Textures/null.png", start,ui_category.button)
 
     menu.style.text_color  = {r=1,g=1,b=0,a=1}

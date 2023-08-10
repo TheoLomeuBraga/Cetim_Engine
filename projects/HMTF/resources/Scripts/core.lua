@@ -43,7 +43,7 @@ function load_demo(demo_name)
 end
 
 function load_sceane(demo_name)
-    load_demo(demo_name.demo)
+    load_demo(demo_name.name)
 end
 
 function set_render_layers()
