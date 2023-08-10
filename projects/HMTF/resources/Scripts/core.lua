@@ -30,7 +30,7 @@ layers = layers_table:new_3D()
 back_ground = {}
 
 demo_selected = 1
-demos_list = { "3D", "text", "2D", "buttons_test" }
+demos_list = { "main_menu", "3D", "text", "2D", "buttons_test" }
 demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
@@ -38,6 +38,7 @@ function load_demo(demo_name)
     end
     demo = nil
     demo = require("level_loaders." .. demo_name)
+    print(demo)
     demo:START(layers)
 end
 
