@@ -35,9 +35,20 @@ demo = nil
 function load_demo(demo_name)
     if demo ~= nil then
         demo:END()
+        demo = nil
     end
-    demo = nil
     demo = require("level_loaders." .. demo_name)
+    print(demo)
+    demo:START(layers)
+end
+
+function load_sceane(demo_name)
+    if demo ~= nil then
+        demo:END()
+        demo = nil
+    end
+    
+    demo = require("level_loaders." .. demo_name.name)
     print(demo)
     demo:START(layers)
 end

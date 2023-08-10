@@ -7,7 +7,7 @@ local menu = {
     menu_obj = {},
 }
 
-function menu:START(father,pos,rot,sca)
+function menu:START(father,args)
 
 end
 
