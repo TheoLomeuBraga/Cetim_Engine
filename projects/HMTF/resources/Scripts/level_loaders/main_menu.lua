@@ -6,16 +6,18 @@ require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.objects.scene_3D")
 require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
+require("TMP_libs.short_cuts.create_camera")
+require("TMP_libs.short_cuts.create_sound")
 
 local menu = {
+    camera = {},
+
     style = {},
 
     menu_obj = {},
 
     back_ground_image = {},
-
     title = {},
-    
 
     start = {},
     config = {},
@@ -26,7 +28,7 @@ local core_obj = {}
 
 function start()
     local core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("core","load_sceane",{name="text"})
+    --core_obj.components[components.lua_scripts]:call_function("core","load_sceane",{name="text"})
 end
 
 function config()
@@ -39,7 +41,12 @@ function exit()
     window:close()
 end
 
+in_config_menu = false
+
 function menu:START(layers)
+    menu.camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    set_lisener_object(menu.camera.object_ptr)
+    set_global_volume(100)
 
     menu.menu_obj = game_object:new(create_object(layers.cenary))
 
@@ -47,6 +54,7 @@ function menu:START(layers)
 
     menu.style.border_size = 0
     menu.style.color = {r=0,g=0.2,b=0.2,a=1}
+    menu.style.color_click = {r=0,g=0,b=0,a=0}
     menu.back_ground_image = create_ui(menu.menu_obj.object_ptr, {x=-1,y=1,z=0}, {x=2,y=2,z=2}, 4, menu.style, "",0, "resources/Textures/null.png", nil,ui_category.display)
 
     menu.style.color = {r=0,g=0,b=0,a=0}
@@ -64,13 +72,15 @@ function menu:START(layers)
 
     menu.style.text_color  = {r=1,g=0,b=0,a=1}
     menu.exit = create_ui(menu.menu_obj.object_ptr, {x=-0.2,y=-0.5,z=0}, {x=0.4,y=0.25,z=2}, 4, menu.style, "EXIT",0.075, "resources/Textures/null.png", exit,ui_category.button)
-
+    
 end
 
 function menu:UPDATE()
-    menu.start:UPDATE()
-    menu.config:UPDATE()
-    menu.exit:UPDATE()
+    if not in_config_menu then
+        menu.start:UPDATE()
+        menu.config:UPDATE()
+        menu.exit:UPDATE()
+    end
 end
 
 function menu:END()
