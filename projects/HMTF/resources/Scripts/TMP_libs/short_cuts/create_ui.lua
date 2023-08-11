@@ -281,14 +281,21 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         
     end
 
+    function ret:END()
+        if self.core_obj.object_ptr ~= nil then
+            remove_object(self.core_obj.object_ptr)
+        end
+        
+    end
+
     return ret
 end
 
-ui_element_for_list = {}
-function ui_element_for_list:new()
+ui_element_for_matrix = {}
+function ui_element_for_matrix:new()
     return {
         --pos = {x=1,y=1}, 
-        --sca = {x=1,y=1}, 
+        sca = {x=1,y=1}, 
         style = ui_style:new(),
         text = "",
         text_size = 0.05, 
@@ -299,13 +306,13 @@ function ui_element_for_list:new()
 end
 
 function ui_element_matrix_example()
-    local a = ui_element_for_list:new()
+    local a = ui_element_for_matrix:new()
     a.text = "a"
 
-    local b = ui_element_for_list:new()
+    local b = ui_element_for_matrix:new()
     b.text = "b"
 
-    local c = ui_element_for_list:new()
+    local c = ui_element_for_matrix:new()
     c.text = "a"
 
     return {
@@ -316,7 +323,7 @@ function ui_element_matrix_example()
 end
 
 
-function create_ui_list(father,pos, sca, layer,ui_element_matrix)
+function create_ui_list(father,pos,layer,space_betwen_elements,ui_element_matrix)
     local ret = {}
     return ret
 end
