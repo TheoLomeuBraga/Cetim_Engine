@@ -27,13 +27,7 @@ in_main_menu = 0
 
 menu_type = "pause"
 
-menu_objects = {
-    back_ground_image = {},
-    title = {},
-    start_button = {},
-    config_button = {},
-    exit_button = {},
-}
+menu_objects = {}
 
 
 
@@ -41,9 +35,7 @@ in_menu = false
 
 function clean_menus()
     for key, value in pairs(menu_objects) do
-        if value.END ~= nil then
-            value:END()
-        end
+        value:END()
     end
     menu_objects = nil
     menu_objects = {}

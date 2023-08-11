@@ -300,6 +300,7 @@ function ui_element_for_matrix:new()
         text = "",
         text_size = 0.05, 
         image = "resources/Textures/white.png",
+        hover_function = nil,
         click_function = nil,
         category = ui_category.display
     }
@@ -323,15 +324,20 @@ function ui_element_matrix_example()
 end
 
 
-function create_ui_list(father,pos,layer,space_betwen_elements,ui_element_matrix)
+function create_ui_list(father,text_location_x,text_location_y,layer,space_betwen_elements,ui_element_matrix)
     local ret = {
         core_obj = {},
 
-        position = deepcopy(pos),
         space_betwen_elements = deepcopy(space_betwen_elements),
 
+        button_selected = {x = -1,y = -1},
+
+        elements_location_y = render_text_location.center,
+
         ui_element_matrix = deepcopy(ui_element_matrix),
-        object_matrix = {},
+        object_button_matrix = {},
+        object_text_matrix = {},
+
     }
 
     function ret:START()
