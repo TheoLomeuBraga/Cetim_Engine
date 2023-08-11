@@ -123,6 +123,7 @@ function START()
     layers:create()
 
     global_data:set_var("core_object_ptr", this_object_ptr)
+    global_data:set_var("mouse_sensitivity", 6)
     global_data:set_var("layers", layers)
     
     

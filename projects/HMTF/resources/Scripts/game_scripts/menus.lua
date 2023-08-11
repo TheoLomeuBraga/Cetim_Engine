@@ -9,6 +9,7 @@ require("TMP_libs.short_cuts.create_ui")
 require("TMP_libs.short_cuts.create_sound")
 require("TMP_libs.objects.global_data")
 require("TMP_libs.objects.window")
+local serializer = require("libs.serialize")
 require("math")
 
 
@@ -55,6 +56,13 @@ function exit_to_pause_menu()
 
 end
 
+function save_config_and_exit_to_pause_menu()
+    save_configs()
+    exit_to_pause_menu()
+end
+
+
+
 function new_game()
     print("new_game")
 end
@@ -92,7 +100,42 @@ end
 
 
 
+is_full_screen = false
+function set_full_screen()
+    window.full_screen = not is_full_screen
+    is_full_screen = window.full_screen
+    window:set()
+end
 
+function set_sensitivity(sensitivity)
+    local sensitivityValue = tonumber(sensitivity)
+    if sensitivityValue then
+        global_data:set_var("mouse_sensitivity", sensitivityValue)
+    else
+        print("insert an valid value")
+    end
+end
+
+function set_volume(volume)
+    local volumeValue = tonumber(volume)
+    if volumeValue then
+        set_global_volume(volumeValue)
+        global_data:set_var("global_volume", volumeValue)
+    else
+        print("insert an valid value")
+    end
+end
+
+function save_configs()
+    configs = {
+        global_volume = global_data:get_var("global_volume"),
+        mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
+        full_screen = window.full_screen
+    }
+
+    serializer.save_table("config/configs_save.lua",configs)
+
+end
 
 function call_config_menu()
     menu_selectred = "config"
@@ -114,7 +157,9 @@ function call_config_menu()
     style.border_size = 0.1
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
+    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", save_config_and_exit_to_pause_menu, ui_category.button)
+
+    
 
 end
 
