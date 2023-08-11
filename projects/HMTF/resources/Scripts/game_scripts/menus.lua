@@ -17,7 +17,15 @@ menu_obj = {}
 
 this_object = {}
 
-menu_type = "main"
+menu_types = {
+    pause = "pause",
+    start = "start",
+    config = "config",
+}
+
+in_main_menu = 0
+
+menu_type = "pause"
 
 menu_objects = {
     back_ground_image = {},
@@ -41,17 +49,31 @@ function clean_menus()
     menu_objects = {}
 end
 
-function start()
-    menu_type = "start"
+function go_to_menu(menu_name)
+    menu_type = menu_name
     set_menu()
-    --local core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    --core_obj.components[components.lua_scripts]:call_function("core","load_sceane",{name="text"})
+end
+
+function start()
+    go_to_menu("start")
 end
 
 function config()
+    go_to_menu("config")
 end
 
-function exit_config()
+function new_game()
+end
+
+function load_game()
+end
+
+function exit_main_menu()
+    go_to_menu("main")
+end
+
+function exit_pause_menu()
+    go_to_menu("páuse")
 end
 
 function exit()
@@ -63,12 +85,12 @@ function set_menu()
     
     local style = ui_style:new()
 
-    if menu_type == "main" or menu_type == "pause" then
+    if menu_type == "pause" then
         style.border_size = 0
         style.color = { r = 0, g = 0.2, b = 0.2, a = 1 }
         style.color_click = { r = 0, g = 0, b = 0, a = 0 }
 
-        if menu_type == "main" then
+        if in_main_menu ~= 0 then
             menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 }, { x = 2, y = 2, z = 2 }, 4,style, "", 0, "resources/Textures/null.png", nil, ui_category.display)
         end
 
@@ -91,7 +113,7 @@ function set_menu()
         menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 }, { x = 0.4, y = 0.25, z = 2 }, 4, style, "EXIT", 0.075, "resources/Textures/null.png", exit, ui_category.button)
 
     elseif menu_type == "start" then
-
+        
     elseif menu_type == "config" then
 
     end

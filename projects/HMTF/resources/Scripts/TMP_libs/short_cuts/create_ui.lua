@@ -284,8 +284,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     function ret:END()
         if self.core_obj.object_ptr ~= nil then
             remove_object(self.core_obj.object_ptr)
+            self.core_obj.object_ptr = nil
         end
-        
     end
 
     return ret
@@ -324,6 +324,29 @@ end
 
 
 function create_ui_list(father,pos,layer,space_betwen_elements,ui_element_matrix)
-    local ret = {}
+    local ret = {
+        core_obj = {},
+
+        position = deepcopy(pos),
+        space_betwen_elements = deepcopy(space_betwen_elements),
+
+        ui_element_matrix = deepcopy(ui_element_matrix),
+        object_matrix = {},
+    }
+
+    function ret:START()
+        
+    end
+
+    function ret:UPDATE()
+        
+    end
+
+    function ret:END()
+        if self.core_obj.object_ptr ~= nil then
+            remove_object(self.core_obj.object_ptr)
+        end
+    end
+
     return ret
 end
