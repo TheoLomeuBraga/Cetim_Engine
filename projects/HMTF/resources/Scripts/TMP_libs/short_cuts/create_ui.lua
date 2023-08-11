@@ -53,14 +53,14 @@ local ui_object_example = {
 
 function create_ui(father, pos, sca, layer, style, text,text_size, image, click_function,category)
     --object
-    local core_obj_ptr = create_object(father)
+    local main_obj_ptr = create_object(father)
     
-    local button_obj_ptr = create_object(core_obj_ptr)
-    local text_obj_ptr = create_object(core_obj_ptr)
+    local button_obj_ptr = create_object(main_obj_ptr)
+    local text_obj_ptr = create_object(main_obj_ptr)
     
 
     local ret = {
-        core_obj = game_object:new(core_obj_ptr),
+        main_obj = game_object:new(main_obj_ptr),
         button_obj = game_object:new(button_obj_ptr),
         text_obj = game_object:new(text_obj_ptr),
         text = text,
@@ -78,11 +78,11 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     }
 
     --transform
-    ret.core_obj:add_component(components.transform)
+    ret.main_obj:add_component(components.transform)
     ret.button_obj:add_component(components.transform)
     ret.text_obj:add_component(components.transform)
     function ret:set_transform( pos, sca)
-        self.core_obj.components[components.transform].is_ui = true
+        self.main_obj.components[components.transform].is_ui = true
         self.button_obj.components[components.transform].is_ui = true
         self.text_obj.components[components.transform].is_ui = true
 
@@ -97,7 +97,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         
         self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
 
-        self.core_obj.components[components.transform]:set()
+        self.main_obj.components[components.transform]:set()
         self.button_obj.components[components.transform]:set()
         self.text_obj.components[components.transform]:set()
     end
@@ -282,9 +282,11 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     end
 
     function ret:END()
-        if self.core_obj.object_ptr ~= nil then
-            remove_object(self.core_obj.object_ptr)
-            self.core_obj.object_ptr = nil
+        print("BBBBB")
+        if self.main_obj.object_ptr ~= nil then
+            
+            remove_object(self.main_obj.object_ptr)
+            self.main_obj.object_ptr = nil
         end
     end
 
@@ -324,15 +326,16 @@ function ui_element_matrix_example()
 end
 
 
-function create_ui_list(father,text_location_x,text_location_y,layer,space_betwen_elements,ui_element_matrix)
+function create_ui_list(father,style,text_location_x,text_location_y,layer,space_betwen_elements,ui_element_matrix)
     local ret = {
-        core_obj = {},
+        main_obj = {},
 
         space_betwen_elements = deepcopy(space_betwen_elements),
 
         button_selected = {x = -1,y = -1},
 
-        elements_location_y = render_text_location.center,
+        elements_location_x = render_text_location.center,
+        style = deepcopy(style),
 
         ui_element_matrix = deepcopy(ui_element_matrix),
         object_button_matrix = {},
@@ -349,8 +352,8 @@ function create_ui_list(father,text_location_x,text_location_y,layer,space_betwe
     end
 
     function ret:END()
-        if self.core_obj.object_ptr ~= nil then
-            remove_object(self.core_obj.object_ptr)
+        if self.main_obj.object_ptr ~= nil then
+            remove_object(self.main_obj.object_ptr)
         end
     end
 
