@@ -282,7 +282,6 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     end
 
     function ret:END()
-        print("BBBBB")
         if self.main_obj.object_ptr ~= nil then
             
             remove_object(self.main_obj.object_ptr)

@@ -36,17 +36,10 @@ config_menu_objects = {}
 in_menu = false
 
 function exit_to_pause_menu()
-    print("exit_to_pause_menu")
 
     menu_selectred = "pause"
 
-    
-
-    print("start_menu_objects",tablelength(start_menu_objects))
-    print("config_menu_objects",tablelength(config_menu_objects))
-
     for index, value in pairs(start_menu_objects) do
-        print("END")
         value:END()
     end
     start_menu_objects = {}
@@ -75,7 +68,6 @@ function call_start_menu()
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
     start_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 }, { x = 0.4, y = 0.25, z = 2 }, 4, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
-    print("start_menu_objects",tablelength(start_menu_objects))
 end
 
 function new_game()
