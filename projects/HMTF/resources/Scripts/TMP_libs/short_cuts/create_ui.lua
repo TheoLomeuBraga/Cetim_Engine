@@ -71,8 +71,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         category = category,
 
 
-        click_last_frame = false,
-        click = false,
+        click_last_frame = true,
+        click = true,
         insertion_mode = false,
         insertion_mode_last_frame = false,
     }

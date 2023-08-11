@@ -53,6 +53,14 @@ function exit_to_pause_menu()
 
 end
 
+function new_game()
+    print("new_game")
+end
+
+function load_game()
+    print("load_game")
+end
+
 function call_start_menu()
     menu_selectred = "start"
 
@@ -61,20 +69,24 @@ function call_start_menu()
     style.color = { r = 0.2, g = 0.2, b = 0.2, a = 1 }
     style.color_click = { r = 0, g = 0, b = 0, a = 0 }
     start_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 0.6, z = 0 }, { x = 2, y = 1.6, z = 2 }, 4,style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
+    
+    
 
-    style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    style.text_color = { r = 0, g = 1, b = 1, a = 1 }
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
     style.border_size = 0.1
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
+    start_menu_objects.new_game_button = create_ui(this_object.object_ptr, { x = -0.5, y = 0.5, z = 0 }, { x = 1, y = 0.25,z = 2 }, 4, style, "NEW GAME", 0.075, "resources/Textures/white.png", new_game, ui_category.button)
+
+    style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    start_menu_objects.load_game_button = create_ui(this_object.object_ptr, { x = -0.6, y = 0, z = 0 }, { x = 1.2, y = 0.25,z = 2 }, 4, style, "LOAD GAME", 0.075, "resources/Textures/white.png", load_game, ui_category.button)
+
+    style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     start_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 }, { x = 0.4, y = 0.25, z = 2 }, 4, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
 end
 
-function new_game()
-end
 
-function load_game()
-end
 
 
 
