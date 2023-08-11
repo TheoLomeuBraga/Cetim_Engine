@@ -17,6 +17,8 @@ menu_obj = {}
 
 this_object = {}
 
+
+
 menu_types = {
     pause = "pause",
     start = "start",
@@ -49,7 +51,7 @@ function exit_to_pause_menu()
     end
     config_menu_objects = {}
 
-    
+    slider_objects = {}
 
 end
 
@@ -84,6 +86,8 @@ function call_start_menu()
 
     style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     start_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 }, { x = 0.4, y = 0.25, z = 2 }, 4, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
+
+    
 end
 
 
@@ -97,15 +101,20 @@ function call_config_menu()
     style.border_size = 0
     style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
     style.color_click = { r = 0, g = 0, b = 0, a = 0 }
-    start_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 0.6, z = 0 }, { x = 2, y = 1.6, z = 2 }, 4,style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
-
+    config_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 }, { x = 2, y = 2, z = 2 }, 4,style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
     
+    
+
+    style.color = { r = 0, g = 0, b = 0, a = 0 }
+    style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    config_menu_objects.title = create_ui(this_object.object_ptr, { x = -1, y = 1.75, z = 0 }, { x = 2, y = 2, z = 2 },4, style, "CONFIG", 0.2, "resources/Textures/white.png", nil, ui_category.display)
+
     style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
     style.border_size = 0.1
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 }, { x = 0.4, y = 0.25, z = 2 }, 4, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
+    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", exit_to_pause_menu, ui_category.button)
 
 end
 
@@ -190,6 +199,11 @@ function UPDATE()
             end
         end
     end
+
+    
+    
+
+    
     
 end
 

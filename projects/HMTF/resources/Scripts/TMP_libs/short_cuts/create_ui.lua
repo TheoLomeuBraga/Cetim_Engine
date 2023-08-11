@@ -70,6 +70,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         hover = false,
         category = category,
 
+        base_position = deepcopy(pos),
+        base_scale = deepcopy(sca),
 
         click_last_frame = true,
         click = true,
