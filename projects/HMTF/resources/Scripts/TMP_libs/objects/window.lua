@@ -14,7 +14,7 @@ function window:get()
     self.full_screen = new_window.full_screen
 end
 function window:set()
-    get_set_window(set_lua,deepcopyjson(window))
+    get_set_window(set_lua,deepcopyjson(self))
 end
 function window:set_cursor_image(path)
     set_cursor_image(path)

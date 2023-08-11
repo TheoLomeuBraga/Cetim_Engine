@@ -24,6 +24,8 @@ require("TMP_libs.objects.gravity")
 
 require("TMP_libs.objects.render_layer")
 
+local serializer = require("libs.serialize")
+
 cam = {}
 layers = layers_table:new_3D()
 
@@ -34,9 +36,6 @@ back_ground = {}
 
 function load_sceane(demo_name)
     name = ""
-
-    print(type(""))
-    print(type({}))
 
     if type(demo_name) == "string" then
         name = demo_name
@@ -101,6 +100,24 @@ function set_render_layers()
     renders_layers:set()
 end
 
+function load_configs()
+    configs = serializer.load_table("config/configs_save.lua")
+    if configs ~= nil then
+        serializer.save_table("config/configs_save.lua",configs)
+        set_global_volume(configs.global_volume)
+        global_data:set_var("global_volume", configs.global_volume)
+        global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
+        window.full_screen = configs.full_screen == 1
+        window:set()
+    else
+        set_global_volume(100)
+        global_data:set_var("global_volume", 100)
+        global_data:set_var("mouse_sensitivity",6)
+        window.full_screen = false
+        window:set()
+    end
+end
+
 function START()
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
@@ -129,6 +146,9 @@ function START()
     
 
     load_sceane("main_menu")
+
+    load_configs()
+    
 end
 
 function UPDATE()

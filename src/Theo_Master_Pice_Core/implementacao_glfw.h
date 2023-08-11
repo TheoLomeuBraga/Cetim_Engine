@@ -408,8 +408,14 @@ void MudarRes(int x, int y)
 
 bool janelaInteira = false;
 
+ivec2 monitor_res = ivec2(0,0);
 void IniciarJanela()
 {
+	
+
+	
+
+    	
 
 	glewExperimental = true; // Needed for core profile
 	if (!glfwInit())
@@ -417,6 +423,10 @@ void IniciarJanela()
 		fprintf(stderr, "Failed to initialize GLFW\n");
 		cout << "falha en iniciar o GLFW\n";
 	}
+
+	const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	monitor_res.x = mode->width;
+    monitor_res.y = mode->height;
 
 	glfwWindowHint(GLFW_SAMPLES, configuracoes::janelaConfig.antiCerrilhado); // 4x antialiasing
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);							  // We want OpenGL 3.3
@@ -524,6 +534,20 @@ public:
 		IniciarJanela();
 	}
 
+	void encerrar()
+	{
+		print({"monitor_res",monitor_res.x, monitor_res.y});
+		if(monitor_res.x != 0 && monitor_res.y != 0){
+			//mudar_res(monitor_res.x, monitor_res.y);
+			
+		}
+		setar_tela_inteira_como(false);
+
+		interromper_loop_input = true;
+		this_thread::sleep_for(chrono::milliseconds(100));
+		glfwTerminate();
+	}
+
 	void loop()
 	{
 
@@ -533,18 +557,17 @@ public:
 			fechar = glfwWindowShouldClose(janela) == 1;
 			loop_janela();
 		} while (fechar == false);
+
+		encerrar();
 	}
 
-	void encerrar()
-	{
-		interromper_loop_input = true;
-		this_thread::sleep_for(chrono::milliseconds(100));
-		glfwTerminate();
-	}
+	
 	ivec2 pos_janela;
 	void setar_tela_inteira_como(bool tela_cheia)
 	{
 		vec2 res = pegar_res();
+
+		janela_inteira = tela_cheia;
 
 		if (!janelaInteira)
 		{

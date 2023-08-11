@@ -11,7 +11,7 @@ function serializer.save_table(file_name, table)
         file:write(table_serializada)
         file:close()
     else
-        error("Erro ao abrir file para salvar table")
+        return nil
     end
 end
 
@@ -24,7 +24,7 @@ function serializer.load_table(file_name)
         local table = load(conteudo_file)()
         return table
     else
-        error("Erro ao abrir file para carregar table")
+        return nil
     end
 end
 
@@ -35,7 +35,7 @@ function serializer.save_table_base64(file_name, table)
         file:write(base64:encode(table_serializada))
         file:close()
     else
-        error("Erro ao abrir file para salvar table")
+        return nil
     end
 end
 
@@ -48,7 +48,7 @@ function serializer.load_table_base64(file_name)
         local table = load(base64:decode(conteudo_file))()
         return table
     else
-        error("Erro ao abrir file para carregar table")
+        return nil
     end
 end
 
@@ -58,7 +58,7 @@ function serializer.save_table_json(file_name, table)
         file:write(json.encode(table))
         file:close()
     else
-        error("Erro ao abrir file para salvar table")
+        return nil
     end
 end
 
@@ -71,7 +71,7 @@ function serializer.load_table_json(file_name)
         local table = json.decode(conteudo_file)
         return table
     else
-        error("Erro ao abrir file para carregar table")
+        return nil
     end
 end
 

@@ -127,6 +127,7 @@ function set_volume(volume)
 end
 
 function save_configs()
+    window:get()
     configs = {
         global_volume = global_data:get_var("global_volume"),
         mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
