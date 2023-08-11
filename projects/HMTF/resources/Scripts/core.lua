@@ -109,9 +109,12 @@ function START()
 
     gravity:set()
 
-    global_data:set_var("core_object_ptr", this_object_ptr)
+    
 
     layers:create()
+
+    global_data:set_var("core_object_ptr", this_object_ptr)
+    global_data:set_var("layers", layers)
 
     --[[
     cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
