@@ -536,11 +536,6 @@ public:
 
 	void encerrar()
 	{
-		print({"monitor_res",monitor_res.x, monitor_res.y});
-		if(monitor_res.x != 0 && monitor_res.y != 0){
-			//mudar_res(monitor_res.x, monitor_res.y);
-			
-		}
 		setar_tela_inteira_como(false);
 
 		interromper_loop_input = true;
@@ -584,5 +579,9 @@ public:
 		{
 			glfwSetWindowMonitor(janela, NULL, pos_janela.x, pos_janela.y, res.x, res.y, 0);
 		}
+	}
+
+	~gerenciador_janela_glfw(){
+		encerrar();
 	}
 };

@@ -139,6 +139,7 @@ function save_configs()
 end
 
 function call_config_menu()
+    
     menu_selectred = "config"
 
     local style = ui_style:new()
@@ -146,8 +147,6 @@ function call_config_menu()
     style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
     style.color_click = { r = 0, g = 0, b = 0, a = 0 }
     config_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 }, { x = 2, y = 2, z = 2 }, 4,style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
-    
-    
 
     style.color = { r = 0, g = 0, b = 0, a = 0 }
     style.text_color = { r = 1, g = 1, b = 0, a = 1 }
