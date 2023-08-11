@@ -41,7 +41,7 @@ function exit()
     window:close()
 end
 
-in_config_menu = false
+in_menu = false
 
 function menu:START(layers)
     menu.camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
@@ -76,7 +76,7 @@ function menu:START(layers)
 end
 
 function menu:UPDATE()
-    if not in_config_menu then
+    if not in_menu then
         menu.start:UPDATE()
         menu.config:UPDATE()
         menu.exit:UPDATE()
