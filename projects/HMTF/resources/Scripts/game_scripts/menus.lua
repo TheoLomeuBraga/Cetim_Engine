@@ -107,6 +107,10 @@ function set_full_screen()
     window:set()
 end
 
+
+function increase_sensitivity()
+    global_data:set_var("mouse_sensitivity", global_data:get_var("mouse_sensitivity") + 1)
+end
 function set_sensitivity(sensitivity)
     print("sensitivity",sensitivity)
     local sensitivityValue = tonumber(sensitivity)
@@ -116,7 +120,14 @@ function set_sensitivity(sensitivity)
         print("insert an valid value")
     end
 end
+function decrease_sensitivity()
+    global_data:set_var("mouse_sensitivity", global_data:get_var("mouse_sensitivity") - 1)
+end
 
+function increase_volume()
+    get_set_global_volume(get_set_global_volume() + 10)
+    
+end
 function set_volume(volume)
     print("volume",volume)
     local volumeValue = tonumber(volume)
@@ -130,6 +141,9 @@ function set_volume(volume)
     else
         print("insert an valid value")
     end
+end
+function decrease_volume()
+    get_set_global_volume(get_set_global_volume() - 10)
 end
 
 function save_configs()
@@ -163,21 +177,25 @@ function call_config_menu()
     style.border_size = 0.1
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", save_config_and_exit_to_pause_menu, ui_category.button)
+    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.2, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", save_config_and_exit_to_pause_menu, ui_category.button)
 
 
     style.text_color = { r = 0, g = 1, b = 0, a = 1 }
-    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "volume: " .. get_set_global_volume(), 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
+    config_menu_objects.volume_controler_button_decrease = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/null.png", decrease_volume, ui_category.button)
+    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -0.8, y = 0.5, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 4, style, "volume: " .. get_set_global_volume(), 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
+    config_menu_objects.volume_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0.5, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, ">", 0.075, "resources/Textures/null.png", increase_volume, ui_category.button)
 
-    config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
-
+    config_menu_objects.sensitivity_controler_button_decrease = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/null.png", decrease_sensitivity, ui_category.button)
+    config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
+    config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, ">", 0.075, "resources/Textures/null.png", increase_sensitivity, ui_category.button)
     local is_full_screen = "false"
     if window.full_screen then
         is_full_screen = "true"
     end
 
-    config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "full_screen: " .. is_full_screen, 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
-
+    
+    config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -0.8, y = -0.5, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 4, style, "full_screen: " .. is_full_screen, 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
+    
 
 end
 
