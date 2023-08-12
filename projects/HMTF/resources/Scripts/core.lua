@@ -106,7 +106,7 @@ function load_configs()
         serializer.save_table("config/configs_save.lua",configs)
         get_set_global_volume(configs.volume)
         global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
-        window.full_screen = configs.full_screen == 1
+        window.full_screen = configs.full_screen
         window:set()
     else
         get_set_global_volume(100)
