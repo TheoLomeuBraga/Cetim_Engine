@@ -73,6 +73,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         base_position = deepcopy(pos),
         base_scale = deepcopy(sca),
 
+        enter_last_frame = true,
         click_last_frame = true,
         click = true,
         insertion_mode = false,
@@ -196,6 +197,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and (mouse_pos.y > pos.y and mouse_pos.y < (pos.y + sca.y))
     
             self.click = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) == 1
+            
     
             if  not self.hover then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
@@ -223,8 +225,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         end
         
 
-        if self.category == 1 or self.category == 3 then
-            if self.hover and  self.click and not self.click_last_frame and click_function ~= nil then
+        if  self.category == 1 or self.category == 3 then
+            if self.hover and  self.click and not self.click_last_frame and self.click_function ~= nil then
                 self.click_function()
             end
             self.click_last_frame = self.click
@@ -235,7 +237,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
         if self.category == 2 then
             
-            if self.hover and self.click and not self.click_last_frame and click_function ~= nil then
+            if self.hover and self.click and not self.click_last_frame and self.click_function ~= nil then
                 
                 self.insertion_mode = not self.insertion_mode
                 keys_axis:set_text_input_geter(self.insertion_mode)
@@ -245,15 +247,17 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 end
                 
             end
+            
+            if self.click_function ~= nil and ( (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1 and not self.enter_last_frame and self.insertion_mode)  then
 
-            if (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1 then
+                self.insertion_mode = false
+                keys_axis:set_text_input_geter(self.insertion_mode)
 
                 if keys_axis:get_text_input() ~= "" and keys_axis:get_text_input() ~= "" then
                     self.click_function(keys_axis:get_text_input())
                 end
 
-                self.insertion_mode = false
-                keys_axis:set_text_input_geter(self.insertion_mode)
+                
                 
             end
 
@@ -275,6 +279,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
             self.insertion_mode_last_frame = self.insertion_mode
             self.click_last_frame = self.click
+            self.enter_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1
+
         end
 
         

@@ -100,14 +100,15 @@ end
 
 
 
-is_full_screen = false
+
 function set_full_screen()
-    window.full_screen = not is_full_screen
-    is_full_screen = window.full_screen
+    window:get()
+    window.full_screen = not window.full_screen 
     window:set()
 end
 
 function set_sensitivity(sensitivity)
+    print("sensitivity",sensitivity)
     local sensitivityValue = tonumber(sensitivity)
     if sensitivityValue then
         global_data:set_var("mouse_sensitivity", sensitivityValue)
@@ -117,6 +118,7 @@ function set_sensitivity(sensitivity)
 end
 
 function set_volume(volume)
+    print("volume",volume)
     local volumeValue = tonumber(volume)
     if volumeValue then
         set_global_volume(volumeValue)
@@ -159,7 +161,14 @@ function call_config_menu()
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
     config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, "<", 0.075, "resources/Textures/white.png", save_config_and_exit_to_pause_menu, ui_category.button)
 
-    
+
+    style.text_color = { r = 0, g = 1, b = 0, a = 1 }
+    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "volume", 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
+
+    config_menu_objects.mouse_sensitivity_controler = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity", 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
+
+    config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "full_screen", 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
+
 
 end
 

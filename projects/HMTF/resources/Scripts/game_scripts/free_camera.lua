@@ -38,7 +38,7 @@ end
 
 function run_rotation()
     window:get()
-    local screan_center = {
+    local screen_center = {
         x = math.floor(window.resolution.x / 2),
         y = math.floor(window.resolution.y / 2)
     }
@@ -59,7 +59,7 @@ function run_rotation()
         current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
         current_rot.y = math.max(-90, math.min(90, current_rot.y))
         this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
-        keys_axis:set_cursor_position(screan_center.x, screan_center.y)
+        keys_axis:set_cursor_position(screen_center.x, screen_center.y)
     end
     ]]
     current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
@@ -67,7 +67,7 @@ function run_rotation()
     current_rot.y = math.max(-90, math.min(90, current_rot.y))
     this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
     this_object.components[components.transform]:get()
-    keys_axis:set_cursor_position(screan_center.x, screan_center.y)
+    keys_axis:set_cursor_position(screen_center.x, screen_center.y)
 
 end
 
