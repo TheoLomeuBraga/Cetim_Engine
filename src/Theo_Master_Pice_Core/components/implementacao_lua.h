@@ -1357,10 +1357,17 @@ namespace funcoes_ponte
 		}
 	}
 
-	int set_global_volume(lua_State *L)
+	int get_set_global_volume(lua_State *L)
 	{
-		set_global_volume_sfml(lua_tonumber(L, 1));
-		return 0;
+		if(lua_gettop(L) > 0){
+			get_set_global_volume_sfml(lua_tonumber(L, 1));
+			return 0;
+		}else{
+			lua_pushnumber(L,global_volume_sfml);
+			return 1;
+		}
+		
+		
 	}
 
 	int set_lisener_object(lua_State *L)
@@ -1635,41 +1642,19 @@ namespace funcoes_ponte
 		}
 		else if (lua_type_id == LUA_TNIL)
 		{
+			lua_pop(lua_global_data, 1);
 			return 0;
 		}
+		lua_pop(lua_global_data,1);
 		return 1;
 	}
 
 	int global_data_set_var(lua_State *L)
 	{
-		/*
-		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-		shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
-		string script_name = lua_tostring(L, 2), var_name = lua_tostring(L, 3);
-		lua_getglobal(cl->estados_lua[script_name], var_name.c_str());
-		int lua_type_id = lua_type(L, 4);
-		if (lua_type_id == LUA_TNUMBER)
-		{
-			cl->mudar_numero(script_name, var_name, lua_tonumber(L, 4));
-		}
-		else if (lua_type_id == LUA_TSTRING)
-		{
-			cl->mudar_string(script_name, var_name, lua_tostring(L, 4));
-		}
-		else if (lua_type_id == LUA_TBOOLEAN)
-		{
-			cl->mudar_numero(script_name, var_name, lua_tonumber(L, 4));
-		}
-		else if (lua_type_id == LUA_TTABLE)
-		{
-			cl->mudar_tabela(script_name, var_name, lua_totable(L, 4));
-		}
-		*/
 
 		string var_name = lua_tostring(L, 1);
 		int lua_type_id = lua_type(L, 2);
 
-		// lua_getglobal(lua_global_data, var_name.c_str());
 		if (lua_type_id == LUA_TNUMBER)
 		{
 			lua_pushnumber(lua_global_data, lua_tonumber(L, 2));
@@ -1801,7 +1786,7 @@ namespace funcoes_ponte
 
 		// audio
 		pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
-		pair<string, lua_function>("set_global_volume", funcoes_ponte::set_global_volume),
+		pair<string, lua_function>("get_set_global_volume", funcoes_ponte::get_set_global_volume),
 
 		pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
 
@@ -1868,37 +1853,6 @@ namespace funcoes_lua
 
 		lua_pushinteger(L, argumentos.size());
 		lua_setglobal(L, "argsn");
-
-		// get_input
-		/*
-		{
-			// controle & mouse
-			{
-				// lua_register(L, "get_input", funcoes_ponte::get_input);
-			}
-			// teclado
-			{
-				lua_getglobal(L, "get_keys_input");
-				if (lua_toboolean(L, -1))
-				{
-					lua_getglobal(L, "keys");
-					// input texto
-					lua_pushstring(L, "text_input");
-					lua_pushstring(L, TECLADO.input_texto.c_str());
-					lua_settable(L, -3);
-					// input teclas
-					for (pair<string, bool> p : TECLADO.teclas)
-					{
-						lua_pushstring(L, p.first.c_str());
-						lua_pushboolean(L, p.second);
-						lua_settable(L, -3);
-					}
-				}
-			}
-		}
-		*/
-
-		// af.join();
 
 		funcoes_lua::adicionar_funcoes_ponte_estado_lua(L);
 	}
@@ -2015,10 +1969,6 @@ public:
 		lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
 		lua_setglobal(L, "this_object_ptr");
 
-		// if (iniciado) {
-		//	lua_getglobal(estados_lua[s], "START");
-		//	lua_call(estados_lua[s], 0, 0);
-		// }
 	}
 	void adicionar_scripts(vector<string> s)
 	{
