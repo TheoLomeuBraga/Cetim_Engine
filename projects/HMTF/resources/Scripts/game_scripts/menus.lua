@@ -121,8 +121,12 @@ function set_volume(volume)
     print("volume",volume)
     local volumeValue = tonumber(volume)
     if volumeValue then
-        set_global_volume(volumeValue)
-        global_data:set_var("global_volume", volumeValue)
+        if volumeValue > 200 then
+            volumeValue = 200
+        elseif volumeValue < 0 then
+            volumeValue = 0
+        end
+        get_set_global_volume(volumeValue)
     else
         print("insert an valid value")
     end
@@ -131,7 +135,7 @@ end
 function save_configs()
     window:get()
     configs = {
-        global_volume = global_data:get_var("global_volume"),
+        volume = get_set_global_volume(),
         mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
         full_screen = window.full_screen
     }
@@ -163,11 +167,16 @@ function call_config_menu()
 
 
     style.text_color = { r = 0, g = 1, b = 0, a = 1 }
-    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "volume", 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
+    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "volume: " .. get_set_global_volume(), 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
 
-    config_menu_objects.mouse_sensitivity_controler = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity", 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
+    config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
 
-    config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "full_screen", 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
+    local is_full_screen = "false"
+    if window.full_screen then
+        is_full_screen = "true"
+    end
+
+    config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.25,z = 2 }, 4, style, "full_screen: " .. is_full_screen, 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
 
 
 end
@@ -219,6 +228,8 @@ end
 
 function UPDATE()
 
+    --print(this_object.components[components.lua_scripts]:get_variable("game_scripts/menus", "in_main_menu"))
+
     global_data:set_var("in_menu", true)
 
     if menu_selectred == "pause" then
@@ -247,11 +258,24 @@ function UPDATE()
             call_config_menu()
         end
 
+        config_menu_objects.volume_controler.text = "volume: " .. get_set_global_volume()
+
+        config_menu_objects.mouse_sensitivity.text = "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity")
+
+        window:get()
+        local is_full_screen = "false"
+        if window.full_screen then
+            is_full_screen = "true"
+        end
+        config_menu_objects.full_screen_controler.text  =  "full_screen: " .. is_full_screen 
+
         for key, value in pairs(config_menu_objects) do
             if value.UPDATE ~= nil then
                 value:UPDATE()
             end
         end
+
+        
     end
 
     

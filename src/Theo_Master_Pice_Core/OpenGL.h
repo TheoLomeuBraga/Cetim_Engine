@@ -1477,6 +1477,7 @@ public:
 
 	void reindenizar_cenario()
 	{
+		
 
 		pegar_oclusion_queries();
 		limpar_oclusion_queries();
@@ -1541,6 +1542,8 @@ public:
 			ogl_aplicar_pos_processamento();
 		}
 	}
+
+	~OpenGL_API(){print({"OpenGL deleted"});}
 };
 
 // OpenGL_APP* APP;

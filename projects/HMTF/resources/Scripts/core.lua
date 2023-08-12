@@ -104,14 +104,12 @@ function load_configs()
     configs = serializer.load_table("config/configs_save.lua")
     if configs ~= nil then
         serializer.save_table("config/configs_save.lua",configs)
-        set_global_volume(configs.global_volume)
-        global_data:set_var("global_volume", configs.global_volume)
+        get_set_global_volume(configs.volume)
         global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
         window.full_screen = configs.full_screen == 1
         window:set()
     else
-        set_global_volume(100)
-        global_data:set_var("global_volume", 100)
+        get_set_global_volume(100)
         global_data:set_var("mouse_sensitivity",6)
         window.full_screen = false
         window:set()

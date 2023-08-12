@@ -27,7 +27,12 @@ void carregar_audio_buffer_thread(string local, shared_ptr<sf::SoundBuffer> *ret
 
 shared_ptr<transform_> listener_transform = NULL;
 
-void set_global_volume_sfml(float vol){sf::Listener::setGlobalVolume(vol);}
+float global_volume_sfml = 0;
+
+void get_set_global_volume_sfml(float vol){
+	sf::Listener::setGlobalVolume(vol);
+	global_volume_sfml = vol;
+}
 
 class sfml_audio : public componente
 {
