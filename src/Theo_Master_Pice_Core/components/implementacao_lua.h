@@ -553,7 +553,7 @@ namespace funcoes_ponte
 	{
 		// Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
-		//cout << lua_toboolean(L, 1) << endl;
+		// cout << lua_toboolean(L, 1) << endl;
 		return 0;
 	}
 
@@ -768,7 +768,7 @@ namespace funcoes_ponte
 		if (tf != NULL)
 		{
 
-			vec3 v3a = vec3(lua_tonumber(L, 2),lua_tonumber(L, 3), lua_tonumber(L, 4));
+			vec3 v3a = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 			vec3 v3b = tf->pegar_angulo_graus();
 			vec3 v3c = vec3(v3a.x + v3b.x, v3a.y + v3b.y, v3a.z + v3b.z);
 			tf->mudar_angulo_graus(v3c);
@@ -1067,7 +1067,8 @@ namespace funcoes_ponte
 		}
 	}
 
-	int get_text_size(lua_State *L){
+	int get_text_size(lua_State *L)
+	{
 		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 		shared_ptr<render_texto> rt = obj->pegar_componente<render_texto>();
 		lua_pushtable(L, vec2_table(rt->get_text_size()));
@@ -1359,15 +1360,16 @@ namespace funcoes_ponte
 
 	int get_set_global_volume(lua_State *L)
 	{
-		if(lua_gettop(L) > 0){
+		if (lua_gettop(L) > 0)
+		{
 			get_set_global_volume_sfml(lua_tonumber(L, 1));
 			return 0;
-		}else{
-			lua_pushnumber(L,global_volume_sfml);
+		}
+		else
+		{
+			lua_pushnumber(L, global_volume_sfml);
 			return 1;
 		}
-		
-		
 	}
 
 	int set_lisener_object(lua_State *L)
@@ -1645,7 +1647,7 @@ namespace funcoes_ponte
 			lua_pop(lua_global_data, 1);
 			return 0;
 		}
-		lua_pop(lua_global_data,1);
+		lua_pop(lua_global_data, 1);
 		return 1;
 	}
 
@@ -1762,7 +1764,6 @@ namespace funcoes_ponte
 		// text
 		pair<string, lua_function>("get_set_render_text", funcoes_ponte::get_set_render_text),
 		pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
-		
 
 		// shader
 		pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
@@ -1968,7 +1969,6 @@ public:
 
 		lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
 		lua_setglobal(L, "this_object_ptr");
-
 	}
 	void adicionar_scripts(vector<string> s)
 	{
@@ -2159,9 +2159,11 @@ public:
 		{
 			lua_getglobal(estados_lua[script], func.c_str());
 			lua_pushtable(estados_lua[script], arg);
-			lua_call(estados_lua[script], 1, 1);
-
-			ret = lua_totable(estados_lua[script], -2);
+			//lua_call(estados_lua[script], 1, 1);
+			if (lua_pcall(estados_lua[script], 1, LUA_MULTRET, 0) != 0){return ret;}
+			if (lua_gettop(estados_lua[script]) - 1 > 0) {
+				ret = lua_totable(estados_lua[script], -2);
+			}
 		}
 		return ret;
 	}
@@ -2503,7 +2505,6 @@ int set_lua_var(lua_State *L)
 
 int call_lua_function(lua_State *L)
 {
-
 	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	string script_name = lua_tostring(L, 2), func_name = lua_tostring(L, 3);

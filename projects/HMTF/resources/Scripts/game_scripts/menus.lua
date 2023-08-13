@@ -65,6 +65,8 @@ end
 
 function new_game()
     print("new_game")
+    core_obj = game_object:new(global_data:get_var("core_object_ptr"))
+    core_obj.components[components.lua_scripts]:call_function("core", "aaaaa", {"map_test"})
 end
 
 function load_game()
@@ -189,11 +191,12 @@ function call_config_menu()
     config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 4, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
     config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 4, style, ">", 0.075, "resources/Textures/null.png", increase_sensitivity, ui_category.button)
     local is_full_screen = "false"
+    
+    
+    
     if window.full_screen then
         is_full_screen = "true"
     end
-
-    
     config_menu_objects.full_screen_controler  = create_ui(this_object.object_ptr, { x = -0.8, y = -0.5, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 4, style, "full_screen: " .. is_full_screen, 0.05, "resources/Textures/null.png", set_full_screen, ui_category.button)
     
 

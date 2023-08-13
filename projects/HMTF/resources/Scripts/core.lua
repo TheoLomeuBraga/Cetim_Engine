@@ -31,7 +31,15 @@ layers = layers_table:new_3D()
 
 back_ground = {}
 
-
+function aaaaa(a)
+    if type(a) == "string" then
+        print(a)
+    elseif type(a) == "table" then
+        for key, value in pairs(a) do
+            print(value)
+        end
+    end
+end
 
 
 function load_sceane(demo_name)
@@ -45,13 +53,17 @@ function load_sceane(demo_name)
         end
     end
 
-    if demo ~= nil then
-        demo:END()
-        demo = nil
+    if type(demo_name) == "string" or type(demo_name) == "table" then
+        if demo ~= nil then
+            demo:END()
+            demo = nil
+        end
+        demo = require("level_loaders." .. name)
+        print(demo)
+        demo:START(layers)
     end
-    demo = require("level_loaders." .. name)
-    print(demo)
-    demo:START(layers)
+
+    
 end
 
 function set_render_layers()
