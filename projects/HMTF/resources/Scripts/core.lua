@@ -31,17 +31,6 @@ layers = layers_table:new_3D()
 
 back_ground = {}
 
-function aaaaa(a)
-    if type(a) == "string" then
-        print(a)
-    elseif type(a) == "table" then
-        for key, value in pairs(a) do
-            print(value)
-        end
-    end
-end
-
-
 function load_sceane(demo_name)
     name = ""
 
