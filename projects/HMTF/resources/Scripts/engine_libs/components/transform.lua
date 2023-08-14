@@ -72,14 +72,6 @@ function transform_component:new(object_ptr)
     function t:get_translation_position(x,y,z)
         return get_translation_position_transform(self.object_ptr,x,y,z)
     end
-
-    
-    function t:delet()
-        self.position = nil
-        self.rotation = nil
-        self.scale = nil
-        self = nil
-    end
     return t
 end
 component_map[components.transform] = transform_component

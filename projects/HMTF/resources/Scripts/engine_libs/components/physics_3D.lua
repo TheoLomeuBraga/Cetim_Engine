@@ -49,7 +49,7 @@ end
 
 physics_3D_component = {}
 function physics_3D_component:new(object_ptr)
-    p = {}
+    local p = {}
     p.object_ptr = object_ptr
     p.scale = { x = 1, y = 1, z = 1 }
     p.boady_dynamic = boady_dynamics.static
@@ -102,11 +102,6 @@ function physics_3D_component:new(object_ptr)
     function p:set_angular_velocity(force_x, force_y,force_z)
         set_angular_velocity(self.object_ptr, force_x,force_y,force_z)
     end
-    
-
-    function p:delet()
-    end
-
     return p
 end
 

@@ -7,7 +7,7 @@ end
 
 render_shader_component = {}
 function render_shader_component:new(object_ptr)
-    rs = {}
+    local rs = {}
     rs.object_ptr = object_ptr
     rs.layer = 2
     rs.vertex_size = 6
@@ -20,9 +20,6 @@ function render_shader_component:new(object_ptr)
     end
     function rs:set()
         get_set_render_shader(set_lua,deepcopyjson(self))
-    end
-    function rs:delet()
-        
     end
     return rs
 end

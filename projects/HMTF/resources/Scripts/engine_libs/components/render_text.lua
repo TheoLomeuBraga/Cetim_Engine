@@ -55,8 +55,6 @@ function render_text_component:new(object_ptr)
     function rs:get_text_size()
         return get_text_size(self.object_ptr)
     end
-    function rs:delet()
-    end
     return rs
 end
 component_map[components.render_text] = render_text_component

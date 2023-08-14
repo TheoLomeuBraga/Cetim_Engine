@@ -24,7 +24,7 @@ end
 
 render_mesh_component = {}
 function render_mesh_component:new(object_ptr)
-    rm = {}
+    local rm = {}
     rm.object_ptr = object_ptr
     rm.layer = 2
     rm.use_oclusion = true
@@ -45,7 +45,6 @@ function render_mesh_component:new(object_ptr)
     --buscar por erros
     function rm:set()
         get_set_render_mesh(set_lua,deepcopyjson(self))
-        
     end
     return rm
 end

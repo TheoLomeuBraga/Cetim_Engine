@@ -105,13 +105,6 @@ function physics_2D_component:new(object_ptr)
     function p:set_angular_velocity(force_x)
         set_angular_velocity(self.object_ptr, force_x)
     end
-    
-
-    function p:delet()
-        self.scale = nil
-        self.objs_touching = nil
-        self = nil
-    end
 
     return p
 end

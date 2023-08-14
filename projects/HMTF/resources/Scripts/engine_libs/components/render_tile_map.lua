@@ -25,8 +25,6 @@ function render_tile_map_component:new(object_ptr)
     function rtm:set()
         get_set_render_tilemap(set_lua,deepcopyjson(self))
     end
-    function rtm:delet()
-    end
     return rtm
 end
 component_map[components.render_tile_map] = render_tile_map_component

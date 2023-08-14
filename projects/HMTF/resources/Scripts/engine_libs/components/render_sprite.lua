@@ -16,7 +16,7 @@ end
 
 render_sprite_component = {}
 function render_sprite_component:new(object_ptr)
-    rs = {}
+    local rs = {}
     rs.object_ptr = object_ptr
     rs.layer = 2
     rs.selected_tile = 0
@@ -32,9 +32,6 @@ function render_sprite_component:new(object_ptr)
     end
     function rs:set()
         get_set_sprite_render(set_lua,self)
-    end
-    function rs:delet()
-        
     end
     return rs
 end

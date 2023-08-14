@@ -21,7 +21,7 @@ end
 
 lua_scripts_component = {}
 function lua_scripts_component:new(object_ptr)
-    ls = {}
+    local ls = {}
     ls.object_ptr = object_ptr
     ls.scripts = {}
     function ls:get()
@@ -43,11 +43,6 @@ function lua_scripts_component:new(object_ptr)
     end
     function ls:call_function(script_name,function_name,args_table)
         return call_lua_function(self.object_ptr,script_name,function_name,args_table)
-    end
-    
-    function ls:delet()
-        self.scripts = nil
-        self = nil
     end
     return ls
 end

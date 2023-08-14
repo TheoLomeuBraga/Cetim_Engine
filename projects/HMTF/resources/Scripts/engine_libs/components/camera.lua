@@ -12,7 +12,7 @@ end
 
 camera_component = {}
 function camera_component:new(object_ptr)
-    c = {}
+    local c = {}
     c.object_ptr = object_ptr
     c.type = ""
     c.orthographc = false
@@ -49,10 +49,6 @@ function camera_component:new(object_ptr)
         end
         ]]
         get_set_camera(set_lua,deepcopyjson(self))
-    end
-    function c:delet()
-        self.size = nil
-        self.resolution = nil
     end
     return c
 end
