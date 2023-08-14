@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 
 

@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.extras")
 require("engine_libs.objects.game_object")
 require("engine_libs.components.transform")

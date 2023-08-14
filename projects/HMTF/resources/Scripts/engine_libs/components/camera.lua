@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 
 --camera
@@ -10,7 +11,7 @@ end
 function get_set_camera(get_set,object)
 end
 
-camera_component = {}
+camera_component = create_base_component(components.camera)
 camera_component.object_ptr = ""
 camera_component.type = ""
 camera_component.orthographc = false
@@ -21,9 +22,18 @@ camera_component.fcp = 0
 camera_component.ncp = 0
 
 
+function camera_component:clean()
+    self.type = ""
+    self.orthographc = false
+    self.size = {x = 20,y = 20}
+    self.zoom = 90
+    self.resolution = {x = 100,y = 100}
+    self.fcp = 0
+    self.ncp = 0
+end
 
 function camera_component:get()
-    j = get_set_camera(get_lua,self.object_ptr)
+    local j = get_set_camera(get_lua,self.object_ptr)
     self.orthographc = j.orthographc > 0
     self.size = deepcopyjson(j.size)
     self.zoom = j.zoom
@@ -35,19 +45,9 @@ function camera_component:set()
     get_set_camera(set_lua,deepcopyjson(self))
 end
 function camera_component:new(object_ptr)
+    self:clean()
     local ret = deepcopy(self)
     ret.object_ptr = object_ptr
     return ret
-end
-function camera_component:have(object_ptr)    
-    return have_component(object_ptr, components.camera)
-end
-
-function camera_component:add(object_ptr)    
-    add_component(object_ptr, components.camera)
-end
-
-function camera_component:remove(object_ptr)    
-    remove_component(object_ptr,components.camera)
 end
 component_map[components.camera] = camera_component:new(nil)

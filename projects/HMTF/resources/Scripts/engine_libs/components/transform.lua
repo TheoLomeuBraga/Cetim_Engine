@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.vectors")
 require("engine_libs.functions")
@@ -24,7 +25,7 @@ end
 function get_global_position_transform(object,x,y,z)
 end
 
-transform_component = {}
+transform_component = create_base_component(components.transform)
 transform_component.object_ptr = ""
 transform_component.is_ui = false
 transform_component.position = Vec3:new(0,0,0)
@@ -69,6 +70,12 @@ end
 
 
 --component functions
+function transform_component:clean()
+    self.is_ui = false
+    self.position = Vec3:new(0,0,0)
+    self.rotation = Vec3:new(0,0,0)
+    self.scale = Vec3:new(1,1,1)
+end
 
 function transform_component:get()
     local t = get_set_transform(get_lua,self.object_ptr)
@@ -83,22 +90,6 @@ function transform_component:set()
     get_set_transform(set_lua,deepcopyjson(self))
 end
 
-function transform_component:have(object_ptr)    
-    return have_component(object_ptr, components.transform)
-end
 
-function transform_component:add(object_ptr)    
-    add_component(object_ptr, components.transform)
-end
-
-function transform_component:remove(object_ptr)    
-    remove_component(object_ptr,components.transform)
-end
-
-function transform_component:new(object_ptr)    
-    local ret = deepcopy(self)
-    ret.object_ptr = object_ptr
-    return ret
-end
 
 component_map[components.transform] = transform_component:new(nil)
