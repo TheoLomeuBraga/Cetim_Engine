@@ -36,6 +36,7 @@ function level:UPDATE()
 end
 
 function level:END()
+    close_menu()
     clear_memory()
 end
 
