@@ -220,6 +220,9 @@ end
 function get_keyboard_text_input()
 end
 
+function get_last_device_used()
+end
+
 --[[
 function get_inputs(device)
 end
