@@ -25,7 +25,7 @@ layout(location = 0) in struct Vertex
   vec2 uv;
   vec3 normal;
   vec3 color;
-} vertex;
+} vertex_in;
 
 layout(location = 0) out struct Vertex
 {
@@ -33,7 +33,7 @@ layout(location = 0) out struct Vertex
   vec2 uv;
   vec3 normal;
   vec3 color;
-} vertex;
+} vertex_out;
 
 vec3 quad_data[4] = vec3[4](
   vec3(1,-1,0),
