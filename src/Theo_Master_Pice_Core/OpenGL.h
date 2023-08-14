@@ -829,6 +829,14 @@ public:
 			}
 		}
 
+		for (int i = 0; i < SAIDAS_SHADER; i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + NO_TEXTURAS + i);
+			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
+			glUniform1i(glGetUniformLocation(shader_s, local.c_str()), NO_TEXTURAS + i);
+		}
+
 		switch (mat.lado_render)
 		{
 		case lado_render_malha::both:
@@ -872,60 +880,16 @@ public:
 			shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
 			if (rs != NULL)
 			{
-				glDisable(GL_CULL_FACE);
 				// shader
 				unsigned int shader_s = pegar_shader(rs->mat.shad);
 				glUseProgram(shader_s);
 
-				glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
-
-				// tempo
-				glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
-
-				// texturas
-				for (int i = 0; i < NO_TEXTURAS; i++)
-				{
-					if (rs->mat.texturas[i] != NULL)
-					{
-						ogl_adicionar_textura(rs->mat.texturas[i].get());
-						glActiveTexture(GL_TEXTURE0 + i);
-						glBindTexture(GL_TEXTURE_2D, texturas[rs->mat.texturas[i].get()]);
-						string nome_veriavel = string("textures[") + to_string(i) + string("]");
-						glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
-					}
-				}
-
-				// input
-				for (int i = 0; i < NO_INPUTS; i++)
-				{
-					string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-					glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
-				}
-
-				// cor
-				vec4 cor = rs->mat.cor;
-				glUniform4f(glGetUniformLocation(shader_s, "color"), cor.x, cor.y, cor.z, cor.w);
-
-				// uv
-				vec4 uv = rs->mat.uv_pos_sca;
-				glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), uv.x, uv.y, uv.z, uv.w);
-
-				// transform
-				/*
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
-				*/
 				apply_transform(shader_s, tf, ca);
 
-				for (int i = 0; i < NO_INPUTS; i++)
-				{
-					string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-					glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rs->mat.inputs[i]);
-				}
+				apply_material(shader_s,rs->mat);
 
 				// render
+				glDisable(GL_CULL_FACE);
 				glBindVertexArray(quad_array);
 				glDrawArrays(GL_TRIANGLES, 0, rs->tamanho);
 			}
