@@ -7,7 +7,6 @@ require("resources.playable_scene")
 
 local level = {
     camera_obj = {},
-    menu = {},
 }
 
 
@@ -17,7 +16,6 @@ function level:START(layers)
     level.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(level.camera_obj.object_ptr)
 
-    level.menu = menu.open()
     
 end
 
@@ -25,7 +23,6 @@ function level:UPDATE()
 end
 
 function level:END()
-    level.menu = menu.close(level.menu)
     clear_memory()
 end
 

@@ -249,9 +249,7 @@ end
 
 function UPDATE()
 
-    --print(this_object.components[components.lua_scripts]:get_variable("game_scripts/menus", "in_main_menu"))
-
-    global_data:set_var("in_menu", true)
+    global_data:set_var("pause", true)
 
     if menu_selectred == "pause" then
         for key, value in pairs(pause_menu_objects) do
@@ -307,7 +305,7 @@ function UPDATE()
 end
 
 function END()
-    global_data:set_var("in_menu", false)
+    global_data:set_var("pause", false)
 end
 
 function COLLIDE(collision_info)
