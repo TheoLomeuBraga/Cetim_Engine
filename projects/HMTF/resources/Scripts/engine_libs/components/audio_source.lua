@@ -17,7 +17,7 @@ end
 
 audio_component = {}
 function audio_component:new(object_ptr)
-    a = {}
+    local a = {}
     a.object_ptr = object_ptr
     a.path = "resources/Audio/teste de audio.wav"
 	a.pause = false
@@ -43,9 +43,6 @@ function audio_component:new(object_ptr)
     function a:set()
         --set_audio(self.object_ptr,self.path,self.pause,self.loop,self.time,self.speed,self.volume,self.min_distance,self.atenuation)
         get_set_audio(set_lua,deepcopyjson(self))
-    end
-    function a:delet()
-        self = nil
     end
 
     return a
