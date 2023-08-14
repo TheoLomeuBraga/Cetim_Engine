@@ -51,11 +51,12 @@ joystick.analog_left_Y = "analog_left_Y"
 joystick.analog_right_X = "analog_right_X"
 joystick.analog_right_Y = "analog_right_Y"
 
+--[[
 --keys
 get_keys_input = false;
 keys = {}
 keys.text_input = ""
-
+]]
 
 --camera types
 camera_view_types = {}

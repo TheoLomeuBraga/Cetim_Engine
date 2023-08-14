@@ -181,9 +181,9 @@ local key_axis_dictionarys = {
         right = 14,
         rx = "axis_0",
         ry = "axis_1",
-        lx = "axis_2",
-        ly = "axis_3",
-        rt_axis = "axis_4",
+        lx = "axis_3",
+        ly = "axis_4",
+        rt_axis = "axis_2",
         lt_axis = "axis_5"
     },
     [input_devices.mouse] = {
