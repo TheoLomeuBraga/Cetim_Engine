@@ -26,9 +26,9 @@ menu = {
 
 cenary_bilders = {
 
-    player_part = function (father, obj_data)
+    entity_part = function (father, obj_data)
     end,
-    player = function (player_obj, ceane_data)
+    entity = function (entity_obj, ceane_data)
     end,
 
     scene_part = function (father, obj_data)

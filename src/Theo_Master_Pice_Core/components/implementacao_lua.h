@@ -543,7 +543,6 @@ namespace funcoes_ponte
 		int argumentos = lua_gettop(L);
 		if (argumentos == 2)
 		{
-			// gerente_janela->mudar_pos_cursor(lua_tonumber(L, 1), lua_tonumber(L, 2));
 			manuseio_inputs->set_mouse_position(lua_tonumber(L, 1), lua_tonumber(L, 2));
 		}
 		return 0;
@@ -551,15 +550,12 @@ namespace funcoes_ponte
 
 	int set_keyboard_text_input(lua_State *L)
 	{
-		// Teclado.pegar_input_texto = lua_toboolean(L, 1);
 		manuseio_inputs->set_text_input(lua_toboolean(L, 1));
-		// cout << lua_toboolean(L, 1) << endl;
 		return 0;
 	}
 
 	int get_keyboard_text_input(lua_State *L)
 	{
-		// lua_pushfstring(L, Teclado.input_texto.c_str());
 		lua_pushfstring(L, manuseio_inputs->text_input.c_str());
 		return 1;
 	}
@@ -1871,10 +1867,18 @@ namespace funcoes_lua
 		luaL_openlibs(ret);
 
 		// configurar diretorio
-		string local = pegar_local_aplicacao() + "/resources/Scripts/?.lua";
+		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua";
+
+		string link_libs_path = pegar_local_aplicacao() + "/resources/Scripts/link_libs/?.dll;/resources/Scripts/link_libs/?.so";
+
 		lua_getglobal(ret, "package");
-		lua_pushstring(ret, local.c_str());
+
+		lua_pushstring(ret, lua_path.c_str());
 		lua_setfield(ret, -2, "path");
+
+		lua_pushstring(ret, link_libs_path.c_str());
+		lua_setfield(ret, -2, "cpath");
+		
 		lua_pop(ret, 1);
 
 		// int i = luaL_dofile(ret,s.c_str());
