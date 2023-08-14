@@ -34,7 +34,7 @@ function transform_component:new(object_ptr)
     t.scale = Vec3:new(1,1,1)
     function t:get()
         t = get_set_transform(get_lua,self.object_ptr)
-        self.is_ui = t.is_ui
+        self.is_ui = t.is_ui > 0
         self.position = deepcopyjson(t.position)
         self.rotation = deepcopyjson(t.rotation)
         self.scale = deepcopyjson(t.scale)

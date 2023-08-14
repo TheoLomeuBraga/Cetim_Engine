@@ -54,10 +54,10 @@ function physics_3D_component:new(object_ptr)
     p.scale = { x = 1, y = 1, z = 1 }
     p.boady_dynamic = boady_dynamics.static
     p.collision_shape = collision_shapes.cube
-    p.rotate_X = 1
-    p.rotate_Y = 1
-    p.rotate_Z = 1
-    p.triger = 0
+    p.rotate_X = true
+    p.rotate_Y = true
+    p.rotate_Z = true
+    p.triger = false
     p.friction = 1
     p.density = 1
     p.collision_layer = collision_layer_info:new()
@@ -68,10 +68,10 @@ function physics_3D_component:new(object_ptr)
         self.scale = deepcopyjson(j.scale)
         self.boady_dynamic = j.boady_dynamic
         self.collision_shape = j.collision_shape
-        self.rotate_X = j.rotate_X
-        self.rotate_Y = j.rotate_Y
-        self.rotate_Z = j.rotate_Z
-        self.triger = j.triger
+        self.rotate_X = j.rotate_X > 0
+        self.rotate_Y = j.rotate_Y > 0
+        self.rotate_Z = j.rotate_Z > 0
+        self.triger = j.triger > 0
         self.friction = j.friction
         self.density = j.density
         self.collision_layer = deepcopyjson(j.collision_layer)

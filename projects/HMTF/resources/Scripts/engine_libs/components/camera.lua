@@ -32,7 +32,7 @@ function camera_component:new(object_ptr)
         end
         ]]
         j = get_set_camera(get_lua,self.object_ptr)
-        self.orthographc = j.orthographc
+        self.orthographc = j.orthographc > 0
         self.size = deepcopyjson(j.size)
         self.zoom = j.zoom
         self.resolution = deepcopyjson(j.resolution)
@@ -53,7 +53,6 @@ function camera_component:new(object_ptr)
     function c:delet()
         self.size = nil
         self.resolution = nil
-        self = nil
     end
     return c
 end

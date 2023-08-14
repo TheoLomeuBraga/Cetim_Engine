@@ -34,7 +34,7 @@ function render_mesh_component:new(object_ptr)
     function rm:get()
         j = get_set_render_mesh(get_lua,self.object_ptr)
         self.layer = j.layer
-        self.use_oclusion = j.use_oclusion
+        self.use_oclusion = j.use_oclusion > 0
         self.normal_direction = j.normal_direction
         self.meshes = deepcopyjson(j.meshes) 
         self.materials = deepcopyjson(j.materials) 

@@ -69,8 +69,8 @@ function physics_2D_component:new(object_ptr)
         self.boady_dynamic = j.boady_dynamic
         self.collision_shape = j.collision_shape
         self.gravity_scale = j.gravity_scale
-        self.rotate = j.rotate
-        self.triger = j.triger
+        self.rotate = j.rotate > 0
+        self.triger = j.triger > 0
         self.friction = j.friction
         self.density = j.density
         self.objs_touching = deepcopyjson(j.objs_touching)

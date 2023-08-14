@@ -32,8 +32,8 @@ function audio_component:new(object_ptr)
         --self.path,self.pause,self.loop,self.time,self.speed,self.volume,self.min_distance,self.atenuation = get_audio(self.object_ptr)
         a = get_set_audio(get_lua,self.object_ptr)
         self.path = a.path
-	    self.pause = a.pause
-	    self.loop = a.loop
+	    self.pause = a.pause > 0
+	    self.loop = a.loop > 0
 	    self.time = a.time
 	    self.speed = a.speed
         self.volume = a.volume

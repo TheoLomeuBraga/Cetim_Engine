@@ -57,12 +57,12 @@ function game_object:new(object_ptr,ignore_components)
         function obj:have_component(comp)
             return have_component(self.object_ptr, comp) == true
         end
+    end
 
-        function obj:get_components()
-            for key, value in pairs(components) do
-                if self:have_component(value) then
-                    self.components[value] = component_map[value]:new(self.object_ptr)
-                end
+    function obj:get_components()
+        for key, value in pairs(components) do
+            if self:have_component(value) then
+                self.components[value] = component_map[value]:new(self.object_ptr)
             end
         end
     end
@@ -72,6 +72,7 @@ function game_object:new(object_ptr,ignore_components)
         self.name = j.name
         self.father = j.father
         self.children_ptr = deepcopyjson(j.childrens)
+        self:get_components()
     end
 
     
