@@ -32,31 +32,27 @@ function get_set_object(get_set,object)
 end
 
 game_object = {}
-function game_object:new(object_ptr,ignore_components)
+function game_object:new(object_ptr,not_recreate)
     obj = {}
     obj.object_ptr = object_ptr
     obj.name = ""
-    if ignore_components ~= true then
-        obj.components = {}
-    end
+    obj.components = {}
     obj.father = ""
     obj.children_ptr = {}
     obj.children = {}
 
-    if ignore_components ~= true then
-        function obj:add_component(component_name)
-            add_component(self.object_ptr, component_name)
-            self.components[component_name] = component_map[component_name]:new(self.object_ptr)
-        end
+    function obj:add_component(component_name)
+        add_component(self.object_ptr, component_name)
+        self.components[component_name] = component_map[component_name]:new(self.object_ptr)
+    end
 
-        function obj:remove_component(component_name)
-            remove_component(self.object_ptr, component_name)
-            self.components[component_name]:delet()
-        end
+    function obj:remove_component(component_name)
+        remove_component(self.object_ptr, component_name)
+        self.components[component_name]:delet()
+    end
 
-        function obj:have_component(comp)
-            return have_component(self.object_ptr, comp) == true
-        end
+    function obj:have_component(comp)
+        return have_component(self.object_ptr, comp) == true
     end
 
     function obj:get_components()
@@ -80,7 +76,7 @@ function game_object:new(object_ptr,ignore_components)
         get_set_object(lua_set,self)
     end
     
-    if ignore_components ~= true then
+    if not_recreate ~= true then
         function obj:recreate()
             self:get()
     
