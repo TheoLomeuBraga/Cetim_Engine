@@ -1869,7 +1869,7 @@ namespace funcoes_lua
 		// configurar diretorio
 		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua";
 
-		string link_libs_path = pegar_local_aplicacao() + "/resources/Scripts/link_libs/?.dll;/resources/Scripts/link_libs/?.so";
+		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so")
 
 		lua_getglobal(ret, "package");
 

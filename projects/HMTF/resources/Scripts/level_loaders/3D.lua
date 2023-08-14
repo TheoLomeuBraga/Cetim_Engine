@@ -1,7 +1,7 @@
-require("TMP_libs.short_cuts.create_mesh")
-require("TMP_libs.short_cuts.create_collision")
-require("TMP_libs.short_cuts.create_sound")
-require("TMP_libs.objects.scene_3D")
+require("engine_libs.short_cuts.create_mesh")
+require("engine_libs.short_cuts.create_collision")
+require("engine_libs.short_cuts.create_sound")
+require("engine_libs.objects.scene_3D")
 
 local demo = {}
 

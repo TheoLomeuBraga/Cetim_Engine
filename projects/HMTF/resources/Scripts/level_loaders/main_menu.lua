@@ -1,13 +1,13 @@
-require("TMP_libs.short_cuts.create_text")
-require("TMP_libs.short_cuts.create_render_shader")
-require("TMP_libs.short_cuts.create_ui")
-require("TMP_libs.short_cuts.create_mesh")
-require("TMP_libs.short_cuts.create_sound")
-require("TMP_libs.objects.scene_3D")
-require("TMP_libs.objects.global_data")
-require("TMP_libs.objects.window")
-require("TMP_libs.short_cuts.create_camera")
-require("TMP_libs.objects.global_data")
+require("engine_libs.short_cuts.create_text")
+require("engine_libs.short_cuts.create_render_shader")
+require("engine_libs.short_cuts.create_ui")
+require("engine_libs.short_cuts.create_mesh")
+require("engine_libs.short_cuts.create_sound")
+require("engine_libs.objects.scene_3D")
+require("engine_libs.objects.global_data")
+require("engine_libs.objects.window")
+require("engine_libs.short_cuts.create_camera")
+require("engine_libs.objects.global_data")
 
 
 local menu = {

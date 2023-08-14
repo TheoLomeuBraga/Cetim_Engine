@@ -1,6 +1,6 @@
-require("TMP_libs.objects.global_data")
-require("TMP_libs.objects.input")
-require("TMP_libs.functions")
+require("engine_libs.objects.global_data")
+require("engine_libs.objects.input")
+require("engine_libs.functions")
 
 inputs_last_frame = {}
 
