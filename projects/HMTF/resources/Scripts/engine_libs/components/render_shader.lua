@@ -26,4 +26,4 @@ end
 function render_shader_component:set()
     get_set_render_shader(set_lua,deepcopyjson(self))
 end
-component_map[components.render_shader] = render_shader_component
+component_map[components.render_shader] = render_shader_component:new(nil)

@@ -43,9 +43,5 @@ function lua_scripts_component:get()
 end
 function lua_scripts_component:set()
 end
-function lua_scripts_component:new(object_ptr)
-    local ret = deepcopy(self)
-    ret.object_ptr = object_ptr
-    return ret
-end
-component_map[components.lua_scripts] = lua_scripts_component
+
+component_map[components.lua_scripts] = lua_scripts_component:new(nil)

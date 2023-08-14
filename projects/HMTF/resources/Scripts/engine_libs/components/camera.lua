@@ -44,10 +44,4 @@ end
 function camera_component:set()
     get_set_camera(set_lua,deepcopyjson(self))
 end
-function camera_component:new(object_ptr)
-    self:clean()
-    local ret = deepcopy(self)
-    ret.object_ptr = object_ptr
-    return ret
-end
 component_map[components.camera] = camera_component:new(nil)
