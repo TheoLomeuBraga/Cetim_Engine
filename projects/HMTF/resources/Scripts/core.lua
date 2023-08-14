@@ -50,7 +50,6 @@ function load_sceane(demo_name)
             demo = nil
         end
         demo = require("level_loaders." .. name)
-        print(demo)
         demo:START(layers)
     end
 
@@ -142,7 +141,6 @@ function START()
     global_data:set_var("layers", layers)
 
     this_object = game_object:new(create_object(this_object_ptr))
-    print("this_object.components[components.lua_scripts]",this_object.components[components.lua_scripts])
     this_object:add_component(components.lua_scripts)
     this_object.components[components.lua_scripts]:add_script("game_scripts/input_getter")
 
