@@ -26,6 +26,8 @@ require("TMP_libs.objects.render_layer")
 
 local serializer = require("libs.serialize")
 
+local this_object
+
 cam = {}
 layers = layers_table:new_3D()
 
@@ -130,19 +132,19 @@ function START()
 
     window.resolution.x = 720
     window.resolution.y = 720
+
     window:set()
-
     gravity:set()
-
-    
-
     layers:create()
 
     global_data:set_var("core_object_ptr", this_object_ptr)
     global_data:set_var("mouse_sensitivity", 6)
     global_data:set_var("layers", layers)
-    
-    
+
+    this_object = game_object:new(create_object(this_object_ptr))
+    print("this_object.components[components.lua_scripts]",this_object.components[components.lua_scripts])
+    this_object:add_component(components.lua_scripts)
+    this_object.components[components.lua_scripts]:add_script("game_scripts/input_getter")
 
     load_sceane("main_menu")
 

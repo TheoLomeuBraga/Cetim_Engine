@@ -21,9 +21,8 @@ local menu = {
 function menu:START(layers)
     menu.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(menu.camera_obj.object_ptr)
-    
 
-    menu.menu_obj = game_object:new(create_object(layers.hud)) 
+    menu.menu_obj = game_object:new(create_object(layers.hud))
     menu.menu_obj:add_component(components.transform)
     menu.menu_obj.components[components.transform]:set()
 
