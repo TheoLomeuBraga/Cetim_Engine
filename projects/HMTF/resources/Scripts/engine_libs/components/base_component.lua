@@ -28,7 +28,7 @@ function base_component:remove()
 end
 
 function create_base_component(component_name)
-    local ret = base_component:new("")
+    local ret = base_component:new(nil)
     ret.component_name = component_name
     return ret
 end

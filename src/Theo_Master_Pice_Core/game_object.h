@@ -266,8 +266,9 @@ public:
 	void iniciar()
 	{
 		em_cena = true;
+		map<string, shared_ptr<componente>> componentes_copy = componentes;
 
-		for (pair<string, shared_ptr<componente>> p : componentes)
+		for (pair<string, shared_ptr<componente>> p : componentes_copy)
 		{
 			p.second->esse_objeto = esse_objeto;
 			p.second->iniciar();
@@ -281,7 +282,9 @@ public:
 		{
 			limpar_lixo();
 
-			for (pair<string, shared_ptr<componente>> p : componentes)
+			map<string, shared_ptr<componente>> componentes_copy = componentes;
+
+			for (pair<string, shared_ptr<componente>> p : componentes_copy)
 			{
 				p.second->atualisar();
 			}

@@ -48,62 +48,70 @@ function collision_layer_info:new()
     return cli
 end
 
-physics_3D_component = {}
-function physics_3D_component:new(object_ptr)
-    local p = {}
-    p.object_ptr = object_ptr
-    p.scale = { x = 1, y = 1, z = 1 }
-    p.boady_dynamic = boady_dynamics.static
-    p.collision_shape = collision_shapes.cube
-    p.rotate_X = true
-    p.rotate_Y = true
-    p.rotate_Z = true
-    p.triger = false
-    p.friction = 1
-    p.density = 1
-    p.collision_layer = collision_layer_info:new()
-    p.collision_mesh = { file = "", name = "" }
-    p.objs_touching = {}
-    function p:get()
-        j = get_set_physic_3D(get_lua, self.object_ptr)
-        self.scale = deepcopyjson(j.scale)
-        self.boady_dynamic = j.boady_dynamic
-        self.collision_shape = j.collision_shape
-        self.rotate_X = j.rotate_X > 0
-        self.rotate_Y = j.rotate_Y > 0
-        self.rotate_Z = j.rotate_Z > 0
-        self.triger = j.triger > 0
-        self.friction = j.friction
-        self.density = j.density
-        self.collision_layer = deepcopyjson(j.collision_layer)
-        self.collision_mesh = deepcopyjson(j.collision_mesh)
-        self.objs_touching = deepcopyjson(j.objs_touching)
-    end
-    
-
-    function p:set()
-        get_set_physic_3D(set_lua, deepcopyjson(self))
-    end
-
-    function p:add_force(force_x, force_y,force_z)
-        add_force(self.object_ptr, force_x, force_y,force_z)
-    end
-    function p:add_impulse(force_x, force_y,force_z)
-        add_impulse(self.object_ptr, force_x, force_y,force_z)
-    end
-    function p:set_linear_velocity(force_x, force_y,force_z)
-        set_linear_velocity(self.object_ptr, force_x, force_y,force_z)
-    end
-    function p:add_rotative_force(force_x, force_y,force_z)
-        add_rotative_force(self.object_ptr, force_x, force_y,force_z)
-    end
-    function p:add_rotative_impulse(force_x, force_y,force_z)
-        add_rotative_impulse(self.object_ptr, force_x, force_y,force_z)
-    end
-    function p:set_angular_velocity(force_x, force_y,force_z)
-        set_angular_velocity(self.object_ptr, force_x,force_y,force_z)
-    end
-    return p
+physics_3D_component = create_base_component(components.physics_3D)
+physics_3D_component.object_ptr = nil
+physics_3D_component.scale = { x = 1, y = 1, z = 1 }
+physics_3D_component.boady_dynamic = boady_dynamics.static
+physics_3D_component.collision_shape = collision_shapes.cube
+physics_3D_component.rotate_X = true
+physics_3D_component.rotate_Y = true
+physics_3D_component.rotate_Z = true
+physics_3D_component.triger = false
+physics_3D_component.friction = 1
+physics_3D_component.density = 1
+physics_3D_component.collision_layer = collision_layer_info:new()
+physics_3D_component.collision_mesh = { file = "", name = "" }
+physics_3D_component.objs_touching = {}
+function physics_3D_component:add_force(force_x, force_y,force_z)
+    add_force(self.object_ptr, force_x, force_y,force_z)
+end
+function physics_3D_component:add_impulse(force_x, force_y,force_z)
+    add_impulse(self.object_ptr, force_x, force_y,force_z)
+end
+function physics_3D_component:set_linear_velocity(force_x, force_y,force_z)
+    set_linear_velocity(self.object_ptr, force_x, force_y,force_z)
+end
+function physics_3D_component:add_rotative_force(force_x, force_y,force_z)
+    add_rotative_force(self.object_ptr, force_x, force_y,force_z)
+end
+function physics_3D_component:add_rotative_impulse(force_x, force_y,force_z)
+    add_rotative_impulse(self.object_ptr, force_x, force_y,force_z)
+end
+function physics_3D_component:set_angular_velocity(force_x, force_y,force_z)
+    set_angular_velocity(self.object_ptr, force_x,force_y,force_z)
 end
 
-component_map[components.physics_3D] = physics_3D_component
+function physics_3D_component:clean()
+    physics_3D_component.scale = { x = 1, y = 1, z = 1 }
+    physics_3D_component.boady_dynamic = boady_dynamics.static
+    physics_3D_component.collision_shape = collision_shapes.cube
+    physics_3D_component.rotate_X = true
+    physics_3D_component.rotate_Y = true
+    physics_3D_component.rotate_Z = true
+    physics_3D_component.triger = false
+    physics_3D_component.friction = 1
+    physics_3D_component.density = 1
+    physics_3D_component.collision_layer = collision_layer_info:new()
+    physics_3D_component.collision_mesh = { file = "", name = "" }
+    physics_3D_component.objs_touching = {}
+end
+function physics_3D_component:get()
+    j = get_set_physic_3D(get_lua, self.object_ptr)
+    self.scale = deepcopyjson(j.scale)
+    self.boady_dynamic = j.boady_dynamic
+    self.collision_shape = j.collision_shape
+    self.rotate_X = j.rotate_X > 0
+    self.rotate_Y = j.rotate_Y > 0
+    self.rotate_Z = j.rotate_Z > 0
+    self.triger = j.triger > 0
+    self.friction = j.friction
+    self.density = j.density
+    self.collision_layer = deepcopyjson(j.collision_layer)
+    self.collision_mesh = deepcopyjson(j.collision_mesh)
+    self.objs_touching = deepcopyjson(j.objs_touching)
+end
+function physics_3D_component:set()
+    get_set_physic_3D(set_lua, deepcopyjson(self))
+end
+
+component_map[components.physics_3D] = physics_3D_component:new(nil)
