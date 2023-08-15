@@ -13,7 +13,7 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     ret:add_component(components.transform)
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
+    ret.components[components.transform].scale = deepcopy({x=1,y=1,z=1})
     ret.components[components.transform]:set()
 
     
@@ -25,11 +25,11 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     end
     ret.components[components.physics_3D].collision_shape = shape
     if shape == collision_shapes.convex then
-        ret.components[components.physics_3D].collision_mesh = deepcopyjson(cillision_mesh)
+        ret.components[components.physics_3D].collision_mesh = deepcopy(cillision_mesh)
     end
 
     ret.components[components.physics_3D].triger = triger
-    ret.components[components.physics_3D].scale = deepcopyjson(sca)
+    ret.components[components.physics_3D].scale = deepcopy(sca)
     ret.components[components.physics_3D]:set()
 
     --ret.components[components.transform]:change_position(pos.x,pos.y,pos.z)

@@ -189,7 +189,7 @@ function START()
 
     this_object = game_object:new(create_object(this_object_ptr))
     this_object:add_component(components.lua_scripts)
-    this_object.components[components.lua_scripts]:add_script("game_scripts/input_getter")
+    this_object.components[components.lua_scripts]:add_script("game_scripts/input_geter")
 
     
 

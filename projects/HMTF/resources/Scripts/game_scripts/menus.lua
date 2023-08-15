@@ -214,6 +214,9 @@ end
 
 function START()
 
+    global_data:set_var("pause", 1)
+    time:set_speed(0)
+
     local layers = global_data:get_var("layers")
 
     this_object = game_object:new(this_object_ptr)
@@ -253,7 +256,7 @@ end
 
 function UPDATE()
 
-    global_data:set_var("pause", true)
+    
 
     if menu_selectred == "pause" then
         for key, value in pairs(pause_menu_objects) do
@@ -309,7 +312,8 @@ function UPDATE()
 end
 
 function END()
-    global_data:set_var("pause", false)
+    time:set_speed(1)
+    global_data:set_var("pause", 0)
 end
 
 function COLLIDE(collision_info)

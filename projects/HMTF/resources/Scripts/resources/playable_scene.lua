@@ -2,6 +2,7 @@ require("engine_libs.components.extras")
 require("engine_libs.components.component_all")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.global_data")
+require("engine_libs.objects.time")
 
 menu = {
     obj = nil,
