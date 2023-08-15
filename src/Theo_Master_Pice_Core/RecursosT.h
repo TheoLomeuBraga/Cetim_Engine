@@ -928,13 +928,14 @@ public:
 	mapeamento_assets() {}
 	string local;
 
-	void aplicar(string local, Y valor)
+	shared_ptr<Y> aplicar(string local, Y valor)
 	{
 		if (mapa.find(local) == mapa.end())
 		{
 			mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
 		}
 		mapa[local] = make_shared<Y>(valor);
+		return mapa[local];
 	}
 
 	void aplicar_ptr(string local, shared_ptr<Y> valor)

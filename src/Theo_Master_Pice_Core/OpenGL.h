@@ -1488,6 +1488,8 @@ public:
 				if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
 				{
 					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);
+
+					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
 				}
 				else
 				{
@@ -1495,7 +1497,7 @@ public:
 				}
 			}
 
-			rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
+			
 
 			/*
 			if (info_render[a].terminar_render)

@@ -14,12 +14,16 @@ local level = {
 
 function level:START(layers)
 
+    while not is_loaded(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf",true) do
+        print("loading")
+        coroutine.yield()
+    end
     
     level.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(level.camera_obj.object_ptr)
 
     cenary_builders.cenary_obj(game_object.new(create_game_object(layers.cenary)))
-    level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map")
+    level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
     cenary_builders.scene_part(cenary_builders.cenary_obj,level.scene_3D_data)
     
 end

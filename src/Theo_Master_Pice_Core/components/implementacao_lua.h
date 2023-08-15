@@ -516,24 +516,49 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int get_set_parallel_loading(lua_State *L)
-	{
-		if (lua_tonumber(L, 1) == get_lua)
-		{
-			lua_pushboolean(L, parallel_loading);
-			return 1;
-		}
-		else
-		{
-			parallel_loading = lua_toboolean(L, 2);
-			return 0;
-		}
-	}
+	//arquivos
 
-	int loading_requests_number(lua_State *L)
+	int is_loaded(lua_State *L)
 	{
-		lua_pushnumber(L, ManuseioDados::loading_requests_no);
-		return 0;
+		int asset_type = lua_tonumber(L, 1);
+		string file_path = lua_tostring(L, 2);
+		bool load = lua_toboolean(L, 3);
+		bool ret = false;
+
+		if(asset_type == 1){
+			ret = ManuseioDados::mapeamento_imagems.pegar(file_path) != NULL;
+			if(!ret && load){
+				thread loader(ManuseioDados::carregar_Imagem,file_path);
+				loader.detach();
+			}
+		}else if (asset_type == 2){
+			ret = ManuseioDados::mapeamento_fontes.pegar(file_path) != NULL;
+			if(!ret && load){
+				thread loader(ManuseioDados::carregar_fonte,file_path);
+				loader.detach();
+			}
+		}else if (asset_type == 3){
+			ret = ManuseioDados::mapeamento_tilesets.pegar(file_path) != NULL;
+			if(!ret && load){
+				thread loader(ManuseioDados::carregar_tile_set,file_path);
+				loader.detach();
+			}
+		}else if (asset_type == 4){
+			ret = ManuseioDados::mapeamento_tile_map_infos.pegar(file_path) != NULL;
+			if(!ret && load){
+				thread loader(ManuseioDados::carregar_info_tile_map,file_path);
+				loader.detach();
+			}
+		}else if (asset_type == 5){
+			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
+			if(!ret && load){
+				thread loader(ManuseioDados::carregar_modelo_3D,file_path);
+				loader.detach();
+			}
+		}
+
+		lua_pushboolean(L,ret);
+		return 1;
 	}
 
 	// input
@@ -1693,6 +1718,7 @@ namespace funcoes_ponte
 
 		// input
 		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
+		pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
 		pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 		pair<string, lua_function>("get_input", funcoes_ponte::get_input),
@@ -1703,9 +1729,6 @@ namespace funcoes_ponte
 
 		// memoria
 		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
-		pair<string, lua_function>("get_set_parallel_loading", funcoes_ponte::get_set_parallel_loading),
-
-		pair<string, lua_function>("loading_requests_number", funcoes_ponte::loading_requests_number),
 
 		// objeto
 		pair<string, lua_function>("create_object", funcoes_ponte::create_object),

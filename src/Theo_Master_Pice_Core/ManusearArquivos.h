@@ -187,10 +187,10 @@ namespace ManuseioDados
 				}
 				f.chars = chars;
 				f.path = lugar;
-				mapeamento_fontes.aplicar(lugar, f);
+				
 
 				remove_loading_request(lugar);
-				return mapeamento_fontes.pegar(lugar);
+				return mapeamento_fontes.aplicar(lugar, f);
 			}
 			else
 			{
@@ -239,13 +239,12 @@ namespace ManuseioDados
 				image.local = local;
 				// delete[] data;
 
-				mapeamento_imagems.aplicar(local, image);
+				
 
-				escrever(local);
-				escrever(mapeamento_imagems.pegar(local));
+				
 
 				remove_loading_request(local);
-				return mapeamento_imagems.pegar(local);
+				return mapeamento_imagems.aplicar(local, image);
 			}
 			else
 			{
@@ -381,10 +380,10 @@ namespace ManuseioDados
 					}
 				}
 
-				mapeamento_tilesets.aplicar(local, ret);
+				
 
 				remove_loading_request(local);
-				return mapeamento_tilesets.pegar(local);
+				return mapeamento_tilesets.aplicar(local, ret);
 			}
 			else
 			{
@@ -454,9 +453,9 @@ namespace ManuseioDados
 					}
 				}
 
-				mapeamento_tile_map_infos.aplicar(local, ret);
+				
 				remove_loading_request(local);
-				return mapeamento_tile_map_infos.pegar(local);
+				return mapeamento_tile_map_infos.aplicar(local, ret);
 			}
 			else
 			{
@@ -647,9 +646,9 @@ namespace ManuseioDados
 			// adicionar material
 			ret.materiais.insert(pair<string, Material>("material", mat));
 			ret.objetos.meus_materiais.push_back(mat);
-			cenas_3D.aplicar(local, ret);
+			
 
-			return cenas_3D.pegar(local);
+			return cenas_3D.aplicar(local, ret);
 		}else{
 			while(has_loading_request(local)){}
 			return cenas_3D.pegar(local);
@@ -782,8 +781,8 @@ namespace ManuseioDados
 
 		Full_Map_Info map_info = read_map_file(local);
 
-		cenas_3D.aplicar(local, ret);
-		return cenas_3D.pegar(local);
+		
+		return cenas_3D.aplicar(local, ret);
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
 	{
@@ -974,9 +973,9 @@ namespace ManuseioDados
 
 			
 
-			cenas_3D.aplicar(local, ret);
+			
 			remove_loading_request(local);
-			return cenas_3D.pegar(local);
+			return cenas_3D.aplicar(local, ret);
 		}else{
 			while(has_loading_request(local)){}
 			return cenas_3D.pegar(local);
@@ -1009,7 +1008,7 @@ namespace ManuseioDados
 	{
 		return funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
 	}
-	void carregar_modelo_3D(string local, shared_ptr<cena_3D> *ret)
+	void carregar_modelo_3D_thread(string local, shared_ptr<cena_3D> *ret)
 	{
 		*ret = carregar_modelo_3D(local);
 	}

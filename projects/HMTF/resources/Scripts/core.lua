@@ -28,32 +28,53 @@ local serializer = require("libs.serialize")
 
 local this_object
 
+
+
 cam = {}
 layers = layers_table:new_3D()
 
 back_ground = {}
 
-function load_sceane(demo_name)
-    name = ""
 
-    if type(demo_name) == "string" then
-        name = demo_name
-    elseif type(demo_name) == "table" then
-        for key, value in pairs(demo_name) do
+sceane_name = ""
+local loader = coroutine.create(function () end)
+function load_sceane_step()
+    name = ""
+    
+    if type(sceane_name) == "string" then
+        name = sceane_name
+    elseif type(sceane_name) == "table" then
+        for key, value in pairs(sceane_name) do
             name = value
         end
     end
-
-    if type(demo_name) == "string" or type(demo_name) == "table" then
+    
+    if type(sceane_name) == "string" or type(sceane_name) == "table" then
         if demo ~= nil then
             demo:END()
-            demo = nil
+            
         end
+
         demo = require("level_loaders." .. name)
+        
         demo:START(layers)
     end
-
     
+    
+end
+function load_sceane(demo_name)
+    sceane_name = demo_name
+
+    --load_sceane_step()
+    loader = coroutine.create(load_sceane_step)
+end
+
+function keep_loading()
+    if coroutine.status(loader) ~= "dead" then
+        coroutine.resume(loader)
+        return true
+    end
+    return false
 end
 
 function set_render_layers()
@@ -119,6 +140,10 @@ function load_configs()
 end
 
 function START()
+
+    
+    
+
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
     local mat = matreial:new()
@@ -144,14 +169,19 @@ function START()
     this_object:add_component(components.lua_scripts)
     this_object.components[components.lua_scripts]:add_script("game_scripts/input_getter")
 
-    load_sceane("main_menu")
+    
 
     load_configs()
+
+    load_sceane("main_menu")
     
 end
 
 function UPDATE()
-    demo:UPDATE()
+    if keep_loading() and demo ~= nil then
+        demo:UPDATE()
+    end
+    --
 
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1 then
         window:close()

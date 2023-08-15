@@ -73,6 +73,21 @@ function lerp(A,B,time)
     return (A * time) + (B * (1 - time))
 end
 
+asset_types = {
+    image = 1,
+    font = 2,
+    tile_set = 3,
+    tile_map = 4,
+    scene_3D = 5,
+}
+-- Function that check if the asset are loaded
+-- @param asset_type number: The asset type
+-- @param asset_path string: The path to the asset
+-- @param load boolean: Showd i load it if it isant loaded
+-- @return boolean: The asset is loaded ?
+function is_loaded(asset_type,asset_path,load)
+end
+
 -- time
 function get_time()
 end
