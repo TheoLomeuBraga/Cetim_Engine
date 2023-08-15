@@ -12,17 +12,7 @@ local level = {
     scene_3D_data = {},
 }
 
-function  count_to_10000()
-    local i = 0
-    while i < 1000000 do
-        print(i + 1)
-        i = i + 1
-    end
-end
-
 function level:START(layers)
-
-    local co1 = coroutine.create(count_to_10000)
 
     
     level.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)

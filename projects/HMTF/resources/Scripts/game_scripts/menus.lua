@@ -247,59 +247,11 @@ function START()
 
 end
 
-function  count_to_1000_coroutine()
-    local i = 0
-    while i < 1000000 do
-        print(i + 1)
-        i = i + 1
-        coroutine.yield()
 
-    end
-end
 
-function  count_to_1000_reverse_coroutine()
-    local i = 1000000
-    while i > 0 do
-        print(i)
-        i = i - 1
-        coroutine.yield()
-    end
-end
 
-local continue_loop = false
-local co1 = coroutine.create(count_to_1000_coroutine)
-local co2 = coroutine.create(count_to_1000_reverse_coroutine)
-
-function test_coroutine()
-    if not continue_loop then
-        local co1 = coroutine.create(count_to_1000_coroutine)
-        local co2 = coroutine.create(count_to_1000_reverse_coroutine)
-        continue_loop = true
-    end
-    
-    if continue_loop then
-        if coroutine.status(co1) ~= "dead" then
-            coroutine.resume(co1)
-        end
-        if coroutine.status(co2) ~= "dead" then
-            coroutine.resume(co2)
-        end
-        if coroutine.status(co1) == "dead" and coroutine.status(co2) == "dead" then
-            continue_loop = false
-        end
-    end
-end
 
 function UPDATE()
-
-    local i = 0
-    while i < 1000000 do
-        print(i + 1)
-        i = i + 1
-    end
-
-    --test_coroutine()
-    print("aaaaa")
 
     global_data:set_var("pause", true)
 

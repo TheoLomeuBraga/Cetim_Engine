@@ -1905,7 +1905,6 @@ class componente_lua : public componente
 	bool iniciado = false;
 	map<string, shared_ptr<string>> scripts_lua_string;
 	map<string, bool> scripts_lua_iniciados;
-	map<string, bool> UPDATE_pausados;
 
 public:
 	map<string, lua_State *> estados_lua;
@@ -1999,21 +1998,16 @@ public:
 			scripts_lua_iniciados[p.first] = true;
 		}
 	}
-
-	
-
 	void atualisar()
 	{
-		
+
 		for (pair<string, lua_State *> p : estados_lua)
 		{
 			if (scripts_lua_iniciados[p.first])
 			{
 				lua_State *L = p.second;
 				lua_getglobal(L, "UPDATE");
-				UPDATE_pausados.insert(pair<string, bool>(p.first,true));
 				lua_call(L, 0, 0);
-				UPDATE_pausados.erase(p.first);
 			}
 			else
 			{
@@ -2024,8 +2018,6 @@ public:
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
-		
-
 	}
 	void colidir(colis_info col)
 	{
