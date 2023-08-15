@@ -69,13 +69,6 @@ variable_types.string = 0
 variable_types.number = 1
 variable_types.bool = 2
 
---variable types
-asset_types = {}
-asset_types.font = "font"
-asset_types.image = "image"
-asset_types.tile_set = "tile_set"
-asset_types.tile_map = "tile_map"
-asset_types.audio = "audio"
 
 --normal direction
 normal_direction = {

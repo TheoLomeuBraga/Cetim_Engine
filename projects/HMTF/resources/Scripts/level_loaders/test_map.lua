@@ -12,12 +12,13 @@ local level = {
     scene_3D_data = {},
 }
 
+local assets_needed = {
+    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf")
+}
+
 function level:START(layers)
 
-    while not is_loaded(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf",true) do
-        print("loading")
-        coroutine.yield()
-    end
+    stop_coroutine_if_is_not_loaded(assets_needed,true)
     
     level.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(level.camera_obj.object_ptr)

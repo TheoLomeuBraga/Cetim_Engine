@@ -527,31 +527,31 @@ namespace funcoes_ponte
 
 		if(asset_type == 1){
 			ret = ManuseioDados::mapeamento_imagems.pegar(file_path) != NULL;
-			if(!ret && load){
+			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_Imagem,file_path);
 				loader.detach();
 			}
 		}else if (asset_type == 2){
 			ret = ManuseioDados::mapeamento_fontes.pegar(file_path) != NULL;
-			if(!ret && load){
+			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_fonte,file_path);
 				loader.detach();
 			}
 		}else if (asset_type == 3){
 			ret = ManuseioDados::mapeamento_tilesets.pegar(file_path) != NULL;
-			if(!ret && load){
+			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_tile_set,file_path);
 				loader.detach();
 			}
 		}else if (asset_type == 4){
 			ret = ManuseioDados::mapeamento_tile_map_infos.pegar(file_path) != NULL;
-			if(!ret && load){
+			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_info_tile_map,file_path);
 				loader.detach();
 			}
 		}else if (asset_type == 5){
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
-			if(!ret && load){
+			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_modelo_3D,file_path);
 				loader.detach();
 			}

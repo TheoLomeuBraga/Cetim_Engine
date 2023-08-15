@@ -88,6 +88,20 @@ asset_types = {
 function is_loaded(asset_type,asset_path,load)
 end
 
+function new_asset_list_element(type,path)
+    return {
+        type = type,
+        path = path,
+    }
+end
+function stop_coroutine_if_is_not_loaded(asset_list,load)
+    for key, value in pairs(asset_list) do
+        while is_loaded(value.type,value.path,load) do
+            coroutine.yield()
+        end
+    end
+end
+
 -- time
 function get_time()
 end

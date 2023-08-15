@@ -140,8 +140,6 @@ function load_configs()
 end
 
 function START()
-
-    
     
 
     set_render_layers()
