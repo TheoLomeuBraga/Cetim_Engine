@@ -26,12 +26,15 @@ menu = {
 
 cenary_builders = {
 
+    yield_count_down_total_time = 10,
+    yield_count_down = 10,
+
     entity_part = function (father, part_data)
     end,
     entity = function (entity_obj, ceane_data)
     end,
 
-    scene_part = function (father, part_data)
+    scene_part = function (father, part_data,yield)
         local ret = game_object:new(create_object(father))
 
         ret:add_component(components.transform)
@@ -87,6 +90,17 @@ cenary_builders = {
 
         add_mesh(nil)
 
+        if yield == true then
+
+            cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
+            if cenary_builders.yield_count_down < 1 then
+                coroutine.yield()
+                cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
+            end
+            
+        end
+        
+        
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, value)
@@ -94,7 +108,9 @@ cenary_builders = {
         
         return ret
     end,
-    scene = function (father, ceane_data)
-        return cenary_builders.scene_part(father, ceane_data.objects)
+    scene = function (father, ceane_data,yield)
+        if yield == nil then yield = false end
+        cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
+        return cenary_builders.scene_part(father, ceane_data.objects,yield)
     end,
 }
