@@ -24,7 +24,7 @@ menu = {
     end,
 }
 
-cenary_bilders = {
+cenary_builders = {
 
     entity_part = function (father, obj_data)
     end,
