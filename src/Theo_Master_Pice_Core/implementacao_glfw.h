@@ -495,8 +495,7 @@ void loop_janela()
 {
 
 	// tempo
-	Tempo::varTempRender = Tempo::tempUltFrameRender - Tempo::tempo;
-	Tempo::varTempRender = Tempo::tempo - Tempo::tempUltFrameRender;
+	Tempo::varTempRender = (Tempo::tempo - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
 	Tempo::tempUltFrameRender = Tempo::tempo;
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
