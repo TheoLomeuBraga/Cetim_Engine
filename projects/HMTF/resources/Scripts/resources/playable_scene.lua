@@ -34,6 +34,60 @@ cenary_builders = {
     scene_part = function (father, part_data)
         local ret = game_object:new(create_object(father))
 
+        ret:add_component(components.transform)
+        ret.components[components.transform].position = deepcopy(part_data.position)
+        ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+        if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
+            ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+        else
+            ret.components[components.transform].scale = deepcopy(part_data.scale)
+        end
+        ret.components[components.transform]:set()
+
+        local add_physics = function(rb)
+            if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
+                ret:add_component(components.physics_3D)
+                if rb then
+                    ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+                else
+                    ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
+                end
+                ret.components[components.physics_3D].collision_shape = collision_shapes.convex
+                ret.components[components.physics_3D].collision_mesh = deepcopyjson(part_data.meshes[1])
+                ret.components[components.physics_3D].triger = false
+                ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
+                ret.components[components.physics_3D].friction = 10
+                ret.components[components.physics_3D]:set()
+            end
+        end
+
+        if part_data.variables.type == "sb" then
+            add_physics(false)
+        elseif part_data.variables.type == "rb" then
+            add_physics(true)
+        end
+
+        local add_mesh = function(color)
+            if part_data.meshes ~= nil and part_data.materials ~= nil then
+                if color ~= nil then
+                    for key, value in pairs(part_data.materials) do
+                        value.color = deepcopy(color)
+                        part_data.materials[key] = deepcopy(value)
+                    end
+                end
+    
+                ret:add_component(components.render_mesh)
+                ret.components[components.render_mesh].layer = 2
+                ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
+                ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
+                ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+                ret.components[components.render_mesh]:set()
+            end
+        end
+
+        add_mesh(nil)
+
+
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, value)
         end

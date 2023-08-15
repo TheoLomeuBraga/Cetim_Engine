@@ -35,6 +35,28 @@ layers = layers_table:new_3D()
 
 back_ground = {}
 
+load_image = {}
+
+function set_load_image(args)
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/background"
+    if args.path ~= nil and args.path ~= "" then
+        mat.textures[1] = args.path
+        if args.color ~= nil then
+            mat.color.r = args.color.r
+            mat.color.g = args.color.g
+            mat.color.b = args.color.b 
+        end
+        mat.color.a = 1
+        load_image.components[components.render_shader].material = deepcopy(mat)
+    else
+        mat.color.a = 0
+        load_image.components[components.render_shader].material = deepcopy(mat)
+    end
+    
+    load_image.components[components.render_shader]:set()
+end
+
 
 sceane_name = ""
 local loader = coroutine.create(function () end)
@@ -151,6 +173,8 @@ function START()
     mat.color.g = 0.2
     mat.color.b = 0.2
     back_ground = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    mat.color.a = 0
+    load_image = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
 
     window.resolution.x = 720
     window.resolution.y = 720
