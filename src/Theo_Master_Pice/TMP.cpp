@@ -57,6 +57,7 @@ void comecar()
     configuracaoInicial();
 
     thread temp(Tempo::IniciarTempo);
+    temp.detach();
 
     //gerente_janela = new gerenciador_janela_glfw(true);
     start_window_lib();
@@ -88,12 +89,10 @@ int main(int argc, char **argv)
     {
         setar_diretorio_aplicacao("/home/theo/Cpp/TMP_TECH_DEMO_2D");
     }
-
-    cout << "vamos ao trabalho\n";
+    
     escrever(pegar_local_aplicacao());
 
     comecar();
-    cout << "volte sempre\n";
 
     return 0;
 }

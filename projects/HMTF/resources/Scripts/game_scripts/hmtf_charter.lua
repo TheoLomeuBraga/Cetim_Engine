@@ -31,12 +31,15 @@ local layers = {}
 
 
 function START()
+
+    global_data:set("player_object_ptr",this_object_ptr)
+
     this_object = game_object:new(this_object_ptr)
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
 
     layers = global_data:get_var("layers")
-    check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(1,0.5,1), true,collision_shapes.cylinder,nil,true)
-    check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(1,0.5,1), true,collision_shapes.cylinder,nil,true)
+    check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
+    check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
 
     
     this_object:add_component(components.physics_3D)
@@ -45,6 +48,7 @@ function START()
     this_object.components[components.physics_3D].rotate_Y = false
     this_object.components[components.physics_3D].rotate_Z = false
     this_object.components[components.physics_3D].friction = 0
+    this_object.components[components.physics_3D].triger = false
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
     this_object.components[components.physics_3D].scale = Vec3:new(1,2,1)
     this_object.components[components.physics_3D]:set()
@@ -60,9 +64,15 @@ hit_down = false
 local inputs = {}
 local inputs_last_frame = {}
 
+camera_rotation = {x=0,y=0}
+
+this_object_physics_3D_seted = false
+
 function UPDATE()
 
-    mouse_sensitivity = global_data:get_var("mouse_sensitivity")
+    time:get()
+
+    mouse_sensitivity = global_data:get("mouse_sensitivity")
 
     this_object.components[components.transform]:get()
     local pos = deepcopy(this_object.components[components.transform].position)
@@ -90,7 +100,25 @@ function UPDATE()
     if global_data:get("pause") < 1 then
         window:get()
         keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
+
+        camera_rotation.x = -((inputs.mouse_view_x - 0.5) * mouse_sensitivity * 20)
+        camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y - 0.5) * mouse_sensitivity * 20),90),-90)
+        camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
+        this_object.components[components.physics_3D]:set_angular_velocity(0,camera_rotation.x,0)
+
+        if not this_object_physics_3D_seted then
+            this_object.components[components.physics_3D]:set()
+            this_object_physics_3D_seted = not this_object_physics_3D_seted
+        end
+        
+        
+        local move_dir = this_object.components[components.transform]:get_local_direction(inputs.left * speed,0,inputs.foward * speed)
+        this_object.components[components.physics_3D]:set_linear_velocity(move_dir.x * time.sacale,0,move_dir.z * time.sacale)
+
     end
+
+    
+
 
 end
 
@@ -101,4 +129,5 @@ function END()
     remove_object(camera.object_ptr)
     remove_object(check_top.object_ptr)
     remove_object(check_down.object_ptr)
+    global_data:set("player_object_ptr","")
 end

@@ -189,6 +189,8 @@ function demo:START(layers)
 
     demo.map_data = get_scene_3D("resources/Levels/3D/test_level.gltf")
     demo.map_objects = create_ceane(layers.cenary, demo.map_data)
+
+    
     demo.map_objects.components[components.transform].position = Vec3:new(0, 0, 0)
     demo.map_objects.components[components.transform]:set()
 end

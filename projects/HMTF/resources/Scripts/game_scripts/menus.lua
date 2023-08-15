@@ -74,6 +74,7 @@ function load_game()
 end
 
 function call_start_menu()
+    
     menu_selectred = "start"
 
     local style = ui_style:new()
@@ -239,8 +240,9 @@ function START()
     style.border_size = 0.1
     style.border_color = { r = 0, g = 0, b = 0, a = 0 }
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    pause_menu_objects.start_button = create_ui(this_object.object_ptr, { x = -0.25, y = 0.5, z = 0 }, { x = 0.5, y = 0.25,z = 2 }, 4, style, "START", 0.075, "resources/Textures/null.png", call_start_menu, ui_category.button)
-
+    if in_main_menu ~= 0 then
+        pause_menu_objects.start_button = create_ui(this_object.object_ptr, { x = -0.25, y = 0.5, z = 0 }, { x = 0.5, y = 0.25,z = 2 }, 4, style, "START", 0.075, "resources/Textures/null.png", call_start_menu, ui_category.button)
+    end
     style.text_color = { r = 1, g = 1, b = 0, a = 1 }
     pause_menu_objects.config_button = create_ui(this_object.object_ptr, { x = -0.3, y = 0, z = 0 }, { x = 0.6, y = 0.25, z = 2 },4, style, "CONFIG", 0.075, "resources/Textures/null.png", call_config_menu, ui_category.button)
 

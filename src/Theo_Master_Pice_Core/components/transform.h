@@ -6,11 +6,13 @@ using namespace std;
 #include "RecursosT.h"
 #include "game_object.h"
 
-mat4 MatrizMundi = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
+mat4 MatrizMundi =  glm::mat4(1.0);
 
 class transform_ : public componente
 {
 public:
+	glm::mat4 matrizTransform;
+
 	transform_()
 	{
 		matrizTransform = MatrizMundi;
@@ -24,9 +26,9 @@ public:
 	bool usar_pai_matriz;
 	mat4 pai_matriz;
 
-	glm::vec3 pos, esca, rot;
+	glm::vec3 pos = vec3(0,0,0), esca = vec3(1,1,1), rot = vec3(0,0,0);
 
-	glm::mat4 matrizTransform;
+	
 	quat quater;
 
 	glm::mat4 pegar_matriz()

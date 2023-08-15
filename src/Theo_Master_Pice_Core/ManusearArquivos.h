@@ -955,11 +955,13 @@ namespace ManuseioDados
 						okf.has_scale = kf.has_scale;
 
 						okf.position = kf.position;
+						
 						//correct possition
 						if(gltf_loader.nodes[okf.object_id].meshIndices.size() == 0){
 							okf.position.x = -okf.position.x;
 							okf.position.z = -okf.position.z;
 						}
+						
 						okf.rotation = kf.rotation;
 						okf.scale = kf.scale;
 
@@ -971,8 +973,8 @@ namespace ManuseioDados
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
 
-			
-
+			//ret.objetos.escala.x *= -1;
+			//ret.objetos.escala.z *= -1;
 			
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);

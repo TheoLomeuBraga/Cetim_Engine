@@ -29,7 +29,8 @@ function level:START(layers)
     stop_coroutine_if_is_not_loaded(assets_needed)
 
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
-    cenary_builders.cenary_obj = cenary_builders.scene(layers.cenary,level.scene_3D_data,true)
+
+    cenary_builders.cenary_obj = cenary_builders.scene(layers.hud,level.scene_3D_data,true)
 
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 

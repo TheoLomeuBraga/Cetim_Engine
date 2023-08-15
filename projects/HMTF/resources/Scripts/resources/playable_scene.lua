@@ -52,6 +52,7 @@ cenary_builders = {
         else
             ret.components[components.transform].scale = deepcopy(part_data.scale)
         end
+        
         ret.components[components.transform]:set()
 
         local add_physics = function(rb)
@@ -76,7 +77,11 @@ cenary_builders = {
         elseif part_data.variables.type == "rb" then
             add_physics(true)
         elseif part_data.variables.type == "player_start" then
+            --ret.components[components.transform].position = game_object:new(father).components[components.transform]:get_global_position(-part_data.position.x,part_data.position.y,-part_data.position.z)
+            --ret.components[components.transform]:set()
+
             ret:add_component(components.lua_scripts)
+            ret:add_component(components.physics_3D)
             ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
         end
 
@@ -114,6 +119,7 @@ cenary_builders = {
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, value)
+            
         end
         
         return ret
@@ -121,6 +127,7 @@ cenary_builders = {
     scene = function (father, ceane_data,yield)
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
+        
         return cenary_builders.scene_part(father, ceane_data.objects,yield)
     end,
 }
