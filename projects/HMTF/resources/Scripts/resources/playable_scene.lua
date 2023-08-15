@@ -26,13 +26,21 @@ menu = {
 
 cenary_builders = {
 
-    entity_part = function (father, obj_data)
+    entity_part = function (father, part_data)
     end,
     entity = function (entity_obj, ceane_data)
     end,
 
-    scene_part = function (father, obj_data)
+    scene_part = function (father, part_data)
+        local ret = game_object:new(create_object(father))
+
+        for key, value in pairs(part_data.children) do
+            cenary_builders.scene_part(ret.object_ptr, value)
+        end
+        
+        return ret
     end,
-    scene = function (player_obj, ceane_data)
+    scene = function (father, ceane_data)
+        return cenary_builders.scene_part(father, ceane_data.objects)
     end,
 }

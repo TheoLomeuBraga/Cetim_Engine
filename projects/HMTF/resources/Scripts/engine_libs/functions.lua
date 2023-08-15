@@ -96,10 +96,17 @@ function new_asset_list_element(type,path)
 end
 function stop_coroutine_if_is_not_loaded(asset_list,load)
     for key, value in pairs(asset_list) do
-        while is_loaded(value.type,value.path,load) do
+        while not is_loaded(value.type,value.path,load) do
             coroutine.yield()
         end
     end
+end
+
+-- Function that calculates the sum of two numbers
+-- @param a number: The first operand
+-- @param b number: The second operand
+-- @return number: The sum of a and b
+function get_scene_3D(path)
 end
 
 -- time

@@ -145,12 +145,7 @@ function sceane_3D_example()
     }
 end
 
--- Function that calculates the sum of two numbers
--- @param a number: The first operand
--- @param b number: The second operand
--- @return number: The sum of a and b
-function get_scene_3D(path)
-end
+
 
 function lerp_key_frame(key_frame_A, key_frame_B, time)
     local ret = {}
