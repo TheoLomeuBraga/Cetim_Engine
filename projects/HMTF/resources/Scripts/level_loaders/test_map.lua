@@ -6,9 +6,7 @@ require("engine_libs.objects.scene_3D")
 require("resources.playable_scene")
 
 local level = {
-    camera_obj = {},
     cenary_obj = {},
-    player_obj = {},
     scene_3D_data = {},
 }
 
@@ -19,16 +17,16 @@ local assets_needed = {
 }
 
 function level:START(layers)
+    
     time:set_speed(0)
     core_obj = game_object:new(global_data:get_var("core_object_ptr"))
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/null.png",color={r=1,g=1,b=1}})
 
-    level.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
-    set_lisener_object(level.camera_obj.object_ptr)
-
+    local camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    set_lisener_object(camera.object_ptr)
     
-
-    stop_coroutine_if_is_not_loaded(assets_needed,true)
+    
+    stop_coroutine_if_is_not_loaded(assets_needed)
 
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
     cenary_builders.cenary_obj = cenary_builders.scene(layers.cenary,level.scene_3D_data,true)
@@ -36,6 +34,9 @@ function level:START(layers)
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 
     time:set_speed(1)
+
+    remove_object(camera.object_ptr)
+    camera = {}
     
 end
 

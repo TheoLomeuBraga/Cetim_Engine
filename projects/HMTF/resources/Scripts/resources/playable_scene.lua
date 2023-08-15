@@ -35,7 +35,13 @@ cenary_builders = {
     end,
 
     scene_part = function (father, part_data,yield)
-        local ret = game_object:new(create_object(father))
+        local ret = {}
+        if part_data.variables.type ~= "player_start" then
+            ret = game_object:new(create_object(father))
+        else
+            ret = game_object:new(create_object(global_data:get_var("layers").cenary))
+        end
+        
 
         ret:add_component(components.transform)
         ret.components[components.transform].position = deepcopy(part_data.position)
@@ -68,6 +74,9 @@ cenary_builders = {
             add_physics(false)
         elseif part_data.variables.type == "rb" then
             add_physics(true)
+        elseif part_data.variables.type == "player_start" then
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
         end
 
         local add_mesh = function(color)
