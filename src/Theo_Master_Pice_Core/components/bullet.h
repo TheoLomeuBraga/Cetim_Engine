@@ -548,6 +548,7 @@ bool raycast_dir_bullet_3D(vec3 rayFrom, vec3 rayTo, colis_info &result)
         result.pos = btToGlm(rayCallback.m_hitPointWorld);
         result.nor = btToGlm(rayCallback.m_hitNormalWorld);
         result.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(rayCallback.m_collisionObject)].get();
+        result.distancia = glm::distance(rayFrom, result.pos) ;
         if (rayCallback.hasHit())
         {
             return true;

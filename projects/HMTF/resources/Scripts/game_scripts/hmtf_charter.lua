@@ -96,13 +96,8 @@ function UPDATE()
     check_top.components[components.physics_3D]:get()
     hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
     
-    if hit_down then
-        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.6 ,pos.z)
-    else 
-        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
-    end
     
-    
+    check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
     check_down.components[components.physics_3D]:get()
     hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
@@ -131,7 +126,6 @@ function UPDATE()
             this_object_physics_3D_seted = not this_object_physics_3D_seted
         end
         
-        --print("can jump",hit_down and inpulse.y <= 0 )
         if hit_down and not (inpulse.y > 0)  then
             inpulse.y = 0
         end
@@ -145,14 +139,16 @@ function UPDATE()
         local hit = false
         local hit_info = {}
         hit,hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0,-1,0),direction_reference.components[components.transform]:get_global_position(0,-5,0))
-        if not hit or not hit_down then
+        if not hit then
+            hit_info.normal = {x=0,y=1,z=0}
+        end
+        if not hit_down then
             hit_info.normal = {x=0,y=1,z=0}
         end
 
         local move_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
 
         move_dir = crossProduct(move_dir,hit_info.normal)
-        print(move_dir.y * time.sacale * speed)
 
         this_object.components[components.physics_3D]:set_linear_velocity(move_dir.x * time.sacale * speed,(move_dir.y * time.sacale * speed) + inpulse.y,move_dir.z * time.sacale * speed)
 

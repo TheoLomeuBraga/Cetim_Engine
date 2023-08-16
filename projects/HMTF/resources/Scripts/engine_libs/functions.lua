@@ -156,6 +156,36 @@ function crossProduct(a, b)
     return result
 end
 
+-- Function to calculate the dot product of two vectors
+function dotProduct(a, b)
+    return a.x * b.x + a.y * b.y + a.z * b.z
+end
+
+-- Function to add two vectors
+function sumVectors(a, b)
+    return {x = a.x + b.x, y = a.y + b.y, z = a.z + b.z}
+end
+
+function multplayVectors(a, b)
+    return {x = a.x * b.x, y = a.y * b.y, z = a.z * b.z}
+end
+
+-- Function to multiply a vector by a scalar
+function multiplyVectorByScalar(vector, scalar)
+    return {x = vector.x * scalar, y = vector.y * scalar, z = vector.z * scalar}
+end
+
+function divideVectors(a, b)
+    return {x = a.x / b.x, y = a.y / b.y, z = a.z / b.z}
+end
+
+-- Function to subtract one vector from another
+function subtractVectors(a, b)
+    return {x = a.x - b.x, y = a.y - b.y, z = a.z - b.z}
+end
+
+
+
 -- asset tiles
 --[[
 function get_tile_set_size(path,image_folder)
