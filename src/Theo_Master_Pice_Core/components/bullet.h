@@ -270,7 +270,7 @@ public:
                 }
                 else
                 {
-                    mesh_shape_address = get_mesh_shape_address(collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+                    mesh_shape_address = get_mesh_shape_address(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic");
 
                     if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                     {
@@ -453,6 +453,10 @@ public:
     {
         ((btRigidBody *)(bt_obj))->activate();
         ((btRigidBody *)(bt_obj))->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+    }
+
+    void adicionar_veaplicar_velocidade_rotativalocidade(vec3 forca)
+    {
     }
 
     void adicionar_forca_rotativo(vec3 forca)
