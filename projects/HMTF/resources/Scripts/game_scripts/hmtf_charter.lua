@@ -34,7 +34,7 @@ health = 100
 max_health = 100
 inventory = {
     double_jump = 0,
-    jump_booster = 0,
+    jump_booster = 15,
     gun = 0,
     sword = 0,
     super_charger = 0,
@@ -89,6 +89,7 @@ force_y = 12
 
 inpulse = {x=0,y=0,z=0}
 
+friction = 10
 
 
 function UPDATE()
@@ -139,15 +140,7 @@ function UPDATE()
             this_object_physics_3D_seted = not this_object_physics_3D_seted
         end
         
-        if hit_down and not (inpulse.y > 0)  then
-            inpulse.y = 0
-        end
-        if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-            inpulse.y = force_y
-        end
-        if hit_top and inpulse.y > 0 then
-            inpulse.y = 0
-        end
+        
         
         local hit = false
         local hit_info = {}
@@ -159,6 +152,16 @@ function UPDATE()
         local move_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
 
         move_dir = crossProduct(move_dir,hit_info.normal)
+
+        if hit_down and not (inpulse.y > 0)  then
+            inpulse.y = 0
+        end
+        if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+            inpulse.y = force_y
+        end
+        if hit_top and inpulse.y > 0 then
+            inpulse.y = 0
+        end
 
         this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + inpulse.x  * time.sacale,(move_dir.y * speed) + inpulse.y  * time.sacale,(move_dir.z * speed) + inpulse.z  * time.sacale)
 
