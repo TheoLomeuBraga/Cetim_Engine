@@ -867,8 +867,8 @@ namespace ManuseioDados
 
 		//correct position in objects with no nodes
 		if(node.meshIndices.size() == 0){
-			ret.posicao.x = -node.translation.x;
-			ret.posicao.z = -node.translation.z;
+			//ret.posicao.x = -node.translation.x;
+			//ret.posicao.z = -node.translation.z;
 		}
 
 		ret.variaveis = json_table(node.extras);
@@ -973,8 +973,8 @@ namespace ManuseioDados
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
 
-			//ret.objetos.escala.x *= -1;
-			//ret.objetos.escala.z *= -1;
+			ret.objetos.escala.x *= -1;
+			ret.objetos.escala.z *= -1;
 			
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);
