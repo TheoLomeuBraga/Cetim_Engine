@@ -13,7 +13,12 @@
 				2,
 				3,
 				4,
-				5
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
 			]
 		}
 	],
@@ -83,6 +88,64 @@
 			},
 			"mesh":2,
 			"name":"Cube.004"
+		},
+		{
+			"extras":{
+				"type":"sb"
+			},
+			"mesh":1,
+			"name":"Plane.006",
+			"translation":[
+				-140,
+				10,
+				-20
+			]
+		},
+		{
+			"extras":{
+				"type":"sb"
+			},
+			"mesh":1,
+			"name":"Plane.008",
+			"translation":[
+				-220,
+				10,
+				-20
+			]
+		},
+		{
+			"extras":{
+				"type":"sb"
+			},
+			"mesh":1,
+			"name":"Plane.009",
+			"translation":[
+				-240,
+				10,
+				-20
+			]
+		},
+		{
+			"extras":{
+				"type":"drone"
+			},
+			"name":"Empty.001",
+			"translation":[
+				-109,
+				20,
+				-19
+			]
+		},
+		{
+			"extras":{
+				"type":"drone"
+			},
+			"name":"Empty.002",
+			"translation":[
+				-193,
+				20,
+				-19
+			]
 		}
 	],
 	"meshes":[

@@ -82,6 +82,7 @@ force_y = 12
 inpulse = {x=0,y=0,z=0}
 
 inventory = {
+    double_jump = 0,
     gun = 0,
     sword = 0,
     super_charger = 0,
