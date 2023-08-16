@@ -41,6 +41,7 @@ function START()
     check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
 
+    this_object.components[components.transform]:change_rotation(0,180,0)
     
     this_object:add_component(components.physics_3D)
     this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
@@ -64,7 +65,7 @@ hit_down = false
 local inputs = {}
 local inputs_last_frame = {}
 
-camera_rotation = {x=0,y=0}
+camera_rotation = {x=180,y=0}
 
 this_object_physics_3D_seted = false
 
