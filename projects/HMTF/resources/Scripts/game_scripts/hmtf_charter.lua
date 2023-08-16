@@ -81,6 +81,12 @@ force_y = 12
 
 inpulse = {x=0,y=0,z=0}
 
+inventory = {
+    gun = 0,
+    sword = 0,
+    super_charger = 0,
+}
+
 function UPDATE()
 
     time:get()
@@ -88,18 +94,7 @@ function UPDATE()
 
     mouse_sensitivity = global_data:get("mouse_sensitivity")
 
-    this_object.components[components.transform]:get()
-    local pos = deepcopy(this_object.components[components.transform].position)
-
     
-    check_top.components[components.transform]:change_position(pos.x,pos.y + 1.5 ,pos.z)
-    check_top.components[components.physics_3D]:get()
-    hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
-    
-    
-    check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
-    check_down.components[components.physics_3D]:get()
-    hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
     inputs = global_data:get("inputs")
     inputs_last_frame = global_data:get("inputs_last_frame")
@@ -113,6 +108,19 @@ function UPDATE()
     end
 
     if global_data:get("pause") < 1 then
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+
+    
+        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.5 ,pos.z)
+        check_top.components[components.physics_3D]:get()
+        hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
+    
+    
+        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
+        check_down.components[components.physics_3D]:get()
+        hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
+
         window:get()
         keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
 
@@ -138,11 +146,8 @@ function UPDATE()
         
         local hit = false
         local hit_info = {}
-        hit,hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0,-1,0),direction_reference.components[components.transform]:get_global_position(0,-5,0))
-        if not hit then
-            hit_info.normal = {x=0,y=1,z=0}
-        end
-        if not hit_down then
+        hit,hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0,-1,0),direction_reference.components[components.transform]:get_global_position(0,-10,0))
+        if not hit or not hit_down then
             hit_info.normal = {x=0,y=1,z=0}
         end
 
