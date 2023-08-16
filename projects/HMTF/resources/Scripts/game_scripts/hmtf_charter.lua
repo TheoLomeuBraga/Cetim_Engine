@@ -112,6 +112,7 @@ function UPDATE()
     end
 
     if global_data:get("pause") < 1 then
+        
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
@@ -159,7 +160,7 @@ function UPDATE()
 
         move_dir = crossProduct(move_dir,hit_info.normal)
 
-        this_object.components[components.physics_3D]:set_linear_velocity(move_dir.x * time.sacale * speed,(move_dir.y * time.sacale * speed) + inpulse.y,move_dir.z * time.sacale * speed)
+        this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + inpulse.x  * time.sacale,(move_dir.y * speed) + inpulse.y  * time.sacale,(move_dir.z * speed) + inpulse.z  * time.sacale)
 
         if not hit_down then
             inpulse.y = inpulse.y + (time.delta * gravity.force.y )
