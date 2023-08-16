@@ -30,7 +30,15 @@ direction_reference = {}
 
 local layers = {}
 
-
+health = 100
+max_health = 100
+inventory = {
+    double_jump = 0,
+    jump_booster = 0,
+    gun = 0,
+    sword = 0,
+    super_charger = 0,
+}
 
 function START()
 
@@ -40,8 +48,8 @@ function START()
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
 
     layers = global_data:get_var("layers")
-    check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
-    check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.5,0.5,0.5), true,collision_shapes.cylinder,nil,true)
+    check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
+    check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
 
     this_object.components[components.transform]:change_rotation(0,180,0)
     
@@ -81,12 +89,7 @@ force_y = 12
 
 inpulse = {x=0,y=0,z=0}
 
-inventory = {
-    double_jump = 0,
-    gun = 0,
-    sword = 0,
-    super_charger = 0,
-}
+
 
 function UPDATE()
 
@@ -113,12 +116,12 @@ function UPDATE()
         local pos = deepcopy(this_object.components[components.transform].position)
 
     
-        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.5 ,pos.z)
+        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
         check_top.components[components.physics_3D]:get()
         hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
     
     
-        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
+        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
