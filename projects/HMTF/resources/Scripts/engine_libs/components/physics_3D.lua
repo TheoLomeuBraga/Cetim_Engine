@@ -62,6 +62,7 @@ physics_3D_component.density = 1
 physics_3D_component.collision_layer = collision_layer_info:new()
 physics_3D_component.collision_mesh = { file = "", name = "" }
 physics_3D_component.objs_touching = {}
+physics_3D_component.gravity_scale = 1
 function physics_3D_component:add_force(force_x, force_y,force_z)
     add_force(self.object_ptr, force_x, force_y,force_z)
 end
@@ -82,18 +83,19 @@ function physics_3D_component:set_angular_velocity(force_x, force_y,force_z)
 end
 
 function physics_3D_component:clean()
-    physics_3D_component.scale = { x = 1, y = 1, z = 1 }
-    physics_3D_component.boady_dynamic = boady_dynamics.static
-    physics_3D_component.collision_shape = collision_shapes.cube
-    physics_3D_component.rotate_X = true
-    physics_3D_component.rotate_Y = true
-    physics_3D_component.rotate_Z = true
-    physics_3D_component.triger = false
-    physics_3D_component.friction = 1
-    physics_3D_component.density = 1
-    physics_3D_component.collision_layer = collision_layer_info:new()
-    physics_3D_component.collision_mesh = { file = "", name = "" }
-    physics_3D_component.objs_touching = {}
+    self.scale = { x = 1, y = 1, z = 1 }
+    self.boady_dynamic = boady_dynamics.static
+    self.collision_shape = collision_shapes.cube
+    self.rotate_X = true
+    self.rotate_Y = true
+    self.rotate_Z = true
+    self.triger = false
+    self.friction = 1
+    self.density = 1
+    self.collision_layer = collision_layer_info:new()
+    self.collision_mesh = { file = "", name = "" }
+    self.objs_touching = {}
+    self.gravity_scale = 1
 end
 function physics_3D_component:get()
     j = get_set_physic_3D(get_lua, self.object_ptr)
@@ -109,6 +111,7 @@ function physics_3D_component:get()
     self.collision_layer = deepcopyjson(j.collision_layer)
     self.collision_mesh = deepcopyjson(j.collision_mesh)
     self.objs_touching = deepcopyjson(j.objs_touching)
+    self.gravity_scale = j.gravity_scale
 end
 function physics_3D_component:set()
     get_set_physic_3D(set_lua, deepcopyjson(self))

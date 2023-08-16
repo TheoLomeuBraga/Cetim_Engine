@@ -1,3 +1,5 @@
+require("math")
+
 function deepcopy(orig)
     local orig_type = type(orig)
     local copy
@@ -134,6 +136,24 @@ function get_set_parallel_loading(get_set,value)
 end
 
 function asset_is_load(asset_type, path)
+end
+
+-- Function to convert a normalized vector to angles in degrees
+function vectorToAngles(normal)
+    local pitch = math.deg(math.asin(normal.y))
+    local yaw = math.deg(math.atan2(normal.x, normal.z))
+
+    return {x = pitch,y =  yaw,z = 0} -- Roll is set to 0 since it's not well-defined for a normal vector
+end
+
+-- Function to calculate the cross product of two vectors
+function crossProduct(a, b)
+    local result = {
+        x = a.y * b.z - a.z * b.y,
+        y = a.z * b.x - a.x * b.z,
+        z = a.x * b.y - a.y * b.x
+    }
+    return result
 end
 
 -- asset tiles

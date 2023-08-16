@@ -1591,6 +1591,7 @@ namespace funcoes_ponte
 			ret.setFloat("triger", bu->gatilho);
 			ret.setFloat("friction", bu->atrito);
 			ret.setFloat("density", bu->densidade);
+			ret.setFloat("gravity_scale", bu->gravity_force);
 
 			vector<string> objs_touching;
 			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
@@ -1626,6 +1627,9 @@ namespace funcoes_ponte
 			bu->gatilho = t.getFloat("triger");
 			bu->atrito = t.getFloat("friction");
 			bu->densidade = t.getFloat("density");
+			bu->gravity_force = t.getFloat("gravity_scale");
+
+			
 
 			bu->aplay();
 			return 0;
