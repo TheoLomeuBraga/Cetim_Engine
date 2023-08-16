@@ -56,7 +56,7 @@ function START()
     
 end
 
-speed = 7
+speed = 12
 mouse_sensitivity = 0
 
 hit_top = false
@@ -69,9 +69,14 @@ camera_rotation = {x=180,y=0}
 
 this_object_physics_3D_seted = false
 
+force_y = 12
+
+inpulse = {x=0,y=0,z=0}
+
 function UPDATE()
 
     time:get()
+    gravity:get()
 
     mouse_sensitivity = global_data:get("mouse_sensitivity")
 
@@ -112,9 +117,21 @@ function UPDATE()
             this_object_physics_3D_seted = not this_object_physics_3D_seted
         end
         
+        print(hit_down,inputs.jump)
+        if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+            inpulse.y = force_y
+        end
+        if hit_top and inpulse.y > 0 then
+            inpulse.y = 0
+        end
         
         local move_dir = this_object.components[components.transform]:get_local_direction(inputs.left * speed,0,inputs.foward * speed)
-        this_object.components[components.physics_3D]:set_linear_velocity(move_dir.x * time.sacale,0,move_dir.z * time.sacale)
+        this_object.components[components.physics_3D]:set_linear_velocity(move_dir.x * time.sacale,inpulse.y,move_dir.z * time.sacale)
+
+        if not hit_down then
+            inpulse.y = inpulse.y + (time.delta * gravity.force.y )
+        end
+        
 
     end
 
