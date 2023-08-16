@@ -135,9 +135,6 @@ function UPDATE()
 
     end
 
-    
-
-
 end
 
 function COLLIDE(collision_info)
