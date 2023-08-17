@@ -80,6 +80,8 @@ input_keys = {
         y = "y",
         normalized_x = "normalized_x",
         normalized_y = "normalized_y",
+        movement_x = "movement_x",
+        movement_y = "movement_y",
         scroll = "scroll",
     },
     joystick = {
@@ -194,6 +196,8 @@ local key_axis_dictionarys = {
         y = "y",
         normalized_x = "normalized_x",
         normalized_y = "normalized_y",
+        movement_x = "movement_x",
+        movement_y = "movement_y",
         scroll = "scroll",
     },
 }

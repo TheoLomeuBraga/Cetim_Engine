@@ -31,14 +31,12 @@ function UPDATE()
         jump = keys_axis:get_input(input_devices.keyboard,"space") + keys_axis:get_input_joystick(1,"a"),
         action_1 = keys_axis:get_input(input_devices.mouse,"left") + keys_axis:get_input_joystick(1,"rt_axis"),
         action_2 = keys_axis:get_input(input_devices.mouse,"right") + keys_axis:get_input_joystick(1,"lt_axis"),
-        mouse_view_x = keys_axis:get_input(input_devices.mouse,"normalized_x"),
-        mouse_view_y = keys_axis:get_input(input_devices.mouse,"normalized_y"),
+        mouse_view_x = keys_axis:get_input(input_devices.mouse,"movement_x"),
+        mouse_view_y = keys_axis:get_input(input_devices.mouse,"movement_y"),
         analog_view_x = keys_axis:get_input_joystick(1,"lx"),
         analog_view_y = keys_axis:get_input_joystick(1,"ly"),
         menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
     }
-
-    --print(inputs.menu)
 
     if inputs.foward < -1 then
         inputs.foward = -1

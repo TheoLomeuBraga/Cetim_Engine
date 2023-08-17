@@ -4,6 +4,8 @@ function close()
 end
 function set_cursor_image(path)
 end
+function enable_cursor(enable)
+end
 
 window = {resolution = {x = 256,y = 224},full_screen = false}
 function window:get()
@@ -18,6 +20,9 @@ function window:set()
 end
 function window:set_cursor_image(path)
     set_cursor_image(path)
+end
+function window:enable_cursor(enable)
+    enable_cursor(enable)
 end
 
 function window:close()

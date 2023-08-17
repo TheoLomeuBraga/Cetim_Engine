@@ -14,6 +14,8 @@ bool interromper_loop_input = false;
 namespace mouse
 {
 
+	vec2 mouse_movement_last_frame(0,0);
+
 	struct ScrollData
 	{
 		double xoffset;
@@ -45,6 +47,11 @@ namespace mouse
 		mouseInfo["y"] = static_cast<float>(ypos);
 		mouseInfo["normalized_x"] = normalizedX;
 		mouseInfo["normalized_y"] = normalizedY;
+
+		mouseInfo["movement_x"] = normalizedX - mouse_movement_last_frame.x;
+        mouseInfo["movement_y"] = normalizedY - mouse_movement_last_frame.y;
+
+		mouse_movement_last_frame = vec2(normalizedX,normalizedY);
 
 		// Set up the scroll callback and retrieve scroll offset
 
@@ -345,7 +352,8 @@ void mudar_imagem_cursor(shared_ptr<imagem> img)
 {
 	if (img == NULL)
 	{
-		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		//glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else
 	{
@@ -356,7 +364,26 @@ void mudar_imagem_cursor(shared_ptr<imagem> img)
 		image.height = img->res.y;
 		image.pixels = &img->data[0];
 
-		glfwSetCursor(janela, glfwCreateCursor(&image, 0, 0));
+		GLFWcursor* customCursor = glfwCreateCursor(&image, 0, 0);
+
+		glfwSetCursor(janela, customCursor);
+
+		glfwDestroyCursor(customCursor);
+
+	}
+}
+
+void ativar_cursor(bool ativar)
+{
+	if (ativar)
+	{
+		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		
+	}
+	else
+	{
+		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	}
 }
 
@@ -516,6 +543,7 @@ public:
 	gerenciador_janela_glfw(bool tela_inteira) { janela_inteira = tela_inteira; }
 	bool esta_janela_inteira() { return !glfwGetWindowAttrib(janela, GLFW_MAXIMIZED); }
 	void mudar_cursor(shared_ptr<imagem> cursor) { mudar_imagem_cursor(cursor); }
+	void enable_cursor(bool enable){ativar_cursor(enable);}
 	void mudar_imagem_janela(shared_ptr<imagem> janela) { mudar_logo_janela(janela); }
 	void mudar_pos_cursor(float pos_x, float pos_y) { mudar_posicao_cursor(pos_x, pos_y); }
 	void mudar_res(float res_x, float res_y) { MudarRes(res_x, res_y); }

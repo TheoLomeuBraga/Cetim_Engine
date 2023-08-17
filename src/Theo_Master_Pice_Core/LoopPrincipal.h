@@ -54,6 +54,7 @@ public:
 	virtual bool esta_minimizado() { return false; }
 	virtual void mudar_cursor(shared_ptr<imagem> cursor) {}
 	virtual void mudar_imagem_janela(shared_ptr<imagem> janela) {}
+	virtual void enable_cursor(bool enable) {}
 	virtual void mudar_pos_cursor(float pos_x, float pos_y) {}
 	virtual void mudar_res(float res_x, float res_y) {}
 	virtual vec2 pegar_res() { return vec2(0,0); }

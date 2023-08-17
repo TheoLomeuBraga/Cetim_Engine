@@ -91,6 +91,7 @@ inpulse = {x=0,y=0,z=0}
 
 friction = 10
 
+pause_last_frame = false
 
 function UPDATE()
 
@@ -112,6 +113,9 @@ function UPDATE()
         end
     end
 
+    enable_cursor(global_data:get("pause") > 0)
+    
+
     if global_data:get("pause") < 1 then
         
         this_object.components[components.transform]:get()
@@ -128,17 +132,22 @@ function UPDATE()
         hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
         window:get()
-        keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
+        --keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
 
-        camera_rotation.x = -((inputs.mouse_view_x - 0.5) * mouse_sensitivity * 20)
-        camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y - 0.5) * mouse_sensitivity * 20),90),-90)
-        camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
-        this_object.components[components.physics_3D]:set_angular_velocity(0,camera_rotation.x,0)
+        if pause_last_frame then
+            
+            camera_rotation.x = -((inputs.mouse_view_x) * mouse_sensitivity * 20)
+            camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.mouse_view_y) * mouse_sensitivity * 20),90),-90)
+            camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
+            this_object.components[components.physics_3D]:set_angular_velocity(0,camera_rotation.x,0)
 
-        if not this_object_physics_3D_seted then
-            this_object.components[components.physics_3D]:set()
-            this_object_physics_3D_seted = not this_object_physics_3D_seted
+            if not this_object_physics_3D_seted then
+                this_object.components[components.physics_3D]:set()
+                this_object_physics_3D_seted = not this_object_physics_3D_seted
+            end
+            
         end
+        
         
         
         
@@ -171,6 +180,8 @@ function UPDATE()
         
 
     end
+
+    pause_last_frame = global_data:get("pause") < 1
 
 end
 

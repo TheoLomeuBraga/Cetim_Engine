@@ -341,17 +341,31 @@ namespace funcoes_ponte
 		}
 	}
 
+	
+	int enable_cursor(lua_State *L)
+	{
+		if (lua_toboolean(L,1))
+		{
+			gerente_janela->enable_cursor(true);
+		}
+		else
+		{
+			gerente_janela->enable_cursor(false);
+		}
+
+		return 0;
+	}
+
 	int set_cursor_image(lua_State *L)
 	{
-		string texture_path = lua_tostring(L, 1);
 
-		if (texture_path.size() == 0)
+		if (lua_gettop(L) == 0)
 		{
 			gerente_janela->mudar_cursor(NULL);
 		}
 		else
 		{
-			gerente_janela->mudar_cursor(ManuseioDados::carregar_Imagem(texture_path));
+			gerente_janela->mudar_cursor(ManuseioDados::carregar_Imagem(lua_tostring(L, 1)));
 		}
 
 		return 0;
@@ -1777,6 +1791,8 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
 		pair<string, lua_function>("close", funcoes_ponte::close),
 		pair<string, lua_function>("set_cursor_image", funcoes_ponte::set_cursor_image),
+		pair<string, lua_function>("enable_cursor", funcoes_ponte::enable_cursor),
+		
 
 		// sprite
 		pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),
