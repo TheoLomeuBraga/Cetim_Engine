@@ -51,7 +51,7 @@ function START()
     check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
 
-    this_object.components[components.transform]:change_rotation(0,180,0)
+    this_object.components[components.transform]:change_rotation(0,0,0)
     
     this_object:add_component(components.physics_3D)
     this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
@@ -134,18 +134,14 @@ function UPDATE()
         window:get()
         --keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
 
-        if pause_last_frame then
-            
-            camera_rotation.x = -((inputs.mouse_view_x) * mouse_sensitivity * 20)
-            camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.mouse_view_y) * mouse_sensitivity * 20),90),-90)
-            camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
-            this_object.components[components.physics_3D]:set_angular_velocity(0,camera_rotation.x,0)
 
-            if not this_object_physics_3D_seted then
-                this_object.components[components.physics_3D]:set()
-                this_object_physics_3D_seted = not this_object_physics_3D_seted
-            end
-            
+        camera_rotation.x = camera_rotation.x-(inputs.mouse_view_x) * mouse_sensitivity * 20
+        camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.mouse_view_y) * mouse_sensitivity * 20),90),-90)
+        
+
+        if not this_object_physics_3D_seted then
+            this_object.components[components.physics_3D]:set()
+            this_object_physics_3D_seted = not this_object_physics_3D_seted
         end
         
         
@@ -181,6 +177,8 @@ function UPDATE()
 
     end
 
+    camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
+    this_object.components[components.transform]:change_rotation(0,camera_rotation.x,0)
     pause_last_frame = global_data:get("pause") < 1
 
 end
