@@ -171,7 +171,7 @@ function UPDATE()
         this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + inpulse.x  * time.sacale,(move_dir.y * speed) + inpulse.y  * time.sacale,(move_dir.z * speed) + inpulse.z  * time.sacale)
 
         if not hit_down then
-            inpulse.y = inpulse.y + (time.delta * gravity.force.y )
+            inpulse.y = inpulse.y + ( time.delta * gravity.force.y )
         end
         
 

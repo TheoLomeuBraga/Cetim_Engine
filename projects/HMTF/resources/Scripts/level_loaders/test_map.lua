@@ -31,17 +31,17 @@ function level:START(layers)
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
 
     coroutine.yield()
-    print("yield 1")
+    --print("yield 1")
 
     cenary_builders.cenary_obj = cenary_builders.scene(layers.hud,level.scene_3D_data,true)
 
     coroutine.yield()
-    print("yield 2")
+    --print("yield 2")
 
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 
     coroutine.yield()
-    print("yield 3")
+    --print("yield 3")
 
     time:set_speed(1)
     remove_object(camera.object_ptr)
