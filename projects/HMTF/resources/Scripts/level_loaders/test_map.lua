@@ -19,7 +19,7 @@ local assets_needed = {
 function level:START(layers)
     
     time:set_speed(0)
-    
+
     core_obj = game_object:new(global_data:get_var("core_object_ptr"))
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/null.png",color={r=1,g=1,b=1}})
 
@@ -31,17 +31,19 @@ function level:START(layers)
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
 
     coroutine.yield()
+    print("yield 1")
 
     cenary_builders.cenary_obj = cenary_builders.scene(layers.hud,level.scene_3D_data,true)
 
     coroutine.yield()
+    print("yield 2")
 
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 
     coroutine.yield()
+    print("yield 3")
 
     time:set_speed(1)
-
     remove_object(camera.object_ptr)
     camera = {}
     
