@@ -7,6 +7,7 @@ require("resources.playable_scene")
 
 local level = {
     cenary_obj = {},
+    entities_obj = {},
     scene_3D_data = {},
 }
 
@@ -33,7 +34,9 @@ function level:START(layers)
     coroutine.yield()
     --print("yield 1")
 
-    cenary_builders.cenary_obj = cenary_builders.scene(layers.hud,level.scene_3D_data,true)
+    cenary_builders.cenary_obj = create_object(layers.cenary)
+    cenary_builders.entities_obj = create_object(layers.cenary)
+    cenary_builders.scene(cenary_builders.cenary_obj,cenary_builders.entities_obj,level.scene_3D_data,true)
 
     coroutine.yield()
     --print("yield 2")
@@ -61,6 +64,8 @@ function level:UPDATE()
 end
 
 function level:END()
+    remove_object(cenary_builders.cenary_obj)
+    remove_object(cenary_builders.entities_obj)
     clear_memory()
 end
 
