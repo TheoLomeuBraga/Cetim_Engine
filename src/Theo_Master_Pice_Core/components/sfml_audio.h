@@ -96,7 +96,7 @@ public:
 
 		if (listener_transform != NULL && tf != NULL)
 		{
-
+			
 			vec3 lpos = listener_transform->pegar_pos_global();
 			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
 			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
