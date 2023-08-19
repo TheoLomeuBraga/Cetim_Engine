@@ -46,6 +46,7 @@ function START()
 
     this_object = game_object:new(this_object_ptr)
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    set_lisener_object(camera.object_ptr)
 
     layers = global_data:get_var("layers")
     check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)

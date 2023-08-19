@@ -1410,13 +1410,15 @@ namespace funcoes_ponte
 	int set_lisener_object(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
-		objeto_jogo *obj = NULL;
 		audio_info output;
 		if (argumentos > 0)
 		{
-			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+			listener_transform = string_ponteiro<objeto_jogo>(lua_tostring(L, 1))->pegar_componente<transform_>();
 		}
-		listener_transform = obj->pegar_componente<transform_>();
+		else{
+			listener_transform = NULL;
+		}
+		
 		return 0;
 	}
 	// geral render

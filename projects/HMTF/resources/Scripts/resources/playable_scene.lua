@@ -3,6 +3,7 @@ require("engine_libs.components.component_all")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.global_data")
 require("engine_libs.objects.time")
+require("engine_libs.short_cuts.create_sound")
 
 menu = {
     obj = nil,
@@ -47,6 +48,7 @@ cenary_builders = {
         ret:add_component(components.transform)
         ret.components[components.transform].position = deepcopy(part_data.position)
         ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+
         if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
             ret.components[components.transform].scale = Vec3:new(1, 1, 1)
         else
@@ -77,12 +79,31 @@ cenary_builders = {
         elseif part_data.variables.type == "rb" then
             add_physics(true)
         elseif part_data.variables.type == "player_start" then
-            --ret.components[components.transform].position = game_object:new(father).components[components.transform]:get_global_position(-part_data.position.x,part_data.position.y,-part_data.position.z)
-            --ret.components[components.transform]:set()
 
             ret:add_component(components.lua_scripts)
             ret:add_component(components.physics_3D)
             ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
+
+        elseif part_data.variables.type == "music" then
+
+            ret:add_component(components.audio_source)
+            ret.components[components.audio_source].path = "resources/Audio/music/" .. part_data.variables.sound_source .. ".wav"
+            ret.components[components.audio_source].loop = true
+            ret.components[components.audio_source].volume = 5
+            ret.components[components.audio_source].min_distance = 5
+            ret.components[components.audio_source].atenuation = 1
+            ret.components[components.audio_source]:set()
+
+        elseif part_data.variables.type == "sound" then
+
+            ret:add_component(components.audio_source)
+            ret.components[components.audio_source].path = "resources/Audio/sound/" .. part_data.variables.sound_source .. ".wav"
+            ret.components[components.audio_source].loop = true
+            ret.components[components.audio_source].volume = 5
+            ret.components[components.audio_source].min_distance = 5
+            ret.components[components.audio_source].atenuation = 1
+            ret.components[components.audio_source]:set()
+
         end
 
         local add_mesh = function(color)

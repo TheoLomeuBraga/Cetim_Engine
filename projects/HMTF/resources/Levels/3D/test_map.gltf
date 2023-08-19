@@ -20,7 +20,8 @@
 				9,
 				10,
 				11,
-				12
+				12,
+				13
 			]
 		}
 	],
@@ -177,6 +178,18 @@
 				-40,
 				10,
 				-40
+			]
+		},
+		{
+			"extras":{
+				"type":"music",
+				"sound_source":"music_test_1"
+			},
+			"name":"Empty.003",
+			"translation":[
+				0,
+				2,
+				-27
 			]
 		}
 	],

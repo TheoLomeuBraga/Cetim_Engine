@@ -56,7 +56,7 @@ public:
 
 	glm::vec3 pegar_pos_global()
 	{
-		return glm::vec3(matrizTransform[3]); //
+		return glm::vec3(pegar_matriz()[3]); //
 	}
 	glm::quat pegar_qua_global()
 	{
