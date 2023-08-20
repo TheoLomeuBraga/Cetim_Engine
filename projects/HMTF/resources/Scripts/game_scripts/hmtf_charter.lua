@@ -88,7 +88,10 @@ this_object_physics_3D_seted = false
 
 force_y = 12
 
-inpulse = {x=0,y=0,z=0}
+inpulse_y = 0
+
+directional_inpulse = {x=0,z=0}
+directional_inpulse_force = 0
 
 friction = 10
 
@@ -122,20 +125,18 @@ function UPDATE()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
-    
+        --hit top
         check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
         check_top.components[components.physics_3D]:get()
         hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
     
-    
+        --hit down
         check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
+        --move camera
         window:get()
-        --keys_axis:set_cursor_position(window.resolution.x / 2, window.resolution.y / 2)
-
-
         camera_rotation.x = camera_rotation.x-(inputs.mouse_view_x) * mouse_sensitivity * 20
         camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.mouse_view_y) * mouse_sensitivity * 20),90),-90)
         
@@ -147,7 +148,7 @@ function UPDATE()
         
         
         
-        
+        --get floor info
         local hit = false
         local hit_info = {}
         hit,hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0,-1,0),direction_reference.components[components.transform]:get_global_position(0,-10,0))
@@ -155,24 +156,25 @@ function UPDATE()
             hit_info.normal = {x=0,y=1,z=0}
         end
 
+        --get movement direction
         local move_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
-
         move_dir = crossProduct(move_dir,hit_info.normal)
 
-        if hit_down and not (inpulse.y > 0)  then
-            inpulse.y = 0
+        if hit_down and not (inpulse_y > 0)  then
+            inpulse_y = 0
         end
-        if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-            inpulse.y = force_y
+        if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+            inpulse_y = force_y
         end
-        if hit_top and inpulse.y > 0 then
-            inpulse.y = 0
+        if hit_top and inpulse_y > 0 then
+            inpulse_y = 0
         end
 
-        this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + inpulse.x  * time.sacale,(move_dir.y * speed) + inpulse.y  * time.sacale,(move_dir.z * speed) + inpulse.z  * time.sacale)
+        --move
+        this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + (directional_inpulse.x + directional_inpulse_force) * time.sacale,(move_dir.y * speed) + inpulse_y  * time.sacale,(move_dir.z * speed) + (directional_inpulse.z + directional_inpulse_force)  * time.sacale)
 
         if not hit_down then
-            inpulse.y = inpulse.y + ( time.delta * gravity.force.y )
+            inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
         end
         
 
