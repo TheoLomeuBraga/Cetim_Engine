@@ -94,6 +94,8 @@ base_directional_inpulse = {x=0,y=0,z=0}
 directional_inpulse = {x=0,y=0,z=0}
 directional_inpulse_force = 0
 
+platform_movement = {x=0,y=0,z=0}
+
 friction = 10
 air_friction = 0.5
 
@@ -224,7 +226,7 @@ function UPDATE()
 
         --move
         if hit_down and not (inpulse_y > 0) then
-            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) * time.sacale,(move_dir.y * speed) + inpulse_y * time.sacale,(move_dir.z * speed)  * time.sacale)
+            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + platform_movement.x * time.sacale,(move_dir.y * speed) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * speed) + platform_movement.z  * time.sacale)
         else 
             this_object.components[components.physics_3D]:set_linear_velocity((directional_inpulse.x * directional_inpulse_force) * time.sacale,inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(directional_inpulse.z * directional_inpulse_force)  * time.sacale)
         end
