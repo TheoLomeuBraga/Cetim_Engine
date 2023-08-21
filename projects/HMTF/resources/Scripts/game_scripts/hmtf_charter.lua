@@ -90,12 +90,38 @@ force_y = 12
 
 inpulse_y = 0
 
-directional_inpulse = {x=0,z=0}
+base_directional_inpulse = {x=0,y=0,z=0}
+directional_inpulse = {x=0,y=0,z=0}
 directional_inpulse_force = 0
 
 friction = 10
+air_friction = 1
 
 pause_last_frame = false
+
+function aproche_to_zero(num,speed)
+    ret = 0
+    if math.abs(num) < speed then
+        ret = 0
+    elseif num < 0 then
+        ret = num + speed
+    elseif num > 0 then
+        ret = num - speed
+    end
+    return ret
+end
+
+function aproche_to_target_value(num,speed,target_value)
+    ret = target_value
+    if math.abs(num) < speed then
+        ret = target_value
+    elseif num < target_value then
+        ret = num + speed
+    elseif num > target_value then
+        ret = num - speed
+    end
+    return ret
+end
 
 function UPDATE()
 
@@ -157,21 +183,53 @@ function UPDATE()
         end
 
         --get movement direction
-        local move_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
-        move_dir = crossProduct(move_dir,hit_info.normal)
+        local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
+        local move_dir = crossProduct(input_dir,hit_info.normal)
+        
 
+        --hit floor
         if hit_down and not (inpulse_y > 0)  then
+
             inpulse_y = 0
+            
+            directional_inpulse_force = aproche_to_zero(directional_inpulse_force,time.delta * friction)
+
         end
+
+        --jump
         if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
             inpulse_y = force_y
+            base_directional_inpulse = deepcopy(input_dir)
+            directional_inpulse_force = inventory.jump_booster + speed
         end
+
+        --ajust directional inpulse
+        --remenber input_dir and  base_directional_inpulse
+        if (input_dir.x ~= 0 and input_dir.z ~=0) and (input_dir.x > base_directional_inpulse.x) or (input_dir.x < base_directional_inpulse.x) or (input_dir.z > base_directional_inpulse.z) or (input_dir.z < base_directional_inpulse.z) then
+            base_directional_inpulse.x = aproche_to_target_value(base_directional_inpulse.x,air_friction * time.delta,input_dir.x)
+            base_directional_inpulse.z = aproche_to_target_value(base_directional_inpulse.z,air_friction * time.delta,input_dir.z)
+        end
+        if (input_dir.x > 0 and base_directional_inpulse.x < 0) or (input_dir.x < 0 and base_directional_inpulse.x > 0) or (input_dir.z > 0 and base_directional_inpulse.z < 0) or (input_dir.z < 0 and base_directional_inpulse.z > 0) then
+            directional_inpulse_force = aproche_to_target_value(directional_inpulse_force,air_friction * time.delta,speed) 
+            print(speed,directional_inpulse_force)
+        end
+        
+
+
+        directional_inpulse  = crossProduct(base_directional_inpulse,hit_info.normal)
+
+        --hit cealing
         if hit_top and inpulse_y > 0 then
             inpulse_y = 0
         end
 
         --move
-        this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + (directional_inpulse.x * directional_inpulse_force) * time.sacale,(move_dir.y * speed) + inpulse_y  * time.sacale,(move_dir.z * speed) + (directional_inpulse.z * directional_inpulse_force)  * time.sacale)
+        if hit_down and not (inpulse_y > 0) then
+            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + (directional_inpulse.x * directional_inpulse_force) * time.sacale,(move_dir.y * speed) + inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(move_dir.z * speed) + (directional_inpulse.z * directional_inpulse_force)  * time.sacale)
+        else 
+            this_object.components[components.physics_3D]:set_linear_velocity((directional_inpulse.x * directional_inpulse_force) * time.sacale,inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(directional_inpulse.z * directional_inpulse_force)  * time.sacale)
+        end
+        
 
         if not hit_down then
             inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
