@@ -95,7 +95,7 @@ directional_inpulse = {x=0,y=0,z=0}
 directional_inpulse_force = 0
 
 friction = 10
-air_friction = 1
+air_friction = 0.5
 
 pause_last_frame = false
 
@@ -203,17 +203,16 @@ function UPDATE()
             directional_inpulse_force = inventory.jump_booster + speed
         end
 
-        --ajust directional inpulse
-        --remenber input_dir and  base_directional_inpulse
+        --ajust directional inpulse direction
         if (input_dir.x ~= 0 and input_dir.z ~=0) and (input_dir.x > base_directional_inpulse.x) or (input_dir.x < base_directional_inpulse.x) or (input_dir.z > base_directional_inpulse.z) or (input_dir.z < base_directional_inpulse.z) then
-            base_directional_inpulse.x = aproche_to_target_value(base_directional_inpulse.x,air_friction * time.delta,input_dir.x)
-            base_directional_inpulse.z = aproche_to_target_value(base_directional_inpulse.z,air_friction * time.delta,input_dir.z)
+            base_directional_inpulse.x = aproche_to_target_value(base_directional_inpulse.x,air_friction * time.delta * math.abs(input_dir.x),input_dir.x)
+            base_directional_inpulse.z = aproche_to_target_value(base_directional_inpulse.z,air_friction * time.delta * math.abs(input_dir.z),input_dir.z)
         end
+
+        --ajust directional inpulse force
         if (input_dir.x > 0 and base_directional_inpulse.x < 0) or (input_dir.x < 0 and base_directional_inpulse.x > 0) or (input_dir.z > 0 and base_directional_inpulse.z < 0) or (input_dir.z < 0 and base_directional_inpulse.z > 0) then
             directional_inpulse_force = aproche_to_target_value(directional_inpulse_force,air_friction * time.delta,speed) 
-            print(speed,directional_inpulse_force)
         end
-        
 
 
         directional_inpulse  = crossProduct(base_directional_inpulse,hit_info.normal)
@@ -225,7 +224,7 @@ function UPDATE()
 
         --move
         if hit_down and not (inpulse_y > 0) then
-            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + (directional_inpulse.x * directional_inpulse_force) * time.sacale,(move_dir.y * speed) + inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(move_dir.z * speed) + (directional_inpulse.z * directional_inpulse_force)  * time.sacale)
+            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) * time.sacale,(move_dir.y * speed) + inpulse_y * time.sacale,(move_dir.z * speed)  * time.sacale)
         else 
             this_object.components[components.physics_3D]:set_linear_velocity((directional_inpulse.x * directional_inpulse_force) * time.sacale,inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(directional_inpulse.z * directional_inpulse_force)  * time.sacale)
         end
