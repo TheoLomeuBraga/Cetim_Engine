@@ -134,12 +134,12 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         local render_shader_mat = matreial:new()
         render_shader_mat.shader = "resources/Shaders/button"
         render_shader_mat.color = deepcopy(self.style.color)
-        render_shader_mat.inputs[2] = self.style.border_color.r
-        render_shader_mat.inputs[3] = self.style.border_color.g
-        render_shader_mat.inputs[4] = self.style.border_color.b
-        render_shader_mat.inputs[5] = self.style.border_color.a
+        render_shader_mat.inputs["border_color_x"] = self.style.border_color_r
+        render_shader_mat.inputs["border_color_y"] = self.style.border_color_g
+        render_shader_mat.inputs["border_color_z"] = self.style.border_color_b
+        render_shader_mat.inputs["border_color_w"] = self.style.border_color_a
 
-        render_shader_mat.inputs[1] = self.style.border_size
+        render_shader_mat.inputs["border_size"] = self.style.border_size
 
         --colors
 
@@ -201,22 +201,22 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     
             if  not self.hover then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
-                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color.r
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color.g
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color.b
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color.a
+                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color.r
+                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color.g
+                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color.b
+                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color.a
             elseif  self.hover and not self.click then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_hover)
-                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color_hover.r
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_hover.g
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_hover.b
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_hover.a
+                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color_hover.r
+                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color_hover.g
+                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color_hover.b
+                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color_hover.a
             elseif self.hover and  self.click then
                 self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_click)
-                self.button_obj.components[components.render_shader].material.inputs[2] = self.style.border_color_click.r
-                self.button_obj.components[components.render_shader].material.inputs[3] = self.style.border_color_click.g
-                self.button_obj.components[components.render_shader].material.inputs[4] = self.style.border_color_click.b
-                self.button_obj.components[components.render_shader].material.inputs[5] = self.style.border_color_click.a
+                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color_click.r
+                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color_click.g
+                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color_click.b
+                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color_click.a
             end
             self.button_obj.components[components.render_shader]:set()
         else

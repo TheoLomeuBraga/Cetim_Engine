@@ -179,10 +179,16 @@ Material table_material(Table t)
         m.filtro[i] = (int)filters[i];
     }
 
+    /*
     vector<float> inputs = table_vFloat(t.getTable("inputs"));
     for (int i = 0; i < std::min((int)NO_INPUTS, (int)inputs.size()); i++)
     {
         m.inputs[i] = inputs[i];
+    }
+    */
+   m.inputs = {};
+    for(pair<std::string, float> p : t.getTable("inputs").m_floatMap){
+        m.inputs[p.first] = p.second;
     }
 
     return m;
@@ -228,13 +234,20 @@ Table material_table(Material m)
     }
     t.setTable("texture_filter", vFloat_table(filters));
 
+    /*
     vector<float> inputs;
     for (int i = 0; i < NO_INPUTS; i++)
     {
         inputs.push_back(m.inputs[i]);
     }
     t.setTable("inputs", vFloat_table(inputs));
-
+    */
+    Table inputs;
+    for (pair<std::string, float> p : m.inputs)
+    {
+        inputs.setFloat(p.first,p.second);
+    }
+    t.setTable("inputs", inputs);
     return t;
 }
 

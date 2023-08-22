@@ -7,14 +7,6 @@ layout(location = 1) in vec2 uv;
 layout(location = 0) out vec4 ret;
 
 
-
-
-
-
-
-
-
-
 // material
 uniform sampler2D textures[12];
 uniform float inputs[32];
@@ -51,14 +43,21 @@ float checkSquareBorder(vec2 uv, float borderSize) {
     }
 }
 
+uniform float border_size;
+uniform float border_color_x;
+uniform float border_color_y;
+uniform float border_color_z;
+uniform float border_color_w;
+
 
 void main(){
 
-    float border_size = inputs[0] / 2;
-    vec4 border_color = vec4(inputs[1],inputs[2],inputs[3],inputs[4]);
+    //float border_size = inputs[0] / 2;
+    //vec4 border_color = vec4(inputs[1],inputs[2],inputs[3],inputs[4]);
 
     vec4 ret2 = color * texture(textures[0], re_pos_uv(uv, uv_position_scale));
 
-    ret = mix(ret2,border_color,checkSquareBorder(uv, border_size));
-  
+    vec4 border_color = vec4(border_color_x,border_color_y,border_color_z,border_color_w);
+
+    ret = mix(ret2,border_color,checkSquareBorder(uv, border_size / 2));
 }

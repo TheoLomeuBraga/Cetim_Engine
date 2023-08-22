@@ -204,66 +204,6 @@ void carregar_script_lua_thread(string local, shared_ptr<string> *ret)
 	*ret = carregar_script_lua(local);
 }
 
-json material_json(Material mat)
-{
-	vector<string> textures;
-	for (shared_ptr<imagem> i : mat.texturas)
-	{
-		if (i != NULL)
-		{
-			textures.push_back(i->local);
-		}
-		else
-		{
-			textures.push_back("");
-		}
-	}
-
-	vector<float> inputs;
-	for (float i : mat.inputs)
-	{
-		inputs.push_back(i);
-	}
-
-	json JSON = {
-		{"shader", mat.shad},
-		{"color", {{"r", mat.cor.x}, {"g", mat.cor.y}, {"b", mat.cor.z}, {"a", mat.cor.w}}},
-		{"position_scale", {{"x", mat.uv_pos_sca.x}, {"y", mat.uv_pos_sca.y}, {"z", mat.uv_pos_sca.z}, {"w", mat.uv_pos_sca.w}}},
-		{"metallic", mat.metalico},
-		{"softness", mat.suave},
-		{"textures", textures},
-		{"inputs", inputs},
-
-	};
-	return JSON;
-}
-
-Material json_material(json JSON)
-{
-
-	Material ret = Material();
-	json color = JSON["color"].get<json>(), position_scale = JSON["position_scale"].get<json>();
-	vector<string> textures = JSON["textures"].get<vector<string>>();
-	vector<float> inputs = JSON["inputs"].get<vector<float>>();
-
-	ret.shad = JSON["shader"].get<string>();
-	ret.cor = vec4(color["r"].get<float>(), color["g"].get<float>(), color["b"].get<float>(), color["a"].get<float>());
-	ret.uv_pos_sca = vec4(position_scale["x"].get<float>(), position_scale["y"].get<float>(), position_scale["z"].get<float>(), position_scale["w"].get<float>());
-	ret.metalico = JSON["metallic"].get<float>();
-	ret.suave = JSON["softness"].get<float>();
-
-	for (int i = 0; i < textures.size(); i++)
-	{
-		ret.texturas[i] = ManuseioDados::carregar_Imagem(textures[i]);
-	}
-	for (int i = 0; i < inputs.size(); i++)
-	{
-		ret.inputs[i] = inputs[i];
-	}
-
-	return ret;
-}
-
 // aqui
 
 int add_component(lua_State *L);

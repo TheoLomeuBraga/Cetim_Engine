@@ -716,6 +716,7 @@ public:
 			}
 		}
 
+		
 		for (int i = 0; i < SAIDAS_SHADER; i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + NO_TEXTURAS + i);
@@ -743,10 +744,17 @@ public:
 		}
 
 		// input
+		/*
 		for (int i = 0; i < NO_INPUTS; i++)
 		{
 			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 			glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), mat.inputs[i]);
+		}
+		*/
+
+		for(pair <string,float> p : mat.inputs){
+			//print({"p.first",p.first,p.second});
+			glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
 		}
 
 		// cor
@@ -897,10 +905,15 @@ public:
 
 							glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
 
+							/*
 							for (int i = 0; i < NO_INPUTS; i++)
 							{
 								string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 								glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rt->mat.inputs[i]);
+							}
+							*/
+							for(pair <string,float> p : rt->mat.inputs){
+								glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
 							}
 
 							// transform
@@ -1106,7 +1119,7 @@ public:
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texturas[RS->tiles->tiles_img.get()]);
 				glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
-				if (RS->mat.inputs[0] > 0)
+				if (RS->mat.filtro[0] > 0)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1291,10 +1304,15 @@ public:
 		}
 
 		// input
+		/*
 		for (int i = 0; i < NO_INPUTS; i++)
 		{
 			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), pos_processamento_info.inputs[i]);
+		}
+		*/
+		for(pair <string,float> p : pos_processamento_info.inputs){
+			glUniform1f(glGetUniformLocation(pp_shader, p.first.c_str()), p.second);
 		}
 
 		// cor

@@ -479,7 +479,10 @@ public:
 	int filtro[NO_TEXTURAS];
 	shared_ptr<imagem> texturas[NO_TEXTURAS];
 
-	float inputs[NO_INPUTS];
+	//float inputs[NO_INPUTS];
+	
+	map<string,float> inputs = {};
+
 	float interpolacao, gama = 1, metalico = 0, suave = 0;
 	vec4 cor = vec4(1, 1, 1, 1);
 	vec4 uv_pos_sca = vec4(0, 0, 1, 1);
@@ -490,10 +493,12 @@ public:
 			texturas[i] = NULL;
 			filtro[i] = 0;
 		}
+		/*
 		for (int i = 0; i < NO_INPUTS; i++)
 		{
 			inputs[i] = 0;
 		}
+		*/
 	}
 };
 
