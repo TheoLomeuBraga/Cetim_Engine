@@ -33,8 +33,8 @@ local layers = {}
 health = 100
 max_health = 100
 inventory = {
-    double_jump = 0,
-    jump_booster = 15,
+    extra_jumps = 1,
+    jump_booster = 5,
     gun = 0,
     sword = 0,
     super_charger = 0,
@@ -74,6 +74,8 @@ function START()
 end
 
 speed = 12
+speed_boost = 1
+speed_boost_air = 1
 mouse_sensitivity = 0
 
 hit_top = false
@@ -92,7 +94,7 @@ inpulse_y = 0
 
 base_directional_inpulse = {x=0,y=0,z=0}
 directional_inpulse = {x=0,y=0,z=0}
-directional_inpulse_force = 0
+
 
 platform_movement = {x=0,y=0,z=0}
 
@@ -100,6 +102,8 @@ friction = 10
 air_friction = 0.5
 
 pause_last_frame = false
+
+extra_jumps_utilizeds = 0
 
 function aproche_to_zero(num,speed)
     ret = 0
@@ -193,8 +197,7 @@ function UPDATE()
         if hit_down and not (inpulse_y > 0)  then
 
             inpulse_y = 0
-            
-            directional_inpulse_force = aproche_to_zero(directional_inpulse_force,time.delta * friction)
+            extra_jumps_utilizeds = 0
 
         end
 
@@ -202,20 +205,7 @@ function UPDATE()
         if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
             inpulse_y = force_y
             base_directional_inpulse = deepcopy(input_dir)
-            directional_inpulse_force = inventory.jump_booster + speed
         end
-
-        --ajust directional inpulse direction
-        if (input_dir.x ~= 0 and input_dir.z ~=0) and (input_dir.x > base_directional_inpulse.x) or (input_dir.x < base_directional_inpulse.x) or (input_dir.z > base_directional_inpulse.z) or (input_dir.z < base_directional_inpulse.z) then
-            base_directional_inpulse.x = aproche_to_target_value(base_directional_inpulse.x,air_friction * time.delta * math.abs(input_dir.x),input_dir.x)
-            base_directional_inpulse.z = aproche_to_target_value(base_directional_inpulse.z,air_friction * time.delta * math.abs(input_dir.z),input_dir.z)
-        end
-
-        --ajust directional inpulse force
-        if (input_dir.x > 0 and base_directional_inpulse.x < 0) or (input_dir.x < 0 and base_directional_inpulse.x > 0) or (input_dir.z > 0 and base_directional_inpulse.z < 0) or (input_dir.z < 0 and base_directional_inpulse.z > 0) then
-            directional_inpulse_force = aproche_to_target_value(directional_inpulse_force,air_friction * time.delta,speed) 
-        end
-
 
         directional_inpulse  = crossProduct(base_directional_inpulse,hit_info.normal)
 
@@ -226,10 +216,11 @@ function UPDATE()
 
         --move
         if hit_down and not (inpulse_y > 0) then
-            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * speed) + platform_movement.x * time.sacale,(move_dir.y * speed) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * speed) + platform_movement.z  * time.sacale)
-        else 
-            this_object.components[components.physics_3D]:set_linear_velocity((directional_inpulse.x * directional_inpulse_force) * time.sacale,inpulse_y + (directional_inpulse.y * directional_inpulse_force) * time.sacale,(directional_inpulse.z * directional_inpulse_force)  * time.sacale)
+            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost)) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost)) + platform_movement.z  * time.sacale)
+        else
+            this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost_air)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost_air)) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost_air)) + platform_movement.z  * time.sacale) 
         end
+        
         
 
         if not hit_down then
