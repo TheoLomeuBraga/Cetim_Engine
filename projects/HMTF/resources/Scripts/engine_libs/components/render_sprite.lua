@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
 
@@ -14,15 +15,18 @@ end
 function get_set_sprite_render(get_set,object)
 end
 
-render_sprite_component = {}
-function render_sprite_component:new(object_ptr)
-    local rs = {}
-    rs.object_ptr = object_ptr
-    rs.layer = 2
-    rs.selected_tile = 0
-    rs.tile_set_local = ""
-    rs.material = matreial:new()
-    function rs:get()
+render_sprite_component = create_base_component(components.render_sprite)
+render_sprite_component.layer = 2
+render_sprite_component.selected_tile = 0
+render_sprite_component.tile_set_local = ""
+render_sprite_component.material = matreial:new()
+function render_sprite_component:clean()
+    self.layer = 2
+    self.selected_tile = 0
+    self.tile_set_local = ""
+    self.material = matreial:new()
+end
+    function render_sprite_component:get()
         j = get_set_sprite_render(get_lua,self.object_ptr)
         self.layer = j.layer
         self.selected_tile = j.selected_tile
@@ -30,9 +34,7 @@ function render_sprite_component:new(object_ptr)
         self.material = deepcopyjson(j.material)
 
     end
-    function rs:set()
+    function render_sprite_component:set()
         get_set_sprite_render(set_lua,self)
     end
-    return rs
-end
-component_map[components.render_sprite] = render_sprite_component
+component_map[components.render_sprite] = render_sprite_component:new(nil)

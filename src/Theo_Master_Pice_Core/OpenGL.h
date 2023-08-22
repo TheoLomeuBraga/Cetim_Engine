@@ -13,7 +13,6 @@
 #include "LoopPrincipal.h"
 
 #include <GL/glew.h>
-// #include <GL/glut.h>
 
 #include "game_object.h"
 #include "camera.h"
@@ -215,10 +214,7 @@ public:
 	{
 		teste_tf = make_shared<transform_>(transform_(false, vec3(10, 0, 0), vec3(0, 0, 0), vec3(1, 1, 1)));
 		teste_cam = novo_objeto_jogo();
-
-		// teste_cam->adicionar_componente<camera>(camera(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 90, 1, 1, 0.01, 100));
 		teste_cam->adicionar_componente<camera>(camera(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 10, 10, 0.01, 100));
-
 		teste_cam->adicionar_componente<transform_>(transform_(false, vec3(0, 0, 0), vec3(0, 0, 0), vec3(1, 1, 1)));
 		teste_cam->pegar_componente<camera>()->paiTF = teste_cam->pegar_componente<transform_>().get();
 		teste_cam->pegar_componente<camera>()->atualizar_tf();
@@ -344,79 +340,6 @@ public:
 				glDisable(GL_DEPTH_TEST);
 			}
 		}
-
-		/*
-		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
-		{
-
-			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
-			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
-
-			if (tf != NULL && rm != NULL && rm->usar_oclusao)
-			{
-
-				glBeginQuery(GL_SAMPLES_PASSED, p.second);
-				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
-				glUseProgram(shader_s);
-
-				vec3 oq_sca(1, 1, 1);
-
-				for (shared_ptr<malha> m : rm->malhas)
-				{
-					m->pegar_tamanho_maximo();
-					oq_sca.x = std::max<float>(oq_sca.x, std::abs(m->tamanho_maximo.x));
-					oq_sca.y = std::max<float>(oq_sca.y, std::abs(m->tamanho_maximo.y));
-					oq_sca.z = std::max<float>(oq_sca.z, std::abs(m->tamanho_maximo.z));
-				}
-
-				mat4 oq_mat = tf->pegar_matriz();
-				oq_mat = scale(oq_mat, oq_sca);
-
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &oq_mat[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-
-				if (malhas.find(oclusion_box.get()) != malhas.end())
-				{
-					glDisable(GL_CULL_FACE);
-					glDisable(GL_DEPTH_TEST);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[oclusion_box.get()].vbo);
-					glBindBuffer(GL_ARRAY_BUFFER, malhas[oclusion_box.get()].malha_buffer);
-
-					for (int i = 0; i < 4; i++)
-					{
-						glEnableVertexAttribArray(i);
-					}
-
-					// posição
-					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
-
-					if (!show_oclusion_querie)
-					{
-						glColorMask(false, false, false, false);
-					}
-					glDrawElements(
-						GL_TRIANGLES,							   // mode
-						malhas[oclusion_box.get()].tamanho_indice, // count
-						GL_UNSIGNED_INT,						   // type
-						(void *)0								   // element array buffer offset
-					);
-					if (usar_profundidade)
-					{
-						glEnable(GL_DEPTH_TEST);
-					}
-					else
-					{
-						glDisable(GL_DEPTH_TEST);
-					}
-					glColorMask(true, true, true, true);
-				}
-
-				glEndQuery(GL_SAMPLES_PASSED);
-			}
-		}
-		*/
 	}
 
 	void pegar_oclusion_queries()
@@ -424,8 +347,6 @@ public:
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
-
-			// print({"oclusion querie result:",oclusion_queries_resultados[p.first]});
 
 			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
 			{
@@ -447,7 +368,6 @@ public:
 			}
 			else
 			{
-				// cout << "querie: " << p.second << " foi deletada" << endl;
 				glDeleteQueries(1, &p.second);
 			}
 		}
@@ -482,8 +402,6 @@ public:
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// glEnable(GL_CULL_FACE);
 
 		TF = glGetUniformLocation(ShaderGL, "vert_mat.TF");
 		VIS = glGetUniformLocation(ShaderGL, "vert_mat.VIS");
@@ -595,37 +513,6 @@ public:
 
 	void adicionar_fonte(fonte *f)
 	{
-		/*
-		if (fontes.find(f) == fontes.end()) {
-			fontes.insert(pair<fonte*, unsigned int*>(f,new unsigned int[NUM_CARACTERES]));
-			fontes_data.insert(pair<fonte*, vector<unsigned char*> >(f, vector<unsigned char*>()));
-			fontes_data[f].resize(NUM_CARACTERES);
-
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			for (int i = 0; i < NUM_CARACTERES; i++) {
-
-				glGenTextures(1, &fontes[f][i]);
-				glBindTexture(GL_TEXTURE_2D, fontes[f][i]);
-
-				//fontes_data[f][i] = vetor_ponteiro(f->Characters[i].data);
-				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->Characters[i].res.x, f->Characters[i].res.y, 0, GL_RED, GL_UNSIGNED_BYTE, fontes_data[f][i]);
-				fontes_data[f][i] = f->chars[i].bitmap;
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[i].width, f->chars[i].height, 0, GL_RED, GL_UNSIGNED_BYTE, fontes_data[f][i]);
-
-
-				//if (f->pixel_perfeito) {
-				if (f->pixel_perfect) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				}
-				else
-				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				}
-			}
-		}
-		*/
 
 		if (fontes.find(f) == fontes.end())
 		{
@@ -986,12 +873,6 @@ public:
 								
 								pos_letra.x = pos_letra.x + (( -tamanho_texto.x - (tamanho_linhas[no_linha].x *2)) + tamanho_texto.x  ) ;
 							}
-							/*	
-							else if (rt->text_location_x == render_text_location::RIGHT)
-							{
-								pos_letra.x = pos_letra.x;
-							}
-							*/
 
 							if (rt->text_location_y == render_text_location::CENTER)
 							{
@@ -1028,9 +909,6 @@ public:
 							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 							pos_char.x += pos_adi_char.x;
-
-							// rt->text_size.x = std::max(rt->text_size.x, (pos_char.x + (sca_char.x / font->quality)) / 2);
-							// rt->text_size.y = std::max(rt->text_size.y, (pos_char.y + (sca_char.y / font->quality)) / 2);
 
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
@@ -1497,14 +1375,6 @@ public:
 				}
 			}
 
-			
-
-			/*
-			if (info_render[a].terminar_render)
-			{
-				ogl_aplicar_pos_processamento();
-			}
-			*/
 			ogl_aplicar_pos_processamento();
 		}
 	}

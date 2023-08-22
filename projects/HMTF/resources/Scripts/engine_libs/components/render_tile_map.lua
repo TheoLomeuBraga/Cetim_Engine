@@ -1,3 +1,4 @@
+require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
 
@@ -5,16 +6,20 @@ require("engine_libs.objects.material")
 function get_set_render_tilemap(get_set,object)
 end
 
-render_tile_map_component = {}
-function render_tile_map_component:new(object_ptr)
-    rtm = {}
-    rtm.object_ptr = object_ptr
-    rtm.layer = 2
-    rtm.material = matreial:new()
-    rtm.render_tilemap_only_layer = -1
-    rtm.tile_set_local = ""
-    rtm.tile_map_local = ""
-    function rtm:get()
+render_tile_map_component = create_base_component(components.render_tile_map)
+render_tile_map_component.layer = 2
+render_tile_map_component.material = matreial:new()
+render_tile_map_component.render_tilemap_only_layer = -1
+render_tile_map_component.tile_set_local = ""
+render_tile_map_component.tile_map_local = ""
+function render_tile_map_component:clean()
+    self.layer = 2
+    self.material = matreial:new()
+    self.render_tilemap_only_layer = -1
+    self.tile_set_local = ""
+    self.tile_map_local = ""
+end
+    function render_tile_map_component:get()
         j = get_set_render_tilemap(get_lua,self.object_ptr)
         self.layer = j.layer
         self.material = deepcopyjson(j.material)
@@ -22,9 +27,7 @@ function render_tile_map_component:new(object_ptr)
         self.tile_set_local = j.tile_set_local
         self.tile_map_local = j.tile_map_local
     end
-    function rtm:set()
+    function render_tile_map_component:set()
         get_set_render_tilemap(set_lua,deepcopyjson(self))
     end
-    return rtm
-end
-component_map[components.render_tile_map] = render_tile_map_component
+component_map[components.render_tile_map] = render_tile_map_component:new(nil)
