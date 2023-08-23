@@ -205,7 +205,7 @@ function UPDATE()
     end
     --
 
-    if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.delete]) == 1 then
+    if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
         window:close()
     end
 end

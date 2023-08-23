@@ -75,15 +75,15 @@ namespace mouse
 
 			if (buttonState == GLFW_PRESS)
 			{
-				mouseMap[std::to_string(button)] = 1;
+				mouseMap[ajust_keys_map[std::to_string(button)]] = 1;
 			}
 			else if (buttonState == GLFW_RELEASE)
 			{
-				mouseMap[std::to_string(button)] = 0;
+				mouseMap[ajust_keys_map[std::to_string(button)]] = 0;
 			}
 			else
 			{
-				mouseMap[std::to_string(button)] = 0;
+				mouseMap[ajust_keys_map[std::to_string(button)]] = 0;
 			}
 		}
 
@@ -101,8 +101,125 @@ namespace teclas
 
 	bool read_input_text = false;
 
+	/*
+	[0] = 48,["0"] = 48,
+        [1] = 49,["1"] = 49,
+        [2] = 50,["2"] = 50,
+        [3] = 51,["3"] = 51,
+        [4] = 52,["4"] = 52,
+        [5] = 53,["5"] = 53,
+        [6] = 54,["6"] = 54,
+        [7] = 55,["7"] = 55,
+        [8] = 56,["8"] = 56,
+        [9] = 57,["9"] = 57,
+        space = 32,
+        a = 65,
+        b = 66,
+        c = 67,
+        d = 68,
+        e = 69,
+        f = 70,
+        g = 71,
+        h = 72,
+        i = 73,
+        j = 74,
+        k = 75,
+        l = 76,
+        m = 77,
+        n = 78,
+        o = 79,
+        p = 80,
+        q = 81,
+        r = 82,
+        s = 83,
+        t = 84,
+        u = 85,
+        v = 86,
+        w = 87,
+        x = 88,
+        y = 89,
+        z = 90,
+        backslash = 92,
+        escape = 256,
+        enter = 257,
+        tab = 258,
+        backspace = 259,
+        insert = 260,
+        delete = 261,
+        right = 262,
+        left = 263,
+        down = 264,
+        up = 265,
+        caps_locl = 280,
+        shift = 340,
+        ctrl = 341,
+        alt = 342,
+        right_shift = 344,
+        right_ctrl = 345,
+        right_alt = 346,
+	*/
+
 	map<std::string,std::string> ajust_keys_map = {
-		pair<std::string,std::string>("0",""),
+		
+		pair<std::string,std::string>("48","0"),
+		pair<std::string,std::string>("49","1"),
+		pair<std::string,std::string>("50","2"),
+		pair<std::string,std::string>("51","3"),
+		pair<std::string,std::string>("52","4"),
+		pair<std::string,std::string>("53","5"),
+		pair<std::string,std::string>("54","6"),
+		pair<std::string,std::string>("55","7"),
+		pair<std::string,std::string>("56","8"),
+		pair<std::string,std::string>("57","9"),
+
+		pair<std::string,std::string>("32","space"),
+
+		pair<std::string,std::string>("65","a"),
+		pair<std::string,std::string>("66","b"),
+		pair<std::string,std::string>("67","c"),
+		pair<std::string,std::string>("68","d"),
+		pair<std::string,std::string>("69","e"),
+		pair<std::string,std::string>("70","f"),
+		pair<std::string,std::string>("71","g"),
+		pair<std::string,std::string>("72","h"),
+		pair<std::string,std::string>("73","i"),
+		pair<std::string,std::string>("74","j"),
+		pair<std::string,std::string>("75","k"),
+		pair<std::string,std::string>("76","l"),
+		pair<std::string,std::string>("77","m"),
+		pair<std::string,std::string>("78","n"),
+		pair<std::string,std::string>("79","o"),
+		pair<std::string,std::string>("80","p"),
+		pair<std::string,std::string>("81","q"),
+		pair<std::string,std::string>("82","r"),
+		pair<std::string,std::string>("83","s"),
+		pair<std::string,std::string>("84","t"),
+		pair<std::string,std::string>("85","u"),
+		pair<std::string,std::string>("86","v"),
+		pair<std::string,std::string>("87","w"),
+		pair<std::string,std::string>("88","x"),
+		pair<std::string,std::string>("89","y"),
+		pair<std::string,std::string>("90","z"),
+
+		pair<std::string,std::string>("92","backslash"),
+		pair<std::string,std::string>("256","escape"),
+		pair<std::string,std::string>("257","enter"),
+		pair<std::string,std::string>("258","tab"),
+		pair<std::string,std::string>("259","backspace"),
+		pair<std::string,std::string>("260","insert"),
+		pair<std::string,std::string>("261","delete"),
+		pair<std::string,std::string>("262","right"),
+		pair<std::string,std::string>("263","left"),
+		pair<std::string,std::string>("264","down"),
+		pair<std::string,std::string>("265","up"),
+		pair<std::string,std::string>("280","caps_locl"),
+		pair<std::string,std::string>("340","shift"),
+		pair<std::string,std::string>("341","ctrl"),
+		pair<std::string,std::string>("342","alt"),
+		pair<std::string,std::string>("344","right_shift"),
+		pair<std::string,std::string>("345","right_ctrl"),
+		pair<std::string,std::string>("346","right_alt"),
+
 	};
 
 	std::unordered_map<std::string, int> generateKeyboardMap(GLFWwindow *window)
@@ -115,7 +232,7 @@ namespace teclas
 
 			std::string keyIdentifier;
 
-			keyIdentifier = std::to_string(key);
+			keyIdentifier = ajust_keys_map[std::to_string(key)];
 
 			if (keyState == GLFW_PRESS && !read_input_text)
 			{
@@ -211,6 +328,13 @@ namespace controle
 		pair<std::string,std::string>("12","down"),
 		pair<std::string,std::string>("13","left"),
 		pair<std::string,std::string>("14","right"),
+		
+		pair<std::string,std::string>("axis_0","rx"),
+		pair<std::string,std::string>("axis_1","ry"),
+		pair<std::string,std::string>("axis_3","lx"),
+		pair<std::string,std::string>("axis_4","ly"),
+		pair<std::string,std::string>("axis_2","rt_axis"),
+		pair<std::string,std::string>("axis_5","lt_axis"),
 	};
 
 	static std::vector<int> prevJoystickButtonsState;
@@ -233,15 +357,15 @@ namespace controle
 			{
 				if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
 				{
-					joystickKeyMap[std::to_string(i)] = 1;
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
 				}
 				else if (buttons[i] == GLFW_PRESS)
 				{
-					joystickKeyMap[std::to_string(i)] = 1;
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
 				}
 				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
 				{
-					joystickKeyMap[std::to_string(i)] = 0;
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
 				}
 				else
 				{
@@ -266,7 +390,7 @@ namespace controle
 
 			for (int i = 0; i < axisCount; ++i)
 			{
-				joystickAxes[string("axis_") + std::to_string(i)] = axes[i];
+				joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
 			}
 		}
 

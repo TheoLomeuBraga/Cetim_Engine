@@ -59,12 +59,12 @@ function get_control()
         control_last_frame = deepcopy(control)
     else
         control_last_frame = deepcopy(control)
-        control.top = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.w]) > 0
-        control.down = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.s]) > 0
-        control.left = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.a]) > 0
-        control.right = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.d]) > 0
-        control.jump = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.space]) > 0
-        control.action = keys_axis:get_input(input_devices.mouse, input_keys.mouse[input_keys.mouse.left]) > 0
+        control.top = keys_axis:get_input(input_devices.keyboard, "w") > 0
+        control.down = keys_axis:get_input(input_devices.keyboard, "s") > 0
+        control.left = keys_axis:get_input(input_devices.keyboard, "a") > 0
+        control.right = keys_axis:get_input(input_devices.keyboard, "d") > 0
+        control.jump = keys_axis:get_input(input_devices.keyboard, "space") > 0
+        control.action = keys_axis:get_input(input_devices.mouse, "left") > 0
     end
 end
 
