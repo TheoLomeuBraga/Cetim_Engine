@@ -1,6 +1,7 @@
 require("engine_libs.objects.global_data")
 require("engine_libs.objects.input")
 require("engine_libs.functions")
+require("math")
 
 inputs_last_frame = {}
 
@@ -17,7 +18,13 @@ inputs = {
     menu = false,
 }
 
-
+function apply_death_zone(input,death_zone)
+    local ret = input
+    if math.abs(input) < death_zone then
+        ret = 0
+    end
+    return ret
+end
 
 function START()
     inputs_last_frame = deepcopy(inputs)
@@ -25,16 +32,22 @@ end
 
 function UPDATE()
 
+    local analog_foward =  apply_death_zone(keys_axis:get_input_joystick(1,"ry"),0.2)
+    local analog_left =  apply_death_zone(keys_axis:get_input_joystick(1,"rx"),0.2)
+
+    local av_x = apply_death_zone(keys_axis:get_input_joystick(1,"lx"),0.2)
+    local av_y = apply_death_zone(keys_axis:get_input_joystick(1,"ly"),0.2)
+
     inputs = {
-        foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - keys_axis:get_input_joystick(1,"ry"),
-        left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - keys_axis:get_input_joystick(1,"rx"),
+        foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
+        left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - analog_left,
         jump = keys_axis:get_input(input_devices.keyboard,"space") + keys_axis:get_input_joystick(1,"a"),
         action_1 = keys_axis:get_input(input_devices.mouse,"left") + keys_axis:get_input_joystick(1,"rt_axis"),
         action_2 = keys_axis:get_input(input_devices.mouse,"right") + keys_axis:get_input_joystick(1,"lt_axis"),
         mouse_view_x = keys_axis:get_input(input_devices.mouse,"movement_x"),
         mouse_view_y = keys_axis:get_input(input_devices.mouse,"movement_y"),
-        analog_view_x = keys_axis:get_input_joystick(1,"lx"),
-        analog_view_y = keys_axis:get_input_joystick(1,"ly"),
+        analog_view_x = av_x,
+        analog_view_y = av_y,
         menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
     }
 

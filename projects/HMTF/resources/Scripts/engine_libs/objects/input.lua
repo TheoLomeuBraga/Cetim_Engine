@@ -167,9 +167,9 @@ local key_axis_dictionarys = {
         right_alt = 346,
     },
     [input_devices.joystick] = {
-        x = 0,
-        a = 1,
-        b = 2,
+        a = 0,
+        b = 1,
+        x = 2,
         y = 3,
         lb = 4,
         rb = 5,

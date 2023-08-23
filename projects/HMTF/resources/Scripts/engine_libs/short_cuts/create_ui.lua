@@ -310,7 +310,7 @@ function ui_element_for_matrix:new()
         sca = {x=1,y=1}, 
         button_obj = {},
         text_obj = {},
-        style = ui_style:new(),
+        style = nil,
         text = "",
         text_size = 0.05, 
         image = "resources/Textures/white.png",
