@@ -79,7 +79,7 @@ function load_sceane_step()
 
         demo = require("level_loaders." .. name)
         
-        demo:START(layers)
+        demo:START()
     end
     
     

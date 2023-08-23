@@ -18,7 +18,8 @@ local menu = {
 
 
 
-function menu:START(layers)
+function menu:START()
+    local layers = global_data:get_var("layers")
     menu.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(menu.camera_obj.object_ptr)
 

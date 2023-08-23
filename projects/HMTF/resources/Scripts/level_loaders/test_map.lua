@@ -16,7 +16,8 @@ local assets_needed = {
     new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf")
 }
 
-function level:START(layers)
+function level:START()
+    local layers = global_data:get_var("layers")
     
     time:set_speed(0)
 
