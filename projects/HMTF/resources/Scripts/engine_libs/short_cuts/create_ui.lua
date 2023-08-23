@@ -24,6 +24,9 @@ function ui_style:new()
         border_color_hover = { r = 0, g = 0, b = 1, a = 1 },
         border_color_click = { r = 0, g = 0, b = 1, a = 1 },
 
+        text_location_x = render_text_location.center,
+        text_location_y = render_text_location.center,
+
     }
 end
 
@@ -305,6 +308,8 @@ function ui_element_for_matrix:new()
     return {
         --pos = {x=1,y=1}, 
         sca = {x=1,y=1}, 
+        button_obj = {},
+        text_obj = {},
         style = ui_style:new(),
         text = "",
         text_size = 0.05, 
@@ -333,26 +338,20 @@ function ui_element_matrix_example()
 end
 
 
-function create_ui_list(father,style,text_location_x,text_location_y,layer,space_betwen_elements,ui_element_matrix)
+function create_ui_list(father,pos,sca,layer,style,elements_size,ui_element_matrix)
     local ret = {
         main_obj = {},
 
-        space_betwen_elements = deepcopy(space_betwen_elements),
-
         button_selected = {x = -1,y = -1},
 
-        elements_location_x = render_text_location.center,
+        elements_size = deepcopy(elements_size),
+
         style = deepcopy(style),
 
         ui_element_matrix = deepcopy(ui_element_matrix),
-        object_button_matrix = {},
-        object_text_matrix = {},
+        
 
     }
-
-    function ret:START()
-        
-    end
 
     function ret:UPDATE()
         
