@@ -59,6 +59,12 @@ namespace mouse
 		return mouseInfo;
 	}
 
+	map<std::string,std::string> ajust_keys_map = {
+		pair<std::string,std::string>("0","left"),
+		pair<std::string,std::string>("1","right"),
+		pair<std::string,std::string>("2","scroll_button"),
+	};
+
 	std::unordered_map<std::string, int> generateMouseMap(GLFWwindow *window)
 	{
 		std::unordered_map<std::string, int> mouseMap;
@@ -94,6 +100,10 @@ namespace teclas
 	bool delet_last_frame = false;
 
 	bool read_input_text = false;
+
+	map<std::string,std::string> ajust_keys_map = {
+		pair<std::string,std::string>("0",""),
+	};
 
 	std::unordered_map<std::string, int> generateKeyboardMap(GLFWwindow *window)
 	{
@@ -185,6 +195,23 @@ namespace controle
 
 		return count;
 	}
+
+	map<std::string,std::string> ajust_keys_map = {
+		pair<std::string,std::string>("0","a"),
+		pair<std::string,std::string>("1","b"),
+		pair<std::string,std::string>("2","x"),
+		pair<std::string,std::string>("3","y"),
+		pair<std::string,std::string>("4","lb"),
+		pair<std::string,std::string>("5","rb"),
+		pair<std::string,std::string>("6","back"),
+		pair<std::string,std::string>("7","start"),
+		pair<std::string,std::string>("9","lt"),
+		pair<std::string,std::string>("10","rt"),
+		pair<std::string,std::string>("11","up"),
+		pair<std::string,std::string>("12","down"),
+		pair<std::string,std::string>("13","left"),
+		pair<std::string,std::string>("14","right"),
+	};
 
 	static std::vector<int> prevJoystickButtonsState;
 

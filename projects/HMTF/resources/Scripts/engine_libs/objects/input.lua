@@ -255,9 +255,11 @@ function keys_axis:set_text_input_geter(on)
 end
 
 function keys_axis:get_input(device, key)
+    --return get_input(device, 0, key_axis_dictionarys[device][key])
     return get_input(device, 0, key_axis_dictionarys[device][key])
 end
 
 function keys_axis:get_input_joystick(joystick_no, key)
+    --return get_input(input_devices.joystick, joystick_no, key_axis_dictionarys[input_devices.joystick][key])
     return get_input(input_devices.joystick, joystick_no, key_axis_dictionarys[input_devices.joystick][key])
 end
