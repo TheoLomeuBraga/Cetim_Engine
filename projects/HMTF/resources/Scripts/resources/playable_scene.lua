@@ -75,9 +75,18 @@ cenary_builders = {
         end
 
         if part_data.variables.type == "sb" then
+
             add_physics(false)
+
         elseif part_data.variables.type == "rb" then
+
             add_physics(true)
+
+        elseif part_data.variables.type == "camera" then
+
+            ret:add_component(components.camera)
+            ret.components[components.camera]:set()
+
         elseif part_data.variables.type == "player_start" then
 
             ret:add_component(components.lua_scripts)
