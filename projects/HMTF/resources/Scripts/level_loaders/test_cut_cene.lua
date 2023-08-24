@@ -21,7 +21,9 @@ speachs = {
 }
 
 local assets_needed = {
-    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf")
+    --new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf")
+    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_cut_cene.gltf")
+    
 }
 
 function level:START()
@@ -37,7 +39,7 @@ function level:START()
 
     stop_coroutine_if_is_not_loaded(assets_needed)
 
-    level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
+    level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_cut_cene.gltf")
 
     coroutine.yield()
     --print("yield 1")

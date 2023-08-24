@@ -106,7 +106,8 @@ public:
 			sf::Listener::setDirection(ldir.x, ldir.y, ldir.z);
 
 			vec3 gpos = tf->pegar_pos_global();
-			som.setPosition(-gpos.x, gpos.y, -gpos.z);
+			//som.setPosition(-gpos.x, gpos.y, -gpos.z);
+			som.setPosition(gpos.x, gpos.y, gpos.z);
 
 		}
 		else

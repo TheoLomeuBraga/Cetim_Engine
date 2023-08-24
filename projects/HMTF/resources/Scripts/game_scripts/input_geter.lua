@@ -56,12 +56,15 @@ function UPDATE()
     elseif inputs.foward > 1 then
         inputs.foward = 1
     end
+    --inputs.foward = -inputs.foward
+
 
     if inputs.left < -1 then
         inputs.left = -1
     elseif inputs.left > 1 then
         inputs.left = 1
     end
+    --inputs.left = -inputs.left
     
 
     

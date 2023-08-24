@@ -299,8 +299,10 @@ public:
 				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 				glUseProgram(shader_s);
 
+				//ajustar
 				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->pegar_matriz()[0][0]);
+				mat4 ajust = glm::scale(mat4(1.0),vec3(-1,1,-1)) * tf->matrizTransform;
+				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
@@ -680,6 +682,7 @@ public:
 	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+		
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
@@ -1178,7 +1181,13 @@ public:
 							unsigned int shader_s = pegar_shader(mat.shad);
 							glUseProgram(shader_s);
 
-							apply_transform(shader_s, tf, ca);
+							//apply_transform(shader_s, tf, ca);
+							//ajustar
+							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+							mat4 ajust = glm::scale(mat4(1.0),vec3(-1,1,-1)) * tf->matrizTransform;
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 							apply_material(shader_s, mat);
 

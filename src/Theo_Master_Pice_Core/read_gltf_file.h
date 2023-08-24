@@ -428,23 +428,14 @@ namespace gltf_loader
     glm::vec2 GLTFLoader::getAnimationTimeDuration(const AnimationChannel &channel)
     {
 
-        print({"AAAAA"});
-
         const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
         const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
 
-        print({"BBBBB"});
-
-        print({"sampler.inputAccessorIndex", sampler.inputAccessorIndex});
 
         std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
 
-        print({"CCCCC"});
-
         float startTime = inputTimes[0];                   // Tempo inicial
         float endTime = inputTimes[inputTimes.size() - 1]; // Tempo final
-
-        print({"DDDDD"});
 
         return glm::vec2(startTime, endTime);
     }
@@ -525,8 +516,7 @@ namespace gltf_loader
                 vector<AnimationKeyFrame> key_frames;
                 for(AnimationChannel ac : animations[a].channels){
                     AnimationKeyFrame akf;
-
-                    //print({"ac.targetPath",ac.targetPath});
+                    
                     getAnimationKeyFrame(animations[a],ac, t,akf);
                     
 
@@ -536,8 +526,6 @@ namespace gltf_loader
                 }
                 animations[a].keyFrames.push_back(key_frames);
             }
-
-            //animations[a].keyFrames.erase(animations[a].keyFrames.begin());
 
             animations[a].start_time = start_time;
             animations[a].duration = duration_time;

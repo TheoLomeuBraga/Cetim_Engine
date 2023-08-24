@@ -36,12 +36,25 @@ cenary_builders = {
     entity = function (entity_obj, ceane_data)
     end,
 
+    is_entity = function (part_data)
+        entyty_types = {"player_start","camera","music","sound"}
+        --[[
+        for index, value in ipairs(entyty_types) do
+            if part_data.variables.type == value then
+                return true
+            end
+        end
+        ]]
+        
+        return false
+    end,
+
     scene_part = function (cenary_father,entities_father, part_data,yield)
         local ret = {}
-        if part_data.variables.type ~= "player_start" then
-            ret = game_object:new(create_object(cenary_father))
-        else
+        if cenary_builders.is_entity(part_data) then
             ret = game_object:new(create_object(entities_father))
+        else
+            ret = game_object:new(create_object(cenary_father))
         end
         
 
@@ -73,6 +86,26 @@ cenary_builders = {
                 ret.components[components.physics_3D]:set()
             end
         end
+
+        local add_mesh = function(color)
+            if part_data.meshes ~= nil and part_data.materials ~= nil then
+                if color ~= nil then
+                    for key, value in pairs(part_data.materials) do
+                        value.color = deepcopy(color)
+                        part_data.materials[key] = deepcopy(value)
+                    end
+                end
+    
+                ret:add_component(components.render_mesh)
+                ret.components[components.render_mesh].layer = 2
+                ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
+                ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
+                ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+                ret.components[components.render_mesh]:set()
+            end
+        end
+
+        add_mesh(nil)
 
         if part_data.variables.type == "sb" then
 
@@ -115,25 +148,7 @@ cenary_builders = {
 
         end
 
-        local add_mesh = function(color)
-            if part_data.meshes ~= nil and part_data.materials ~= nil then
-                if color ~= nil then
-                    for key, value in pairs(part_data.materials) do
-                        value.color = deepcopy(color)
-                        part_data.materials[key] = deepcopy(value)
-                    end
-                end
-    
-                ret:add_component(components.render_mesh)
-                ret.components[components.render_mesh].layer = 2
-                ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
-                ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
-                ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
-                ret.components[components.render_mesh]:set()
-            end
-        end
-
-        add_mesh(nil)
+        
 
         if yield == true then
 

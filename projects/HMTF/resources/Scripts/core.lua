@@ -53,7 +53,6 @@ function set_load_image(args)
         mat.color.a = 0
         load_image.components[components.render_shader].material = deepcopy(mat)
     end
-    
     load_image.components[components.render_shader]:set()
 end
 
@@ -173,8 +172,16 @@ function START()
     mat.color.g = 0.2
     mat.color.b = 0.2
     back_ground = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+
+    mat.shader = "resources/Shaders/tiled_volume"
+    mat.textures[1] = "resources/Textures/null.png"
+    mat.color.r = 1
+    mat.color.g = 1
+    mat.color.b = 1
+    create_render_shader(create_object(), false, Vec3:new(0, 2, 5), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 2, mat)
+
     mat.color.a = 0
-    load_image = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
+    create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
 
     window.resolution.x = 720
     window.resolution.y = 720
