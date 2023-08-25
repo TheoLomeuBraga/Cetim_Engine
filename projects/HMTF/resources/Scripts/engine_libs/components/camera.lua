@@ -19,7 +19,7 @@ camera_component.size = {x = 20,y = 20}
 camera_component.zoom = 90
 camera_component.resolution = {x = 100,y = 100}
 camera_component.fcp = 100
-camera_component.ncp = 0
+camera_component.ncp = 0.01
 
 
 function camera_component:clean()
@@ -29,7 +29,7 @@ function camera_component:clean()
     self.zoom = 90
     self.resolution = {x = 100,y = 100}
     self.fcp = 100
-    self.ncp = 0
+    self.ncp = 0.01
 end
 
 function camera_component:get()
