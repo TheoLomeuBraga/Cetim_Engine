@@ -70,7 +70,7 @@ cenary_builders = {
         
         ret.components[components.transform]:set()
 
-        local add_physics = function(rb)
+        local add_physics = function(rb,is_triger)
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
                 ret:add_component(components.physics_3D)
                 if rb then
@@ -80,7 +80,7 @@ cenary_builders = {
                 end
                 ret.components[components.physics_3D].collision_shape = collision_shapes.convex
                 ret.components[components.physics_3D].collision_mesh = deepcopyjson(part_data.meshes[1])
-                ret.components[components.physics_3D].triger = false
+                ret.components[components.physics_3D].triger = is_triger
                 ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
                 ret.components[components.physics_3D].friction = 10
                 ret.components[components.physics_3D]:set()
@@ -105,15 +105,17 @@ cenary_builders = {
             end
         end
 
-        add_mesh(nil)
+        
 
         if part_data.variables.type == "sb" then
 
-            add_physics(false)
+            add_physics(false,false)
+            add_mesh(nil)
 
         elseif part_data.variables.type == "rb" then
 
-            add_physics(true)
+            add_physics(true,false)
+            add_mesh(nil)
 
         elseif part_data.variables.type == "camera" then
 
@@ -126,6 +128,14 @@ cenary_builders = {
             ret:add_component(components.physics_3D)
             ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
 
+        elseif part_data.variables.type == "passage" then
+
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/passage")
+            ret.components[components.lua_scripts]:set_variable("game_scripts/passage","passage_target",part_data.variables.passage_target)
+
+            add_physics(false,true)
+
         elseif part_data.variables.type == "music" then
 
             ret:add_component(components.audio_source)
@@ -135,6 +145,8 @@ cenary_builders = {
             ret.components[components.audio_source].min_distance = 5
             ret.components[components.audio_source].atenuation = 1
             ret.components[components.audio_source]:set()
+
+            add_mesh(nil)
 
         elseif part_data.variables.type == "sound" then
 
@@ -146,6 +158,10 @@ cenary_builders = {
             ret.components[components.audio_source].atenuation = 1
             ret.components[components.audio_source]:set()
 
+            add_mesh(nil)
+
+        elseif part_data.variables.type == nil then
+            add_mesh(nil)
         end
 
         

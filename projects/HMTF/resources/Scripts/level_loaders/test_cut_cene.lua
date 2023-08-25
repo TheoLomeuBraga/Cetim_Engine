@@ -27,6 +27,9 @@ local assets_needed = {
 }
 
 function level:START()
+
+    print("test_cut_cene")
+
     local layers = global_data:get_var("layers")
     
     time:set_speed(0)

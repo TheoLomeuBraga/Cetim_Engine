@@ -38,6 +38,15 @@ end
 function lua_scripts_component:call_function(script_name,function_name,args_table)
     return call_lua_function(self.object_ptr,script_name,function_name,args_table)
 end
+function lua_scripts_component:has_script(script)
+    self.scripts = deepcopyjson(get_lua_component(self.object_ptr).scripts)
+    for key, value in pairs(self.scripts) do
+        if script == value then
+            return true
+        end
+    end
+    return false
+end
 function lua_scripts_component:get()
     self.scripts = deepcopyjson(get_lua_component(self.object_ptr).scripts)
 end
