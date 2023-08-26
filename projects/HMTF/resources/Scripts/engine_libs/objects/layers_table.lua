@@ -47,6 +47,7 @@ function layers_table:new_3D()
         top = "",
         hud = "",
         sound = "",
+        sky_box = "",
     }
     
     function ret:create()
@@ -60,6 +61,7 @@ function layers_table:new_3D()
         self.top = create_object(self.main)
         self.hud = create_object(self.main)
         self.sound = create_object(self.main)
+        self.sky_box = create_object(self.main)
     end
     function ret:destroy()
         remove_object(self.main)

@@ -35,9 +35,15 @@ layers = layers_table:new_3D()
 
 back_ground = {}
 
-load_image = {}
+load_image = nil
 
 function set_load_image(args)
+
+    if load_image ~= nil then
+        remove_object(load_image.object_ptr)
+        load_image = nil
+    end
+
     local mat = matreial:new()
     mat.shader = "resources/Shaders/background"
     if args.path ~= nil and args.path ~= "" then
@@ -48,12 +54,13 @@ function set_load_image(args)
             mat.color.b = args.color.b 
         end
         mat.color.a = 1
-        load_image.components[components.render_shader].material = deepcopy(mat)
+
+        load_image = create_render_shader(layers.hud, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
     else
-        mat.color.a = 0
-        load_image.components[components.render_shader].material = deepcopy(mat)
+        remove_object(load_image.object_ptr)
+        load_image = nil
     end
-    load_image.components[components.render_shader]:set()
+    
 end
 
 
@@ -85,8 +92,7 @@ function load_sceane_step()
 end
 function load_sceane(demo_name)
     sceane_name = demo_name
-
-    --load_sceane_step()
+    
     loader = coroutine.create(load_sceane_step)
 end
 
@@ -162,6 +168,7 @@ end
 
 function START()
     
+    layers:create()
 
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
@@ -171,7 +178,7 @@ function START()
     mat.color.r = 0.2
     mat.color.g = 0.2
     mat.color.b = 0.2
-    back_ground = create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    back_ground = create_render_shader(layers.sky_box, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
 
     --[[
     mat.shader = "resources/Shaders/tiled_volume"
@@ -182,15 +189,15 @@ function START()
     create_render_shader(create_object(), false, Vec3:new(0, 2, 5), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 2, mat)
     ]]
 
-    mat.color.a = 0
-    create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
+    --mat.color.a = 0
+    --create_render_shader(create_object(), true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
 
     window.resolution.x = 720
     window.resolution.y = 720
 
     window:set()
     gravity:set()
-    layers:create()
+    
 
     global_data:set_var("core_object_ptr", this_object_ptr)
     global_data:set_var("mouse_sensitivity", 6)

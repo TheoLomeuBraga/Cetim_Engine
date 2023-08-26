@@ -35,7 +35,7 @@ function level:START()
     time:set_speed(0)
 
     core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/null.png",color={r=1,g=1,b=1}})
+    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
 
     local camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(camera.object_ptr)
@@ -45,20 +45,17 @@ function level:START()
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_cut_cene.gltf")
 
     coroutine.yield()
-    --print("yield 1")
 
     cenary_builders.cenary_obj = create_object(layers.cenary)
     cenary_builders.entities_obj = create_object(layers.cenary)
     cenary_builders.scene(cenary_builders.cenary_obj,cenary_builders.entities_obj,level.scene_3D_data,true)
 
     coroutine.yield()
-    --print("yield 2")
 
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 
     coroutine.yield()
-    --print("yield 3")
-
+    
     time:set_speed(1)
     remove_object(camera.object_ptr)
     camera = {}

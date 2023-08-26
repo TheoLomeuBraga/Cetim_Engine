@@ -63,7 +63,7 @@ vec3 quad_data[6] = vec3[6](
    POS =vec4( quad_data[gl_VertexID],1);
    
    
-   UV= vec2(max(0,quad_data[gl_VertexID].x),max(0,quad_data[gl_VertexID].y));
+   UV= vec2(max(0,quad_data[gl_VertexID].x),-max(0,quad_data[gl_VertexID].y));
 
    
    
