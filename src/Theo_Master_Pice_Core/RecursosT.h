@@ -152,6 +152,17 @@ public:
 		// data = dat;
 	}
 
+	imagem(int x, int y, int c, vector<unsigned char> dat)
+	{
+		res.x = x;
+		res.y = y;
+		ContagemPixels = x * y;
+		canais = c;
+		tamanho = x * y * c;
+
+		data = dat;
+	}
+
 	friend void remover_da_api_grafica();
 
 	void deletar()

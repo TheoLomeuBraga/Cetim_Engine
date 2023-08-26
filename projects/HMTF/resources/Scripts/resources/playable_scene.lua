@@ -128,14 +128,6 @@ cenary_builders = {
             ret:add_component(components.physics_3D)
             ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
 
-        elseif part_data.variables.type == "passage" then
-
-            ret:add_component(components.lua_scripts)
-            ret.components[components.lua_scripts]:add_script("game_scripts/passage")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/passage","passage_target",part_data.variables.passage_target)
-
-            add_physics(false,true)
-
         elseif part_data.variables.type == "music" then
 
             ret:add_component(components.audio_source)
@@ -159,6 +151,21 @@ cenary_builders = {
             ret.components[components.audio_source]:set()
 
             add_mesh(nil)
+
+        elseif part_data.variables.type == "mensage" then
+
+            local mensage = part_data.variables.mensage
+
+            add_physics(false,false)
+
+        elseif part_data.variables.type == "passage" then
+
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/passage")
+            ret.components[components.lua_scripts]:set_variable("game_scripts/passage","passage_target",part_data.variables.passage_target)
+
+            add_mesh(nil)
+            add_physics(false,true)
 
         elseif part_data.variables.type == nil then
             add_mesh(nil)

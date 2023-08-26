@@ -10,6 +10,16 @@
 
 // const unsigned int ANIMATION_FPS_COUNT = 20;
 
+bool file_exist(string nome)
+{
+    ifstream file(nome.c_str());
+    if (!file)
+    {
+        return false;
+    }
+    return true;
+}
+
 #ifndef ANIMATION_FPS_COUNT
 #define ANIMATION_FPS_COUNT 20
 #endif
@@ -103,14 +113,14 @@ namespace gltf_loader
     struct Material
     {
         std::string name;
-        size_t textureIndex = 0;
+        int textureIndex = -1;
         glm::vec4 baseColorFactor = glm::vec4(0, 0, 0, 0);
         float metallicFactor = 0;
         float roughnessFactor = 0;
-        size_t metallicRoughnessTextureIndex = 0;
-        size_t normalTextureIndex = 0;
-        size_t occlusionTexture = 0;
-        size_t emissiveTexture = 0;
+        int metallicRoughnessTextureIndex = -1;
+        int normalTextureIndex = -1;
+        int occlusionTexture = -1;
+        int emissiveTexture = -1;
         glm::vec3 emissiveFactor = glm::vec3(0, 0, 0);
         std::string alphaMode;
         float alphaCutoff = 0;
@@ -143,7 +153,7 @@ namespace gltf_loader
         bool loadNodes();
         glm::vec2 getAnimationTimeDuration(const AnimationChannel &channel);
         bool loadAnimations();
-        void getAnimationKeyFrame(Animation animation,const AnimationChannel &channel, float time,AnimationKeyFrame &keyFrame);
+        void getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame);
         bool loadTextures();
         bool loadMaterials();
         std::vector<float> getAttributeData(size_t accessorIndex);
@@ -431,7 +441,6 @@ namespace gltf_loader
         const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
         const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
 
-
         std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
 
         float startTime = inputTimes[0];                   // Tempo inicial
@@ -510,17 +519,19 @@ namespace gltf_loader
                 duration_time = std::max(duration_time, as.duration);
             }
 
-            for(float t = start_time; t < start_time + duration_time ; t += 1.0 / ANIMATION_FPS_COUNT){
-                t = std::min(t,start_time + duration_time);
-                
-                vector<AnimationKeyFrame> key_frames;
-                for(AnimationChannel ac : animations[a].channels){
-                    AnimationKeyFrame akf;
-                    
-                    getAnimationKeyFrame(animations[a],ac, t,akf);
-                    
+            for (float t = start_time; t < start_time + duration_time; t += 1.0 / ANIMATION_FPS_COUNT)
+            {
+                t = std::min(t, start_time + duration_time);
 
-                    if(akf.targetNodeIndex != -1){
+                vector<AnimationKeyFrame> key_frames;
+                for (AnimationChannel ac : animations[a].channels)
+                {
+                    AnimationKeyFrame akf;
+
+                    getAnimationKeyFrame(animations[a], ac, t, akf);
+
+                    if (akf.targetNodeIndex != -1)
+                    {
                         key_frames.push_back(akf);
                     }
                 }
@@ -534,10 +545,10 @@ namespace gltf_loader
         return true;
     }
 
-    void GLTFLoader::getAnimationKeyFrame(Animation animation,const AnimationChannel &channel, float time,AnimationKeyFrame &keyFrame)
+    void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
     {
-        
-        //print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
+
+        // print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
 
         if (true)
         {
@@ -551,7 +562,7 @@ namespace gltf_loader
 
             keyFrame.targetNodeIndex = channel.targetNodeIndex;
 
-            //print({"channel.targetPath",channel.targetPath});
+            // print({"channel.targetPath",channel.targetPath});
 
             // interpolate position
             if (channel.targetPath == "translation")
@@ -613,7 +624,7 @@ namespace gltf_loader
                 keyFrame.has_scale = true;
             }
 
-            //return keyFrame;
+            // return keyFrame;
         }
         /*
         else
@@ -654,6 +665,21 @@ namespace gltf_loader
                         {
                             texture.uri = baseDir + "/" + imageJson["uri"].get<std::string>();
                         }
+                        else if (imageJson.find("name") != imageJson.end())
+                        {
+
+                            if (imageJson["mimeType"] == "image/png")
+                            {
+                                if (file_exist(baseDir + imageJson["name"].get<std::string>() + ".png"))
+                                {
+                                    texture.uri = baseDir + imageJson["name"].get<std::string>() + ".png";
+                                }
+                                else if (file_exist("resources/Textures/" + imageJson["name"].get<std::string>() + ".png"))
+                                {
+                                    texture.uri = "resources/Textures/" + imageJson["name"].get<std::string>() + ".png";
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -690,6 +716,11 @@ namespace gltf_loader
                 if (pbr.contains("baseColorFactor"))
                 {
                     material.baseColorFactor = glm::vec4(pbr["baseColorFactor"][0].get<float>(), pbr["baseColorFactor"][1].get<float>(), pbr["baseColorFactor"][2].get<float>(), pbr["baseColorFactor"][3].get<float>());
+                }
+
+                if (pbr.contains("baseColorTexture"))
+                {
+                    material.textureIndex = pbr["baseColorTexture"]["index"].get<size_t>();
                 }
 
                 if (pbr.contains("metallicFactor"))
@@ -843,27 +874,27 @@ namespace gltf_loader
 
     std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
     {
-	    //print({"AAAAA"});
+        // print({"AAAAA"});
         const Accessor &accessor = accessors[accessorIndex];
         const BufferView &bufferView = bufferViews[accessor.bufferView];
         const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
-	    //print({"BBBBB"});
+        // print({"BBBBB"});
         size_t byteOffset = bufferView.byteOffset + accessor.byteOffset;
         size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : accessor.type.size() * sizeof(float);
-	    //print({"CCCCC"});
+        // print({"CCCCC"});
         std::vector<uint8_t> data(accessor.count * byteStride);
-	    //print({"DDDDD"});
+        // print({"DDDDD"});
         for (size_t i = 0; i < accessor.count; ++i)
         {
             size_t srcOffset = byteOffset + i * byteStride;
             size_t dstOffset = i * byteStride;
-            //std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
+            // std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
             if (srcOffset >= 0 && dstOffset >= 0 && srcOffset < buffer.size() && dstOffset < data.size() && byteStride <= buffer.size() - srcOffset && byteStride <= data.size() - dstOffset && buffer.data() && data.data())
             {
                 std::memcpy(data.data() + dstOffset, buffer.data() + srcOffset, byteStride);
             }
         }
-	    //print({"EEEEE"});
+        // print({"EEEEE"});
         return data;
     }
 
@@ -1026,5 +1057,4 @@ namespace gltf_loader
         return true;
     }
 
-    
 };
