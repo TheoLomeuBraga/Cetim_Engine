@@ -156,6 +156,11 @@ cenary_builders = {
 
             local mensage = part_data.variables.mensage
 
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/mensage")
+            ret.components[components.lua_scripts]:set_variable("game_scripts/mensage","mensage",mensage)
+
+            add_mesh(nil)
             add_physics(false,false)
 
         elseif part_data.variables.type == "passage" then

@@ -84,7 +84,7 @@ public:
 	{
 		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
-		return glm::vec3(ret.x,ret.y,ret.z); //
+		return glm::vec3(ret.x,ret.y,ret.z); 
 	}
 
 	vec3 mover_direcao(vec3 dir)

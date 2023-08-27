@@ -137,7 +137,25 @@ function aproche_to_target_value(num,speed,target_value)
 end
 
 function interact()
+
+    local ray_start = camera.components[components.transform]:get_global_position(0,0,0)
+    local ray_end_direction = camera.components[components.transform]:get_local_direction(0,0,-10)
+    local ray_end = {x=ray_start.x - ray_end_direction.x,y=ray_start.y + ray_end_direction.y,z=ray_start.z - ray_end_direction.z}
     
+    local hit = false
+    local hit_info = {}
+    hit,hit_info = raycast_3D(ray_start,ray_end)
+    
+    if hit then
+
+        local hit_object = game_object:new(hit_info.collision_object)
+
+        if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") then
+            print(hit_object.components[components.lua_scripts]:get_variable("game_scripts/mensage","mensage"))
+        end
+
+    end
+
 end
 
 function UPDATE()
@@ -166,6 +184,11 @@ function UPDATE()
         
             this_object.components[components.transform]:get()
             local pos = deepcopy(this_object.components[components.transform].position)
+
+            --interact
+            if inputs.interact > 0 and inputs_last_frame.interact < 1 then
+                interact()
+            end
 
             --hit top
             check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
@@ -229,8 +252,6 @@ function UPDATE()
             else
                 this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost_air)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost_air)) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost_air)) + platform_movement.z  * time.sacale) 
             end
-        
-        
 
             if not hit_down then
                 inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
