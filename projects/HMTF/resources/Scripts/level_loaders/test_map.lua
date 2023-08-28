@@ -63,8 +63,7 @@ function level:UPDATE()
 end
 
 function level:END()
-    remove_object(cenary_builders.cenary_obj)
-    remove_object(cenary_builders.entities_obj)
+    remove_object(cenary_builders.cenary)
     clear_memory()
 end
 
