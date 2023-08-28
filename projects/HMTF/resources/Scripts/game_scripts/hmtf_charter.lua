@@ -66,7 +66,7 @@ function START()
     this_object.components[components.physics_3D].rotate_X = false
     this_object.components[components.physics_3D].rotate_Y = false
     this_object.components[components.physics_3D].rotate_Z = false
-    this_object.components[components.physics_3D].friction = 0
+    this_object.components[components.physics_3D].friction = 1
     this_object.components[components.physics_3D].gravity_scale = 0
     this_object.components[components.physics_3D].triger = false
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
@@ -165,6 +165,7 @@ function UPDATE()
     if game_state == game_states.play then
         time:get()
         gravity:get()
+        
 
         mouse_sensitivity = global_data:get("mouse_sensitivity")
 
@@ -181,26 +182,27 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
     
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+
+        --hit top
+        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
+        check_top.components[components.physics_3D]:get()
+        hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
+    
+        --hit down
+        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
+        check_down.components[components.physics_3D]:get()
+        hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
         if global_data:get("pause") < 1 then
-        
-            this_object.components[components.transform]:get()
-            local pos = deepcopy(this_object.components[components.transform].position)
 
             --interact
             if inputs.interact > 0 and inputs_last_frame.interact < 1 then
                 interact()
             end
-
-            --hit top
-            check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
-            check_top.components[components.physics_3D]:get()
-            hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
-    
-            --hit down
-            check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
-            check_down.components[components.physics_3D]:get()
-            hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
+        
+            
 
             --move camera
             window:get()
@@ -250,9 +252,9 @@ function UPDATE()
 
            --move
             if hit_down and not (inpulse_y > 0) then
-                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost)) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost)) + platform_movement.z  * time.sacale)
+                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost)) + platform_movement.y * time.sacale,(move_dir.z * (speed + speed_boost)) + platform_movement.z  * time.sacale)
             else
-                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost_air)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost_air)) + platform_movement.y + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost_air)) + platform_movement.z  * time.sacale) 
+                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost_air)) * time.sacale,(move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost_air)) * time.sacale) 
             end
 
             if not hit_down then
@@ -260,10 +262,16 @@ function UPDATE()
             end
         
         else
+
+            
             if not hit_down then
-                inpulse_y = inpulse_y + (gravity.force.y * time.delta)
+                inpulse_y = inpulse_y + gravity.force.y
+                this_object.components[components.physics_3D]:set_linear_velocity(0,inpulse_y * time.sacale,0)
+            else
+                this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
             end
-            this_object.components[components.physics_3D]:set_linear_velocity(0,inpulse_y * time.sacale,0)
+            
+            
         end
 
         camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
