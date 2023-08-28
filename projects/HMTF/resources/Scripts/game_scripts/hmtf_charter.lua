@@ -140,7 +140,7 @@ function interact()
 
     local ray_start = camera.components[components.transform]:get_global_position(0,0,0)
     local ray_end_direction = camera.components[components.transform]:get_local_direction(0,0,-10)
-    local ray_end = {x=ray_start.x - ray_end_direction.x,y=ray_start.y + ray_end_direction.y,z=ray_start.z - ray_end_direction.z}
+    local ray_end = {x=ray_start.x - ray_end_direction.x,y=ray_start.y - ray_end_direction.y,z=ray_start.z - ray_end_direction.z}
     
     local hit = false
     local hit_info = {}
@@ -151,7 +151,9 @@ function interact()
         local hit_object = game_object:new(hit_info.collision_object)
 
         if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") then
-            print(hit_object.components[components.lua_scripts]:get_variable("game_scripts/mensage","mensage"))
+            --print(hit_object.components[components.lua_scripts]:get_variable("game_scripts/mensage","mensage"))
+            hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage","interact",{})
+            
         end
 
     end
@@ -257,7 +259,11 @@ function UPDATE()
                 inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
             end
         
-
+        else
+            if not hit_down then
+                inpulse_y = inpulse_y + (gravity.force.y * time.delta)
+            end
+            this_object.components[components.physics_3D]:set_linear_velocity(0,inpulse_y * time.sacale,0)
         end
 
         camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)

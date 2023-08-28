@@ -131,7 +131,7 @@ cenary_builders = {
         elseif part_data.variables.type == "music" then
 
             ret:add_component(components.audio_source)
-            ret.components[components.audio_source].path = "resources/Audio/music/" .. part_data.variables.sound_source .. ".wav"
+            ret.components[components.audio_source].path = "resources/Audio/musics/" .. part_data.variables.sound_source .. ".wav"
             ret.components[components.audio_source].loop = true
             ret.components[components.audio_source].volume = 5
             ret.components[components.audio_source].min_distance = 5
@@ -143,7 +143,7 @@ cenary_builders = {
         elseif part_data.variables.type == "sound" then
 
             ret:add_component(components.audio_source)
-            ret.components[components.audio_source].path = "resources/Audio/sound/" .. part_data.variables.sound_source .. ".wav"
+            ret.components[components.audio_source].path = "resources/Audio/sounds/" .. part_data.variables.sound_source .. ".wav"
             ret.components[components.audio_source].loop = true
             ret.components[components.audio_source].volume = 5
             ret.components[components.audio_source].min_distance = 5
