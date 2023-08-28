@@ -12,6 +12,8 @@ mensage = "hello world"
 interacting = false
 local first_frame = false
 
+dialog_box = nil
+
 function interact(args)
 
     global_data:set("pause",1)

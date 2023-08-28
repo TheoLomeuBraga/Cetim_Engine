@@ -37,6 +37,8 @@ back_ground = {}
 
 load_image = nil
 
+cenary = nil
+
 function set_load_image(args)
 
     if load_image ~= nil then
@@ -76,23 +78,27 @@ function load_sceane_step()
             name = value
         end
     end
+
+    
     
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
-        if demo ~= nil then
-            demo:END()
-            
+        
+        
+        if cenary ~= nil then
+            cenary:END()
         end
 
-        demo = require("level_loaders." .. name)
+        cenary = require("level_loaders." .. name)
+        cenary:START()
         
-        demo:START()
     end
     
     
-end
-function load_sceane(demo_name)
-    sceane_name = demo_name
     
+end
+
+function load_sceane(cenary_name)
+    sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
 end
 
@@ -216,8 +222,8 @@ function START()
 end
 
 function UPDATE()
-    if keep_loading() and demo ~= nil then
-        demo:UPDATE()
+    if keep_loading() and cenary ~= nil then
+        cenary:UPDATE()
     end
     --
 

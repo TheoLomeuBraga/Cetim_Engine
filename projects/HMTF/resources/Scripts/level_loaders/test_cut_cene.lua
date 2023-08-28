@@ -47,7 +47,7 @@ function level:START()
     coroutine.yield()
 
     cenary_builders.cenary = create_object(layers.cenary)
-    cenary_builders.scene(cenary_builders.cenary_obj,cenary_builders.entities_obj,level.scene_3D_data,true)
+    cenary_builders.scene(cenary_builders.cenary,level.scene_3D_data,true)
 
     coroutine.yield()
 
@@ -73,8 +73,7 @@ function level:UPDATE()
 end
 
 function level:END()
-    remove_object(cenary_builders.cenary_obj)
-    remove_object(cenary_builders.entities_obj)
+    remove_object(cenary_builders.cenary)
     clear_memory()
 end
 

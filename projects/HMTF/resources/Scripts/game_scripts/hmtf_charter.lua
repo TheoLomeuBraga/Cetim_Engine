@@ -150,7 +150,6 @@ function interact()
         local hit_object = game_object:new(hit_info.collision_object)
 
         if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") then
-            --print(hit_object.components[components.lua_scripts]:get_variable("game_scripts/mensage","mensage"))
             hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage","interact",{})
             
         end
