@@ -344,6 +344,7 @@ public:
                 btRigidBody *rb = new btRigidBody(CI);
                 rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
+                print({gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force});
                 rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(rb);
                 bt_obj = rb;
