@@ -344,7 +344,6 @@ public:
                 btRigidBody *rb = new btRigidBody(CI);
                 rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
-                print({gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force});
                 rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(rb);
                 bt_obj = rb;
@@ -657,20 +656,9 @@ void atualisar_global_bullet()
 
     bullet_passo_tempo = 0;
 
-    dynamicsWorld->setGravity(glmToBt(gravidade));
+    //dynamicsWorld->setGravity(glmToBt(gravidade));
 
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
-
-    /*
-    print({"btMeshes_shapes_count", btMeshes_shapes_count});
-    if (btMeshes_shapes_count == 1)
-    {
-        for (pair<shared_ptr<std::string>, btCollisionShape *> p : btMeshes_shapes)
-        {
-            print({*p.first.get()});
-        }
-    }
-    */
 }
