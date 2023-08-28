@@ -76,7 +76,6 @@ function START()
     direction_reference = game_object:new(this_object_ptr)
     direction_reference:add_component(components.transform)
     direction_reference.components[components.transform]:set()
-
     
 end
 

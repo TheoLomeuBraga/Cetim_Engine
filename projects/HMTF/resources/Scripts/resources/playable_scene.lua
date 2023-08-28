@@ -49,13 +49,9 @@ cenary_builders = {
         return false
     end,
 
-    scene_part = function (cenary_father,entities_father, part_data,yield)
+    scene_part = function (father, part_data,yield)
         local ret = {}
-        if cenary_builders.is_entity(part_data) then
-            ret = game_object:new(create_object(entities_father))
-        else
-            ret = game_object:new(create_object(cenary_father))
-        end
+        ret = game_object:new(create_object(father))
         
 
         ret:add_component(components.transform)
@@ -191,15 +187,15 @@ cenary_builders = {
         
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.scene_part(ret.object_ptr,entities_father, value)
+            cenary_builders.scene_part(ret.object_ptr, value)
         end
         
         return ret
     end,
-    scene = function (cenary_father,entities_father, ceane_data,yield)
+    scene = function (father, ceane_data,yield)
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         
-        return cenary_builders.scene_part(cenary_father,entities_father, ceane_data.objects,yield)
+        return cenary_builders.scene_part(father, ceane_data.objects,yield)
     end,
 }

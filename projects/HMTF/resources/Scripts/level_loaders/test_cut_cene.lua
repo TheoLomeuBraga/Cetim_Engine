@@ -46,8 +46,7 @@ function level:START()
 
     coroutine.yield()
 
-    cenary_builders.cenary_obj = create_object(layers.cenary)
-    cenary_builders.entities_obj = create_object(layers.cenary)
+    cenary_builders.cenary = create_object(layers.cenary)
     cenary_builders.scene(cenary_builders.cenary_obj,cenary_builders.entities_obj,level.scene_3D_data,true)
 
     coroutine.yield()
