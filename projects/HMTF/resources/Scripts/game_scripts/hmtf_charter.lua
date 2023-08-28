@@ -165,8 +165,6 @@ function UPDATE()
     if game_state == game_states.play then
         time:get()
         gravity:get()
-        
-        
 
         mouse_sensitivity = global_data:get("mouse_sensitivity")
 

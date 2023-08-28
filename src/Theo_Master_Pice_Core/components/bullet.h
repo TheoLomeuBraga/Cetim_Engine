@@ -163,8 +163,10 @@ public:
     float gravity_force = 1;
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
+    btRigidBody *bt_obj_rb = NULL;
     vector<shared_ptr<objeto_jogo>> objs_touching;
     shared_ptr<std::string> mesh_shape_address = NULL;
+    btRigidBody *rb = NULL;
 
     void iniciar()
     {
@@ -328,7 +330,6 @@ public:
         {
             bt_obj = new btGhostObject();
             bt_obj->setCollisionShape(Shape);
-            // bt_obj->setCollisionFlags(bt_obj->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
@@ -341,33 +342,45 @@ public:
                 btVector3 Inertia = btVector3(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
                 btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
-                btRigidBody *rb = new btRigidBody(CI);
+                rb = new btRigidBody(CI);
                 rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
-                rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
+                rb->setGravity(btVector3(0,0,0));
                 rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(rb);
                 bt_obj = rb;
+                bt_obj_rb = rb;
             }
             else if (dinamica == estatico)
             {
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                btRigidBody *rb = new btRigidBody(CI);
+                rb = new btRigidBody(CI);
                 dynamicsWorld->addRigidBody(rb);
                 bt_obj = rb;
+                bt_obj_rb = rb;
             }
         }
 
         collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj, esse_objeto));
     }
 
+    void aply_gravity(){
+        if(bt_obj_rb != NULL && dinamica == dinamico ){
+            bt_obj_rb->activate();
+            bt_obj_rb->applyCentralForce(btVector3(gravidade.x * gravity_force * densidade, gravidade.y * gravity_force * densidade, gravidade.z * gravity_force * densidade));
+        }
+    }
+
     void atualisar()
     {
+        aply_gravity();
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
-        if (tf != NULL && bt_obj != NULL)
+        if (tf != NULL && bt_obj != NULL && !gatilho)
         {
             getObjectPositionAndQuaternion(bt_obj, tf->pos, tf->quater);
         }
     }
+
+    
 
     void colidir(colis_info col) {}
 
@@ -402,6 +415,7 @@ public:
                 collisionObject_obj.erase(bt_obj);
             }
             bt_obj = NULL;
+            bt_obj_rb = NULL;
         }
     }
 
@@ -443,18 +457,18 @@ public:
     }
     void adicionar_forca(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_impulso(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_velocidade(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
     }
 
     void adicionar_veaplicar_velocidade_rotativalocidade(vec3 forca)
@@ -463,18 +477,18 @@ public:
 
     void adicionar_forca_rotativo(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->applyTorque(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
     }
     void adicionar_impulso_rotativo(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
     }
     void aplicar_velocidade_rotativa(vec3 forca)
     {
-        ((btRigidBody *)(bt_obj))->activate();
-        ((btRigidBody *)(bt_obj))->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
+        bt_obj_rb->activate();
+        bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
     }
     ~bullet()
     {
@@ -584,6 +598,8 @@ void iniciar_global_bullet()
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
+        dynamicsWorld->setGravity(btVector3(0,0,0));
+
         global_bullet_iniciado++;
     }
 }
@@ -645,6 +661,7 @@ int maxSubSteps = 10;
 
 void atualisar_global_bullet()
 {
+    
     iniciar_global_bullet();
 
     // collisions
@@ -654,11 +671,13 @@ void atualisar_global_bullet()
     get_bu_collisions_no_per_object();
     clean_collisions();
 
+    
+
     bullet_passo_tempo = 0;
-
-    //dynamicsWorld->setGravity(glmToBt(gravidade));
-
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
+
+    //dynamicsWorld->setGravity(glmToBt(gravidade));
+
 }
