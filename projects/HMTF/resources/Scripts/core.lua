@@ -86,10 +86,6 @@ function load_sceane_step()
         
         previous_cenary = deepcopy(cenary)
 
-        if cenary ~= nil then
-            cenary:END()
-        end
-
         cenary = require("level_loaders." .. name)
         cenary:START()
         
@@ -99,14 +95,33 @@ function load_sceane_step()
     
 end
 
+local unloader = coroutine.create(function () end)
+function unload_sceane_step()
+    
+    if previous_cenary ~= nil then
+        previous_cenary:END()
+        previous_cenary = nil
+    end
+    
+end
+
 function load_sceane(cenary_name)
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
+    unloader = coroutine.create(unload_sceane_step)
 end
 
 function keep_loading()
     if coroutine.status(loader) ~= "dead" then
         coroutine.resume(loader)
+        return true
+    end
+    return false
+end
+
+function keep_unloading()
+    if coroutine.status(unloader) ~= "dead" then
+        coroutine.resume(unloader)
         return true
     end
     return false
@@ -224,10 +239,13 @@ function START()
 end
 
 function UPDATE()
+
+    
+
     if keep_loading() and cenary ~= nil then
         cenary:UPDATE()
     end
-    --
+    keep_unloading()
 
     if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
         window:close()

@@ -64,7 +64,9 @@ end
 
 function level:END()
     remove_object(cenary_builders.cenary)
+    coroutine.yield()
     clear_memory()
+    coroutine.yield()
 end
 
 return level
