@@ -144,14 +144,13 @@ function interact()
     local hit = false
     local hit_info = {}
     hit,hit_info = raycast_3D(ray_start,ray_end)
-    
+
     if hit then
 
         local hit_object = game_object:new(hit_info.collision_object)
 
-        if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") then
+        if  hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and (inputs.interact > 0 and inputs_last_frame.interact < 1) or (inputs.action_1 > 0 and inputs_last_frame.action_1 < 1) then
             hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage","interact",{})
-            
         end
 
     end
@@ -193,7 +192,7 @@ function UPDATE()
         hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
 
         if global_data:get("pause") < 1 then
-
+            
             --interact
             if inputs.interact > 0 and inputs_last_frame.interact < 1 then
                 interact()
