@@ -1,5 +1,16 @@
 require("math")
 
+function splitString(inputString, delimiter)
+    local result = {}
+    local pattern = string.format("([^%s]+)", delimiter)
+    
+    for match in inputString:gmatch(pattern) do
+        table.insert(result, match)
+    end
+    
+    return result
+end
+
 function deepcopy(orig)
     local orig_type = type(orig)
     local copy
