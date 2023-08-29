@@ -21,6 +21,8 @@ function interact(args)
     interacting = true
 
     local style = ui_style:new()
+    style.color = { r = 0, g = 0, b = 0, a = 1 }
+    style.text_color = { r = 1, g = 1, b = 1, a = 1 }
     style.text_location_x = render_text_location.left
     style.text_location_y = render_text_location.top
     dialog_box_father = create_object(global_data:get("layers").hud)
