@@ -10,6 +10,7 @@ local jsom = require("libs.json")
 
 mensage = nil
 mensage_index = nil
+mensage_indexs = nil
 mensage_list = nil
 
 interacting = false
@@ -22,6 +23,10 @@ function interact(args)
     
     global_data:set("pause",1)
     interacting = true
+
+    if mensage_index ~= nil then
+        mensage_indexs = splitString(mensage_index,":")
+    end
 
     if mensage ~= nil then
 
