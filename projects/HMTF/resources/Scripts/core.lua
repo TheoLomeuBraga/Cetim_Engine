@@ -38,6 +38,7 @@ back_ground = {}
 load_image = nil
 
 cenary = nil
+previous_cenary = nil
 
 function set_load_image(args)
 
@@ -83,7 +84,8 @@ function load_sceane_step()
     
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
         
-        
+        previous_cenary = deepcopy(cenary)
+
         if cenary ~= nil then
             cenary:END()
         end
