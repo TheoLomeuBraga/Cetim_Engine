@@ -39,9 +39,9 @@ function menu:UPDATE()
 end
 
 function menu:END()
-    clear_memory()
     remove_object(menu.camera_obj.object_ptr)
     remove_object(menu.menu_obj.object_ptr)
+    clear_memory()
 end
 
 return menu
