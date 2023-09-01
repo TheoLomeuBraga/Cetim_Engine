@@ -13,7 +13,6 @@ require("engine_libs.objects.global_data")
 local menu = {
     camera_obj = {},
     menu_obj = {},
-    
 }
 
 
