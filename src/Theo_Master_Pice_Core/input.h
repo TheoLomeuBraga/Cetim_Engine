@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+#include <thread>
 #include <GLFW/glfw3.h>
 using namespace std;
 
@@ -43,6 +43,20 @@ void get_input(){
 		manuseio_inputs->get_keyboard_input();
 		manuseio_inputs->get_mouse_input();
 		manuseio_inputs->get_joysticks_input();
+	}
+}
+
+void get_input_using_threads(){
+	if(manuseio_inputs != NULL){
+		thread t1(manuseio_inputs::get_text_input);
+		thread t2(manuseio_inputs::get_keyboard_input);
+		thread t3(manuseio_inputs::get_mouse_input);
+		thread t4(manuseio_inputs::get_joysticks_input);
+
+		t1.join();
+		t2.join();
+		t3.join();
+		t4.join();
 	}
 }
 

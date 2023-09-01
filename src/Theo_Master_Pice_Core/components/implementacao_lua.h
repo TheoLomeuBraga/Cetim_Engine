@@ -549,17 +549,17 @@ namespace funcoes_ponte
 
 		if (device == 1)
 		{
-
 			teclado t = manuseio_inputs->keyboard_input;
 
 			if (t.teclas.find(key) != t.teclas.end())
 			{
 				ret = t.teclas[key];
 			}
+			
 		}
 		else if (device == 2)
 		{
-
+			
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
@@ -576,7 +576,6 @@ namespace funcoes_ponte
 		}
 		else if (device == 3)
 		{
-			///*
 			input_mouse m = manuseio_inputs->mouse_input;
 
 			if (m.botoes.find(key) != m.botoes.end())
@@ -587,7 +586,6 @@ namespace funcoes_ponte
 			{
 				ret = m.movimentos[key];
 			}
-			//*/
 		}
 
 		lua_pushnumber(L, ret);

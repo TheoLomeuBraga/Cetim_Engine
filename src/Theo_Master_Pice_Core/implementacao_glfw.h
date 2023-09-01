@@ -101,64 +101,6 @@ namespace teclas
 
 	bool read_input_text = false;
 
-	/*
-	[0] = 48,["0"] = 48,
-        [1] = 49,["1"] = 49,
-        [2] = 50,["2"] = 50,
-        [3] = 51,["3"] = 51,
-        [4] = 52,["4"] = 52,
-        [5] = 53,["5"] = 53,
-        [6] = 54,["6"] = 54,
-        [7] = 55,["7"] = 55,
-        [8] = 56,["8"] = 56,
-        [9] = 57,["9"] = 57,
-        space = 32,
-        a = 65,
-        b = 66,
-        c = 67,
-        d = 68,
-        e = 69,
-        f = 70,
-        g = 71,
-        h = 72,
-        i = 73,
-        j = 74,
-        k = 75,
-        l = 76,
-        m = 77,
-        n = 78,
-        o = 79,
-        p = 80,
-        q = 81,
-        r = 82,
-        s = 83,
-        t = 84,
-        u = 85,
-        v = 86,
-        w = 87,
-        x = 88,
-        y = 89,
-        z = 90,
-        backslash = 92,
-        escape = 256,
-        enter = 257,
-        tab = 258,
-        backspace = 259,
-        insert = 260,
-        delete = 261,
-        right = 262,
-        left = 263,
-        down = 264,
-        up = 265,
-        caps_locl = 280,
-        shift = 340,
-        ctrl = 341,
-        alt = 342,
-        right_shift = 344,
-        right_ctrl = 345,
-        right_alt = 346,
-	*/
-
 	map<std::string,std::string> ajust_keys_map = {
 		
 		pair<std::string,std::string>("48","0"),
@@ -447,24 +389,31 @@ public:
 
 	teclado get_keyboard_input()
 	{
-		keyboard_input.teclas = teclas::generateKeyboardMap(janela);
-		keyboard_input.input_texto = get_text_input();
+		teclado ki;
+		ki.teclas = teclas::generateKeyboardMap(janela);
+		ki.input_texto = get_text_input();
+		keyboard_input = ki;
 		return keyboard_input;
 	}
 	input_mouse get_mouse_input()
 	{
-		mouse_input.movimentos = mouse::generateMouseInfo(janela);
-		mouse_input.botoes = mouse::generateMouseMap(janela);
+		input_mouse mi;
+		mi.movimentos = mouse::generateMouseInfo(janela);
+		mi.botoes = mouse::generateMouseMap(janela);
+		mouse_input = mi;
 		return mouse_input;
 	}
 	vector<joystick> get_joysticks_input()
 	{
-		joysticks_input.resize(controle::countConnectedJoysticks());
+		vector<joystick> ji = {};
+		ji.resize(controle::countConnectedJoysticks());
 		for (int i = 0; i < joysticks_input.size(); i++)
 		{
-			joysticks_input[i].botoes = controle::generateJoystickKeyMap(i);
-			joysticks_input[i].eixos = controle::generateJoystickAxes(i);
+			ji[i].botoes = controle::generateJoystickKeyMap(i);
+			ji[i].eixos = controle::generateJoystickAxes(i);
 		}
+
+		joysticks_input = ji;
 		return joysticks_input;
 	}
 

@@ -44,8 +44,9 @@ void configuracaoInicial()
 
     Antes_Render_Func.push_back(atualisar_global_box2D);
     Antes_Render_Func.push_back(atualisar_global_bullet);
-    Antes_Render_Func.push_back(get_input);
     Antes_Render_Func.push_back(teste3);
+    //Antes_Render_Func.push_back(get_input);
+    Antes_Render_Func.push_back(get_input_using_threads);
 
     // Iniciar_Render_Func.push_back(inciar_imgui);
     // Antes_Render_Func.push_back(antes_imgui);
@@ -63,6 +64,7 @@ void comecar()
     start_window_lib();
 
     thread grafi(loop_principal::loop_principal);
+    //start_input_geter();
 
     grafi.join();
 }
