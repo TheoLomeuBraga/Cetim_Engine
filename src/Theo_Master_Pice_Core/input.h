@@ -48,10 +48,10 @@ void get_input(){
 
 void get_input_using_threads(){
 	if(manuseio_inputs != NULL){
-		thread t1(manuseio_inputs::get_text_input);
-		thread t2(manuseio_inputs::get_keyboard_input);
-		thread t3(manuseio_inputs::get_mouse_input);
-		thread t4(manuseio_inputs::get_joysticks_input);
+		thread t1(&input_manager::get_text_input,manuseio_inputs);
+		thread t2(&input_manager::get_keyboard_input,manuseio_inputs);
+		thread t3(&input_manager::get_mouse_input,manuseio_inputs);
+		thread t4(&input_manager::get_joysticks_input,manuseio_inputs);
 
 		t1.join();
 		t2.join();
