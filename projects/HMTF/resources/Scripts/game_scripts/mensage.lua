@@ -76,7 +76,7 @@ function UPDATE()
     
     local inputs = global_data:get("inputs")
     local inputs_last_frame = global_data:get("inputs_last_frame")
-
+    
     if interacting and ((inputs.interact > 0 and inputs_last_frame.interact < 1) or (inputs.action_1 > 0 and inputs_last_frame.action_1 < 1)) then
         if first_frame then
             next_interaction()
