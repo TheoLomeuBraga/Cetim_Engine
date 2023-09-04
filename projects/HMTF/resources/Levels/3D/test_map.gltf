@@ -173,7 +173,8 @@
 		{
 			"extras":{
 				"type":"mensage",
-				"mensage":"hello world"
+				"mensage":"hello world",
+				"mensage_index":"signals:hello"
 			},
 			"mesh":6,
 			"name":"Cube.002",

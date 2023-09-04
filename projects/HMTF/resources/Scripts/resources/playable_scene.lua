@@ -157,10 +157,10 @@ cenary_builders = {
 
             local mensage = part_data.variables.mensage
             local mensage_index = part_data.variables.mensage_index
-            if mensage ~= nil then
+            if mensage_index ~= nil then
+                ret.components[components.lua_scripts]:set_variable("game_scripts/mensage","mensage_index",mensage_index)
+            elseif mensage ~= nil then
                 ret.components[components.lua_scripts]:set_variable("game_scripts/mensage","mensage",mensage)
-            elseif mensage_index ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/mensage","mensage",mensage_index)
             end
             
             add_mesh(nil)

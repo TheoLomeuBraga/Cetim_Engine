@@ -10,7 +10,6 @@ local jsom = require("libs.json")
 
 mensage = nil
 mensage_index = nil
-mensage_indexs = nil
 mensage_list = nil
 
 interacting = false
@@ -25,7 +24,8 @@ function interact(args)
     interacting = true
 
     if mensage_index ~= nil then
-        mensage_indexs = splitString(mensage_index,":") 
+        local mensage_indexs = splitString(mensage_index,":")
+        
     end
 
     if mensage ~= nil then
@@ -57,8 +57,6 @@ function stop_interact()
         remove_object(dialog_box_father)
 
     elseif mensage_list  ~= nil then
-
-
 
     end
 
