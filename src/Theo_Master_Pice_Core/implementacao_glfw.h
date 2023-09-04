@@ -271,12 +271,12 @@ namespace controle
 		pair<std::string,std::string>("13","left"),
 		pair<std::string,std::string>("14","right"),
 		
-		pair<std::string,std::string>("axis_0","rx"),
-		pair<std::string,std::string>("axis_1","ry"),
-		pair<std::string,std::string>("axis_3","lx"),
-		pair<std::string,std::string>("axis_4","ly"),
-		pair<std::string,std::string>("axis_2","rt"),
-		pair<std::string,std::string>("axis_5","lt"),
+		pair<std::string,std::string>("axis_0","lx"),
+		pair<std::string,std::string>("axis_1","ly"),
+		pair<std::string,std::string>("axis_3","rx"),
+		pair<std::string,std::string>("axis_4","ry"),
+		pair<std::string,std::string>("axis_2","lt"),
+		pair<std::string,std::string>("axis_5","rt"),
 	};
 
 	static std::vector<int> prevJoystickButtonsState;
