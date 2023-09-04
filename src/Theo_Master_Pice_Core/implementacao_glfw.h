@@ -332,7 +332,12 @@ namespace controle
 
 			for (int i = 0; i < axisCount; ++i)
 			{
-				joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				
+				if (i == 2 || i == 5){
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+				}else{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				}
 			}
 		}
 

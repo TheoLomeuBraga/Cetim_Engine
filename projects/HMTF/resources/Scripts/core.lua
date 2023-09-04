@@ -235,6 +235,8 @@ function START()
     load_configs()
 
     load_sceane("main_menu")
+
+    global_data:set_var("localization_file","resources/localization/AmericanEnglish.json")
     
 end
 

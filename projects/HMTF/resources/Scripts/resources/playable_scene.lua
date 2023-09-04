@@ -26,27 +26,38 @@ menu = {
     end,
 }
 
+local entity_ptr_list = {}
+
 cenary_builders = {
 
     yield_count_down_total_time = 10,
     yield_count_down = 10,
 
-    entity_part = function (father, part_data)
-    end,
-    entity = function (entity_obj, ceane_data)
+    entity_part = function (father, part_data,yield)
+
+        local ret = game_object:new(create_object(father))
+
+        entity_ptr_list[tablelength(entity_ptr_list) + 1] = ret.object_ptr
+        return ret
+
     end,
 
-    is_entity = function (part_data)
-        entyty_types = {"player_start","camera","music","sound"}
-        --[[
-        for index, value in ipairs(entyty_types) do
-            if part_data.variables.type == value then
-                return true
-            end
-        end
-        ]]
+    entity = function (father, ceane_data,yield)
         
-        return false
+        local ret = {
+            obj = {},
+            parts_ptr_list = {}
+        }
+
+        entity_ptr_list = {}
+
+        local entity_part = cenary_builders.entity_part(father, ceane_data.objects,yield)
+
+        ret.obj = entity_part.obj
+        ret.parts_ptr_list = deepcopy(entity_ptr_list)
+
+        return ret
+
     end,
 
     scene_part = function (father, part_data,yield)

@@ -1,6 +1,6 @@
 {
     "signals" : {
-        "hello" : "hello world"
+        "hello" : "hello world;welcome"
     }
 }
   
