@@ -42,7 +42,7 @@ function UPDATE()
     inputs = {
         foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
         left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - analog_left,
-        jump = keys_axis:get_input(input_devices.keyboard,"space") + keys_axis:get_input_joystick(1,"a"),
+        jump = keys_axis:get_input(input_devices.keyboard,"space") + keys_axis:get_input_joystick(1,"la"),
         interact = keys_axis:get_input(input_devices.keyboard,"e") + keys_axis:get_input_joystick(1,"y"),
         action_1 = keys_axis:get_input(input_devices.mouse,"left") + (keys_axis:get_input_joystick(1,"rt_axis") + 1) - 1,
         action_2 = keys_axis:get_input(input_devices.mouse,"right") + (keys_axis:get_input_joystick(1,"lt_axis") + 1) - 1,
@@ -52,6 +52,8 @@ function UPDATE()
         analog_view_y = av_y,
         menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
     }
+
+    
 
     if inputs.foward < -1 then
         inputs.foward = -1

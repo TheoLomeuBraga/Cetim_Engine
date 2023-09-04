@@ -25,7 +25,7 @@ function interact(args)
     interacting = true
 
     if mensage_index ~= nil then
-        mensage_indexs = splitString(mensage_index,":")
+        mensage_indexs = splitString(mensage_index,":") 
     end
 
     if mensage ~= nil then

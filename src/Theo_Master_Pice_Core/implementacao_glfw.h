@@ -248,7 +248,7 @@ namespace controle
 		{
 			if (glfwJoystickPresent(i))
 			{
-				++count;
+				count++;
 			}
 		}
 
@@ -264,8 +264,8 @@ namespace controle
 		pair<std::string,std::string>("5","rb"),
 		pair<std::string,std::string>("6","back"),
 		pair<std::string,std::string>("7","start"),
-		pair<std::string,std::string>("9","lt"),
-		pair<std::string,std::string>("10","rt"),
+		pair<std::string,std::string>("9","la"),
+		pair<std::string,std::string>("10","ra"),
 		pair<std::string,std::string>("11","up"),
 		pair<std::string,std::string>("12","down"),
 		pair<std::string,std::string>("13","left"),
@@ -275,8 +275,8 @@ namespace controle
 		pair<std::string,std::string>("axis_1","ry"),
 		pair<std::string,std::string>("axis_3","lx"),
 		pair<std::string,std::string>("axis_4","ly"),
-		pair<std::string,std::string>("axis_2","rt_axis"),
-		pair<std::string,std::string>("axis_5","lt_axis"),
+		pair<std::string,std::string>("axis_2","rt"),
+		pair<std::string,std::string>("axis_5","lt"),
 	};
 
 	static std::vector<int> prevJoystickButtonsState;
@@ -452,7 +452,6 @@ void mudar_imagem_cursor(shared_ptr<imagem> img)
 {
 	if (img == NULL)
 	{
-		//glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else
