@@ -30,7 +30,7 @@ function interact(args)
     if mensage_index ~= nil then
         local mensage_indexs = splitString(mensage_index,":")
         local localization_data = serializer.load_table_json(global_data:get_var("localization_file"))
-        mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]],";")
+        mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]],"\n")
     end
 
     if mensage ~= nil then
