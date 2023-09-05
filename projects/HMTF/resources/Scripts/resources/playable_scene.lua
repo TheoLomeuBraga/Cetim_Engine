@@ -133,7 +133,7 @@ cenary_builders = {
 
             ret:add_component(components.lua_scripts)
             ret:add_component(components.physics_3D)
-            ret.components[components.lua_scripts]:add_script("game_scripts/hmtf_charter")
+            ret.components[components.lua_scripts]:add_script("game_scripts/charter")
 
         elseif part_data.variables.type == "music" then
 
