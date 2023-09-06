@@ -35,7 +35,7 @@ function level:START()
     --print("yield 1")
 
     cenary_builders.cenary = create_object(layers.cenary)
-    cenary_builders.scene(cenary_builders.cenary,level.scene_3D_data,true)
+    cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
 
     coroutine.yield()
     --print("yield 2")

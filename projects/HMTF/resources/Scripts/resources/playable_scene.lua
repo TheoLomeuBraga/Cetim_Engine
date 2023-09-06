@@ -33,7 +33,7 @@ cenary_builders = {
     yield_count_down_total_time = 10,
     yield_count_down = 10,
 
-    entity_part = function (father, part_data,yield)
+    entity_part = function (father,layer, part_data,yield)
 
         local ret = game_object:new(create_object(father))
 
@@ -42,7 +42,7 @@ cenary_builders = {
 
     end,
 
-    entity = function (father, ceane_data,yield)
+    entity = function (father,layer, ceane_data,yield)
         
         local ret = {
             obj = {},
@@ -51,7 +51,7 @@ cenary_builders = {
 
         entity_ptr_list = {}
 
-        local entity_part = cenary_builders.entity_part(father, ceane_data.objects,yield)
+        local entity_part = cenary_builders.entity_part(father,layer, ceane_data.objects,yield)
 
         ret.obj = entity_part.obj
         ret.parts_ptr_list = deepcopy(entity_ptr_list)
@@ -60,7 +60,7 @@ cenary_builders = {
 
     end,
 
-    scene_part = function (father, part_data,yield)
+    scene_part = function (father,layer, part_data,yield)
         local ret = {}
         ret = game_object:new(create_object(father))
         
@@ -104,7 +104,7 @@ cenary_builders = {
                 end
     
                 ret:add_component(components.render_mesh)
-                ret.components[components.render_mesh].layer = 2
+                ret.components[components.render_mesh].layer = layer
                 ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
                 ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
                 ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
@@ -205,15 +205,15 @@ cenary_builders = {
         
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.scene_part(ret.object_ptr, value)
+            cenary_builders.scene_part(ret.object_ptr,layer, value)
         end
         
         return ret
     end,
-    scene = function (father, ceane_data,yield)
+    scene = function (father,layer, ceane_data,yield)
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         
-        return cenary_builders.scene_part(father, ceane_data.objects,yield)
+        return cenary_builders.scene_part(father,layer, ceane_data.objects,yield)
     end,
 }
