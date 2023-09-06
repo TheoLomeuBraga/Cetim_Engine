@@ -76,6 +76,8 @@ function START()
     direction_reference = game_object:new(this_object_ptr)
     direction_reference:add_component(components.transform)
     direction_reference.components[components.transform]:set()
+
+    this_object:add_component(components.audio_source)
     
 end
 
@@ -237,6 +239,10 @@ function UPDATE()
             if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
                 inpulse_y = force_y
                 base_directional_inpulse = deepcopy(input_dir)
+
+                this_object.components[components.audio_source].path = "resources/Audio/sounds/jump.wav"
+                this_object.components[components.audio_source].volume = 20
+                this_object.components[components.audio_source]:set()
             end
 
             directional_inpulse  = crossProduct(base_directional_inpulse,hit_info.normal)
