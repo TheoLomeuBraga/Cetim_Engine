@@ -5,12 +5,53 @@
  *      Author: theo
  */
 
+/*
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+
+
+
+
+
+void InitImGui() {
+    // Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO();
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(janela, true);
+	ImGui_ImplOpenGL3_Init("#version 330 core");
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+}
+
+// Function to update the ImGui UI
+void UpdateImGuiUI() {
+    // render your GUI
+    ImGui::Begin("Demo window");
+    ImGui::Button("Hello!");
+    ImGui::End();
+
+    // Render dear imgui into screen
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ShutdownImGui() {
+    ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+*/
+
 #include <iostream>
 #include <fstream>
 #include <functional>
 #include <stdlib.h>
 #include <thread>
-#include <future>
 #include <fstream>
 #include <type_traits>
 #include <iterator>
@@ -35,6 +76,10 @@
 
 #include <bitset>
 
+
+
+
+
 void configuracaoInicial()
 {
 
@@ -45,12 +90,13 @@ void configuracaoInicial()
     Antes_Render_Func.push_back(atualisar_global_box2D);
     Antes_Render_Func.push_back(atualisar_global_bullet);
     Antes_Render_Func.push_back(teste3);
-    //Antes_Render_Func.push_back(get_input);
     Antes_Render_Func.push_back(get_input_using_threads);
 
-    // Iniciar_Render_Func.push_back(inciar_imgui);
-    // Antes_Render_Func.push_back(antes_imgui);
-    // Depois_Render_Func.push_back(depois_imgui);
+    /*
+    Iniciar_Render_Func.push_back(InitImGui);
+    Antes_Render_Func.push_back(UpdateImGuiUI);
+    Depois_Render_Func.push_back(ShutdownImGui);
+    */
 }
 void comecar()
 {

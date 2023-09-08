@@ -9,6 +9,8 @@
 
 GLFWwindow *janela;
 
+
+
 bool interromper_loop_input = false;
 
 namespace mouse
@@ -606,6 +608,7 @@ void IniciarJanela()
 
 	AntesReindenizar();
 
+
 	cout << "Graficos Online" << endl;
 
 	glfwSetInputMode(janela, GLFW_STICKY_KEYS, GL_TRUE);
@@ -630,7 +633,7 @@ void loop_janela()
 	Tempo::tempUltFrameRender = Tempo::tempo;
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
-	glfwPollEvents();
+	
 
 	Reindenizar();
 
@@ -638,7 +641,6 @@ void loop_janela()
 
 	// Swap buffers
 	glfwSwapBuffers(janela);
-	glfwPollEvents();
 }
 
 class gerenciador_janela_glfw : public gerenciador_janela
