@@ -14,7 +14,7 @@ TARGET_FONT_READER_WINDOWS := ./build/font_reader_gtk.exe
 TARGET_FONT_READER_LINUX := ./build/font_reader_gtk
 
 SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/backends/imgui_impl_glfw.cpp  
-SRC_ENGINE := ./src/Theo_Master_Pice/TMP.cpp  #$(SRC_IMGUI)
+SRC_ENGINE := ./src/Theo_Master_Pice/TMP.cpp  $(SRC_IMGUI)
 SRC_READER := ./src/font_reader_gtk/font_reader_gtk.cpp
 
 INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Pice -I./src/Theo_Master_Pice_Core -I./src/Theo_Master_Pice_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends

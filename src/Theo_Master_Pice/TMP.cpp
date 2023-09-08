@@ -5,16 +5,13 @@
  *      Author: theo
  */
 
-/*
+//*
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-
-
-
-
+#include "implementacao_glfw.h"
 
 void InitImGui() {
     // Setup Dear ImGui context
@@ -23,29 +20,26 @@ void InitImGui() {
 	ImGuiIO &io = ImGui::GetIO();
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(janela, true);
-	ImGui_ImplOpenGL3_Init("#version 330 core");
+	ImGui_ImplOpenGL3_Init("#version 330");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 }
 
 // Function to update the ImGui UI
 void UpdateImGuiUI() {
-    // render your GUI
-    ImGui::Begin("Demo window");
-    ImGui::Button("Hello!");
-    ImGui::End();
-
-    // Render dear imgui into screen
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 }
 
 void ShutdownImGui() {
-    ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+    ImGui::Begin("Demo window");
+    ImGui::Button("Hello!");
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-*/
+//*/
 
 #include <iostream>
 #include <fstream>
@@ -89,14 +83,14 @@ void configuracaoInicial()
 
     Antes_Render_Func.push_back(atualisar_global_box2D);
     Antes_Render_Func.push_back(atualisar_global_bullet);
-    Antes_Render_Func.push_back(teste3);
     Antes_Render_Func.push_back(get_input_using_threads);
+    Antes_Render_Func.push_back(teste3);
 
-    /*
+    //*
     Iniciar_Render_Func.push_back(InitImGui);
     Antes_Render_Func.push_back(UpdateImGuiUI);
     Depois_Render_Func.push_back(ShutdownImGui);
-    */
+    //*/
 }
 void comecar()
 {
