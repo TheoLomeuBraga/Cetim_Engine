@@ -86,11 +86,11 @@ void configuracaoInicial()
     Antes_Render_Func.push_back(get_input_using_threads);
     Antes_Render_Func.push_back(teste3);
 
-    //*
+    /*
     Iniciar_Render_Func.push_back(InitImGui);
     Antes_Render_Func.push_back(UpdateImGuiUI);
     Depois_Render_Func.push_back(ShutdownImGui);
-    //*/
+    */
 }
 void comecar()
 {

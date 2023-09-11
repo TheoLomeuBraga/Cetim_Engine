@@ -66,6 +66,7 @@ public:
 
 	map<shared_ptr<objeto_jogo>, unsigned int> oclusion_queries;
 	map<shared_ptr<objeto_jogo>, int> oclusion_queries_resultados;
+	unsigned int oclusion_querie_in_view = 0;
 
 	unsigned int CompilarShader_ogl(vector<pair<string, unsigned int>> shader)
 	{
@@ -350,9 +351,14 @@ public:
 		{
 			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
 
-			if (p.first->pegar_componente<render_malha>()->usar_oclusao)
+			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
+			if (rm->usar_oclusao)
 			{
-				p.first->pegar_componente<render_malha>()->ligado = oclusion_queries_resultados[p.first] > 0;
+				rm->ligado = oclusion_queries_resultados[p.first] > 0;
+				if(oclusion_queries_resultados[p.first] > 0){
+					oclusion_querie_in_view++;
+				}
+				
 			}
 		}
 	}
@@ -375,6 +381,7 @@ public:
 		}
 		oclusion_queries.swap(oclusion_queries2);
 		oclusion_queries_resultados.swap(oclusion_queries_resultados2);
+		oclusion_querie_in_view = 0;
 	}
 
 	void aplicar_frame_buffer_principal()
@@ -1348,8 +1355,7 @@ public:
 	{
 		
 
-		pegar_oclusion_queries();
-		limpar_oclusion_queries();
+		
 
 		// transparency
 
@@ -1392,9 +1398,15 @@ public:
 			{
 				if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
 				{
+					pegar_oclusion_queries();
+					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
+					//print({"oclusion_querie_in_view",oclusion_querie_in_view});
+					limpar_oclusion_queries();
+					
 					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);
 
-					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
+					
+					
 				}
 				else
 				{
@@ -1406,7 +1418,9 @@ public:
 		}
 	}
 
-	~OpenGL_API(){print({"OpenGL deleted"});}
+	~OpenGL_API(){
+		print({"OpenGL deleted"});
+	}
 };
 
 // OpenGL_APP* APP;
