@@ -214,8 +214,6 @@ end
 
 -- asset 3D scene
 -- adicionar lua cena 3D
-function get_scene_3D_json(path)
-end
 
 -- moovement
 function to_move(object, x, y)

@@ -282,19 +282,23 @@ public:
 
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
+
+			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
+			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
+			
 			glDisable(GL_CULL_FACE);
-			glDisable(GL_DEPTH_TEST);
 
 			if (!show_oclusion_querie)
 			{
 				glColorMask(false, false, false, false);
 			}
 
-			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
-			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
 
 			if (tf != NULL && rm != NULL && rm->usar_oclusao)
 			{
+
+				
+
 				glBeginQuery(GL_SAMPLES_PASSED, p.second);
 
 				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
@@ -312,8 +316,17 @@ public:
 					glEnableVertexAttribArray(i);
 				}
 
-				for (shared_ptr<malha> m : rm->malhas)
+				for (char i = 0 ; i < rm->malhas.size() ; i++ )
 				{
+					shared_ptr<malha> m = rm->malhas[i];
+
+					if(rm->mats[i].cor.w < 1){
+						glDisable(GL_DEPTH_TEST);
+					}else{
+						glEnable(GL_DEPTH_TEST);
+					}
+
+					//glEnable(GL_DEPTH_TEST);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[m.get()].vbo);
 					glBindBuffer(GL_ARRAY_BUFFER, malhas[m.get()].malha_buffer);
@@ -1400,7 +1413,7 @@ public:
 				{
 					pegar_oclusion_queries();
 					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
-					//print({"oclusion_querie_in_view",oclusion_querie_in_view});
+					print({"oclusion_querie_in_view",oclusion_querie_in_view});
 					limpar_oclusion_queries();
 					
 					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);

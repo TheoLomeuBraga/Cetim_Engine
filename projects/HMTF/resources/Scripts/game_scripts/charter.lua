@@ -47,6 +47,12 @@ game_states = {
 
 game_state = 0
 
+local cannon = {
+    obj = {},
+    objs_list = {},
+    animations = {},
+}
+
 function START()
 
     global_data:set("player_object_ptr",this_object_ptr)
@@ -66,7 +72,7 @@ function START()
     this_object.components[components.physics_3D].rotate_X = false
     this_object.components[components.physics_3D].rotate_Y = false
     this_object.components[components.physics_3D].rotate_Z = false
-    this_object.components[components.physics_3D].friction = 1
+    this_object.components[components.physics_3D].friction = 0
     this_object.components[components.physics_3D].gravity_scale = 0
     this_object.components[components.physics_3D].triger = false
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
