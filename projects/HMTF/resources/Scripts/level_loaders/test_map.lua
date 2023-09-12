@@ -13,7 +13,8 @@ local level = {
 core_obj = {}
 
 local assets_needed = {
-    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf")
+    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/test_map.gltf"),
+    --new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
 }
 
 function level:START()

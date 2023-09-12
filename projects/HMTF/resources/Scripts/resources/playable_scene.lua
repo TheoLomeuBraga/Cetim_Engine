@@ -30,14 +30,51 @@ local entity_ptr_list = {}
 
 cenary_builders = {
 
-    yield_count_down_total_time = 10,
-    yield_count_down = 10,
+    yield_count_down_total_time = 50,
+    yield_count_down = 50,
 
     entity_part = function (father,layer, part_data,yield)
 
         local ret = game_object:new(create_object(father))
-
         entity_ptr_list[tablelength(entity_ptr_list) + 1] = ret.object_ptr
+
+        ret:add_component(components.transform)
+        ret.components[components.transform].position = deepcopy(part_data.position)
+        ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+
+        if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
+            ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+        else
+            ret.components[components.transform].scale = deepcopy(part_data.scale)
+        end
+        
+        ret.components[components.transform]:set()
+
+        if part_data.meshes ~= nil and part_data.materials ~= nil then
+
+            ret:add_component(components.render_mesh)
+            ret.components[components.render_mesh].layer = layer
+            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
+            ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
+            ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+            ret.components[components.render_mesh]:set()
+
+        end
+
+        if yield == true then
+
+            cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
+            if cenary_builders.yield_count_down < 1 then
+                coroutine.yield()
+                cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
+            end
+            
+        end
+
+        for key, value in pairs(part_data.children) do
+            cenary_builders.entity_part(ret.object_ptr,layer, value,yield)
+        end
+
         return ret
 
     end,
@@ -46,16 +83,21 @@ cenary_builders = {
         
         local ret = {
             obj = {},
-            parts_ptr_list = {}
+            parts_ptr_list = {},
+            parts_list = {},
         }
+        
+        if yield == nil then yield = false end
+        cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
+        local entity_parts = cenary_builders.entity_part(father,layer, ceane_data.objects,yield)
+
+        ret.obj = deepcopy(entity_parts)
+        ret.parts_ptr_list = deepcopy(entity_ptr_list)
+        for key, value in pairs(ret.parts_ptr_list) do
+            ret.parts_list[key] = game_object:new(value)
+        end
 
         entity_ptr_list = {}
-
-        local entity_part = cenary_builders.entity_part(father,layer, ceane_data.objects,yield)
-
-        ret.obj = entity_part.obj
-        ret.parts_ptr_list = deepcopy(entity_ptr_list)
-
         return ret
 
     end,
@@ -213,7 +255,6 @@ cenary_builders = {
     scene = function (father,layer, ceane_data,yield)
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-        
         return cenary_builders.scene_part(father,layer, ceane_data.objects,yield)
     end,
 }
