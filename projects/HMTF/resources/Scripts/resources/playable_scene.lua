@@ -33,7 +33,7 @@ cenary_builders = {
     yield_count_down_total_time = 50,
     yield_count_down = 50,
 
-    entity_part = function (father,layer, part_data,yield)
+    entity_part = function (father,layer, part_data,use_oclusion,yield)
 
         local ret = game_object:new(create_object(father))
         entity_ptr_list[tablelength(entity_ptr_list) + 1] = ret.object_ptr
@@ -57,6 +57,7 @@ cenary_builders = {
             ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
             ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
             ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+            ret.components[components.render_mesh].use_oclusion = use_oclusion
             ret.components[components.render_mesh]:set()
 
         end
@@ -79,7 +80,7 @@ cenary_builders = {
 
     end,
 
-    entity = function (father,layer, ceane_data,yield)
+    entity = function (father,layer, ceane_data,use_oclusion,yield)
         
         local ret = {
             obj = {},
@@ -89,7 +90,7 @@ cenary_builders = {
         
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-        local entity_parts = cenary_builders.entity_part(father,layer, ceane_data.objects,yield)
+        local entity_parts = cenary_builders.entity_part(father,layer, ceane_data.objects,use_oclusion,yield)
 
         ret.obj = deepcopy(entity_parts)
         ret.parts_ptr_list = deepcopy(entity_ptr_list)

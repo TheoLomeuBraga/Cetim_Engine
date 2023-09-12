@@ -55,7 +55,7 @@ local cannon = {
 
 function create_arm_cannon()
     local sceane_3D_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
-    local entity_data = cenary_builders.entity(camera.object_ptr,2, sceane_3D_data,false)
+    local entity_data = cenary_builders.entity(camera.object_ptr,4, sceane_3D_data,false,false)
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
 end
@@ -96,7 +96,7 @@ function START()
 
     this_object:add_component(components.audio_source)
 
-    --create_arm_cannon()
+    create_arm_cannon()
     
 end
 

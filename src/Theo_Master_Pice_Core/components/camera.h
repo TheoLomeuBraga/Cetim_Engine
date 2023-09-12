@@ -30,6 +30,25 @@ public:
 
 	camera() {}
 
+	glm::mat4 removeQuaternionFromMatrix(const glm::mat4 &originalMatrix)
+	{
+		// Extract the translation part of the original matrix.
+		glm::vec3 translation = glm::vec3(originalMatrix[3]);
+
+		// Extract the scale part of the original matrix.
+		glm::vec3 scale;
+		scale.x = glm::length(glm::vec3(originalMatrix[0]));
+		scale.y = glm::length(glm::vec3(originalMatrix[1]));
+		scale.z = glm::length(glm::vec3(originalMatrix[2]));
+
+		// Create a new transformation matrix with identity rotation, extracted translation, and scale.
+		glm::mat4 newMatrix = glm::mat4(1.0f);
+		newMatrix = glm::translate(newMatrix, translation);
+		newMatrix = glm::scale(newMatrix, scale);
+
+		return newMatrix;
+	}
+
 	glm::mat4 getCameraViewMatrix(glm::mat4 transformMatrix)
 	{
 		// Remove a informação de escala da matriz de transformação
@@ -44,6 +63,17 @@ public:
 		return viewMatrix;
 	}
 
+	glm::mat4 reapplyQuaternionToMatrix(const glm::mat4 &originalMatrix, const glm::quat &rotationQuaternion)
+	{
+		// Create a new transformation matrix with the quaternion rotation.
+		glm::mat4 rotationMatrix = glm::mat4_cast(rotationQuaternion);
+
+		// Combine the original transformation matrix with the rotation matrix.
+		glm::mat4 newMatrix = originalMatrix * rotationMatrix;
+
+		return newMatrix;
+	}
+
 	void atualizar_tf()
 	{
 
@@ -56,12 +86,9 @@ public:
 			vec3 pos, pos_alvo, pos_cima;
 			quat qua;
 			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
-			
-			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
-			matrizVisao = translate(matrizVisao,vec3(pos.x,-pos.y,pos.z));
 
-			
-			
+			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
+			matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
 		}
 	}
 
@@ -93,7 +120,7 @@ public:
 		alvo = a;
 		cima = c;
 
-		//atualizar_tf();
+		// atualizar_tf();
 
 		ortografica = false;
 		zoom = ZooM;
@@ -110,8 +137,7 @@ public:
 		alvo = a;
 		cima = c;
 
-		//atualizar_tf();
-		
+		// atualizar_tf();
 
 		ortografica = true;
 		tamanho = vec2(tamanhoX, tamanhoY);
@@ -131,6 +157,4 @@ public:
 	{
 		configurar_camera(p, a, c, tamanhoX, tamanhoY, ncp, fcp);
 	}
-
-	
 };

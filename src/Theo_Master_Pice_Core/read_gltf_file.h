@@ -456,11 +456,14 @@ namespace gltf_loader
             return true;
         }
 
+        
+
         const auto &animationsJson = gltf["animations"];
         animations.reserve(animationsJson.size());
 
         for (const auto &animationJson : animationsJson)
         {
+            
             Animation animation;
 
             if (animationJson.contains("name"))
@@ -484,8 +487,11 @@ namespace gltf_loader
                 animation.channels.push_back(channel);
             }
 
+            
+
             for (const auto &samplerJson : samplersJson)
             {
+
                 AnimationSampler sampler;
                 sampler.inputAccessorIndex = samplerJson["input"];
                 sampler.outputAccessorIndex = samplerJson["output"];
@@ -500,11 +506,13 @@ namespace gltf_loader
                 {
                     sampler.start_time = input[0];
                     sampler.duration = input[input.size() - 1];
-                    // print({"sampler.start_time:",sampler.start_time,"sampler.duration:",sampler.duration});
                 }
 
                 animation.samplers.push_back(sampler);
+
             }
+
+            
 
             animations.push_back(animation);
         }
@@ -541,6 +549,8 @@ namespace gltf_loader
             animations[a].start_time = start_time;
             animations[a].duration = duration_time;
         }
+
+        
 
         return true;
     }
@@ -792,6 +802,7 @@ namespace gltf_loader
 
     std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
     {
+
         const Accessor &accessor = accessors[accessorIndex];
         const BufferView &bufferView = bufferViews[accessor.bufferView];
         const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
@@ -837,6 +848,10 @@ namespace gltf_loader
         else if (accessor.type == "VEC4")
         {
             numComponents = 4;
+        }
+        else if (accessor.type == "MAT4")
+        {
+            numComponents = 16;
         }
         else
         {
@@ -1016,18 +1031,25 @@ namespace gltf_loader
                     }
 
                     // corect mesh
+                    //print({"mesh.indices.size() / 3",mesh.indices.size() / 3,mesh.indices.size() % 3});
                     vector<unsigned int> new_indice;
                     for (int i = 0; i < mesh.indices.size() / 3; i += 3)
                     {
 
-                        if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
+                        
+                        //if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
+                        if ((mesh.indices[i] < mesh.indices.size() -1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
                         {
                             new_indice.push_back(mesh.indices[i]);
                             new_indice.push_back(mesh.indices[i + 1]);
                             new_indice.push_back(mesh.indices[i + 2]);
+                        }else{
+                            break;
                         }
                     }
                     mesh.indices = new_indice;
+
+                    //print({"new_indice.size() / 3",new_indice.size() / 3,new_indice.size() % 3});
 
                     if (primitive.contains("material"))
                     {
@@ -1044,15 +1066,25 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
+        //print({"loadBuffers"});
         loadBuffers();
+        //print({"loadBufferViews"});
         loadBufferViews();
+        //print({"loadAccessors"});
         loadAccessors();
+        //print({"loadMeshes"});
         loadMeshes();
+        //print({"loadScenes"});
         loadScenes();
+        //print({"loadNodes"});
         loadNodes();
+        //print({"loadAnimations"});
         loadAnimations();
+        //print({"loadTextures"});
         loadTextures();
+        //print({"loadMaterials"});
         loadMaterials();
+        //print({"load end"});
 
         return true;
     }

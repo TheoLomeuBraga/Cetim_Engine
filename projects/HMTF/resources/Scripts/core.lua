@@ -58,7 +58,7 @@ function set_load_image(args)
         end
         mat.color.a = 1
 
-        load_image = create_render_shader(layers.hud, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 4, mat)
+        load_image = create_render_shader(layers.hud, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 5, mat)
     else
         remove_object(load_image.object_ptr)
         load_image = nil
@@ -161,6 +161,16 @@ function set_render_layers()
     }
 
     renders_layers.layers[4] = {
+        camera_selected = 0,
+        start_render = false,
+        clean_color = false,
+        clean_deep = true,
+        enable = true,
+        end_render = true,
+        use_deep = true,
+    }
+
+    renders_layers.layers[5] = {
         camera_selected = 0,
         start_render = false,
         clean_color = false,

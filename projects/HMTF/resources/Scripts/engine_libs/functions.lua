@@ -119,7 +119,6 @@ function stop_coroutine_if_is_not_loaded(asset_list)
                 coroutine.yield()
             end
         end
-        
     end
 end
 
