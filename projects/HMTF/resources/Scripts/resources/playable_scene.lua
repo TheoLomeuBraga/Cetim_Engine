@@ -104,8 +104,10 @@ cenary_builders = {
     end,
 
     scene_part = function (father,layer, part_data,yield)
+
         local ret = {}
         ret = game_object:new(create_object(father))
+
         
 
         ret:add_component(components.transform)
@@ -154,8 +156,6 @@ cenary_builders = {
                 ret.components[components.render_mesh]:set()
             end
         end
-
-        
 
         if part_data.variables.type == "sb" then
 
@@ -233,8 +233,6 @@ cenary_builders = {
             add_mesh(nil)
         end
 
-        
-
         if yield == true then
 
             cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
@@ -244,8 +242,6 @@ cenary_builders = {
             end
             
         end
-        
-        
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr,layer, value)
