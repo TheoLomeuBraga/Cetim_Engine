@@ -295,7 +295,7 @@ function UPDATE()
             
         end
 
-        camera.components[components.transform]:change_rotation(camera_rotation.y,0,0)
+        camera.components[components.transform]:change_rotation(-camera_rotation.y,0,0)
         this_object.components[components.transform]:change_rotation(0,camera_rotation.x,0)
         pause_last_frame = global_data:get("pause") < 1
     end

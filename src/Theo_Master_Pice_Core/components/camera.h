@@ -30,23 +30,15 @@ public:
 
 	camera() {}
 
-	glm::mat4 removeQuaternionFromMatrix(const glm::mat4 &originalMatrix)
+	glm::mat4 removeQuaternionFromMatrix(const glm::mat4 &matrix)
 	{
-		// Extract the translation part of the original matrix.
-		glm::vec3 translation = glm::vec3(originalMatrix[3]);
+		// Extract the 3x3 rotation matrix from the upper-left corner of the 4x4 matrix.
+		glm::mat3 rotationMatrix = glm::mat3(matrix);
 
-		// Extract the scale part of the original matrix.
-		glm::vec3 scale;
-		scale.x = glm::length(glm::vec3(originalMatrix[0]));
-		scale.y = glm::length(glm::vec3(originalMatrix[1]));
-		scale.z = glm::length(glm::vec3(originalMatrix[2]));
+		// Extract the quaternion representation of the rotation matrix.
+		glm::quat rotationQuaternion = glm::quat_cast(rotationMatrix);
 
-		// Create a new transformation matrix with identity rotation, extracted translation, and scale.
-		glm::mat4 newMatrix = glm::mat4(1.0f);
-		newMatrix = glm::translate(newMatrix, translation);
-		newMatrix = glm::scale(newMatrix, scale);
-
-		return newMatrix;
+		return toMat4(rotationQuaternion);
 	}
 
 	glm::mat4 getCameraViewMatrix(glm::mat4 transformMatrix)
@@ -63,15 +55,12 @@ public:
 		return viewMatrix;
 	}
 
-	glm::mat4 reapplyQuaternionToMatrix(const glm::mat4 &originalMatrix, const glm::quat &rotationQuaternion)
+	glm::quat extractQuaternionFromMatrix(const glm::mat4 &matrix)
 	{
-		// Create a new transformation matrix with the quaternion rotation.
-		glm::mat4 rotationMatrix = glm::mat4_cast(rotationQuaternion);
+		// Extract the quaternion rotation from the transformation matrix.
+		glm::quat rotationQuaternion = glm::quat_cast(matrix);
 
-		// Combine the original transformation matrix with the rotation matrix.
-		glm::mat4 newMatrix = originalMatrix * rotationMatrix;
-
-		return newMatrix;
+		return rotationQuaternion;
 	}
 
 	void atualizar_tf()
@@ -86,8 +75,10 @@ public:
 			vec3 pos, pos_alvo, pos_cima;
 			quat qua;
 			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
+			//qua = extractQuaternionFromMatrix(paiTF->matrizTransform);
 
 			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
+
 			matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
 		}
 	}
