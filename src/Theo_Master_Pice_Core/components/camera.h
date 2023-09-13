@@ -86,12 +86,13 @@ public:
 			new_mat = translate(new_mat, paiTF->pos);
 
 			vec3 rot = quat_graus(paiTF->quater);
+			rot = vec3(-rot.x,rot.y,rot.z);
 
 			new_mat *= toMat4(graus_quat(rot));
 
 			vec3 nada;
 			vec4 nada2;
-			vec3 pos, pos_alvo, pos_cima;
+			vec3 pos;
 			quat qua;
 			glm::decompose(new_mat, nada, qua, pos, nada, nada2);
 
