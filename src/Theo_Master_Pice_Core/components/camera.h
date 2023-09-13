@@ -66,9 +66,7 @@ public:
 		return rotationQuaternion;
 	}
 
-	void atualizar_tf()
-	{
-
+	void pegar_matriz_visao(){
 		if (paiTF != NULL)
 		{
 
@@ -98,9 +96,15 @@ public:
 
 			matrizVisao = getCameraViewMatrix(new_mat);
 			matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
-
-			// print({"quat",qua.x,qua.y,qua.z,qua.w});
+			
 		}
+	}
+
+	void atualizar_tf()
+	{
+
+		pegar_matriz_visao();
+
 	}
 
 	glm::mat4 gerar_matriz_perspectiva(float zoom, int resX, int resY, float ncp, float fcp)
