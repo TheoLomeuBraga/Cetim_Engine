@@ -71,6 +71,10 @@ public:
 		{
 
 			mat4 new_mat;
+			vec3 nada;
+			vec4 nada2;
+			vec3 pos;
+			quat qua;
 
 			if (paiTF->paiTF == NULL)
 			{
@@ -88,10 +92,7 @@ public:
 
 			new_mat *= toMat4(graus_quat(rot));
 
-			vec3 nada;
-			vec4 nada2;
-			vec3 pos;
-			quat qua;
+			
 			glm::decompose(new_mat, nada, qua, pos, nada, nada2);
 
 			matrizVisao = getCameraViewMatrix(new_mat);
