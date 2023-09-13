@@ -84,7 +84,7 @@ public:
 			new_mat = translate(new_mat, paiTF->pos);
 
 			vec3 rot = quat_graus(paiTF->quater);
-			rot = vec3(-rot.x,rot.y,rot.z);
+			rot = vec3(-rot.x,rot.y,-rot.z);
 
 			new_mat *= toMat4(graus_quat(rot));
 
