@@ -32,13 +32,16 @@ public:
 
 	glm::mat4 removeQuaternionFromMatrix(const glm::mat4 &matrix)
 	{
-		// Extract the 3x3 rotation matrix from the upper-left corner of the 4x4 matrix.
-		glm::mat3 rotationMatrix = glm::mat3(matrix);
+		// Extract the translation part of the original matrix.
+		glm::vec3 translation = glm::vec3(matrix[3]);
 
-		// Extract the quaternion representation of the rotation matrix.
-		glm::quat rotationQuaternion = glm::quat_cast(rotationMatrix);
+		// Create a new identity matrix to remove the rotation.
+		glm::mat4 noRotationMatrix = glm::mat4(1.0f);
 
-		return toMat4(rotationQuaternion);
+		// Set the translation part in the new matrix.
+		noRotationMatrix[3] = glm::vec4(translation, 1.0f);
+
+		return noRotationMatrix;
 	}
 
 	glm::mat4 getCameraViewMatrix(glm::mat4 transformMatrix)
@@ -69,17 +72,33 @@ public:
 		if (paiTF != NULL)
 		{
 
+			mat4 new_mat;
+
+			if (paiTF->paiTF == NULL)
+			{
+				new_mat = paiTF->matrizTransform;
+			}
+			else
+			{
+				new_mat = paiTF->paiTF->matrizTransform;
+			}
+
+			new_mat = translate(new_mat, paiTF->pos);
+
+			vec3 rot = quat_graus(paiTF->quater);
+
+			new_mat *= toMat4(graus_quat(rot));
+
 			vec3 nada;
 			vec4 nada2;
-
 			vec3 pos, pos_alvo, pos_cima;
 			quat qua;
-			glm::decompose(paiTF->matrizTransform, nada, qua, pos, nada, nada2);
-			//qua = extractQuaternionFromMatrix(paiTF->matrizTransform);
+			glm::decompose(new_mat, nada, qua, pos, nada, nada2);
 
-			matrizVisao = getCameraViewMatrix(paiTF->matrizTransform);
-
+			matrizVisao = getCameraViewMatrix(new_mat);
 			matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
+
+			// print({"quat",qua.x,qua.y,qua.z,qua.w});
 		}
 	}
 
