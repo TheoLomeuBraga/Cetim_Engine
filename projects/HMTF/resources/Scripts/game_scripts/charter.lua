@@ -60,7 +60,19 @@ function create_arm_cannon()
     cannon.part_list = deepcopy(entity_data.parts_list)
 end
 
-function select_arm_cannon_animation_frame(animation_name,frame)
+local animation_state = {
+    animation = {},
+    loop = false,
+}
+
+function stop_interact_arm_cannon_animation(animation,loop)
+
+    animation_state.animation = deepcopy(animation)
+    animation_state.loop = loop
+    
+end
+
+function play_arm_cannon_animation()
     
 end
 
@@ -300,7 +312,7 @@ function UPDATE()
         pause_last_frame = global_data:get("pause") < 1
     end
 
-    
+    play_arm_cannon_animation()
 
 end
 
