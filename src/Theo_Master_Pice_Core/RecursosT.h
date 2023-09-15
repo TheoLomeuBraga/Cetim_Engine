@@ -685,7 +685,6 @@ struct animacao_struct
 {
 	string nome;
 	float start_time = 0, duration = 0;
-	//std::vector<key_frame> keyFrames;
 	std::vector<std::vector<key_frame>> keyFrames;
 };
 typedef struct animacao_struct animacao;

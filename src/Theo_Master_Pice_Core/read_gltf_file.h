@@ -437,14 +437,13 @@ namespace gltf_loader
 
     glm::vec2 GLTFLoader::getAnimationTimeDuration(const AnimationChannel &channel)
     {
-
         const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
         const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
 
         std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
 
-        float startTime = inputTimes[0];                   // Tempo inicial
-        float endTime = inputTimes[inputTimes.size() - 1]; // Tempo final
+        float startTime = inputTimes[0];               
+        float endTime = inputTimes[inputAccessor.count - 1]; 
 
         return glm::vec2(startTime, endTime);
     }
@@ -480,7 +479,6 @@ namespace gltf_loader
             for (const auto &channelJson : channelsJson)
             {
                 AnimationChannel channel;
-                // print({"channelJson[sampler]",channelJson["sampler"]});
                 channel.samplerIndex = channelJson["sampler"];
                 channel.targetNodeIndex = channelJson["target"]["node"];
                 channel.targetPath = channelJson["target"]["path"];
@@ -505,10 +503,12 @@ namespace gltf_loader
                 if (input.size() > 0)
                 {
                     sampler.start_time = input[0];
-                    sampler.duration = input[input.size() - 1];
+                    sampler.duration = input[inputAccessor.count - 1];
                 }
 
                 animation.samplers.push_back(sampler);
+
+                
 
             }
 
@@ -520,12 +520,15 @@ namespace gltf_loader
         for (int a = 0; a < animations.size(); a++)
         {
             float start_time = 0, duration_time = 0, time = 0;
+            
 
             for (AnimationSampler as : animations[a].samplers)
             {
                 start_time = std::min(start_time, as.start_time);
                 duration_time = std::max(duration_time, as.duration);
             }
+
+            
 
             for (float t = start_time; t < start_time + duration_time; t += 1.0 / ANIMATION_FPS_COUNT)
             {
@@ -548,6 +551,9 @@ namespace gltf_loader
 
             animations[a].start_time = start_time;
             animations[a].duration = duration_time;
+
+            print({animations[a].name,animations[a].start_time,animations[a].duration});
+            
         }
 
         

@@ -36,7 +36,7 @@ cenary_builders = {
     entity_part = function (father,layer, part_data,use_oclusion,yield)
 
         local ret = game_object:new(create_object(father))
-        entity_ptr_list[tablelength(entity_ptr_list) + 1] = ret.object_ptr
+        entity_ptr_list[part_data.id] = ret.object_ptr
 
         ret:add_component(components.transform)
         ret.components[components.transform].position = deepcopy(part_data.position)

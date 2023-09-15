@@ -947,6 +947,7 @@ namespace ManuseioDados
 				}
 			}
 
+
 			for (gltf_loader::Animation a : gltf_loader.animations)
 			{
 				animacao ani;
@@ -973,16 +974,6 @@ namespace ManuseioDados
 
 						okf.position = kf.position;
 
-						// correct possition
-						/*
-						if(gltf_loader.nodes[okf.object_id].meshIndices.size() == 0){
-							okf.position.x = -okf.position.x;
-							okf.position.z = -okf.position.z;
-						}
-						*/
-						// okf.position.x = -okf.position.x;
-						// okf.position.z = -okf.position.z;
-
 						okf.rotation = kf.rotation;
 						okf.scale = kf.scale;
 
@@ -990,6 +981,8 @@ namespace ManuseioDados
 					}
 					ani.keyFrames.push_back(okfs);
 				}
+
+				//print({"animation 2 :",ani.nome,"key frames:",animations[a].keyFrames.size()});
 
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}

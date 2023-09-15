@@ -53,27 +53,36 @@ local cannon = {
     animations = {},
 }
 
+arm_cannon_sceane_data = {}
+
 function create_arm_cannon()
-    local sceane_3D_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
-    local entity_data = cenary_builders.entity(camera.object_ptr,4, sceane_3D_data,false,false)
+    arm_cannon_sceane_data = get_scene_3D("resources/3D Models/test_arm.gltf")
+    local entity_data = cenary_builders.entity(camera.object_ptr,4, arm_cannon_sceane_data,false,false)
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
 end
 
 local animation_state = {
-    animation = {},
+    animation = nil,
     loop = false,
+    speed = 1,
+    time = 0;
 }
 
-function stop_interact_arm_cannon_animation(animation,loop)
+function start_arm_cannon_animation(animation,speed,loop)
 
-    animation_state.animation = deepcopy(animation)
+    animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation])
+
+    animation_state.speed = speed
     animation_state.loop = loop
+    animation_state.time = 0
     
 end
 
 function play_arm_cannon_animation()
-    
+    if animation_state.animation ~= nil  then
+        apply_key_frame(cannon.part_list,animation_state.animation.key_frames[1])
+    end
 end
 
 function START()
@@ -109,6 +118,8 @@ function START()
     this_object:add_component(components.audio_source)
 
     create_arm_cannon()
+
+    start_arm_cannon_animation("hello",15,false)
     
 end
 
