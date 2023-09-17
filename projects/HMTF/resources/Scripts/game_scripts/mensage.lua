@@ -33,25 +33,23 @@ function interact(args)
         mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]],"\n")
     end
 
+    local style = ui_style:new()
+    style.color = { r = 0, g = 0, b = 0, a = 1 }
+    style.text_color = { r = 1, g = 1, b = 1, a = 1 }
+    style.border_size = 0
+    style.text_location_x = render_text_location.left
+    style.text_location_y = render_text_location.top
+
     if mensage ~= nil then
 
-        local style = ui_style:new()
-        style.color = { r = 0, g = 0, b = 0, a = 1 }
-        style.text_color = { r = 1, g = 1, b = 1, a = 1 }
-        style.text_location_x = render_text_location.left
-        style.text_location_y = render_text_location.top
         dialog_box_father = create_object(global_data:get("layers").hud)
-        dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 4, style, mensage, 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
+        dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 5, style, mensage, 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
 
     elseif mensage_list  ~= nil then
 
-        local style = ui_style:new()
-        style.color = { r = 0, g = 0, b = 0, a = 1 }
-        style.text_color = { r = 1, g = 1, b = 1, a = 1 }
-        style.text_location_x = render_text_location.left
-        style.text_location_y = render_text_location.top
+        
         dialog_box_father = create_object(global_data:get("layers").hud)
-        dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 4, style, mensage_list[mensage_list_index], 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
+        dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 5, style, mensage_list[mensage_list_index], 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
 
     end
     
@@ -85,11 +83,11 @@ function next_interaction()
             local style = ui_style:new()
             style.color = { r = 0, g = 0, b = 0, a = 1 }
             style.text_color = { r = 1, g = 1, b = 1, a = 1 }
+            style.border_size = 0
             style.text_location_x = render_text_location.left
             style.text_location_y = render_text_location.top
             dialog_box_father = create_object(global_data:get("layers").hud)
-            dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 4, style, mensage_list[mensage_list_index], 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
-
+            dialog_box = create_ui(dialog_box_father, { x = -1, y = -0.5, z = 0 }, { x = 2, y = 0.5,z = 2 }, 5, style, mensage_list[mensage_list_index], 0.075, "resources/Textures/white.png", nil, ui_category.progrecive_text_fild)
         end
 
     end
