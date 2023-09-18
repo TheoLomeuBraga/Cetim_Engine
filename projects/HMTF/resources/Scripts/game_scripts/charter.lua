@@ -119,7 +119,7 @@ function START()
 
     create_arm_cannon()
 
-    start_arm_cannon_animation("open",15,false)
+    start_arm_cannon_animation("open",1,false)
     
 end
 

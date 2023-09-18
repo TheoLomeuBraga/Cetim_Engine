@@ -60,6 +60,9 @@ cenary_builders = {
             ret.components[components.render_mesh].use_oclusion = use_oclusion
             ret.components[components.render_mesh]:set()
 
+            deepprint(part_data.materials)
+            
+
         end
 
         if yield == true then
