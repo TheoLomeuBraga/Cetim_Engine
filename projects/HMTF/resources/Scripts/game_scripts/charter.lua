@@ -66,13 +66,12 @@ local animation_state = {
     animation = nil,
     loop = false,
     speed = 1,
-    time = 0;
+    time = 0,
 }
 
 function start_arm_cannon_animation(animation,speed,loop)
 
     animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation])
-
     animation_state.speed = speed
     animation_state.loop = loop
     animation_state.time = 0
@@ -80,9 +79,25 @@ function start_arm_cannon_animation(animation,speed,loop)
 end
 
 function play_arm_cannon_animation()
+
     if animation_state.animation ~= nil  then
-        apply_key_frame(cannon.part_list,animation_state.animation.key_frames[1])
+
+        time:get()
+        animation_state.time = animation_state.time + (animation_state.speed * time.delta)
+
+        local frame_selected = math.floor( animation_state.time * tablelength(animation_state.animation.key_frames) / animation_state.animation.duration + 1)
+
+        if frame_selected > tablelength(animation_state.animation.key_frames) then
+            frame_selected = tablelength(animation_state.animation.key_frames)
+        end
+        if animation_state.time > animation_state.animation.duration then
+            animation_state.time = animation_state.animation.duration
+        end
+
+        apply_key_frame(cannon.part_list,animation_state.animation.key_frames[frame_selected])
+
     end
+    
 end
 
 function START()
@@ -119,7 +134,7 @@ function START()
 
     create_arm_cannon()
 
-    start_arm_cannon_animation("open",1,false)
+    start_arm_cannon_animation("normal",1,false)
     
 end
 

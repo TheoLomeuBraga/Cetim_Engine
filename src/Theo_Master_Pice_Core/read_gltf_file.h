@@ -6,9 +6,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "base64.h"
-// #include <math>
-
-// const unsigned int ANIMATION_FPS_COUNT = 20;
 
 bool file_exist(string nome)
 {

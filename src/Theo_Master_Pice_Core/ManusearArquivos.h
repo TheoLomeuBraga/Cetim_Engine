@@ -27,7 +27,7 @@ using json = nlohmann::json;
 
 #include "read_map_file.h"
 
-#define ANIMATION_FPS_COUNT 20
+#define ANIMATION_FPS_COUNT 30
 #include "read_gltf_file.h"
 
 namespace ManuseioDados
