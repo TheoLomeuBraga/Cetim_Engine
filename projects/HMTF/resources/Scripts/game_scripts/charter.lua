@@ -82,6 +82,12 @@ function start_arm_cannon_animation(animation_name,speed,loop)
         animation_state.finish = false
     end
     
+end
+
+function restart_arm_cannon_animation()
+
+    animation_state.time = 0
+    animation_state.finish = false
     
 end
 
@@ -191,8 +197,12 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
-function shot()
-    
+function shoot()
+    print("shoot")
+
+    start_arm_cannon_animation("recoil",8,false)
+    restart_arm_cannon_animation()
+
 end
 
 function aproche_to_zero(num,speed)
@@ -282,8 +292,11 @@ function UPDATE()
             if inputs.interact > 0 and inputs_last_frame.interact < 1 then
                 interact()
             end
-        
-            
+
+            --shoot
+            if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
+                shoot()
+            end
 
             --move camera
             window:get()
@@ -347,15 +360,11 @@ function UPDATE()
             end
 
             --animate
-            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" then
+            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or (animation_state.name ==  "recoil" and animation_state.finish) then
                 if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down then
                     start_arm_cannon_animation("walk",1,true)
                 else
-                    if hit_down then
-                        start_arm_cannon_animation("normal",1,false)
-                    else
-                        start_arm_cannon_animation("jump",2,false)
-                    end
+                    start_arm_cannon_animation("normal",1,false)
                 end
             end
         
