@@ -63,18 +63,23 @@ function create_arm_cannon()
 end
 
 local animation_state = {
+    name = "",
     animation = nil,
     loop = false,
     speed = 1,
     time = 0,
 }
 
-function start_arm_cannon_animation(animation,speed,loop)
+function start_arm_cannon_animation(animation_name,speed,loop)
 
-    animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation])
-    animation_state.speed = speed
-    animation_state.loop = loop
-    animation_state.time = 0
+    if animation_state.name ~= animation_name then
+        animation_state.name = animation_name
+        animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation_name])
+        animation_state.speed = speed
+        animation_state.loop = loop
+        animation_state.time = 0
+    end
+    
     
 end
 
@@ -88,10 +93,18 @@ function play_arm_cannon_animation()
         local frame_selected = math.floor( animation_state.time * tablelength(animation_state.animation.key_frames) / animation_state.animation.duration + 1)
 
         if frame_selected > tablelength(animation_state.animation.key_frames) then
-            frame_selected = tablelength(animation_state.animation.key_frames)
+            if animation_state.loop then
+                frame_selected = 1
+            else
+                frame_selected = tablelength(animation_state.animation.key_frames)
+            end
         end
         if animation_state.time > animation_state.animation.duration then
-            animation_state.time = animation_state.animation.duration
+            if animation_state.loop then
+                animation_state.time = 0
+            else
+                animation_state.time = animation_state.animation.duration
+            end
         end
 
         apply_key_frame(cannon.part_list,animation_state.animation.key_frames[frame_selected])
@@ -134,7 +147,11 @@ function START()
 
     create_arm_cannon()
 
-    start_arm_cannon_animation("normal",1,false)
+    --start_arm_cannon_animation("normal",1,false)
+    --start_arm_cannon_animation("open",1,false)
+    --start_arm_cannon_animation("walk",1,true)
+    --start_arm_cannon_animation("spin",1,true)
+    --start_arm_cannon_animation("recoil",8,true)
     
 end
 
@@ -319,17 +336,27 @@ function UPDATE()
             if not hit_down then
                 inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
             end
+
+            --animate
+            if animation_state.name == "normal" or animation_state.name == "walk" or animation_state.name == "" then
+                if input_dir.x == 0 and input_dir.z == 0 then
+                    start_arm_cannon_animation("normal",1,false)
+                else
+                    start_arm_cannon_animation("walk",1,true)
+                end
+            end
         
         else
 
-            
+
+            --[[
             if not hit_down then
                 inpulse_y = inpulse_y + gravity.force.y
                 this_object.components[components.physics_3D]:set_linear_velocity(0,inpulse_y * time.sacale,0)
             else
                 this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
             end
-            
+            ]]
             
         end
 
