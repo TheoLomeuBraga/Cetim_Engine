@@ -56,9 +56,12 @@ cenary_builders = {
             ret.components[components.render_mesh].layer = layer
             ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),tablelength(part_data.materials))
             ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
+
             ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
             ret.components[components.render_mesh].use_oclusion = use_oclusion
             ret.components[components.render_mesh]:set()
+            
+            
             
 
         end

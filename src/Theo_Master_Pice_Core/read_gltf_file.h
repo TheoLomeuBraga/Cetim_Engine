@@ -439,10 +439,113 @@ namespace gltf_loader
 
         std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
 
-        float startTime = inputTimes[0];               
-        float endTime = inputTimes[inputAccessor.count - 1]; 
+        float startTime = inputTimes[0];
+        float endTime = inputTimes[inputAccessor.count - 1];
 
         return glm::vec2(startTime, endTime);
+    }
+
+    void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
+    {
+
+        // print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
+
+        AnimationSampler &sampler = animation.samplers[channel.samplerIndex]; // assuming only 1 sampler for simplicity
+        Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+        Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+        std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+        std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+        std::string interpolation = sampler.interpolation;
+        size_t count = inputAccessor.count;
+
+        keyFrame.targetNodeIndex = channel.targetNodeIndex;
+
+        // print({"channel.targetPath",channel.targetPath});
+
+        // interpolate position
+        if (channel.targetPath == "translation")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+
+            float t = 0.0f;
+
+            if (input[index2] != input[index1])
+            {
+                // Calculate interpolation factor
+                t = (time - input[index1]) / (input[index2] - input[index1]);
+            }
+
+            glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
+            glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
+            keyFrame.position = glm::mix(pos1, pos2, t);
+            keyFrame.has_position = true;
+
+            /*
+            print({"input size", input.size()});
+            print({"indexes", index1, index2});
+            print({"output size", output.size()});
+            print({"count", count});
+            */
+
+            /*
+            print({"position_1 c++",pos1.x,pos1.y,pos1.z});
+            print({"position_2 c++",pos2.x,pos2.y,pos2.z});
+            print({"position",keyFrame.position.x,keyFrame.position.y,keyFrame.position.z});
+            print({"t c++",t});
+            print({"time c++",time});
+            print({"input[index1] c++",input[index1]});
+            print({"input[index2] c++",input[index2]});
+            */
+        }
+
+        // interpolate rotation
+        if (channel.targetPath == "rotation")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+            glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
+            glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
+            keyFrame.rotation = glm::slerp(rot1, rot2, t);
+            keyFrame.has_rotation = true;
+        }
+
+        // interpolate scale
+        if (channel.targetPath == "scale")
+        {
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < count - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+            glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
+            glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
+            keyFrame.scale = glm::mix(scale1, scale2, t);
+            keyFrame.has_scale = true;
+        }
     }
 
     bool GLTFLoader::loadAnimations()
@@ -452,14 +555,12 @@ namespace gltf_loader
             return true;
         }
 
-        
-
         const auto &animationsJson = gltf["animations"];
         animations.reserve(animationsJson.size());
 
         for (const auto &animationJson : animationsJson)
         {
-            
+
             Animation animation;
 
             if (animationJson.contains("name"))
@@ -482,8 +583,6 @@ namespace gltf_loader
                 animation.channels.push_back(channel);
             }
 
-            
-
             for (const auto &samplerJson : samplersJson)
             {
 
@@ -504,12 +603,7 @@ namespace gltf_loader
                 }
 
                 animation.samplers.push_back(sampler);
-
-                
-
             }
-
-            
 
             animations.push_back(animation);
         }
@@ -517,7 +611,6 @@ namespace gltf_loader
         for (int a = 0; a < animations.size(); a++)
         {
             float start_time = 0, duration_time = 0, time = 0;
-            
 
             for (AnimationSampler as : animations[a].samplers)
             {
@@ -525,14 +618,13 @@ namespace gltf_loader
                 duration_time = std::max(duration_time, as.duration);
             }
 
-            
-
             for (float t = start_time; t < start_time + duration_time; t += 1.0 / ANIMATION_FPS_COUNT)
             {
                 t = std::min(t, start_time + duration_time);
 
                 vector<AnimationKeyFrame> key_frames;
                 for (AnimationChannel ac : animations[a].channels)
+
                 {
                     AnimationKeyFrame akf;
 
@@ -549,103 +641,10 @@ namespace gltf_loader
             animations[a].start_time = start_time;
             animations[a].duration = duration_time;
 
-            print({animations[a].name,animations[a].start_time,animations[a].duration});
-            
+            print({animations[a].name, animations[a].start_time, animations[a].duration});
         }
-
-        
 
         return true;
-    }
-
-    void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
-    {
-
-        // print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
-
-        if (true)
-        {
-            AnimationSampler &sampler = animation.samplers[channel.samplerIndex]; // assuming only 1 sampler for simplicity
-            Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-            Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-            std::vector<float> input = getAttributeData(inputAccessor.bufferView);
-            std::vector<float> output = getAttributeData(outputAccessor.bufferView);
-            std::string interpolation = sampler.interpolation;
-            size_t count = inputAccessor.count;
-
-            keyFrame.targetNodeIndex = channel.targetNodeIndex;
-
-            // print({"channel.targetPath",channel.targetPath});
-
-            // interpolate position
-            if (channel.targetPath == "translation")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-                float t = (time - input[index1]) / (input[index2] - input[index1]);
-                glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
-                glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
-                keyFrame.position = glm::mix(pos1, pos2, t);
-                keyFrame.has_position = true;
-            }
-
-            // interpolate rotation
-            if (channel.targetPath == "rotation")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-                float t = (time - input[index1]) / (input[index2] - input[index1]);
-                glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
-                glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
-                keyFrame.rotation = glm::slerp(rot1, rot2, t);
-                keyFrame.has_rotation = true;
-            }
-
-            // interpolate scale
-            if (channel.targetPath == "scale")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-                float t = (time - input[index1]) / (input[index2] - input[index1]);
-                glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
-                glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
-                keyFrame.scale = glm::mix(scale1, scale2, t);
-                keyFrame.has_scale = true;
-            }
-
-            // return keyFrame;
-        }
-        /*
-        else
-        {
-            //keyFrame.targetNodeIndex = -1;
-            //return akf;
-        }
-        */
     }
 
     bool GLTFLoader::loadTextures()
@@ -1034,25 +1033,26 @@ namespace gltf_loader
                     }
 
                     // corect mesh
-                    //print({"mesh.indices.size() / 3",mesh.indices.size() / 3,mesh.indices.size() % 3});
+                    // print({"mesh.indices.size() / 3",mesh.indices.size() / 3,mesh.indices.size() % 3});
                     vector<unsigned int> new_indice;
                     for (int i = 0; i < mesh.indices.size() / 3; i += 3)
                     {
 
-                        
-                        //if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
-                        if ((mesh.indices[i] < mesh.indices.size() -1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
+                        // if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
+                        if ((mesh.indices[i] < mesh.indices.size() - 1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
                         {
                             new_indice.push_back(mesh.indices[i]);
                             new_indice.push_back(mesh.indices[i + 1]);
                             new_indice.push_back(mesh.indices[i + 2]);
-                        }else{
+                        }
+                        else
+                        {
                             break;
                         }
                     }
                     mesh.indices = new_indice;
 
-                    //print({"new_indice.size() / 3",new_indice.size() / 3,new_indice.size() % 3});
+                    // print({"new_indice.size() / 3",new_indice.size() / 3,new_indice.size() % 3});
 
                     if (primitive.contains("material"))
                     {
@@ -1069,25 +1069,25 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        //print({"loadBuffers"});
+        // print({"loadBuffers"});
         loadBuffers();
-        //print({"loadBufferViews"});
+        // print({"loadBufferViews"});
         loadBufferViews();
-        //print({"loadAccessors"});
+        // print({"loadAccessors"});
         loadAccessors();
-        //print({"loadMeshes"});
+        // print({"loadMeshes"});
         loadMeshes();
-        //print({"loadScenes"});
+        // print({"loadScenes"});
         loadScenes();
-        //print({"loadNodes"});
+        // print({"loadNodes"});
         loadNodes();
-        //print({"loadAnimations"});
+        // print({"loadAnimations"});
         loadAnimations();
-        //print({"loadTextures"});
+        // print({"loadTextures"});
         loadTextures();
-        //print({"loadMaterials"});
+        // print({"loadMaterials"});
         loadMaterials();
-        //print({"load end"});
+        // print({"load end"});
 
         return true;
     }

@@ -127,14 +127,17 @@ function START()
 
     global_data:set("player_object_ptr",this_object_ptr)
 
-    this_object = game_object:new(this_object_ptr)
+    
+
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    camera:add_component(components.audio_source)
     set_lisener_object(camera.object_ptr)
 
     layers = global_data:get_var("layers")
     check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
 
+    this_object = game_object:new(this_object_ptr)
     this_object.components[components.transform]:change_rotation(0,0,0)
     
     this_object:add_component(components.physics_3D)
@@ -197,13 +200,20 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
+
+
 function shoot()
-    print("shoot")
 
     start_arm_cannon_animation("recoil",8,false)
     restart_arm_cannon_animation()
 
+    camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
+    camera.components[components.audio_source].volume = 20
+    camera.components[components.audio_source]:set()
+
 end
+
+
 
 function aproche_to_zero(num,speed)
     ret = 0
