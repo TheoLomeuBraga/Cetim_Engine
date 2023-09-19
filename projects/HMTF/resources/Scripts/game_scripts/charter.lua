@@ -187,6 +187,10 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
+function shot()
+    
+end
+
 function aproche_to_zero(num,speed)
     ret = 0
     if math.abs(num) < speed then
@@ -338,11 +342,16 @@ function UPDATE()
             end
 
             --animate
-            if animation_state.name == "normal" or animation_state.name == "walk" or animation_state.name == "" then
-                if input_dir.x == 0 and input_dir.z == 0 then
-                    start_arm_cannon_animation("normal",1,false)
-                else
+            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" then
+                if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down then
                     start_arm_cannon_animation("walk",1,true)
+                else
+                    if hit_down then
+                        start_arm_cannon_animation("normal",1,false)
+                    else
+                        start_arm_cannon_animation("jump",2,false)
+                    end
+                    
                 end
             end
         
