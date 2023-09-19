@@ -68,6 +68,7 @@ local animation_state = {
     loop = false,
     speed = 1,
     time = 0,
+    finish = false,
 }
 
 function start_arm_cannon_animation(animation_name,speed,loop)
@@ -78,6 +79,7 @@ function start_arm_cannon_animation(animation_name,speed,loop)
         animation_state.speed = speed
         animation_state.loop = loop
         animation_state.time = 0
+        animation_state.finish = false
     end
     
     
@@ -85,7 +87,7 @@ end
 
 function play_arm_cannon_animation()
 
-    if animation_state.animation ~= nil  then
+    if animation_state.animation ~= nil and global_data:get("pause") < 1 then
 
         time:get()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
@@ -97,6 +99,7 @@ function play_arm_cannon_animation()
                 frame_selected = 1
             else
                 frame_selected = tablelength(animation_state.animation.key_frames)
+                animation_state.finish = true
             end
         end
         if animation_state.time > animation_state.animation.duration then
@@ -104,6 +107,7 @@ function play_arm_cannon_animation()
                 animation_state.time = 0
             else
                 animation_state.time = animation_state.animation.duration
+                animation_state.finish = true
             end
         end
 
@@ -214,6 +218,7 @@ function aproche_to_target_value(num,speed,target_value)
     end
     return ret
 end
+
 
 function interact()
 
@@ -351,7 +356,6 @@ function UPDATE()
                     else
                         start_arm_cannon_animation("jump",2,false)
                     end
-                    
                 end
             end
         
@@ -366,6 +370,7 @@ function UPDATE()
                 this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
             end
             ]]
+            this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
             
         end
 

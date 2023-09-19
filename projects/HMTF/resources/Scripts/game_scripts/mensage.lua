@@ -57,7 +57,6 @@ function interact(args)
 end
 
 function stop_interact()
-
     
     global_data:set("pause",0)
     interacting = false
