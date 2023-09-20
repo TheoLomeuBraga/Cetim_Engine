@@ -500,7 +500,6 @@ namespace gltf_loader
             glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
             keyFrame.position = glm::mix(pos1, pos2, t);
             keyFrame.has_position = true;
-
         }
 
         // interpolate rotation
@@ -1051,25 +1050,25 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        // print({"loadBuffers"});
+        //print({"loadBuffers"});
         loadBuffers();
-        // print({"loadBufferViews"});
+        //print({"loadBufferViews"});
         loadBufferViews();
-        // print({"loadAccessors"});
+        //print({"loadAccessors"});
         loadAccessors();
-        // print({"loadMeshes"});
+        //print({"loadMeshes"});
         loadMeshes();
-        // print({"loadScenes"});
+        //print({"loadScenes"});
         loadScenes();
-        // print({"loadNodes"});
+        //print({"loadNodes"});
         loadNodes();
-        // print({"loadAnimations"});
+        //print({"loadAnimations"});
         loadAnimations();
-        // print({"loadTextures"});
+        //print({"loadTextures"});
         loadTextures();
-        // print({"loadMaterials"});
+        //print({"loadMaterials"});
         loadMaterials();
-        // print({"load end"});
+        //print({"load end"});
 
         return true;
     }

@@ -947,7 +947,6 @@ namespace ManuseioDados
 				}
 			}
 
-
 			for (gltf_loader::Animation a : gltf_loader.animations)
 			{
 				animacao ani;
@@ -989,6 +988,8 @@ namespace ManuseioDados
 
 			// ret.objetos.escala.x *= -1;
 			// ret.objetos.escala.z *= -1;
+
+			
 
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);

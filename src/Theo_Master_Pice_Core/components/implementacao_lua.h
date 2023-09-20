@@ -507,7 +507,8 @@ namespace funcoes_ponte
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
 			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
 				thread loader(ManuseioDados::carregar_modelo_3D,file_path);
-				loader.detach();
+				loader.join();
+				//loader.detach();
 			}
 		}
 

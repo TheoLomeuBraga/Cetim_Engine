@@ -28,7 +28,9 @@ function level:START()
     local camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(camera.object_ptr)
 
+    print("LUA_AAAAA")
     stop_coroutine_if_is_not_loaded(assets_needed)
+    print("LUA_BBBBB")
 
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/test_map.gltf")
 

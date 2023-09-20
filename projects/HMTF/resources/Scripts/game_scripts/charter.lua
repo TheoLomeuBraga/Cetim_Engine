@@ -56,10 +56,12 @@ local cannon = {
 arm_cannon_sceane_data = {}
 
 function create_arm_cannon()
+    
     arm_cannon_sceane_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
     local entity_data = cenary_builders.entity(camera.object_ptr,4, arm_cannon_sceane_data,false,false)
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
+    
 end
 
 local animation_state = {
