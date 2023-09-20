@@ -374,7 +374,7 @@ function UPDATE()
                 if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down then
                     start_arm_cannon_animation("walk",1,true)
                 else
-                    start_arm_cannon_animation("normal",1,false)
+                    start_arm_cannon_animation("normal",1,true)
                 end
             end
         

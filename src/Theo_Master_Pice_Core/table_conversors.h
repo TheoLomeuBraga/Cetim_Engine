@@ -454,7 +454,6 @@ Table scene_3D_table(cena_3D sceane)
                 kf_table.setFloat("has_rotation", kf.has_rotation);
 
                 kf_table.setTable("position", vec3_table(kf.position));
-                //if(kf.has_position){print({"position c++",kf.position.x,kf.position.y,kf.position.z});}
                 kf_table.setTable("scale", vec3_table(kf.scale));
                 kf_table.setTable("rotation", vec3_table(quat_graus(kf.rotation)));
 

@@ -148,9 +148,9 @@ namespace gltf_loader
         bool loadAccessors();
         bool loadScenes();
         bool loadNodes();
-        glm::vec2 getAnimationTimeDuration(const AnimationChannel &channel);
-        bool loadAnimations();
+        glm::vec2 getAnimationTimeDuration(Animation &channel);
         void getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame);
+        bool loadAnimations();
         bool loadTextures();
         bool loadMaterials();
         std::vector<float> getAttributeData(size_t accessorIndex);
@@ -432,17 +432,29 @@ namespace gltf_loader
         return true;
     }
 
-    glm::vec2 GLTFLoader::getAnimationTimeDuration(const AnimationChannel &channel)
+    glm::vec2 GLTFLoader::getAnimationTimeDuration(Animation &animation)
     {
-        const AnimationSampler &sampler = animations[channel.samplerIndex].samplers[channel.samplerIndex];
-        const Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+        float startTime = std::numeric_limits<float>::max();
+        float endTime = std::numeric_limits<float>::min();
 
-        std::vector<float> inputTimes = getAttributeData(sampler.inputAccessorIndex);
+        for (const AnimationChannel &channel : animation.channels)
+        {
+            const AnimationSampler &sampler = animation.samplers[channel.samplerIndex];
+            Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+            std::vector<float> input = getAttributeData(inputAccessor.bufferView);
 
-        float startTime = inputTimes[0];
-        float endTime = inputTimes[inputAccessor.count - 1];
+            if (!input.empty())
+            {
+                startTime = std::min(startTime, input[0]);
+                endTime = std::max(endTime, input[input.size() - 1]);
+            }
+        }
 
-        return glm::vec2(startTime, endTime);
+        float duration = endTime - startTime;
+
+        animation.start_time = startTime;
+        animation.duration = duration;
+        return glm::vec2(startTime, duration);
     }
 
     void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
@@ -489,22 +501,6 @@ namespace gltf_loader
             keyFrame.position = glm::mix(pos1, pos2, t);
             keyFrame.has_position = true;
 
-            /*
-            print({"input size", input.size()});
-            print({"indexes", index1, index2});
-            print({"output size", output.size()});
-            print({"count", count});
-            */
-
-            /*
-            print({"position_1 c++",pos1.x,pos1.y,pos1.z});
-            print({"position_2 c++",pos2.x,pos2.y,pos2.z});
-            print({"position",keyFrame.position.x,keyFrame.position.y,keyFrame.position.z});
-            print({"t c++",t});
-            print({"time c++",time});
-            print({"input[index1] c++",input[index1]});
-            print({"input[index2] c++",input[index2]});
-            */
         }
 
         // interpolate rotation
@@ -596,12 +592,6 @@ namespace gltf_loader
                 std::vector<float> input = getAttributeData(inputAccessor.bufferView);
                 std::vector<float> output = getAttributeData(outputAccessor.bufferView);
 
-                if (input.size() > 0)
-                {
-                    sampler.start_time = input[0];
-                    sampler.duration = input[inputAccessor.count - 1];
-                }
-
                 animation.samplers.push_back(sampler);
             }
 
@@ -610,17 +600,12 @@ namespace gltf_loader
 
         for (int a = 0; a < animations.size(); a++)
         {
-            float start_time = 0, duration_time = 0, time = 0;
+            vec2 start_duration = getAnimationTimeDuration(animations[a]);
+            float time = 0;
 
-            for (AnimationSampler as : animations[a].samplers)
+            for (float t = start_duration.x; t < start_duration.x + start_duration.y; t += 1.0 / ANIMATION_FPS_COUNT)
             {
-                start_time = std::min(start_time, as.start_time);
-                duration_time = std::max(duration_time, as.duration);
-            }
-
-            for (float t = start_time; t < start_time + duration_time; t += 1.0 / ANIMATION_FPS_COUNT)
-            {
-                t = std::min(t, start_time + duration_time);
+                t = std::min(t, start_duration.x + start_duration.y);
 
                 vector<AnimationKeyFrame> key_frames;
                 for (AnimationChannel ac : animations[a].channels)
@@ -637,9 +622,6 @@ namespace gltf_loader
                 }
                 animations[a].keyFrames.push_back(key_frames);
             }
-
-            animations[a].start_time = start_time;
-            animations[a].duration = duration_time;
 
             print({animations[a].name, animations[a].start_time, animations[a].duration});
         }

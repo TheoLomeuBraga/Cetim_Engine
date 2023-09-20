@@ -159,6 +159,7 @@ function apply_key_frame(game_objects_list, key_frame)
         if kfn.has_position == 1 then
             game_objects_list[kfn.target_id].components[components.transform].position = deepcopy(kfn.position)
             game_objects_list[kfn.target_id].components[components.transform]:change_position(kfn.position.x,kfn.position.y,kfn.position.z)
+            --print(kfn.position.x,kfn.position.y,kfn.position.z)
         end
 
         if kfn.has_rotation == 1 then
