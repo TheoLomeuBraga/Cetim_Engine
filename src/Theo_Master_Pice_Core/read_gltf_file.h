@@ -639,7 +639,9 @@ namespace gltf_loader
                     glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
                     glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
                     keyFrame.position = glm::mix(pos1, pos2, t);
+                    if(glm::any(glm::isnan(keyFrame.position))){return;}
                     keyFrame.has_position = true;
+
                     print({"translation",keyFrame.position.x,keyFrame.position.y,keyFrame.position.z});
                     print({"pos1",pos1.x,pos1.y,pos1.z});
                     print({"pos2",pos2.x,pos2.y,pos2.z});
@@ -657,7 +659,12 @@ namespace gltf_loader
                     glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
                     glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
                     keyFrame.rotation = glm::normalize(glm::slerp(rot1, rot2, t));
+                    if(glm::any(glm::isnan(keyFrame.rotation))){return;}
                     keyFrame.has_rotation = true;
+
+                    print({"rotation",keyFrame.rotation.x,keyFrame.rotation.y,keyFrame.rotation.z,keyFrame.rotation.w});
+                    print({"rot1",rot1.x,rot1.y,rot1.z,rot1.w});
+                    print({"rot2",rot2.x,rot2.y,rot2.z,rot2.w});
                 }
                 else
                 {
@@ -672,7 +679,12 @@ namespace gltf_loader
                     glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
                     glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
                     keyFrame.scale = glm::mix(scale1, scale2, t);
+                    if(glm::any(glm::isnan(keyFrame.scale))){return;}
                     keyFrame.has_scale = true;
+
+                    print({"rotation",keyFrame.scale.x,keyFrame.scale.y,keyFrame.scale.z});
+                    print({"rot1",scale1.x,scale1.y,scale1.z});
+                    print({"rot2",scale2.x,scale2.y,scale2.z});
                 }
                 else
                 {
