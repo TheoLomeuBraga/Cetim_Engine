@@ -447,7 +447,11 @@ namespace gltf_loader
             {
                 startTime = std::min(startTime, input[0]);
                 endTime = std::max(endTime, input[input.size() - 1]);
+            }else{
+                startTime = 0;
+                endTime = 0;
             }
+
         }
 
         float duration = endTime - startTime;
@@ -459,18 +463,21 @@ namespace gltf_loader
 
     void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
     {
-
-        // print({"channel.samplerIndex",channel.samplerIndex,"animations.size()",animations.size()});
-
         AnimationSampler &sampler = animation.samplers[channel.samplerIndex]; // assuming only 1 sampler for simplicity
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+        
         std::vector<float> input = getAttributeData(inputAccessor.bufferView);
-        std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+        std::vector<float> output = getAttributeData(outputAccessor.bufferView);// <--error
+        
         std::string interpolation = sampler.interpolation;
         size_t count = inputAccessor.count;
 
+        
+
         keyFrame.targetNodeIndex = channel.targetNodeIndex;
+
+        
 
         // print({"channel.targetPath",channel.targetPath});
 
@@ -502,6 +509,8 @@ namespace gltf_loader
             keyFrame.has_position = true;
         }
 
+        
+
         // interpolate rotation
         if (channel.targetPath == "rotation")
         {
@@ -522,6 +531,8 @@ namespace gltf_loader
             keyFrame.has_rotation = true;
         }
 
+        
+
         // interpolate scale
         if (channel.targetPath == "scale")
         {
@@ -541,6 +552,7 @@ namespace gltf_loader
             keyFrame.scale = glm::mix(scale1, scale2, t);
             keyFrame.has_scale = true;
         }
+        
     }
 
     bool GLTFLoader::loadAnimations()
@@ -579,37 +591,6 @@ namespace gltf_loader
                 animation.channels.push_back(channel);
             }
 
-            /*
-
-            for (const auto &samplerJson : samplersJson)
-            {
-
-                print({"AAAAA"});
-
-                AnimationSampler sampler;
-                sampler.inputAccessorIndex = samplerJson["input"];
-                sampler.outputAccessorIndex = samplerJson["output"];
-                sampler.interpolation = samplerJson["interpolation"];
-
-                print({"BBBBB"});
-
-                Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-                print({"CCCCC"});
-                Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-                print({"DDDDD"});
-                std::vector<float> input = getAttributeData(inputAccessor.bufferView);
-                print({"EEEEE"});
-                std::vector<float> output = getAttributeData(outputAccessor.bufferView);
-
-                print({"FFFFF"});
-
-                animation.samplers.push_back(sampler);
-
-                print({"GGGGG"});
-            }
-
-            */
-
             for (const auto &samplerJson : samplersJson)
             {
                 AnimationSampler sampler;
@@ -625,8 +606,13 @@ namespace gltf_loader
 
         for (int a = 0; a < animations.size(); a++)
         {
+            
             vec2 start_duration = getAnimationTimeDuration(animations[a]);
             float time = 0;
+
+            print({animations[a].name, animations[a].start_time, animations[a].duration});
+
+            
 
             for (float t = start_duration.x; t < start_duration.x + start_duration.y; t += 1.0 / ANIMATION_FPS_COUNT)
             {
@@ -634,21 +620,26 @@ namespace gltf_loader
 
                 vector<AnimationKeyFrame> key_frames;
                 for (AnimationChannel ac : animations[a].channels)
-
                 {
                     AnimationKeyFrame akf;
 
+                    //print({"AAAAA"});
+
                     getAnimationKeyFrame(animations[a], ac, t, akf);
+
+                    //print({"BBBBB"});
 
                     if (akf.targetNodeIndex != -1)
                     {
                         key_frames.push_back(akf);
                     }
+
                 }
                 animations[a].keyFrames.push_back(key_frames);
             }
 
             print({animations[a].name, animations[a].start_time, animations[a].duration});
+            
         }
 
         return true;
