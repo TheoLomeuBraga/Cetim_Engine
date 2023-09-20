@@ -545,6 +545,7 @@ namespace gltf_loader
 
     bool GLTFLoader::loadAnimations()
     {
+
         if (gltf.find("animations") == gltf.end())
         {
             return true;
@@ -578,18 +579,43 @@ namespace gltf_loader
                 animation.channels.push_back(channel);
             }
 
+            /*
+
             for (const auto &samplerJson : samplersJson)
             {
+
+                print({"AAAAA"});
 
                 AnimationSampler sampler;
                 sampler.inputAccessorIndex = samplerJson["input"];
                 sampler.outputAccessorIndex = samplerJson["output"];
                 sampler.interpolation = samplerJson["interpolation"];
 
+                print({"BBBBB"});
+
                 Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+                print({"CCCCC"});
                 Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+                print({"DDDDD"});
                 std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+                print({"EEEEE"});
                 std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+
+                print({"FFFFF"});
+
+                animation.samplers.push_back(sampler);
+
+                print({"GGGGG"});
+            }
+
+            */
+
+            for (const auto &samplerJson : samplersJson)
+            {
+                AnimationSampler sampler;
+                sampler.inputAccessorIndex = samplerJson["input"];
+                sampler.outputAccessorIndex = samplerJson["output"];
+                sampler.interpolation = samplerJson["interpolation"];
 
                 animation.samplers.push_back(sampler);
             }
@@ -1050,25 +1076,25 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        //print({"loadBuffers"});
+        // print({"loadBuffers"});
         loadBuffers();
-        //print({"loadBufferViews"});
+        // print({"loadBufferViews"});
         loadBufferViews();
-        //print({"loadAccessors"});
+        // print({"loadAccessors"});
         loadAccessors();
-        //print({"loadMeshes"});
+        // print({"loadMeshes"});
         loadMeshes();
-        //print({"loadScenes"});
+        // print({"loadScenes"});
         loadScenes();
-        //print({"loadNodes"});
+        // print({"loadNodes"});
         loadNodes();
-        //print({"loadAnimations"});
+        // print({"loadAnimations"});
         loadAnimations();
-        //print({"loadTextures"});
+        // print({"loadTextures"});
         loadTextures();
-        //print({"loadMaterials"});
+        // print({"loadMaterials"});
         loadMaterials();
-        //print({"load end"});
+        // print({"load end"});
 
         return true;
     }
