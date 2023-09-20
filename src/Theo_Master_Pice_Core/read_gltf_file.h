@@ -447,37 +447,44 @@ namespace gltf_loader
             {
                 startTime = std::min(startTime, input[0]);
                 endTime = std::max(endTime, input[input.size() - 1]);
-            }else{
+            }
+            else
+            {
                 startTime = 0;
                 endTime = 0;
             }
-
         }
 
         float duration = endTime - startTime;
 
         animation.start_time = startTime;
         animation.duration = duration;
+        if (startTime > duration)
+        {
+            return glm::vec2(duration, startTime);
+        }
         return glm::vec2(startTime, duration);
     }
+
+    /*
 
     void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
     {
         AnimationSampler &sampler = animation.samplers[channel.samplerIndex]; // assuming only 1 sampler for simplicity
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-        
+
         std::vector<float> input = getAttributeData(inputAccessor.bufferView);
         std::vector<float> output = getAttributeData(outputAccessor.bufferView);// <--error
-        
+
         std::string interpolation = sampler.interpolation;
         size_t count = inputAccessor.count;
 
-        
+
 
         keyFrame.targetNodeIndex = channel.targetNodeIndex;
 
-        
+
 
         // print({"channel.targetPath",channel.targetPath});
 
@@ -509,7 +516,7 @@ namespace gltf_loader
             keyFrame.has_position = true;
         }
 
-        
+
 
         // interpolate rotation
         if (channel.targetPath == "rotation")
@@ -531,7 +538,7 @@ namespace gltf_loader
             keyFrame.has_rotation = true;
         }
 
-        
+
 
         // interpolate scale
         if (channel.targetPath == "scale")
@@ -552,7 +559,73 @@ namespace gltf_loader
             keyFrame.scale = glm::mix(scale1, scale2, t);
             keyFrame.has_scale = true;
         }
-        
+
+    }
+
+    */
+
+    void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
+    {
+        keyFrame.targetNodeIndex = channel.targetNodeIndex;
+
+        // Find the sampler associated with this channel
+        const AnimationSampler &sampler = animation.samplers[channel.samplerIndex];
+
+        // Retrieve the input and output accessors
+        Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
+        Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+
+        // Get the input and output data
+        const std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+
+        if (outputAccessor.bufferView < accessors.size())
+        {
+            //print({"AAAAA"});
+            const std::vector<float> output = getAttributeData(outputAccessor.bufferView);
+            //print({"BBBBB"});
+
+            // Find the keyframes surrounding the specified time
+            size_t index1 = 0, index2 = 0;
+            for (size_t i = 0; i < input.size() - 1; ++i)
+            {
+                if (input[i] <= time && time <= input[i + 1])
+                {
+                    index1 = i;
+                    index2 = i + 1;
+                    break;
+                }
+            }
+
+            // Calculate the interpolation factor
+            float t = (time - input[index1]) / (input[index2] - input[index1]);
+
+            // Perform interpolation based on the target path
+            if (channel.targetPath == "translation")
+            {
+                // Interpolate translation
+                glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
+                glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
+                keyFrame.position = glm::mix(pos1, pos2, t);
+                keyFrame.has_position = true;
+            }
+            else if (channel.targetPath == "rotation")
+            {
+                // Interpolate rotation as quaternions
+                glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
+                glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
+                keyFrame.rotation = glm::normalize(glm::slerp(rot1, rot2, t));
+                keyFrame.has_rotation = true;
+            }
+            else if (channel.targetPath == "scale")
+            {
+                // Interpolate scale
+                glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
+                glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
+                keyFrame.scale = glm::mix(scale1, scale2, t);
+                keyFrame.has_scale = true;
+            }
+            // Add handling for other target paths as needed
+        }
     }
 
     bool GLTFLoader::loadAnimations()
@@ -606,13 +679,11 @@ namespace gltf_loader
 
         for (int a = 0; a < animations.size(); a++)
         {
-            
+
             vec2 start_duration = getAnimationTimeDuration(animations[a]);
             float time = 0;
 
             print({animations[a].name, animations[a].start_time, animations[a].duration});
-
-            
 
             for (float t = start_duration.x; t < start_duration.x + start_duration.y; t += 1.0 / ANIMATION_FPS_COUNT)
             {
@@ -623,23 +694,21 @@ namespace gltf_loader
                 {
                     AnimationKeyFrame akf;
 
-                    //print({"AAAAA"});
+                    // print({"AAAAA"});
 
                     getAnimationKeyFrame(animations[a], ac, t, akf);
 
-                    //print({"BBBBB"});
+                    // print({"BBBBB"});
 
                     if (akf.targetNodeIndex != -1)
                     {
                         key_frames.push_back(akf);
                     }
-
                 }
                 animations[a].keyFrames.push_back(key_frames);
             }
 
-            print({animations[a].name, animations[a].start_time, animations[a].duration});
-            
+            print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
         }
 
         return true;
@@ -800,6 +869,7 @@ namespace gltf_loader
         return true;
     }
 
+    /*
     std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
     {
 
@@ -878,6 +948,103 @@ namespace gltf_loader
                 default:
                     throw std::runtime_error("Unsupported component type for attribute data.");
                 }
+                attributeData[i * numComponents + j] = value;
+                srcOffset += componentSize;
+            }
+            srcOffset += byteStride - componentSize * numComponents;
+        }
+
+        return attributeData;
+    }
+    */
+
+    std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
+    {
+        const Accessor &accessor = accessors[accessorIndex];
+        const BufferView &bufferView = bufferViews[accessor.bufferView];
+        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+
+        size_t componentSize = 0;
+        switch (accessor.componentType)
+        {
+        case 5120: // BYTE
+        case 5121: // UNSIGNED_BYTE
+            componentSize = 1;
+            break;
+        case 5122: // SHORT
+        case 5123: // UNSIGNED_SHORT
+            componentSize = 2;
+            break;
+        case 5125: // UNSIGNED_INT
+            componentSize = 4;
+            break;
+        case 5126: // FLOAT
+            componentSize = 4;
+            break;
+        default:
+            throw std::runtime_error("Unsupported component type.");
+        }
+
+        size_t numComponents = 0;
+        if (accessor.type == "SCALAR")
+        {
+            numComponents = 1;
+        }
+        else if (accessor.type == "VEC2")
+        {
+            numComponents = 2;
+        }
+        else if (accessor.type == "VEC3")
+        {
+            numComponents = 3;
+        }
+        else if (accessor.type == "VEC4")
+        {
+            numComponents = 4;
+        }
+        else if (accessor.type == "MAT4")
+        {
+            numComponents = 16;
+        }
+        else
+        {
+            throw std::runtime_error("Unsupported accessor type.");
+        }
+
+        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
+        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
+        std::vector<float> attributeData(accessor.count * numComponents);
+
+        for (size_t i = 0; i < accessor.count; ++i)
+        {
+            for (size_t j = 0; j < numComponents; ++j)
+            {
+                float value = 0.0f;
+
+                if (accessor.componentType == 5126) // FLOAT
+                {
+                    if (srcOffset + sizeof(float) <= buffer.size())
+                    {
+                        value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading FLOAT data.");
+                    }
+                }
+                else if (accessor.componentType == 5123) // UNSIGNED_SHORT
+                {
+                    if (srcOffset + sizeof(uint16_t) <= buffer.size())
+                    {
+                        uint16_t uint16Value = *reinterpret_cast<const uint16_t *>(&buffer[srcOffset]);
+                        value = static_cast<float>(uint16Value) / 65535.0f;
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading UNSIGNED_SHORT data.");
+                    }
+                }
+
                 attributeData[i * numComponents + j] = value;
                 srcOffset += componentSize;
             }
@@ -1089,5 +1256,4 @@ namespace gltf_loader
 
         return true;
     }
-
 };

@@ -119,7 +119,11 @@ function play_arm_cannon_animation()
             end
         end
 
+        --print("animation_state.animation.key_frames",tablelength(animation_state.animation.key_frames))
+        --print("neme",animation_state.name)
+
         apply_key_frame(cannon.part_list,animation_state.animation.key_frames[frame_selected])
+        
 
     end
     
