@@ -1,10 +1,10 @@
 #pragma once
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
 #include "base64.h"
 
 bool file_exist(string nome)
@@ -15,6 +15,19 @@ bool file_exist(string nome)
         return false;
     }
     return true;
+}
+
+template <typename T>
+T cyclicAccess(const std::vector<T>& vec, size_t id) {
+    if (vec.empty()) {
+        throw std::runtime_error("Error: The vector is empty.");
+    }
+
+    if (id >= vec.size()) {
+        id = id % vec.size();
+    }
+
+    return vec[id];
 }
 
 #ifndef ANIMATION_FPS_COUNT
@@ -39,10 +52,11 @@ namespace gltf_loader
 
     struct Accessor
     {
-        size_t bufferView;
-        size_t byteOffset;
-        size_t componentType;
+        size_t bufferView = 0;
+        size_t byteOffset = 0;
+        size_t componentType = 0;
         size_t count;
+        std::vector<float> min = {},max = {};
         std::string type;
     };
 
@@ -389,7 +403,7 @@ namespace gltf_loader
 
             if (nodeJson.contains("extras"))
             {
-                nodeData.extras = nodeJson["extras"].get<json>();
+                nodeData.extras = nodeJson["extras"];
             }
 
             nodes.push_back(nodeData);
@@ -418,6 +432,13 @@ namespace gltf_loader
             accessor.byteOffset = accessorData.value("byteOffset", 0);
             accessor.componentType = accessorData["componentType"].get<size_t>();
             accessor.count = accessorData["count"].get<size_t>();
+            /**/
+            if(accessorData.contains("min")){
+                accessor.min = accessorData["min"].get<vector<float>>();
+            }
+            if(accessorData.contains("max")){
+                accessor.max = accessorData["max"].get<vector<float>>();
+            }
             accessor.type = accessorData["type"].get<std::string>();
 
             if (accessor.bufferView >= bufferViews.size())
@@ -445,16 +466,24 @@ namespace gltf_loader
 
             if (!input.empty())
             {
-                startTime = std::min(startTime, input[0]);
-                endTime = std::max(endTime, input[input.size() - 1]);
-            }
-            else
-            {
-                startTime = 0;
-                endTime = 0;
+
+                if(inputAccessor.min.size() > 0 && inputAccessor.max.size() > 0){
+                    startTime = inputAccessor.min[0];
+                    endTime = inputAccessor.max[0];
+                }
+                
+
+                // Find the actual start and end times in this channel
+                float channelStartTime = input[0];
+                float channelEndTime = input[input.size() - 1];
+
+                // Update global start and end times
+                startTime = std::min(startTime, channelStartTime);
+                endTime = std::max(endTime, channelEndTime);
             }
         }
 
+        // Calculate duration based on the global start and end times
         float duration = endTime - startTime;
 
         if (startTime > duration)
@@ -575,7 +604,7 @@ namespace gltf_loader
         // Find the sampler associated with this channel
         if (channel.samplerIndex >= animation.samplers.size())
         {
-            print({"Invalid sampler index"});
+            // print({"Invalid sampler index"});
             return;
         }
 
@@ -584,18 +613,19 @@ namespace gltf_loader
         // Retrieve the input and output accessors
         if (sampler.inputAccessorIndex >= accessors.size() || sampler.outputAccessorIndex >= accessors.size())
         {
-            print({"Invalid accessor index"});
+            // print({"Invalid accessor index"});
             return;
         }
 
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
+        //print({"outputAccessor",outputAccessor.min.size(),outputAccessor.max.size()});
 
         // Get the input and output data
         ///*
         if (inputAccessor.bufferView < buffersData.size() || outputAccessor.bufferView < buffersData.size())
         {
-            print({"Invalid buffer view index"});
+            // print({"Invalid buffer view index"});
             return;
         }
         //*/
@@ -605,15 +635,6 @@ namespace gltf_loader
         if (outputAccessor.bufferView < accessors.size())
         {
             const std::vector<float> output = getAttributeData(outputAccessor.bufferView);
-
-            // Ensure that the input and output vectors have the same size
-            /*
-            if (input.size() != output.size())
-            {
-                print({"Input and output data size mismatch"});
-                return;
-            }
-            */
 
             // Find the keyframes surrounding the specified time
             size_t index1 = 0, index2 = 0;
@@ -639,16 +660,13 @@ namespace gltf_loader
                     glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
                     glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
                     keyFrame.position = glm::mix(pos1, pos2, t);
-                    if(glm::any(glm::isnan(keyFrame.position))){return;}
-                    keyFrame.has_position = true;
 
-                    print({"translation",keyFrame.position.x,keyFrame.position.y,keyFrame.position.z});
-                    print({"pos1",pos1.x,pos1.y,pos1.z});
-                    print({"pos2",pos2.x,pos2.y,pos2.z});
-                }
-                else
-                {
-                    print({"Invalid translation data"});
+                    if (glm::any(glm::isnan(keyFrame.position)))
+                    {
+                        return;
+                    }
+                    
+                    keyFrame.has_position = true;
                 }
             }
             else if (channel.targetPath == "rotation")
@@ -659,16 +677,11 @@ namespace gltf_loader
                     glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
                     glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
                     keyFrame.rotation = glm::normalize(glm::slerp(rot1, rot2, t));
-                    if(glm::any(glm::isnan(keyFrame.rotation))){return;}
+                    if (glm::any(glm::isnan(keyFrame.rotation)))
+                    {
+                        return;
+                    }
                     keyFrame.has_rotation = true;
-
-                    print({"rotation",keyFrame.rotation.x,keyFrame.rotation.y,keyFrame.rotation.z,keyFrame.rotation.w});
-                    print({"rot1",rot1.x,rot1.y,rot1.z,rot1.w});
-                    print({"rot2",rot2.x,rot2.y,rot2.z,rot2.w});
-                }
-                else
-                {
-                    print({"Invalid rotation data"});
                 }
             }
             else if (channel.targetPath == "scale")
@@ -679,23 +692,14 @@ namespace gltf_loader
                     glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
                     glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
                     keyFrame.scale = glm::mix(scale1, scale2, t);
-                    if(glm::any(glm::isnan(keyFrame.scale))){return;}
+                    if (glm::any(glm::isnan(keyFrame.scale)))
+                    {
+                        return;
+                    }
                     keyFrame.has_scale = true;
-
-                    print({"rotation",keyFrame.scale.x,keyFrame.scale.y,keyFrame.scale.z});
-                    print({"rot1",scale1.x,scale1.y,scale1.z});
-                    print({"rot2",scale2.x,scale2.y,scale2.z});
-                }
-                else
-                {
-                    print({"Invalid scale data"});
                 }
             }
             // Add handling for other target paths as needed
-        }
-        else
-        {
-            print({"error in getAnimationKeyFrame"});
         }
     }
 
@@ -756,8 +760,6 @@ namespace gltf_loader
             vec2 start_duration = getAnimationTimeDuration(animations[a]);
             float time = 0;
 
-            print({animations[a].name, animations[a].start_time, animations[a].duration});
-
             for (float t = start_duration.x; t < start_duration.x + start_duration.y; t += 1.0 / ANIMATION_FPS_COUNT)
             {
                 t = std::min(t, start_duration.x + start_duration.y);
@@ -767,11 +769,7 @@ namespace gltf_loader
                 {
                     AnimationKeyFrame akf;
 
-                    // print({"AAAAA"});
-
                     getAnimationKeyFrame(animations[a], ac, t, akf);
-
-                    // print({"BBBBB"});
 
                     if (akf.targetNodeIndex != -1 && (akf.has_position || akf.has_rotation || akf.has_scale))
                     {
@@ -941,95 +939,6 @@ namespace gltf_loader
 
         return true;
     }
-
-    /*
-    std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
-    {
-
-        const Accessor &accessor = accessors[accessorIndex];
-        const BufferView &bufferView = bufferViews[accessor.bufferView];
-        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
-
-        size_t componentSize;
-        switch (accessor.componentType)
-        {
-        case 5120: // BYTE
-            componentSize = 1;
-            break;
-        case 5121: // UNSIGNED_BYTE
-            componentSize = 1;
-            break;
-        case 5122: // SHORT
-            componentSize = 2;
-            break;
-        case 5123: // UNSIGNED_SHORT
-            componentSize = 2;
-            break;
-        case 5125: // UNSIGNED_INT
-            componentSize = 4;
-            break;
-        case 5126: // FLOAT
-            componentSize = 4;
-            break;
-        default:
-            throw std::runtime_error("Unsupported component type.");
-        }
-
-        size_t numComponents;
-        if (accessor.type == "SCALAR")
-        {
-            numComponents = 1;
-        }
-        else if (accessor.type == "VEC2")
-        {
-            numComponents = 2;
-        }
-        else if (accessor.type == "VEC3")
-        {
-            numComponents = 3;
-        }
-        else if (accessor.type == "VEC4")
-        {
-            numComponents = 4;
-        }
-        else if (accessor.type == "MAT4")
-        {
-            numComponents = 16;
-        }
-        else
-        {
-            throw std::runtime_error("Unsupported accessor type.");
-        }
-
-        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
-        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
-        std::vector<float> attributeData(accessor.count * numComponents);
-
-        for (size_t i = 0; i < accessor.count; ++i)
-        {
-            for (size_t j = 0; j < numComponents; ++j)
-            {
-                float value;
-                switch (accessor.componentType)
-                {
-                case 5126: // FLOAT
-                    value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
-                    break;
-                case 5123: // UNSIGNED_SHORT
-                    value = static_cast<float>(*reinterpret_cast<const uint16_t *>(&buffer[srcOffset])) / 65535.0f;
-                    break;
-                default:
-                    throw std::runtime_error("Unsupported component type for attribute data.");
-                }
-                attributeData[i * numComponents + j] = value;
-                srcOffset += componentSize;
-            }
-            srcOffset += byteStride - componentSize * numComponents;
-        }
-
-        return attributeData;
-    }
-    */
 
     std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
     {
