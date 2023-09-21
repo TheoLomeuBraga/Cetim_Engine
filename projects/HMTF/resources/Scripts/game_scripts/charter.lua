@@ -244,6 +244,25 @@ function shoot()
     
     restart_arm_cannon_animation()
 
+    local bullet = game_object:new(create_object(layers.cenary))
+
+    local bullet_position = camera.components[components.transform]:get_global_position(0,0,0)
+    local bullet_direction = camera.components[components.transform]:get_local_direction(0,0,1)
+
+    bullet:add_component(components.transform)
+    bullet.components[components.transform].position = {x=bullet_position.x + bullet_direction.x,y=bullet_position.y + bullet_direction.y,z=bullet_position.z + bullet_direction.z}
+    bullet.components[components.transform].scale = {x=0.25,y=0.25,z=0.25}
+    bullet.components[components.transform]:set()
+
+    bullet:add_component(components.lua_scripts)
+    bullet.components[components.lua_scripts]:add_script("game_scripts/bullet")
+
+    
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
+    
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", 1)
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh", {file = "resources/3D Models/bullets.gltf",name = "round_bullet"})
+
     
 
 end
@@ -321,15 +340,29 @@ function UPDATE()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
 
+        local check_hit_top_down = function (objs_touching)
+            local valid_touches = 0
+            for key, value in pairs(objs_touching) do
+                local obj_touching = game_object:new(value)
+                if not obj_touching.components[components.physics_3D].triger then
+                    valid_touches = valid_touches + 1 
+                    if valid_touches > 1 then
+                        return true
+                    end
+                end
+            end
+            return false
+        end
+
         --hit top
         check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
         check_top.components[components.physics_3D]:get()
-        hit_top = tablelength(check_top.components[components.physics_3D].objs_touching) > 1
+        hit_top = check_hit_top_down(check_top.components[components.physics_3D].objs_touching)
     
         --hit down
         check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
         check_down.components[components.physics_3D]:get()
-        hit_down = tablelength(check_down.components[components.physics_3D].objs_touching) > 1
+        hit_down = check_hit_top_down(check_down.components[components.physics_3D].objs_touching)
 
         if global_data:get("pause") < 1 then
             

@@ -296,7 +296,9 @@ public:
 		if (em_cena)
 		{
 
-			for (pair<string, shared_ptr<componente>> p : componentes)
+			map<string, shared_ptr<componente>> componentes_copy = componentes;
+
+			for (pair<string, shared_ptr<componente>> p : componentes_copy)
 			{
 				p.second->colidir(col);
 			}
@@ -307,7 +309,9 @@ public:
 	{
 		em_cena = false;
 
-		for (pair<string, shared_ptr<componente>> p : componentes)
+		map<string, shared_ptr<componente>> componentes_copy = componentes;
+
+		for (pair<string, shared_ptr<componente>> p : componentes_copy)
 		{
 
 			p.second->finalisar();

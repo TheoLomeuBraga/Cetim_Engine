@@ -15,12 +15,14 @@ require("engine_libs.objects.scene_3D")
 require("engine_libs.short_cuts.create_collision")
 require("engine_libs.short_cuts.create_mesh")
 
+local this_object = {}
+
 damage = 1
-direction = {x = 1,y = 0,z = 0}
+direction = { x = 1, y = 0, z = 0 }
 speed = 1
 special_pattern = ""
 max_distance = -1
-life_time = 10
+life_time = 1
 mesh = {
     file = "",
     name = ""
@@ -28,9 +30,47 @@ mesh = {
 
 
 function START()
+    this_object = game_object:new(this_object_ptr)
+
+    if mesh.file ~= "" then
+        local mat = matreial:new()
+        mat.shader = "resources/Shaders/mesh"
+        mat.textures[1] = "resources/Textures/white.png"
+        this_object:add_component(components.render_mesh)
+        this_object.components[components.render_mesh].layer = 2
+        this_object.components[components.render_mesh].meshes_cout = 1
+        this_object.components[components.render_mesh].meshes = deepcopy({ mesh })
+        this_object.components[components.render_mesh].materials = deepcopy({ mat })
+        this_object.components[components.render_mesh]:set()
+
+        this_object.components[components.transform]:get()
+
+        this_object:add_component(components.physics_3D)
+        this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+        this_object.components[components.physics_3D].collision_shape = collision_shapes.convex
+        this_object.components[components.physics_3D].gravity_scale = 0
+        this_object.components[components.physics_3D].collision_mesh = deepcopy( mesh )
+        this_object.components[components.physics_3D].triger = true
+        this_object.components[components.physics_3D].scale = this_object.components[components.transform].scale
+        this_object.components[components.physics_3D].friction = 0
+        this_object.components[components.physics_3D]:set()
+    end
+
+
+
+    --this_object:add_component(components.physics_3D)
+    --this_object.components[components.physics_3D]:set()
 end
 
 function UPDATE()
+    time:get()
+
+    --this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed,direction.y * speed,direction.z * speed)
+
+    life_time = life_time - time.delta
+    if life_time <= 0 then
+        remove_object(this_object_ptr)
+    end
 end
 
 function COLLIDE(collision_info)
