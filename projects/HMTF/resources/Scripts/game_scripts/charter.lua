@@ -216,15 +216,20 @@ end
 function shoot()
     if animation_state.name == "open" and animation_state.finish then
         start_arm_cannon_animation("recoil_open",2,false)
+        start_arm_cannon_animation("recoil",8,false)
+        camera.components[components.audio_source].path = "resources/Audio/sounds/shot_3.wav"
+        camera.components[components.audio_source].volume = 20
+        camera.components[components.audio_source]:set()
     else
         start_arm_cannon_animation("recoil",8,false)
+        camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
+        camera.components[components.audio_source].volume = 20
+        camera.components[components.audio_source]:set()
     end
     
     restart_arm_cannon_animation()
 
-    camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
-    camera.components[components.audio_source].volume = 20
-    camera.components[components.audio_source]:set()
+    
 
 end
 
