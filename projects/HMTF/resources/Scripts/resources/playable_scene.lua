@@ -33,7 +33,7 @@ cenary_builders = {
     yield_count_down_total_time = 50,
     yield_count_down = 50,
 
-    entity_part = function (father,layer, part_data,use_oclusion,yield)
+    entity_part = function (father,layer, part_data,shader,use_oclusion,yield)
 
         local ret = game_object:new(create_object(father))
         entity_ptr_list[part_data.id] = ret.object_ptr
@@ -51,8 +51,7 @@ cenary_builders = {
         ret.components[components.transform]:set()
 
         for key, value in pairs(part_data.materials) do
-            part_data.materials[key].shader = "resources/Shaders/explosive_vertex_mesh"
-            part_data.materials[key].inputs["vertex_explosion"] = 0.5
+            part_data.materials[key].shader = shader
         end
 
         if part_data.meshes ~= nil and part_data.materials ~= nil then
@@ -82,14 +81,14 @@ cenary_builders = {
         end
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.entity_part(ret.object_ptr,layer, value,yield)
+            cenary_builders.entity_part(ret.object_ptr,layer, value,shader,use_oclusion,yield)
         end
 
         return ret
 
     end,
 
-    entity = function (father,layer, ceane_data,use_oclusion,yield)
+    entity = function (father,layer, ceane_data,shader,use_oclusion,yield)
         
         local ret = {
             obj = {},
@@ -99,7 +98,7 @@ cenary_builders = {
         
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-        local entity_parts = cenary_builders.entity_part(father,layer, ceane_data.objects,use_oclusion,yield)
+        local entity_parts = cenary_builders.entity_part(father,layer, ceane_data.objects,shader,use_oclusion,yield)
 
         ret.obj = deepcopy(entity_parts)
         ret.parts_ptr_list = deepcopy(entity_ptr_list)

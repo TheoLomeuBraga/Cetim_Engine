@@ -58,9 +58,19 @@ arm_cannon_sceane_data = {}
 function create_arm_cannon()
     
     arm_cannon_sceane_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
-    local entity_data = cenary_builders.entity(camera.object_ptr,4, arm_cannon_sceane_data,false,false)
+    local entity_data = cenary_builders.entity(camera.object_ptr,4, arm_cannon_sceane_data,"resources/Shaders/explosive_vertex_mesh",false,false)
+    --"resources/Shaders/explosive_vertex_mesh"
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
+
+    for key_1, value_1 in pairs(cannon.part_list) do
+        if value_1:have_component(components.render_mesh) then
+            for key_2, value_2 in pairs(value_1.components[components.render_mesh].materials) do
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] = 0.5
+                cannon.part_list[key_1].components[components.render_mesh]:set()
+            end
+        end
+    end
     
 end
 
