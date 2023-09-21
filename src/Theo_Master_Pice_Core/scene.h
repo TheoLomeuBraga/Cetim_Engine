@@ -256,7 +256,7 @@ public:
 		shared_ptr<camera> cam = obj->pegar_componente<camera>();
 		if (cam != NULL)
 		{
-			cam->paiTF = TF.get();
+			cam->paiTF = TF;
 			cam->atualizar_tf();
 		}
 

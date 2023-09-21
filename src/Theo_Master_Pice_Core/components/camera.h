@@ -13,7 +13,7 @@ class camera : public componente
 {
 private:
 public:
-	transform_ *paiTF;
+	shared_ptr<transform_> paiTF;
 
 	glm::vec3 pos, alvo, cima;
 
@@ -91,7 +91,6 @@ public:
 			rot = vec3(-rot.x,rot.y,-rot.z);
 
 			new_mat *= toMat4(graus_quat(rot));
-
 			
 			glm::decompose(new_mat, nada, qua, pos, nada, nada2);
 

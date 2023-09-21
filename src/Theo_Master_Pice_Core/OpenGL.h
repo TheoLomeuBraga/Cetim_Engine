@@ -217,7 +217,7 @@ public:
 		teste_cam = novo_objeto_jogo();
 		teste_cam->adicionar_componente<camera>(camera(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 10, 10, 0.01, 100));
 		teste_cam->adicionar_componente<transform_>(transform_(false, vec3(0, 0, 0), vec3(0, 0, 0), vec3(1, 1, 1)));
-		teste_cam->pegar_componente<camera>()->paiTF = teste_cam->pegar_componente<transform_>().get();
+		teste_cam->pegar_componente<camera>()->paiTF = teste_cam->pegar_componente<transform_>();
 		teste_cam->pegar_componente<camera>()->atualizar_tf();
 	}
 

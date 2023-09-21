@@ -8,6 +8,8 @@ using namespace std;
 
 mat4 MatrizMundi =  glm::mat4(1.0);
 
+
+
 class transform_ : public componente
 {
 public:
@@ -17,9 +19,13 @@ public:
 	{
 		matrizTransform = MatrizMundi;
 	}
+	~transform_()
+	{
+		matrizTransform = MatrizMundi;
+	}
 
 	bool UI = false;
-	transform_ *paiTF;
+	transform_ *paiTF = NULL;
 
 	int local_hierarquia;
 
@@ -111,7 +117,6 @@ public:
 
 	void atualizar_tf()
 	{
-		// OBS: o unico proposito dessa fun��o e eu n�o me confundir
 		pegar_matriz();
 	}
 
