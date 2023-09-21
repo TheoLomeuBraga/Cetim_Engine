@@ -50,6 +50,11 @@ cenary_builders = {
         
         ret.components[components.transform]:set()
 
+        for key, value in pairs(part_data.materials) do
+            part_data.materials[key].shader = "resources/Shaders/explosive_vertex_mesh"
+            part_data.materials[key].inputs["vertex_explosion"] = 0.5
+        end
+
         if part_data.meshes ~= nil and part_data.materials ~= nil then
 
             ret:add_component(components.render_mesh)
