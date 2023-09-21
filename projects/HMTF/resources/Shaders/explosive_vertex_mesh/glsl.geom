@@ -14,19 +14,34 @@ out Vertex {
     vec2 UV;
 } vert_out;
 
-uniform float primitives_size;
+uniform float primitives_size,elevation_distance;
+
+uniform bool ui;
+uniform mat4 projection, vision, transform;
 
 void main() {
     
     vec3 center = (vert_in[0].POS.xyz + vert_in[1].POS.xyz + vert_in[2].POS.xyz) / 3.0;
+    
+    vec3 edge1 = vert_in[1].POS.xyz - vert_in[0].POS.xyz;
+    vec3 edge2 = vert_in[2].POS.xyz - vert_in[0].POS.xyz;
+    vec3 direction = normalize(cross(edge1, edge2));
 
     for (int i = 0; i < 3; ++i) {
-        vec3 new_pos = mix(center,vert_in[i].POS.xyz,primitives_size);
-        //vert_out.POS = vec4(new_pos,1);
 
-        vert_out.POS = vert_in[i].POS;
+        //ajust center distance
+        vec3 new_pos = mix(vert_in[i].POS.xyz,center,primitives_size);
+        
+        new_pos += direction * elevation_distance;
+
+        vert_out.POS = vec4(new_pos,1);
         vert_out.UV = vert_in[i].UV;
-        gl_Position = gl_in[i].gl_Position;
+        gl_Position = vert_out.POS;
+        if(ui) {
+            gl_Position = transform * vert_out.POS;
+        } else {
+            gl_Position = (projection * vision * transform) * vert_out.POS;
+        }
         EmitVertex();
     }
     EndPrimitive();

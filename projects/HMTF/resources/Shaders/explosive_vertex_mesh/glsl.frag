@@ -13,7 +13,7 @@ uniform sampler2D textures[6];
 uniform vec4 color;
 uniform vec4 uv_position_scale;
 
-
+uniform float texture_transition;
 
 
 vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
@@ -22,7 +22,7 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 
 void main() {
 
-   ret = color * texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale));
+   ret = color * mix(texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale)),texture(textures[1], re_pos_uv(vert_out.UV, uv_position_scale)),texture_transition);
    //ret = vec4(vertex_explosion,vertex_explosion,vertex_explosion,1);
 
 }

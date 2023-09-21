@@ -63,15 +63,21 @@ function create_arm_cannon()
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
 
+    
+end
+
+function set_cannon_vertex_explosion_state(primitives_size,elevation_distance,texture_transition,transition_texture)
     for key_1, value_1 in pairs(cannon.part_list) do
         if value_1:have_component(components.render_mesh) then
             for key_2, value_2 in pairs(value_1.components[components.render_mesh].materials) do
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] = 0.5
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] = primitives_size
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["elevation_distance"] = elevation_distance
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["texture_transition"] = texture_transition
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].textures[2] = transition_texture
                 cannon.part_list[key_1].components[components.render_mesh]:set()
             end
         end
     end
-    
 end
 
 local animation_state = {

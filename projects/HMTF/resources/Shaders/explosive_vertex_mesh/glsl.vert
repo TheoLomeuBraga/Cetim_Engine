@@ -12,6 +12,8 @@ out Vertex {
 uniform bool ui;
 uniform mat4 projection, vision, transform;
 
+
+
 void main() {
 
    vert_out.POS = vec4(position, 1);
