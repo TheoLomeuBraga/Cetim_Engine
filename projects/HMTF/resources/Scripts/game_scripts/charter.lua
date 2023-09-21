@@ -206,11 +206,20 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
+function load_shoot()
 
+    start_arm_cannon_animation("open",2,false)
+    restart_arm_cannon_animation()
+
+end
 
 function shoot()
-
-    start_arm_cannon_animation("recoil",8,false)
+    if animation_state.name == "open" then
+        start_arm_cannon_animation("recoil_open",4,false)
+    else
+        start_arm_cannon_animation("recoil",8,false)
+    end
+    
     restart_arm_cannon_animation()
 
     camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
@@ -310,7 +319,9 @@ function UPDATE()
             end
 
             --shoot
-            if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
+            if inputs.action_2 > 0 and inputs_last_frame.action_2 == 0 then
+                load_shoot()
+            elseif inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
                 shoot()
             end
 
@@ -376,11 +387,13 @@ function UPDATE()
             end
 
             --animate
-            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or (animation_state.name ==  "recoil" and animation_state.finish) then
-                if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down then
+            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name ==  "recoil" and animation_state.finish) then
+                if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down and not (inputs.action_2 > 0) then
                     start_arm_cannon_animation("walk",1,true)
                 else
-                    start_arm_cannon_animation("normal",1,true)
+                    if not (inputs.action_2 > 0) then
+                        start_arm_cannon_animation("normal",1,true)
+                    end
                 end
             end
         

@@ -471,12 +471,13 @@ namespace gltf_loader
 
             if (!input.empty())
             {
-
+                /*
                 if (inputAccessor.min.size() > 0 && inputAccessor.max.size() > 0)
                 {
                     startTime = inputAccessor.min[0];
                     endTime = inputAccessor.max[0];
                 }
+                */
 
                 // Find the actual start and end times in this channel
                 float channelStartTime = input[0];
@@ -510,7 +511,6 @@ namespace gltf_loader
         // Find the sampler associated with this channel
         if (channel.samplerIndex >= animation.samplers.size())
         {
-            // print({"Invalid sampler index"});
             return;
         }
 
@@ -519,7 +519,6 @@ namespace gltf_loader
         // Retrieve the input and output accessors
         if (sampler.inputAccessorIndex >= accessors.size() || sampler.outputAccessorIndex >= accessors.size())
         {
-            // print({"Invalid accessor index"});
             return;
         }
 
@@ -658,7 +657,7 @@ namespace gltf_loader
                 animations[a].keyFrames.push_back(key_frames);
             }
 
-            print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
+            //print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
         }
 
         return true;
