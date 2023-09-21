@@ -214,8 +214,8 @@ function load_shoot()
 end
 
 function shoot()
-    if animation_state.name == "open" then
-        start_arm_cannon_animation("recoil_open",4,false)
+    if animation_state.name == "open" and animation_state.finish then
+        start_arm_cannon_animation("recoil_open",2,false)
     else
         start_arm_cannon_animation("recoil",8,false)
     end
