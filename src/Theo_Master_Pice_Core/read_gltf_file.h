@@ -18,12 +18,15 @@ bool file_exist(string nome)
 }
 
 template <typename T>
-T cyclicAccess(const std::vector<T>& vec, size_t id) {
-    if (vec.empty()) {
+T cyclicAccess(const std::vector<T> &vec, size_t id)
+{
+    if (vec.empty())
+    {
         throw std::runtime_error("Error: The vector is empty.");
     }
 
-    if (id >= vec.size()) {
+    if (id >= vec.size())
+    {
         id = id % vec.size();
     }
 
@@ -56,7 +59,7 @@ namespace gltf_loader
         size_t byteOffset = 0;
         size_t componentType = 0;
         size_t count;
-        std::vector<float> min = {},max = {};
+        std::vector<float> min = {}, max = {};
         std::string type;
     };
 
@@ -433,10 +436,12 @@ namespace gltf_loader
             accessor.componentType = accessorData["componentType"].get<size_t>();
             accessor.count = accessorData["count"].get<size_t>();
             /**/
-            if(accessorData.contains("min")){
+            if (accessorData.contains("min"))
+            {
                 accessor.min = accessorData["min"].get<vector<float>>();
             }
-            if(accessorData.contains("max")){
+            if (accessorData.contains("max"))
+            {
                 accessor.max = accessorData["max"].get<vector<float>>();
             }
             accessor.type = accessorData["type"].get<std::string>();
@@ -467,11 +472,11 @@ namespace gltf_loader
             if (!input.empty())
             {
 
-                if(inputAccessor.min.size() > 0 && inputAccessor.max.size() > 0){
+                if (inputAccessor.min.size() > 0 && inputAccessor.max.size() > 0)
+                {
                     startTime = inputAccessor.min[0];
                     endTime = inputAccessor.max[0];
                 }
-                
 
                 // Find the actual start and end times in this channel
                 float channelStartTime = input[0];
@@ -498,105 +503,6 @@ namespace gltf_loader
         return glm::vec2(startTime, duration);
     }
 
-    /*
-
-    void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
-    {
-        AnimationSampler &sampler = animation.samplers[channel.samplerIndex]; // assuming only 1 sampler for simplicity
-        Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-        Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-
-        std::vector<float> input = getAttributeData(inputAccessor.bufferView);
-
-        if (outputAccessor.bufferView < accessors.size())
-        {
-            std::vector<float> output = getAttributeData(outputAccessor.bufferView); // <--error
-
-            std::string interpolation = sampler.interpolation;
-            size_t count = inputAccessor.count;
-
-            keyFrame.targetNodeIndex = channel.targetNodeIndex;
-
-            // print({"channel.targetPath",channel.targetPath});
-
-            // interpolate position
-            if (channel.targetPath == "translation")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-
-                float t = 0.0f;
-
-                if (input[index2] != input[index1])
-                {
-                    // Calculate interpolation factor
-                    t = (time - input[index1]) / (input[index2] - input[index1]);
-                }
-
-                glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
-                glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
-                keyFrame.position = glm::mix(pos1, pos2, t);
-                keyFrame.has_position = true;
-                print({"position",keyFrame.position.x,keyFrame.position.y,keyFrame.position.z,count});
-            }
-
-            // interpolate rotation
-            if (channel.targetPath == "rotation")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-                float t = (time - input[index1]) / (input[index2] - input[index1]);
-                glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
-                glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
-                keyFrame.rotation = glm::slerp(rot1, rot2, t);
-                keyFrame.has_rotation = true;
-            }
-
-            // interpolate scale
-            if (channel.targetPath == "scale")
-            {
-                size_t index1 = 0, index2 = 0;
-                for (size_t i = 0; i < count - 1; ++i)
-                {
-                    if (input[i] <= time && time <= input[i + 1])
-                    {
-                        index1 = i;
-                        index2 = i + 1;
-                        break;
-                    }
-                }
-                float t = (time - input[index1]) / (input[index2] - input[index1]);
-                glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
-                glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
-                keyFrame.scale = glm::mix(scale1, scale2, t);
-                keyFrame.has_scale = true;
-            }
-        }
-        else{
-            print({"error in getAnimationKeyFrame"});
-        }
-    }
-
-    */
-
-    ///*
-
     void GLTFLoader::getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame)
     {
         keyFrame.targetNodeIndex = channel.targetNodeIndex;
@@ -619,91 +525,64 @@ namespace gltf_loader
 
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-        //print({"outputAccessor",outputAccessor.min.size(),outputAccessor.max.size()});
-
-        // Get the input and output data
-        ///*
-        if (inputAccessor.bufferView < buffersData.size() || outputAccessor.bufferView < buffersData.size())
-        {
-            // print({"Invalid buffer view index"});
-            return;
-        }
-        //*/
+        // print({"outputAccessor",outputAccessor.min.size(),outputAccessor.max.size()});
 
         const std::vector<float> input = getAttributeData(inputAccessor.bufferView);
 
-        if (outputAccessor.bufferView < accessors.size())
+        const std::vector<float> output = getAttributeData(outputAccessor.bufferView - textures.size());
+
+        // Find the keyframes surrounding the specified time
+        size_t index1 = 0, index2 = 0;
+        for (size_t i = 0; i < input.size() - 1; ++i)
         {
-            const std::vector<float> output = getAttributeData(outputAccessor.bufferView);
-
-            // Find the keyframes surrounding the specified time
-            size_t index1 = 0, index2 = 0;
-            for (size_t i = 0; i < input.size() - 1; ++i)
+            if (input[i] <= time && time <= input[i + 1])
             {
-                if (input[i] <= time && time <= input[i + 1])
-                {
-                    index1 = i;
-                    index2 = i + 1;
-                    break;
-                }
+                index1 = i;
+                index2 = i + 1;
+                break;
             }
-
-            // Calculate the interpolation factor
-            float t = (time - input[index1]) / (input[index2] - input[index1]);
-
-            // Perform interpolation based on the target path
-            if (channel.targetPath == "translation")
-            {
-                // Interpolate translation
-                if (index1 * 3 + 2 < output.size() && index2 * 3 + 2 < output.size())
-                {
-                    glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
-                    glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
-                    keyFrame.position = glm::mix(pos1, pos2, t);
-
-                    if (glm::any(glm::isnan(keyFrame.position)))
-                    {
-                        return;
-                    }
-                    
-                    keyFrame.has_position = true;
-                }
-            }
-            else if (channel.targetPath == "rotation")
-            {
-                // Interpolate rotation as quaternions
-                if (index1 * 4 + 3 < output.size() && index2 * 4 + 3 < output.size())
-                {
-                    glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
-                    glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
-                    keyFrame.rotation = glm::normalize(glm::slerp(rot1, rot2, t));
-                    if (glm::any(glm::isnan(keyFrame.rotation)))
-                    {
-                        return;
-                    }
-                    keyFrame.has_rotation = true;
-                }
-            }
-            else if (channel.targetPath == "scale")
-            {
-                // Interpolate scale
-                if (index1 * 3 + 2 < output.size() && index2 * 3 + 2 < output.size())
-                {
-                    glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
-                    glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
-                    keyFrame.scale = glm::mix(scale1, scale2, t);
-                    if (glm::any(glm::isnan(keyFrame.scale)))
-                    {
-                        return;
-                    }
-                    keyFrame.has_scale = true;
-                }
-            }
-            // Add handling for other target paths as needed
         }
-    }
 
-    //*/
+        // Calculate the interpolation factor
+        float t = (time - input[index1]) / (input[index2] - input[index1]);
+
+        // Perform interpolation based on the target path
+        if (channel.targetPath == "translation")
+        {
+            // Interpolate translation
+            if (index1 * 3 + 2 < output.size() && index2 * 3 + 2 < output.size())
+            {
+                glm::vec3 pos1 = glm::make_vec3(&output[index1 * 3]);
+                glm::vec3 pos2 = glm::make_vec3(&output[index2 * 3]);
+                keyFrame.position = glm::mix(pos1, pos2, t);
+
+                keyFrame.has_position = true;
+            }
+        }
+        else if (channel.targetPath == "rotation")
+        {
+            // Interpolate rotation as quaternions
+            if (index1 * 4 + 3 < output.size() && index2 * 4 + 3 < output.size())
+            {
+                glm::quat rot1 = glm::make_quat(&output[index1 * 4]);
+                glm::quat rot2 = glm::make_quat(&output[index2 * 4]);
+                keyFrame.rotation = glm::normalize(glm::slerp(rot1, rot2, t));
+                keyFrame.has_rotation = true;
+            }
+        }
+        else if (channel.targetPath == "scale")
+        {
+            // Interpolate scale
+            if (index1 * 3 + 2 < output.size() && index2 * 3 + 2 < output.size())
+            {
+                glm::vec3 scale1 = glm::make_vec3(&output[index1 * 3]);
+                glm::vec3 scale2 = glm::make_vec3(&output[index2 * 3]);
+                keyFrame.scale = glm::mix(scale1, scale2, t);
+                keyFrame.has_scale = true;
+            }
+        }
+        // Add handling for other target paths as needed
+    }
 
     bool GLTFLoader::loadAnimations()
     {
@@ -1216,6 +1095,8 @@ namespace gltf_loader
         loadBufferViews();
         // print({"loadAccessors"});
         loadAccessors();
+        // print({"loadTextures"});
+        loadTextures();
         // print({"loadMeshes"});
         loadMeshes();
         // print({"loadScenes"});
@@ -1224,8 +1105,6 @@ namespace gltf_loader
         loadNodes();
         // print({"loadAnimations"});
         loadAnimations();
-        // print({"loadTextures"});
-        loadTextures();
         // print({"loadMaterials"});
         loadMaterials();
         // print({"load end"});
