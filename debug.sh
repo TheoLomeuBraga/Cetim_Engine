@@ -7,3 +7,12 @@ run $(pwd)/projects/HMTF
 c
 y
 backtrace
+
+#windows
+gdb $(pwd)/build/engine_theo_master_pice
+c
+set auto-solib-add off
+run C:\Theo_Master_Peace\projects\HMTF
+c
+y
+backtrace
