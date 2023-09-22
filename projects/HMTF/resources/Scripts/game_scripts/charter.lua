@@ -132,9 +132,6 @@ function play_arm_cannon_animation()
             end
         end
 
-        --print("animation_state.animation.key_frames",tablelength(animation_state.animation.key_frames))
-        --print("neme",animation_state.name)
-
         apply_key_frame(cannon.part_list, animation_state.animation.key_frames[frame_selected])
     end
 end
@@ -153,18 +150,6 @@ function START()
         collision_shapes.cylinder, nil, true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75),
     true, collision_shapes.cylinder, nil, true)
-
-    local mat = matreial:new()
-    mat.shader = "resources/Shaders/mesh"
-    mat.textures[1] = "resources/Textures/white.png"
-    mat.color = {r=1,g=0,b=0,a=1}
-    check_down:add_component(components.render_mesh)
-    check_down.components[components.render_mesh].layer = 4
-    check_down.components[components.render_mesh].meshes_cout = 1
-    check_down.components[components.render_mesh].meshes = deepcopy({
-        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" } })
-    check_down.components[components.render_mesh].materials = deepcopy({mat})
-    check_down.components[components.render_mesh]:set()
 
     
 
@@ -266,10 +251,9 @@ function shoot()
 
 
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed",speed * 2)
 
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", 1)
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",
-        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
 end
 
 function aproche_to_zero(num, speed)
@@ -335,20 +319,6 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
 
-        local check_hit_top_down = function(objs_touching)
-            local valid_touches = 0
-            for key, value in pairs(objs_touching) do
-                local obj_touching = game_object:new(value)
-                if not obj_touching.components[components.physics_3D].triger then
-                    valid_touches = valid_touches + 1
-                    if valid_touches > 1 then
-                        return true
-                    end
-                end
-            end
-            return false
-        end
-
         local get_valid_touches = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
@@ -369,22 +339,10 @@ function UPDATE()
         check_top.components[components.physics_3D]:get()
         hit_top = get_valid_touches(check_top.components[components.physics_3D].objs_touching) > 1
 
-        if true then
-            check_top.components[components.transform]:get()
-            local cd_pos = check_top.components[components.transform].position
-            print("hit_top", hit_top)
-        end
-
         --hit down
         check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
-
-        if true then
-            check_down.components[components.transform]:get()
-            local cd_pos = check_down.components[components.transform].position
-            print("hit_down", hit_down)
-        end
 
 
 
@@ -458,9 +416,9 @@ function UPDATE()
             --move
             if hit_down and not (inpulse_y > 0) then
                 this_object.components[components.physics_3D]:set_linear_velocity(
-                (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,
-                    (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.sacale,
-                    (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.sacale)
+                (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
+                    (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,
+                    (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta)
             else
                 this_object.components[components.physics_3D]:set_linear_velocity(
                 (move_dir.x * (speed + speed_boost_air)) * time.sacale,

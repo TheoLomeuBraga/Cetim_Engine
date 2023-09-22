@@ -66,9 +66,11 @@ function UPDATE()
     time:get()
 
     --print(direction.x * speed * time.sacale,direction.y * speed * time.sacale,direction.z * speed * time.sacale)
-    if mesh.file ~= "" then
-        this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed * time.sacale,direction.y * speed * time.sacale,direction.z * speed * time.sacale)
-    end
+    --this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed,direction.y * speed,direction.z * speed)
+
+    this_object.components[components.transform]:get()
+    local next_pos = {x=this_object.components[components.transform].position.x + (direction.x * speed * time.delta),y=this_object.components[components.transform].position.y + (direction.y * speed * time.delta),z=this_object.components[components.transform].position.z + (direction.z * speed * time.delta)}
+    this_object.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
 
     life_time = life_time - time.delta
     if life_time <= 0 then
