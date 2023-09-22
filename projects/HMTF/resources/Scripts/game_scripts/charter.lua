@@ -336,9 +336,6 @@ function UPDATE()
         end
 
         enable_cursor(global_data:get("pause") > 0)
-    
-        this_object.components[components.transform]:get()
-        local pos = deepcopy(this_object.components[components.transform].position)
 
         local check_hit_top_down = function (objs_touching)
             local valid_touches = 0
@@ -354,15 +351,44 @@ function UPDATE()
             return false
         end
 
+        local get_valid_touches = function (objs_touching)
+            local valid_touches = 0
+            for key, value in pairs(objs_touching) do
+                local obj_touching = game_object:new(value)
+                obj_touching.components[components.physics_3D]:get()
+                if not obj_touching.components[components.physics_3D].triger  then
+                    valid_touches = valid_touches + 1 
+                end
+            end
+            return valid_touches
+        end
+
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+
         --hit top
-        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.75 ,pos.z)
+        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.5 ,pos.z)
         check_top.components[components.physics_3D]:get()
-        hit_top = check_hit_top_down(check_top.components[components.physics_3D].objs_touching)
+        hit_top = get_valid_touches(check_top.components[components.physics_3D].objs_touching) > 1
+
+        if true then
+            check_top.components[components.transform]:get()
+            local cd_pos = check_top.components[components.transform].position
+            print("hit_top",hit_top,cd_pos.x,cd_pos.y,cd_pos.z,get_valid_touches(check_top.components[components.physics_3D].objs_touching))
+        end
     
         --hit down
-        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.75 ,pos.z)
+        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
         check_down.components[components.physics_3D]:get()
-        hit_down = check_hit_top_down(check_down.components[components.physics_3D].objs_touching)
+        hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
+
+        if true then
+            check_down.components[components.transform]:get()
+            local cd_pos = check_down.components[components.transform].position
+            print("hit_down",hit_down,cd_pos.x,cd_pos.y,cd_pos.z,get_valid_touches(check_down.components[components.physics_3D].objs_touching))
+        end
+        
+        
 
         if global_data:get("pause") < 1 then
             
@@ -413,6 +439,7 @@ function UPDATE()
 
             --jump
             if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+
                 inpulse_y = force_y
                 base_directional_inpulse = deepcopy(input_dir)
 

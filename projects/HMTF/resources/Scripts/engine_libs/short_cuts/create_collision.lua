@@ -28,6 +28,12 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
         ret.components[components.physics_3D].collision_mesh = deepcopy(cillision_mesh)
     end
 
+    if triger then
+        ret.components[components.physics_3D].gravity_scale = 0
+    else 
+        ret.components[components.physics_3D].gravity_scale = 1
+    end
+    
     ret.components[components.physics_3D].triger = triger
     ret.components[components.physics_3D].scale = deepcopy(sca)
     ret.components[components.physics_3D]:set()

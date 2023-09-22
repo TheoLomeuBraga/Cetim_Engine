@@ -328,11 +328,39 @@ public:
 
         if (gatilho)
         {
+            
             bt_obj = new btGhostObject();
             bt_obj->setCollisionShape(Shape);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+            
+            /*
+            btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
+            if (dinamica == dinamico)
+            {
+                btVector3 Inertia = btVector3(0, 0, 0);
+                Shape->calculateLocalInertia(densidade, Inertia);
+                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
+                rb = new btRigidBody(CI);
+                rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
+                rb->setGravity(btVector3(0,0,0));
+                rb->setFriction(atrito);
+                rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+                dynamicsWorld->addRigidBody(rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+                bt_obj = rb;
+                bt_obj_rb = rb;
+            }
+            else if (dinamica == estatico)
+            {
+                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
+                rb = new btRigidBody(CI);
+                rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+                dynamicsWorld->addRigidBody(rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+                bt_obj = rb;
+                bt_obj_rb = rb;
+            }
+            */
         }
         else
         {

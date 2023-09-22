@@ -65,7 +65,10 @@ end
 function UPDATE()
     time:get()
 
-    --this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed,direction.y * speed,direction.z * speed)
+    --print(direction.x * speed * time.sacale,direction.y * speed * time.sacale,direction.z * speed * time.sacale)
+    if mesh.file ~= "" then
+        this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed * time.sacale,direction.y * speed * time.sacale,direction.z * speed * time.sacale)
+    end
 
     life_time = life_time - time.delta
     if life_time <= 0 then
