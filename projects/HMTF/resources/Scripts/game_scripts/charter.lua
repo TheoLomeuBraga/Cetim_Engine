@@ -69,13 +69,13 @@ function set_cannon_vertex_explosion_state(primitives_size, elevation_distance, 
         if value_1:have_component(components.render_mesh) then
             for key_2, value_2 in pairs(value_1.components[components.render_mesh].materials) do
                 cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] =
-                primitives_size
+                    primitives_size
                 cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["elevation_distance"] =
-                elevation_distance
+                    elevation_distance
                 cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["texture_transition"] =
-                texture_transition
+                    texture_transition
                 cannon.part_list[key_1].components[components.render_mesh].materials[key_2].textures[2] =
-                transition_texture
+                    transition_texture
                 cannon.part_list[key_1].components[components.render_mesh]:set()
             end
         end
@@ -113,7 +113,7 @@ function play_arm_cannon_animation()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
 
         local frame_selected = math.floor(animation_state.time * tablelength(animation_state.animation.key_frames) /
-        animation_state.animation.duration + 1)
+            animation_state.animation.duration + 1)
 
         if frame_selected > tablelength(animation_state.animation.key_frames) then
             if animation_state.loop then
@@ -149,9 +149,9 @@ function START()
     check_top = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75), true,
         collision_shapes.cylinder, nil, true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75),
-    true, collision_shapes.cylinder, nil, true)
+        true, collision_shapes.cylinder, nil, true)
 
-    
+
 
     this_object = game_object:new(this_object_ptr)
     this_object.components[components.transform]:change_rotation(0, 0, 0)
@@ -237,12 +237,37 @@ function shoot()
 
     local bullet = game_object:new(create_object(layers.cenary))
 
-    local bullet_position = camera.components[components.transform]:get_global_position(0, 0, 0)
-    local bullet_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
+    local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
+
+    local ray_end = camera.components[components.transform]:get_global_position(0, 0, -1000)
+
+    local hit = false
+    local hit_info = {}
+    hit, hit_info = raycast_3D(bullet_position, ray_end)
+
+    local target = deepcopy(ray_end)
+
+    if hit then
+        target = hit_info.position
+    end
+
+    normalize = function (vec3)
+        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
+        return {x = vec3.x / sun,y=vec3.y / sun,z=vec3.z / sun}
+    end
+
+    bullet_direction = normalize(Vec3:new(bullet_position.x - ray_end.x,bullet_position.y - ray_end.y,bullet_position.z - ray_end.z))
+
+    
+
+    
 
     bullet:add_component(components.transform)
-    bullet.components[components.transform].position = { x = bullet_position.x + bullet_direction.x,
-        y = bullet_position.y + bullet_direction.y, z = bullet_position.z + bullet_direction.z }
+    bullet.components[components.transform].position = {
+        x = bullet_position.x + bullet_direction.x,
+        y = bullet_position.y + bullet_direction.y,
+        z = bullet_position.z + bullet_direction.z
+    }
     bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
     bullet.components[components.transform]:set()
 
@@ -251,9 +276,18 @@ function shoot()
 
 
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed",speed * 2)
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed * 16)
 
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
+
+    if animation_state.finish then
+        bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 9)
+    else
+        bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 3)
+    end
+    
+    
+    
 end
 
 function aproche_to_zero(num, speed)
@@ -283,8 +317,11 @@ end
 function interact()
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
     local ray_end_direction = camera.components[components.transform]:get_local_direction(0, 0, -10)
-    local ray_end = { x = ray_start.x - ray_end_direction.x, y = ray_start.y - ray_end_direction.y,
-        z = ray_start.z - ray_end_direction.z }
+    local ray_end = {
+        x = ray_start.x - ray_end_direction.x,
+        y = ray_start.y - ray_end_direction.y,
+        z = ray_start.z - ray_end_direction.z
+    }
 
     local hit = false
     local hit_info = {}
@@ -367,7 +404,7 @@ function UPDATE()
 
             camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity / 2.5
             camera_rotation.y = math.max(
-            math.min(camera_rotation.y - ((inputs.analog_view_y) * mouse_sensitivity / 2.5), 90), -90)
+                math.min(camera_rotation.y - ((inputs.analog_view_y) * mouse_sensitivity / 2.5), 90), -90)
 
             if not this_object_physics_3D_seted then
                 this_object.components[components.physics_3D]:set()
@@ -379,7 +416,8 @@ function UPDATE()
             --get floor info
             local hit = false
             local hit_info = {}
-            hit, hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0, -1, 0),
+            hit, hit_info = raycast_3D(
+                direction_reference.components[components.transform]:get_global_position(0, -1, 0),
                 direction_reference.components[components.transform]:get_global_position(0, -10, 0))
             if not hit or not hit_down then
                 hit_info.normal = { x = 0, y = 1, z = 0 }
@@ -416,12 +454,12 @@ function UPDATE()
             --move
             if hit_down and not (inpulse_y > 0) then
                 this_object.components[components.physics_3D]:set_linear_velocity(
-                (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
+                    (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
                     (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,
                     (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta)
             else
                 this_object.components[components.physics_3D]:set_linear_velocity(
-                (move_dir.x * (speed + speed_boost_air)) * time.sacale,
+                    (move_dir.x * (speed + speed_boost_air)) * time.sacale,
                     (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
                     (move_dir.z * (speed + speed_boost_air)) * time.sacale)
             end
