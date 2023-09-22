@@ -56,24 +56,26 @@ local cannon = {
 arm_cannon_sceane_data = {}
 
 function create_arm_cannon()
-    
     arm_cannon_sceane_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
-    local entity_data = cenary_builders.entity(camera.object_ptr,4, arm_cannon_sceane_data,"resources/Shaders/explosive_vertex_mesh",false,false)
+    local entity_data = cenary_builders.entity(camera.object_ptr, 4, arm_cannon_sceane_data,
+        "resources/Shaders/explosive_vertex_mesh", false, false)
     --"resources/Shaders/explosive_vertex_mesh"
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
-
-    
 end
 
-function set_cannon_vertex_explosion_state(primitives_size,elevation_distance,texture_transition,transition_texture)
+function set_cannon_vertex_explosion_state(primitives_size, elevation_distance, texture_transition, transition_texture)
     for key_1, value_1 in pairs(cannon.part_list) do
         if value_1:have_component(components.render_mesh) then
             for key_2, value_2 in pairs(value_1.components[components.render_mesh].materials) do
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] = primitives_size
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["elevation_distance"] = elevation_distance
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["texture_transition"] = texture_transition
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].textures[2] = transition_texture
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] =
+                primitives_size
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["elevation_distance"] =
+                elevation_distance
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["texture_transition"] =
+                texture_transition
+                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].textures[2] =
+                transition_texture
                 cannon.part_list[key_1].components[components.render_mesh]:set()
             end
         end
@@ -89,8 +91,7 @@ local animation_state = {
     finish = false,
 }
 
-function start_arm_cannon_animation(animation_name,speed,loop)
-
+function start_arm_cannon_animation(animation_name, speed, loop)
     if animation_state.name ~= animation_name then
         animation_state.name = animation_name
         animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation_name])
@@ -99,24 +100,20 @@ function start_arm_cannon_animation(animation_name,speed,loop)
         animation_state.time = 0
         animation_state.finish = false
     end
-    
 end
 
 function restart_arm_cannon_animation()
-
     animation_state.time = 0
     animation_state.finish = false
-    
 end
 
 function play_arm_cannon_animation()
-
     if animation_state.animation ~= nil and global_data:get("pause") < 1 then
-
         time:get()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
 
-        local frame_selected = math.floor( animation_state.time * tablelength(animation_state.animation.key_frames) / animation_state.animation.duration + 1)
+        local frame_selected = math.floor(animation_state.time * tablelength(animation_state.animation.key_frames) /
+        animation_state.animation.duration + 1)
 
         if frame_selected > tablelength(animation_state.animation.key_frames) then
             if animation_state.loop then
@@ -138,30 +135,42 @@ function play_arm_cannon_animation()
         --print("animation_state.animation.key_frames",tablelength(animation_state.animation.key_frames))
         --print("neme",animation_state.name)
 
-        apply_key_frame(cannon.part_list,animation_state.animation.key_frames[frame_selected])
-        
-
+        apply_key_frame(cannon.part_list, animation_state.animation.key_frames[frame_selected])
     end
-    
 end
 
 function START()
+    global_data:set("player_object_ptr", this_object_ptr)
 
-    global_data:set("player_object_ptr",this_object_ptr)
 
-    
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera:add_component(components.audio_source)
     set_lisener_object(camera.object_ptr)
 
     layers = global_data:get_var("layers")
-    check_top = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
-    check_down = create_collision_3D(layers.cenary, Vec3:new(0,0,0), Vec3:new(0,0,0), Vec3:new(0.75,0.75,0.75), true,collision_shapes.cylinder,nil,true)
+    check_top = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75), true,
+        collision_shapes.cylinder, nil, true)
+    check_down = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75),
+    true, collision_shapes.cylinder, nil, true)
+
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.textures[1] = "resources/Textures/white.png"
+    mat.color = {r=1,g=0,b=0,a=1}
+    check_down:add_component(components.render_mesh)
+    check_down.components[components.render_mesh].layer = 4
+    check_down.components[components.render_mesh].meshes_cout = 1
+    check_down.components[components.render_mesh].meshes = deepcopy({
+        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" } })
+    check_down.components[components.render_mesh].materials = deepcopy({mat})
+    check_down.components[components.render_mesh]:set()
+
+    
 
     this_object = game_object:new(this_object_ptr)
-    this_object.components[components.transform]:change_rotation(0,0,0)
-    
+    this_object.components[components.transform]:change_rotation(0, 0, 0)
+
     this_object:add_component(components.physics_3D)
     this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     this_object.components[components.physics_3D].rotate_X = false
@@ -171,7 +180,7 @@ function START()
     this_object.components[components.physics_3D].gravity_scale = 0
     this_object.components[components.physics_3D].triger = false
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
-    this_object.components[components.physics_3D].scale = Vec3:new(1,2,1)
+    this_object.components[components.physics_3D].scale = Vec3:new(1, 2, 1)
     this_object.components[components.physics_3D]:set()
 
     direction_reference = game_object:new(this_object_ptr)
@@ -187,7 +196,6 @@ function START()
     --start_arm_cannon_animation("walk",1,true)
     --start_arm_cannon_animation("spin",1,true)
     --start_arm_cannon_animation("recoil",8,true)
-    
 end
 
 speed = 12
@@ -201,7 +209,7 @@ hit_down = false
 local inputs = {}
 local inputs_last_frame = {}
 
-camera_rotation = {x=180,y=0}
+camera_rotation = { x = 180, y = 0 }
 
 this_object_physics_3D_seted = false
 
@@ -209,11 +217,11 @@ force_y = 12
 
 inpulse_y = 0
 
-base_directional_inpulse = {x=0,y=0,z=0}
-directional_inpulse = {x=0,y=0,z=0}
+base_directional_inpulse = { x = 0, y = 0, z = 0 }
+directional_inpulse = { x = 0, y = 0, z = 0 }
 
 
-platform_movement = {x=0,y=0,z=0}
+platform_movement = { x = 0, y = 0, z = 0 }
 
 friction = 10
 air_friction = 0.5
@@ -223,53 +231,48 @@ pause_last_frame = false
 extra_jumps_utilizeds = 0
 
 function load_shoot()
-
-    start_arm_cannon_animation("open",2,false)
+    start_arm_cannon_animation("open", 2, false)
     restart_arm_cannon_animation()
-
 end
 
 function shoot()
     if animation_state.name == "open" and animation_state.finish then
-        start_arm_cannon_animation("recoil_open",2,false)
+        start_arm_cannon_animation("recoil_open", 2, false)
         camera.components[components.audio_source].path = "resources/Audio/sounds/shot_3.wav"
         camera.components[components.audio_source].volume = 20
         camera.components[components.audio_source]:set()
     else
-        start_arm_cannon_animation("recoil",8,false)
+        start_arm_cannon_animation("recoil", 8, false)
         camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
         camera.components[components.audio_source].volume = 20
         camera.components[components.audio_source]:set()
     end
-    
+
     restart_arm_cannon_animation()
 
     local bullet = game_object:new(create_object(layers.cenary))
 
-    local bullet_position = camera.components[components.transform]:get_global_position(0,0,0)
-    local bullet_direction = camera.components[components.transform]:get_local_direction(0,0,1)
+    local bullet_position = camera.components[components.transform]:get_global_position(0, 0, 0)
+    local bullet_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
 
     bullet:add_component(components.transform)
-    bullet.components[components.transform].position = {x=bullet_position.x + bullet_direction.x,y=bullet_position.y + bullet_direction.y,z=bullet_position.z + bullet_direction.z}
-    bullet.components[components.transform].scale = {x=0.25,y=0.25,z=0.25}
+    bullet.components[components.transform].position = { x = bullet_position.x + bullet_direction.x,
+        y = bullet_position.y + bullet_direction.y, z = bullet_position.z + bullet_direction.z }
+    bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
     bullet.components[components.transform]:set()
 
     bullet:add_component(components.lua_scripts)
     bullet.components[components.lua_scripts]:add_script("game_scripts/bullet")
 
-    
+
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
-    
+
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", 1)
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh", {file = "resources/3D Models/bullets.gltf",name = "round_bullet"})
-
-    
-
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",
+        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
 end
 
-
-
-function aproche_to_zero(num,speed)
+function aproche_to_zero(num, speed)
     ret = 0
     if math.abs(num) < speed then
         ret = 0
@@ -281,7 +284,7 @@ function aproche_to_zero(num,speed)
     return ret
 end
 
-function aproche_to_target_value(num,speed,target_value)
+function aproche_to_target_value(num, speed, target_value)
     ret = target_value
     if math.abs(num) < speed then
         ret = target_value
@@ -293,31 +296,26 @@ function aproche_to_target_value(num,speed,target_value)
     return ret
 end
 
-
 function interact()
+    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
+    local ray_end_direction = camera.components[components.transform]:get_local_direction(0, 0, -10)
+    local ray_end = { x = ray_start.x - ray_end_direction.x, y = ray_start.y - ray_end_direction.y,
+        z = ray_start.z - ray_end_direction.z }
 
-    local ray_start = camera.components[components.transform]:get_global_position(0,0,0)
-    local ray_end_direction = camera.components[components.transform]:get_local_direction(0,0,-10)
-    local ray_end = {x=ray_start.x - ray_end_direction.x,y=ray_start.y - ray_end_direction.y,z=ray_start.z - ray_end_direction.z}
-    
     local hit = false
     local hit_info = {}
-    hit,hit_info = raycast_3D(ray_start,ray_end)
+    hit, hit_info = raycast_3D(ray_start, ray_end)
 
     if hit then
-
         local hit_object = game_object:new(hit_info.collision_object)
 
-        if  hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
-            hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage","interact",{})
+        if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
+            hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage", "interact", {})
         end
-
     end
-
 end
 
 function UPDATE()
-
     if game_state == game_states.play then
         time:get()
         gravity:get()
@@ -337,12 +335,12 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
 
-        local check_hit_top_down = function (objs_touching)
+        local check_hit_top_down = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
                 local obj_touching = game_object:new(value)
                 if not obj_touching.components[components.physics_3D].triger then
-                    valid_touches = valid_touches + 1 
+                    valid_touches = valid_touches + 1
                     if valid_touches > 1 then
                         return true
                     end
@@ -351,13 +349,13 @@ function UPDATE()
             return false
         end
 
-        local get_valid_touches = function (objs_touching)
+        local get_valid_touches = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
                 local obj_touching = game_object:new(value)
                 obj_touching.components[components.physics_3D]:get()
-                if not obj_touching.components[components.physics_3D].triger  then
-                    valid_touches = valid_touches + 1 
+                if not obj_touching.components[components.physics_3D].triger then
+                    valid_touches = valid_touches + 1
                 end
             end
             return valid_touches
@@ -367,31 +365,30 @@ function UPDATE()
         local pos = deepcopy(this_object.components[components.transform].position)
 
         --hit top
-        check_top.components[components.transform]:change_position(pos.x,pos.y + 1.5 ,pos.z)
+        check_top.components[components.transform]:change_position(pos.x, pos.y + 1.75, pos.z)
         check_top.components[components.physics_3D]:get()
         hit_top = get_valid_touches(check_top.components[components.physics_3D].objs_touching) > 1
 
         if true then
             check_top.components[components.transform]:get()
             local cd_pos = check_top.components[components.transform].position
-            print("hit_top",hit_top,cd_pos.x,cd_pos.y,cd_pos.z,get_valid_touches(check_top.components[components.physics_3D].objs_touching))
+            print("hit_top", hit_top)
         end
-    
+
         --hit down
-        check_down.components[components.transform]:change_position(pos.x,pos.y - 1.5 ,pos.z)
+        check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
 
         if true then
             check_down.components[components.transform]:get()
             local cd_pos = check_down.components[components.transform].position
-            print("hit_down",hit_down,cd_pos.x,cd_pos.y,cd_pos.z,get_valid_touches(check_down.components[components.physics_3D].objs_touching))
+            print("hit_down", hit_down)
         end
-        
-        
+
+
 
         if global_data:get("pause") < 1 then
-            
             --interact
             if inputs.interact > 0 and inputs_last_frame.interact < 1 then
                 interact()
@@ -406,40 +403,43 @@ function UPDATE()
 
             --move camera
             window:get()
-            camera_rotation.x = camera_rotation.x-(inputs.mouse_view_x) * mouse_sensitivity * 20
-            camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.mouse_view_y) * mouse_sensitivity * 20),90),-90)
+            camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
+            camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20),
+                90), -90)
 
-            camera_rotation.x = camera_rotation.x-(inputs.analog_view_x) * mouse_sensitivity / 2.5
-            camera_rotation.y = math.max(math.min(camera_rotation.y-((inputs.analog_view_y) * mouse_sensitivity / 2.5 ),90),-90)
+            camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity / 2.5
+            camera_rotation.y = math.max(
+            math.min(camera_rotation.y - ((inputs.analog_view_y) * mouse_sensitivity / 2.5), 90), -90)
 
             if not this_object_physics_3D_seted then
                 this_object.components[components.physics_3D]:set()
                 this_object_physics_3D_seted = not this_object_physics_3D_seted
             end
-        
-        
-        
+
+
+
             --get floor info
             local hit = false
             local hit_info = {}
-            hit,hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0,-1,0),direction_reference.components[components.transform]:get_global_position(0,-10,0))
+            hit, hit_info = raycast_3D(direction_reference.components[components.transform]:get_global_position(0, -1, 0),
+                direction_reference.components[components.transform]:get_global_position(0, -10, 0))
             if not hit or not hit_down then
-                hit_info.normal = {x=0,y=1,z=0}
+                hit_info.normal = { x = 0, y = 1, z = 0 }
             end
 
             --get movement direction
-            local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward ,0,-inputs.left )
-            local move_dir = crossProduct(input_dir,hit_info.normal)
+            local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward, 0,
+                -inputs.left)
+            local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
-            if hit_down and not (inpulse_y > 0)  then
+            if hit_down and not (inpulse_y > 0) then
                 inpulse_y = 0
                 extra_jumps_utilizeds = 0
             end
 
             --jump
             if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-
                 inpulse_y = force_y
                 base_directional_inpulse = deepcopy(input_dir)
 
@@ -448,38 +448,41 @@ function UPDATE()
                 this_object.components[components.audio_source]:set()
             end
 
-            directional_inpulse  = crossProduct(base_directional_inpulse,hit_info.normal)
+            directional_inpulse = crossProduct(base_directional_inpulse, hit_info.normal)
 
             --hit cealing
             if hit_top and inpulse_y > 0 then
                 inpulse_y = 0
             end
 
-           --move
+            --move
             if hit_down and not (inpulse_y > 0) then
-                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,(move_dir.y * (speed + speed_boost)) + platform_movement.y * time.sacale,(move_dir.z * (speed + speed_boost)) + platform_movement.z  * time.sacale)
+                this_object.components[components.physics_3D]:set_linear_velocity(
+                (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.sacale,
+                    (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.sacale,
+                    (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.sacale)
             else
-                this_object.components[components.physics_3D]:set_linear_velocity((move_dir.x * (speed + speed_boost_air)) * time.sacale,(move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,(move_dir.z * (speed + speed_boost_air)) * time.sacale) 
+                this_object.components[components.physics_3D]:set_linear_velocity(
+                (move_dir.x * (speed + speed_boost_air)) * time.sacale,
+                    (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
+                    (move_dir.z * (speed + speed_boost_air)) * time.sacale)
             end
 
             if not hit_down then
-                inpulse_y = inpulse_y + ( time.delta * gravity.force.y )
+                inpulse_y = inpulse_y + (time.delta * gravity.force.y)
             end
 
             --animate
-            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name ==  "recoil" and animation_state.finish) then
+            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name == "recoil" and animation_state.finish) then
                 if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down and not (inputs.action_2 > 0) then
-                    start_arm_cannon_animation("walk",1,true)
+                    start_arm_cannon_animation("walk", 1, true)
                 else
                     if not (inputs.action_2 > 0) then
-                        start_arm_cannon_animation("normal",1,true)
+                        start_arm_cannon_animation("normal", 1, true)
                     end
                 end
             end
-        
         else
-
-
             --[[
             if not hit_down then
                 inpulse_y = inpulse_y + gravity.force.y
@@ -488,17 +491,15 @@ function UPDATE()
                 this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
             end
             ]]
-            this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
-            
+            this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
         end
 
-        camera.components[components.transform]:change_rotation(-camera_rotation.y,0,0)
-        this_object.components[components.transform]:change_rotation(0,camera_rotation.x,0)
+        camera.components[components.transform]:change_rotation(-camera_rotation.y, 0, 0)
+        this_object.components[components.transform]:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data:get("pause") < 1
     end
 
     play_arm_cannon_animation()
-
 end
 
 function COLLIDE(collision_info)
@@ -508,5 +509,5 @@ function END()
     remove_object(camera.object_ptr)
     remove_object(check_top.object_ptr)
     remove_object(check_down.object_ptr)
-    global_data:set("player_object_ptr","")
+    global_data:set("player_object_ptr", "")
 end
