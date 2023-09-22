@@ -28,7 +28,6 @@ mesh = {
     name = ""
 }
 
-
 function START()
     this_object = game_object:new(this_object_ptr)
 
@@ -36,6 +35,7 @@ function START()
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"
+        mat.color = {r=1,g=0,b=0,a=1}
         this_object:add_component(components.render_mesh)
         this_object.components[components.render_mesh].layer = 2
         this_object.components[components.render_mesh].meshes_cout = 1
@@ -77,6 +77,7 @@ function UPDATE()
         remove_object(this_object_ptr)
     end
 end
+
 
 function COLLIDE(collision_info)
 end
