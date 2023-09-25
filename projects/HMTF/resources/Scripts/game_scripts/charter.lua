@@ -215,12 +215,12 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
-function load_shoot()
+function load_simple_shoot()
     start_arm_cannon_animation("open", 2, false)
     restart_arm_cannon_animation()
 end
 
-function shoot()
+function simple_shoot()
     if animation_state.name == "open" and animation_state.finish then
         start_arm_cannon_animation("recoil_open", 2, false)
         camera.components[components.audio_source].path = "resources/Audio/sounds/shot_3.wav"
@@ -251,16 +251,17 @@ function shoot()
         target = hit_info.position
     end
 
-    normalize = function (vec3)
+    normalize = function(vec3)
         local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
-        return {x = vec3.x / sun,y=vec3.y / sun,z=vec3.z / sun}
+        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
     end
 
-    bullet_direction = normalize(Vec3:new(bullet_position.x - ray_end.x,bullet_position.y - ray_end.y,bullet_position.z - ray_end.z))
+    bullet_direction = normalize(Vec3:new(bullet_position.x - ray_end.x, bullet_position.y - ray_end.y,
+        bullet_position.z - ray_end.z))
 
-    
 
-    
+
+
 
     bullet:add_component(components.transform)
     bullet.components[components.transform].position = {
@@ -278,16 +279,79 @@ function shoot()
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
     bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed * 16)
 
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
+    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",
+        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
 
     if animation_state.finish then
         bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 9)
     else
         bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 3)
     end
-    
-    
-    
+end
+
+function advanced_shoot(mesh, sound,spred, speed, life_time,damage, quantity, hit_scan)
+    local directions = {}
+
+    if spred ~= 0 then
+        for i = 1, quantity, 1 do
+            directions[i] = { x = (math.random() - 0.5) * spred, y = (math.random() - 0.5) * spred, z = 1 }
+        end
+    else
+        for i = 1, quantity, 1 do
+            directions[i] = { x = 0, y = 0, z = 1 }
+        end
+    end
+
+    if hit_scan then
+
+    else
+        for key, value in pairs(directions) do
+            local bullet = game_object:new(create_object(layers.cenary))
+            local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
+            local ray_end = camera.components[components.transform]:get_global_position(value.x * 1000, value.y * 1000,value.z * 1000)
+
+            local hit = false
+            local hit_info = {}
+            hit, hit_info = raycast_3D(bullet_position, ray_end)
+            local target = deepcopy(ray_end)
+
+            if hit then
+                target = hit_info.position
+            end
+
+            local normalize = function(vec3)
+                local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
+                return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
+            end
+
+            local bullet_direction =  normalize(camera.components[components.transform]:get_local_direction(value.x * 1000, value.y * 1000,value.z * 1000))
+            
+
+            bullet:add_component(components.transform)
+            bullet.components[components.transform].position = deepcopy(bullet_position)
+            bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
+            bullet.components[components.transform]:set()
+
+            bullet:add_component(components.lua_scripts)
+            bullet.components[components.lua_scripts]:add_script("game_scripts/bullet")
+
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed)
+
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",mesh)
+
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", damage)
+
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
+        end
+    end
+
+    start_arm_cannon_animation("recoil", 2, false)
+    camera.components[components.audio_source].path = sound
+    camera.components[components.audio_source].volume = 20
+    camera.components[components.audio_source]:set()
+
+    restart_arm_cannon_animation()
 end
 
 function aproche_to_zero(num, speed)
@@ -389,11 +453,16 @@ function UPDATE()
                 interact()
             end
 
-            --shoot
+            --simple_shoot
+            --[[
             if inputs.action_2 > 0 and inputs_last_frame.action_2 == 0 then
-                load_shoot()
+                load_simple_shoot()
             elseif inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
-                shoot()
+                simple_shoot()
+            end
+            ]]
+            if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
+                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" }, "resources/Audio/sounds/shot_3.wav",0.2, 50, 1,10, 5, false)
             end
 
             --move camera
