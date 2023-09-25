@@ -34,6 +34,52 @@ const int set_lua = 1;
 
 bool parallel_loading = false;
 
+std::string CompileLuaScriptToString(const std::string& luaScript) {
+    std::stringstream bytecodeStream;
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    int result = luaL_loadstring(L, luaScript.c_str());
+    if (result != LUA_OK) {
+        lua_close(L);
+        return ""; // Falha ao compilar o script Lua
+    }
+
+    result = lua_dump(L, [](lua_State*, const void* p, size_t sz, void* ud) {
+        auto& stream = *static_cast<std::stringstream*>(ud);
+        stream.write(static_cast<const char*>(p), sz);
+        return 0;
+    }, static_cast<void*>(&bytecodeStream));
+
+    lua_close(L);
+
+    if (result != LUA_OK) {
+        return ""; // Falha ao compilar o bytecode
+    }
+
+    return bytecodeStream.str();
+}
+
+lua_State* LoadCompiledLuaScriptFromString(const std::string& bytecode) {
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    int result = luaL_loadbuffer(L, bytecode.c_str(), bytecode.size(), "compiled_lua_script");
+    if (result != LUA_OK) {
+        lua_close(L);
+        return nullptr; // Falha ao carregar o bytecode da string
+    }
+
+    result = lua_pcall(L, 0, LUA_MULTRET, 0); // Executa o bytecode
+
+    if (result != LUA_OK) {
+        lua_close(L);
+        return nullptr; // Falha ao executar o bytecode
+    }
+
+    return L;
+}
+
 bool isNumber(const std::string &str)
 {
 	std::istringstream iss(str);
@@ -196,12 +242,6 @@ shared_ptr<string> carregar_script_lua(string local)
 		mapeamento_scripts_lua.aplicar(local, ManuseioDados::Carregar_script(local));
 	}
 	return mapeamento_scripts_lua.pegar(local);
-	return NULL;
-}
-
-void carregar_script_lua_thread(string local, shared_ptr<string> *ret)
-{
-	*ret = carregar_script_lua(local);
 }
 
 // aqui
@@ -1846,6 +1886,10 @@ namespace funcoes_lua
 
 	lua_State *carregar_luaState(string s)
 	{
+		//CompileLuaScriptToString
+		//LoadCompiledLuaScriptFromString
+
+
 		// criar
 		lua_State *ret = luaL_newstate();
 		luaL_openlibs(ret);
