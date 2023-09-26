@@ -29,6 +29,8 @@ using namespace Tempo;
 #include "table.h"
 #include "table_conversors.h"
 
+#include "ui_mouse_cheker.h"
+
 const int get_lua = 0;
 const int set_lua = 1;
 

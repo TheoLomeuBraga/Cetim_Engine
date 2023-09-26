@@ -26,4 +26,3 @@ public:
 	bool ligado = true;
 	fonte_luz() {}
 };
-

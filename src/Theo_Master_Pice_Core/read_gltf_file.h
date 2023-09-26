@@ -1022,7 +1022,7 @@ namespace gltf_loader
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint16_t);
+                        size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
@@ -1037,7 +1037,7 @@ namespace gltf_loader
                         std::vector<uint32_t> indices;
                         const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint32_t);
+                        size_t dataSize = indexAccessor.count * sizeof(uint32_t) * 4;
                         indices.assign(data, data + dataSize);
 
                         for (int i = 0; i < dataSize; i++)
@@ -1071,7 +1071,7 @@ namespace gltf_loader
                     }
                     mesh.indices = new_indice;
 
-                    print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
+                    //print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
 
                     if (primitive.contains("material"))
                     {
