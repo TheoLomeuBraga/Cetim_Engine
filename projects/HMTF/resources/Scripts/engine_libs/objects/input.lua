@@ -1,3 +1,5 @@
+register_function_set("input")
+
 input_devices = {
     keyboard = 1,
     joystick = 2,
@@ -113,33 +115,7 @@ input_keys = {
 
 
 
-function set_cursor_position(x, y)
-end
 
-function get_keyboard_input()
-end
-
-function get_mouse_input()
-end
-
-function get_joystick_input()
-end
-
-function set_keyboard_text_input(on)
-end
-
-function get_keyboard_text_input()
-end
-
-function get_last_device_used()
-end
-
---[[
-function get_inputs(device)
-end
-]]
-function get_input(device, joystick_no, key)
-end
 
 keys_axis = {
     [input_devices.keyboard] = {},

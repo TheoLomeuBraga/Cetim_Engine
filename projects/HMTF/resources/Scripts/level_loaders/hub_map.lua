@@ -1,7 +1,10 @@
 require("engine_libs.short_cuts.create_mesh")
 require("engine_libs.short_cuts.create_collision")
 require("engine_libs.objects.time")
+require("engine_libs.objects.game_object")
+require("engine_libs.components.physics_3D")
 require("engine_libs.objects.scene_3D")
+require("engine_libs.components.audio_source")
 require("resources.playable_scene")
 
 local level = {
@@ -32,22 +35,19 @@ function level:START()
     --print("LUA_AAAAA")
     stop_coroutine_if_is_not_loaded(assets_needed)
     --print("LUA_BBBBB")
-
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/hub/hub.gltf")
-
     coroutine.yield()
-    --print("yield 1")
 
     cenary_builders.cenary = create_object(layers.cenary)
     cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
 
+    
     coroutine.yield()
-    --print("yield 2")
+    
 
     core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
 
     coroutine.yield()
-    --print("yield 3")
 
     time:set_speed(1)
     remove_object(camera.object_ptr)

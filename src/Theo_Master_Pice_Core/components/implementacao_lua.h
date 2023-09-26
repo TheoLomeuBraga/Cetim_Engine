@@ -277,10 +277,9 @@ namespace funcoes_ponte
 		}
 	}
 
-	
 	int enable_cursor(lua_State *L)
 	{
-		if (lua_toboolean(L,1))
+		if (lua_toboolean(L, 1))
 		{
 			gerente_janela->enable_cursor(true);
 		}
@@ -466,7 +465,7 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	//arquivos
+	// arquivos
 
 	int is_loaded(lua_State *L)
 	{
@@ -475,40 +474,54 @@ namespace funcoes_ponte
 		bool load = lua_toboolean(L, 3);
 		bool ret = false;
 
-		if(asset_type == 1){
+		if (asset_type == 1)
+		{
 			ret = ManuseioDados::mapeamento_imagems.pegar(file_path) != NULL;
-			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
-				thread loader(ManuseioDados::carregar_Imagem,file_path);
+			if (!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end())
+			{
+				thread loader(ManuseioDados::carregar_Imagem, file_path);
 				loader.detach();
 			}
-		}else if (asset_type == 2){
+		}
+		else if (asset_type == 2)
+		{
 			ret = ManuseioDados::mapeamento_fontes.pegar(file_path) != NULL;
-			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
-				thread loader(ManuseioDados::carregar_fonte,file_path);
+			if (!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end())
+			{
+				thread loader(ManuseioDados::carregar_fonte, file_path);
 				loader.detach();
 			}
-		}else if (asset_type == 3){
+		}
+		else if (asset_type == 3)
+		{
 			ret = ManuseioDados::mapeamento_tilesets.pegar(file_path) != NULL;
-			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
-				thread loader(ManuseioDados::carregar_tile_set,file_path);
+			if (!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end())
+			{
+				thread loader(ManuseioDados::carregar_tile_set, file_path);
 				loader.detach();
 			}
-		}else if (asset_type == 4){
+		}
+		else if (asset_type == 4)
+		{
 			ret = ManuseioDados::mapeamento_tile_map_infos.pegar(file_path) != NULL;
-			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
-				thread loader(ManuseioDados::carregar_info_tile_map,file_path);
+			if (!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end())
+			{
+				thread loader(ManuseioDados::carregar_info_tile_map, file_path);
 				loader.detach();
 			}
-		}else if (asset_type == 5){
+		}
+		else if (asset_type == 5)
+		{
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
-			if(!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end()){
-				thread loader(ManuseioDados::carregar_modelo_3D,file_path);
+			if (!ret && load && ManuseioDados::loading_requests_files.find(file_path) == ManuseioDados::loading_requests_files.end())
+			{
+				thread loader(ManuseioDados::carregar_modelo_3D, file_path);
 				loader.join();
-				//loader.detach();
+				// loader.detach();
 			}
 		}
 
-		lua_pushboolean(L,ret);
+		lua_pushboolean(L, ret);
 		return 1;
 	}
 
@@ -552,11 +565,10 @@ namespace funcoes_ponte
 			{
 				ret = t.teclas[key];
 			}
-			
 		}
 		else if (device == 2)
 		{
-			
+
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
@@ -1350,10 +1362,11 @@ namespace funcoes_ponte
 		{
 			listener_transform = string_ponteiro<objeto_jogo>(lua_tostring(L, 1))->pegar_componente<transform_>();
 		}
-		else{
+		else
+		{
 			listener_transform = NULL;
 		}
-		
+
 		return 0;
 	}
 	// geral render
@@ -1580,8 +1593,6 @@ namespace funcoes_ponte
 			bu->densidade = t.getFloat("density");
 			bu->gravity_force = t.getFloat("gravity_scale");
 
-			
-
 			bu->aplay();
 			return 0;
 		}
@@ -1693,8 +1704,6 @@ namespace funcoes_ponte
 		pair<string, lua_function>("remove_component", remove_component),
 		pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
 		pair<string, lua_function>("have_component", have_component),
-
-		// pair<string, lua_function>("get_object_family", funcoes_ponte::get_object_family),
 		pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
 
 		// movimento
@@ -1718,31 +1727,21 @@ namespace funcoes_ponte
 		pair<string, lua_function>("get_global_position_transform", funcoes_ponte::get_global_position_transform),
 		pair<string, lua_function>("get_translation_position_transform", funcoes_ponte::get_translation_position_transform),
 
-		// pos-procesing
-		pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),
-
-		// camadas render
-		pair<string, lua_function>("get_set_render_layer_instruction", funcoes_ponte::get_set_render_layer_instruction),
-
 		// janela
 		pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
 		pair<string, lua_function>("close", funcoes_ponte::close),
 		pair<string, lua_function>("set_cursor_image", funcoes_ponte::set_cursor_image),
 		pair<string, lua_function>("enable_cursor", funcoes_ponte::enable_cursor),
-		
 
-		// sprite
+		// render
+		pair<string, lua_function>("get_set_render_layer_instruction", funcoes_ponte::get_set_render_layer_instruction),
 		pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),
-
-		// render tilemap
 		pair<string, lua_function>("get_set_render_tilemap", funcoes_ponte::get_set_render_tilemap),
-
-		// text
 		pair<string, lua_function>("get_set_render_text", funcoes_ponte::get_set_render_text),
 		pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
-
-		// shader
 		pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
+		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
+		pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
 
 		// physic
 		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
@@ -1750,31 +1749,21 @@ namespace funcoes_ponte
 		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
 		pair<string, lua_function>("set_linear_velocity", funcoes_ponte::set_linear_velocity),
 		pair<string, lua_function>("set_angular_velocity", funcoes_ponte::set_angular_velocity),
-
 		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
 		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
 		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
-
 		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
 		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
-
-		// camera
-		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
 
 		// audio
 		pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
 		pair<string, lua_function>("get_set_global_volume", funcoes_ponte::get_set_global_volume),
-
 		pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
-
-		// mesh
-		pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
 
 		// script
 		pair<string, lua_function>("get_script_size", get_script_size),
 		pair<string, lua_function>("get_script_name", get_script_name),
 		pair<string, lua_function>("set_script_var", set_script_var),
-
 		pair<string, lua_function>("get_lua_component", get_lua_component),
 		pair<string, lua_function>("have_script", have_script),
 		pair<string, lua_function>("add_script_lua", add_script_lua),
@@ -1792,6 +1781,106 @@ namespace funcoes_ponte
 
 	};
 
+	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
+		pair<string, map<string, lua_function>>("game_object", {
+															  pair<string, lua_function>("create_object", funcoes_ponte::create_object),
+															  pair<string, lua_function>("get_object_with_name", funcoes_ponte::get_object_with_name),
+															  pair<string, lua_function>("remove_object", funcoes_ponte::remove_object),
+															  pair<string, lua_function>("add_component", add_component),
+															  pair<string, lua_function>("remove_component", remove_component),
+															  pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
+															  pair<string, lua_function>("have_component", have_component),
+															  pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
+														  }),
+		pair<string, map<string, lua_function>>("input", {
+															 pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
+															 
+															 pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
+															 pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
+															 pair<string, lua_function>("get_input", funcoes_ponte::get_input),
+														 }),
+		pair<string, map<string, lua_function>>("time", {
+															pair<string, lua_function>("get_time", funcoes_ponte::get_time),
+															pair<string, lua_function>("set_time_scale", funcoes_ponte::set_time_scale),
+														}),
+		pair<string, map<string, lua_function>>("memory", {
+															  pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
+															  pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
+														  }),
+		pair<string, map<string, lua_function>>("gravity", {
+															   pair<string, lua_function>("to_move", funcoes_ponte::to_move),
+															   pair<string, lua_function>("get_gravity", funcoes_ponte::get_gravity),
+															   pair<string, lua_function>("set_gravity", funcoes_ponte::set_gravity),
+														   }),
+		pair<string, map<string, lua_function>>("transform", {
+																 pair<string, lua_function>("get_set_transform", funcoes_ponte::get_set_transform),
+
+																 pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
+																 pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
+
+																 pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
+																 pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
+																 pair<string, lua_function>("change_transfotm_scale", funcoes_ponte::change_transfotm_scale),
+
+																 pair<string, lua_function>("get_local_direction_transform", funcoes_ponte::get_local_direction_transform),
+																 pair<string, lua_function>("get_global_position_transform", funcoes_ponte::get_global_position_transform),
+																 pair<string, lua_function>("get_translation_position_transform", funcoes_ponte::get_translation_position_transform),
+															 }),
+		pair<string, map<string, lua_function>>("window", {
+															  pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
+															  pair<string, lua_function>("close", funcoes_ponte::close),
+															  pair<string, lua_function>("set_cursor_image", funcoes_ponte::set_cursor_image),
+															  pair<string, lua_function>("enable_cursor", funcoes_ponte::enable_cursor),
+														  }),
+		pair<string, map<string, lua_function>>("render", {
+															  pair<string, lua_function>("get_set_render_layer_instruction", funcoes_ponte::get_set_render_layer_instruction),
+															  pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),
+															  pair<string, lua_function>("get_set_render_tilemap", funcoes_ponte::get_set_render_tilemap),
+															  pair<string, lua_function>("get_set_render_text", funcoes_ponte::get_set_render_text),
+															  pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
+															  pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
+															  pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
+															  pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
+														  		pair<string, lua_function>("get_scene_3D", get_scene_3D),
+														  }),
+		pair<string, map<string, lua_function>>("physics", {
+															   pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
+															   pair<string, lua_function>("add_force", funcoes_ponte::add_force),
+															   pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
+															   pair<string, lua_function>("set_linear_velocity", funcoes_ponte::set_linear_velocity),
+															   pair<string, lua_function>("set_angular_velocity", funcoes_ponte::set_angular_velocity),
+															   pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
+															   pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
+															   pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
+															   pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
+															   pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
+														   }),
+		pair<string, map<string, lua_function>>("audio", {
+															 pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
+															 pair<string, lua_function>("get_set_global_volume", funcoes_ponte::get_set_global_volume),
+															 pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
+														 }),
+		pair<string, map<string, lua_function>>("script", {
+															  pair<string, lua_function>("get_script_size", get_script_size),
+															  pair<string, lua_function>("get_script_name", get_script_name),
+															  pair<string, lua_function>("set_script_var", set_script_var),
+															  pair<string, lua_function>("get_lua_component", get_lua_component),
+															  pair<string, lua_function>("have_script", have_script),
+															  pair<string, lua_function>("add_script_lua", add_script_lua),
+															  pair<string, lua_function>("remove_script", remove_script),
+															  pair<string, lua_function>("get_lua_var", get_lua_var),
+															  pair<string, lua_function>("set_lua_var", set_lua_var),
+															  pair<string, lua_function>("call_lua_function", call_lua_function),
+														  }),
+		pair<string, map<string, lua_function>>("global_data", {
+																   pair<string, lua_function>("global_data_get_var", global_data_get_var),
+																   pair<string, lua_function>("global_data_set_var", global_data_set_var),
+															   }),
+		pair<string, map<string, lua_function>>("3D_sceane", {
+																 pair<string, lua_function>("get_scene_3D", get_scene_3D),
+															 }),
+	};
+
 };
 
 namespace funcoes_lua
@@ -1805,33 +1894,41 @@ namespace funcoes_lua
 		}
 	}
 
+	void registrar_funcoes_ponte_estado_lua(lua_State *L, string set_de_funcoes)
+	{
+		if (set_de_funcoes == "all")
+		{
+			for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
+			{
+				for (pair<string, lua_function> p : p1.second)
+				{
+					lua_register(L, p.first.c_str(), p.second);
+				}
+			}
+		}
+		else
+		{
+			for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[set_de_funcoes])
+			{
+				lua_register(L, p.first.c_str(), p.second);
+			}
+		}
+	}
+
+	int register_function_set(lua_State *L)
+	{
+		registrar_funcoes_ponte_estado_lua(L, lua_tostring(L, 1));
+		return 0;
+	}
+
 	void adicionar_funcoes_ponte_estado_lua(lua_State *L)
 	{
-		vector<pair<string, lua_function>> funcoes_ponte_pair = map_vetor<string, lua_function>(funcoes_ponte::funcoes_ponte_map);
 
 		// solu��o 1
 		for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map)
 		{
 			lua_register(L, p.first.c_str(), p.second);
 		}
-	}
-
-	void iniciar_estado_lua(lua_State *L)
-	{
-
-		lua_newtable(L);
-		for (int i = 0; i < argumentos.size(); i++)
-		{
-			lua_pushinteger(L, i);
-			lua_pushstring(L, argumentos[i].c_str());
-			lua_settable(L, -3);
-		}
-		lua_setglobal(L, "args");
-
-		lua_pushinteger(L, argumentos.size());
-		lua_setglobal(L, "argsn");
-
-		funcoes_lua::adicionar_funcoes_ponte_estado_lua(L);
 	}
 
 	map<string, string> scripts_lua;
@@ -1842,9 +1939,8 @@ namespace funcoes_lua
 
 	lua_State *carregar_luaState(string s)
 	{
-		//CompileLuaScriptToString
-		//LoadCompiledLuaScriptFromString
-
+		// CompileLuaScriptToString
+		// LoadCompiledLuaScriptFromString
 
 		// criar
 		lua_State *ret = luaL_newstate();
@@ -1856,18 +1952,25 @@ namespace funcoes_lua
 		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
 
 		lua_getglobal(ret, "package");
-
 		lua_pushstring(ret, lua_path.c_str());
 		lua_setfield(ret, -2, "path");
-
 		lua_pushstring(ret, link_libs_path.c_str());
 		lua_setfield(ret, -2, "cpath");
-		
 		lua_pop(ret, 1);
 
-		// int i = luaL_dofile(ret,s.c_str());
+		lua_newtable(ret);
+		for (int i = 0; i < argumentos.size(); i++)
+		{
+			lua_pushinteger(ret, i);
+			lua_pushstring(ret, argumentos[i].c_str());
+			lua_settable(ret, -3);
+		}
+		lua_setglobal(ret, "args");
+
+		// funcoes_lua::adicionar_funcoes_ponte_estado_lua(ret);
+		lua_register(ret, "register_function_set", register_function_set);
+
 		int i = luaL_dostring(ret, carregar_script_lua(s)->c_str());
-		funcoes_lua::iniciar_estado_lua(ret);
 
 		// buscar erros
 		if (i != LUA_OK)
@@ -2147,9 +2250,13 @@ public:
 		{
 			lua_getglobal(estados_lua[script], func.c_str());
 			lua_pushtable(estados_lua[script], arg);
-			//lua_call(estados_lua[script], 1, 1);
-			if (lua_pcall(estados_lua[script], 1, LUA_MULTRET, 0) != 0){return ret;}
-			if (lua_gettop(estados_lua[script]) - 1 > 0) {
+			// lua_call(estados_lua[script], 1, 1);
+			if (lua_pcall(estados_lua[script], 1, LUA_MULTRET, 0) != 0)
+			{
+				return ret;
+			}
+			if (lua_gettop(estados_lua[script]) - 1 > 0)
+			{
 				ret = lua_totable(estados_lua[script], -2);
 			}
 		}

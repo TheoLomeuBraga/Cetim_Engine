@@ -1,19 +1,10 @@
+register_function_set("render")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
 
---sprite
-function set_tileset(object,tileset)
-end
-function get_tileset(object)
-end
 
-function get_sprite_render_json(object)
-end
-function set_sprite_render_json(object,json)
-end
-function get_set_sprite_render(get_set,object)
-end
 
 render_sprite_component = create_base_component(components.render_sprite)
 render_sprite_component.layer = 2

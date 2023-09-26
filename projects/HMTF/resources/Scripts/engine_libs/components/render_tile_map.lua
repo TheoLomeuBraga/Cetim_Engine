@@ -1,10 +1,8 @@
+register_function_set("render")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
-
---tilemap
-function get_set_render_tilemap(get_set,object)
-end
 
 render_tile_map_component = create_base_component(components.render_tile_map)
 render_tile_map_component.layer = 2

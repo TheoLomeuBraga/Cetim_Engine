@@ -1,32 +1,8 @@
+register_function_set("physics")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.collision_shapes")
-
-function get_set_physic_3D(get_set, object)
-end
-
-function add_force(object, force_x, force_y,force_z)
-end
-function add_impulse(object, force_x, force_y,force_z)
-end
-
-function add_rotative_force(object, force_x, force_y,force_z)
-end
-function add_rotative_impulse(object, force_x, force_y,force_z)
-end
-
-function set_linear_velocity(object,x,y,z)
-end
-function set_angular_velocity(object, force_x,force_y,force_z)
-end
-
-function get_gravity()
-end
-function set_gravity(object,x, y, z)
-end
-
-function raycast_3D(ray_from,ray_to)
-end
 
 
 --boady_dynamics

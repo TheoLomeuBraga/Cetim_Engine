@@ -1,15 +1,10 @@
+register_function_set("camera")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 
 --camera
-function set_camera(object, sizeX,sizeY,ncp,fcp)
-end
-function set_camera(object, zoom, resX,resY,ncp,fcp)
-end
-function get_camera(object)
-end
-function get_set_camera(get_set,object)
-end
+
 
 camera_component = create_base_component(components.camera)
 camera_component.object_ptr = ""

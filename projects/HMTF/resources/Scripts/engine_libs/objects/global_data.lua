@@ -1,8 +1,4 @@
-function global_data_get_var(var_name)
-end
-
-function global_data_set_var(var_name,var_value)
-end
+register_function_set("global_data")
 
 global_data = {}
 function global_data:get_var(var_name)

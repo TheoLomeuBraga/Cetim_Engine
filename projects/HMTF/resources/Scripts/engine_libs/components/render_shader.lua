@@ -1,9 +1,8 @@
+register_function_set("render")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
-
-function get_set_render_shader(get_set,object)
-end
 
 
 render_shader_component = create_base_component(components.transform)

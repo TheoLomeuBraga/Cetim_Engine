@@ -1,9 +1,6 @@
-require("engine_libs.objects.material")
+register_function_set("render")
 
---[[
-function get_set_post_processing(get_set,object)
-end
-]]
+require("engine_libs.objects.material")
 
 post_processing = {}
 post_processing.material = material:new()

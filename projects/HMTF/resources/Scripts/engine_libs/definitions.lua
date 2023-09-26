@@ -13,9 +13,6 @@ function shallow_copy(t)
     return table.shallow_copy(t)
 end
 
---input
-function get_input(input_divice,input_to_check)
-end 
 
 --camera types
 camera_view_types = {}

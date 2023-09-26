@@ -1,3 +1,5 @@
+register_function_set("time")
+
 time = {}
 time.time = 0
 time.delta = 0

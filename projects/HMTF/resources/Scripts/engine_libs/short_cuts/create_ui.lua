@@ -196,7 +196,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             local sca  = deepcopy(self.button_obj.components[components.transform].scale)
             sca.x      = sca.x / 2
             sca.y      = sca.y / 2
-    
+            
             self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and (mouse_pos.y > pos.y and mouse_pos.y < (pos.y + sca.y))
     
             self.click = keys_axis:get_input(input_devices.mouse, "left") == 1

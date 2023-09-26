@@ -1,16 +1,9 @@
+register_function_set("render")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.components.extras")
 require("engine_libs.objects.material")
-
---mesh
-function get_mesh_json(object)
-end
-function set_mesh_json(object,json)
-end
-
-function get_set_render_mesh(get_set,object)
-end
 
 
 mesh_location = {}

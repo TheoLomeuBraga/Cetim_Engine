@@ -1,29 +1,11 @@
+register_function_set("transform")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.vectors")
 require("engine_libs.functions")
 
---transform
-function get_set_transform(get_set,object)
-end
 
-function move_transform(object,x,y,z)
-end
-function rotate_transform(object,x,y,z)
-end
-
-function change_transfotm_position(object,x,y,z)
-end
-function change_transfotm_rotation(object,x,y,z)
-end
-function change_transfotm_scale(object,x,y,z)
-end
-function get_local_direction_transform(object,x,y,z)
-end
-function get_translation_position_transform(object,x,y,z)
-end
-function get_global_position_transform(object,x,y,z)
-end
 
 transform_component = create_base_component(components.transform)
 transform_component.object_ptr = ""

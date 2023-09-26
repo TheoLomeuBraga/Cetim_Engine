@@ -1,24 +1,7 @@
+register_function_set("script")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
-
-
-
-
-
-function have_script(object,script)
-end
-function add_script_lua(object,script)
-end
-function remove_script(object,script)
-end
-function get_lua_component()
-end
-function get_lua_var(object,script_name,variable_name)
-end
-function set_lua_var(object,script_name,variable_name,value)
-end
-function call_lua_function(object,script_name,function_name,arg)
-end
 
 lua_scripts_component = create_base_component(components.lua_scripts)
 lua_scripts_component.object_ptr = ""

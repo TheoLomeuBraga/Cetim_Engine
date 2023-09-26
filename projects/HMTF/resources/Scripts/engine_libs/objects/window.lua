@@ -1,11 +1,4 @@
-function get_set_window(get_set,object)
-end
-function close()
-end
-function set_cursor_image(path)
-end
-function enable_cursor(enable)
-end
+register_function_set("window")
 
 window = {resolution = {x = 256,y = 224},full_screen = false}
 function window:get()

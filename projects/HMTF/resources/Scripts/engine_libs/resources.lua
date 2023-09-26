@@ -5,13 +5,6 @@ args = {}
 --this object ptr
 this_object_ptr = ""
 
-
-
---input
-function get_input(input_divice, input_to_check)
-
-end
-
 --mouse
 mouse = {}
 mouse.name = "mouse"

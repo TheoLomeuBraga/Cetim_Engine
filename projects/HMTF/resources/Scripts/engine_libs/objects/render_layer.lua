@@ -1,12 +1,4 @@
-function get_post_processing_json()
-end
-function set_post_processing_json(json)
-end
-function get_set_render_layer_instruction()
-end
-function get_set_render_layer_instruction(get_set,object)
-    
-end
+register_function_set("render")
 
 render_layer = {}
 function render_layer:new()

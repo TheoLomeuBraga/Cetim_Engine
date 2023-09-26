@@ -1,20 +1,7 @@
+register_function_set("audio")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
-
-
-
---audio
-function set_audio(object,path,pause,loop,time,speed,volume,min_distance,atenuation)
-end
-function get_audio(object)
-end
-
-function get_set_audio(get_set,object)
-end
-function set_lisener_object(object)
-end
-function get_set_global_volume(vol)
-end
 
 audio_component = {}
 function audio_component:new(object_ptr)

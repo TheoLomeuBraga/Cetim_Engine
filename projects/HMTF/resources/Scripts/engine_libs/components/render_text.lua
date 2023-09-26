@@ -1,3 +1,5 @@
+register_function_set("render")
+
 require("engine_libs.components.base_component")
 require("engine_libs.components.component_index")
 require("engine_libs.objects.material")
@@ -12,17 +14,6 @@ render_text_location = {
 	left = 4,
 	right = 5
 }
-
-function get_text_json(object)
-end
-function set_text_json(object,json)
-end
-
-function get_set_render_text(get_set,object)
-end
-
-function get_text_size(object)
-end
 
 render_text_component = create_base_component(components.render_text)
 render_text_component.layer = 2

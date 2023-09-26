@@ -1,9 +1,6 @@
-gravity = {force = {x = 0,y = -9.8, z = 0}}
+register_function_set("gravity")
 
-function get_gravity()
-end
-function set_gravity(x, y, z)
-end
+gravity = {force = {x = 0,y = -9.8, z = 0}}
 
 function gravity:get()
     self.force.x,self.force.y,self.force.z = get_gravity()

@@ -1,35 +1,10 @@
+register_function_set("game_object")
+
 require("engine_libs.components.extras")
 require("engine_libs.components.component_index")
 
 
---object
 
-function create_object()
-end
-
-function create_object(parent)
-end
-
-function get_object_with_name(name)
-end
-
-function remove_object(object)
-end
-
-function have_component(object, component)
-end
-
-function add_component(object, component)
-end
-
-function remove_component(object, component)
-end
-
---function get_object_family(object)
---end
-
-function get_set_object(get_set,object)
-end
 
 game_object = {}
 function game_object:new(object_ptr,not_recreate)
