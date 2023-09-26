@@ -1,8 +1,8 @@
-require("engine_libs.objects.game_object")
-require("engine_libs.components.extras")
-require("engine_libs.components.component_all")
-require("engine_libs.components.component_index")
-require("engine_libs.objects.global_data")
+require("objects.game_object")
+require("components.extras")
+require("components.component_all")
+require("components.component_index")
+require("objects.global_data")
 
 
 

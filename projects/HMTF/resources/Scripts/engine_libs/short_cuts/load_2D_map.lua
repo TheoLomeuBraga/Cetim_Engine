@@ -1,9 +1,9 @@
-require("engine_libs.components.extras")
-require("engine_libs.definitions")
+require("components.extras")
+require("definitions")
 
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_tile_map")
+require("objects.game_object")
+require("components.transform")
+require("components.render_tile_map")
 
 
 require("math")

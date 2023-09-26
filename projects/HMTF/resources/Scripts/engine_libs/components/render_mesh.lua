@@ -1,9 +1,9 @@
 register_function_set("render")
 
-require("engine_libs.components.base_component")
-require("engine_libs.components.component_index")
-require("engine_libs.components.extras")
-require("engine_libs.objects.material")
+require("components.base_component")
+require("components.component_index")
+require("components.extras")
+require("objects.material")
 
 
 mesh_location = {}

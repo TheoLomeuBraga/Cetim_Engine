@@ -1,7 +1,7 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.camera")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.camera")
 
 
 function create_camera_perspective(father,pos,rot,zoom,ncf,fcp)

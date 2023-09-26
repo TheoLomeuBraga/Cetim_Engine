@@ -1,6 +1,6 @@
 
-require("engine_libs.definitions")
-require("engine_libs.components.component_index")
+require("definitions")
+require("components.component_index")
 
 layers_table = {}
 function layers_table:new_2D()

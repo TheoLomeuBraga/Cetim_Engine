@@ -1,9 +1,9 @@
 register_function_set("transform")
 
-require("engine_libs.components.base_component")
-require("engine_libs.components.component_index")
-require("engine_libs.objects.vectors")
-require("engine_libs.functions")
+require("components.base_component")
+require("components.component_index")
+require("objects.vectors")
+require("functions")
 
 
 

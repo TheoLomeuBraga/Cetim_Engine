@@ -1,6 +1,6 @@
-require("engine_libs.objects.global_data")
-require("engine_libs.objects.input")
-require("engine_libs.functions")
+require("objects.global_data")
+require("objects.input")
+require("functions")
 require("math")
 
 inputs_last_frame = {}

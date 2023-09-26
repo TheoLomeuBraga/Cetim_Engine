@@ -1,10 +1,10 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_mesh")
-require("engine_libs.components.physics_3D")
-require("engine_libs.components.physics_2D")
-require("engine_libs.objects.collision_shapes")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.render_mesh")
+require("components.physics_3D")
+require("components.physics_2D")
+require("objects.collision_shapes")
 
 
 function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_mesh,triger)

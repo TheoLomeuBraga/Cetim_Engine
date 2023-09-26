@@ -1,11 +1,11 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_shader")
-require("engine_libs.short_cuts.create_render_shader")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.render_shader")
+require("short_cuts.create_render_shader")
 
-require("engine_libs.objects.input")
-require("engine_libs.objects.window")
+require("objects.input")
+require("objects.window")
 
 ui_style = {}
 function ui_style:new()

@@ -1,6 +1,6 @@
 register_function_set("render")
 
-require("engine_libs.objects.material")
+require("objects.material")
 
 post_processing = {}
 post_processing.material = material:new()

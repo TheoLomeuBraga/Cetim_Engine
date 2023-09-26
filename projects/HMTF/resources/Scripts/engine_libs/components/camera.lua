@@ -1,7 +1,7 @@
 register_function_set("camera")
 
-require("engine_libs.components.base_component")
-require("engine_libs.components.component_index")
+require("components.base_component")
+require("components.component_index")
 
 --camera
 

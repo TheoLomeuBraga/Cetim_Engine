@@ -1,25 +1,24 @@
-require("engine_libs.definitions")
-require("engine_libs.components.extras")
-require("engine_libs.components.component_all")
-require("engine_libs.components.component_index")
+require("definitions")
+require("components.extras")
+require("components.component_all")
+require("components.component_index")
 
-require("engine_libs.objects.game_object")
-require("engine_libs.objects.time")
+require("objects.game_object")
+require("objects.time")
 
-require("engine_libs.objects.material")
-require("engine_libs.objects.global_data")
-require("engine_libs.objects.vectors")
-require("engine_libs.objects.input")
-require("engine_libs.objects.gravity")
-require("engine_libs.objects.scene_3D")
-require("engine_libs.objects.window")
+require("objects.material")
+require("objects.global_data")
+require("objects.vectors")
+require("objects.input")
+require("objects.gravity")
+require("objects.scene_3D")
+require("objects.window")
 
-require("engine_libs.short_cuts.create_camera")
-require("engine_libs.short_cuts.create_collision")
+require("short_cuts.create_camera")
+require("short_cuts.create_collision")
 require("resources.playable_scene")
 
 require("math")
-
 
 local this_object = {}
 camera = {}

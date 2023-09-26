@@ -1,7 +1,7 @@
-require("engine_libs.components.component_table")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_sprite")
+require("components.component_table")
+require("objects.game_object")
+require("components.transform")
+require("components.render_sprite")
 
 function create_sprite(father,is_ui,pos,rot,sca,mat,layer,sprite_id,tileset_local)
     ret = game_object:new(create_object(father))

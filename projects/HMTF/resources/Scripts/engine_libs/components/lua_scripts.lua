@@ -1,7 +1,7 @@
 register_function_set("script")
 
-require("engine_libs.components.base_component")
-require("engine_libs.components.component_index")
+require("components.base_component")
+require("components.component_index")
 
 lua_scripts_component = create_base_component(components.lua_scripts)
 lua_scripts_component.object_ptr = ""

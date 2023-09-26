@@ -1,7 +1,7 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.audio_source")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.audio_source")
 
 function create_audio(father,music_path,loop,volume)
     ret = game_object:new(create_object(father)) 

@@ -1,8 +1,8 @@
-require("engine_libs.components.base_component")
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_shader")
+require("components.base_component")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.render_shader")
 
 function create_render_shader(father,is_ui,pos,rot,sca,layer,mat)
     ret = game_object:new(create_object(father))

@@ -1,7 +1,7 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_text")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.render_text")
 
 function create_text(father,is_ui,pos,rot,sca,material,layer,text,font)
 

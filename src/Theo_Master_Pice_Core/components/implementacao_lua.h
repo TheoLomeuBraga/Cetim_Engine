@@ -1680,107 +1680,7 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	map<string, lua_function> funcoes_ponte_map = {
-
-		// input
-		pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
-		pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
-		pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
-		pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
-		pair<string, lua_function>("get_input", funcoes_ponte::get_input),
-
-		// tempo
-		pair<string, lua_function>("get_time", funcoes_ponte::get_time),
-		pair<string, lua_function>("set_time_scale", funcoes_ponte::set_time_scale),
-
-		// memoria
-		pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
-
-		// objeto
-		pair<string, lua_function>("create_object", funcoes_ponte::create_object),
-		pair<string, lua_function>("get_object_with_name", funcoes_ponte::get_object_with_name),
-		pair<string, lua_function>("remove_object", funcoes_ponte::remove_object),
-		pair<string, lua_function>("add_component", add_component),
-		pair<string, lua_function>("remove_component", remove_component),
-		pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
-		pair<string, lua_function>("have_component", have_component),
-		pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
-
-		// movimento
-		pair<string, lua_function>("to_move", funcoes_ponte::to_move),
-		pair<string, lua_function>("in_ceiling", funcoes_ponte::in_ceiling),
-		pair<string, lua_function>("in_floor", funcoes_ponte::in_floor),
-		pair<string, lua_function>("get_gravity", funcoes_ponte::get_gravity),
-		pair<string, lua_function>("set_gravity", funcoes_ponte::set_gravity),
-
-		// transform
-		pair<string, lua_function>("get_set_transform", funcoes_ponte::get_set_transform),
-
-		pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
-		pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
-
-		pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
-		pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
-		pair<string, lua_function>("change_transfotm_scale", funcoes_ponte::change_transfotm_scale),
-
-		pair<string, lua_function>("get_local_direction_transform", funcoes_ponte::get_local_direction_transform),
-		pair<string, lua_function>("get_global_position_transform", funcoes_ponte::get_global_position_transform),
-		pair<string, lua_function>("get_translation_position_transform", funcoes_ponte::get_translation_position_transform),
-
-		// janela
-		pair<string, lua_function>("get_set_window", funcoes_ponte::get_set_window),
-		pair<string, lua_function>("close", funcoes_ponte::close),
-		pair<string, lua_function>("set_cursor_image", funcoes_ponte::set_cursor_image),
-		pair<string, lua_function>("enable_cursor", funcoes_ponte::enable_cursor),
-
-		// render
-		pair<string, lua_function>("get_set_render_layer_instruction", funcoes_ponte::get_set_render_layer_instruction),
-		pair<string, lua_function>("get_set_sprite_render", funcoes_ponte::get_set_sprite_render),
-		pair<string, lua_function>("get_set_render_tilemap", funcoes_ponte::get_set_render_tilemap),
-		pair<string, lua_function>("get_set_render_text", funcoes_ponte::get_set_render_text),
-		pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
-		pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
-		pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
-		pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
-
-		// physic
-		pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
-		pair<string, lua_function>("add_force", funcoes_ponte::add_force),
-		pair<string, lua_function>("add_impulse", funcoes_ponte::add_impulse),
-		pair<string, lua_function>("set_linear_velocity", funcoes_ponte::set_linear_velocity),
-		pair<string, lua_function>("set_angular_velocity", funcoes_ponte::set_angular_velocity),
-		pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
-		pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
-		pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
-		pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
-		pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
-
-		// audio
-		pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
-		pair<string, lua_function>("get_set_global_volume", funcoes_ponte::get_set_global_volume),
-		pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
-
-		// script
-		pair<string, lua_function>("get_script_size", get_script_size),
-		pair<string, lua_function>("get_script_name", get_script_name),
-		pair<string, lua_function>("set_script_var", set_script_var),
-		pair<string, lua_function>("get_lua_component", get_lua_component),
-		pair<string, lua_function>("have_script", have_script),
-		pair<string, lua_function>("add_script_lua", add_script_lua),
-		pair<string, lua_function>("remove_script", remove_script),
-		pair<string, lua_function>("get_lua_var", get_lua_var),
-		pair<string, lua_function>("set_lua_var", set_lua_var),
-		pair<string, lua_function>("call_lua_function", call_lua_function),
-
-		// global data
-		pair<string, lua_function>("global_data_get_var", global_data_get_var),
-		pair<string, lua_function>("global_data_set_var", global_data_set_var),
-
-		// 3D sceane
-		pair<string, lua_function>("get_scene_3D", get_scene_3D),
-
-	};
-
+	
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
 		pair<string, map<string, lua_function>>("game_object", {
 															  pair<string, lua_function>("create_object", funcoes_ponte::create_object),
@@ -1921,16 +1821,6 @@ namespace funcoes_lua
 		return 0;
 	}
 
-	void adicionar_funcoes_ponte_estado_lua(lua_State *L)
-	{
-
-		// solu��o 1
-		for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map)
-		{
-			lua_register(L, p.first.c_str(), p.second);
-		}
-	}
-
 	map<string, string> scripts_lua;
 	void limpar_scripts_lua()
 	{
@@ -1947,7 +1837,7 @@ namespace funcoes_lua
 		luaL_openlibs(ret);
 
 		// configurar diretorio
-		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua";
+		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
 
 		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
 

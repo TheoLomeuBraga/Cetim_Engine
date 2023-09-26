@@ -1,10 +1,10 @@
-require("engine_libs.definitions")
-require("engine_libs.components.extras")
-require("engine_libs.components.component_all")
-require("engine_libs.components.component_index")
-require("engine_libs.objects.game_object")
-require("engine_libs.objects.global_data")
-require("engine_libs.short_cuts.create_ui")
+require("definitions")
+require("components.extras")
+require("components.component_all")
+require("components.component_index")
+require("objects.game_object")
+require("objects.global_data")
+require("short_cuts.create_ui")
 
 local serializer = require("libs.serialize")
 

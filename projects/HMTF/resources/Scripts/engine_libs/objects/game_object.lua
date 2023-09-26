@@ -1,7 +1,7 @@
 register_function_set("game_object")
 
-require("engine_libs.components.extras")
-require("engine_libs.components.component_index")
+require("components.extras")
+require("components.component_index")
 
 
 

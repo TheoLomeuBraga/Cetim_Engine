@@ -1,4 +1,4 @@
-require("engine_libs.short_cuts.create_mesh")
+require("short_cuts.create_mesh")
 
 function load_3D_asset(father, render_layer, object_3D)
 

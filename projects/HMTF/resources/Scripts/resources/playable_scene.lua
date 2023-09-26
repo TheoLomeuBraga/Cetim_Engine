@@ -1,9 +1,9 @@
-require("engine_libs.components.extras")
-require("engine_libs.components.component_all")
-require("engine_libs.components.component_index")
-require("engine_libs.objects.global_data")
-require("engine_libs.objects.time")
-require("engine_libs.short_cuts.create_sound")
+require("components.extras")
+require("components.component_all")
+require("components.component_index")
+require("objects.global_data")
+require("objects.time")
+require("short_cuts.create_sound")
 
 menu = {
     obj = nil,

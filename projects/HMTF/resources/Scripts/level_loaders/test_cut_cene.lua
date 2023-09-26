@@ -1,7 +1,7 @@
-require("engine_libs.short_cuts.create_mesh")
-require("engine_libs.short_cuts.create_collision")
-require("engine_libs.objects.time")
-require("engine_libs.objects.scene_3D")
+require("short_cuts.create_mesh")
+require("short_cuts.create_collision")
+require("objects.time")
+require("objects.scene_3D")
 require("resources.playable_scene")
 
 local level = {

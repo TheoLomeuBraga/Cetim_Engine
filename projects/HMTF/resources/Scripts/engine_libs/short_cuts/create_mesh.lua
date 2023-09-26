@@ -1,7 +1,7 @@
-require("engine_libs.components.extras")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.transform")
-require("engine_libs.components.render_mesh")
+require("components.extras")
+require("objects.game_object")
+require("components.transform")
+require("components.render_mesh")
 
 
 function create_mesh(father,is_ui,pos,rot,sca,layer,mats,meshes_locations)

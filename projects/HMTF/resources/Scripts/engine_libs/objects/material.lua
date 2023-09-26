@@ -1,4 +1,4 @@
-require("engine_libs.objects.gravity")
+require("objects.gravity")
 
 normal_direction = {
     front = 0,

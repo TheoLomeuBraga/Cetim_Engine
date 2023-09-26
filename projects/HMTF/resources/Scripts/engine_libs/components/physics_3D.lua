@@ -1,8 +1,8 @@
 register_function_set("physics")
 
-require("engine_libs.components.base_component")
-require("engine_libs.components.component_index")
-require("engine_libs.objects.collision_shapes")
+require("components.base_component")
+require("components.component_index")
+require("objects.collision_shapes")
 
 
 --boady_dynamics

@@ -1,10 +1,10 @@
-require("engine_libs.short_cuts.create_mesh")
-require("engine_libs.short_cuts.create_collision")
-require("engine_libs.objects.time")
-require("engine_libs.objects.game_object")
-require("engine_libs.components.physics_3D")
-require("engine_libs.objects.scene_3D")
-require("engine_libs.components.audio_source")
+require("short_cuts.create_mesh")
+require("short_cuts.create_collision")
+require("objects.time")
+require("objects.game_object")
+require("components.physics_3D")
+require("objects.scene_3D")
+require("components.audio_source")
 require("resources.playable_scene")
 
 local level = {
