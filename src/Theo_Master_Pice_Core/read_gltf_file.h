@@ -657,7 +657,7 @@ namespace gltf_loader
                 animations[a].keyFrames.push_back(key_frames);
             }
 
-            //print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
+            // print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
         }
 
         return true;
@@ -1022,7 +1022,7 @@ namespace gltf_loader
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
+                        size_t dataSize = indexAccessor.count * sizeof(uint16_t);
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
@@ -1037,7 +1037,7 @@ namespace gltf_loader
                         std::vector<uint32_t> indices;
                         const uint32_t *data = reinterpret_cast<const uint32_t *>(indexBufferData.data());
                         // size_t dataSize = indexBufferData.size() / sizeof(uint32_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint32_t) * 4;
+                        size_t dataSize = indexAccessor.count * sizeof(uint32_t);
                         indices.assign(data, data + dataSize);
 
                         for (int i = 0; i < dataSize; i++)
@@ -1057,7 +1057,7 @@ namespace gltf_loader
                     for (int i = 0; i < mesh.indices.size() / 3; i += 3)
                     {
 
-                        // if ((mesh.indices[i] < mesh.indices.size() && mesh.indices[i + 1] < mesh.indices.size() && mesh.indices[i + 2] < mesh.indices.size()) && !has_duplicates({(float)mesh.indices[i], (float)mesh.indices[i + 1], (float)mesh.indices[i + 2]}))
+                        
                         if ((mesh.indices[i] < mesh.indices.size() - 1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
                         {
                             new_indice.push_back(mesh.indices[i]);
@@ -1071,7 +1071,7 @@ namespace gltf_loader
                     }
                     mesh.indices = new_indice;
 
-                    // print({"new_indice.size() / 3",new_indice.size() / 3,new_indice.size() % 3});
+                    print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
 
                     if (primitive.contains("material"))
                     {

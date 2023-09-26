@@ -65,7 +65,8 @@ end
 function new_game()
     print("new_game")
     core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", {"test_map"})
+    --core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", {"test_map"})
+    core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", {"hub_map"})
 end
 
 function load_game()
