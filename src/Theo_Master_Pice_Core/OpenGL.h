@@ -280,6 +280,7 @@ public:
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam)
 	{
 
+		
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 
