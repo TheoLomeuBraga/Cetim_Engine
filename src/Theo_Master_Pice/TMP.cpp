@@ -74,6 +74,7 @@ void ShutdownImGui() {
 
 
 
+
 void configuracaoInicial()
 {
 
@@ -81,9 +82,20 @@ void configuracaoInicial()
     Iniciar_Render_Func.push_back(iniciarTeste3);
     Iniciar_Render_Func.push_back(iniciar_global_bullet);
 
-    Antes_Render_Func.push_back(atualisar_global_box2D);
-    Antes_Render_Func.push_back(atualisar_global_bullet);
+
+
+    //Antes_Render_Func.push_back(atualisar_global_box2D);
+    //Antes_Render_Func.push_back(atualisar_global_bullet);
+
+    Antes_Render_Func.push_back(iniciar_atualisar_global_box2D);
+    Antes_Render_Func.push_back(iniciar_atualisar_global_bullet);
+
     Antes_Render_Func.push_back(get_input_using_threads);
+
+    Antes_Render_Func.push_back(terminar_atualisar_global_box2D);
+    Antes_Render_Func.push_back(terminar_atualisar_global_bullet);
+
+
     Antes_Render_Func.push_back(teste3);
 
     /*
