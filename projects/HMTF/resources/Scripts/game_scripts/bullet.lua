@@ -47,9 +47,9 @@ function START()
 
         this_object:add_component(components.physics_3D)
         this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-        this_object.components[components.physics_3D].collision_shape = collision_shapes.convex
+        this_object.components[components.physics_3D].collision_shape = collision_shapes.sphere
         this_object.components[components.physics_3D].gravity_scale = 0
-        this_object.components[components.physics_3D].collision_mesh = deepcopy( mesh )
+        this_object.components[components.physics_3D].collision_mesh = nil
         this_object.components[components.physics_3D].triger = true
         this_object.components[components.physics_3D].scale = this_object.components[components.transform].scale
         this_object.components[components.physics_3D].friction = 0

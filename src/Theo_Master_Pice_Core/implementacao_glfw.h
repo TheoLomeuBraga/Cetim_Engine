@@ -596,7 +596,7 @@ void IniciarJanela()
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
 
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 	
 	glewExperimental = true;		// Needed in core profile
 	if (glewInit() != GLEW_OK)
