@@ -5,20 +5,24 @@
 #include "Tempo.h"
 #include "game_object.h"
 #include <thread>
+#include <mutex>
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
 btDiscreteDynamicsWorld *dynamicsWorld;
+std::mutex mtx_dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
 vector<thread> bullet_threads;
+std::mutex mtx_bullet_threads;
 
 int btMeshes_shapes_count = 0;
 std::map<shared_ptr<std::string>, btCollisionShape *> btMeshes_shapes;
 std::map<string, shared_ptr<std::string>> btMeshes_shapes_addresses;
+std::mutex mtx_btMeshes_shapes;
 void btClean_Meshes_shapes()
 {
 
@@ -67,8 +71,10 @@ map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
 */
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
+std::mutex mtx_collisionObject_obj;
 
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
+std::mutex mtx_bu_collisions_no_per_object;
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -174,14 +180,20 @@ public:
     vector<shared_ptr<objeto_jogo>> objs_touching;
     shared_ptr<std::string> mesh_shape_address = NULL;
 
-    void iniciar()
-    {
+    void set_up(){
+        std::lock_guard<std::mutex> lock1(mtx_bu_collisions_no_per_object);
         bu_collisions_no_per_object[esse_objeto.get()] = {};
         iniciar_global_bullet();
         btCollisionShape *Shape;
+        
         if (forma == formato_colisao::caixa)
         {
+
+            
+            //std::lock_guard<std::mutex> lock(mtx_btMeshes_shapes);
+
             mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            std::lock_guard<std::mutex> lock(mtx_btMeshes_shapes);
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
@@ -196,6 +208,7 @@ public:
         else if (forma == formato_colisao::esfera)
         {
             mesh_shape_address = get_mesh_shape_address("sphere:" + std::to_string(escala.x));
+            std::lock_guard<std::mutex> lock(mtx_btMeshes_shapes);
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
@@ -210,6 +223,7 @@ public:
         else if (forma == formato_colisao::cilindro)
         {
             mesh_shape_address = get_mesh_shape_address("cylinder:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+            std::lock_guard<std::mutex> lock(mtx_btMeshes_shapes);
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
@@ -224,6 +238,7 @@ public:
         else if (forma == formato_colisao::capsula)
         {
             mesh_shape_address = get_mesh_shape_address("capsule:" + std::to_string(escala.x) + ":" + std::to_string(escala.y));
+            std::lock_guard<std::mutex> lock(mtx_btMeshes_shapes);
             if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
             {
                 Shape = btMeshes_shapes[mesh_shape_address];
@@ -245,6 +260,7 @@ public:
                 {
                     mesh_shape_address = get_mesh_shape_address(collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
 
+                    std::lock_guard<std::mutex> lock1(mtx_btMeshes_shapes);
                     if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                     {
                         Shape = btMeshes_shapes[mesh_shape_address];
@@ -280,7 +296,7 @@ public:
                 else
                 {
                     mesh_shape_address = get_mesh_shape_address(std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z) + ":" + collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":dynamic");
-
+                    std::lock_guard<std::mutex> lock1(mtx_btMeshes_shapes);
                     if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                     {
                         Shape = btMeshes_shapes[mesh_shape_address];
@@ -305,6 +321,7 @@ public:
                 print({"fail load collision mesh"});
 
                 mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
+                std::lock_guard<std::mutex> lock1(mtx_btMeshes_shapes);
                 if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
                 {
                     Shape = btMeshes_shapes[mesh_shape_address];
@@ -324,6 +341,7 @@ public:
         transform.setOrigin(glmToBt(position));
         quat quaternion;
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
+
         if (tf != NULL)
         {
             transform.setOrigin(glmToBt(tf->pos));
@@ -339,32 +357,10 @@ public:
             bt_obj->setCollisionShape(Shape);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
+            
+            std::lock_guard<std::mutex> lock1(mtx_dynamicsWorld);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
 
-            /*
-            btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
-            if (dinamica == dinamico)
-            {
-                btVector3 Inertia = btVector3(0, 0, 0);
-                Shape->calculateLocalInertia(densidade, Inertia);
-                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
-                bt_obj_rb = new btRigidBody(CI);
-                bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
-                bt_obj_rb->setGravity(btVector3(0,0,0));
-                bt_obj_rb->setFriction(atrito);
-                bt_obj_rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-                dynamicsWorld->addRigidBody(bt_obj_rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
-                bt_obj = bt_obj_rb;
-            }
-            else if (dinamica == estatico)
-            {
-                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                bt_obj_rb = new btRigidBody(CI);
-                bt_obj_rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-                dynamicsWorld->addRigidBody(bt_obj_rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
-                bt_obj = bt_obj_rb;
-            }
-            */
         }
         else
         {
@@ -378,6 +374,7 @@ public:
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 bt_obj_rb->setGravity(btVector3(0, 0, 0));
                 bt_obj_rb->setFriction(atrito);
+                std::lock_guard<std::mutex> lock1(mtx_dynamicsWorld);
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
             }
@@ -385,12 +382,24 @@ public:
             {
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
                 bt_obj_rb = new btRigidBody(CI);
+                std::lock_guard<std::mutex> lock1(mtx_dynamicsWorld);
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
             }
         }
 
+        
+        std::lock_guard<std::mutex> lock2(mtx_collisionObject_obj);
         collisionObject_obj.insert(pair<btCollisionObject *, shared_ptr<objeto_jogo>>(bt_obj, esse_objeto));
+    }
+
+    void iniciar()
+    {
+        thread t(&bullet::set_up,this);
+        std::lock_guard<std::mutex> lock(mtx_bullet_threads);
+        bullet_threads.push_back(move(t));
+
+
     }
 
     void aply_gravity()
@@ -652,12 +661,14 @@ thread bullet_starter;
 void iniciar_iniciar_global_bullet(){
 
     thread t(iniciar_global_bullet);
+    std::lock_guard<std::mutex> lock(mtx_bullet_threads);
     bullet_threads.push_back(move(t));
 
 }
 
 void terminar_iniciar_global_bullet(){
 
+    std::lock_guard<std::mutex> lock(mtx_bullet_threads);
     for (std::thread& thread : bullet_threads) {
         thread.join();
     }
@@ -743,15 +754,22 @@ void atualisar_global_bullet()
 
 void iniciar_atualisar_global_bullet(){
 
+    /*
     thread t(atualisar_global_bullet);
     bullet_threads.push_back(move(t));
+    */
 
 }
 
 void terminar_atualisar_global_bullet(){
 
+    print({"terminar_atualisar_global_bullet"});
+    std::lock_guard<std::mutex> lock(mtx_bullet_threads);
     for (std::thread& thread : bullet_threads) {
         thread.join();
     }
     bullet_threads.clear();
+
+    atualisar_global_bullet();
+    print({"terminar_atualisar_global_bullet end"});
 }
