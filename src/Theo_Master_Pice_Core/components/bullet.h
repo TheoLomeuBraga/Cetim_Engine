@@ -626,6 +626,8 @@ public:
     void finalisar() {}
 };
 
+thread bullet_thread;
+
 void iniciar_global_bullet()
 {
     if (global_bullet_iniciado == 0)
@@ -644,6 +646,18 @@ void iniciar_global_bullet()
 
         global_bullet_iniciado++;
     }
+}
+
+void iniciar_iniciar_global_bullet(){
+
+    bullet_thread = thread(iniciar_global_bullet);
+
+}
+
+void terminar_iniciar_global_bullet(){
+
+    bullet_thread.join();
+
 }
 
 void get_3D_collisions()
@@ -720,7 +734,7 @@ void atualisar_global_bullet()
     // dynamicsWorld->setGravity(glmToBt(gravidade));
 }
 
-thread bullet_thread;
+
 
 void iniciar_atualisar_global_bullet(){
 
