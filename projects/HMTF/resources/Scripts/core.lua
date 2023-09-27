@@ -243,16 +243,29 @@ function START()
     
 
     load_configs()
-
     load_sceane("main_menu")
-
     global_data:set_var("localization_file","resources/localization/AmericanEnglish.json")
     
 end
 
+local count_fps ={
+    time = 0,
+    frames = 0,
+}
+function count_fps:update()
+    time:get()
+    self.time = self.time + time.delta
+    self.frames = self.frames + 1
+    if self.time >= 1 then
+        self.time = 0
+        print("FPS",self.frames)
+        self.frames = 0
+    end
+end
+
 function UPDATE()
 
-    
+    count_fps:update()
 
     if keep_loading() and cenary ~= nil then
         cenary:UPDATE()

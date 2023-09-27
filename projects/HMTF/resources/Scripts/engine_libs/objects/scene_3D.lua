@@ -153,6 +153,8 @@ function lerp_key_frame(key_frame_A, key_frame_B, time)
     return ret
 end
 
+
+
 function apply_key_frame(game_objects_list, key_frame)
     for k, kfn in pairs(key_frame) do
 
@@ -175,4 +177,7 @@ function apply_key_frame(game_objects_list, key_frame)
         game_objects_list[kfn.target_id].components[components.transform]:set()
 
     end
+end
+
+function new_apply_key_frame(animation_file, name,time)
 end

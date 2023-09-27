@@ -49,6 +49,7 @@ game_state = 0
 local cannon = {
     obj = {},
     part_list = {},
+    part_ptr_list = {},
     animations = {},
 }
 
@@ -61,6 +62,9 @@ function create_arm_cannon()
     --"resources/Shaders/explosive_vertex_mesh"
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
+    for key, value in pairs(cannon.part_list) do
+        cannon.part_ptr_list[key] = value.object_ptr
+    end
 end
 
 function set_cannon_vertex_explosion_state(primitives_size, elevation_distance, texture_transition, transition_texture)
@@ -107,12 +111,12 @@ function restart_arm_cannon_animation()
 end
 
 function play_arm_cannon_animation()
+    --[[
     if animation_state.animation ~= nil and global_data:get("pause") < 1 then
         time:get()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
 
-        local frame_selected = math.floor(animation_state.time * tablelength(animation_state.animation.key_frames) /
-            animation_state.animation.duration + 1)
+        local frame_selected = math.floor(animation_state.time * tablelength(animation_state.animation.key_frames) / animation_state.animation.duration + 1)
 
         if frame_selected > tablelength(animation_state.animation.key_frames) then
             if animation_state.loop then
@@ -132,6 +136,22 @@ function play_arm_cannon_animation()
         end
 
         apply_key_frame(cannon.part_list, animation_state.animation.key_frames[frame_selected])
+    end
+    ]]
+    if animation_state.animation ~= nil and global_data:get("pause") < 1 then
+        time:get()
+        animation_state.time = animation_state.time + (animation_state.speed * time.delta)
+
+        if animation_state.time > animation_state.animation.duration then
+            if animation_state.loop then
+                animation_state.time = 0
+            else
+                animation_state.time = animation_state.animation.duration
+                animation_state.finish = true
+            end
+        end
+        
+        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list,false, animation_state.name, animation_state.time)
     end
 end
 
@@ -288,7 +308,7 @@ function simple_shoot()
     end
 end
 
-function advanced_shoot(mesh, sound,spred, speed, life_time,damage, quantity, hit_scan)
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan)
     local directions = {}
 
     if spred ~= 0 then
@@ -307,7 +327,8 @@ function advanced_shoot(mesh, sound,spred, speed, life_time,damage, quantity, hi
         for key, value in pairs(directions) do
             local bullet = game_object:new(create_object(layers.cenary))
             local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
-            local ray_end = camera.components[components.transform]:get_global_position(value.x * 1000, value.y * 1000,value.z * 1000)
+            local ray_end = camera.components[components.transform]:get_global_position(value.x * 1000, value.y * 1000,
+                value.z * 1000)
 
             local hit = false
             local hit_info = {}
@@ -323,8 +344,9 @@ function advanced_shoot(mesh, sound,spred, speed, life_time,damage, quantity, hi
                 return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
             end
 
-            local bullet_direction =  normalize(camera.components[components.transform]:get_local_direction(value.x * 1000, value.y * 1000,value.z * 1000))
-            
+            local bullet_direction = normalize(camera.components[components.transform]:get_local_direction(
+            value.x * 1000, value.y * 1000, value.z * 1000))
+
 
             bullet:add_component(components.transform)
             bullet.components[components.transform].position = deepcopy(bullet_position)
@@ -337,7 +359,7 @@ function advanced_shoot(mesh, sound,spred, speed, life_time,damage, quantity, hi
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed)
 
-            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",mesh)
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh", mesh)
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", damage)
 
@@ -461,7 +483,8 @@ function UPDATE()
             end
             ]]
             if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
-                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" }, "resources/Audio/sounds/shot_3.wav",0.2, 50, 1,10, 5, false)
+                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
+                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 5, false)
             end
 
             --move camera

@@ -221,6 +221,131 @@ int get_lua_var(lua_State *L);
 int set_lua_var(lua_State *L);
 int call_lua_function(lua_State *L);
 
+// lambda labs
+
+void change_pos(objeto_jogo *obj, vec3 pos)
+{
+	shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+	if (tf != NULL)
+	{
+		tf->pos = pos;
+	}
+	shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+	if (b2d != NULL)
+	{
+		b2d->mudar_pos(vec2(pos.x, pos.y));
+	}
+	shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+	if (bu != NULL)
+	{
+		bu->mudar_pos(pos);
+	}
+};
+
+void change_rot(objeto_jogo *obj, vec3 rot)
+{
+	shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+	if (tf != NULL)
+	{
+		tf->mudar_angulo_graus(rot);
+	}
+	shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+	if (b2d != NULL)
+	{
+		b2d->mudar_rot(rot.x);
+	}
+	shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+	if (bu != NULL)
+	{
+		bu->mudar_rot(rot);
+	}
+};
+
+key_frame mix_keyframe(key_frame a, key_frame b, float time)
+{
+	if (a.has_position)
+	{
+		a.position = mix(a.position, b.position, time);
+		return a;
+	}
+	else if (a.has_rotation)
+	{
+		a.rotation = mix(a.rotation, b.rotation, time);
+		return a;
+	}
+	else if (a.has_scale)
+	{
+		a.rotation = mix(a.scale, b.scale, time);
+		return a;
+	}
+	return a;
+};
+
+bool key_frame_match(key_frame a, key_frame b)
+{
+	if (a.object_id == b.object_id && (a.has_position == b.has_position || a.has_rotation == b.has_rotation || a.has_scale == b.has_scale))
+	{
+		return true;
+	}
+	return false;
+}
+
+vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float time)
+{
+
+	for (int x = 0; x < a.size(); x++)
+	{
+		key_frame kf_a = a[x];
+
+		for (int y = 0; y < b.size(); y++)
+		{
+			key_frame kf_b = b[y];
+			if (key_frame_match(kf_a, kf_b))
+			{
+
+				// fazer coisa
+				if (kf_a.has_position)
+				{
+					a[x].position = mix(a[x].position,b[y].position,time);
+				}
+				else if (kf_a.has_rotation)
+				{
+					a[x].rotation = mix(a[x].rotation,b[y].rotation,time);
+				}
+				else if (kf_a.has_scale)
+				{
+					a[x].scale = mix(a[x].scale,b[y].scale,time);
+				}
+
+				b.erase(b.begin() + y);
+				//print({b.size()});
+				break;
+			}
+		}
+	}
+
+	return a;
+};
+
+void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs)
+{
+	for (key_frame kfs : key_frames)
+	{
+		if (kfs.has_position)
+		{
+			change_pos(objects_ptrs[kfs.object_id], kfs.position);
+		}
+		else if (kfs.has_rotation)
+		{
+			change_rot(objects_ptrs[kfs.object_id], quat_graus(kfs.rotation));
+		}
+		else if (kfs.has_scale)
+		{
+			objects_ptrs[kfs.object_id]->pegar_componente<transform_>()->esca = kfs.scale;
+		}
+	}
+};
+
 namespace funcoes_ponte
 {
 
@@ -575,7 +700,7 @@ namespace funcoes_ponte
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
 				manuseio_inputs->get_joysticks_input();
-				
+
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
 
 				if (j.botoes.find(key) != j.botoes.end())
@@ -765,6 +890,7 @@ namespace funcoes_ponte
 
 	int change_transfotm_position(lua_State *L)
 	{
+
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -772,26 +898,14 @@ namespace funcoes_ponte
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		}
 		vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
-		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-		if (tf != NULL)
-		{
-			tf->pos = v3;
-		}
-		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
-		if (b2d != NULL)
-		{
-			b2d->mudar_pos(vec2(v3.x, v3.y));
-		}
-		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
-		if (bu != NULL)
-		{
-			bu->mudar_pos(v3);
-		}
+		change_pos(obj, v3);
+
 		return 0;
 	}
 
 	int change_transfotm_rotation(lua_State *L)
 	{
+
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -799,21 +913,7 @@ namespace funcoes_ponte
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		}
 		vec3 v3 = vec3(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
-		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-		if (tf != NULL)
-		{
-			tf->mudar_angulo_graus(v3);
-		}
-		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
-		if (b2d != NULL)
-		{
-			b2d->mudar_rot(v3.x);
-		}
-		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
-		if (bu != NULL)
-		{
-			bu->mudar_rot(v3);
-		}
+		change_rot(obj, v3);
 		return 0;
 	}
 
@@ -1685,21 +1785,93 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	
+	int set_keyframe(lua_State *L)
+	{
+
+		int args_no = lua_gettop(L);
+
+		if (args_no == 5)
+		{
+
+			shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(lua_tostring(L, 1));
+
+			vector<string> objects_ptrs_str = table_vString(lua_totable(L, 2));
+			vector<objeto_jogo *> objects_ptrs = {};
+			for (int i = 0; i < objects_ptrs_str.size(); i++)
+			{
+				objects_ptrs.push_back(string_ponteiro<objeto_jogo>(objects_ptrs_str[i]));
+			}
+
+			bool mix = lua_toboolean(L, 3);
+
+			string animation_name = lua_tostring(L, 4);
+			animacao ani = scene->animacoes[animation_name];
+
+			float animation_time = lua_tonumber(L, 5);
+			if (animation_time > ani.duration)
+			{
+				animation_time = ani.duration;
+			}
+			else if (animation_time < 0)
+			{
+				animation_time = 0;
+			}
+
+			float animation_frame = 0;
+			if (animation_time > ani.duration)
+			{
+				animation_frame = ani.keyFrames.size();
+			}
+			else
+			{
+				animation_frame = (animation_time * ani.keyFrames.size()) / ani.duration + 1;
+			}
+
+			/**/
+
+			float animation_frame_rest = animation_frame - (int)animation_frame;
+
+			if (animation_frame < 0)
+			{
+				animation_frame = 0;
+				animation_frame_rest = 0;
+			}
+			else if (animation_frame > ani.keyFrames.size())
+			{
+				animation_frame = ani.keyFrames.size();
+				animation_frame_rest = 0;
+			}
+
+			if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
+			{
+				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
+				apply_key_frame_transform(kfs, objects_ptrs);
+			}
+			else
+			{
+				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs);
+			}
+		}
+		else if (args_no == 6)
+		{
+		}
+
+		return 0;
+	}
+
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
 		pair<string, map<string, lua_function>>("game_object", {
-															  pair<string, lua_function>("create_object", funcoes_ponte::create_object),
-															  pair<string, lua_function>("get_object_with_name", funcoes_ponte::get_object_with_name),
-															  pair<string, lua_function>("remove_object", funcoes_ponte::remove_object),
-															  pair<string, lua_function>("add_component", add_component),
-															  pair<string, lua_function>("remove_component", remove_component),
-															  pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
-															  pair<string, lua_function>("have_component", have_component),
-															  pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
-														  }),
+																   pair<string, lua_function>("create_object", funcoes_ponte::create_object),
+																   pair<string, lua_function>("get_object_with_name", funcoes_ponte::get_object_with_name),
+																   pair<string, lua_function>("remove_object", funcoes_ponte::remove_object),
+																   pair<string, lua_function>("add_component", add_component),
+																   pair<string, lua_function>("remove_component", remove_component),
+																   pair<string, lua_function>("reset_components", funcoes_ponte::reset_components),
+																   pair<string, lua_function>("have_component", have_component),
+																   pair<string, lua_function>("get_set_object", funcoes_ponte::get_set_object),
+															   }),
 		pair<string, map<string, lua_function>>("input", {
 															 pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
-															 
 															 pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 															 pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 															 pair<string, lua_function>("get_input", funcoes_ponte::get_input),
@@ -1746,7 +1918,8 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
 															  pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
 															  pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
-														  		pair<string, lua_function>("get_scene_3D", get_scene_3D),
+															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
+															  pair<string, lua_function>("set_keyframe", funcoes_ponte::set_keyframe),
 														  }),
 		pair<string, map<string, lua_function>>("physics", {
 															   pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
