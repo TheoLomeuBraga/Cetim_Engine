@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "Tempo.h"
 #include "game_object.h"
+#include <thread>
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -717,4 +718,18 @@ void atualisar_global_bullet()
     bullet_ultimo_tempo = Tempo::tempo;
 
     // dynamicsWorld->setGravity(glmToBt(gravidade));
+}
+
+thread bullet_thread;
+
+void iniciar_atualisar_global_bullet(){
+
+    bullet_thread = thread(atualisar_global_bullet);
+
+}
+
+void terminar_atualisar_global_bullet(){
+
+    bullet_thread.join();
+
 }

@@ -559,6 +559,9 @@ namespace funcoes_ponte
 
 		if (device == 1)
 		{
+
+			manuseio_inputs->get_text_input();
+
 			teclado t = manuseio_inputs->keyboard_input;
 
 			if (t.teclas.find(key) != t.teclas.end())
@@ -571,6 +574,8 @@ namespace funcoes_ponte
 
 			if (joystick_no <= manuseio_inputs->joysticks_input.size())
 			{
+				manuseio_inputs->get_joysticks_input();
+				
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
 
 				if (j.botoes.find(key) != j.botoes.end())

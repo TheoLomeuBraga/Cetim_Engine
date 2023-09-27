@@ -6,6 +6,7 @@
 
 #include "box2d/box2d.h"
 #include "game_object.h"
+#include <thread>
 
 int32 velocidade_interacoes = 6;
 int32 iteracao_posicao = 2;
@@ -474,6 +475,20 @@ void atualisar_global_box2D()
 	// mundo.Step(passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
 	mundo.Step(passo_tempo, velocidade_interacoes, iteracao_posicao);
 	ultimo_tempo = Tempo::tempo;
+}
+
+thread box2D_thread;
+
+void iniciar_atualisar_global_box2D(){
+
+	box2D_thread = thread(atualisar_global_box2D);
+
+}
+
+void terminar_atualisar_global_box2D(){
+
+	box2D_thread.join();
+
 }
 
 class fisica_char_B2D : public componente
