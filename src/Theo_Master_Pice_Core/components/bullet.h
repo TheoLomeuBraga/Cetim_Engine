@@ -14,6 +14,8 @@ btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
 
+vector<thread> bullet_threads;
+
 int btMeshes_shapes_count = 0;
 std::map<shared_ptr<std::string>, btCollisionShape *> btMeshes_shapes;
 std::map<string, shared_ptr<std::string>> btMeshes_shapes_addresses;
@@ -626,8 +628,6 @@ public:
     void finalisar() {}
 };
 
-thread bullet_thread;
-
 void iniciar_global_bullet()
 {
     if (global_bullet_iniciado == 0)
@@ -648,15 +648,20 @@ void iniciar_global_bullet()
     }
 }
 
+thread bullet_starter;
 void iniciar_iniciar_global_bullet(){
 
-    bullet_thread = thread(iniciar_global_bullet);
+    thread t(iniciar_global_bullet);
+    bullet_threads.push_back(move(t));
 
 }
 
 void terminar_iniciar_global_bullet(){
 
-    bullet_thread.join();
+    for (std::thread& thread : bullet_threads) {
+        thread.join();
+    }
+    bullet_threads.clear();
 
 }
 
@@ -738,12 +743,15 @@ void atualisar_global_bullet()
 
 void iniciar_atualisar_global_bullet(){
 
-    bullet_thread = thread(atualisar_global_bullet);
+    thread t(atualisar_global_bullet);
+    bullet_threads.push_back(move(t));
 
 }
 
 void terminar_atualisar_global_bullet(){
 
-    bullet_thread.join();
-
+    for (std::thread& thread : bullet_threads) {
+        thread.join();
+    }
+    bullet_threads.clear();
 }
