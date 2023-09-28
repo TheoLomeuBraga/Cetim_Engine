@@ -111,33 +111,7 @@ function restart_arm_cannon_animation()
 end
 
 function play_arm_cannon_animation()
-    --[[
-    if animation_state.animation ~= nil and global_data:get("pause") < 1 then
-        time:get()
-        animation_state.time = animation_state.time + (animation_state.speed * time.delta)
 
-        local frame_selected = math.floor(animation_state.time * tablelength(animation_state.animation.key_frames) / animation_state.animation.duration + 1)
-
-        if frame_selected > tablelength(animation_state.animation.key_frames) then
-            if animation_state.loop then
-                frame_selected = 1
-            else
-                frame_selected = tablelength(animation_state.animation.key_frames)
-                animation_state.finish = true
-            end
-        end
-        if animation_state.time > animation_state.animation.duration then
-            if animation_state.loop then
-                animation_state.time = 0
-            else
-                animation_state.time = animation_state.animation.duration
-                animation_state.finish = true
-            end
-        end
-
-        apply_key_frame(cannon.part_list, animation_state.animation.key_frames[frame_selected])
-    end
-    ]]
     if animation_state.animation ~= nil and global_data:get("pause") < 1 then
         time:get()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
@@ -347,7 +321,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             local bullet_direction = normalize(camera.components[components.transform]:get_local_direction(
             value.x * 1000, value.y * 1000, value.z * 1000))
 
-
+            
             bullet:add_component(components.transform)
             bullet.components[components.transform].position = deepcopy(bullet_position)
             bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
@@ -364,6 +338,8 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", damage)
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
+            
+            
         end
     end
 
@@ -484,7 +460,7 @@ function UPDATE()
             ]]
             if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
                 advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
-                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 5, false)
+                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 15, false)
             end
 
             --move camera

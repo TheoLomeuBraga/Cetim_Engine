@@ -29,9 +29,11 @@ mesh = {
 }
 
 function START()
+    
     this_object = game_object:new(this_object_ptr)
 
     if mesh.file ~= "" then
+        
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"
@@ -43,30 +45,29 @@ function START()
         this_object.components[components.render_mesh].materials = deepcopy({ mat })
         this_object.components[components.render_mesh]:set()
 
-        this_object.components[components.transform]:get()
+        
 
+        
         this_object:add_component(components.physics_3D)
         this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
         this_object.components[components.physics_3D].collision_shape = collision_shapes.sphere
         this_object.components[components.physics_3D].gravity_scale = 0
         this_object.components[components.physics_3D].collision_mesh = nil
         this_object.components[components.physics_3D].triger = true
-        this_object.components[components.physics_3D].scale = this_object.components[components.transform].scale
+        this_object.components[components.physics_3D].scale = 0.25
         this_object.components[components.physics_3D].friction = 0
         this_object.components[components.physics_3D]:set()
+        --[[]]
     end
 
 
-
-    --this_object:add_component(components.physics_3D)
-    --this_object.components[components.physics_3D]:set()
+    
 end
 
 function UPDATE()
-    time:get()
 
-    --print(direction.x * speed * time.sacale,direction.y * speed * time.sacale,direction.z * speed * time.sacale)
-    --this_object.components[components.physics_3D]:set_linear_velocity(direction.x * speed,direction.y * speed,direction.z * speed)
+    
+    time:get()
 
     this_object.components[components.transform]:get()
     local next_pos = {x=this_object.components[components.transform].position.x + (direction.x * speed * time.delta),y=this_object.components[components.transform].position.y + (direction.y * speed * time.delta),z=this_object.components[components.transform].position.z + (direction.z * speed * time.delta)}
@@ -76,6 +77,7 @@ function UPDATE()
     if life_time <= 0 then
         remove_object(this_object_ptr)
     end
+    
 end
 
 
