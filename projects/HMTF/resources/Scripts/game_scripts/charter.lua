@@ -347,9 +347,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
 
-            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "impulse_base", impulse)
-
-            
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "base_inpulse", impulse)
             
             i = i + 1
             if yield ~= nil and i >= 5 then
