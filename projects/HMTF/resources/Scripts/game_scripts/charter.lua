@@ -289,6 +289,11 @@ function simple_shoot()
 end
 
 function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,impulse,yield)
+
+    start_arm_cannon_animation("recoil", 2, false)
+    camera.components[components.audio_source].path = sound
+    camera.components[components.audio_source].volume = 20
+    camera.components[components.audio_source]:set()
     
     local directions = {}
 
@@ -357,10 +362,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
         end
     end
 
-    start_arm_cannon_animation("recoil", 2, false)
-    camera.components[components.audio_source].path = sound
-    camera.components[components.audio_source].volume = 20
-    camera.components[components.audio_source]:set()
+    
 
     restart_arm_cannon_animation()
 end
@@ -539,7 +541,7 @@ function UPDATE()
             end
             if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
                 if coroutine.status(bullets_waiting) == "dead" then
-                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 12, false}
+                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 17, false}
                     bullets_waiting = coroutine.create(advanced_shoot)
                 end
             end

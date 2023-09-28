@@ -9,7 +9,7 @@ using namespace Tempo;
 #include "scene.h"
 #include "box_2d.h"
 #include "sfml_audio.h"
-#include "lua/lua.hpp"
+
 #include "render_mesh.h"
 #include "projetil.h"
 #include "render_sprite.h"
@@ -30,6 +30,24 @@ using namespace Tempo;
 #include "table_conversors.h"
 
 #include "ui_mouse_cheker.h"
+
+
+
+
+#ifdef USE_LUA_JIT
+extern "C" {
+	#include <luajit/lua.h>
+	#include <luajit/lualib.h>
+	#include <luajit/lauxlib.h>
+	#include "luajit/luajit.h"
+}
+
+#else
+extern "C" {
+	#include "lua/lua.hpp"
+}
+
+#endif
 
 const int get_lua = 0;
 const int set_lua = 1;
@@ -2013,6 +2031,7 @@ namespace funcoes_lua
 
 		// criar
 		lua_State *ret = luaL_newstate();
+		
 		luaL_openlibs(ret);
 
 		// configurar diretorio
