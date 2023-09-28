@@ -19,6 +19,7 @@ local this_object = {}
 
 damage = 1
 direction = { x = 1, y = 0, z = 0 }
+impulse_base = { x = 0, y = 0, z = 0 }
 speed = 1
 special_pattern = ""
 max_distance = -1
@@ -46,8 +47,7 @@ function START()
         time:get()
         this_object.components[components.transform]:get()
         local pos = deepcopy(this_object.components[components.transform].position)
-        local next_pos = { x = pos.x + (direction.x * speed * time.delta ), y = pos.y + (direction.y * speed * time.delta),
-            z = pos.z + (direction.z * speed * time.delta) }
+        local next_pos = { x = pos.x + (direction.x * speed * time.delta ) + (impulse_base.x * time.delta), y = pos.y + (direction.y * speed * time.delta) + (impulse_base.y * time.delta),z = pos.z + (direction.z * speed * time.delta) + (impulse_base.z * time.delta) }
         this_object.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 
         
@@ -70,10 +70,10 @@ end
 function UPDATE()
     time:get()
 
-    --[[]]
+    
     this_object.components[components.transform]:get()
     local pos =  deepcopy(this_object.components[components.transform].position)
-    local next_pos = {x=pos.x + (direction.x * speed * time.delta),y=pos.y + (direction.y * speed * time.delta),z=pos.z + (direction.z * speed * time.delta)}
+    local next_pos = {x=(pos.x + (direction.x * speed * time.delta)) + (impulse_base.x * time.delta),y=(pos.y + (direction.y * speed * time.delta)) + (impulse_base.y * time.delta),z=(pos.z + (direction.z * speed * time.delta)) + (impulse_base.z * time.delta)}
     this_object.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
     
     

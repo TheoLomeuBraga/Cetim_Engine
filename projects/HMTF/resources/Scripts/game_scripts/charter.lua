@@ -212,6 +212,8 @@ extra_jumps_utilizeds = 0
 
 local shoot_data = {}
 
+local impulse = {}
+
 function load_simple_shoot()
     start_arm_cannon_animation("open", 2, false)
     restart_arm_cannon_animation()
@@ -286,7 +288,7 @@ function simple_shoot()
     end
 end
 
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,yield)
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,impulse,yield)
     
     local directions = {}
 
@@ -344,6 +346,10 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", damage)
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
+
+            bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "impulse_base", impulse)
+
+            
             
             i = i + 1
             if yield ~= nil and i >= 5 then
@@ -460,24 +466,6 @@ function UPDATE()
                 interact()
             end
 
-            
-            --print(shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8])
-
-            if coroutine.status(bullets_waiting) ~= "dead" then
-                coroutine.resume(bullets_waiting,shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8],true)
-            end
-
-            --shoot
-            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
-                
-                
-
-                if coroutine.status(bullets_waiting) == "dead" then
-                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 15, false}
-                    bullets_waiting = coroutine.create(advanced_shoot)
-                end
-            end
-
             --move camera
             window:get()
             camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
@@ -533,21 +521,29 @@ function UPDATE()
                 inpulse_y = 0
             end
 
+            
             --move
             if hit_down and not (inpulse_y > 0) then
-                this_object.components[components.physics_3D]:set_linear_velocity(
-                    (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
-                    (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,
-                    (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta)
+                    impulse = {x=(move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,y=(move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,z=(move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta}
             else
-                this_object.components[components.physics_3D]:set_linear_velocity(
-                    (move_dir.x * (speed + speed_boost_air)) * time.sacale,
-                    (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
-                    (move_dir.z * (speed + speed_boost_air)) * time.sacale)
+                impulse = {x=(move_dir.x * (speed + speed_boost_air)) * time.sacale,y=(move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,z=(move_dir.z * (speed + speed_boost_air)) * time.sacale}
+                    
             end
+            this_object.components[components.physics_3D]:set_linear_velocity(impulse.x,impulse.y,impulse.z)
 
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)
+            end
+
+            --shoot
+            if coroutine.status(bullets_waiting) ~= "dead" then
+                coroutine.resume(bullets_waiting,shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8],impulse,true)                
+            end
+            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
+                if coroutine.status(bullets_waiting) == "dead" then
+                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 12, false}
+                    bullets_waiting = coroutine.create(advanced_shoot)
+                end
             end
 
             --animate
