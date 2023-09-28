@@ -29,6 +29,8 @@ direction_reference = {}
 
 local layers = {}
 
+local bullets_waiting = coroutine.create(function()end)
+
 health = 100
 max_health = 100
 inventory = {
@@ -208,6 +210,8 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
+local shoot_data = {}
+
 function load_simple_shoot()
     start_arm_cannon_animation("open", 2, false)
     restart_arm_cannon_animation()
@@ -282,7 +286,8 @@ function simple_shoot()
     end
 end
 
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan)
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,yield)
+    
     local directions = {}
 
     if spred ~= 0 then
@@ -298,6 +303,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     if hit_scan then
 
     else
+        local i = 0
         for key, value in pairs(directions) do
             local bullet = game_object:new(create_object(layers.cenary))
             local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
@@ -339,7 +345,11 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
             
-            
+            i = i + 1
+            if yield ~= nil and i >= 5 then
+                coroutine.yield()
+                i = 0
+            end
         end
     end
 
@@ -442,7 +452,7 @@ function UPDATE()
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
 
-
+        
 
         if global_data:get("pause") < 1 then
             --interact
@@ -450,16 +460,22 @@ function UPDATE()
                 interact()
             end
 
-            --simple_shoot
-            --[[
-            if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
-                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
-                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 15, false)
+            
+            --print(shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8])
+
+            if coroutine.status(bullets_waiting) ~= "dead" then
+                coroutine.resume(bullets_waiting,shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8],true)
             end
-            ]]
-            if inputs.action_1 > 0 then
-                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
-                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 1, false)
+
+            --shoot
+            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
+                
+                
+
+                if coroutine.status(bullets_waiting) == "dead" then
+                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 15, false}
+                    bullets_waiting = coroutine.create(advanced_shoot)
+                end
             end
 
             --move camera
@@ -545,14 +561,6 @@ function UPDATE()
                 end
             end
         else
-            --[[
-            if not hit_down then
-                inpulse_y = inpulse_y + gravity.force.y
-                this_object.components[components.physics_3D]:set_linear_velocity(0,inpulse_y * time.sacale,0)
-            else
-                this_object.components[components.physics_3D]:set_linear_velocity(0,0,0)
-            end
-            ]]
             this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
         end
 
