@@ -226,19 +226,20 @@ int call_lua_function(lua_State *L);
 void change_pos(objeto_jogo *obj, vec3 pos)
 {
 	shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+	shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+	shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 	if (tf != NULL)
 	{
 		tf->pos = pos;
 	}
-	shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
-	if (b2d != NULL)
-	{
-		b2d->mudar_pos(vec2(pos.x, pos.y));
-	}
-	shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+	
 	if (bu != NULL)
 	{
 		bu->mudar_pos(pos);
+	}
+	else if (b2d != NULL)
+	{
+		b2d->mudar_pos(vec2(pos.x, pos.y));
 	}
 };
 

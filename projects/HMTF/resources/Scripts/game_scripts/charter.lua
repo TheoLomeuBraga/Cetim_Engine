@@ -452,15 +452,14 @@ function UPDATE()
 
             --simple_shoot
             --[[
-            if inputs.action_2 > 0 and inputs_last_frame.action_2 == 0 then
-                load_simple_shoot()
-            elseif inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
-                simple_shoot()
-            end
-            ]]
             if inputs.action_1 > 0 and inputs_last_frame.action_1 == 0 then
                 advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
                     "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 15, false)
+            end
+            ]]
+            if inputs.action_1 > 0 then
+                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
+                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 1, false)
             end
 
             --move camera

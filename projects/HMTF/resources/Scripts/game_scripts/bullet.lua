@@ -29,15 +29,13 @@ mesh = {
 }
 
 function START()
-    
     this_object = game_object:new(this_object_ptr)
 
     if mesh.file ~= "" then
-        
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"
-        mat.color = {r=1,g=0,b=0,a=1}
+        mat.color = { r = 1, g = 0, b = 0, a = 1 }
         this_object:add_component(components.render_mesh)
         this_object.components[components.render_mesh].layer = 2
         this_object.components[components.render_mesh].meshes_cout = 1
@@ -45,7 +43,12 @@ function START()
         this_object.components[components.render_mesh].materials = deepcopy({ mat })
         this_object.components[components.render_mesh]:set()
 
-        
+        time:get()
+        this_object.components[components.transform]:get()
+        local pos = deepcopy(this_object.components[components.transform].position)
+        local next_pos = { x = pos.x + (direction.x * speed * time.delta ), y = pos.y + (direction.y * speed * time.delta),
+            z = pos.z + (direction.z * speed * time.delta) }
+        this_object.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 
         
         this_object:add_component(components.physics_3D)
@@ -54,32 +57,33 @@ function START()
         this_object.components[components.physics_3D].gravity_scale = 0
         this_object.components[components.physics_3D].collision_mesh = nil
         this_object.components[components.physics_3D].triger = true
+        this_object.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 1, } }
         this_object.components[components.physics_3D].scale = 0.25
         this_object.components[components.physics_3D].friction = 0
         this_object.components[components.physics_3D]:set()
         --[[]]
+
+        
     end
-
-
-    
 end
 
 function UPDATE()
-
-    
     time:get()
 
+    --[[]]
     this_object.components[components.transform]:get()
-    local next_pos = {x=this_object.components[components.transform].position.x + (direction.x * speed * time.delta),y=this_object.components[components.transform].position.y + (direction.y * speed * time.delta),z=this_object.components[components.transform].position.z + (direction.z * speed * time.delta)}
+    local pos =  deepcopy(this_object.components[components.transform].position)
+    local next_pos = {x=pos.x + (direction.x * speed * time.delta),y=pos.y + (direction.y * speed * time.delta),z=pos.z + (direction.z * speed * time.delta)}
     this_object.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
+    
+    
+    
 
     life_time = life_time - time.delta
     if life_time <= 0 then
         remove_object(this_object_ptr)
     end
-    
 end
-
 
 function COLLIDE(collision_info)
 end

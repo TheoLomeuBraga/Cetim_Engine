@@ -18,10 +18,10 @@ boady_dynamics = {
 
 collision_layer_info = {}
 function collision_layer_info:new()
-    cli = {}
-    cli.layer = 1
-    cli.layers_can_colide = { 1, }
-    return cli
+    return {
+    layer = 1,
+    layers_can_colide = { 1, }
+    }
 end
 
 physics_3D_component = create_base_component(components.physics_3D)

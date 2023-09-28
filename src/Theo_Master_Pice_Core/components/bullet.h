@@ -174,11 +174,13 @@ public:
     vector<shared_ptr<objeto_jogo>> objs_touching;
     shared_ptr<std::string> mesh_shape_address = NULL;
 
+    
+
     void iniciar()
     {
         bu_collisions_no_per_object[esse_objeto.get()] = {};
-        iniciar_global_bullet();
         btCollisionShape *Shape;
+
         if (forma == formato_colisao::caixa)
         {
             mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
@@ -340,31 +342,6 @@ public:
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
-
-            /*
-            btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
-            if (dinamica == dinamico)
-            {
-                btVector3 Inertia = btVector3(0, 0, 0);
-                Shape->calculateLocalInertia(densidade, Inertia);
-                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
-                bt_obj_rb = new btRigidBody(CI);
-                bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
-                bt_obj_rb->setGravity(btVector3(0,0,0));
-                bt_obj_rb->setFriction(atrito);
-                bt_obj_rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-                dynamicsWorld->addRigidBody(bt_obj_rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
-                bt_obj = bt_obj_rb;
-            }
-            else if (dinamica == estatico)
-            {
-                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                bt_obj_rb = new btRigidBody(CI);
-                bt_obj_rb->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-                dynamicsWorld->addRigidBody(bt_obj_rb, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
-                bt_obj = bt_obj_rb;
-            }
-            */
         }
         else
         {
