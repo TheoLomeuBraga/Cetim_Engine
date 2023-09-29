@@ -2039,7 +2039,7 @@ namespace funcoes_ponte
 
 int register_function_set(lua_State *L, string set_de_funcoes)
 {
-	/*
+	
 	if (set_de_funcoes == "all")
 	{
 		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
@@ -2049,29 +2049,6 @@ int register_function_set(lua_State *L, string set_de_funcoes)
 				lua_register(L, p2.first.c_str(), p2.second);
 			}
 		}
-	}
-	*/
-	if (set_de_funcoes == "all")
-	{
-		print({"AAAAA"});
-		auto registrar = [](lua_State *L, string fn)
-		{
-			for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[fn])
-			{
-				lua_register(L, p.first.c_str(), p.second);
-			}
-		};
-
-		vector<thread> thrs = {};
-		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
-		{
-			thrs.push_back(std::move(thread(registrar, L, p1.first)));
-		}
-		for (thread &t : thrs)
-		{
-			t.join();
-		}
-		print({"BBBBB"});
 	}
 	else
 	{
