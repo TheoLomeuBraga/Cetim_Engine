@@ -38,6 +38,7 @@ physics_3D_component.density = 1
 physics_3D_component.collision_layer = collision_layer_info:new()
 physics_3D_component.collision_mesh = { file = "", name = "" }
 physics_3D_component.objs_touching = {}
+physics_3D_component.colis_infos = {}
 physics_3D_component.gravity_scale = 1
 function physics_3D_component:add_force(force_x, force_y,force_z)
     add_force(self.object_ptr, force_x, force_y,force_z)
@@ -71,6 +72,7 @@ function physics_3D_component:clean()
     self.collision_layer = collision_layer_info:new()
     self.collision_mesh = { file = "", name = "" }
     self.objs_touching = {}
+    self.colis_infos = {}
     self.gravity_scale = 1
 end
 function physics_3D_component:get()
@@ -87,6 +89,7 @@ function physics_3D_component:get()
     self.collision_layer = deepcopyjson(j.collision_layer)
     self.collision_mesh = deepcopyjson(j.collision_mesh)
     self.objs_touching = deepcopyjson(j.objs_touching)
+    self.colis_infos = deepcopyjson(j.colis_infos)
     self.gravity_scale = j.gravity_scale
 end
 function physics_3D_component:set()

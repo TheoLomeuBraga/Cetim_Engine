@@ -260,8 +260,7 @@ public:
 		{
 			esse_objeto->colidir(c);
 		}
-		vector<colis_info> vazio;
-		colis_infos.swap(vazio);
+		
 
 		if(dinamica == dinamico){
 			corpo->SetGravityScale(escala_gravidade);
@@ -293,8 +292,7 @@ public:
 	}
 	~box_2D()
 	{
-		vector<colis_info> vazioA;
-		colis_infos.swap(vazioA);
+		colis_infos.clear();
 
 		vector<shared_ptr<objeto_jogo>> vazioB;
 		objs_touching.swap(vazioB);
@@ -395,6 +393,8 @@ public:
 	};
 };
 
+vector<shared_ptr<box_2D>> b2d_clear = {};
+
 class m_contactlistener : public b2ContactListener
 {
 public:
@@ -423,12 +423,16 @@ public:
 		ci.obj = corpo_obj[corpoA].get();
 		ci.cos_obj = corpo_obj[corpoB].get();
 		ci.sensor = corpo_obj[corpoB]->pegar_componente<box_2D>()->gatilho;
-		corpo_obj[corpoA]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
+		shared_ptr<box_2D> b2d_a = corpo_obj[corpoA]->pegar_componente<box_2D>();
+		b2d_a->colis_infos.push_back(ci);
+		b2d_clear.push_back(b2d_a);
 
 		ci.obj = corpo_obj[corpoB].get();
 		ci.cos_obj = corpo_obj[corpoA].get();
 		ci.sensor = corpo_obj[corpoA]->pegar_componente<box_2D>()->gatilho;
-		corpo_obj[corpoB]->pegar_componente<box_2D>()->colis_infos.push_back(ci);
+		shared_ptr<box_2D> b2d_b = corpo_obj[corpoB]->pegar_componente<box_2D>();
+		b2d_b->colis_infos.push_back(ci);
+		b2d_clear.push_back(b2d_b);
 	}
 
 	void EndContact(b2Contact *contact)
@@ -457,10 +461,17 @@ public:
 	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {}
 };
 
+//b2d_clear
 void atualisar_global_box2D()
 {
+	
 	if (box_2D_iniciado != true)
 	{
+
+		for(shared_ptr<box_2D> b2d : b2d_clear){
+        	b2d->colis_infos.clear();
+    	}
+    	b2d_clear.clear();
 
 		mundo.SetContactFilter(new filtro_colisao());
 		mundo.SetContactListener(new m_contactlistener());

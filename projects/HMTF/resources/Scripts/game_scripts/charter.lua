@@ -162,6 +162,7 @@ function START()
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
     this_object.components[components.physics_3D].scale = Vec3:new(1, 2, 1)
     this_object.components[components.physics_3D]:set()
+    
 
     direction_reference = game_object:new(this_object_ptr)
     direction_reference:add_component(components.transform)
@@ -563,6 +564,8 @@ function UPDATE()
         camera.components[components.transform]:change_rotation(-camera_rotation.y, 0, 0)
         this_object.components[components.transform]:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data:get("pause") < 1
+
+        this_object.components[components.physics_3D]:get()
     end
 
     play_arm_cannon_animation()

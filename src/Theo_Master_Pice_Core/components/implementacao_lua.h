@@ -1455,6 +1455,12 @@ namespace funcoes_ponte
 				vertex.push_back(vec2_table(v2));
 			}
 			ret.setTable("vertex", vTable_table(vertex));
+			vector<Table> colis_infos;
+			for (colis_info ci : b2d->colis_infos)
+			{
+				colis_infos.push_back(colis_info_table(ci));
+			}
+			ret.setTable("colis_infos", vTable_table(colis_infos));
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1744,6 +1750,12 @@ namespace funcoes_ponte
 				objs_touching.push_back(ponteiro_string(obj));
 			}
 			ret.setTable("objs_touching", vString_table(stringRemoveDuplicates(objs_touching)));
+			vector<Table> colis_infos;
+			for (colis_info ci : bu->colis_infos)
+			{
+				colis_infos.push_back(colis_info_table(ci));
+			}
+			ret.setTable("colis_infos", vTable_table(colis_infos));
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -2069,6 +2081,12 @@ int register_function_set(lua_State *L)
 
 void load_base_lua_state(lua_State *L, string path)
 {
+
+	shared_ptr<string> compiledCode;
+	auto load_script_thread = [](string path , shared_ptr<string> *ret){*ret = carregar_script_lua(path);};
+
+	thread cct(load_script_thread,path,&compiledCode);
+
 	luaL_openlibs(L);
 
 	// configurar diretorio
@@ -2091,10 +2109,10 @@ void load_base_lua_state(lua_State *L, string path)
 		lua_settable(L, -3);
 	}
 	lua_setglobal(L, "args");
-
 	lua_register(L, "register_function_set", register_function_set);
 
-	shared_ptr<string> compiledCode = carregar_script_lua(path);
+	//shared_ptr<string> compiledCode = carregar_script_lua(path);
+	cct.join();
 
 	int loadResult = luaL_loadbuffer(L, compiledCode->c_str(), compiledCode->size(), "compiled_script");
 

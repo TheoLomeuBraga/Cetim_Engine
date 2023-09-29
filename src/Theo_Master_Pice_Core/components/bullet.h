@@ -5,6 +5,7 @@
 #include "Tempo.h"
 #include "game_object.h"
 #include <thread>
+#include <memory>
 
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -171,10 +172,9 @@ public:
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
     btRigidBody *bt_obj_rb = NULL;
-    vector<shared_ptr<objeto_jogo>> objs_touching;
     shared_ptr<std::string> mesh_shape_address = NULL;
-
-    
+    vector<shared_ptr<objeto_jogo>> objs_touching;
+    vector<colis_info> colis_infos;
 
     void iniciar()
     {
@@ -626,20 +626,21 @@ void iniciar_global_bullet()
 }
 
 thread bullet_starter;
-void iniciar_iniciar_global_bullet(){
+void iniciar_iniciar_global_bullet()
+{
 
     thread t(iniciar_global_bullet);
     bullet_threads.push_back(move(t));
-
 }
 
-void terminar_iniciar_global_bullet(){
+void terminar_iniciar_global_bullet()
+{
 
-    for (std::thread& thread : bullet_threads) {
+    for (std::thread &thread : bullet_threads)
+    {
         thread.join();
     }
     bullet_threads.clear();
-
 }
 
 void get_3D_collisions()
@@ -660,19 +661,31 @@ void get_3D_collisions()
     }
 }
 
+std::vector<std::shared_ptr<bullet>> bullet_to_clear;
 void applay_3D_collisions()
 {
     for (colis_info ci : physics_3D_collisionInfos)
     {
-
         objeto_jogo *obj = (objeto_jogo *)ci.obj;
         obj->colidir(ci);
+
+        shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+        if (bu != NULL)
+        {
+            bu->colis_infos.push_back(ci);
+            bullet_to_clear.push_back(bu);
+        }
     }
 }
 void clean_collisions()
 {
     std::vector<colis_info> vazio = {};
     physics_3D_collisionInfos.swap(vazio);
+
+    for(shared_ptr<bullet> bu : bullet_to_clear){
+        bu->colis_infos.clear();
+    }
+    bullet_to_clear.clear();
 }
 
 void clean_bu_collisions_no_per_object()
@@ -702,11 +715,13 @@ void atualisar_global_bullet()
     iniciar_global_bullet();
 
     // collisions
+    clean_bu_collisions_no_per_object();
+    clean_collisions();
+
     get_3D_collisions();
     applay_3D_collisions();
-    clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
-    clean_collisions();
+    
 
     bullet_passo_tempo = 0;
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
@@ -716,18 +731,18 @@ void atualisar_global_bullet()
     // dynamicsWorld->setGravity(glmToBt(gravidade));
 }
 
-
-
-void iniciar_atualisar_global_bullet(){
+void iniciar_atualisar_global_bullet()
+{
 
     thread t(atualisar_global_bullet);
     bullet_threads.push_back(move(t));
-
 }
 
-void terminar_atualisar_global_bullet(){
+void terminar_atualisar_global_bullet()
+{
 
-    for (std::thread& thread : bullet_threads) {
+    for (std::thread &thread : bullet_threads)
+    {
         thread.join();
     }
     bullet_threads.clear();

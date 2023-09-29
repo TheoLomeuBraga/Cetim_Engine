@@ -34,6 +34,7 @@ physics_2D_component.triger = false
 physics_2D_component.friction = 1
 physics_2D_component.density = 1
 physics_2D_component.objs_touching = {}
+physics_2D_component.colis_infos = {}
 physics_2D_component.collision_layer = collision_layer_info:new()
 physics_2D_component.vertex = {}
 
@@ -49,6 +50,7 @@ function physics_2D_component:clean()
     self.friction = 1
     self.density = 1
     self.objs_touching = {}
+    self.colis_infos = {}
     self.collision_layer = collision_layer_info:new()
     self.vertex = {}
 end
@@ -65,6 +67,7 @@ function physics_2D_component:get()
     self.density = j.density
     self.objs_touching = deepcopyjson(j.objs_touching)
     self.collision_layer = deepcopyjson(j.collision_layer)
+    self.colis_infos = deepcopyjson(j.colis_infos)
     self.vertex = deepcopyjson(j.vertex)
 end
 
