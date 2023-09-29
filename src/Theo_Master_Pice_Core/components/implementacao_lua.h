@@ -54,7 +54,7 @@ const int set_lua = 1;
 
 bool parallel_loading = false;
 
-void load_base_lua_state(lua_State* L);
+void load_base_lua_state(lua_State* L,string path);
 
 
 bool isNumber(const std::string &str)
@@ -239,7 +239,7 @@ std::string compileLuaFile(const std::string& path ) {
 
     lua_State* L = luaL_newstate();
 
-	load_base_lua_state(L);
+	load_base_lua_state(L,filename);
 
     if (luaL_loadstring(L, luaScript.c_str()) != 0) {
         std::cerr << "Error: Failed to compile Lua script" << std::endl;
@@ -2058,7 +2058,7 @@ int register_function_set(lua_State *L)
 	return 0;
 }
 
-void load_base_lua_state(lua_State* L){
+void load_base_lua_state(lua_State* L,string path){
 		luaL_openlibs(L);
 
 		// configurar diretorio
@@ -2082,8 +2082,24 @@ void load_base_lua_state(lua_State* L){
 		}
 		lua_setglobal(L, "args");
 
-		// funcoes_lua::adicionar_funcoes_ponte_estado_lua(ret);
+		
 		lua_register(L, "register_function_set", register_function_set);
+
+		shared_ptr<string> compiledCode = carregar_script_lua(path);
+
+		int loadResult = luaL_loadbuffer(L, compiledCode->c_str(), compiledCode->size(), "compiled_script");
+
+        if (loadResult == LUA_OK) {
+            // Execute o código Lua carregado
+            int execResult = lua_pcall(L, 0, LUA_MULTRET, 0);
+
+            if (execResult != LUA_OK) {
+                std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
+            }
+        } else {
+			escrever("LUA NOT OK");
+            std::cerr << "Error loading compiled Lua script: " << lua_tostring(L, -1) << std::endl;
+        }
 		
 }
 
@@ -2116,23 +2132,9 @@ namespace funcoes_lua
 		// criar
 		lua_State *ret = luaL_newstate();
 
-		load_base_lua_state(ret);
+		load_base_lua_state(ret,s);
 		
-		shared_ptr<string> compiledCode = carregar_script_lua(s);
-
-		int loadResult = luaL_loadbuffer(ret, compiledCode->c_str(), compiledCode->size(), "compiled_script");
-
-        if (loadResult == LUA_OK) {
-            // Execute o código Lua carregado
-            int execResult = lua_pcall(ret, 0, LUA_MULTRET, 0);
-
-            if (execResult != LUA_OK) {
-                std::cerr << "Error executing Lua script: " << lua_tostring(ret, -1) << std::endl;
-            }
-        } else {
-			escrever("LUA NOT OK");
-            std::cerr << "Error loading compiled Lua script: " << lua_tostring(ret, -1) << std::endl;
-        }
+		
 
 		return ret;
 	}
