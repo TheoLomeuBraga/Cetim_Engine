@@ -2037,26 +2037,41 @@ namespace funcoes_ponte
 
 };
 
+int register_function_set(lua_State *L, string set_de_funcoes)
+{
+	if (set_de_funcoes == "all")
+	{
+		print({"AAAAA"});
+		auto registrar = [](lua_State *L,string fn,lua_function lf){lua_register(L, fn.c_str(), lf);};
+
+		vector<thread> thrs = {};
+		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
+		{
+			for (pair<string, lua_function> p2 : p1.second)
+			{
+				//lua_register(L, p2.first.c_str(), p2.second);
+				thrs.push_back(move(thread(registrar,L, p2.first.c_str(), p2.second)));
+			}
+		}
+		for(thread& t : thrs){
+			t.join();
+		}
+		print({"BBBBB"});
+	}
+	else
+	{
+		for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[set_de_funcoes])
+		{
+			lua_register(L, p.first.c_str(), p.second);
+		}
+	}
+	return 0;
+}
+
 int register_function_set(lua_State *L)
 {
-	string set_de_funcoes = lua_tostring(L, 1);
-	if (set_de_funcoes == "all")
-		{
-			for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
-			{
-				for (pair<string, lua_function> p : p1.second)
-				{
-					lua_register(L, p.first.c_str(), p.second);
-				}
-			}
-		}
-		else
-		{
-			for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[set_de_funcoes])
-			{
-				lua_register(L, p.first.c_str(), p.second);
-			}
-		}
+	register_function_set(L, lua_tostring(L, 1));
+
 	return 0;
 }
 
