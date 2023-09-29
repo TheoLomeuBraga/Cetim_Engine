@@ -339,14 +339,19 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             bullet.components[components.transform].position = deepcopy(bullet_position)
             bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
             bullet.components[components.transform]:set()
-            
+
             bullet:add_component(components.lua_scripts)
             bullet.components[components.lua_scripts]:add_script("game_scripts/bullet")
+
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed)
+
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh", mesh)
+
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", damage)
+
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
+
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "base_inpulse", impulse)
             
             i = i + 1

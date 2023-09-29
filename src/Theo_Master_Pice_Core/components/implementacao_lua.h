@@ -54,6 +54,9 @@ const int set_lua = 1;
 
 bool parallel_loading = false;
 
+void load_base_lua_state(lua_State* L);
+
+
 bool isNumber(const std::string &str)
 {
 	std::istringstream iss(str);
@@ -213,6 +216,8 @@ int writerFunction(lua_State*, const void* p, size_t sz, void* ud) {
     return 0;
 }
 
+
+
 std::string compileLuaFile(const std::string& path ) {
 	string filename = string("resources/Scripts/") + path + string(".lua");
 
@@ -233,6 +238,8 @@ std::string compileLuaFile(const std::string& path ) {
     std::string luaScript = buffer.str();
 
     lua_State* L = luaL_newstate();
+
+	load_base_lua_state(L);
 
     if (luaL_loadstring(L, luaScript.c_str()) != 0) {
         std::cerr << "Error: Failed to compile Lua script" << std::endl;
@@ -2028,20 +2035,10 @@ namespace funcoes_ponte
 
 };
 
-namespace funcoes_lua
+int register_function_set(lua_State *L)
 {
-
-	void adicionar_parte_funcoes_ponte_estado_lua(lua_State *L, vector<pair<string, lua_function>> funcoes, int inicio, int tamanho)
-	{
-		for (int i = inicio; i < tamanho; i++)
-		{
-			lua_register(L, funcoes[i].first.c_str(), funcoes[i].second);
-		}
-	}
-
-	void registrar_funcoes_ponte_estado_lua(lua_State *L, string set_de_funcoes)
-	{
-		if (set_de_funcoes == "all")
+	string set_de_funcoes = lua_tostring(L, 1);
+	if (set_de_funcoes == "all")
 		{
 			for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
 			{
@@ -2058,13 +2055,52 @@ namespace funcoes_lua
 				lua_register(L, p.first.c_str(), p.second);
 			}
 		}
+	return 0;
+}
+
+void load_base_lua_state(lua_State* L){
+		luaL_openlibs(L);
+
+		// configurar diretorio
+		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
+
+		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
+
+		lua_getglobal(L, "package");
+		lua_pushstring(L, lua_path.c_str());
+		lua_setfield(L, -2, "path");
+		lua_pushstring(L, link_libs_path.c_str());
+		lua_setfield(L, -2, "cpath");
+		lua_pop(L, 1);
+
+		lua_newtable(L);
+		for (int i = 0; i < argumentos.size(); i++)
+		{
+			lua_pushinteger(L, i);
+			lua_pushstring(L, argumentos[i].c_str());
+			lua_settable(L, -3);
+		}
+		lua_setglobal(L, "args");
+
+		// funcoes_lua::adicionar_funcoes_ponte_estado_lua(ret);
+		lua_register(L, "register_function_set", register_function_set);
+		
+}
+
+namespace funcoes_lua
+{
+
+	void adicionar_parte_funcoes_ponte_estado_lua(lua_State *L, vector<pair<string, lua_function>> funcoes, int inicio, int tamanho)
+	{
+		for (int i = inicio; i < tamanho; i++)
+		{
+			lua_register(L, funcoes[i].first.c_str(), funcoes[i].second);
+		}
 	}
 
-	int register_function_set(lua_State *L)
-	{
-		registrar_funcoes_ponte_estado_lua(L, lua_tostring(L, 1));
-		return 0;
-	}
+	
+
+	
 
 	map<string, string> scripts_lua;
 	void limpar_scripts_lua()
@@ -2079,32 +2115,8 @@ namespace funcoes_lua
 
 		// criar
 		lua_State *ret = luaL_newstate();
-		
-		luaL_openlibs(ret);
 
-		// configurar diretorio
-		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
-
-		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
-
-		lua_getglobal(ret, "package");
-		lua_pushstring(ret, lua_path.c_str());
-		lua_setfield(ret, -2, "path");
-		lua_pushstring(ret, link_libs_path.c_str());
-		lua_setfield(ret, -2, "cpath");
-		lua_pop(ret, 1);
-
-		lua_newtable(ret);
-		for (int i = 0; i < argumentos.size(); i++)
-		{
-			lua_pushinteger(ret, i);
-			lua_pushstring(ret, argumentos[i].c_str());
-			lua_settable(ret, -3);
-		}
-		lua_setglobal(ret, "args");
-
-		// funcoes_lua::adicionar_funcoes_ponte_estado_lua(ret);
-		lua_register(ret, "register_function_set", register_function_set);
+		load_base_lua_state(ret);
 		
 		shared_ptr<string> compiledCode = carregar_script_lua(s);
 
