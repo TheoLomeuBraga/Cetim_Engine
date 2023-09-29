@@ -239,8 +239,6 @@ std::string compileLuaFile(const std::string& path ) {
 
     lua_State* L = luaL_newstate();
 
-	load_base_lua_state(L,filename);
-
     if (luaL_loadstring(L, luaScript.c_str()) != 0) {
         std::cerr << "Error: Failed to compile Lua script" << std::endl;
         lua_close(L);
