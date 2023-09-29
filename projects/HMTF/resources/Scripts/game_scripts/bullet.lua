@@ -33,6 +33,8 @@ function START()
     this_object = game_object:new(this_object_ptr)
 
     if mesh.file ~= "" then
+
+        
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"

@@ -207,13 +207,62 @@ void lua_pushwstring(lua_State *L, const std::wstring &ws)
 
 using lua_function = int (*)(lua_State *);
 
+int writerFunction(lua_State*, const void* p, size_t sz, void* ud) {
+    std::stringstream* ss = static_cast<std::stringstream*>(ud);
+    ss->write(static_cast<const char*>(p), sz);
+    return 0;
+}
+
+std::string compileLuaFile(const std::string& path ) {
+	string filename = string("resources/Scripts/") + path + string(".lua");
+
+    std::ifstream file(filename, std::ios::in | std::ios::binary);
+
+	if(filename != ""){
+
+	
+    if (!file) {
+        std::cerr << "Error: Failed to open Lua file " << filename << std::endl;
+        return "";
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    file.close();
+
+    std::string luaScript = buffer.str();
+
+    lua_State* L = luaL_newstate();
+
+    if (luaL_loadstring(L, luaScript.c_str()) != 0) {
+        std::cerr << "Error: Failed to compile Lua script" << std::endl;
+        lua_close(L);
+        return "";
+    }
+
+    std::stringstream compiledScript;
+    if (lua_dump(L, writerFunction, &compiledScript) != 0) {
+        std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
+        lua_close(L);
+        return "";
+    }
+
+    lua_close(L);
+
+    return compiledScript.str();
+
+	}
+
+	return "";
+}
+
 mapeamento_assets<string> mapeamento_scripts_lua;
 
 shared_ptr<string> carregar_script_lua(string local)
 {
 	if (mapeamento_scripts_lua.pegar(local) == NULL)
 	{
-		mapeamento_scripts_lua.aplicar(local, ManuseioDados::Carregar_script(local));
+		mapeamento_scripts_lua.aplicar(local, compileLuaFile(local));
 	}
 	return mapeamento_scripts_lua.pegar(local);
 }
@@ -337,7 +386,6 @@ vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float 
 				}
 
 				b.erase(b.begin() + y);
-				//print({b.size()});
 				break;
 			}
 		}
@@ -2057,18 +2105,22 @@ namespace funcoes_lua
 
 		// funcoes_lua::adicionar_funcoes_ponte_estado_lua(ret);
 		lua_register(ret, "register_function_set", register_function_set);
+		
+		shared_ptr<string> compiledCode = carregar_script_lua(s);
 
-		int i = luaL_dostring(ret, carregar_script_lua(s)->c_str());
+		int loadResult = luaL_loadbuffer(ret, compiledCode->c_str(), compiledCode->size(), "compiled_script");
 
-		// buscar erros
-		if (i != LUA_OK)
-		{
+        if (loadResult == LUA_OK) {
+            // Execute o código Lua carregado
+            int execResult = lua_pcall(ret, 0, LUA_MULTRET, 0);
+
+            if (execResult != LUA_OK) {
+                std::cerr << "Error executing Lua script: " << lua_tostring(ret, -1) << std::endl;
+            }
+        } else {
 			escrever("LUA NOT OK");
-
-			// get error
-			cout << "error in file: " << s << "\n";
-			escrever(lua_tostring(ret, -1));
-		}
+            std::cerr << "Error loading compiled Lua script: " << lua_tostring(ret, -1) << std::endl;
+        }
 
 		return ret;
 	}

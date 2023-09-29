@@ -20,6 +20,8 @@ gprof $(pwd)/build/engine_theo_master_pice | gprof2dot | dot -Tpng -o output.png
 
 
 #windows
+$(pwd)/build/engine_theo_master_pice.exe C:\\Theo_Master_Pice\\projects\\HMTF
+
 gdb $(pwd)/build/engine_theo_master_pice
 c
 set auto-solib-add off
