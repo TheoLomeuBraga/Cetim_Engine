@@ -31,20 +31,19 @@ using namespace Tempo;
 
 #include "ui_mouse_cheker.h"
 
-
-
-
 #ifdef USE_LUA_JIT
-extern "C" {
-	#include <luajit/lua.h>
-	#include <luajit/lualib.h>
-	#include <luajit/lauxlib.h>
-	#include "luajit/luajit.h"
+extern "C"
+{
+#include <luajit/lua.h>
+#include <luajit/lualib.h>
+#include <luajit/lauxlib.h>
+#include "luajit/luajit.h"
 }
 
 #else
-extern "C" {
-	#include "lua/lua.hpp"
+extern "C"
+{
+#include "lua/lua.hpp"
 }
 
 #endif
@@ -54,8 +53,7 @@ const int set_lua = 1;
 
 bool parallel_loading = false;
 
-void load_base_lua_state(lua_State* L,string path);
-
+void load_base_lua_state(lua_State *L, string path);
 
 bool isNumber(const std::string &str)
 {
@@ -212,54 +210,56 @@ using lua_function = int (*)(lua_State *);
 
 int register_function_set(lua_State *);
 
-int writerFunction(lua_State*, const void* p, size_t sz, void* ud) {
-    std::stringstream* ss = static_cast<std::stringstream*>(ud);
-    ss->write(static_cast<const char*>(p), sz);
-    return 0;
+int writerFunction(lua_State *, const void *p, size_t sz, void *ud)
+{
+	std::stringstream *ss = static_cast<std::stringstream *>(ud);
+	ss->write(static_cast<const char *>(p), sz);
+	return 0;
 }
 
-
-
-std::string compileLuaFile(const std::string& path ) {
+std::string compileLuaFile(const std::string &path)
+{
 	string filename = string("resources/Scripts/") + path + string(".lua");
 
-    std::ifstream file(filename, std::ios::in | std::ios::binary);
+	std::ifstream file(filename, std::ios::in | std::ios::binary);
 
-	if(filename != ""){
+	if (filename != "")
+	{
 
-	
-    if (!file) {
-        std::cerr << "Error: Failed to open Lua file " << filename << std::endl;
-        return "";
-    }
+		if (!file)
+		{
+			std::cerr << "Error: Failed to open Lua file " << filename << std::endl;
+			return "";
+		}
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    file.close();
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		file.close();
 
-    std::string luaScript = buffer.str();
+		std::string luaScript = buffer.str();
 
-    lua_State* L = luaL_newstate();
+		lua_State *L = luaL_newstate();
 
-	lua_register(L, "register_function_set", register_function_set);
+		lua_register(L, "register_function_set", register_function_set);
 
-    if (luaL_loadstring(L, luaScript.c_str()) != 0) {
-        std::cerr << "Error: Failed to compile Lua script" << std::endl;
-        lua_close(L);
-        return "";
-    }
+		if (luaL_loadstring(L, luaScript.c_str()) != 0)
+		{
+			std::cerr << "Error: Failed to compile Lua script" << std::endl;
+			lua_close(L);
+			return "";
+		}
 
-    std::stringstream compiledScript;
-    if (lua_dump(L, writerFunction, &compiledScript) != 0) {
-        std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
-        lua_close(L);
-        return "";
-    }
+		std::stringstream compiledScript;
+		if (lua_dump(L, writerFunction, &compiledScript) != 0)
+		{
+			std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
+			lua_close(L);
+			return "";
+		}
 
-    lua_close(L);
+		lua_close(L);
 
-    return compiledScript.str();
-
+		return compiledScript.str();
 	}
 
 	return "";
@@ -308,7 +308,7 @@ void change_pos(objeto_jogo *obj, vec3 pos)
 	{
 		tf->pos = pos;
 	}
-	
+
 	if (bu != NULL)
 	{
 		bu->mudar_pos(pos);
@@ -383,15 +383,15 @@ vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float 
 				// fazer coisa
 				if (kf_a.has_position)
 				{
-					a[x].position = mix(a[x].position,b[y].position,time);
+					a[x].position = mix(a[x].position, b[y].position, time);
 				}
 				else if (kf_a.has_rotation)
 				{
-					a[x].rotation = mix(a[x].rotation,b[y].rotation,time);
+					a[x].rotation = mix(a[x].rotation, b[y].rotation, time);
 				}
 				else if (kf_a.has_scale)
 				{
-					a[x].scale = mix(a[x].scale,b[y].scale,time);
+					a[x].scale = mix(a[x].scale, b[y].scale, time);
 				}
 
 				b.erase(b.begin() + y);
@@ -2039,21 +2039,36 @@ namespace funcoes_ponte
 
 int register_function_set(lua_State *L, string set_de_funcoes)
 {
+	/*
 	if (set_de_funcoes == "all")
 	{
-		print({"AAAAA"});
-		auto registrar = [](lua_State *L,string fn,lua_function lf){lua_register(L, fn.c_str(), lf);};
-
-		vector<thread> thrs = {};
 		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
 		{
 			for (pair<string, lua_function> p2 : p1.second)
 			{
-				//lua_register(L, p2.first.c_str(), p2.second);
-				thrs.push_back(move(thread(registrar,L, p2.first.c_str(), p2.second)));
+				lua_register(L, p2.first.c_str(), p2.second);
 			}
 		}
-		for(thread& t : thrs){
+	}
+	*/
+	if (set_de_funcoes == "all")
+	{
+		print({"AAAAA"});
+		auto registrar = [](lua_State *L, string fn)
+		{
+			for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[fn])
+			{
+				lua_register(L, p.first.c_str(), p.second);
+			}
+		};
+
+		vector<thread> thrs = {};
+		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
+		{
+			thrs.push_back(std::move(thread(registrar, L, p1.first)));
+		}
+		for (thread &t : thrs)
+		{
 			t.join();
 		}
 		print({"BBBBB"});
@@ -2075,49 +2090,52 @@ int register_function_set(lua_State *L)
 	return 0;
 }
 
-void load_base_lua_state(lua_State* L,string path){
-		luaL_openlibs(L);
+void load_base_lua_state(lua_State *L, string path)
+{
+	luaL_openlibs(L);
 
-		// configurar diretorio
-		string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
+	// configurar diretorio
+	string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
 
-		string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
+	string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
 
-		lua_getglobal(L, "package");
-		lua_pushstring(L, lua_path.c_str());
-		lua_setfield(L, -2, "path");
-		lua_pushstring(L, link_libs_path.c_str());
-		lua_setfield(L, -2, "cpath");
-		lua_pop(L, 1);
+	lua_getglobal(L, "package");
+	lua_pushstring(L, lua_path.c_str());
+	lua_setfield(L, -2, "path");
+	lua_pushstring(L, link_libs_path.c_str());
+	lua_setfield(L, -2, "cpath");
+	lua_pop(L, 1);
 
-		lua_newtable(L);
-		for (int i = 0; i < argumentos.size(); i++)
+	lua_newtable(L);
+	for (int i = 0; i < argumentos.size(); i++)
+	{
+		lua_pushinteger(L, i);
+		lua_pushstring(L, argumentos[i].c_str());
+		lua_settable(L, -3);
+	}
+	lua_setglobal(L, "args");
+
+	lua_register(L, "register_function_set", register_function_set);
+
+	shared_ptr<string> compiledCode = carregar_script_lua(path);
+
+	int loadResult = luaL_loadbuffer(L, compiledCode->c_str(), compiledCode->size(), "compiled_script");
+
+	if (loadResult == LUA_OK)
+	{
+		// Execute o código Lua carregado
+		int execResult = lua_pcall(L, 0, LUA_MULTRET, 0);
+
+		if (execResult != LUA_OK)
 		{
-			lua_pushinteger(L, i);
-			lua_pushstring(L, argumentos[i].c_str());
-			lua_settable(L, -3);
+			std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
 		}
-		lua_setglobal(L, "args");
-
-		
-		lua_register(L, "register_function_set", register_function_set);
-
-		shared_ptr<string> compiledCode = carregar_script_lua(path);
-
-		int loadResult = luaL_loadbuffer(L, compiledCode->c_str(), compiledCode->size(), "compiled_script");
-
-        if (loadResult == LUA_OK) {
-            // Execute o código Lua carregado
-            int execResult = lua_pcall(L, 0, LUA_MULTRET, 0);
-
-            if (execResult != LUA_OK) {
-                std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
-            }
-        } else {
-			escrever("LUA NOT OK");
-            std::cerr << "Error loading compiled Lua script: " << lua_tostring(L, -1) << std::endl;
-        }
-		
+	}
+	else
+	{
+		escrever("LUA NOT OK");
+		std::cerr << "Error loading compiled Lua script: " << lua_tostring(L, -1) << std::endl;
+	}
 }
 
 namespace funcoes_lua
@@ -2130,10 +2148,6 @@ namespace funcoes_lua
 			lua_register(L, funcoes[i].first.c_str(), funcoes[i].second);
 		}
 	}
-
-	
-
-	
 
 	map<string, string> scripts_lua;
 	void limpar_scripts_lua()
@@ -2149,9 +2163,7 @@ namespace funcoes_lua
 		// criar
 		lua_State *ret = luaL_newstate();
 
-		load_base_lua_state(ret,s);
-		
-		
+		load_base_lua_state(ret, s);
 
 		return ret;
 	}
