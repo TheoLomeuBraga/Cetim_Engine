@@ -210,6 +210,8 @@ void lua_pushwstring(lua_State *L, const std::wstring &ws)
 
 using lua_function = int (*)(lua_State *);
 
+int register_function_set(lua_State *);
+
 int writerFunction(lua_State*, const void* p, size_t sz, void* ud) {
     std::stringstream* ss = static_cast<std::stringstream*>(ud);
     ss->write(static_cast<const char*>(p), sz);
@@ -238,6 +240,8 @@ std::string compileLuaFile(const std::string& path ) {
     std::string luaScript = buffer.str();
 
     lua_State* L = luaL_newstate();
+
+	lua_register(L, "register_function_set", register_function_set);
 
     if (luaL_loadstring(L, luaScript.c_str()) != 0) {
         std::cerr << "Error: Failed to compile Lua script" << std::endl;
