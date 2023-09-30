@@ -11,6 +11,7 @@ require("objects.global_data")
 require("objects.vectors")
 require("objects.gravity")
 require("objects.scene_3D")
+require("objects.time")
 
 require("short_cuts.create_collision")
 require("short_cuts.create_mesh")
@@ -60,6 +61,7 @@ end
 function UPDATE()
     time:get()
 
+    --local timer = stopwatch:new()
 
     for key, value in pairs(bullets_list) do
         bullets_list[key].timer = bullets_list[key].timer - time.delta
@@ -88,7 +90,12 @@ function UPDATE()
             remove_object(bullets_list[key].object.object_ptr)
             remove_bullet(key)
         end
+        
+        
     end
+    
+    --print(timer:getTime())
+
 end
 
 function COLLIDE(collision_info)

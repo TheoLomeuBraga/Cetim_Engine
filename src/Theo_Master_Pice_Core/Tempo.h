@@ -53,49 +53,16 @@ namespace Tempo
 
 		std::chrono::time_point<clock> start_time;
 		std::chrono::duration<double> accumulated_time;
-		bool running;
 
 	public:
-		Timer() : running(false), accumulated_time(0.0) {}
-
-		void start()
-		{
-			if (!running)
-			{
-				start_time = clock::now();
-				running = true;
-			}
-		}
-
-		void stop()
-		{
-			if (running)
-			{
-				accumulated_time += clock::now() - start_time;
-				running = false;
-			}
-		}
-
-		void resume()
-		{
-			if (!running)
-			{
-				start_time = clock::now();
-				running = true;
-			}
+		Timer() {
+			start_time = clock::now();
 		}
 
 		double get() const
 		{
-			if (running)
-			{
-				auto current_time = clock::now();
-				return accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count();
-			}
-			else
-			{
-				return accumulated_time.count();
-			}
+			auto current_time = clock::now();
+			return accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count();
 		}
 	};
 

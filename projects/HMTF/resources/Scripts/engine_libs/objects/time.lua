@@ -10,3 +10,14 @@ end
 function time:get()
     self.time, self.delta,self.sacale = get_time()
 end
+
+stopwatch = {} -- A "classe" MyClass
+function stopwatch:new()
+    local obj = {
+        creationTime = os.clock(),
+    }
+    function obj:getTime()
+        return (os.clock() - self.creationTime) * 1000
+    end
+    return obj
+end
