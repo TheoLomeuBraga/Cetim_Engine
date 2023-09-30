@@ -228,6 +228,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     
     local directions = {}
 
+    --[[
     if spred ~= 0 then
         for i = 1, quantity, 1 do
             directions[i] = { x = (math.random() - 0.5) * spred, y = (math.random() - 0.5) * spred, z = 1 }
@@ -237,8 +238,10 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             directions[i] = { x = 0, y = 0, z = 1 }
         end
     end
+    ]]
 
-    summon_bullet(mesh, spred, speed, life_time, damage, quantity, hit_scan,impulse,"enimy","")
+    local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
+    summon_bullet(bullet_position,mesh, spred, speed, life_time, damage, quantity, hit_scan,impulse,"enimy","")
 
     --[[
     if hit_scan then
