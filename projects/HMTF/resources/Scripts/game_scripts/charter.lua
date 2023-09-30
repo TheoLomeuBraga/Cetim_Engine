@@ -224,8 +224,6 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     camera.components[components.audio_source]:set()
 
     local directions = {}
-
-    --[[
     if spred ~= 0 then
         for i = 1, quantity, 1 do
             directions[i] = { x = (math.random() - 0.5) * spred, y = (math.random() - 0.5) * spred, z = 1 }
@@ -235,7 +233,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             directions[i] = { x = 0, y = 0, z = 1 }
         end
     end
-    ]]
+    
 
     local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
@@ -246,9 +244,14 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     hit, hit_info = raycast_3D(ray_start, ray_end)
     local target = deepcopy(ray_end)
 
+    local normalize = function(vec3)
+        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
+        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
+    end
 
-    summon_bullet(bullet_position, hit_info.position, mesh, spred, speed, life_time, damage, quantity, hit_scan, impulse,
-        "enimy")
+    
+
+    summon_bullet(bullet_position, normalize(ray_end), mesh, directions, speed, life_time, damage, quantity, hit_scan, impulse,"enimy")
 
     --[[
     if hit_scan then
