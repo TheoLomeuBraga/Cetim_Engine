@@ -22,11 +22,12 @@ local mat = matreial:new()
 local layers = {}
 bullets_list = {}
 bullets_data = {}
-function bullets_data:new(obj,direction, spred, speed, life_time, damage, base_impulse, target, behavior)
+function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target, behavior)
     return {
         object = obj,
         direction = direction,
         spred = spred,
+        id = id,
         speed = speed,
         life_time = life_time,
         timer = life_time,
@@ -71,6 +72,11 @@ function UPDATE()
         next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta
         next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta
         next_pos.z = next_pos.z + bullets_list[key].base_impulse.z * time.delta
+
+        local id = bullets_list[key].id
+        next_pos.x = next_pos.x + (bullets_list[key].spred[id].x * bullets_list[key].speed) * time.delta
+        next_pos.y = next_pos.y + (bullets_list[key].spred[id].y * bullets_list[key].speed) * time.delta
+        next_pos.z = next_pos.z + (bullets_list[key].spred[id].z * bullets_list[key].speed) * time.delta
 
         next_pos.x = next_pos.x + (bullets_list[key].direction.x * bullets_list[key].speed) * time.delta
         next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta
@@ -126,7 +132,9 @@ function summon_bullet(args)
         bullet.components[components.physics_3D].friction = 0
         bullet.components[components.physics_3D]:set()
 
-        local bullet_data = bullets_data:new(bullet,args.direction, args.spred, args.speed, args.life_time, args.damage,
+        
+        
+        local bullet_data = bullets_data:new(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
             args.base_impulse, args.target, args.behavior)
         add_bullet(bullet_data)
     end
