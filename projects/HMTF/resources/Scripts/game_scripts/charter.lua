@@ -113,7 +113,6 @@ function restart_arm_cannon_animation()
 end
 
 function play_arm_cannon_animation()
-
     if animation_state.animation ~= nil and global_data:get("pause") < 1 then
         time:get()
         animation_state.time = animation_state.time + (animation_state.speed * time.delta)
@@ -126,8 +125,9 @@ function play_arm_cannon_animation()
                 animation_state.finish = true
             end
         end
-        
-        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list,false, animation_state.name, animation_state.time)
+
+        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list, false, animation_state.name,
+            animation_state.time)
     end
 end
 
@@ -162,7 +162,7 @@ function START()
     this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
     this_object.components[components.physics_3D].scale = Vec3:new(1, 2, 1)
     this_object.components[components.physics_3D]:set()
-    
+
 
     direction_reference = game_object:new(this_object_ptr)
     direction_reference:add_component(components.transform)
@@ -217,15 +217,12 @@ local impulse = {}
 
 require("resources.bullet_api")
 
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,impulse)
-
-    
-
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan)
     start_arm_cannon_animation("recoil", 2, false)
     camera.components[components.audio_source].path = sound
     camera.components[components.audio_source].volume = 20
     camera.components[components.audio_source]:set()
-    
+
     local directions = {}
 
     --[[
@@ -241,7 +238,17 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     ]]
 
     local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
-    summon_bullet(bullet_position,mesh, spred, speed, life_time, damage, quantity, hit_scan,impulse,"enimy","")
+    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
+    local ray_end = camera.components[components.transform]:get_global_position(0, 0, 1000)
+
+    local hit = false
+    local hit_info = {}
+    hit, hit_info = raycast_3D(ray_start, ray_end)
+    local target = deepcopy(ray_end)
+
+
+    summon_bullet(bullet_position, hit_info.position, mesh, spred, speed, life_time, damage, quantity, hit_scan, impulse,
+        "enimy")
 
     --[[
     if hit_scan then
@@ -273,7 +280,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             local bullet_direction = normalize(camera.components[components.transform]:get_local_direction(
             value.x * 1000, value.y * 1000, value.z * 1000))
 
-            
+
             bullet:add_component(components.transform)
             bullet.components[components.transform].position = deepcopy(bullet_position)
             bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
@@ -299,7 +306,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
     end
     ]]
 
-    
+
 
     restart_arm_cannon_animation()
 end
@@ -395,7 +402,7 @@ function UPDATE()
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
 
-        
+
 
         if global_data:get("pause") < 1 then
             --interact
@@ -458,15 +465,18 @@ function UPDATE()
                 inpulse_y = 0
             end
 
-            
+
             --move
             if hit_down and not (inpulse_y > 0) then
-                    impulse = {x=(move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,y=(move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,z=(move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta}
+                impulse = { x = (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
+                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta }
             else
-                impulse = {x=(move_dir.x * (speed + speed_boost_air)) * time.sacale,y=(move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,z=(move_dir.z * (speed + speed_boost_air)) * time.sacale}
-                    
+                impulse = { x = (move_dir.x * (speed + speed_boost_air)) * time.sacale,
+                    y = (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
+                    z = (move_dir.z * (speed + speed_boost_air)) * time.sacale }
             end
-            this_object.components[components.physics_3D]:set_linear_velocity(impulse.x,impulse.y,impulse.z)
+            this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
 
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)
@@ -474,7 +484,8 @@ function UPDATE()
 
             --shoot
             if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
-                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 17, false)
+                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
+                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 7, false)
             end
 
             --animate

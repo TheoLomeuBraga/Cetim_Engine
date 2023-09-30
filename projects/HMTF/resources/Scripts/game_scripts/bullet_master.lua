@@ -17,25 +17,26 @@ require("short_cuts.create_mesh")
 
 require("objects.global_data")
 
+local mat = matreial:new()
 
 local layers = {}
-
+bullets_list = {}
 bullets_data = {}
-function bullets_data:new(obj, spred, speed, life_time, damage, impulse, target, behavior)
+function bullets_data:new(obj, spred, speed, life_time, damage, base_impulse, target, behavior)
     return {
-        obj = obj,
+        object = obj,
         spred = spred,
         speed = speed,
         life_time = life_time,
         timer = life_time,
         damage = damage,
-        impulse = impulse,
+        base_impulse = base_impulse,
         target = target,
         behavior = behavior,
     }
 end
 
-bullets_list = {}
+
 
 function add_bullet(data)
     table.insert(bullets_list, data)
@@ -47,6 +48,11 @@ end
 
 function START()
     layers = global_data:get_var("layers")
+
+    
+    mat.shader = "resources/Shaders/mesh"
+    mat.textures[1] = "resources/Textures/white.png"
+    mat.color = { r = 1, g = 0, b = 0, a = 1 }
 end
 
 function UPDATE()
@@ -55,7 +61,20 @@ function UPDATE()
 
     for key, value in pairs(bullets_list) do
         bullets_list[key].timer = bullets_list[key].timer - time.delta
+
+        local bullet = bullets_list[key].object
+
+        bullet.components[components.transform]:get()
+        local next_pos = deepcopy(bullet.components[components.transform].position)
+
+        next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta
+        next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta
+        next_pos.z = next_pos.z + bullets_list[key].base_impulse.z * time.delta
+
+        bullet.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
+
         if bullets_list[key].timer <= 0 then
+            remove_object(bullets_list[key].object.object_ptr)
             remove_bullet(key)
         end
     end
@@ -72,10 +91,7 @@ function summon_bullet(args)
 
 
 
-    local mat = matreial:new()
-    mat.shader = "resources/Shaders/mesh"
-    mat.textures[1] = "resources/Textures/white.png"
-    mat.color = { r = 1, g = 0, b = 0, a = 1 }
+    
 
     --[[]]
 
@@ -96,7 +112,7 @@ function summon_bullet(args)
         bullet.components[components.render_mesh].materials = deepcopy({ mat })
         bullet.components[components.render_mesh]:set()
 
-        --[[
+        
         bullet:add_component(components.physics_3D)
         bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
         bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere
@@ -107,7 +123,6 @@ function summon_bullet(args)
         bullet.components[components.physics_3D].scale = 0.25
         bullet.components[components.physics_3D].friction = 0
         bullet.components[components.physics_3D]:set()
-        ]]
 
         local bullet_data = bullets_data:new(bullet, args.spred, args.speed, args.life_time, args.damage,
             args.base_impulse, args.target, args.behavior)
