@@ -285,7 +285,6 @@ int have_component(lua_State *L);
 
 // scripts
 int get_script_size(lua_State *L);
-int get_script_name(lua_State *L);
 int set_script_var(lua_State *L);
 
 int get_lua_component(lua_State *L);
@@ -2028,7 +2027,6 @@ namespace funcoes_ponte
 														 }),
 		pair<string, map<string, lua_function>>("script", {
 															  pair<string, lua_function>("get_script_size", get_script_size),
-															  pair<string, lua_function>("get_script_name", get_script_name),
 															  pair<string, lua_function>("set_script_var", set_script_var),
 															  pair<string, lua_function>("get_lua_component", get_lua_component),
 															  pair<string, lua_function>("have_script", have_script),
@@ -2177,7 +2175,7 @@ public:
 	vector<string> pegar_lista_scripts()
 	{
 		vector<string> ret = {};
-		for (pair<string, lua_State *> p : estados_lua)
+		for (pair<string, shared_ptr<string>> p : scripts_lua_string)
 		{
 			ret.push_back(p.first);
 		}
@@ -2223,7 +2221,7 @@ public:
 
 	void adicionar_script(string s)
 	{
-
+		
 		if (estados_lua.find(s) != estados_lua.end())
 		{
 			lua_getglobal(estados_lua[s], "END");
@@ -2238,6 +2236,7 @@ public:
 
 		lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
 		lua_setglobal(L, "this_object_ptr");
+
 	}
 	void adicionar_scripts(vector<string> s)
 	{
@@ -2604,23 +2603,6 @@ int get_script_size(lua_State *L)
 	return 1;
 }
 
-int get_script_name(lua_State *L)
-{
-	string output = "";
-	int argumentos = lua_gettop(L);
-	objeto_jogo *obj = NULL;
-	if (argumentos > 0)
-	{
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	}
-	if (argumentos == 2 && obj != NULL && obj->pegar_componente<componente_lua>() != NULL)
-	{
-		output = obj->pegar_componente<componente_lua>()->pegar_lista_scripts()[0];
-	}
-	lua_pushstring(L, output.c_str());
-	return 1;
-}
-
 int set_script_var(lua_State *L)
 {
 	int argumentos = lua_gettop(L);
@@ -2684,7 +2666,9 @@ int add_script_lua(lua_State *L)
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	if (argumentos == 2 && cl != NULL)
 	{
+		
 		cl->adicionar_script(lua_tostring(L, 2));
+		
 	}
 	return 0;
 }

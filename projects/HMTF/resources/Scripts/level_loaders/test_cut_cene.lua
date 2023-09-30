@@ -2,7 +2,7 @@ require("short_cuts.create_mesh")
 require("short_cuts.create_collision")
 require("objects.time")
 require("objects.scene_3D")
-require("resources.playable_scene")
+require("custom_libs.playable_scene")
 
 local level = {
     cenary_obj = {},

@@ -26,7 +26,7 @@ require("objects.render_layer")
 
 local serializer = require("libs.serialize")
 
-local this_object
+local this_object = {}
 
 
 
@@ -236,15 +236,18 @@ function START()
     global_data:set_var("mouse_sensitivity", 6)
     global_data:set_var("layers", layers)
 
-    this_object = game_object:new(create_object(this_object_ptr))
+    this_object = game_object:new(this_object_ptr)
     this_object:add_component(components.lua_scripts)
     this_object.components[components.lua_scripts]:add_script("game_scripts/input_geter")
-
+    this_object.components[components.lua_scripts]:add_script("game_scripts/bullet_master")
     
-
+    deepprint(this_object.components[components.lua_scripts].scripts)
+    
     load_configs()
     load_sceane("main_menu")
     global_data:set_var("localization_file","resources/localization/AmericanEnglish.json")
+
+    
     
 end
 

@@ -27,9 +27,9 @@ check_down = {}
 
 direction_reference = {}
 
-local layers = {}
+local core_obj = {}
 
-local bullets_waiting = coroutine.create(function()end)
+local layers = {}
 
 health = 100
 max_health = 100
@@ -134,7 +134,7 @@ end
 function START()
     global_data:set("player_object_ptr", this_object_ptr)
 
-
+    core_obj = game_object:new(global_data:get("core_object_ptr"))
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera:add_component(components.audio_source)
@@ -215,81 +215,11 @@ local shoot_data = {}
 
 local impulse = {}
 
-function load_simple_shoot()
-    start_arm_cannon_animation("open", 2, false)
-    restart_arm_cannon_animation()
-end
+require("resources.bullet_api")
 
-function simple_shoot()
-    if animation_state.name == "open" and animation_state.finish then
-        start_arm_cannon_animation("recoil_open", 2, false)
-        camera.components[components.audio_source].path = "resources/Audio/sounds/shot_3.wav"
-        camera.components[components.audio_source].volume = 20
-        camera.components[components.audio_source]:set()
-    else
-        start_arm_cannon_animation("recoil", 8, false)
-        camera.components[components.audio_source].path = "resources/Audio/sounds/shot_1.wav"
-        camera.components[components.audio_source].volume = 20
-        camera.components[components.audio_source]:set()
-    end
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,impulse)
 
-    restart_arm_cannon_animation()
-
-    local bullet = game_object:new(create_object(layers.cenary))
-
-    local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
-
-    local ray_end = camera.components[components.transform]:get_global_position(0, 0, -1000)
-
-    local hit = false
-    local hit_info = {}
-    hit, hit_info = raycast_3D(bullet_position, ray_end)
-
-    local target = deepcopy(ray_end)
-
-    if hit then
-        target = hit_info.position
-    end
-
-    normalize = function(vec3)
-        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
-        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
-    end
-
-    bullet_direction = normalize(Vec3:new(bullet_position.x - ray_end.x, bullet_position.y - ray_end.y,
-        bullet_position.z - ray_end.z))
-
-
-
-
-
-    bullet:add_component(components.transform)
-    bullet.components[components.transform].position = {
-        x = bullet_position.x + bullet_direction.x,
-        y = bullet_position.y + bullet_direction.y,
-        z = bullet_position.z + bullet_direction.z
-    }
-    bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
-    bullet.components[components.transform]:set()
-
-    bullet:add_component(components.lua_scripts)
-    bullet.components[components.lua_scripts]:add_script("game_scripts/bullet")
-
-
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "direction", bullet_direction)
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "speed", speed * 16)
-
-    bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "mesh",
-        { file = "resources/3D Models/bullets.gltf", name = "round_bullet" })
-
-    if animation_state.finish then
-        bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 9)
-    else
-        bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "damage", 3)
-    end
-end
-
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan,impulse,yield)
+    
 
     start_arm_cannon_animation("recoil", 2, false)
     camera.components[components.audio_source].path = sound
@@ -308,11 +238,16 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
         end
     end
 
+    summon_bullet(mesh, spred, speed, life_time, damage, quantity, hit_scan,impulse,"enimy","")
+
+    --[[
     if hit_scan then
 
     else
         local i = 0
         for key, value in pairs(directions) do
+
+
             local bullet = game_object:new(create_object(layers.cenary))
             local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
             local ray_end = camera.components[components.transform]:get_global_position(value.x * 1000, value.y * 1000,
@@ -354,14 +289,12 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "life_time", life_time)
 
             bullet.components[components.lua_scripts]:set_variable("game_scripts/bullet", "base_inpulse", impulse)
-            
-            i = i + 1
-            if yield ~= nil and yield == true and i >= 5 then
-                coroutine.yield()
-                i = 0
-            end
+
+            summon_bullet(mesh, spred, speed, life_time, damage, quantity, hit_scan,impulse,"enimy","")
+
         end
     end
+    ]]
 
     
 
@@ -537,14 +470,8 @@ function UPDATE()
             end
 
             --shoot
-            if coroutine.status(bullets_waiting) ~= "dead" then
-                coroutine.resume(bullets_waiting,shoot_data[1],shoot_data[2],shoot_data[3],shoot_data[4],shoot_data[5],shoot_data[6],shoot_data[7],shoot_data[8],impulse,true)                
-            end
             if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
-                if coroutine.status(bullets_waiting) == "dead" then
-                    shoot_data = {{ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 17, false}
-                    bullets_waiting = coroutine.create(advanced_shoot)
-                end
+                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },"resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 17, false)
             end
 
             --animate
