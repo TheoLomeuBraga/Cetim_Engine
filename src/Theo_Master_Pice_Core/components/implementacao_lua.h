@@ -25,6 +25,7 @@ using namespace Tempo;
 #include <unordered_map>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 #include "table.h"
 #include "table_conversors.h"
@@ -217,8 +218,12 @@ int writerFunction(lua_State *, const void *p, size_t sz, void *ud)
 	return 0;
 }
 
-std::string compileLuaFile(const std::string &path)
+std::string compileLuaFile(std::string path)
 {
+
+	
+    std::replace(path.begin(), path.end(), '.', '/');
+
 	string filename = string("resources/Scripts/") + path + string(".lua");
 
 	std::ifstream file(filename, std::ios::in | std::ios::binary);
