@@ -126,8 +126,7 @@ function play_arm_cannon_animation()
             end
         end
 
-        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list, false, animation_state.name,
-            animation_state.time)
+        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list, false, animation_state.name,animation_state.time)
     end
 end
 

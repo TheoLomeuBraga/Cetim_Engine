@@ -13,7 +13,9 @@ boady_dynamics = {
 
 --collision_shapes
 
-
+function raycast_3D(ray_start, ray_end)
+    return c_raycast_3D(ray_start, ray_end)
+end
 
 
 collision_layer_info = {}
