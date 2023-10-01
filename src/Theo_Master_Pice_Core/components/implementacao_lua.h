@@ -2057,6 +2057,7 @@ int register_function_set(lua_State *L, string set_de_funcoes)
 			for (pair<string, lua_function> p2 : p1.second)
 			{
 				lua_register(L, p2.first.c_str(), p2.second);
+				lua_register(L, ("c_" + p2.first).c_str(), p2.second);
 			}
 		}
 	}
@@ -2065,6 +2066,7 @@ int register_function_set(lua_State *L, string set_de_funcoes)
 		for (pair<string, lua_function> p : funcoes_ponte::funcoes_ponte_map_secoes[set_de_funcoes])
 		{
 			lua_register(L, p.first.c_str(), p.second);
+			lua_register(L, ("c_" + p.first).c_str(), p.second);
 		}
 	}
 	return 0;

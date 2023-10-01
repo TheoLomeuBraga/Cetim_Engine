@@ -64,6 +64,8 @@ function UPDATE()
     --local timer = stopwatch:new()
 
     for key, value in pairs(bullets_list) do
+
+        
         bullets_list[key].timer = bullets_list[key].timer - time.delta
 
         local bullet = bullets_list[key].object

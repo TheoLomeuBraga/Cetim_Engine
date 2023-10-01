@@ -47,6 +47,10 @@ function deepprint(tab)
     end
 end
 
+function clear_memory()
+    c_clear_memory()
+end
+
 function tableprint(tab)
     local orig_type = type(tab)
     if orig_type == 'table' then

@@ -3,7 +3,32 @@ register_function_set("game_object")
 require("components.extras")
 require("components.component_index")
 
+function create_object(obj)
+    if obj == nil then
+        return c_create_object()
+    end
+    return c_create_object(obj)
+end
 
+function remove_object(obj)
+    return c_remove_object(obj)
+end
+
+function add_component(obj,name)
+    return c_add_component(obj,name)
+end
+
+function have_component(obj,name)
+    return c_have_component(obj,name)
+end
+
+function remove_component(obj,name)
+    return c_remove_component(obj,name)
+end
+
+function get_set_object(get_set,obj)
+    return c_get_set_object(get_set,obj)
+end
 
 
 game_object = {}

@@ -179,5 +179,10 @@ function apply_key_frame(game_objects_list, key_frame)
     end
 end
 
-function new_apply_key_frame(animation_file, name,time)
+function set_keyframe(path, obj_list, smooth, animation_name,moment)
+    c_set_keyframe(path, obj_list, smooth, animation_name,moment)
+end
+
+function get_scene_3D(path)
+    return c_get_scene_3D(path)
 end

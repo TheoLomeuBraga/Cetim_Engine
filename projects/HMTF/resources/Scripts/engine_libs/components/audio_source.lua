@@ -3,6 +3,18 @@ register_function_set("audio")
 require("components.base_component")
 require("components.component_index")
 
+function get_set_global_volume(volume)
+    c_get_set_global_volume(volume)
+end
+
+function set_lisener_object(obj)
+    c_set_lisener_object(obj)
+end
+
+function get_set_audio(get_set,obj)
+    return c_get_set_audio(get_set,obj)
+end
+
 audio_component = {}
 function audio_component:new(object_ptr)
     local a = {}
