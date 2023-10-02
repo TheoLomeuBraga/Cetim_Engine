@@ -23,7 +23,7 @@ local mat = matreial:new()
 local layers = {}
 bullets_list = {}
 bullets_data = {}
-function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target, behavior)
+function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target,friendly, behavior)
     return {
         object = obj,
         direction = direction,
@@ -35,6 +35,7 @@ function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, bas
         damage = damage,
         base_impulse = base_impulse,
         target = target,
+        friendly=friendly,
         behavior = behavior,
     }
 end
@@ -144,7 +145,7 @@ function summon_bullet(args)
         
         
         local bullet_data = bullets_data:new(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
-            args.base_impulse, args.target, args.behavior)
+            args.base_impulse, args.target,args.friendly, args.behavior)
         add_bullet(bullet_data)
     end
 
