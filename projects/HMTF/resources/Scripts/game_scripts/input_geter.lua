@@ -40,10 +40,10 @@ function UPDATE()
     local av_y = apply_death_zone(keys_axis:get_input_joystick(1,"ry"),0.2)
 
     
-    print("analog buttons",keys_axis:get_input_joystick(1,"la"),keys_axis:get_input_joystick(1,"ra"))
-    print(0,keys_axis:get_input_joystick(1,"up"),0)
-    print(keys_axis:get_input_joystick(1,"left"),0,keys_axis:get_input_joystick(1,"right"))
-    print(0,keys_axis:get_input_joystick(1,"down"),0)
+    
+    print(0,keys_axis:get_input_joystick(1,"y"),0)
+    print(keys_axis:get_input_joystick(1,"x"),0,keys_axis:get_input_joystick(1,"b"))
+    print(0,keys_axis:get_input_joystick(1,"a"),0)
 
     inputs = {
         foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
