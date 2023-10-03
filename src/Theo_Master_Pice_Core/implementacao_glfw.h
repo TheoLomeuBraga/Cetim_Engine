@@ -9,14 +9,12 @@
 
 GLFWwindow *janela;
 
-
-
 bool interromper_loop_input = false;
 
 namespace mouse
 {
 
-	vec2 mouse_movement_last_frame(0,0);
+	vec2 mouse_movement_last_frame(0, 0);
 
 	struct ScrollData
 	{
@@ -51,9 +49,9 @@ namespace mouse
 		mouseInfo["normalized_y"] = normalizedY;
 
 		mouseInfo["movement_x"] = normalizedX - mouse_movement_last_frame.x;
-        mouseInfo["movement_y"] = normalizedY - mouse_movement_last_frame.y;
+		mouseInfo["movement_y"] = normalizedY - mouse_movement_last_frame.y;
 
-		mouse_movement_last_frame = vec2(normalizedX,normalizedY);
+		mouse_movement_last_frame = vec2(normalizedX, normalizedY);
 
 		// Set up the scroll callback and retrieve scroll offset
 
@@ -61,10 +59,10 @@ namespace mouse
 		return mouseInfo;
 	}
 
-	map<std::string,std::string> ajust_keys_map = {
-		pair<std::string,std::string>("0","left"),
-		pair<std::string,std::string>("1","right"),
-		pair<std::string,std::string>("2","scroll_button"),
+	map<std::string, std::string> ajust_keys_map = {
+		pair<std::string, std::string>("0", "left"),
+		pair<std::string, std::string>("1", "right"),
+		pair<std::string, std::string>("2", "scroll_button"),
 	};
 
 	std::unordered_map<std::string, int> generateMouseMap(GLFWwindow *window)
@@ -103,66 +101,66 @@ namespace teclas
 
 	bool read_input_text = false;
 
-	map<std::string,std::string> ajust_keys_map = {
-		
-		pair<std::string,std::string>("48","0"),
-		pair<std::string,std::string>("49","1"),
-		pair<std::string,std::string>("50","2"),
-		pair<std::string,std::string>("51","3"),
-		pair<std::string,std::string>("52","4"),
-		pair<std::string,std::string>("53","5"),
-		pair<std::string,std::string>("54","6"),
-		pair<std::string,std::string>("55","7"),
-		pair<std::string,std::string>("56","8"),
-		pair<std::string,std::string>("57","9"),
+	map<std::string, std::string> ajust_keys_map = {
 
-		pair<std::string,std::string>("32","space"),
+		pair<std::string, std::string>("48", "0"),
+		pair<std::string, std::string>("49", "1"),
+		pair<std::string, std::string>("50", "2"),
+		pair<std::string, std::string>("51", "3"),
+		pair<std::string, std::string>("52", "4"),
+		pair<std::string, std::string>("53", "5"),
+		pair<std::string, std::string>("54", "6"),
+		pair<std::string, std::string>("55", "7"),
+		pair<std::string, std::string>("56", "8"),
+		pair<std::string, std::string>("57", "9"),
 
-		pair<std::string,std::string>("65","a"),
-		pair<std::string,std::string>("66","b"),
-		pair<std::string,std::string>("67","c"),
-		pair<std::string,std::string>("68","d"),
-		pair<std::string,std::string>("69","e"),
-		pair<std::string,std::string>("70","f"),
-		pair<std::string,std::string>("71","g"),
-		pair<std::string,std::string>("72","h"),
-		pair<std::string,std::string>("73","i"),
-		pair<std::string,std::string>("74","j"),
-		pair<std::string,std::string>("75","k"),
-		pair<std::string,std::string>("76","l"),
-		pair<std::string,std::string>("77","m"),
-		pair<std::string,std::string>("78","n"),
-		pair<std::string,std::string>("79","o"),
-		pair<std::string,std::string>("80","p"),
-		pair<std::string,std::string>("81","q"),
-		pair<std::string,std::string>("82","r"),
-		pair<std::string,std::string>("83","s"),
-		pair<std::string,std::string>("84","t"),
-		pair<std::string,std::string>("85","u"),
-		pair<std::string,std::string>("86","v"),
-		pair<std::string,std::string>("87","w"),
-		pair<std::string,std::string>("88","x"),
-		pair<std::string,std::string>("89","y"),
-		pair<std::string,std::string>("90","z"),
+		pair<std::string, std::string>("32", "space"),
 
-		pair<std::string,std::string>("92","backslash"),
-		pair<std::string,std::string>("256","escape"),
-		pair<std::string,std::string>("257","enter"),
-		pair<std::string,std::string>("258","tab"),
-		pair<std::string,std::string>("259","backspace"),
-		pair<std::string,std::string>("260","insert"),
-		pair<std::string,std::string>("261","delete"),
-		pair<std::string,std::string>("262","right"),
-		pair<std::string,std::string>("263","left"),
-		pair<std::string,std::string>("264","down"),
-		pair<std::string,std::string>("265","up"),
-		pair<std::string,std::string>("280","caps_locl"),
-		pair<std::string,std::string>("340","shift"),
-		pair<std::string,std::string>("341","ctrl"),
-		pair<std::string,std::string>("342","alt"),
-		pair<std::string,std::string>("344","right_shift"),
-		pair<std::string,std::string>("345","right_ctrl"),
-		pair<std::string,std::string>("346","right_alt"),
+		pair<std::string, std::string>("65", "a"),
+		pair<std::string, std::string>("66", "b"),
+		pair<std::string, std::string>("67", "c"),
+		pair<std::string, std::string>("68", "d"),
+		pair<std::string, std::string>("69", "e"),
+		pair<std::string, std::string>("70", "f"),
+		pair<std::string, std::string>("71", "g"),
+		pair<std::string, std::string>("72", "h"),
+		pair<std::string, std::string>("73", "i"),
+		pair<std::string, std::string>("74", "j"),
+		pair<std::string, std::string>("75", "k"),
+		pair<std::string, std::string>("76", "l"),
+		pair<std::string, std::string>("77", "m"),
+		pair<std::string, std::string>("78", "n"),
+		pair<std::string, std::string>("79", "o"),
+		pair<std::string, std::string>("80", "p"),
+		pair<std::string, std::string>("81", "q"),
+		pair<std::string, std::string>("82", "r"),
+		pair<std::string, std::string>("83", "s"),
+		pair<std::string, std::string>("84", "t"),
+		pair<std::string, std::string>("85", "u"),
+		pair<std::string, std::string>("86", "v"),
+		pair<std::string, std::string>("87", "w"),
+		pair<std::string, std::string>("88", "x"),
+		pair<std::string, std::string>("89", "y"),
+		pair<std::string, std::string>("90", "z"),
+
+		pair<std::string, std::string>("92", "backslash"),
+		pair<std::string, std::string>("256", "escape"),
+		pair<std::string, std::string>("257", "enter"),
+		pair<std::string, std::string>("258", "tab"),
+		pair<std::string, std::string>("259", "backspace"),
+		pair<std::string, std::string>("260", "insert"),
+		pair<std::string, std::string>("261", "delete"),
+		pair<std::string, std::string>("262", "right"),
+		pair<std::string, std::string>("263", "left"),
+		pair<std::string, std::string>("264", "down"),
+		pair<std::string, std::string>("265", "up"),
+		pair<std::string, std::string>("280", "caps_locl"),
+		pair<std::string, std::string>("340", "shift"),
+		pair<std::string, std::string>("341", "ctrl"),
+		pair<std::string, std::string>("342", "alt"),
+		pair<std::string, std::string>("344", "right_shift"),
+		pair<std::string, std::string>("345", "right_ctrl"),
+		pair<std::string, std::string>("346", "right_alt"),
 
 	};
 
@@ -199,8 +197,6 @@ namespace teclas
 		return keyboardMap;
 	}
 
-	
-
 	void charCallback(GLFWwindow *window, unsigned int codepoint)
 	{
 		inputText += static_cast<char>(codepoint);
@@ -232,8 +228,6 @@ namespace teclas
 			delet_last_frame = false;
 		}
 
-		
-
 		return inputText;
 	}
 
@@ -251,34 +245,36 @@ namespace controle
 			if (glfwJoystickPresent(i))
 			{
 				count++;
+			}else{
+				break;
 			}
 		}
 
 		return count;
 	}
 
-	map<std::string,std::string> ajust_keys_map = {
-		pair<std::string,std::string>("0","a"),
-		pair<std::string,std::string>("1","b"),
-		pair<std::string,std::string>("2","x"),
-		pair<std::string,std::string>("3","y"),
-		pair<std::string,std::string>("4","lb"),
-		pair<std::string,std::string>("5","rb"),
-		pair<std::string,std::string>("6","back"),
-		pair<std::string,std::string>("7","start"),
-		pair<std::string,std::string>("9","la"),
-		pair<std::string,std::string>("10","ra"),
-		pair<std::string,std::string>("11","up"),
-		pair<std::string,std::string>("12","down"),
-		pair<std::string,std::string>("13","left"),
-		pair<std::string,std::string>("14","right"),
-		
-		pair<std::string,std::string>("axis_0","lx"),
-		pair<std::string,std::string>("axis_1","ly"),
-		pair<std::string,std::string>("axis_3","rx"),
-		pair<std::string,std::string>("axis_4","ry"),
-		pair<std::string,std::string>("axis_2","lt"),
-		pair<std::string,std::string>("axis_5","rt"),
+	map<std::string, std::string> ajust_keys_map = {
+		pair<std::string, std::string>("0", "a"),
+		pair<std::string, std::string>("1", "b"),
+		pair<std::string, std::string>("2", "x"),
+		pair<std::string, std::string>("3", "y"),
+		pair<std::string, std::string>("4", "lb"),
+		pair<std::string, std::string>("5", "rb"),
+		pair<std::string, std::string>("6", "back"),
+		pair<std::string, std::string>("7", "start"),
+		pair<std::string, std::string>("9", "la"),
+		pair<std::string, std::string>("10", "ra"),
+		pair<std::string, std::string>("11", "up"),
+		pair<std::string, std::string>("12", "down"),
+		pair<std::string, std::string>("13", "left"),
+		pair<std::string, std::string>("14", "right"),
+
+		pair<std::string, std::string>("axis_0", "lx"),
+		pair<std::string, std::string>("axis_1", "ly"),
+		pair<std::string, std::string>("axis_3", "rx"),
+		pair<std::string, std::string>("axis_4", "ry"),
+		pair<std::string, std::string>("axis_2", "lt"),
+		pair<std::string, std::string>("axis_5", "rt"),
 	};
 
 	static std::vector<int> prevJoystickButtonsState;
@@ -287,38 +283,39 @@ namespace controle
 	{
 		std::unordered_map<std::string, int> joystickKeyMap;
 
-		if (glfwJoystickPresent(joystick))
-		{
-			int buttonCount;
-			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
-
-			if (prevJoystickButtonsState.empty())
+			if (glfwJoystickPresent(joystick))
 			{
-				prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
-			}
+				int buttonCount;
+				const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
 
-			for (int i = 0; i < buttonCount; ++i)
-			{
-				if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
+				if (prevJoystickButtonsState.empty())
 				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-				}
-				else if (buttons[i] == GLFW_PRESS)
-				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-				}
-				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
-				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
-				}
-				else
-				{
-					joystickKeyMap[std::to_string(i)] = 0;
+					prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
 				}
 
-				prevJoystickButtonsState[i] = buttons[i];
+				for (int i = 0; i < buttonCount; ++i)
+				{
+					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
+					}
+					else
+					{
+						joystickKeyMap[std::to_string(i)] = 0;
+					}
+
+					prevJoystickButtonsState[i] = buttons[i];
+				}
 			}
-		}
+		
 
 		return joystickKeyMap;
 	}
@@ -327,21 +324,25 @@ namespace controle
 	{
 		std::unordered_map<std::string, float> joystickAxes;
 
-		if (glfwJoystickPresent(joystick))
-		{
-			int axisCount;
-			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
-
-			for (int i = 0; i < axisCount; ++i)
+			if (glfwJoystickPresent(joystick))
 			{
-				
-				if (i == 2 || i == 5){
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-				}else{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				int axisCount;
+				const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
+
+				for (int i = 0; i < axisCount; ++i)
+				{
+
+					if (i == 2 || i == 5)
+					{
+						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
 				}
 			}
-		}
+		
 
 		return joystickAxes;
 	}
@@ -470,12 +471,11 @@ void mudar_imagem_cursor(shared_ptr<imagem> img)
 		image.height = img->res.y;
 		image.pixels = &img->data[0];
 
-		GLFWcursor* customCursor = glfwCreateCursor(&image, 0, 0);
+		GLFWcursor *customCursor = glfwCreateCursor(&image, 0, 0);
 
 		glfwSetCursor(janela, customCursor);
 
 		glfwDestroyCursor(customCursor);
-
 	}
 }
 
@@ -484,12 +484,10 @@ void ativar_cursor(bool ativar)
 	if (ativar)
 	{
 		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		
 	}
 	else
 	{
 		glfwSetInputMode(janela, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 	}
 }
 
@@ -541,14 +539,9 @@ void MudarRes(int x, int y)
 
 bool janelaInteira = false;
 
-ivec2 monitor_res = ivec2(0,0);
+ivec2 monitor_res = ivec2(0, 0);
 void IniciarJanela()
 {
-	
-
-	
-
-    	
 
 	glewExperimental = true; // Needed for core profile
 	if (!glfwInit())
@@ -557,16 +550,15 @@ void IniciarJanela()
 		cout << "falha en iniciar o GLFW\n";
 	}
 
-	const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	monitor_res.x = mode->width;
-    monitor_res.y = mode->height;
+	monitor_res.y = mode->height;
 
 	glfwWindowHint(GLFW_SAMPLES, configuracoes::janelaConfig.antiCerrilhado); // 4x antialiasing
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);							  // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
-	
 
 	if (configuracoes::janelaConfig.transparente == true)
 	{
@@ -596,9 +588,9 @@ void IniciarJanela()
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
 
-	//glfwSwapInterval(1);
-	
-	glewExperimental = true;		// Needed in core profile
+	// glfwSwapInterval(1);
+
+	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
 	{
 		fprintf(stderr, "falha en iniciar o GLFW\n");
@@ -611,7 +603,6 @@ void IniciarJanela()
 	mudar_logo_janela(ManuseioDados::carregar_Imagem("resources/ico.png"));
 
 	AntesReindenizar();
-
 
 	cout << "Graficos Online" << endl;
 
@@ -637,8 +628,6 @@ void loop_janela()
 	Tempo::tempUltFrameRender = Tempo::tempo;
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
-	
-
 	Reindenizar();
 
 	glfwPollEvents();
@@ -653,7 +642,7 @@ public:
 	gerenciador_janela_glfw(bool tela_inteira) { janela_inteira = tela_inteira; }
 	bool esta_janela_inteira() { return !glfwGetWindowAttrib(janela, GLFW_MAXIMIZED); }
 	void mudar_cursor(shared_ptr<imagem> cursor) { mudar_imagem_cursor(cursor); }
-	void enable_cursor(bool enable){ativar_cursor(enable);}
+	void enable_cursor(bool enable) { ativar_cursor(enable); }
 	void mudar_imagem_janela(shared_ptr<imagem> janela) { mudar_logo_janela(janela); }
 	void mudar_pos_cursor(float pos_x, float pos_y) { mudar_posicao_cursor(pos_x, pos_y); }
 	void mudar_res(float res_x, float res_y) { MudarRes(res_x, res_y); }
@@ -693,7 +682,6 @@ public:
 		encerrar();
 	}
 
-	
 	ivec2 pos_janela;
 	void setar_tela_inteira_como(bool tela_cheia)
 	{
@@ -718,7 +706,8 @@ public:
 		}
 	}
 
-	~gerenciador_janela_glfw(){
+	~gerenciador_janela_glfw()
+	{
 		encerrar();
 	}
 };

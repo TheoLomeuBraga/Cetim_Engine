@@ -93,7 +93,13 @@ function UPDATE()
             remove_object(bullets_list[key].object.object_ptr)
             remove_bullet(key)
         end
+
         
+        bullet.components[components.physics_3D]:get()
+        for key, value in pairs(bullet.components[components.physics_3D].colis_infos) do
+            --print(value.object)
+        end
+        --[[]]
         
     end
     
