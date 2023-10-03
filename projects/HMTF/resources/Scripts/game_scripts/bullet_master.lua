@@ -99,7 +99,6 @@ function UPDATE()
         for key, value in pairs(bullet.components[components.physics_3D].colis_infos) do
             --print(value.object)
         end
-        --[[]]
         
     end
     

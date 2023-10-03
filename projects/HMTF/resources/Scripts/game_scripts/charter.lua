@@ -303,6 +303,8 @@ function interact()
     end
 end
 
+shoot_timer = 0
+
 function UPDATE()
     if game_state == game_states.play then
         time:get()
@@ -429,10 +431,12 @@ function UPDATE()
             end
 
             --shoot
-            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
+            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
                 advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
                     "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 8, false)
+                    shoot_timer = 0.5
             end
+            shoot_timer = shoot_timer - time.delta
 
             --animate
             if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name == "recoil" and animation_state.finish) then
