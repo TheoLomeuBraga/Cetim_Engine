@@ -253,6 +253,7 @@ namespace controle
 		return count;
 	}
 
+	#ifdef LINUX
 	map<std::string, std::string> ajust_keys_map = {
 		pair<std::string, std::string>("0", "a"),
 		pair<std::string, std::string>("1", "b"),
@@ -276,6 +277,34 @@ namespace controle
 		pair<std::string, std::string>("axis_2", "lt"),
 		pair<std::string, std::string>("axis_5", "rt"),
 	};
+	#endif
+
+	#ifdef WINDOWS
+	map<std::string, std::string> ajust_keys_map = {
+		pair<std::string, std::string>("0", "a"),
+		pair<std::string, std::string>("1", "b"),
+		pair<std::string, std::string>("2", "x"),
+		pair<std::string, std::string>("3", "y"),
+		pair<std::string, std::string>("4", "lb"),
+		pair<std::string, std::string>("5", "rb"),
+		pair<std::string, std::string>("6", "back"),
+		pair<std::string, std::string>("7", "start"),
+		pair<std::string, std::string>("9", "la"),
+		pair<std::string, std::string>("10", "ra"),
+		pair<std::string, std::string>("11", "up"),
+		pair<std::string, std::string>("12", "down"),
+		pair<std::string, std::string>("13", "left"),
+		pair<std::string, std::string>("14", "right"),
+
+		pair<std::string, std::string>("axis_0", "lx"),
+		pair<std::string, std::string>("axis_1", "ly"),
+		pair<std::string, std::string>("axis_2", "rx"),
+		pair<std::string, std::string>("axis_3", "ry"),
+		pair<std::string, std::string>("axis_4", "lt"),
+		pair<std::string, std::string>("axis_5", "rt"),
+	};
+	#endif
+	
 
 	static std::vector<int> prevJoystickButtonsState;
 

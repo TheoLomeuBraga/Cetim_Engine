@@ -39,6 +39,8 @@ function UPDATE()
     local av_x = apply_death_zone(keys_axis:get_input_joystick(1,"rx"),0.2)
     local av_y = apply_death_zone(keys_axis:get_input_joystick(1,"ry"),0.2)
 
+    print(av_x,av_y)
+
     inputs = {
         foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
         left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - analog_left,
