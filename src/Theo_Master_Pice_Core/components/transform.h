@@ -6,9 +6,7 @@ using namespace std;
 #include "RecursosT.h"
 #include "game_object.h"
 
-mat4 MatrizMundi =  glm::mat4(1.0);
-
-
+mat4 MatrizMundi = glm::mat4(1.0);
 
 class transform_ : public componente
 {
@@ -32,9 +30,8 @@ public:
 	bool usar_pai_matriz;
 	mat4 pai_matriz;
 
-	glm::vec3 pos = vec3(0,0,0), esca = vec3(1,1,1), rot = vec3(0,0,0);
+	glm::vec3 pos = vec3(0, 0, 0), esca = vec3(1, 1, 1), rot = vec3(0, 0, 0);
 
-	
 	quat quater;
 
 	glm::mat4 pegar_matriz()
@@ -82,15 +79,14 @@ public:
 	{
 		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - pegar_pos_global();
-		return glm::vec3(ret.x,ret.y,ret.z); 
+		return glm::vec3(ret.x, ret.y, ret.z);
 	}
-
 
 	vec3 pegar_direcao_global(vec3 dir)
 	{
 		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
-		return glm::vec3(ret.x,ret.y,ret.z); 
+		return glm::vec3(ret.x, ret.y, ret.z);
 	}
 
 	vec3 mover_direcao(vec3 dir)
@@ -187,3 +183,54 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 	// Return the sorted vector of vec3 points
 	return ret;
 }
+
+#include "ecs/ecs.h"
+#include "ecs/ecs_components_systems/ecs_parents.h"
+#include <set>
+
+
+namespace transform_ecs
+{
+	
+	struct transform_data {
+		mat4 matrix;
+		vec3 position;
+		quat rotation;
+		vec3 scale;
+	};
+
+	std::map<entity, struct transform_data> transforms_map;
+
+	entity main_transform_entity = 0;
+
+	void add_transform(entity id, std::any data)
+	{
+		transforms_map.insert(std::pair<entity, struct transform_data>(id, std::any_cast<struct transform_data>(data)));
+	}
+
+	bool have_transform(entity id)
+	{
+		if (transforms_map.find(id) != transforms_map.end())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	void run_transform(entity id) {}
+
+	void run_transforms() {
+		//create this function
+		
+	} 
+
+	void remove_transform(entity id)
+	{
+		transforms_map.erase(id);
+	}
+
+	void register_transform_component()
+	{
+		ecs_systems_registerd.insert(std::pair<std::string, struct ecs_system>("transform", {add_transform, have_transform, run_transform, run_transforms, remove_transform}));
+	}
+};

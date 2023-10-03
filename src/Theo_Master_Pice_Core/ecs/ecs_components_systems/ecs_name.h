@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "ecs.h"
+#include "../ecs.h"
 #include <vector>
 #include <string>
 #include <map>

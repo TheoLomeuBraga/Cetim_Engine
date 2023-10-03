@@ -7,6 +7,7 @@
 #include <any>
 
 
+//using entity = size_t;
 #define entity size_t
 
 struct ecs_system
@@ -23,7 +24,8 @@ struct ecs_system
 
 std::unordered_map<std::string, struct ecs_system> ecs_systems_registerd;
 
-std::set<entity> entityes_set = {},free_entityes = {};
+std::set<entity> entityes_set = {};
+std::set<entity> free_entityes = {};
 entity next_entity_id = 1;
 
 entity find_free_entity()
