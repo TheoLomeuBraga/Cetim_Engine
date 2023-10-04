@@ -289,12 +289,12 @@ namespace controle
 		pair<std::string, std::string>("5", "rb"),
 		pair<std::string, std::string>("6", "back"),
 		pair<std::string, std::string>("7", "start"),
-		pair<std::string, std::string>("9", "la"),
-		pair<std::string, std::string>("10", "ra"),
-		pair<std::string, std::string>("11", "up"),
+		pair<std::string, std::string>("8", "la"),
+		pair<std::string, std::string>("9", "ra"),
+		pair<std::string, std::string>("10", "up"),
+		pair<std::string, std::string>("11", "right"),
 		pair<std::string, std::string>("12", "down"),
 		pair<std::string, std::string>("13", "left"),
-		pair<std::string, std::string>("14", "right"),
 
 		pair<std::string, std::string>("axis_0", "lx"),
 		pair<std::string, std::string>("axis_1", "ly"),
@@ -360,7 +360,7 @@ namespace controle
 
 				for (int i = 0; i < axisCount; ++i)
 				{
-
+					#ifdef LINUX
 					if (i == 2 || i == 5)
 					{
 						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
@@ -369,6 +369,18 @@ namespace controle
 					{
 						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
 					}
+					#endif
+
+					#ifdef WINDOWS
+					if (i == 4 || i == 5)
+					{
+						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
+					#endif
 				}
 			}
 		
