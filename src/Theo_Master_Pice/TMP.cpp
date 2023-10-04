@@ -63,17 +63,24 @@ void ShutdownImGui() {
 #include "transform.h"
 #include "bullet.h"
 #include "input.h"
-
 #include "read_map_file.h"
-
 #include "init_lib_functions.h"
-
 #include <bitset>
 
+#include "ecs/ecs.h"
+#include "ecs/ecs_components_systems/ecs_name.h"
+#include "ecs/ecs_components_systems/ecs_parents.h"
+#include "ecs/ecs_components_systems/ecs_tag.h"
 
 
+void register_ecs_components(){
 
+    register_name_component();
+    register_family_component();
+    register_tag_component();
+    transform_ecs::register_transform_component();
 
+}
 
 void configuracaoInicial()
 {

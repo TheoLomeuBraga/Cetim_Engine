@@ -173,3 +173,16 @@ public:
 		configurar_camera(p, a, c, tamanhoX, tamanhoY, ncp, fcp);
 	}
 };
+
+
+
+
+
+
+
+namespace camera_ecs
+{
+
+};
+
+

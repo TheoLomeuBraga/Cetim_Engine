@@ -9,8 +9,8 @@
 
 
 struct family {
-    entity father;
-    std::set<entity> children;
+    entity father = 0;
+    std::set<entity> children = {};
 };
 
 

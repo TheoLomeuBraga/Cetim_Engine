@@ -31,10 +31,6 @@ void register_name_component(){
     ecs_systems_registerd.insert(std::pair<std::string,struct ecs_system>("name",{add_name,have_name,run_name,run_names,remove_name}));
 }
 
-std::string* get_name(entity id){
-    return &names_map[id];
-}
-
 entity search_entity_by_name(std::string name){
     for(std::pair<entity,std::string> p : names_map){
         if(p.second == name){

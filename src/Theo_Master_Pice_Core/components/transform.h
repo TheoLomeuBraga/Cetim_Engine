@@ -188,11 +188,11 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 #include "ecs/ecs_components_systems/ecs_parents.h"
 #include <set>
 
-
 namespace transform_ecs
 {
-	
-	struct transform_data {
+
+	struct transform_data
+	{
 		mat4 matrix;
 		vec3 position;
 		quat rotation;
@@ -219,10 +219,32 @@ namespace transform_ecs
 
 	void run_transform(entity id) {}
 
-	void run_transforms() {
-		//create this function
-		
-	} 
+	void run_transforms()
+	{
+		for (pair<entity, struct transform_data> p : transforms_map)
+		{
+			glm::mat4 ret;
+
+			transform_data *father =  NULL;
+			transform_data *tf =  &transforms_map[p.first];
+
+			if (have_component(p.first,"family"))
+			{
+				ret = father->matrix;
+			}
+			else
+			{
+				ret = glm::mat4(1.0f);
+			}
+
+			ret = translate(ret, tf->position);
+
+			ret *= toMat4(tf->rotation);
+			ret = scale(ret, tf->scale);
+
+			tf->matrix = ret;
+		}
+	}
 
 	void remove_transform(entity id)
 	{
@@ -232,5 +254,69 @@ namespace transform_ecs
 	void register_transform_component()
 	{
 		ecs_systems_registerd.insert(std::pair<std::string, struct ecs_system>("transform", {add_transform, have_transform, run_transform, run_transforms, remove_transform}));
+	}
+
+	// transform_ecs functions
+
+	glm::vec3 pegar_pos_global(entity id)
+	{
+		transform_data *tf =  &transforms_map[id];
+		
+		return glm::vec3(tf->matrix[3]);
+	}
+	glm::quat pegar_qua_global(entity id)
+	{
+		transform_data *tf =  &transforms_map[id];
+
+		vec3 nada;
+		vec4 nada2;
+		vec3 nada3;
+		quat qua;
+		glm::decompose(tf->matrix, nada, qua, nada3, nada, nada2);
+		return qua;
+	}
+	glm::vec3 pegar_graus_global(entity id)
+	{
+		transform_data *tf =  &transforms_map[id];
+
+		vec3 nada;
+		vec4 nada2;
+		vec3 nada3;
+		quat qua;
+		glm::decompose(tf->matrix, nada, qua, nada3, nada, nada2);
+
+		return quat_graus(qua);
+	}
+
+	vec3 pegar_direcao_local(entity id,vec3 dir)
+	{
+		transform_data *tf =  &transforms_map[id];
+
+		glm::mat4 translationMatrix = glm::translate(tf->matrix, dir);
+		glm::vec3 ret = glm::vec3(translationMatrix[3]) - glm::vec3(tf->matrix[3]);
+		return glm::vec3(ret.x, ret.y, ret.z);
+	}
+
+	vec3 pegar_direcao_global(entity id,vec3 dir)
+	{
+		transform_data *tf =  &transforms_map[id];
+
+		glm::mat4 translationMatrix = glm::translate(tf->matrix, dir);
+		glm::vec3 ret = glm::vec3(translationMatrix[3]);
+		return glm::vec3(ret.x, ret.y, ret.z);
+	}
+
+	vec3 mover_direcao(entity id,vec3 dir)
+	{
+		transform_data *tf =  &transforms_map[id];
+
+		vec3 nada;
+		vec4 nada2;
+		vec3 escala;
+		vec3 pos;
+		quat qua;
+		glm::decompose(glm::translate(tf->matrix, dir), escala, qua, pos, nada, nada2);
+
+		return pos;
 	}
 };
