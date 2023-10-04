@@ -65,6 +65,7 @@ void ShutdownImGui() {
 #include "input.h"
 #include "read_map_file.h"
 #include "init_lib_functions.h"
+#include "render_mesh.h"
 #include <bitset>
 
 #include "ecs/ecs.h"
@@ -79,6 +80,8 @@ void register_ecs_components(){
     register_family_component();
     register_tag_component();
     transform_ecs::register_transform_component();
+    camera_ecs::register_camera_component();
+    ecs_render_mesh::register_render_mesh_component();
 
 }
 
