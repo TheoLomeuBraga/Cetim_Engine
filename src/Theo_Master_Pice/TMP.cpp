@@ -82,11 +82,15 @@ void register_ecs_components(){
     transform_ecs::register_transform_component();
     camera_ecs::register_camera_component();
     ecs_render_mesh::register_render_mesh_component();
+    ecs_render_sprite::register_render_sprite_component();
 
 }
 
 void configuracaoInicial()
 {
+
+    register_ecs_components();
+
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
     Iniciar_Render_Func.push_back(terminar_iniciar_global_bullet);
@@ -100,14 +104,8 @@ void configuracaoInicial()
     Antes_Render_Func.push_back(terminar_atualisar_global_box2D);
     Antes_Render_Func.push_back(terminar_atualisar_global_bullet);
 
-
     Antes_Render_Func.push_back(teste3);
 
-    /*
-    Iniciar_Render_Func.push_back(InitImGui);
-    Antes_Render_Func.push_back(UpdateImGuiUI);
-    Depois_Render_Func.push_back(ShutdownImGui);
-    */
 }
 void comecar()
 {
@@ -128,15 +126,13 @@ void comecar()
 
 int main(int argc, char **argv)
 {
-
-    escrever(pegar_estencao_arquivo("arquivo.abc"));
     aplicar_argumentos(argc, argv);
 
     escrever("argumentos{");
     for (string s : argumentos)
     {
         cout << "	";
-        escrever(s);
+        print({"    ",s});
     }
     escrever("}");
 
