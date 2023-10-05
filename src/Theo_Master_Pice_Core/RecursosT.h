@@ -148,8 +148,7 @@ public:
 			data[i] = dat[i];
 		}
 
-		delete[] dat;
-		// data = dat;
+		//delete[] dat;
 	}
 
 	imagem(int x, int y, int c, vector<unsigned char> dat)

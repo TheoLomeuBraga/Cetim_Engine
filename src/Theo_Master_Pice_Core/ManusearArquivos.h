@@ -4,6 +4,7 @@ using namespace std;
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <mutex>
 
 #include <glm/glm.hpp>
 #include <glm/glm.hpp>
@@ -21,9 +22,11 @@ using namespace std;
 using json = nlohmann::json;
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb-master/stb_image.h>
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION 
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include <stb-master/stb_image_write.h>
+#include <stb-master/stb_image_resize.h>
+#include <stb-master/stb_image.h>
 
 #include "read_map_file.h"
 
@@ -247,7 +250,11 @@ namespace ManuseioDados
 		}
 	}
 
-	ivec2 svg_res(256, 256);
+	ivec2 svg_res(512, 512);
+	//512
+
+	bool use_texture_max_size = true;
+	ivec2 texture_max_size(512, 512);
 
 	mapeamento_assets<imagem> mapeamento_imagems;
 
@@ -276,11 +283,11 @@ namespace ManuseioDados
 						std::cerr << "Error loading SVG " << local << std::endl;
 					}
 
-					NSVGrasterizer* rast = nsvgCreateRasterizer();
+					NSVGrasterizer *rast = nsvgCreateRasterizer();
 
 					data = new unsigned char[X * Y * canais];
 
-					nsvgRasterize(rast, imagemSVG, 0, 0, 1.0, data, X, Y, X * canais);
+					nsvgRasterize(rast, imagemSVG, 0, 0, static_cast<float>(X) / static_cast<float>(imagemSVG->width), data, X, Y, X * canais);
 
 					nsvgDeleteRasterizer(rast);
 					nsvgDelete(imagemSVG);
@@ -294,12 +301,32 @@ namespace ManuseioDados
 				add_loading_request(local);
 				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
-				imagem image = imagem(X, Y, canais, data);
-				image.local = local;
-				// delete[] data;
+				if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
+				{
+					unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
+					stbir_resize_uint8(data, X, Y, 0, data2, texture_max_size.x, texture_max_size.y, 0, canais);
 
-				remove_loading_request(local);
-				return mapeamento_imagems.aplicar(local, image);
+					imagem image = imagem(texture_max_size.x, texture_max_size.y, canais, data2);
+					image.local = local;
+
+					stbi_image_free(data);
+					//delete[] data;
+					delete[] data2;
+
+					remove_loading_request(local);
+					return mapeamento_imagems.aplicar(local, image);
+				}
+				else
+				{
+					imagem image = imagem(X, Y, canais, data);
+					image.local = local;
+
+					stbi_image_free(data);
+					//delete[] data;
+
+					remove_loading_request(local);
+					return mapeamento_imagems.aplicar(local, image);
+				}
 			}
 			else
 			{
@@ -954,7 +981,7 @@ namespace ManuseioDados
 			for (int i = 0; i < gltf_loader.textures.size(); i++)
 			{
 				// print({"gltf_loader.textures[i].uri",gltf_loader.textures[i].uri,Existe(gltf_loader.textures[i].uri)});
-				string svg_uri = trocarExtensaoArquivo(gltf_loader.textures[i].uri, "svg"); 
+				string svg_uri = trocarExtensaoArquivo(gltf_loader.textures[i].uri, "svg");
 				if (ManuseioDados::Existe(svg_uri))
 				{
 					ret.texturas[gltf_loader.textures[i].uri] = carregar_Imagem(svg_uri);
