@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="1.4093294"
-     inkscape:cx="136.58978"
-     inkscape:cy="230.25135"
+     inkscape:cx="250.82851"
+     inkscape:cy="129.49421"
      inkscape:window-width="2560"
      inkscape:window-height="995"
      inkscape:window-x="0"
@@ -39,33 +39,33 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#484848;fill-opacity:1;stroke:#b3b3b3;stroke-width:1;stroke-opacity:1"
+       style="fill:#484848;fill-opacity:1;stroke:#eaeaea;stroke-width:0.99613;stroke-opacity:1"
        id="rect1"
-       width="51.579159"
-       height="48.973404"
-       x="0.33068258"
-       y="0.27480492"
+       width="51.415394"
+       height="48.749878"
+       x="0.49638206"
+       y="0.50026691"
        ry="0" />
     <rect
-       style="fill:#484848;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.980287;stroke-opacity:1"
+       style="fill:#484848;fill-opacity:1;stroke:#eaeaea;stroke-width:0.969233;stroke-opacity:1"
        id="rect2"
-       width="47.171513"
-       height="49.873497"
-       x="52.817074"
-       y="50.297577" />
+       width="46.704384"
+       height="49.242699"
+       x="52.81155"
+       y="50.292053" />
     <rect
-       style="fill:#afafaf;fill-opacity:1;stroke:#656565;stroke-width:0.9915;stroke-opacity:1"
+       style="fill:#eaeaea;fill-opacity:1;stroke:#656565;stroke-width:0.978712;stroke-opacity:1"
        id="rect3"
-       width="46.980698"
-       height="49.212685"
-       x="52.8288"
-       y="0.22073154" />
+       width="46.381512"
+       height="48.57093"
+       x="53.128391"
+       y="0.54160929" />
     <rect
-       style="fill:#afafaf;fill-opacity:1;stroke:#656565;stroke-width:1.03685;stroke-opacity:1"
+       style="fill:#eaeaea;fill-opacity:1;stroke:#656565;stroke-width:1.03729;stroke-opacity:1"
        id="rect3-5"
-       width="51.467064"
-       height="49.126011"
-       x="0.41482025"
-       y="50.235649" />
+       width="51.36393"
+       height="49.266071"
+       x="0.51773781"
+       y="50.235867" />
   </g>
 </svg>

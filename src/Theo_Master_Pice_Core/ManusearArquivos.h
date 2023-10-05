@@ -280,7 +280,7 @@ namespace ManuseioDados
 
 					if (!imagemSVG)
 					{
-						std::cerr << "Error loading SVG " << local << std::endl;
+						print({"Error loading SVG " , local});
 					}
 
 					NSVGrasterizer *rast = nsvgCreateRasterizer();
