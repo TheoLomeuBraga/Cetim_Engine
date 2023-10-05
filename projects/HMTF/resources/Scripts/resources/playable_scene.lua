@@ -27,6 +27,7 @@ menu = {
 }
 
 local entity_ptr_list = {}
+local scene_ptr_list = {}
 
 cenary_builders = {
 
@@ -116,7 +117,7 @@ cenary_builders = {
         local ret = {}
         ret = game_object:new(create_object(father))
 
-        
+        scene_ptr_list[part_data.id] = ret.object_ptr
 
         ret:add_component(components.transform)
         ret.components[components.transform].position = deepcopy(part_data.position)
@@ -257,9 +258,26 @@ cenary_builders = {
         
         return ret
     end,
+    
     scene = function (father,layer, ceane_data,yield)
+
+        local ret = {
+            obj = {},
+            parts_ptr_list = {},
+            parts_list = {},
+        }
+
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-        return cenary_builders.scene_part(father,layer, ceane_data.objects,yield)
+        ret.obj = deepcopy(cenary_builders.scene_part(father,layer, ceane_data.objects,yield))
+        ret.parts_ptr_list = deepcopy(scene_ptr_list)
+        for key, value in pairs(ret.parts_ptr_list) do
+            ret.parts_list[key] = game_object:new(value)
+        end
+
+        
+
+        return ret
     end,
+
 }

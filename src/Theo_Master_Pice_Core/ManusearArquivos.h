@@ -30,10 +30,37 @@ using json = nlohmann::json;
 #define ANIMATION_FPS_COUNT 30
 #include "read_gltf_file.h"
 
+#define NANOSVG_ALL_COLOR_KEYWORDS
+#define NANOSVG_IMPLEMENTATION
+#include "nanosvg.h"
+#define NANOSVGRAST_IMPLEMENTATION
+#include "nanosvgrast.h"
+
 namespace ManuseioDados
 {
 
 	int loading_requests_no = 0;
+
+	std::string obterExtensaoArquivo(std::string nomeArquivo)
+	{
+		size_t pontoPos = nomeArquivo.find_last_of(".");
+		if (pontoPos != std::string::npos && pontoPos < nomeArquivo.length() - 1)
+		{
+			return nomeArquivo.substr(pontoPos + 1);
+		}
+		return ""; // Retorna uma string vazia se não houver extensão
+	}
+
+	// Função para trocar a extensão de um arquivo a partir do nome do arquivo
+	std::string trocarExtensaoArquivo(const std::string &nomeArquivo, const std::string &novaExtensao)
+	{
+		size_t pontoPos = nomeArquivo.find_last_of(".");
+		if (pontoPos != std::string::npos && pontoPos < nomeArquivo.length() - 1)
+		{
+			return nomeArquivo.substr(0, pontoPos + 1) + novaExtensao;
+		}
+		return nomeArquivo + "." + novaExtensao; // Se não houver extensão, adiciona a nova extensão
+	}
 
 	std::map<std::string, char> loading_requests_files = {};
 
@@ -220,6 +247,8 @@ namespace ManuseioDados
 		}
 	}
 
+	ivec2 svg_res(256, 256);
+
 	mapeamento_assets<imagem> mapeamento_imagems;
 
 	shared_ptr<imagem> carregar_Imagem(string local)
@@ -234,6 +263,34 @@ namespace ManuseioDados
 		{
 			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
+				if (obterExtensaoArquivo(local) == "svg")
+				{
+
+					X = svg_res.x;
+					Y = svg_res.y;
+
+					NSVGimage *imagemSVG = nsvgParseFromFile(local.c_str(), "px", 96.0f);
+
+					if (!imagemSVG)
+					{
+						std::cerr << "Error loading SVG " << local << std::endl;
+					}
+
+					NSVGrasterizer* rast = nsvgCreateRasterizer();
+
+					data = new unsigned char[X * Y * canais];
+
+					nsvgRasterize(rast, imagemSVG, 0, 0, 1.0, data, X, Y, X * canais);
+
+					nsvgDeleteRasterizer(rast);
+					nsvgDelete(imagemSVG);
+
+					imagem image = imagem(X, Y, canais, data);
+					image.local = local;
+
+					remove_loading_request(local);
+					return mapeamento_imagems.aplicar(local, image);
+				}
 				add_loading_request(local);
 				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
@@ -897,7 +954,12 @@ namespace ManuseioDados
 			for (int i = 0; i < gltf_loader.textures.size(); i++)
 			{
 				// print({"gltf_loader.textures[i].uri",gltf_loader.textures[i].uri,Existe(gltf_loader.textures[i].uri)});
-				if (ManuseioDados::Existe(gltf_loader.textures[i].uri))
+				string svg_uri = trocarExtensaoArquivo(gltf_loader.textures[i].uri, "svg"); 
+				if (ManuseioDados::Existe(svg_uri))
+				{
+					ret.texturas[gltf_loader.textures[i].uri] = carregar_Imagem(svg_uri);
+				}
+				else if (ManuseioDados::Existe(gltf_loader.textures[i].uri))
 				{
 					ret.texturas[gltf_loader.textures[i].uri] = carregar_Imagem(gltf_loader.textures[i].uri);
 				}
@@ -913,20 +975,18 @@ namespace ManuseioDados
 				mat.shad = "resources/Shaders/mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 
-				
 				if (gltf_loader.materials[i].textureIndex > -1)
 				{
 					string image_location = gltf_loader.textures[gltf_loader.materials[i].textureIndex].uri;
 					mat.texturas[0] = ret.texturas[image_location];
 
-					if(mat.cor.x == 0 and mat.cor.y == 0 and mat.cor.z == 0 and mat.cor.w == 0){
+					if (mat.cor.x == 0 and mat.cor.y == 0 and mat.cor.z == 0 and mat.cor.w == 0)
+					{
 						mat.cor.x = 1;
 						mat.cor.y = 1;
 						mat.cor.z = 1;
 						mat.cor.w = 1;
 					}
-					
-
 				}
 				else
 				{
@@ -981,15 +1041,13 @@ namespace ManuseioDados
 					ani.keyFrames.push_back(okfs);
 				}
 
-				//print({"animation 2 :",ani.nome,"key frames:",animations[a].keyFrames.size()});
+				// print({"animation 2 :",ani.nome,"key frames:",animations[a].keyFrames.size()});
 
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
 
 			// ret.objetos.escala.x *= -1;
 			// ret.objetos.escala.z *= -1;
-
-			
 
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);

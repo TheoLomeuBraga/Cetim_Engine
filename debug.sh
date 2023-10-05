@@ -9,7 +9,6 @@ y
 backtrace
 
 gprof -p $(pwd)/build/engine_theo_master_pice gmon.out > relatorio.txt
-grep -E "^[[:space:]]+[0-9]+.[0-9]+:[[:space:]]+[0-9]+[[:space:]]+[[:digit:]]+" relatorio.txt | awk '{print $NF}' > relatorio_limpo.txt
 
 
 

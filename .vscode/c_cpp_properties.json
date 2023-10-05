@@ -10,7 +10,9 @@
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/freetype",
                 "${workspaceFolder}/include/bullet3",
-                "${workspaceFolder}/src/Theo_Master_Peace_Core"
+                "${workspaceFolder}/src/Theo_Master_Peace_Core",
+                "${workspaceFolder}/include/imgui/backends",
+                "${workspaceFolder}/include/nanosvg"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
