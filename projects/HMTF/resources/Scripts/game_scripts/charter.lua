@@ -463,6 +463,7 @@ function UPDATE()
 end
 
 function COLLIDE(collision_info)
+    --deepprint(collision_info)
 end
 
 function END()

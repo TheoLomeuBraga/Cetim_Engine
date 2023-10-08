@@ -11,4 +11,5 @@ components = {
     physics_3D = "physics_3D",
     audio_source = "audio_source",
     lua_scripts = "lua_scripts",
+    ui_element = "ui_element",
 }

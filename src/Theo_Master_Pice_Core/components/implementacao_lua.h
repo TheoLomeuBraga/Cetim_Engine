@@ -30,7 +30,7 @@ using namespace Tempo;
 #include "table.h"
 #include "table_conversors.h"
 
-#include "ui_mouse_cheker.h"
+#include "ui_element.h"
 
 #ifdef USE_LUA_JIT
 extern "C"
@@ -2489,6 +2489,10 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<render_malha>(render_malha());}else{obj->remover_componente<render_malha>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("light", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<fonte_luz>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("ui_element", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<ui_element>();} }),
+
+												
 
 };
 
@@ -2571,6 +2575,8 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 										  { return obj->tem_componente<render_malha>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("light", [](objeto_jogo *obj)
 										  { return obj->tem_componente<fonte_luz>(); }),
+	pair<string, bool (*)(objeto_jogo *)>("ui_element", [](objeto_jogo *obj)
+										  { return obj->tem_componente<ui_element>(); }),
 
 };
 int have_component(lua_State *L)
