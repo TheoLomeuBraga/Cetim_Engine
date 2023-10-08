@@ -238,6 +238,11 @@ cenary_builders = {
             add_mesh(nil)
             add_physics(false,true)
 
+        elseif part_data.variables.type == "door" then
+            
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/door")
+
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end

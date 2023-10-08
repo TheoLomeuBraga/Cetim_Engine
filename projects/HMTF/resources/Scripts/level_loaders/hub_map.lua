@@ -19,6 +19,8 @@ local assets_needed = {
     new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/hub/hub.gltf"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
+    new_asset_list_element(asset_types.scene_3D,"resources/3D Models/basic_door.gltf"),
+    
 }
 
 function level:START()
