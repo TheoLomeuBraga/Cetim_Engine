@@ -40,8 +40,8 @@ void btClean_Meshes_shapes()
             btMeshes_shapes_count -= 1;
         }
     }
-    btMeshes_shapes.swap(mapa2);
-    btMeshes_shapes_addresses.swap(mapa3);
+    btMeshes_shapes.clear();
+    btMeshes_shapes_addresses.clear();
 }
 
 shared_ptr<std::string> get_mesh_shape_address(std::string addres)
@@ -175,6 +175,8 @@ public:
     shared_ptr<std::string> mesh_shape_address = NULL;
     vector<shared_ptr<objeto_jogo>> objs_touching;
     vector<colis_info> colis_infos;
+
+    unsigned char objects_touching = 0;
 
     void iniciar()
     {
@@ -397,8 +399,7 @@ public:
         {
             for (objeto_jogo *obj : bu_collisions_no_per_object[esse_objeto.get()])
             {
-                vector<objeto_jogo *> vazio = {};
-                bu_collisions_no_per_object[esse_objeto.get()].swap(vazio);
+                bu_collisions_no_per_object[esse_objeto.get()].clear();
             }
             bu_collisions_no_per_object.erase(esse_objeto.get());
         }
@@ -534,10 +535,12 @@ public:
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
+        ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>()->objects_touching++;
 
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
+        ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>()->objects_touching++;
 
         return 0; // return 0 to process all collisions
     }
@@ -644,7 +647,7 @@ void terminar_iniciar_global_bullet()
 }
 
 CustomContactResultCallback bullet_callback;
-void get_3D_collisions() 
+void get_3D_collisions()
 {
     btCollisionObjectArray &bcoa = dynamicsWorld->getCollisionObjectArray();
 
@@ -654,48 +657,58 @@ void get_3D_collisions()
     }
 }
 
-std::vector<std::shared_ptr<bullet>> bullet_to_clear;
+//std::vector<std::shared_ptr<bullet>> bullet_to_clear;
 void applay_3D_collisions()// <-- otimizar
 {
-    
+    unordered_map<objeto_jogo *,bullet*> objects_components;
+    unordered_map<objeto_jogo *,unsigned char> objects_colisions_added;
+
+    Tempo::Timer t = Tempo::Timer();
+
     for (colis_info ci : physics_3D_collisionInfos)
     {
         objeto_jogo *obj = (objeto_jogo *)ci.obj;
         obj->colidir(ci);
         
-        shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
-        bu->colis_infos.push_back(ci);
-        bullet_to_clear.push_back(bu);
+        
+        bullet* bu = NULL;
+        unsigned char i = 0;
+        if(objects_components.find(obj) == objects_components.end()){
 
-        /*
-        shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
-        if (bu != NULL)
-        {
-            bu->colis_infos.push_back(ci);
-            bullet_to_clear.push_back(bu);
+            bu = obj->pegar_componente<bullet>().get();
+            objects_components.emplace(pair<objeto_jogo *,bullet*>(obj,bu));
+            bu->colis_infos.clear();
+            bu->colis_infos.reserve(bu->objects_touching);
+            objects_colisions_added.emplace(pair<objeto_jogo *,unsigned char>(obj,0));
+
+        }else{
+            bu = objects_components[obj];
+            objects_colisions_added[obj]++;
+            i = objects_colisions_added[obj];
         }
-        */
+
+        bu->colis_infos[i] = ci;
+        
+        
+
     }
-    
+
+    //print({"applay_3D_collisions",t.get() * 1000});
+
 }
 void clean_collisions()
 {
-    std::vector<colis_info> vazio = {};
-    physics_3D_collisionInfos.swap(vazio);
-
-    for (shared_ptr<bullet> bu : bullet_to_clear)
-    {
-        bu->colis_infos.clear();
+    for(auto p : collisionObject_obj){
+        p.second->pegar_componente<bullet>()->objects_touching = 0;
     }
-    bullet_to_clear.clear();
+    physics_3D_collisionInfos.clear();
 }
 
 void clean_bu_collisions_no_per_object()
 {
     for (pair<objeto_jogo *, std::vector<objeto_jogo *>> p : bu_collisions_no_per_object)
     {
-        vector<objeto_jogo *> empt;
-        bu_collisions_no_per_object[p.first].swap(empt);
+        bu_collisions_no_per_object[p.first].clear();
     }
 }
 
@@ -715,12 +728,26 @@ void atualisar_global_bullet()
 {
 
     // collisions
-    clean_bu_collisions_no_per_object();
+    
+    //Tempo::Timer t = Tempo::Timer();
     clean_collisions();
+    //print({"clean_collisions",t.get() * 1000});
 
+    //t = Tempo::Timer();
     get_3D_collisions();
+    //print({"get_3D_collisions",t.get() * 1000});
+
+    //t = Tempo::Timer();
     applay_3D_collisions();
+    //print({"applay_3D_collisions",t.get() * 1000});
+
+    //t = Tempo::Timer();
+    clean_bu_collisions_no_per_object();
+    //print({"clean_bu_collisions_no_per_object",t.get() * 1000});
+
+    //t = Tempo::Timer();
     get_bu_collisions_no_per_object();
+    //print({"get_bu_collisions_no_per_object",t.get() * 1000});
 
     bullet_passo_tempo = 0;
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;

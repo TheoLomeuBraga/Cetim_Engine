@@ -295,7 +295,7 @@ public:
 		colis_infos.clear();
 
 		vector<shared_ptr<objeto_jogo>> vazioB;
-		objs_touching.swap(vazioB);
+		objs_touching.clear();
 	}
 	void aplicar()
 	{
