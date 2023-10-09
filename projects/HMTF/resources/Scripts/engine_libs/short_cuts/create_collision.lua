@@ -36,6 +36,7 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     
     ret.components[components.physics_3D].triger = triger
     ret.components[components.physics_3D].scale = deepcopy(sca)
+    ret.components[components.physics_3D].get_collision_data = true
     ret.components[components.physics_3D]:set()
 
     --ret.components[components.transform]:change_position(pos.x,pos.y,pos.z)

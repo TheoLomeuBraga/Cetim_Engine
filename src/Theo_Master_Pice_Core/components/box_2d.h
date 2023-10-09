@@ -90,12 +90,11 @@ b2Vec2 tiled_volume2[] = {
 class raycast_retorno : public b2RayCastCallback
 {
 public:
-
 	colis_info ci;
 
 	raycast_retorno() {}
 
-	float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override
+	float32 ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) override
 	{
 		ci.cos_obj = corpo_obj[fixture->GetBody()].get();
 		ci.pos = vec3(point.x, point.y, 0);
@@ -129,6 +128,7 @@ public:
 	info_camada camada;
 	vector<colis_info> colis_infos;
 	vector<shared_ptr<objeto_jogo>> objs_touching;
+	bool get_collision_data = false;
 
 	box_2D() {}
 
@@ -176,7 +176,6 @@ public:
 		}
 
 		BodyDef.fixedRotation = !(rotacionar && dinamica == dinamico);
-		
 
 		// b2FixtureDef
 		if (forma == caixa)
@@ -245,13 +244,14 @@ public:
 			mudar_rot(rot);
 		}
 
-		if(dinamica == dinamico){
+		if (dinamica == dinamico)
+		{
 			corpo->SetGravityScale(escala_gravidade);
-		}else{
+		}
+		else
+		{
 			corpo->SetGravityScale(0);
 		}
-		
-
 	}
 
 	void atualisar()
@@ -260,11 +260,13 @@ public:
 		{
 			esse_objeto->colidir(c);
 		}
-		
 
-		if(dinamica == dinamico){
+		if (dinamica == dinamico)
+		{
 			corpo->SetGravityScale(escala_gravidade);
-		}else{
+		}
+		else
+		{
 			corpo->SetGravityScale(0);
 		}
 
@@ -356,9 +358,8 @@ public:
 	static bool ray_cast(vec2 pos, vec2 target, colis_info &colis)
 	{
 		raycast_retorno cb;
-		//mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
+		// mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(pos.x, pos.y) + distancia * b2Vec2(sinf(angulo), cosf(angulo)));
 		mundo.RayCast(&cb, b2Vec2(pos.x, pos.y), b2Vec2(target.x, target.y));
-		
 
 		colis = cb.ci;
 
@@ -424,15 +425,21 @@ public:
 		ci.cos_obj = corpo_obj[corpoB].get();
 		ci.sensor = corpo_obj[corpoB]->pegar_componente<box_2D>()->gatilho;
 		shared_ptr<box_2D> b2d_a = corpo_obj[corpoA]->pegar_componente<box_2D>();
-		b2d_a->colis_infos.push_back(ci);
-		b2d_clear.push_back(b2d_a);
+		if (b2d_a->get_collision_data)
+		{
+			b2d_a->colis_infos.push_back(ci);
+			b2d_clear.push_back(b2d_a);
+		}
 
 		ci.obj = corpo_obj[corpoB].get();
 		ci.cos_obj = corpo_obj[corpoA].get();
 		ci.sensor = corpo_obj[corpoA]->pegar_componente<box_2D>()->gatilho;
 		shared_ptr<box_2D> b2d_b = corpo_obj[corpoB]->pegar_componente<box_2D>();
-		b2d_b->colis_infos.push_back(ci);
-		b2d_clear.push_back(b2d_b);
+		if (b2d_b->get_collision_data)
+		{
+			b2d_b->colis_infos.push_back(ci);
+			b2d_clear.push_back(b2d_b);
+		}
 	}
 
 	void EndContact(b2Contact *contact)
@@ -461,17 +468,18 @@ public:
 	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {}
 };
 
-//b2d_clear
+// b2d_clear
 void atualisar_global_box2D()
 {
-	
+
 	if (box_2D_iniciado != true)
 	{
 
-		for(shared_ptr<box_2D> b2d : b2d_clear){
-        	b2d->colis_infos.clear();
-    	}
-    	b2d_clear.clear();
+		for (shared_ptr<box_2D> b2d : b2d_clear)
+		{
+			b2d->colis_infos.clear();
+		}
+		b2d_clear.clear();
 
 		mundo.SetContactFilter(new filtro_colisao());
 		mundo.SetContactListener(new m_contactlistener());
@@ -490,16 +498,16 @@ void atualisar_global_box2D()
 
 thread box2D_thread;
 
-void iniciar_atualisar_global_box2D(){
+void iniciar_atualisar_global_box2D()
+{
 
 	box2D_thread = thread(atualisar_global_box2D);
-
 }
 
-void terminar_atualisar_global_box2D(){
+void terminar_atualisar_global_box2D()
+{
 
 	box2D_thread.join();
-
 }
 
 class fisica_char_B2D : public componente

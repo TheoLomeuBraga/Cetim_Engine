@@ -173,10 +173,9 @@ public:
     btCollisionObject *bt_obj = NULL;
     btRigidBody *bt_obj_rb = NULL;
     shared_ptr<std::string> mesh_shape_address = NULL;
-    vector<shared_ptr<objeto_jogo>> objs_touching;
+    vector<objeto_jogo*> objs_touching;
     vector<colis_info> colis_infos;
-
-    unsigned char objects_touching = 0;
+    bool get_collision_data = false;
 
     void iniciar()
     {
@@ -279,7 +278,6 @@ public:
                         btMeshes_shapes_count++;
                     }
 
-                    // triangleMeshs[esse_objeto] = tm;
                 }
                 else
                 {
@@ -526,7 +524,10 @@ public:
 
     virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
     {
+        shared_ptr<bullet> bu;
         colis_info collisionInfo;
+
+        
 
         collisionInfo.pos = btToGlm(cp.getPositionWorldOnA());
         collisionInfo.nor = btToGlm(cp.m_normalWorldOnB);
@@ -535,12 +536,23 @@ public:
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
-        ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>()->objects_touching++;
+
+        bu = ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>();
+        if(bu->get_collision_data){
+            bu->colis_infos.push_back(collisionInfo);
+            bu->objs_touching.push_back((objeto_jogo*)collisionInfo.obj);
+        }
+        
 
         collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
         collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         physics_3D_collisionInfos.push_back(collisionInfo);
-        ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>()->objects_touching++;
+
+        bu = ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>();
+        if(bu->get_collision_data){
+            bu->colis_infos.push_back(collisionInfo);
+            bu->objs_touching.push_back((objeto_jogo*)collisionInfo.obj);
+        }
 
         return 0; // return 0 to process all collisions
     }
@@ -657,49 +669,12 @@ void get_3D_collisions()
     }
 }
 
-//std::vector<std::shared_ptr<bullet>> bullet_to_clear;
-void applay_3D_collisions()// <-- otimizar
-{
-    unordered_map<objeto_jogo *,bullet*> objects_components;
-    unordered_map<objeto_jogo *,unsigned char> objects_colisions_added;
-
-    Tempo::Timer t = Tempo::Timer();
-
-    for (colis_info ci : physics_3D_collisionInfos)
-    {
-        objeto_jogo *obj = (objeto_jogo *)ci.obj;
-        obj->colidir(ci);
-        
-        
-        bullet* bu = NULL;
-        unsigned char i = 0;
-        if(objects_components.find(obj) == objects_components.end()){
-
-            bu = obj->pegar_componente<bullet>().get();
-            objects_components.emplace(pair<objeto_jogo *,bullet*>(obj,bu));
-            bu->colis_infos.clear();
-            bu->colis_infos.reserve(bu->objects_touching);
-            objects_colisions_added.emplace(pair<objeto_jogo *,unsigned char>(obj,0));
-
-        }else{
-            bu = objects_components[obj];
-            objects_colisions_added[obj]++;
-            i = objects_colisions_added[obj];
-        }
-
-        bu->colis_infos[i] = ci;
-        
-        
-
-    }
-
-    //print({"applay_3D_collisions",t.get() * 1000});
-
-}
 void clean_collisions()
 {
     for(auto p : collisionObject_obj){
-        p.second->pegar_componente<bullet>()->objects_touching = 0;
+        //p.second->pegar_componente<bullet>()->objects_touching = 0;
+        p.second->pegar_componente<bullet>()->colis_infos.clear();
+        p.second->pegar_componente<bullet>()->objs_touching.clear();
     }
     physics_3D_collisionInfos.clear();
 }
@@ -738,7 +713,7 @@ void atualisar_global_bullet()
     //print({"get_3D_collisions",t.get() * 1000});
 
     //t = Tempo::Timer();
-    applay_3D_collisions();
+    //applay_3D_collisions();
     //print({"applay_3D_collisions",t.get() * 1000});
 
     //t = Tempo::Timer();

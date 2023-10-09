@@ -1465,6 +1465,7 @@ namespace funcoes_ponte
 				colis_infos.push_back(colis_info_table(ci));
 			}
 			ret.setTable("colis_infos", vTable_table(colis_infos));
+			ret.setFloat("get_collision_data", b2d->get_collision_data);
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1488,6 +1489,7 @@ namespace funcoes_ponte
 				vertex.push_back(table_vec2(tvec2));
 			}
 			b2d->vertices = vertex;
+			b2d->get_collision_data = t.getFloat("get_collision_data");;
 			b2d->aplicar();
 			return 0;
 		}
@@ -1747,6 +1749,8 @@ namespace funcoes_ponte
 			ret.setFloat("friction", bu->atrito);
 			ret.setFloat("density", bu->densidade);
 			ret.setFloat("gravity_scale", bu->gravity_force);
+			//get_collision_data
+			ret.setFloat("get_collision_data", bu->get_collision_data);
 
 			vector<string> objs_touching;
 			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
@@ -1789,7 +1793,8 @@ namespace funcoes_ponte
 			bu->atrito = t.getFloat("friction");
 			bu->densidade = t.getFloat("density");
 			bu->gravity_force = t.getFloat("gravity_scale");
-
+			bu->get_collision_data = t.getFloat("get_collision_data");
+			
 			bu->aplay();
 			return 0;
 		}

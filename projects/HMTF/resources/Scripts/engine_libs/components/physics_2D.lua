@@ -37,6 +37,7 @@ physics_2D_component.objs_touching = {}
 physics_2D_component.colis_infos = {}
 physics_2D_component.collision_layer = collision_layer_info:new()
 physics_2D_component.vertex = {}
+physics_2D_component.get_collision_data = false
 
 function physics_2D_component:clean()
     self = create_base_component(components.physics_2D)
@@ -53,6 +54,7 @@ function physics_2D_component:clean()
     self.colis_infos = {}
     self.collision_layer = collision_layer_info:new()
     self.vertex = {}
+    self.get_collision_data = false
 end
 
 function physics_2D_component:get()
@@ -69,6 +71,7 @@ function physics_2D_component:get()
     self.collision_layer = deepcopyjson(j.collision_layer)
     self.colis_infos = deepcopyjson(j.colis_infos)
     self.vertex = deepcopyjson(j.vertex)
+    self.get_collision_data = j.get_collision_data
 end
 
     function physics_2D_component:set()
