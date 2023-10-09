@@ -173,9 +173,8 @@ public:
     btCollisionObject *bt_obj = NULL;
     btRigidBody *bt_obj_rb = NULL;
     shared_ptr<std::string> mesh_shape_address = NULL;
-    vector<objeto_jogo*> objs_touching;
+    vector<objeto_jogo *> objs_touching;
     vector<colis_info> colis_infos;
-    bool get_collision_data = false;
 
     void iniciar()
     {
@@ -277,7 +276,6 @@ public:
                         btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
                         btMeshes_shapes_count++;
                     }
-
                 }
                 else
                 {
@@ -527,32 +525,26 @@ public:
         shared_ptr<bullet> bu;
         colis_info collisionInfo;
 
-        
-
         collisionInfo.pos = btToGlm(cp.getPositionWorldOnA());
         collisionInfo.nor = btToGlm(cp.m_normalWorldOnB);
         collisionInfo.velocidade = cp.m_appliedImpulse;
 
-        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        objeto_jogo* A = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        objeto_jogo* B = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+
+        collisionInfo.obj = A;
+        collisionInfo.cos_obj = B;
         physics_3D_collisionInfos.push_back(collisionInfo);
 
-        bu = ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>();
-        if(bu->get_collision_data){
-            bu->colis_infos.push_back(collisionInfo);
-            bu->objs_touching.push_back((objeto_jogo*)collisionInfo.obj);
-        }
-        
+        bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
+        bu->colis_infos.push_back(collisionInfo);
 
-        collisionInfo.obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-        collisionInfo.cos_obj = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        physics_3D_collisionInfos.push_back(collisionInfo);
+        //collisionInfo.obj = B;
+        //collisionInfo.cos_obj = A;
+        //physics_3D_collisionInfos.push_back(collisionInfo);
 
-        bu = ((objeto_jogo*)collisionInfo.obj)->pegar_componente<bullet>();
-        if(bu->get_collision_data){
-            bu->colis_infos.push_back(collisionInfo);
-            bu->objs_touching.push_back((objeto_jogo*)collisionInfo.obj);
-        }
+        //bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
+        //bu->colis_infos.push_back(collisionInfo);
 
         return 0; // return 0 to process all collisions
     }
@@ -671,8 +663,9 @@ void get_3D_collisions()
 
 void clean_collisions()
 {
-    for(auto p : collisionObject_obj){
-        //p.second->pegar_componente<bullet>()->objects_touching = 0;
+    for (auto p : collisionObject_obj)
+    {
+        // p.second->pegar_componente<bullet>()->objects_touching = 0;
         p.second->pegar_componente<bullet>()->colis_infos.clear();
         p.second->pegar_componente<bullet>()->objs_touching.clear();
     }
@@ -703,26 +696,26 @@ void atualisar_global_bullet()
 {
 
     // collisions
-    
-    //Tempo::Timer t = Tempo::Timer();
+
+    // Tempo::Timer t = Tempo::Timer();
     clean_collisions();
-    //print({"clean_collisions",t.get() * 1000});
+    // print({"clean_collisions",t.get() * 1000});
 
-    //t = Tempo::Timer();
+    // t = Tempo::Timer();
     get_3D_collisions();
-    //print({"get_3D_collisions",t.get() * 1000});
+    // print({"get_3D_collisions",t.get() * 1000});
 
-    //t = Tempo::Timer();
-    //applay_3D_collisions();
-    //print({"applay_3D_collisions",t.get() * 1000});
+    // t = Tempo::Timer();
+    // applay_3D_collisions();
+    // print({"applay_3D_collisions",t.get() * 1000});
 
-    //t = Tempo::Timer();
+    // t = Tempo::Timer();
     clean_bu_collisions_no_per_object();
-    //print({"clean_bu_collisions_no_per_object",t.get() * 1000});
+    // print({"clean_bu_collisions_no_per_object",t.get() * 1000});
 
-    //t = Tempo::Timer();
+    // t = Tempo::Timer();
     get_bu_collisions_no_per_object();
-    //print({"get_bu_collisions_no_per_object",t.get() * 1000});
+    // print({"get_bu_collisions_no_per_object",t.get() * 1000});
 
     bullet_passo_tempo = 0;
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;

@@ -42,7 +42,6 @@ physics_3D_component.collision_mesh = { file = "", name = "" }
 physics_3D_component.objs_touching = {}
 physics_3D_component.colis_infos = {}
 physics_3D_component.gravity_scale = 1
-physics_3D_component.get_collision_data = false
 function physics_3D_component:add_force(force_x, force_y,force_z)
     add_force(self.object_ptr, force_x, force_y,force_z)
 end
@@ -77,7 +76,6 @@ function physics_3D_component:clean()
     self.objs_touching = {}
     self.colis_infos = {}
     self.gravity_scale = 1
-    physics_3D_component.get_collision_data = false
 end
 function physics_3D_component:get()
     j = get_set_physic_3D(get_lua, self.object_ptr)
@@ -95,7 +93,6 @@ function physics_3D_component:get()
     self.objs_touching = deepcopyjson(j.objs_touching)
     self.colis_infos = deepcopyjson(j.colis_infos)
     self.gravity_scale = j.gravity_scale
-    self.get_collision_data = j.get_collision_data > 0
 end
 function physics_3D_component:set()
     get_set_physic_3D(set_lua, deepcopyjson(self))

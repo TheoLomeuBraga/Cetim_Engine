@@ -128,7 +128,6 @@ public:
 	info_camada camada;
 	vector<colis_info> colis_infos;
 	vector<shared_ptr<objeto_jogo>> objs_touching;
-	bool get_collision_data = false;
 
 	box_2D() {}
 
@@ -425,21 +424,17 @@ public:
 		ci.cos_obj = corpo_obj[corpoB].get();
 		ci.sensor = corpo_obj[corpoB]->pegar_componente<box_2D>()->gatilho;
 		shared_ptr<box_2D> b2d_a = corpo_obj[corpoA]->pegar_componente<box_2D>();
-		if (b2d_a->get_collision_data)
-		{
-			b2d_a->colis_infos.push_back(ci);
+		b2d_a->colis_infos.push_back(ci);
 			b2d_clear.push_back(b2d_a);
-		}
 
+		/*
 		ci.obj = corpo_obj[corpoB].get();
 		ci.cos_obj = corpo_obj[corpoA].get();
 		ci.sensor = corpo_obj[corpoA]->pegar_componente<box_2D>()->gatilho;
 		shared_ptr<box_2D> b2d_b = corpo_obj[corpoB]->pegar_componente<box_2D>();
-		if (b2d_b->get_collision_data)
-		{
-			b2d_b->colis_infos.push_back(ci);
+		b2d_b->colis_infos.push_back(ci);
 			b2d_clear.push_back(b2d_b);
-		}
+		*/
 	}
 
 	void EndContact(b2Contact *contact)

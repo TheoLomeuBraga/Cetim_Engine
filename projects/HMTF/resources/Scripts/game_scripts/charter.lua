@@ -349,6 +349,7 @@ function UPDATE()
         check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
+        --print("AAAAA",#check_down.components[components.physics_3D].objs_touching,#check_down.components[components.physics_3D].colis_infos)
 
 
 
