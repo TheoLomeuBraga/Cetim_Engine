@@ -30,6 +30,7 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
 
     if triger then
         ret.components[components.physics_3D].gravity_scale = 0
+        ret.components[components.physics_3D].get_collision_info = true
     else 
         ret.components[components.physics_3D].gravity_scale = 1
     end

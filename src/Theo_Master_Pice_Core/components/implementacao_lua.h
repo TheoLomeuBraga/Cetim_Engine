@@ -1760,6 +1760,7 @@ namespace funcoes_ponte
 				colis_infos.push_back(colis_info_table(ci));
 			}
 			ret.setTable("colis_infos", vTable_table(colis_infos));
+			ret.setFloat("get_collision_info", bu->get_collision_info);
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -1789,7 +1790,7 @@ namespace funcoes_ponte
 			bu->atrito = t.getFloat("friction");
 			bu->densidade = t.getFloat("density");
 			bu->gravity_force = t.getFloat("gravity_scale");
-			
+			bu->get_collision_info = t.getFloat("get_collision_info");
 			bu->aplay();
 			return 0;
 		}

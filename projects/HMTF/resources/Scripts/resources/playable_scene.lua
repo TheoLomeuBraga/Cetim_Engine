@@ -139,10 +139,21 @@ cenary_builders = {
                 else
                     ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
                 end
-                ret.components[components.physics_3D].collision_shape = collision_shapes.convex
-                ret.components[components.physics_3D].collision_mesh = deepcopyjson(part_data.meshes[1])
+
+                if part_data.variables.collision_shape == nil then
+                    ret.components[components.physics_3D].collision_shape = collision_shapes.convex
+                    ret.components[components.physics_3D].collision_mesh = deepcopyjson(part_data.meshes[1])
+                elseif part_data.variables.collision_shape == "cube" then
+                    ret.components[components.physics_3D].collision_shape = collision_shapes.cube
+                elseif part_data.variables.collision_shape == "sphere" then
+                    ret.components[components.physics_3D].collision_shape = collision_shapes.sphere
+                end
+                --print(part_data.variables.collision_shape)
+                
+
                 ret.components[components.physics_3D].triger = is_triger
                 ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
+                ret.components[components.physics_3D].friction = 0
                 ret.components[components.physics_3D].friction = 10
                 ret.components[components.physics_3D]:set()
             end

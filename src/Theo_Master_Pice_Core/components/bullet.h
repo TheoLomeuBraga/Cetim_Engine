@@ -8,6 +8,7 @@
 #include <memory>
 
 #include <btBulletDynamicsCommon.h>
+#include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp"
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
@@ -175,6 +176,7 @@ public:
     shared_ptr<std::string> mesh_shape_address = NULL;
     vector<objeto_jogo *> objs_touching;
     vector<colis_info> colis_infos;
+    bool get_collision_info = false;
 
     void iniciar()
     {
@@ -372,7 +374,7 @@ public:
     {
         if (bt_obj_rb != NULL && dinamica == dinamico)
         {
-            bt_obj_rb->activate();
+            //bt_obj_rb->activate();
             bt_obj_rb->applyCentralForce(btVector3(gravidade.x * gravity_force * densidade, gravidade.y * gravity_force * densidade, gravidade.z * gravity_force * densidade));
         }
     }
@@ -529,22 +531,24 @@ public:
         collisionInfo.nor = btToGlm(cp.m_normalWorldOnB);
         collisionInfo.velocidade = cp.m_appliedImpulse;
 
-        objeto_jogo* A = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
-        objeto_jogo* B = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-        
-        collisionInfo.obj = A;
-        collisionInfo.cos_obj = B;
-        physics_3D_collisionInfos.push_back(collisionInfo);
+        objeto_jogo *A = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
+        objeto_jogo *B = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
+        bu = A->pegar_componente<bullet>();
 
-        bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
-        bu->colis_infos.push_back(collisionInfo);
+        if (bu->get_collision_info)
+        {
+            collisionInfo.obj = A;
+            collisionInfo.cos_obj = B;
+            physics_3D_collisionInfos.push_back(collisionInfo);
+            bu->colis_infos.push_back(collisionInfo);
+        }
 
-        //collisionInfo.obj = B;
-        //collisionInfo.cos_obj = A;
-        //physics_3D_collisionInfos.push_back(collisionInfo);
+        // collisionInfo.obj = B;
+        // collisionInfo.cos_obj = A;
+        // physics_3D_collisionInfos.push_back(collisionInfo);
 
-        //bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
-        //bu->colis_infos.push_back(collisionInfo);
+        // bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
+        // bu->colis_infos.push_back(collisionInfo);
 
         return 0; // return 0 to process all collisions
     }
@@ -623,7 +627,10 @@ void iniciar_global_bullet()
         btDbvtBroadphase *broadphase = new btDbvtBroadphase();
         CustomOverlapFilterCallback *customFilterCallback = new CustomOverlapFilterCallback();
         broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
+
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
+        //btSequentialImpulseConstraintSolverMt *solver = new btSequentialImpulseConstraintSolverMt();
+        
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
         dynamicsWorld->setGravity(btVector3(0, 0, 0));
@@ -689,8 +696,8 @@ void get_bu_collisions_no_per_object()
 }
 
 float bullet_passo_tempo;
-float bullet_ultimo_tempo;
-int maxSubSteps = 10;
+float bullet_ultimo_tempo = 0;
+int maxSubSteps = 1;
 
 void atualisar_global_bullet()
 {
@@ -717,9 +724,9 @@ void atualisar_global_bullet()
     get_bu_collisions_no_per_object();
     // print({"get_bu_collisions_no_per_object",t.get() * 1000});
 
-    bullet_passo_tempo = 0;
+    
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    dynamicsWorld->stepSimulation((bullet_passo_tempo * Tempo::velocidadeTempo), maxSubSteps);
+    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps,bullet_passo_tempo / maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 
     // dynamicsWorld->setGravity(glmToBt(gravidade));

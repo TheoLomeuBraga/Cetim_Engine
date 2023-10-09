@@ -146,6 +146,7 @@ function summon_bullet(args)
         bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 1, } }
         bullet.components[components.physics_3D].scale = 0.25
         bullet.components[components.physics_3D].friction = 0
+        bullet.components[components.physics_3D].get_collision_info = true
         bullet.components[components.physics_3D]:set()
 
         
