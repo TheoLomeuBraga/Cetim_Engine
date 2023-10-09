@@ -3,11 +3,18 @@ uniform sampler2D texturas[12];
 uniform sampler2D post_procesing_render_input[6];
 uniform float inputs[32];
 uniform vec4 color;
-uniform vec4 back_ground_color;
 uniform float gama,time,metallic,softness;
 uniform bool ui;
 uniform mat4 projection,vision,transform;
 uniform vec4 uv_position_scale;
+
+vec2 position = vec2(0, 0);
+vec2 ui_size = vec2(0.1, 0.1);
+vec4 back_ground_color = vec4(1, 1, 1, 1);
+vec4 color_hover = vec4(0, 0, 0, 1);
+vec4 back_ground_color_hover = vec4(1, 1, 1, 1);
+vec4 color_click = vec4(0, 0, 0, 1);
+vec4 back_ground_color_click = vec4(1, 1, 1, 1);
 
 struct Light {
   int type;

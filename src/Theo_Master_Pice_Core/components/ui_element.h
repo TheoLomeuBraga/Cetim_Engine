@@ -29,7 +29,7 @@ class ui_element : public componente
 public:
     // style
     vec2 position = vec2(0, 0);
-    vec2 position_size = vec2(0.1, 0.1);
+    vec2 size = vec2(0.1, 0.1);
 
     vec4 color = vec4(0, 0, 0, 1);
     vec4 back_ground_color = vec4(1, 1, 1, 1);
