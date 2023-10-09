@@ -531,7 +531,7 @@ public:
 
         objeto_jogo* A = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         objeto_jogo* B = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-
+        
         collisionInfo.obj = A;
         collisionInfo.cos_obj = B;
         physics_3D_collisionInfos.push_back(collisionInfo);

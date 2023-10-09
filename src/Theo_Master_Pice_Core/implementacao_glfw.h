@@ -624,7 +624,7 @@ void IniciarJanela()
 
 	if (janela == NULL)
 	{
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not opengl 3.3 compatible..\n");
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW

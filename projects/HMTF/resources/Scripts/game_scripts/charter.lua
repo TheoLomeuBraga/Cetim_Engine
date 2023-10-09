@@ -216,7 +216,7 @@ local impulse = {}
 
 require("resources.bullet_api")
 
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, hit_scan)
+function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity,color, hit_scan)
     start_arm_cannon_animation("recoil", 2, false)
     camera.components[components.audio_source].path = sound
     camera.components[components.audio_source].volume = 20
@@ -250,7 +250,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity, 
         end
     end
 
-    summon_bullet(bullet_position, normalize(ray_end), mesh, spred_directions, speed, life_time, damage, quantity, hit_scan, impulse,true,"")
+    summon_bullet(bullet_position, normalize(ray_end), mesh, spred_directions, speed, life_time, damage, quantity, hit_scan, impulse,true,true,color,"")
 
 
 
@@ -434,7 +434,7 @@ function UPDATE()
             --shoot
             if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
                 advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
-                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 12, false)
+                    "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 12,{r=1,g=0,b=0}, false)
                     shoot_timer = 0.5
             end
             shoot_timer = shoot_timer - time.delta

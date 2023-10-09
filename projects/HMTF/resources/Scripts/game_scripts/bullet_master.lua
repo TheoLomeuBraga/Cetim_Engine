@@ -23,7 +23,7 @@ local mat = matreial:new()
 local layers = {}
 bullets_list = {}
 bullets_data = {}
-function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target,friendly, behavior)
+function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target,friendly,color, behavior)
     return {
         object = obj,
         direction = direction,
@@ -37,6 +37,7 @@ function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, bas
         target = target,
         friendly=friendly,
         behavior = behavior,
+        color = color,
     }
 end
 
@@ -56,7 +57,7 @@ function START()
     
     mat.shader = "resources/Shaders/mesh"
     mat.textures[1] = "resources/Textures/white.png"
-    mat.color = { r = 1, g = 0, b = 0, a = 1 }
+    
 end
 
 function UPDATE()
@@ -97,7 +98,7 @@ function UPDATE()
         
         bullet.components[components.physics_3D]:get()
         for key, value in pairs(bullet.components[components.physics_3D].colis_infos) do
-            --print(value.object)
+            --print(value.object)   
         end
         
     end
@@ -132,9 +133,9 @@ function summon_bullet(args)
         bullet.components[components.render_mesh].layer = 2
         bullet.components[components.render_mesh].meshes_cout = 1
         bullet.components[components.render_mesh].meshes = deepcopy({ args.mesh })
+        mat.color = {r=args.color.r,g=args.color.g,b=args.color.b,a=0.99}
         bullet.components[components.render_mesh].materials = deepcopy({ mat })
         bullet.components[components.render_mesh]:set()
-
         
         bullet:add_component(components.physics_3D)
         bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
@@ -150,7 +151,7 @@ function summon_bullet(args)
         
         
         local bullet_data = bullets_data:new(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
-            args.base_impulse, args.target,args.friendly, args.behavior)
+            args.base_impulse, args.target,args.friendly,args.color, args.behavior)
         add_bullet(bullet_data)
     end
 
