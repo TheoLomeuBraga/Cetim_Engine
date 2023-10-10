@@ -31,8 +31,8 @@ local scene_ptr_list = {}
 
 cenary_builders = {
 
-    yield_count_down_total_time = 50,
-    yield_count_down = 50,
+    yield_count_down_total_time = 15,
+    yield_count_down = 15,
 
     entity_part = function (father,layer, part_data,shader,use_oclusion,yield)
 
@@ -258,10 +258,11 @@ cenary_builders = {
             add_mesh(nil)
         end
 
+        
         if yield == true then
-
+            print("cenary_builders.yield_count_down",cenary_builders.yield_count_down)
             cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
-            if cenary_builders.yield_count_down < 1 then
+            if cenary_builders.yield_count_down < 0 then
                 coroutine.yield()
                 cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
             end
