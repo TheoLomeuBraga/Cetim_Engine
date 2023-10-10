@@ -1414,7 +1414,6 @@ public:
 				{
 					pegar_oclusion_queries();
 					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
-					//print({"oclusion_querie_in_view",oclusion_querie_in_view});
 					limpar_oclusion_queries();
 					
 					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);

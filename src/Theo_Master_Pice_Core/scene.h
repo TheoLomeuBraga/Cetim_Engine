@@ -102,6 +102,7 @@ public:
 				}
 
 				// objetos_camadas_render_id
+				///*
 				shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
 				if ((rs != NULL && rs->ligado))
 				{
@@ -179,6 +180,7 @@ public:
 					}
 					objetos_camadas_render[RM->camada].push_back(obj);
 				}
+				//*/
 				shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
 				if ((FL != NULL && FL->ligado))
 				{
