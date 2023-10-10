@@ -357,6 +357,7 @@ public:
                 bt_obj_rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
+                bt_obj_rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
             }
             else if (dinamica == estatico)
             {
@@ -381,7 +382,7 @@ public:
 
     void atualisar()
     {
-        aply_gravity();
+        //aply_gravity();
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL && bt_obj != NULL && !gatilho)
         {
@@ -697,7 +698,7 @@ void get_bu_collisions_no_per_object()
 
 float bullet_passo_tempo;
 float bullet_ultimo_tempo = 0;
-int maxSubSteps = 1;
+int maxSubSteps = 10;
 
 void atualisar_global_bullet()
 {
@@ -726,7 +727,7 @@ void atualisar_global_bullet()
 
     
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps,bullet_passo_tempo / maxSubSteps);
+    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 
     // dynamicsWorld->setGravity(glmToBt(gravidade));
