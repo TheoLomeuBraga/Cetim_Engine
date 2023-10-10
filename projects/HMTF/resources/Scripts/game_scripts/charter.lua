@@ -325,7 +325,19 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
 
-        local get_valid_touches = function(objs_touching)
+        local get_valid_touches_top = function(objs_touching)
+            local valid_touches = 0
+            for key, value in pairs(objs_touching) do
+                local obj_touching = game_object:new(value)
+                obj_touching.components[components.physics_3D]:get()
+                if not obj_touching.components[components.physics_3D].triger and obj_touching.components[components.physics_3D].boady_dynamic == boady_dynamics.static then
+                    valid_touches = valid_touches + 1
+                end
+            end
+            return valid_touches
+        end
+
+        local get_valid_touches_down = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
                 local obj_touching = game_object:new(value)
@@ -343,12 +355,12 @@ function UPDATE()
         --hit top
         check_top.components[components.transform]:change_position(pos.x, pos.y + 1.75, pos.z)
         check_top.components[components.physics_3D]:get()
-        hit_top = get_valid_touches(check_top.components[components.physics_3D].objs_touching) > 1
+        hit_top = get_valid_touches_top(check_top.components[components.physics_3D].objs_touching) > 0
 
         --hit down
         check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
-        hit_down = get_valid_touches(check_down.components[components.physics_3D].objs_touching) > 1
+        hit_down = get_valid_touches_down(check_down.components[components.physics_3D].objs_touching) > 1
         --print("AAAAA",#check_down.components[components.physics_3D].objs_touching,#check_down.components[components.physics_3D].colis_infos)
 
 

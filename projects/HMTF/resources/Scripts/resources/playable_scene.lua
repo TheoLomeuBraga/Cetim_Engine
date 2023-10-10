@@ -153,8 +153,8 @@ cenary_builders = {
 
                 ret.components[components.physics_3D].triger = is_triger
                 ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
-                ret.components[components.physics_3D].friction = 0
-                ret.components[components.physics_3D].friction = 10
+                ret.components[components.physics_3D].friction = 1
+                --ret.components[components.physics_3D].friction = 10
                 ret.components[components.physics_3D]:set()
             end
         end
