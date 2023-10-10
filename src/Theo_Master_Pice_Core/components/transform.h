@@ -52,7 +52,7 @@ public:
 		ret *= toMat4(quater);
 		ret = scale(ret, esca);
 
-		matrizTransform = ret;
+		//matrizTransform = ret;
 
 		return ret;
 	}
@@ -113,7 +113,7 @@ public:
 
 	void atualizar_tf()
 	{
-		pegar_matriz();
+		matrizTransform = pegar_matriz();
 	}
 
 	transform_(glm::vec3 p, glm::vec3 r, glm::vec3 e)

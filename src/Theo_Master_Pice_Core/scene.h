@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <functional>
+#include <thread>
 using namespace std;
 
 #include "RecursosT.h"
@@ -92,63 +93,8 @@ public:
 				obj->ID = lista_objetos.size();
 				lista_objetos.push_back(obj);
 
-				// camera
-				void *componente[6];
-				componente[0] = obj->pegar_componente<camera>().get();
-				if (componente[0] != NULL)
-				{
-					cameras_id.push_back(obj->ID);
-					cameras.push_back(obj);
-				}
-
-				// objetos_camadas_render_id
 				///*
-				shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
-				if ((rs != NULL && rs->ligado))
-				{
-					if (objetos_camadas_render_id.size() < (rs->camada + 1))
-					{
-						objetos_camadas_render_id.resize(rs->camada + 1);
-					}
-					objetos_camadas_render_id[rs->camada].push_back(obj->ID);
-
-					if (objetos_camadas_render.size() < (rs->camada + 1))
-					{
-						objetos_camadas_render.resize(rs->camada + 1);
-					}
-					objetos_camadas_render[rs->camada].push_back(obj);
-				}
-				
-				shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
-				if ((RT != NULL && RT->ligado))
-				{
-					if (objetos_camadas_render_id.size() < (RT->camada + 1))
-					{
-						objetos_camadas_render_id.resize(RT->camada + 1);
-					}
-					objetos_camadas_render_id[RT->camada].push_back(obj->ID);
-
-					if (objetos_camadas_render.size() < (RT->camada + 1))
-					{
-						objetos_camadas_render.resize(RT->camada + 1);
-					}
-					objetos_camadas_render[RT->camada].push_back(obj);
-				}
-				shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
-				if ((RTM != NULL && RTM->ligado))
-				{
-					if (objetos_camadas_render_id.size() < (RTM->camada + 1))
-					{
-						objetos_camadas_render_id.resize(RTM->camada + 1);
-					}
-					objetos_camadas_render_id[RTM->camada].push_back(obj->ID);
-
-					if (objetos_camadas_render.size() < (RTM->camada + 1))
-					{
-						objetos_camadas_render.resize(RTM->camada + 1);
-					}
-					objetos_camadas_render[RTM->camada].push_back(obj);
-				}
+				// render shader
 				shared_ptr<render_sprite> RS = obj->pegar_componente<render_sprite>();
 				if ((RS != NULL && RS->ligado))
 				{
@@ -165,26 +111,88 @@ public:
 					objetos_camadas_render[RS->camada].push_back(obj);
 				}
 
-				shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-				if ((RM != NULL && RM->ligado))
-				{
-					if (objetos_camadas_render_id.size() < (RM->camada + 1))
-					{
-						objetos_camadas_render_id.resize(RM->camada + 1);
-					}
-					objetos_camadas_render_id[RM->camada].push_back(obj->ID);
+				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 
-					if (objetos_camadas_render.size() < (RM->camada + 1))
-					{
-						objetos_camadas_render.resize(RM->camada + 1);
-					}
-					objetos_camadas_render[RM->camada].push_back(obj);
-				}
-				//*/
-				shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
-				if ((FL != NULL && FL->ligado))
+				if (tf != NULL && obj->get_components_count() > 1)
 				{
-					fontes_luzes_id.push_back(obj->ID);
+
+					// camera
+					shared_ptr<camera> cam = obj->pegar_componente<camera>();
+					if (cam != NULL)
+					{
+						cameras_id.push_back(obj->ID);
+						cameras.push_back(obj);
+					}
+
+					// objetos_camadas_render_id
+					shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
+					if ((rs != NULL && rs->ligado))
+					{
+						if (objetos_camadas_render_id.size() < (rs->camada + 1))
+						{
+							objetos_camadas_render_id.resize(rs->camada + 1);
+						}
+						objetos_camadas_render_id[rs->camada].push_back(obj->ID);
+
+						if (objetos_camadas_render.size() < (rs->camada + 1))
+						{
+							objetos_camadas_render.resize(rs->camada + 1);
+						}
+						objetos_camadas_render[rs->camada].push_back(obj);
+					}
+
+					shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
+					if ((RT != NULL && RT->ligado))
+					{
+						if (objetos_camadas_render_id.size() < (RT->camada + 1))
+						{
+							objetos_camadas_render_id.resize(RT->camada + 1);
+						}
+						objetos_camadas_render_id[RT->camada].push_back(obj->ID);
+
+						if (objetos_camadas_render.size() < (RT->camada + 1))
+						{
+							objetos_camadas_render.resize(RT->camada + 1);
+						}
+						objetos_camadas_render[RT->camada].push_back(obj);
+					}
+					shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
+					if ((RTM != NULL && RTM->ligado))
+					{
+						if (objetos_camadas_render_id.size() < (RTM->camada + 1))
+						{
+							objetos_camadas_render_id.resize(RTM->camada + 1);
+						}
+						objetos_camadas_render_id[RTM->camada].push_back(obj->ID);
+
+						if (objetos_camadas_render.size() < (RTM->camada + 1))
+						{
+							objetos_camadas_render.resize(RTM->camada + 1);
+						}
+						objetos_camadas_render[RTM->camada].push_back(obj);
+					}
+
+					shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
+					if ((RM != NULL && RM->ligado))
+					{
+						if (objetos_camadas_render_id.size() < (RM->camada + 1))
+						{
+							objetos_camadas_render_id.resize(RM->camada + 1);
+						}
+						objetos_camadas_render_id[RM->camada].push_back(obj->ID);
+
+						if (objetos_camadas_render.size() < (RM->camada + 1))
+						{
+							objetos_camadas_render.resize(RM->camada + 1);
+						}
+						objetos_camadas_render[RM->camada].push_back(obj);
+					}
+					//*/
+					shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
+					if ((FL != NULL && FL->ligado))
+					{
+						fontes_luzes_id.push_back(obj->ID);
+					}
 				}
 
 				for (shared_ptr<objeto_jogo> ob : obj->filhos)
@@ -222,7 +230,8 @@ public:
 
 			objs = tf_ordenate_by_distance(pos, objs);
 
-			for(int i = 0; i < objs.size() ; i++){
+			for (int i = 0; i < objs.size(); i++)
+			{
 				novo_fontes_luzes_id.push_back(objs[i]->ID);
 			}
 
@@ -230,21 +239,25 @@ public:
 		}
 	}
 
-	void atualisar()
+	void clean_lists()
 	{
-
-		esvasiar_lixeira();
-
 		lista_objetos.clear();
 		cameras_id.clear();
 		objetos_camadas_render_id.clear();
 		fontes_luzes_id.clear();
 		cameras.clear();
 		objetos_camadas_render.clear();
+	}
+
+	void atualisar()
+	{
+
+		esvasiar_lixeira();
+		esvasiar_lixeira();
+		clean_lists();
 
 		adicionar_objeto_lista(objeto_cena);
 		ordenar_luzes();
-		
 	}
 
 	void atualisar_transform_objeto(shared_ptr<objeto_jogo> obj)

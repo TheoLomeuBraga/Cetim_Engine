@@ -925,6 +925,7 @@ namespace funcoes_ponte
 				tf->pos = table_vec3(t.getTable("position"));
 				tf->mudar_angulo_graus(table_vec3(t.getTable("rotation")));
 				tf->esca = table_vec3(t.getTable("scale"));
+				tf->pegar_matriz();
 			}
 
 			return 0;

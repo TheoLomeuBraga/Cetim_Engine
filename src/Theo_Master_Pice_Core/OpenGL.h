@@ -277,84 +277,87 @@ public:
 		}
 	}
 
-	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam)
+	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam, size_t camada)
 	{
 
-		
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
 
 			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
-			
-			glDisable(GL_CULL_FACE);
 
-			if (!show_oclusion_querie)
-			{
-				glColorMask(false, false, false, false);
-			}
-
-
-			if (tf != NULL && rm != NULL && rm->usar_oclusao)
+			if (camada == rm->camada)
 			{
 
-				
+				glDisable(GL_CULL_FACE);
 
-				glBeginQuery(GL_SAMPLES_PASSED, p.second);
-
-				unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
-				glUseProgram(shader_s);
-
-				//ajustar
-				glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-				mat4 ajust = glm::scale(mat4(1.0),vec3(-1,1,-1)) * tf->matrizTransform;
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-
-				for (int i = 0; i < 4; i++)
+				if (!show_oclusion_querie)
 				{
-					glEnableVertexAttribArray(i);
+					glColorMask(false, false, false, false);
 				}
 
-				for (char i = 0 ; i < rm->malhas.size() ; i++ )
+				if (tf != NULL && rm != NULL && rm->usar_oclusao)
 				{
-					shared_ptr<malha> m = rm->malhas[i];
 
-					if(rm->mats[i].cor.w < 1){
-						glDisable(GL_DEPTH_TEST);
-					}else{
-						glEnable(GL_DEPTH_TEST);
+					glBeginQuery(GL_SAMPLES_PASSED, p.second);
+
+					unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
+					glUseProgram(shader_s);
+
+					// ajustar
+					glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+					glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+					glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+					glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
+
+					for (int i = 0; i < 4; i++)
+					{
+						glEnableVertexAttribArray(i);
 					}
 
-					//glEnable(GL_DEPTH_TEST);
+					for (char i = 0; i < rm->malhas.size(); i++)
+					{
+						shared_ptr<malha> m = rm->malhas[i];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[m.get()].vbo);
-					glBindBuffer(GL_ARRAY_BUFFER, malhas[m.get()].malha_buffer);
+						if (rm->mats[i].cor.w < 1)
+						{
+							glDisable(GL_DEPTH_TEST);
+						}
+						else
+						{
+							glEnable(GL_DEPTH_TEST);
+						}
 
-					// posição
-					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
+						// glEnable(GL_DEPTH_TEST);
 
-					glDrawElements(
-						GL_TRIANGLES,					// mode
-						malhas[m.get()].tamanho_indice, // count
-						GL_UNSIGNED_INT,				// type
-						(void *)0						// element array buffer offset
-					);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[m.get()].vbo);
+						glBindBuffer(GL_ARRAY_BUFFER, malhas[m.get()].malha_buffer);
+
+						// posição
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
+
+						glDrawElements(
+							GL_TRIANGLES,					// mode
+							malhas[m.get()].tamanho_indice, // count
+							GL_UNSIGNED_INT,				// type
+							(void *)0						// element array buffer offset
+						);
+					}
 				}
-			}
 
-			glColorMask(true, true, true, true);
-			glEndQuery(GL_SAMPLES_PASSED);
+				glColorMask(true, true, true, true);
+				glEndQuery(GL_SAMPLES_PASSED);
 
-			if (usar_profundidade)
-			{
-				glEnable(GL_DEPTH_TEST);
-				glDepthFunc(GL_LESS);
-			}
-			else
-			{
-				glDisable(GL_DEPTH_TEST);
+				if (usar_profundidade)
+				{
+					glEnable(GL_DEPTH_TEST);
+					glDepthFunc(GL_LESS);
+				}
+				else
+				{
+					glDisable(GL_DEPTH_TEST);
+				}
 			}
 		}
 	}
@@ -369,10 +372,10 @@ public:
 			if (rm->usar_oclusao)
 			{
 				rm->ligado = oclusion_queries_resultados[p.first] > 0;
-				if(oclusion_queries_resultados[p.first] > 0){
+				if (oclusion_queries_resultados[p.first] > 0)
+				{
 					oclusion_querie_in_view++;
 				}
-				
 			}
 		}
 	}
@@ -703,7 +706,7 @@ public:
 	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-		
+
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
@@ -740,7 +743,6 @@ public:
 			}
 		}
 
-		
 		for (int i = 0; i < SAIDAS_SHADER; i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + NO_TEXTURAS + i);
@@ -776,8 +778,9 @@ public:
 		}
 		*/
 
-		for(pair <string,float> p : mat.inputs){
-			//print({"p.first",p.first,p.second});
+		for (pair<string, float> p : mat.inputs)
+		{
+			// print({"p.first",p.first,p.second});
 			glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
 		}
 
@@ -805,7 +808,7 @@ public:
 
 				apply_transform(shader_s, tf, ca);
 
-				apply_material(shader_s,rs->mat);
+				apply_material(shader_s, rs->mat);
 
 				// render
 				glDisable(GL_CULL_FACE);
@@ -840,7 +843,6 @@ public:
 				{
 #define texto rt->texto
 
-					
 					vec2 tamanho_texto = vec2(0, 0);
 					vector<vec2> tamanho_linhas = {};
 					if (rt->text_location_x != 0 && rt->text_location_y != 0)
@@ -898,12 +900,12 @@ public:
 
 							if (rt->text_location_x == render_text_location::CENTER)
 							{
-								pos_letra.x = (pos_letra.x - tamanho_texto.x) + ( tamanho_texto.x - tamanho_linhas[no_linha].x );
+								pos_letra.x = (pos_letra.x - tamanho_texto.x) + (tamanho_texto.x - tamanho_linhas[no_linha].x);
 							}
 							else if (rt->text_location_x == render_text_location::LEFT)
 							{
-								
-								pos_letra.x = pos_letra.x + (( -tamanho_texto.x - (tamanho_linhas[no_linha].x *2)) + tamanho_texto.x  ) ;
+
+								pos_letra.x = pos_letra.x + ((-tamanho_texto.x - (tamanho_linhas[no_linha].x * 2)) + tamanho_texto.x);
 							}
 
 							if (rt->text_location_y == render_text_location::CENTER)
@@ -936,7 +938,8 @@ public:
 								glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), rt->mat.inputs[i]);
 							}
 							*/
-							for(pair <string,float> p : rt->mat.inputs){
+							for (pair<string, float> p : rt->mat.inputs)
+							{
 								glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
 							}
 
@@ -1202,10 +1205,10 @@ public:
 							unsigned int shader_s = pegar_shader(mat.shad);
 							glUseProgram(shader_s);
 
-							//apply_transform(shader_s, tf, ca);
-							//ajustar
+							// apply_transform(shader_s, tf, ca);
+							// ajustar
 							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-							mat4 ajust = glm::scale(mat4(1.0),vec3(-1,1,-1)) * tf->matrizTransform;
+							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
@@ -1341,7 +1344,8 @@ public:
 			glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), pos_processamento_info.inputs[i]);
 		}
 		*/
-		for(pair <string,float> p : pos_processamento_info.inputs){
+		for (pair<string, float> p : pos_processamento_info.inputs)
+		{
 			glUniform1f(glGetUniformLocation(pp_shader, p.first.c_str()), p.second);
 		}
 
@@ -1367,9 +1371,6 @@ public:
 
 	void reindenizar_cenario()
 	{
-		
-
-		
 
 		// transparency
 
@@ -1413,13 +1414,10 @@ public:
 				if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
 				{
 					pegar_oclusion_queries();
-					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera]);
+					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera], a);
 					limpar_oclusion_queries();
-					
-					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);
 
-					
-					
+					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);
 				}
 				else
 				{
@@ -1431,7 +1429,8 @@ public:
 		}
 	}
 
-	~OpenGL_API(){
+	~OpenGL_API()
+	{
 		print({"OpenGL deleted"});
 	}
 };

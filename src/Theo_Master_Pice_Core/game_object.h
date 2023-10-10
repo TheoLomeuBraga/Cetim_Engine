@@ -35,6 +35,10 @@ public:
 		esse_objeto = objeto;
 	}
 
+	size_t get_components_count(){
+		return componentes.size();
+	}
+
 	bool lixo = false;
 	int ID;
 	string nome;
