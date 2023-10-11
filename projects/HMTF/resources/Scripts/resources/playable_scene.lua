@@ -112,6 +112,8 @@ cenary_builders = {
 
     end,
 
+    scene_poly_meshes = {},
+
     scene_part = function (father,layer, part_data,yield)
 
         local ret = {}
@@ -154,7 +156,6 @@ cenary_builders = {
                 ret.components[components.physics_3D].triger = is_triger
                 ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
                 ret.components[components.physics_3D].friction = 1
-                --ret.components[components.physics_3D].friction = 10
                 ret.components[components.physics_3D]:set()
             end
         end
@@ -177,7 +178,16 @@ cenary_builders = {
             end
         end
 
-        if part_data.variables.type == "sb" then
+        if part_data.variables.type == "test_poly_mesh" then
+
+            table.insert(cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].objects,ret.object_ptr)
+            cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
+
+            --add_mesh()
+
+
+
+        elseif part_data.variables.type == "sb" then
 
             add_physics(false,false)
             add_mesh(nil)
@@ -284,6 +294,18 @@ cenary_builders = {
             parts_list = {},
         }
 
+        --[[]]
+        local mat = matreial:new()
+        mat.shader = "resources/Shaders/mesh"
+        mat.textures = {"resources/Textures/null.png"}
+        cenary_builders.scene_poly_meshes = game_object:new(create_object(father))
+        cenary_builders.scene_poly_meshes:add_component(components.render_poly_mesh)
+        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].layer = layer
+        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].meshes_cout = 1
+        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].meshes = deepcopy({mesh_location:new("resources/Levels/3D/hub/hub.gltf","Suzanne")})
+        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = {mat}
+        
+
         if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         ret.obj = deepcopy(cenary_builders.scene_part(father,layer, ceane_data.objects,yield))
@@ -292,7 +314,7 @@ cenary_builders = {
             ret.parts_list[key] = game_object:new(value)
         end
 
-        
+        cenary_builders.scene_poly_meshes = {}
 
         return ret
     end,
