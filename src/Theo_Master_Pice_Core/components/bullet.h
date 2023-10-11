@@ -160,6 +160,7 @@ void iniciar_global_bullet();
 
 class bullet : public componente
 {
+    private:
 public:
     shared_ptr<malha> collision_mesh;
     char forma = 0;
@@ -341,7 +342,8 @@ public:
             bt_obj->setCollisionShape(Shape);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
-            dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+            //dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
+            dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::KinematicFilter);
         }
         else
         {
@@ -560,8 +562,19 @@ class CustomOverlapFilterCallback : public btOverlapFilterCallback
 public:
     virtual bool needBroadphaseCollision(btBroadphaseProxy *proxy0, btBroadphaseProxy *proxy1) const
     {
+        // Obtenha os objetos associados aos proxies
         btCollisionObject *obj0 = static_cast<btCollisionObject *>(proxy0->m_clientObject);
         btCollisionObject *obj1 = static_cast<btCollisionObject *>(proxy1->m_clientObject);
+        
+        
+        // Verifique se ambos os objetos são do tipo SensorTrigger (ou seja, não devem colidir entre si)
+        bool isSensorTrigger0 = obj0->getCollisionFlags() & btCollisionObject::CF_NO_CONTACT_RESPONSE;
+        bool isSensorTrigger1 = obj1->getCollisionFlags() & btCollisionObject::CF_NO_CONTACT_RESPONSE;
+
+        // Evite a colisão entre objetos SensorTrigger
+        if (isSensorTrigger0 && isSensorTrigger1) {
+            return false;
+        }
 
         if (collisionObject_obj.find(obj0) != collisionObject_obj.end() && collisionObject_obj.find(obj1) != collisionObject_obj.end())
         {
@@ -628,10 +641,7 @@ void iniciar_global_bullet()
         btDbvtBroadphase *broadphase = new btDbvtBroadphase();
         CustomOverlapFilterCallback *customFilterCallback = new CustomOverlapFilterCallback();
         broadphase->getOverlappingPairCache()->setOverlapFilterCallback(customFilterCallback);
-
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
-        //btSequentialImpulseConstraintSolverMt *solver = new btSequentialImpulseConstraintSolverMt();
-        
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
         dynamicsWorld->setGravity(btVector3(0, 0, 0));
@@ -715,7 +725,7 @@ void atualisar_global_bullet()
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
-    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps,bullet_passo_tempo);
+    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 
     timer.clear();

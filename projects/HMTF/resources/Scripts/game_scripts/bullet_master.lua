@@ -133,7 +133,7 @@ function summon_bullet(args)
         bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
         bullet.components[components.transform]:set()
 
-        
+        --[[]]
         bullet:add_component(components.render_mesh)
         bullet.components[components.render_mesh].layer = 2
         bullet.components[components.render_mesh].meshes_cout = 1
