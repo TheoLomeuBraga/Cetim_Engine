@@ -1222,11 +1222,51 @@ public:
 				}
 			}
 		}
-		else if (obj->pegar_componente<poly_mesh>()){
+		else if (obj->pegar_componente<poly_mesh>() && cam->pegar_componente<camera>() != NULL)
+		{
+
 			shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+			shared_ptr<camera> ca = cam->pegar_componente<camera>();
 
-			
+			// criar_oclusion_querie(obj);
 
+			if (PMESH->ligado)
+			{
+				for (int i = 0; i < std::min<float>((int)PMESH->mats.size(), (int)PMESH->malhas.size()); i++)
+				{
+
+					shared_ptr<malha> ma = PMESH->malhas[i];
+					Material mat = PMESH->mats[i];
+					if (malhas.find(ma.get()) == malhas.end())
+					{
+						adicionar_malha(ma.get());
+					}
+					if (ma != NULL)
+					{
+						// aplicar material
+						unsigned int shader_s = pegar_shader(mat.shad);
+						glUseProgram(shader_s);
+
+						// apply_transform(shader_s, tf, ca);
+						// ajustar
+						glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
+						glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+
+						for (shared_ptr<objeto_jogo> obj : PMESH->objs)
+						{
+							shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+							if(tf == NULL){continue;}
+							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+						}
+
+						apply_material(shader_s, mat);
+
+						selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+					}
+				}
+			}
 		}
 	}
 
