@@ -17,6 +17,7 @@
 #include "game_object.h"
 #include "camera.h"
 #include "transform.h"
+#include "poly_mesh.h"
 
 struct mesh_ogl_struct
 {
@@ -1220,6 +1221,12 @@ public:
 					}
 				}
 			}
+		}
+		else if (obj->pegar_componente<poly_mesh>()){
+			shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+
+			
+
 		}
 	}
 

@@ -16,6 +16,7 @@ using namespace Tempo;
 #include "render_tilemap.h"
 #include "bullet.h"
 #include "light.h"
+#include "poly_mesh.h"
 
 #include "args.h"
 #include "game_object.h"
@@ -30,7 +31,7 @@ using namespace Tempo;
 #include "table.h"
 #include "table_conversors.h"
 
-#include "ui_element.h"
+//#include "ui_element.h"
 
 #ifdef USE_LUA_JIT
 extern "C"
@@ -1661,6 +1662,59 @@ namespace funcoes_ponte
 			return 0;
 		}
 	}
+	
+	int get_set_render_poly_mesh(lua_State *L)
+	{
+		if (lua_tonumber(L, 1) == get_lua)
+		{
+			Table ret;
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
+			ret.setFloat("layer", mesh->camada + 1);
+			ret.setFloat("use_oclusion", mesh->usar_oclusao);
+			vector<Table> meshes;
+			for (shared_ptr<malha> m : mesh->malhas)
+			{
+				Table mesh_info;
+				mesh_info.setString("file", m->arquivo_origem);
+				mesh_info.setString("name", m->nome);
+				meshes.push_back(mesh_info);
+			}
+			ret.setTable("meshes", vTable_table(meshes));
+			vector<Table> materials;
+			for (Material m : mesh->mats)
+			{
+				materials.push_back(material_table(m));
+			}
+			ret.setTable("materials", vTable_table(materials));
+			lua_pushtable(L, ret);
+			return 1;
+		}
+		else
+		{
+
+			Table t = lua_totable(L, 2);
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
+			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
+			mesh->camada = t.getFloat("layer") - 1;
+			mesh->usar_oclusao = t.getFloat("use_oclusion");
+			vector<Table> vt = table_vTable(t.getTable("meshes"));
+			vector<shared_ptr<malha>> meshes;
+			for (Table mesh : vt)
+			{
+				meshes.push_back(ManuseioDados::carregar_malha(mesh.getString("file"), mesh.getString("name")));
+			}
+			mesh->malhas = meshes;
+			vt = table_vTable(t.getTable("materials"));
+			vector<Material> materials;
+			for (Table mat : vt)
+			{
+				materials.push_back(table_material(mat));
+			}
+			mesh->mats = materials;
+			return 0;
+		}
+	}
 
 	int raycast_2D(lua_State *L)
 	{
@@ -2011,6 +2065,7 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
 															  pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
 															  pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
+															  pair<string, lua_function>("get_set_render_poly_mesh", funcoes_ponte::get_set_render_poly_mesh),
 															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
 															  pair<string, lua_function>("set_keyframe", funcoes_ponte::set_keyframe),
 														  }),
@@ -2490,8 +2545,8 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<render_malha>(render_malha());}else{obj->remover_componente<render_malha>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("light", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<fonte_luz>();} }),
-	pair<string, void (*)(objeto_jogo *, bool)>("ui_element", [](objeto_jogo *obj, bool add)
-												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<ui_element>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("render_poly_mesh", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<poly_mesh>(poly_mesh());}else{obj->remover_componente<poly_mesh>();} }),
 
 												
 
@@ -2576,8 +2631,8 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 										  { return obj->tem_componente<render_malha>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("light", [](objeto_jogo *obj)
 										  { return obj->tem_componente<fonte_luz>(); }),
-	pair<string, bool (*)(objeto_jogo *)>("ui_element", [](objeto_jogo *obj)
-										  { return obj->tem_componente<ui_element>(); }),
+	pair<string, bool (*)(objeto_jogo *)>("render_poly_mesh", [](objeto_jogo *obj)
+										  { return obj->tem_componente<poly_mesh>(); }),
 
 };
 int have_component(lua_State *L)

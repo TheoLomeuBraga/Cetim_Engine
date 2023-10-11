@@ -14,6 +14,7 @@ using namespace std;
 #include "render_shader.h"
 #include "camera.h"
 #include "transform.h"
+#include "poly_mesh.h"
 #include "game_object.h"
 
 vector<shared_ptr<objeto_jogo>> lixeira;
@@ -111,8 +112,23 @@ public:
 					objetos_camadas_render[RS->camada].push_back(obj);
 				}
 
-				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+				shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+				if ((PMESH != NULL && PMESH->ligado))
+				{
+					if (objetos_camadas_render_id.size() < (PMESH->camada + 1))
+					{
+						objetos_camadas_render_id.resize(PMESH->camada + 1);
+					}
+					objetos_camadas_render_id[PMESH->camada].push_back(obj->ID);
 
+					if (objetos_camadas_render.size() < (PMESH->camada + 1))
+					{
+						objetos_camadas_render.resize(PMESH->camada + 1);
+					}
+					objetos_camadas_render[PMESH->camada].push_back(obj);
+				}
+
+				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 				if (tf != NULL && obj->get_components_count() > 1)
 				{
 
