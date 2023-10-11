@@ -107,31 +107,15 @@ function new_asset_list_element(type,path)
     }
 end
 
---[[
-function stop_coroutine_if_is_not_loaded(asset_list)
-    for key, value in pairs(asset_list) do
-        wait = true
-        while wait do
-            wait = false
-            while not is_loaded(value.type,value.path,true) do
-                wait = true
-            end
-            if wait then
-                coroutine.yield()
-            end
-        end
-    end
-end
-]]
+
 function stop_coroutine_if_is_not_loaded(asset_list)
 
     for key, value in pairs(asset_list) do
         is_loaded(value.type,value.path,true)
     end
-    
+
     for key, value in pairs(asset_list) do
         while not is_loaded(value.type,value.path,false) do
-            print("yield",is_loaded(value.type,value.path,false))
             coroutine.yield()
         end
     end
@@ -184,3 +168,4 @@ end
 function subtractVectors(a, b)
     return {x = a.x - b.x, y = a.y - b.y, z = a.z - b.z}
 end
+

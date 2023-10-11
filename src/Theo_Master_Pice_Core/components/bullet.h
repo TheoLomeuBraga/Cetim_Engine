@@ -702,35 +702,13 @@ int maxSubSteps = 10;
 
 void atualisar_global_bullet()
 {
-
-    // collisions
-
-    // Tempo::Timer t = Tempo::Timer();
     clean_collisions();
-    // print({"clean_collisions",t.get() * 1000});
-
-    // t = Tempo::Timer();
     get_3D_collisions();
-    // print({"get_3D_collisions",t.get() * 1000});
-
-    // t = Tempo::Timer();
-    // applay_3D_collisions();
-    // print({"applay_3D_collisions",t.get() * 1000});
-
-    // t = Tempo::Timer();
     clean_bu_collisions_no_per_object();
-    // print({"clean_bu_collisions_no_per_object",t.get() * 1000});
-
-    // t = Tempo::Timer();
     get_bu_collisions_no_per_object();
-    // print({"get_bu_collisions_no_per_object",t.get() * 1000});
-
-    
     bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
     dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
-
-    // dynamicsWorld->setGravity(glmToBt(gravidade));
 }
 
 void iniciar_atualisar_global_bullet()
