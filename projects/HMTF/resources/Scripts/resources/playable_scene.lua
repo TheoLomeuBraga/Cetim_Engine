@@ -155,7 +155,7 @@ cenary_builders = {
 
                 ret.components[components.physics_3D].triger = is_triger
                 ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
-                ret.components[components.physics_3D].friction = 1
+                ret.components[components.physics_3D].friction = 2
                 ret.components[components.physics_3D]:set()
             end
         end
@@ -177,17 +177,8 @@ cenary_builders = {
                 ret.components[components.render_mesh]:set()
             end
         end
-
-        if part_data.variables.type == "test_poly_mesh" then
-
-            table.insert(cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].objects,ret.object_ptr)
-            cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
-
-            --add_mesh()
-
-
-
-        elseif part_data.variables.type == "sb" then
+        
+        if part_data.variables.type == "sb" then
 
             add_physics(false,false)
             add_mesh(nil)

@@ -41,7 +41,7 @@ function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, bas
     }
 end
 
-
+--poly_mesh_object = {}
 
 function add_bullet(data)
     table.insert(bullets_list, data)
@@ -57,6 +57,10 @@ function START()
     
     mat.shader = "resources/Shaders/mesh"
     mat.textures[1] = "resources/Textures/white.png"
+
+    --poly_mesh_object = game_object:new(create_object(layers.cenary))
+    --poly_mesh_object:add_component(components.render_poly_mesh)
+
     
 end
 
@@ -129,6 +133,7 @@ function summon_bullet(args)
         bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
         bullet.components[components.transform]:set()
 
+        
         bullet:add_component(components.render_mesh)
         bullet.components[components.render_mesh].layer = 2
         bullet.components[components.render_mesh].meshes_cout = 1
@@ -143,7 +148,7 @@ function summon_bullet(args)
         bullet.components[components.physics_3D].gravity_scale = 0
         bullet.components[components.physics_3D].collision_mesh = nil
         bullet.components[components.physics_3D].triger = true
-        bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 1, } }
+        bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 9, } }
         bullet.components[components.physics_3D].scale = 0.25
         bullet.components[components.physics_3D].friction = 0
         bullet.components[components.physics_3D].get_collision_info = true

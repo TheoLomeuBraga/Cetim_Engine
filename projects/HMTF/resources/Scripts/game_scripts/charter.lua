@@ -444,7 +444,8 @@ function UPDATE()
             end
 
             --shoot
-            if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
+            --if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
+            if inputs.action_1 > 0 then
                 advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
                     "resources/Audio/sounds/shot_3.wav", 0.2, 50, 1, 10, 12,{r=1,g=0,b=0}, false)
                     shoot_timer = 0.5

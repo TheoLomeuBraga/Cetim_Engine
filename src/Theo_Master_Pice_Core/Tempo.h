@@ -59,9 +59,13 @@ namespace Tempo
 			start_time = clock::now();
 		}
 
+		void clear(){
+			start_time = clock::now();
+		}
+
 		double get(){
 			auto current_time = clock::now();
-			return (accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count()) * 1000;
+			return (accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count());
 		}
 	};
 

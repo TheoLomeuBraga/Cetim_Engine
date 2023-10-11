@@ -696,19 +696,31 @@ void get_bu_collisions_no_per_object()
     }
 }
 
-float bullet_passo_tempo;
+
 float bullet_ultimo_tempo = 0;
-int maxSubSteps = 10;
+int maxSubSteps = 1;
+
+
+Tempo::Timer timer;
 
 void atualisar_global_bullet()
 {
+
+    
+
+    float bullet_passo_tempo =+ timer.get() * Tempo::velocidadeTempo;
+
+    
     clean_collisions();
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
-    bullet_passo_tempo = (Tempo::tempo - bullet_ultimo_tempo) * Tempo::velocidadeTempo;
-    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps);
+    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps,bullet_passo_tempo);
     bullet_ultimo_tempo = Tempo::tempo;
+    
+    bullet_passo_tempo = 0;
+    timer.clear();
+
 }
 
 void iniciar_atualisar_global_bullet()
