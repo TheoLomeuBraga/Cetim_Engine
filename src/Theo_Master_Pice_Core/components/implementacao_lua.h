@@ -1669,7 +1669,7 @@ namespace funcoes_ponte
 		{
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
+			shared_ptr<poly_mesh> mesh = obj->pegar_componente<poly_mesh>();
 			ret.setFloat("layer", mesh->camada + 1);
 			ret.setFloat("use_oclusion", mesh->usar_oclusao);
 			vector<Table> meshes;
@@ -1687,6 +1687,14 @@ namespace funcoes_ponte
 				materials.push_back(material_table(m));
 			}
 			ret.setTable("materials", vTable_table(materials));
+
+			ret.setTable("objects", vTable_table(meshes));
+			vector<string> objects;
+			for (shared_ptr<objeto_jogo> obj : mesh->objs)
+			{
+				objects.push_back(ponteiro_string(obj.get()));
+			}
+			ret.setTable("objects", vString_table(objects));
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1695,7 +1703,7 @@ namespace funcoes_ponte
 
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-			shared_ptr<render_malha> mesh = obj->pegar_componente<render_malha>();
+			shared_ptr<poly_mesh> mesh = obj->pegar_componente<poly_mesh>();
 			mesh->camada = t.getFloat("layer") - 1;
 			mesh->usar_oclusao = t.getFloat("use_oclusion");
 			vector<Table> vt = table_vTable(t.getTable("meshes"));
@@ -1712,6 +1720,11 @@ namespace funcoes_ponte
 				materials.push_back(table_material(mat));
 			}
 			mesh->mats = materials;
+			vector<shared_ptr<objeto_jogo>> objects;
+			for(string s : table_vString(t.getTable("objects"))){
+				objects.push_back(string_ponteiro<objeto_jogo>(s)->get_this_object());
+			}
+			mesh->objs = objects;
 			return 0;
 		}
 	}
