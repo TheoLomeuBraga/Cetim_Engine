@@ -329,10 +329,15 @@ public:
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL)
         {
-            transform.setOrigin(glmToBt(tf->pos));
-            transform.setRotation(btQuaternion(tf->quater.x, tf->quater.y, tf->quater.z, tf->quater.w));
-            position = tf->pos;
-            quaternion = tf->quater;
+            //transform.setOrigin(glmToBt(tf->pos));
+            //transform.setRotation(btQuaternion(tf->quater.x, tf->quater.y, tf->quater.z, tf->quater.w));
+            //position = tf->pos;
+            //quaternion = tf->quater;
+
+            position = tf->pegar_pos_global();
+            quaternion = tf->pegar_qua_global();
+            transform.setOrigin(glmToBt(position));
+            transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
         }
 
         if (gatilho)

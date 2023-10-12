@@ -178,7 +178,11 @@ cenary_builders = {
             end
         end
         
-        if part_data.variables.type == "sb" then
+        if part_data.variables.type == "test_poly_mesh" then
+            
+            table.insert(cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].objects,ret.object_ptr)
+
+        elseif part_data.variables.type == "sb" then
 
             add_physics(false,false)
             add_mesh(nil)
@@ -305,6 +309,7 @@ cenary_builders = {
             ret.parts_list[key] = game_object:new(value)
         end
 
+        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
         cenary_builders.scene_poly_meshes = {}
 
         return ret

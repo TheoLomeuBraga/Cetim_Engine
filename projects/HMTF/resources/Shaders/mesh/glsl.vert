@@ -9,20 +9,22 @@ out Vertex {
    vec2 UV;
 } vert_out;
 
-uniform bool ui;
+uniform bool ui, poly_mesh;
 uniform mat4 projection, vision, transform;
-
-
 
 void main() {
 
    vert_out.POS = vec4(position, 1);
    vert_out.UV = uv;
 
-   if(ui) {
-      gl_Position = transform * vert_out.POS;
+   if(poly_mesh) {
+
    } else {
-      gl_Position = (projection * vision * transform) * vert_out.POS;
+      if(ui) {
+         gl_Position = transform * vert_out.POS;
+      } else {
+         gl_Position = (projection * vision * transform) * vert_out.POS;
+      }
    }
 
 }

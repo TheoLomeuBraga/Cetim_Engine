@@ -1228,15 +1228,13 @@ public:
 			shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
 			shared_ptr<camera> ca = cam->pegar_componente<camera>();
 
-			//criar_oclusion_querie(obj);
+			// criar_oclusion_querie(obj);
 
 			if (PMESH->ligado)
 			{
-				
+
 				for (int i = 0; i < std::min<float>((int)PMESH->mats.size(), (int)PMESH->malhas.size()); i++)
 				{
-
-					
 
 					shared_ptr<malha> ma = PMESH->malhas[i];
 					Material mat = PMESH->mats[i];
@@ -1246,14 +1244,37 @@ public:
 					}
 					if (ma != NULL)
 					{
-						// aplicar material
-						unsigned int shader_s = pegar_shader(mat.shad);
+
+						// set up
+						unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 						glUseProgram(shader_s);
 
-						// apply_transform(shader_s, tf, ca);
-						// ajustar
 						glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 						glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma.get()].vbo);
+						glBindBuffer(GL_ARRAY_BUFFER, malhas[ma.get()].malha_buffer);
+
+						for (int i = 0; i < 4; i++)
+						{
+							glEnableVertexAttribArray(i);
+						}
+
+						// posição
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
+						// uv
+						glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, uv)));
+						// normal
+						glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
+						// cor
+						glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
+						
+						
+
+						// render
+						shader_s = pegar_shader(mat.shad);
+						glUseProgram(shader_s);
+
 						apply_material(shader_s, mat);
 
 						for (shared_ptr<objeto_jogo> obj : PMESH->objs)
@@ -1267,8 +1288,14 @@ public:
 							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 
-							
-							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+							//selecionar_desenhar_malha(ma.get(),GL_TRIANGLES );
+
+							glDrawElements(
+								GL_TRIANGLES,					 // mode
+								malhas[ma.get()].tamanho_indice, // count
+								GL_UNSIGNED_INT,				 // type
+								(void *)0						 // element array buffer offset
+							);
 						}
 					}
 				}
