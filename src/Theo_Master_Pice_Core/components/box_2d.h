@@ -118,6 +118,7 @@ public:
 	float densidade = 1, atrito = 1;
 	bool gatilho = false;
 	char dinamica = estatico;
+	float elasticidade = 0;
 	b2BodyDef BodyDef;
 	b2FixtureDef fixtureDef;
 	vec2 escala = vec2(1, 1);
@@ -175,6 +176,7 @@ public:
 		}
 
 		BodyDef.fixedRotation = !(rotacionar && dinamica == dinamico);
+		
 
 		// b2FixtureDef
 		if (forma == caixa)
@@ -223,6 +225,7 @@ public:
 		}
 
 		fixtureDef.density = densidade;
+		fixtureDef.restitution = elasticidade;
 		fixtureDef.friction = atrito;
 		fixtureDef.isSensor = gatilho;
 

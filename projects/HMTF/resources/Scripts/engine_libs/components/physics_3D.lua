@@ -31,9 +31,10 @@ physics_3D_component.object_ptr = nil
 physics_3D_component.scale = { x = 1, y = 1, z = 1 }
 physics_3D_component.boady_dynamic = boady_dynamics.static
 physics_3D_component.collision_shape = collision_shapes.cube
-physics_3D_component.rotate_X = true
-physics_3D_component.rotate_Y = true
-physics_3D_component.rotate_Z = true
+physics_3D_component.rotate_x = true
+physics_3D_component.rotate_y = true
+physics_3D_component.rotate_z = true
+physics_3D_component.elasticity = 0
 physics_3D_component.triger = false
 physics_3D_component.friction = 1
 physics_3D_component.density = 1
@@ -66,9 +67,10 @@ function physics_3D_component:clean()
     self.scale = { x = 1, y = 1, z = 1 }
     self.boady_dynamic = boady_dynamics.static
     self.collision_shape = collision_shapes.cube
-    self.rotate_X = true
-    self.rotate_Y = true
-    self.rotate_Z = true
+    self.rotate_x = true
+    self.rotate_y = true
+    self.rotate_z = true
+    self.elasticity = 0
     self.triger = false
     self.friction = 1
     self.density = 1
@@ -84,9 +86,10 @@ function physics_3D_component:get()
     self.scale = deepcopyjson(j.scale)
     self.boady_dynamic = j.boady_dynamic
     self.collision_shape = j.collision_shape
-    self.rotate_X = j.rotate_X > 0
-    self.rotate_Y = j.rotate_Y > 0
-    self.rotate_Z = j.rotate_Z > 0
+    self.rotate_x = j.rotate_x > 0
+    self.rotate_y = j.rotate_y > 0
+    self.rotate_z = j.rotate_z > 0
+    self.elasticity = j.elasticity
     self.triger = j.triger > 0
     self.friction = j.friction
     self.density = j.density

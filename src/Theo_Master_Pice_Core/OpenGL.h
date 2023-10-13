@@ -702,6 +702,15 @@ public:
 
 	void apply_light(unsigned int shader_s)
 	{
+		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
+		for(size_t i = 0; i < light_size; i++){
+
+		}
+
+		for(size_t i = light_size; i < 99; i++){
+			
+		}
+
 	}
 
 	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
@@ -1246,7 +1255,7 @@ public:
 					{
 
 						// set up
-						unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
+						unsigned int shader_s = pegar_shader(mat.shad);
 						glUseProgram(shader_s);
 
 						glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
@@ -1272,7 +1281,6 @@ public:
 						
 
 						// render
-						shader_s = pegar_shader(mat.shad);
 						glUseProgram(shader_s);
 
 						apply_material(shader_s, mat);

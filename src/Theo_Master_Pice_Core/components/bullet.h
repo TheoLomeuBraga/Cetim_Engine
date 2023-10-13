@@ -170,6 +170,7 @@ public:
     vec3 escala = vec3(1, 1, 1);
     float escala_gravidade = 1;
     bool rotacionarX = true, rotacionarY = true, rotacionarZ = true;
+    float elasticidade = 0;
     float gravity_force = 1;
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
@@ -361,6 +362,7 @@ public:
                 btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
                 bt_obj_rb = new btRigidBody(CI);
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
+                bt_obj_rb->setRestitution(elasticidade);
                 bt_obj_rb->setGravity(btVector3(0, 0, 0));
                 bt_obj_rb->setFriction(atrito);
                 dynamicsWorld->addRigidBody(bt_obj_rb);

@@ -30,6 +30,7 @@ physics_2D_component.boady_dynamic = boady_dynamics.static
 physics_2D_component.collision_shape = collision_shapes.tile
 physics_2D_component.gravity_scale = 1
 physics_2D_component.rotate = true
+physics_2D_component.elasticity = 0
 physics_2D_component.triger = false
 physics_2D_component.friction = 1
 physics_2D_component.density = 1
@@ -46,6 +47,7 @@ function physics_2D_component:clean()
     self.collision_shape = collision_shapes.tile
     self.gravity_scale = 1
     self.rotate = true
+    self.elasticity = 0
     self.triger = false
     self.friction = 1
     self.density = 1
@@ -62,6 +64,7 @@ function physics_2D_component:get()
     self.collision_shape = j.collision_shape
     self.gravity_scale = j.gravity_scale
     self.rotate = j.rotate > 0
+    self.elasticity = j.elasticity
     self.triger = j.triger > 0
     self.friction = j.friction
     self.density = j.density

@@ -1454,6 +1454,7 @@ namespace funcoes_ponte
 			}
 			ret.setTable("objs_touching", vString_table(objs_touching));
 			ret.setTable("collision_layer", info_camada_table(b2d->camada));
+			ret.setFloat("elasticity", b2d->elasticidade);
 			vector<Table> vertex;
 			for (vec2 v2 : b2d->vertices)
 			{
@@ -1483,6 +1484,7 @@ namespace funcoes_ponte
 			b2d->densidade = t.getFloat("density");
 			b2d->escala_gravidade = t.getFloat("gravity_scale");
 			b2d->camada = table_info_camada(t.getTable("collision_layer"));
+			b2d->elasticidade = t.getFloat("elasticity");
 			vector<vec2> vertex;
 			for (Table tvec2 : table_vTable(t.getTable("vertex")))
 			{
@@ -1806,9 +1808,11 @@ namespace funcoes_ponte
 			ret.setFloat("boady_dynamic", bu->dinamica);
 			ret.setFloat("collision_shape", bu->forma);
 
-			ret.setFloat("rotate_X", bu->rotacionarX);
-			ret.setFloat("rotate_Y", bu->rotacionarY);
-			ret.setFloat("rotate_Z", bu->rotacionarZ);
+			ret.setFloat("rotate_x", bu->rotacionarX);
+			ret.setFloat("rotate_y", bu->rotacionarY);
+			ret.setFloat("rotate_z", bu->rotacionarZ);
+
+			ret.setFloat("elasticity", bu->elasticidade);
 
 			ret.setFloat("triger", bu->gatilho);
 			ret.setFloat("friction", bu->atrito);
@@ -1849,10 +1853,12 @@ namespace funcoes_ponte
 			bu->dinamica = t.getFloat("boady_dynamic");
 			bu->forma = (char)t.getFloat("collision_shape");
 
-			bu->rotacionarX = t.getFloat("rotate_X");
-			bu->rotacionarY = t.getFloat("rotate_Y");
-			bu->rotacionarZ = t.getFloat("rotate_Z");
+			bu->rotacionarX = t.getFloat("rotate_x");
+			bu->rotacionarY = t.getFloat("rotate_y");
+			bu->rotacionarZ = t.getFloat("rotate_z");
 
+			bu->elasticidade = t.getFloat("elasticity");
+			
 			bu->gatilho = t.getFloat("triger");
 			bu->atrito = t.getFloat("friction");
 			bu->densidade = t.getFloat("density");

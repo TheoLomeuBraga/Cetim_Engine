@@ -152,9 +152,9 @@ function START()
 
     this_object:add_component(components.physics_3D)
     this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-    this_object.components[components.physics_3D].rotate_X = false
-    this_object.components[components.physics_3D].rotate_Y = false
-    this_object.components[components.physics_3D].rotate_Z = false
+    this_object.components[components.physics_3D].rotate_x = false
+    this_object.components[components.physics_3D].rotate_y = false
+    this_object.components[components.physics_3D].rotate_z = false
     this_object.components[components.physics_3D].friction = 0
     this_object.components[components.physics_3D].gravity_scale = 0
     this_object.components[components.physics_3D].triger = false

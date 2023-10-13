@@ -21,10 +21,8 @@ struct Light {
   vec3 position;
   vec3 direction;
   vec3 color;
-  float streight;
-  float angle;
-  
-  
+  float intensity;
+  float angle;  
 } light[99];
 
 layout(location = 0) in struct Vertex
