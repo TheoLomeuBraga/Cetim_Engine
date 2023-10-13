@@ -1277,6 +1277,8 @@ public:
 
 						apply_material(shader_s, mat);
 
+						unsigned int ui = glGetUniformLocation(shader_s, "ui"),transform = glGetUniformLocation(shader_s, "transform");
+
 						for (shared_ptr<objeto_jogo> obj : PMESH->objs)
 						{
 							shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
@@ -1284,9 +1286,9 @@ public:
 							{
 								continue;
 							}
-							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+							glUniform1i(ui, tf->UI);
 							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+							glUniformMatrix4fv(transform, 1, GL_FALSE, &ajust[0][0]);
 
 							//selecionar_desenhar_malha(ma.get(),GL_TRIANGLES );
 
