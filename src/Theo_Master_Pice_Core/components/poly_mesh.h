@@ -6,6 +6,7 @@ using namespace std;
 
 #include "RecursosT.h"
 #include "game_object.h"
+#include "transform.h"
 
 class poly_mesh : public componente
 {
@@ -18,7 +19,7 @@ public:
 	vector<shared_ptr<malha>> malhas;
 	vector<Material> mats;
 	
-	vector<shared_ptr<objeto_jogo>> objs;
+	vector<shared_ptr<transform_>> transforms;
 
 	poly_mesh() {}
 	~poly_mesh() {}

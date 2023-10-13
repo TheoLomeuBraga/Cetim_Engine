@@ -1690,9 +1690,9 @@ namespace funcoes_ponte
 
 			ret.setTable("objects", vTable_table(meshes));
 			vector<string> objects;
-			for (shared_ptr<objeto_jogo> obj : mesh->objs)
+			for (shared_ptr<transform_> tf : mesh->transforms)
 			{
-				objects.push_back(ponteiro_string(obj.get()));
+				objects.push_back(ponteiro_string(tf->esse_objeto.get()));
 			}
 			ret.setTable("objects", vString_table(objects));
 			lua_pushtable(L, ret);
@@ -1720,11 +1720,11 @@ namespace funcoes_ponte
 				materials.push_back(table_material(mat));
 			}
 			mesh->mats = materials;
-			vector<shared_ptr<objeto_jogo>> objects;
+			vector<shared_ptr<transform_>> objects;
 			for(string s : table_vString(t.getTable("objects"))){
-				objects.push_back(string_ponteiro<objeto_jogo>(s)->get_this_object());
+				objects.push_back(string_ponteiro<objeto_jogo>(s)->pegar_componente<transform_>());
 			}
-			mesh->objs = objects;
+			mesh->transforms = objects;
 			return 0;
 		}
 	}

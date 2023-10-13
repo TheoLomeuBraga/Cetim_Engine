@@ -1279,10 +1279,9 @@ public:
 
 						unsigned int ui = glGetUniformLocation(shader_s, "ui"),transform = glGetUniformLocation(shader_s, "transform");
 
-						for (shared_ptr<objeto_jogo> obj : PMESH->objs)
+						for (shared_ptr<transform_> tf : PMESH->transforms)
 						{
 							
-							shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 
 
