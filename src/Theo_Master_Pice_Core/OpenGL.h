@@ -1281,23 +1281,21 @@ public:
 
 						for (shared_ptr<objeto_jogo> obj : PMESH->objs)
 						{
+							
 							shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-							if (tf == NULL)
-							{
-								continue;
-							}
-							glUniform1i(ui, tf->UI);
 							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+
+
+							glUniform1i(ui, tf->UI);
 							glUniformMatrix4fv(transform, 1, GL_FALSE, &ajust[0][0]);
-
-							//selecionar_desenhar_malha(ma.get(),GL_TRIANGLES );
-
+							
 							glDrawElements(
 								GL_TRIANGLES,					 // mode
 								malhas[ma.get()].tamanho_indice, // count
 								GL_UNSIGNED_INT,				 // type
 								(void *)0						 // element array buffer offset
 							);
+
 						}
 					}
 				}

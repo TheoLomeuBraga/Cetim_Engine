@@ -360,10 +360,7 @@ public:
 	{
 		for (shared_ptr<objeto_jogo> obj : lista_objetos)
 		{
-			if (obj != NULL)
-			{
-				obj->atualisar();
-			}
+			obj->atualisar();
 		}
 	}
 

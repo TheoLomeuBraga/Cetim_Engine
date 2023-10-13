@@ -81,6 +81,7 @@ public:
 
 	void limpar_lixo()
 	{
+		/**/
 		map<string, shared_ptr<componente>> componentesB;
 		for (pair<string, shared_ptr<componente>> p : componentes)
 		{
@@ -95,6 +96,7 @@ public:
 			filhosB[i] = filhos[i];
 		}
 		filhos.swap(filhosB);
+		
 	}
 
 	void desconectar_componentes()
@@ -136,7 +138,7 @@ public:
 	template <typename X>
 	void adicionar_componente(string nome, X comp)
 	{
-		limpar_lixo();
+		//limpar_lixo();
 		comp.esse_objeto = esse_objeto;
 		if (componentes.find(nome) == componentes.end())
 		{
@@ -146,6 +148,7 @@ public:
 			{
 				componentes[nome]->iniciar();
 			}
+
 		}
 	}
 	template <typename X>
@@ -165,7 +168,6 @@ public:
 		string nome_tipo = pegar_tipo_variavel<X>();
 		if (componentes.find(nome_tipo) != componentes.end())
 		{
-			// return componentes[nome_tipo];
 			return dynamic_pointer_cast<X>(componentes[nome_tipo]);
 		}
 		else
@@ -190,7 +192,7 @@ public:
 
 	void remover_componente(string s)
 	{
-		limpar_lixo();
+		//limpar_lixo();
 		if (componentes.find(s) != componentes.end())
 		{
 			if (em_cena)
@@ -284,7 +286,7 @@ public:
 
 		if (em_cena)
 		{
-			limpar_lixo();
+
 
 			map<string, shared_ptr<componente>> componentes_copy = componentes;
 
