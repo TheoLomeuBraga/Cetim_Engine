@@ -4,7 +4,13 @@ require("components.base_component")
 require("components.component_index")
 
 function get_set_global_volume(volume)
-    c_get_set_global_volume(volume)
+    
+    if volume == nil then
+        return c_get_set_global_volume()
+    else
+        c_get_set_global_volume(volume)
+    end
+    
 end
 
 function set_lisener_object(obj)

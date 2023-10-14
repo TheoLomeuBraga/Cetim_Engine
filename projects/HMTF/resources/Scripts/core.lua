@@ -263,6 +263,10 @@ function UPDATE()
     end
     keep_unloading()
 
+    if keys_axis:get_input(input_devices.keyboard, "r") == 1 then
+        load_sceane(sceane_name)
+    end
+
     if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
         window:close()
     end

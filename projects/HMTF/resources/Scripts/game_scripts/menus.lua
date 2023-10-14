@@ -1,3 +1,4 @@
+
 require("components.extras")
 require("components.component_all")
 require("components.component_index")
@@ -182,17 +183,15 @@ function call_config_menu()
     style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
     config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 }, { x = 0.2, y = 0.2, z = 2 }, 5, style, "<", 0.075, "resources/Textures/white.png", save_config_and_exit_to_pause_menu, ui_category.button)
 
-
+    
     style.text_color = { r = 0, g = 1, b = 0, a = 1 }
     config_menu_objects.volume_controler_button_decrease = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png", decrease_volume, ui_category.button)
     config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -0.8, y = 0.5, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 5, style, "volume: " .. get_set_global_volume(), 0.075, "resources/Textures/null.png", set_volume, ui_category.input_fild)
     config_menu_objects.volume_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0.5, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png", increase_volume, ui_category.button)
-
     config_menu_objects.sensitivity_controler_button_decrease = create_ui(this_object.object_ptr, { x = -1, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png", decrease_sensitivity, ui_category.button)
     config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 }, { x = 1.6, y = 0.25,z = 2 }, 5, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05, "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
     config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png", increase_sensitivity, ui_category.button)
     local is_full_screen = "false"
-    
     
     
     if window.full_screen then
@@ -285,9 +284,8 @@ function UPDATE()
         if tablelength(config_menu_objects) == 0 then
             call_config_menu()
         end
-
+        
         config_menu_objects.volume_controler.text = "volume: " .. get_set_global_volume()
-
         config_menu_objects.mouse_sensitivity.text = "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity")
 
         window:get()
@@ -306,6 +304,7 @@ function UPDATE()
         
     end
 
+    
     
     
 

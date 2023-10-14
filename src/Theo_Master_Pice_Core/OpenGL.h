@@ -702,7 +702,9 @@ public:
 
 	void apply_light(unsigned int shader_s)
 	{
+		
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
+
 		for(size_t i = 0; i < light_size; i++){
 
 		}
@@ -819,6 +821,7 @@ public:
 				apply_transform(shader_s, tf, ca);
 
 				apply_material(shader_s, rs->mat);
+				apply_light(shader_s);
 
 				// render
 				glDisable(GL_CULL_FACE);
@@ -1224,6 +1227,7 @@ public:
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 							apply_material(shader_s, mat);
+							apply_light(shader_s);
 
 							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 						}
@@ -1284,6 +1288,7 @@ public:
 						glUseProgram(shader_s);
 
 						apply_material(shader_s, mat);
+						apply_light(shader_s);
 
 						unsigned int ui = glGetUniformLocation(shader_s, "ui"),transform = glGetUniformLocation(shader_s, "transform");
 

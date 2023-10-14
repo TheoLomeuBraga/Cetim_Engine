@@ -2,7 +2,9 @@ require("components.extras")
 require("objects.game_object")
 require("components.transform")
 require("components.render_shader")
+require("components.audio_source")
 require("short_cuts.create_render_shader")
+
 
 require("objects.input")
 require("objects.window")

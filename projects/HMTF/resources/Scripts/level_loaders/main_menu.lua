@@ -8,6 +8,7 @@ require("objects.global_data")
 require("objects.window")
 require("short_cuts.create_camera")
 require("objects.global_data")
+require("components.component_all")
 
 
 local menu = {
