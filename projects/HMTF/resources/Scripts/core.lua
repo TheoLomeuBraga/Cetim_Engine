@@ -254,6 +254,7 @@ function count_fps:update()
     end
 end
 
+local reload_last_frame = false
 function UPDATE()
 
     count_fps:update()
@@ -263,9 +264,12 @@ function UPDATE()
     end
     keep_unloading()
 
-    if keys_axis:get_input(input_devices.keyboard, "r") == 1 then
+    local last_frame = keys_axis:get_input(input_devices.keyboard, "r") == 1
+
+    if not reload_last_frame and last_frame then
         load_sceane(sceane_name)
     end
+    reload_last_frame = last_frame
 
     if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
         window:close()
