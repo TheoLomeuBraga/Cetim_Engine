@@ -39,6 +39,9 @@ using json = nlohmann::json;
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
+#include <thread>
+#include <mutex>
+
 namespace ManuseioDados
 {
 
@@ -176,6 +179,7 @@ namespace ManuseioDados
 	}
 
 	mapeamento_assets<fonte> mapeamento_fontes;
+	std::mutex mapeamento_fontes_mtx;
 
 	shared_ptr<fonte> carregar_fonte(string lugar)
 	{
@@ -183,7 +187,7 @@ namespace ManuseioDados
 
 		if (file)
 		{
-
+			std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
 			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
 			{
 				add_loading_request(lugar);
@@ -257,6 +261,7 @@ namespace ManuseioDados
 	ivec2 texture_max_size(512, 512);
 
 	mapeamento_assets<imagem> mapeamento_imagems;
+	std::mutex mapeamento_imagems_mtx;
 
 	shared_ptr<imagem> carregar_Imagem(string local)
 	{
@@ -268,6 +273,7 @@ namespace ManuseioDados
 
 		if (Existe(local))
 		{
+			std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
 			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				if (obterExtensaoArquivo(local) == "svg")
@@ -393,11 +399,13 @@ namespace ManuseioDados
 	}
 
 	mapeamento_assets<tile_set> mapeamento_tilesets;
+	std::mutex mapeamento_tilesets_mtx;
 	shared_ptr<tile_set> carregar_tile_set(string local)
 	{
 		string pasta_imagems = pegar_pasta_arquivo(local);
 		if (Existe(local.c_str()))
 		{
+			std::lock_guard<std::mutex> lock(mapeamento_tilesets_mtx);
 			if (mapeamento_tilesets.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -499,12 +507,13 @@ namespace ManuseioDados
 	}
 
 	mapeamento_assets<tile_map_info> mapeamento_tile_map_infos;
+	std::mutex mapeamento_tile_map_infos_mtx;
 
 	shared_ptr<tile_map_info> carregar_info_tile_map(string local)
 	{
 		if (Existe(local.c_str()))
 		{
-
+			std::lock_guard<std::mutex> lock(mapeamento_tile_map_infos_mtx);
 			if (mapeamento_tile_map_infos.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -570,6 +579,7 @@ namespace ManuseioDados
 	}
 
 	mapeamento_assets<cena_3D> cenas_3D;
+	std::mutex cenas_3D_mtx;
 
 	vec3 decode_obj_f(string s)
 	{
@@ -620,6 +630,7 @@ namespace ManuseioDados
 		bool s;
 		string usemtl;
 		vector<unsigned int> f;
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL)
 		{
 			while (getline(arquivo_obj, linha))
@@ -865,6 +876,7 @@ namespace ManuseioDados
 
 		Full_Map_Info map_info = read_map_file(local);
 
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		return cenas_3D.aplicar(local, ret);
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
@@ -967,6 +979,7 @@ namespace ManuseioDados
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 		cena_3D ret;
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
 			add_loading_request(local);
