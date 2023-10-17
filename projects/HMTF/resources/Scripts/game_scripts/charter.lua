@@ -22,6 +22,7 @@ require("math")
 
 local this_object = {}
 camera = {}
+camera_ptr = ""
 check_top = {}
 check_down = {}
 
@@ -61,7 +62,6 @@ function create_arm_cannon()
     arm_cannon_sceane_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
     local entity_data = cenary_builders.entity(camera.object_ptr, 4, arm_cannon_sceane_data,
         "resources/Shaders/explosive_vertex_mesh", false, false)
-    --"resources/Shaders/explosive_vertex_mesh"
     cannon.obj = deepcopy(entity_data.obj)
     cannon.part_list = deepcopy(entity_data.parts_list)
     for key, value in pairs(cannon.part_list) do
@@ -136,6 +136,7 @@ function START()
     core_obj = game_object:new(global_data:get("core_object_ptr"))
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    camera_ptr = camera.object_ptr
     camera:add_component(components.audio_source)
     set_lisener_object(camera.object_ptr)
 
