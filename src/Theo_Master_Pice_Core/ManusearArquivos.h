@@ -184,10 +184,10 @@ namespace ManuseioDados
 	shared_ptr<fonte> carregar_fonte(string lugar)
 	{
 		ifstream file(lugar);
-
+		
+		std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
 		if (file)
 		{
-			std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
 			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
 			{
 				add_loading_request(lugar);
@@ -271,9 +271,11 @@ namespace ManuseioDados
 
 		unsigned char *data;
 
+		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+
 		if (Existe(local))
 		{
-			std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+			
 			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				if (obterExtensaoArquivo(local) == "svg")
@@ -403,9 +405,12 @@ namespace ManuseioDados
 	shared_ptr<tile_set> carregar_tile_set(string local)
 	{
 		string pasta_imagems = pegar_pasta_arquivo(local);
+
+		std::lock_guard<std::mutex> lock(mapeamento_tilesets_mtx);
+
 		if (Existe(local.c_str()))
 		{
-			std::lock_guard<std::mutex> lock(mapeamento_tilesets_mtx);
+			
 			if (mapeamento_tilesets.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -511,9 +516,12 @@ namespace ManuseioDados
 
 	shared_ptr<tile_map_info> carregar_info_tile_map(string local)
 	{
+
+		std::lock_guard<std::mutex> lock(mapeamento_tile_map_infos_mtx);
+		
 		if (Existe(local.c_str()))
 		{
-			std::lock_guard<std::mutex> lock(mapeamento_tile_map_infos_mtx);
+			
 			if (mapeamento_tile_map_infos.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
