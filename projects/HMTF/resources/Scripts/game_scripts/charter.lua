@@ -171,7 +171,7 @@ function START()
 
     this_object:add_component(components.audio_source)
 
-    create_arm_cannon()
+    --create_arm_cannon()
 
     --start_arm_cannon_animation("normal",1,false)
     --start_arm_cannon_animation("open",1,false)
@@ -256,7 +256,7 @@ function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity,c
 
 
 
-    restart_arm_cannon_animation()
+    --restart_arm_cannon_animation()
 end
 
 function aproche_to_zero(num, speed)
@@ -446,6 +446,8 @@ function UPDATE()
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)
             end
 
+            --[[
+
             --shoot
             --if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
             --if inputs.action_1 > 0 then
@@ -458,6 +460,7 @@ function UPDATE()
             shoot_timer = shoot_timer - time.delta
 
             --animate
+            
             if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name == "recoil" and animation_state.finish) then
                 if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down and not (inputs.action_2 > 0) then
                     start_arm_cannon_animation("walk", 1, true)
@@ -467,6 +470,7 @@ function UPDATE()
                     end
                 end
             end
+            ]]
         else
             this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
         end
@@ -478,7 +482,7 @@ function UPDATE()
         this_object.components[components.physics_3D]:get()
     end
 
-    play_arm_cannon_animation()
+    --play_arm_cannon_animation()
 end
 
 function COLLIDE(collision_info)

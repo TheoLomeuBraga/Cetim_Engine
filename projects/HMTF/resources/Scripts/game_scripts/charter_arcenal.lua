@@ -102,11 +102,14 @@ function get_charter_data()
     hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_top")
     hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_down")
     movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+
 end
 
 function UPDATE()
 
     get_charter_data()
+
+    
 
     run_animation()
 
