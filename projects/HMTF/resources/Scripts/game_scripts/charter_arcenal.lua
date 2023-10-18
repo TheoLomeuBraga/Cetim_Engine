@@ -52,6 +52,16 @@ avaliable_wepons = {"test_wepon",}
 
 local current_animation = nil
 
+function start_animation()
+    
+end
+
+function run_animation()
+    if current_animation ~= nil then
+        
+    end
+end
+
 function select_wepon(wepon)
     
     local wepon_data = get_scene_3D(wepon.file)
@@ -88,11 +98,17 @@ local hit_top = false
 local hit_down = false
 local movement_inpulse = {}
 
-function UPDATE()
-
+function get_charter_data()
     hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_top")
     hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_down")
     movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+end
+
+function UPDATE()
+
+    get_charter_data()
+
+    run_animation()
 
 end
 
