@@ -155,7 +155,12 @@ function summon_bullet(args)
         bullet.components[components.physics_3D]:set()
 
         
-        
+        print(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
+        args.base_impulse, args.target,args.friendly,args.color, args.behavior)
+
+        deepprint(args.color)
+        deepprint(args.mesh)
+
         local bullet_data = bullets_data:new(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
             args.base_impulse, args.target,args.friendly,args.color, args.behavior)
         add_bullet(bullet_data)

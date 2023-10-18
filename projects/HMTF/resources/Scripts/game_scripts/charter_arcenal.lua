@@ -2,10 +2,8 @@ require("definitions")
 require("components.extras")
 require("components.component_all")
 require("components.component_index")
-
 require("objects.game_object")
 require("objects.time")
-
 require("objects.material")
 require("objects.global_data")
 require("objects.vectors")
@@ -14,6 +12,7 @@ require("objects.gravity")
 require("objects.scene_3D")
 require("resources.playable_scene")
 require("short_cuts.create_collision")
+require("resources.bullet_api")
 
 require("math")
 
@@ -34,7 +33,12 @@ local selected_wepom = {
     projectile_speed = 50,
     projectile_count = 12,
     spred = 1,
+    speed = 1,
     hit_scan = false,
+
+    damage = 1,
+    life_time = 0.5,
+    mesh = { file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
 }
 
 local wepom_list = {
@@ -44,12 +48,18 @@ local wepom_list = {
         fire_rate = 0.1,
         projectile_speed = 50,
         projectile_count = 12,
-        spred = 1,
+        spred = 0.1,
+        speed = 40,
         hit_scan = false,
+        bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
+        damage = 1,
+        life_time = 0.5,
+        mesh = { file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
     }
 }
+next_shoot_timer = 0
 
-avaliable_wepons = {"test_wepon",}
+avaliable_wepons = { "test_wepon", }
 
 local current_animation_state = {
     name = "",
@@ -60,32 +70,31 @@ local current_animation_state = {
 }
 
 function start_animation()
-    
+
 end
 
 function run_animation()
     if current_animation_state ~= nil and current_animation_state.name ~= "" then
-        time:get()
         current_animation_state.time = current_animation_state.time + time.delta
         if current_animation_state.time > current_animation_state.duration then
             if current_animation_state.loop then
                 current_animation_state.time = 0
-            else 
+            else
                 current_animation_state.time = current_animation_state.duration
                 current_animation_state.finish = true
             end
         end
-        
-        
-        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,current_animation_state.time)
 
+
+        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,
+            current_animation_state.time)
     end
 end
 
 function select_wepon(wepon)
-    
     local wepon_data = get_scene_3D(wepon.file)
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data,"resources/Shaders/explosive_vertex_mesh", false, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",
+        false, false)
 
     current_animation_state = {
         name = "pick_up",
@@ -95,7 +104,7 @@ function select_wepon(wepon)
         finish = false,
         duration = wepon_data.animations["pick_up"].duration,
     }
-    
+
     selected_wepom = {
         file = wepon.file,
         data = wepon_data,
@@ -103,45 +112,138 @@ function select_wepon(wepon)
         part_list = objects.parts_list,
         part_ptr_list = objects.parts_ptr_list,
         animations = wepon_data.animations,
-    
+
+        shoot_sound = "resources/Audio/sounds/shot_3.wav",
+
         automatic = wepon.automatic,
         fire_rate = wepon.fire_rate,
         projectile_speed = wepon.projectile_speed,
         projectile_count = wepon.projectile_count,
         spred = wepon.spred,
+        speed = wepon.speed,
         hit_scan = wepon.hit_scan,
+        bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
+
+        damage = wepon.damage,
+        life_time = wepon.life_time,
+        mesh = deepcopy(wepon.mesh),
     }
-    
 end
 
 function START()
     this_object = game_object:new(this_object_ptr)
-    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","camera_ptr"))
+    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter",
+        "camera_ptr"))
+    this_object:add_component(components.audio_source)
+
     select_wepon(wepom_list.test_wepon)
 end
 
+local movement_inpulse = {x=0,y=0,z=0}
+
 function shoot()
+    print("shoot")
+    next_shoot_timer = selected_wepom.fire_rate
+
+    current_animation_state = {
+        name = "shoot",
+        loop = false,
+        speed = 1,
+        time = 0,
+        finish = false,
+        duration = selected_wepom.data.animations["shoot"].duration,
+    }
+
+    camera.components[components.audio_source].path = selected_wepom.shoot_sound
+    camera.components[components.audio_source].volume = 20
+    camera.components[components.audio_source]:set()
+    --selected_wepom.bullet_origens
+
+    local bullet_start_points = {}
+    for i = 1, selected_wepom.projectile_count, 1 do
+        local a = i
+        if i > #selected_wepom.bullet_origens then
+            a = (i % #selected_wepom.bullet_origens) + 1
+        end
+        bullet_start_points[a] = camera.components[components.transform]:get_global_position(
+        selected_wepom.bullet_origens.x, selected_wepom.bullet_origens.y, selected_wepom.bullet_origens.z)
+    end
+
+    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
+    local ray_end = camera.components[components.transform]:get_global_position(0, 0, 1000)
+    local hit = false
+    local hit_info = {}
+    hit, hit_info = raycast_3D(ray_start, ray_end)
+    local target = deepcopy(ray_end)
+
+    local normalize = function(vec3)
+        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
+        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
+    end
+
+    local spred_directions = {}
+    if selected_wepom.spred ~= 0 then
+        for i = 1, selected_wepom.projectile_count, 1 do
+            spred_directions[i] = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 1)
+        end
+    else
+        for i = 1, selected_wepom.projectile_count, 1 do
+            spred_directions[i] = camera.components[components.transform]:get_local_direction(0, 0, 1)
+        end
+    end
+
+    for i = 1, selected_wepom.projectile_count, 1 do
+        --define mesh
+        --define life_time
+        --define damage
+        --print(movement_inpulse.x,movement_inpulse.y,movement_inpulse.z)
+        --print(spred_directions[i], normalize(ray_end), selected_wepom.mesh, { spred_directions[i] }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 0, b = 0, a = 1 }, "")
+        summon_bullet(bullet_start_points[i], normalize(ray_end), selected_wepom.mesh, { spred_directions[i] }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
+    end
 end
 
 local hit_top = false
 local hit_down = false
-local movement_inpulse = {}
+
+local inpulse = {}
+
+inputs = {}
+inputs_last_frame = {}
 
 function get_charter_data()
-    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_top")
-    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_down")
-    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
+    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
+    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter",
+        "movement_inpulse")
+        
+        
 
+    inputs = global_data:get("inputs")
+    inputs_last_frame = global_data:get("inputs_last_frame")
 end
 
 function UPDATE()
+    time:get()
 
     get_charter_data()
 
-    
+    if next_shoot_timer > 0 then
+        next_shoot_timer = next_shoot_timer - time.delta
+    end
+    if next_shoot_timer < 0 then
+        next_shoot_timer = 0
+    end
+
+    if next_shoot_timer == 0 and inputs.action_1 > 0 then
+        if selected_wepom.automatic then
+            shoot()
+        elseif inputs_last_frame.action_1 < 1 then
+            shoot()
+        end
+    end
+
 
     run_animation()
-
 end
 
 function COLLIDE(collision_info)
