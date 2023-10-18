@@ -27,6 +27,7 @@ check_top = {}
 check_down = {}
 
 direction_reference = {}
+movement_inpulse = {}
 
 local core_obj = {}
 
@@ -213,7 +214,7 @@ extra_jumps_utilizeds = 0
 
 local shoot_data = {}
 
-local impulse = {}
+local inpulse = {}
 
 require("resources.bullet_api")
 
@@ -439,6 +440,7 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air)) * time.sacale }
             end
             this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
+            movement_inpulse = deepcopy(impulse)
 
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)

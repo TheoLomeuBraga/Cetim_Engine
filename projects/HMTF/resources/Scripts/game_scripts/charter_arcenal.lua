@@ -48,6 +48,10 @@ local wepom_list = {
     }
 }
 
+avaliable_wepons = {"test_wepon",}
+
+local current_animation = nil
+
 function select_wepon(wepon)
     
     local wepon_data = get_scene_3D(wepon.file)
@@ -77,7 +81,19 @@ function START()
     select_wepon(wepom_list.test_wepon)
 end
 
+function shoot()
+end
+
+local hit_top = false
+local hit_down = false
+local movement_inpulse = {}
+
 function UPDATE()
+
+    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_top")
+    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","hit_down")
+    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+
 end
 
 function COLLIDE(collision_info)
