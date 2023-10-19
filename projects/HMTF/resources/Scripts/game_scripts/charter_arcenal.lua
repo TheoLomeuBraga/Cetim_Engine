@@ -191,11 +191,9 @@ function shoot()
         if selected_wepom.spred > 0 then
             spred_direction = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
-
-        print(spred_direction.x)
         
-
-        summon_bullet(bullet_start_points[i], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
+        local a = (i % #selected_wepom.bullet_origens) + 1
+        summon_bullet(bullet_start_points[a], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
     end
 end
 
