@@ -130,6 +130,7 @@ function summon_bullet(args)
 
         bullet:add_component(components.transform)
         bullet.components[components.transform].position = deepcopy(args.pos)
+        bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
         bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
         bullet.components[components.transform]:set()
 

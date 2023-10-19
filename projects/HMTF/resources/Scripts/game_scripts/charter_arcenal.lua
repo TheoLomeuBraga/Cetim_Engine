@@ -93,7 +93,9 @@ function run_animation()
     end
 end
 
+local bullet_start_pos_id = 1
 function select_wepon(wepon)
+    bullet_start_pos_id = 1
     local wepon_data = get_scene_3D(wepon.file)
     local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",
         false, false)
@@ -144,10 +146,15 @@ end
 
 local movement_inpulse = {x=0,y=0,z=0}
 
-local bullet_start_pos_id = 1
+
 function shoot()
     next_shoot_timer = selected_wepom.fire_rate
 
+    bullet_start_pos_id = bullet_start_pos_id + 1
+    if bullet_start_pos_id > #selected_wepom.bullet_origens then
+        bullet_start_pos_id = 1
+    end
+    
     current_animation_state = {
         name = "shoot",
         loop = false,
@@ -191,8 +198,8 @@ function shoot()
             spred_direction = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
 
-        local a = (i % #selected_wepom.bullet_origens) + 1
-        summon_bullet(bullet_start_points[a], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,selected_wepom.color, "")
+        --local a = (i % #selected_wepom.bullet_origens) + 1
+        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,selected_wepom.color, "")
     end
 end
 

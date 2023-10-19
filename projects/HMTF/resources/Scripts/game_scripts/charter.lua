@@ -334,8 +334,7 @@ function UPDATE()
             --move camera
             window:get()
             camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
-            camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20),
-                90), -90)
+            camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20),90), -90)
 
             camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity / 2.5
             camera_rotation.y = math.max(
