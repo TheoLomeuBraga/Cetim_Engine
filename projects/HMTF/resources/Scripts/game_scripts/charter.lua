@@ -212,52 +212,10 @@ pause_last_frame = false
 
 extra_jumps_utilizeds = 0
 
-local shoot_data = {}
-
 local inpulse = {}
 
 require("resources.bullet_api")
 
-function advanced_shoot(mesh, sound, spred, speed, life_time, damage, quantity,color, hit_scan)
-    start_arm_cannon_animation("recoil", 2, false)
-    camera.components[components.audio_source].path = sound
-    camera.components[components.audio_source].volume = 20
-    camera.components[components.audio_source]:set()
-
-    
-    
-
-    local bullet_position = camera.components[components.transform]:get_global_position(-0.3, -0.3, 0)
-    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
-    local ray_end = camera.components[components.transform]:get_global_position(0, 0, 1000)
-
-    local hit = false
-    local hit_info = {}
-    hit, hit_info = raycast_3D(ray_start, ray_end)
-    local target = deepcopy(ray_end)
-
-    local normalize = function(vec3)
-        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
-        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
-    end
-
-    local spred_directions = {}
-    if spred ~= 0 then
-        for i = 1, quantity, 1 do
-            spred_directions[i] = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * spred,(math.random() - 0.5) * spred, 1 )
-        end
-    else
-        for i = 1, quantity, 1 do
-            spred_directions[i] = camera.components[components.transform]:get_local_direction(0,0,1)
-        end
-    end
-
-    summon_bullet(bullet_position, normalize(ray_end), mesh, spred_directions, speed, life_time, damage, quantity, hit_scan, impulse,true,true,color,"")
-
-
-
-    --restart_arm_cannon_animation()
-end
 
 function aproche_to_zero(num, speed)
     ret = 0
@@ -445,32 +403,6 @@ function UPDATE()
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)
             end
-
-            --[[
-
-            --shoot
-            --if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and shoot_timer <= 0 then
-            --if inputs.action_1 > 0 then
-            if inputs.action_1 > 0 and shoot_timer <= 0 then
-            
-                advanced_shoot({ file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
-                    "resources/Audio/sounds/shot_3.wav", 0.2, 75, 0.3, 10, 12,{r=1,g=0,b=0}, false)
-                    shoot_timer = 0.2
-            end
-            shoot_timer = shoot_timer - time.delta
-
-            --animate
-            
-            if animation_state.name == "normal" or animation_state.name == "jump" or animation_state.name == "walk" or animation_state.name == "" or animation_state.name == "open" or (animation_state.name == "recoil" and animation_state.finish) then
-                if input_dir.x ~= 0 and input_dir.z ~= 0 and hit_down and not (inputs.action_2 > 0) then
-                    start_arm_cannon_animation("walk", 1, true)
-                else
-                    if not (inputs.action_2 > 0) then
-                        start_arm_cannon_animation("normal", 1, true)
-                    end
-                end
-            end
-            ]]
         else
             this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
         end

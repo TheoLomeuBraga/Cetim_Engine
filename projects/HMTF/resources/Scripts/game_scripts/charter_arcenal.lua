@@ -35,6 +35,7 @@ local selected_wepom = {
     spred = 1,
     speed = 1,
     hit_scan = false,
+    color = {r=1,g=0,b=0,a=1},
 
     damage = 1,
     life_time = 0.5,
@@ -51,6 +52,7 @@ local wepom_list = {
         spred = 0.1,
         speed = 40,
         hit_scan = false,
+        color = {r=1,g=0,b=0,a=1},
         bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
         damage = 1,
         life_time = 0.5,
@@ -122,6 +124,7 @@ function select_wepon(wepon)
         spred = wepon.spred,
         speed = wepon.speed,
         hit_scan = wepon.hit_scan,
+        color = wepon.color,
         bullet_origens = { { x = -0.3, y = -0.3, z = 0.5 }, },
 
         damage = wepon.damage,
@@ -143,7 +146,6 @@ local movement_inpulse = {x=0,y=0,z=0}
 
 local bullet_start_pos_id = 1
 function shoot()
-    print("shoot")
     next_shoot_timer = selected_wepom.fire_rate
 
     current_animation_state = {
@@ -181,9 +183,6 @@ function shoot()
         return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
     end
     
-
-    --deepprint(selected_wepom.projectile_count)
-    print(selected_wepom.projectile_count)
     for i = 1, selected_wepom.projectile_count, 1 do
 
         local spred_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
@@ -191,9 +190,9 @@ function shoot()
         if selected_wepom.spred > 0 then
             spred_direction = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
-        
+
         local a = (i % #selected_wepom.bullet_origens) + 1
-        summon_bullet(bullet_start_points[a], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
+        summon_bullet(bullet_start_points[a], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,selected_wepom.color, "")
     end
 end
 
