@@ -122,7 +122,7 @@ function select_wepon(wepon)
         spred = wepon.spred,
         speed = wepon.speed,
         hit_scan = wepon.hit_scan,
-        bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
+        bullet_origens = { { x = -0.3, y = -0.3, z = 0.5 }, },
 
         damage = wepon.damage,
         life_time = wepon.life_time,
@@ -141,6 +141,7 @@ end
 
 local movement_inpulse = {x=0,y=0,z=0}
 
+local bullet_start_pos_id = 1
 function shoot()
     print("shoot")
     next_shoot_timer = selected_wepom.fire_rate
@@ -165,8 +166,7 @@ function shoot()
         if i > #selected_wepom.bullet_origens then
             a = (i % #selected_wepom.bullet_origens) + 1
         end
-        bullet_start_points[a] = camera.components[components.transform]:get_global_position(
-        selected_wepom.bullet_origens.x, selected_wepom.bullet_origens.y, selected_wepom.bullet_origens.z)
+        bullet_start_points[a] = camera.components[components.transform]:get_global_position(selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
     end
 
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
@@ -180,25 +180,22 @@ function shoot()
         local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
         return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
     end
+    
 
-    local spred_directions = {}
-    if selected_wepom.spred ~= 0 then
-        for i = 1, selected_wepom.projectile_count, 1 do
-            spred_directions[i] = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 1)
-        end
-    else
-        for i = 1, selected_wepom.projectile_count, 1 do
-            spred_directions[i] = camera.components[components.transform]:get_local_direction(0, 0, 1)
-        end
-    end
-
+    --deepprint(selected_wepom.projectile_count)
+    print(selected_wepom.projectile_count)
     for i = 1, selected_wepom.projectile_count, 1 do
-        --define mesh
-        --define life_time
-        --define damage
-        --print(movement_inpulse.x,movement_inpulse.y,movement_inpulse.z)
-        --print(spred_directions[i], normalize(ray_end), selected_wepom.mesh, { spred_directions[i] }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 0, b = 0, a = 1 }, "")
-        summon_bullet(bullet_start_points[i], normalize(ray_end), selected_wepom.mesh, { spred_directions[i] }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
+
+        local spred_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
+        
+        if selected_wepom.spred > 0 then
+            spred_direction = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
+        end
+
+        print(spred_direction.x)
+        
+
+        summon_bullet(bullet_start_points[i], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,{ r = 1, g = 1, b = 1, a = 1 }, "")
     end
 end
 
@@ -235,6 +232,7 @@ function UPDATE()
     end
 
     if next_shoot_timer == 0 and inputs.action_1 > 0 then
+        
         if selected_wepom.automatic then
             shoot()
         elseif inputs_last_frame.action_1 < 1 then
