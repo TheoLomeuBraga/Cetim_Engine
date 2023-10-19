@@ -1,3 +1,12 @@
+
+
+
+game_states = {
+    play = 0,
+    conversation = 1,
+}
+game_state = 0
+
 function START()
 end
 

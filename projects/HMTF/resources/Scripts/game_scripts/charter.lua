@@ -28,6 +28,7 @@ check_down = {}
 
 direction_reference = {}
 movement_inpulse = {}
+require("resources.bullet_api")
 
 local core_obj = {}
 
@@ -43,93 +44,18 @@ inventory = {
     super_charger = 0,
 }
 
-game_states = {
+local game_states = {
     play = 0,
     conversation = 1,
 }
 
 game_state = 0
 
-local cannon = {
-    obj = {},
-    part_list = {},
-    part_ptr_list = {},
-    animations = {},
-}
 
-arm_cannon_sceane_data = {}
 
-function create_arm_cannon()
-    arm_cannon_sceane_data = get_scene_3D("resources/3D Models/arm_cannon.gltf")
-    local entity_data = cenary_builders.entity(camera.object_ptr, 4, arm_cannon_sceane_data,
-        "resources/Shaders/explosive_vertex_mesh", false, false)
-    cannon.obj = deepcopy(entity_data.obj)
-    cannon.part_list = deepcopy(entity_data.parts_list)
-    for key, value in pairs(cannon.part_list) do
-        cannon.part_ptr_list[key] = value.object_ptr
-    end
-end
 
-function set_cannon_vertex_explosion_state(primitives_size, elevation_distance, texture_transition, transition_texture)
-    for key_1, value_1 in pairs(cannon.part_list) do
-        if value_1:have_component(components.render_mesh) then
-            for key_2, value_2 in pairs(value_1.components[components.render_mesh].materials) do
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["primitives_size"] =
-                    primitives_size
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["elevation_distance"] =
-                    elevation_distance
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].inputs["texture_transition"] =
-                    texture_transition
-                cannon.part_list[key_1].components[components.render_mesh].materials[key_2].textures[2] =
-                    transition_texture
-                cannon.part_list[key_1].components[components.render_mesh]:set()
-            end
-        end
-    end
-end
 
-local animation_state = {
-    name = "",
-    animation = nil,
-    loop = false,
-    speed = 1,
-    time = 0,
-    finish = false,
-}
 
-function start_arm_cannon_animation(animation_name, speed, loop)
-    if animation_state.name ~= animation_name then
-        animation_state.name = animation_name
-        animation_state.animation = deepcopy(arm_cannon_sceane_data.animations[animation_name])
-        animation_state.speed = speed
-        animation_state.loop = loop
-        animation_state.time = 0
-        animation_state.finish = false
-    end
-end
-
-function restart_arm_cannon_animation()
-    animation_state.time = 0
-    animation_state.finish = false
-end
-
-function play_arm_cannon_animation()
-    if animation_state.animation ~= nil and global_data:get("pause") < 1 then
-        time:get()
-        animation_state.time = animation_state.time + (animation_state.speed * time.delta)
-
-        if animation_state.time > animation_state.animation.duration then
-            if animation_state.loop then
-                animation_state.time = 0
-            else
-                animation_state.time = animation_state.animation.duration
-                animation_state.finish = true
-            end
-        end
-
-        set_keyframe("resources/3D Models/arm_cannon.gltf", cannon.part_ptr_list, false, animation_state.name,animation_state.time)
-    end
-end
 
 function START()
     global_data:set("player_object_ptr", this_object_ptr)
@@ -214,7 +140,7 @@ extra_jumps_utilizeds = 0
 
 local inpulse = {}
 
-require("resources.bullet_api")
+
 
 
 function aproche_to_zero(num, speed)
@@ -263,7 +189,7 @@ function interact()
     end
 end
 
-shoot_timer = 0
+
 
 function UPDATE()
     if game_state == game_states.play then

@@ -35,7 +35,7 @@ local selected_wepom = {
     spred = 1,
     speed = 1,
     hit_scan = false,
-    color = {r=1,g=0,b=0,a=1},
+    color = { r = 1, g = 0, b = 0, a = 1 },
 
     damage = 1,
     life_time = 0.5,
@@ -52,7 +52,7 @@ local wepom_list = {
         spred = 0.1,
         speed = 40,
         hit_scan = false,
-        color = {r=1,g=0,b=0,a=1},
+        color = { r = 1, g = 0, b = 0, a = 1 },
         bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
         damage = 1,
         life_time = 0.5,
@@ -144,7 +144,7 @@ function START()
     select_wepon(wepom_list.test_wepon)
 end
 
-local movement_inpulse = {x=0,y=0,z=0}
+local movement_inpulse = { x = 0, y = 0, z = 0 }
 
 
 function shoot()
@@ -154,7 +154,7 @@ function shoot()
     if bullet_start_pos_id > #selected_wepom.bullet_origens then
         bullet_start_pos_id = 1
     end
-    
+
     current_animation_state = {
         name = "shoot",
         loop = false,
@@ -175,7 +175,8 @@ function shoot()
         if i > #selected_wepom.bullet_origens then
             a = (i % #selected_wepom.bullet_origens) + 1
         end
-        bullet_start_points[a] = camera.components[components.transform]:get_global_position(selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
+        bullet_start_points[a] = camera.components[components.transform]:get_global_position(
+        selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
     end
 
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
@@ -189,17 +190,19 @@ function shoot()
         local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
         return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
     end
-    
-    for i = 1, selected_wepom.projectile_count, 1 do
 
+    for i = 1, selected_wepom.projectile_count, 1 do
         local spred_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
-        
+
         if selected_wepom.spred > 0 then
-            spred_direction = camera.components[components.transform]:get_local_direction((math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
+            spred_direction = camera.components[components.transform]:get_local_direction(
+            (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
 
         --local a = (i % #selected_wepom.bullet_origens) + 1
-        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh, { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1, selected_wepom.hit_scan, movement_inpulse, true, true,selected_wepom.color, "")
+        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,
+            { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,
+            selected_wepom.hit_scan, movement_inpulse, true, true, selected_wepom.color, "")
     end
 end
 
@@ -216,36 +219,37 @@ function get_charter_data()
     hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
     movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter",
         "movement_inpulse")
-        
-        
+
+
 
     inputs = global_data:get("inputs")
     inputs_last_frame = global_data:get("inputs_last_frame")
 end
 
 function UPDATE()
-    time:get()
+    if global_data:get("pause") < 1 then
+        time:get()
 
-    get_charter_data()
+        get_charter_data()
 
-    if next_shoot_timer > 0 then
-        next_shoot_timer = next_shoot_timer - time.delta
-    end
-    if next_shoot_timer < 0 then
-        next_shoot_timer = 0
-    end
-
-    if next_shoot_timer == 0 and inputs.action_1 > 0 then
-        
-        if selected_wepom.automatic then
-            shoot()
-        elseif inputs_last_frame.action_1 < 1 then
-            shoot()
+        if next_shoot_timer > 0 then
+            next_shoot_timer = next_shoot_timer - time.delta
         end
+        if next_shoot_timer < 0 then
+            next_shoot_timer = 0
+        end
+
+        if next_shoot_timer == 0 and inputs.action_1 > 0 then
+            if selected_wepom.automatic then
+                shoot()
+            elseif inputs_last_frame.action_1 < 1 then
+                shoot()
+            end
+        end
+
+
+        run_animation()
     end
-
-
-    run_animation()
 end
 
 function COLLIDE(collision_info)

@@ -23,7 +23,8 @@ local mat = matreial:new()
 local layers = {}
 bullets_list = {}
 bullets_data = {}
-function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, base_impulse, target,friendly,color, behavior)
+function bullets_data:new(obj, direction, spred, id, speed, life_time, damage, base_impulse, target, friendly, color,
+                          behavior)
     return {
         object = obj,
         direction = direction,
@@ -35,7 +36,7 @@ function bullets_data:new(obj,direction, spred,id, speed, life_time, damage, bas
         damage = damage,
         base_impulse = base_impulse,
         target = target,
-        friendly=friendly,
+        friendly = friendly,
         behavior = behavior,
         color = color,
     }
@@ -54,14 +55,12 @@ end
 function START()
     layers = global_data:get_var("layers")
 
-    
+
     mat.shader = "resources/Shaders/mesh"
     mat.textures[1] = "resources/Textures/white.png"
 
     --poly_mesh_object = game_object:new(create_object(layers.cenary))
     --poly_mesh_object:add_component(components.render_poly_mesh)
-
-    
 end
 
 function UPDATE()
@@ -70,8 +69,6 @@ function UPDATE()
     --local timer = stopwatch:new()
 
     for key, value in pairs(bullets_list) do
-
-        
         bullets_list[key].timer = bullets_list[key].timer - time.delta
 
         local bullet = bullets_list[key].object
@@ -92,23 +89,21 @@ function UPDATE()
         next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta
         next_pos.z = next_pos.z + (bullets_list[key].direction.z * bullets_list[key].speed) * time.delta
 
-        bullet.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
+        bullet.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 
         if bullets_list[key].timer <= 0 then
             remove_object(bullets_list[key].object.object_ptr)
             remove_bullet(key)
         end
 
-        
+
         bullet.components[components.physics_3D]:get()
         for key, value in pairs(bullet.components[components.physics_3D].colis_infos) do
-            --print(value.object)   
+            --print(value.object)
         end
-        
     end
-    
-    --print(timer:getTime())
 
+    --print(timer:getTime())
 end
 
 function COLLIDE(collision_info)
@@ -122,48 +117,45 @@ function summon_bullet(args)
 
 
 
-    
+
 
     --[[]]
     for i = 1, args.quantity, 1 do
-        local bullet = game_object:new(create_object(layers.cenary))
+        if args.hit_scan > 0 then
+            
+        else
+            local bullet = game_object:new(create_object(layers.cenary))
 
-        bullet:add_component(components.transform)
-        bullet.components[components.transform].position = deepcopy(args.pos)
-        bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
-        bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
-        bullet.components[components.transform]:set()
+            bullet:add_component(components.transform)
+            bullet.components[components.transform].position = deepcopy(args.pos)
+            bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
+            bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
+            bullet.components[components.transform]:set()
 
-        --[[]]
-        bullet:add_component(components.render_mesh)
-        bullet.components[components.render_mesh].layer = 2
-        bullet.components[components.render_mesh].meshes_cout = 1
-        bullet.components[components.render_mesh].meshes = deepcopy({ args.mesh })
-        mat.color = {r=args.color.r,g=args.color.g,b=args.color.b,a=0.99}
-        bullet.components[components.render_mesh].materials = deepcopy({ mat })
-        bullet.components[components.render_mesh]:set()
-        
-        bullet:add_component(components.physics_3D)
-        bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-        bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere
-        bullet.components[components.physics_3D].gravity_scale = 0
-        bullet.components[components.physics_3D].collision_mesh = nil
-        bullet.components[components.physics_3D].triger = true
-        bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 9, } }
-        bullet.components[components.physics_3D].scale = 0.25
-        bullet.components[components.physics_3D].friction = 0
-        bullet.components[components.physics_3D].get_collision_info = true
-        bullet.components[components.physics_3D]:set()
+            --[[]]
+            bullet:add_component(components.render_mesh)
+            bullet.components[components.render_mesh].layer = 2
+            bullet.components[components.render_mesh].meshes_cout = 1
+            bullet.components[components.render_mesh].meshes = deepcopy({ args.mesh })
+            mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 0.99 }
+            bullet.components[components.render_mesh].materials = deepcopy({ mat })
+            bullet.components[components.render_mesh]:set()
 
-        
-        --print(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,args.base_impulse, args.target,args.friendly,args.color, args.behavior)
+            bullet:add_component(components.physics_3D)
+            bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+            bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere
+            bullet.components[components.physics_3D].gravity_scale = 0
+            bullet.components[components.physics_3D].collision_mesh = nil
+            bullet.components[components.physics_3D].triger = true
+            bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 9, } }
+            bullet.components[components.physics_3D].scale = 0.25
+            bullet.components[components.physics_3D].friction = 0
+            bullet.components[components.physics_3D].get_collision_info = true
+            bullet.components[components.physics_3D]:set()
 
-        --deepprint(args.color)
-        --deepprint(args.mesh)
-
-        local bullet_data = bullets_data:new(bullet,args.direction, args.spred,i, args.speed, args.life_time, args.damage,
-            args.base_impulse, args.target,args.friendly,args.color, args.behavior)
-        add_bullet(bullet_data)
+            local bullet_data = bullets_data:new(bullet, args.direction, args.spred, i, args.speed, args.life_time,args.damage,args.base_impulse, args.target, args.friendly, args.color, args.behavior)
+            add_bullet(bullet_data)
+        end
     end
 
     return {}
