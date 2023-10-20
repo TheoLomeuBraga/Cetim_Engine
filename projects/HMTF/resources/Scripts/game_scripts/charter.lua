@@ -28,7 +28,6 @@ check_down = {}
 
 direction_reference = {}
 movement_inpulse = {}
-require("resources.bullet_api")
 
 local core_obj = {}
 
