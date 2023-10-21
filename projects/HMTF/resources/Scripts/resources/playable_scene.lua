@@ -58,8 +58,7 @@ cenary_builders = {
         mat.shader = shader
         mat.textures = { "resources/Textures/null.svg" }
         
-        deepprint("position",part_data.position.x,part_data.position.y,part_data.position.z)
-        deepprint(part_data.position)
+        print("position",part_data.position.x,part_data.position.y,part_data.position.z)
         if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
             --[[]]
             
