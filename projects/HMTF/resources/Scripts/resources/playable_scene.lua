@@ -54,17 +54,25 @@ cenary_builders = {
             part_data.materials[key].shader = shader
         end
 
-        if part_data.meshes ~= nil and part_data.materials ~= nil then
+        local mat = matreial:new()
+        mat.shader = shader
+        mat.textures = { "resources/Textures/null.svg" }
+        
+        deepprint("position",part_data.position.x,part_data.position.y,part_data.position.z)
+        deepprint(part_data.position)
+        if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
+            --[[]]
+            
             ret:add_component(components.render_mesh)
             ret.components[components.render_mesh].layer = layer
-            ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),
-                tablelength(part_data.materials))
-            ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
-
-            ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+            ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
+            ret.components[components.render_mesh].meshes = { { file = "resources/3D Models/bullets.gltf", name = "round_bullet" } }--part_data.meshes
+            ret.components[components.render_mesh].materials = { mat }--part_data.materials
             ret.components[components.render_mesh].use_oclusion = use_oclusion
             ret.components[components.render_mesh]:set()
+            
         end
+
 
         if yield == true then
             cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
@@ -153,15 +161,14 @@ cenary_builders = {
             if part_data.meshes ~= nil and part_data.materials ~= nil then
                 if color ~= nil then
                     for key, value in pairs(part_data.materials) do
-                        value.color = deepcopy(color)
+                        part_data.materials[key].color = deepcopy(color)
                         part_data.materials[key] = deepcopy(value)
                     end
                 end
 
                 ret:add_component(components.render_mesh)
                 ret.components[components.render_mesh].layer = layer
-                ret.components[components.render_mesh].meshes_cout = math.min(tablelength(part_data.meshes),
-                    tablelength(part_data.materials))
+                ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
                 ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
                 ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
                 ret.components[components.render_mesh]:set()
@@ -173,7 +180,7 @@ cenary_builders = {
             ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
             ret.components[components.physics_3D].collision_shape = collision_shapes.box
             ret.components[components.physics_3D].triger = false
-            ret.components[components.physics_3D].scale = {x=0.5,y=1,z=1}
+            ret.components[components.physics_3D].scale = { x = 0.5, y = 1, z = 1 }
             ret.components[components.physics_3D].friction = 2
             ret.components[components.physics_3D]:set()
 
@@ -197,7 +204,7 @@ cenary_builders = {
         elseif part_data.variables.type == "music" then
             ret:add_component(components.audio_source)
             ret.components[components.audio_source].path = "resources/Audio/musics/" ..
-            part_data.variables.sound_source .. ".wav"
+                part_data.variables.sound_source .. ".wav"
             ret.components[components.audio_source].loop = true
             ret.components[components.audio_source].volume = 5
             ret.components[components.audio_source].min_distance = 5
@@ -208,7 +215,7 @@ cenary_builders = {
         elseif part_data.variables.type == "sound" then
             ret:add_component(components.audio_source)
             ret.components[components.audio_source].path = "resources/Audio/sounds/" ..
-            part_data.variables.sound_source .. ".wav"
+                part_data.variables.sound_source .. ".wav"
             ret.components[components.audio_source].loop = true
             ret.components[components.audio_source].volume = 5
             ret.components[components.audio_source].min_distance = 5

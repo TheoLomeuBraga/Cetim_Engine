@@ -524,10 +524,8 @@ namespace gltf_loader
 
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
-        // print({"outputAccessor",outputAccessor.min.size(),outputAccessor.max.size()});
 
         const std::vector<float> input = getAttributeData(inputAccessor.bufferView - textures.size());
-
         const std::vector<float> output = getAttributeData(outputAccessor.bufferView - textures.size());
 
         // Find the keyframes surrounding the specified time
