@@ -158,6 +158,7 @@ namespace gltf_loader
         std::vector<Node> nodes;
         std::vector<Animation> animations;
         std::vector<Texture> textures;
+        size_t originalTextureCount = 0;
         std::vector<Material> materials;
 
         bool loadBuffers();
@@ -467,7 +468,7 @@ namespace gltf_loader
         {
             const AnimationSampler &sampler = animation.samplers[channel.samplerIndex];
             Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-            std::vector<float> input = getAttributeData(inputAccessor.bufferView - textures.size());
+            std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
 
             if (!input.empty())
             {
@@ -525,8 +526,8 @@ namespace gltf_loader
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
 
-        const std::vector<float> input = getAttributeData(inputAccessor.bufferView - textures.size());
-        const std::vector<float> output = getAttributeData(outputAccessor.bufferView - textures.size());
+        const std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
+        const std::vector<float> output = getAttributeData(outputAccessor.bufferView - originalTextureCount);
 
         // Find the keyframes surrounding the specified time
         size_t index1 = 0, index2 = 0;
@@ -661,6 +662,24 @@ namespace gltf_loader
         return true;
     }
 
+    int countUniqueValues(const std::vector<Texture> &values)
+    {
+        std::set<std::string> uniqueValues;
+
+        for (const Texture &value : values)
+        {
+            // Verifique se o valor já está no conjunto de valores únicos.
+            if (uniqueValues.find(value.uri) == uniqueValues.end())
+            {
+                // Se não estiver, adicione-o ao conjunto e conte como um valor original.
+                uniqueValues.insert(value.uri);
+            }
+        }
+
+        // O tamanho do conjunto uniqueValues agora é a contagem de valores originais.
+        return uniqueValues.size();
+    }
+
     bool GLTFLoader::loadTextures()
     {
         if (gltf.find("textures") == gltf.end())
@@ -710,9 +729,13 @@ namespace gltf_loader
                 }
             }
 
+            
+
             textures.push_back(std::move(texture));
         }
-
+        
+        originalTextureCount = countUniqueValues(textures);
+        
         return true;
     }
 
@@ -1055,7 +1078,6 @@ namespace gltf_loader
                     for (int i = 0; i < mesh.indices.size() / 3; i += 3)
                     {
 
-                        
                         if ((mesh.indices[i] < mesh.indices.size() - 1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
                         {
                             new_indice.push_back(mesh.indices[i]);
@@ -1069,7 +1091,7 @@ namespace gltf_loader
                     }
                     mesh.indices = new_indice;
 
-                    //print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
+                    // print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
 
                     if (primitive.contains("material"))
                     {

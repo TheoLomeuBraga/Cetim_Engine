@@ -63,13 +63,7 @@ next_shoot_timer = 0
 
 avaliable_wepons = { "test_wepon", }
 
-local current_animation_state = {
-    name = "",
-    loop = false,
-    speed = 1,
-    time = 0,
-    finish = true,
-}
+local current_animation_state = nil
 
 function start_animation()
 
@@ -88,8 +82,7 @@ function run_animation()
         end
 
 
-        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,
-            current_animation_state.time)
+        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,current_animation_state.time)
     end
 end
 
@@ -97,8 +90,8 @@ local bullet_start_pos_id = 1
 function select_wepon(wepon)
     bullet_start_pos_id = 1
     local wepon_data = get_scene_3D(wepon.file)
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",
-        false, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",false, false)
+    --local objects = cenary_builders.scene(camera.object_ptr, 4, wepon_data, false)
 
     current_animation_state = {
         name = "pick_up",
@@ -230,6 +223,31 @@ function UPDATE()
 
         get_charter_data()
 
+        if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
+            if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and  current_animation_state.name ~= "pick_up" then
+                current_animation_state = {
+                    name = "walk",
+                    loop = true,
+                    speed = 1,
+                    time = 0,
+                    finish = false,
+                    duration = selected_wepom.data.animations["walk"].duration,
+                }
+            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and  current_animation_state.name ~= "pick_up" then
+                current_animation_state = {
+                    name = "normal",
+                    loop = true,
+                    speed = 1,
+                    time = 0,
+                    finish = false,
+                    duration = selected_wepom.data.animations["normal"].duration,
+                }
+            end
+        end
+        
+
+        
+
         if next_shoot_timer > 0 then
             next_shoot_timer = next_shoot_timer - time.delta
         end
@@ -245,8 +263,12 @@ function UPDATE()
             end
         end
 
+        
 
-        run_animation()
+        if current_animation_state ~= nil then
+            run_animation()
+        end
+        
     end
 end
 

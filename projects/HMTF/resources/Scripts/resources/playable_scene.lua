@@ -54,23 +54,21 @@ cenary_builders = {
             part_data.materials[key].shader = shader
         end
 
-        local mat = matreial:new()
-        mat.shader = shader
-        mat.textures = { "resources/Textures/null.svg" }
-        
-        print("position",part_data.position.x,part_data.position.y,part_data.position.z)
+
+
+        --print("position",part_data.id,part_data.position.x,part_data.position.y,part_data.position.z)
+        --[[]]
         if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
-            --[[]]
-            
             ret:add_component(components.render_mesh)
             ret.components[components.render_mesh].layer = layer
             ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
-            ret.components[components.render_mesh].meshes = { { file = "resources/3D Models/bullets.gltf", name = "round_bullet" } }--part_data.meshes
-            ret.components[components.render_mesh].materials = { mat }--part_data.materials
+            ret.components[components.render_mesh].meshes = part_data.meshes
+            ret.components[components.render_mesh].materials = part_data.materials
             ret.components[components.render_mesh].use_oclusion = use_oclusion
             ret.components[components.render_mesh]:set()
-            
         end
+
+
 
 
         if yield == true then
