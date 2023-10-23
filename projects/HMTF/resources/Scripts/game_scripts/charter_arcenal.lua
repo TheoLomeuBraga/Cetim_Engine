@@ -224,7 +224,7 @@ function UPDATE()
         get_charter_data()
 
         if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
-            if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and  current_animation_state.name ~= "pick_up" then
+            if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and  ( current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then
                 current_animation_state = {
                     name = "walk",
                     loop = true,
@@ -233,7 +233,7 @@ function UPDATE()
                     finish = false,
                     duration = selected_wepom.data.animations["walk"].duration,
                 }
-            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and  current_animation_state.name ~= "pick_up" then
+            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and ( current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) or not hit_down then
                 current_animation_state = {
                     name = "normal",
                     loop = true,

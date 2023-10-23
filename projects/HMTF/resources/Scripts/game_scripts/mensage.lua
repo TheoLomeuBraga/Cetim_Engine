@@ -25,7 +25,7 @@ function interact(args)
     mensage_list_index = 1
 
     global_data:set("pause",1)
-    interacting = true
+    global_data:set("interacting",1)
 
     if mensage_index ~= nil then
         local mensage_indexs = splitString(mensage_index,":")
@@ -59,7 +59,7 @@ end
 function stop_interact()
     
     global_data:set("pause",0)
-    interacting = false
+    global_data:set("interacting",0)
     first_frame = false
 
     remove_object(dialog_box_father)
@@ -101,7 +101,7 @@ function UPDATE()
     local inputs = global_data:get("inputs")
     local inputs_last_frame = global_data:get("inputs_last_frame")
     
-    if interacting and ((inputs.interact > 0 and not (inputs_last_frame.interact > 0 )) or (inputs.action_1 > 0 and not (inputs_last_frame.action_1 > 0))) then
+    if global_data:get("interacting") > 0 and ((inputs.interact > 0 and not (inputs_last_frame.interact > 0 )) or (inputs.action_1 > 0 and not (inputs_last_frame.action_1 > 0))) then
         if first_frame then
             next_interaction()
         else 

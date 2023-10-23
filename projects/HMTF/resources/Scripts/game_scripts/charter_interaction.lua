@@ -24,12 +24,15 @@ this_object = nil
 camera = nil
 
 function START()
+    global_data:set("interacting",0)
     this_object = game_object:new(this_object_ptr)
     camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","camera_ptr"))
-    this_object:add_component(components.audio_source)
 end
 
+interacting = false
+
 function interact()
+    interacting = true
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
     local ray_end_direction = camera.components[components.transform]:get_local_direction(0, 0, -10)
     local ray_end = {
@@ -52,6 +55,17 @@ function interact()
 end
 
 function UPDATE()
+
+    inputs = global_data:get("inputs")
+    inputs_last_frame = global_data:get("inputs_last_frame")
+    
+
+    --[[]]
+    if global_data:get("interacting") == 0 and inputs.interact > 0 and inputs_last_frame.interact < 1 then
+        interact()
+    end
+    
+
 end
 
 function COLLIDE(collision_info)
