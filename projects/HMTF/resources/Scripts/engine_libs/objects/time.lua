@@ -17,7 +17,7 @@ function stopwatch:new()
         creationTime = os.clock(),
     }
     function obj:getTime()
-        return (os.clock() - self.creationTime) * 1000
+        return (os.clock() - self.creationTime)
     end
     return obj
 end

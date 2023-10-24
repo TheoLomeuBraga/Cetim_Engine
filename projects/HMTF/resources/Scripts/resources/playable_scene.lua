@@ -4,6 +4,7 @@ require("components.component_index")
 require("objects.global_data")
 require("objects.time")
 require("short_cuts.create_sound")
+require("short_cuts.create_render_shader")
 
 menu = {
     obj = nil,
@@ -23,6 +24,40 @@ menu = {
             remove_object(menu.obj.object_ptr)
         end
         menu.obj = nil
+    end,
+}
+
+loading_screen = {
+    obj = nil,
+    spin_obj =  nil,
+    cam = nil,
+
+    open = function()
+
+        loading_screen.obj = game_object:new(global_data:get_var("core_object_ptr"))
+        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image",{ path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
+        loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1,1000)
+        set_lisener_object(loading_screen.cam.object_ptr)
+
+        
+        
+
+        local mat = matreial:new()
+        mat.shader = "resources/Shaders/sprite"
+        mat.textures = { "resources/Textures/spiral.png" }
+        loading_screen.spin_obj = create_render_shader(global_data:get_var("layers").hud, true, Vec3:new(0.8, -0.8, 0), Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
+
+        
+        loading_screen.obj.components[components.lua_scripts]:add_script("game_scripts/loading_sreen_script")
+        loading_screen.obj.components[components.lua_scripts]:set_variable("game_scripts/loading_sreen_script", "obj_ptr_to_rotate",loading_screen.spin_obj.object_ptr)
+        
+    end,
+
+    close = function()
+        loading_screen.obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
+        loading_screen.obj.components[components.lua_scripts]:remove_script("game_scripts/loading_sreen_script")
+        remove_object(loading_screen.cam.object_ptr)
+        remove_object(loading_screen.spin_obj.object_ptr)
     end,
 }
 

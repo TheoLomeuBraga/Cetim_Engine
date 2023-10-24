@@ -37,14 +37,7 @@ function level:START()
     --print("BBBBB")
     coroutine.yield()
 
-    core_obj = game_object:new(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
-
-    local camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
-
-    coroutine.yield()
-
-    set_lisener_object(camera.object_ptr)
+    loading_screen.open()
 
     coroutine.yield()
     --coroutine.yield()
@@ -59,16 +52,11 @@ function level:START()
     cenary_builders.cenary = create_object(layers.cenary)
     cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
 
-    
-    coroutine.yield()
-    
-
-    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
-
     coroutine.yield()
 
     time:set_speed(1)
-    remove_object(camera.object_ptr)
+    
+    loading_screen.close()
     camera = {}
     
 end

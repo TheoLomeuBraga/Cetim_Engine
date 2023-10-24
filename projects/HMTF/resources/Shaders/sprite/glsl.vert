@@ -40,11 +40,14 @@ layout(location = 1) out vec2 UV;
 
 
 
-vec3 quad_data[4] = vec3[4](
+vec3 quad_data[6] = vec3[6](
+  vec3(-1,-1,0),
   vec3(1,-1,0),
   vec3(1,1,0),
-  vec3(-1,-1,0),
-  vec3(-1,1,0)
+  
+  vec3(1,1,0),
+  vec3(-1,1,0),
+  vec3(-1,-1,0)
   );
 
 
