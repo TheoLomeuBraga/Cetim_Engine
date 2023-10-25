@@ -1410,7 +1410,7 @@ public:
 		glBindVertexArray(quad_array);
 		glUniform1i(tipo_vertice, 2);
 
-		glUniform4f(glGetUniformLocation(pp_shader, "color"), pos_processamento_info.cor.x, pos_processamento_info.cor.y, pos_processamento_info.cor.z, pos_processamento_info.cor.w);
+		//glUniform4f(glGetUniformLocation(pp_shader, "color"), pos_processamento_info.cor.x, pos_processamento_info.cor.y, pos_processamento_info.cor.z, pos_processamento_info.cor.w);
 
 		// tempo
 		glUniform1f(glGetUniformLocation(pp_shader, "time"), Tempo::tempo);
@@ -1444,6 +1444,7 @@ public:
 		// cor
 		vec4 cor = pos_processamento_info.cor;
 		glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
+		//print({"color",cor.x, cor.y, cor.z, cor.w});
 
 		// uv
 		vec4 uv = pos_processamento_info.uv_pos_sca;

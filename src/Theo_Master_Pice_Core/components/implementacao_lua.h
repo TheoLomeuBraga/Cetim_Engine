@@ -31,7 +31,7 @@ using namespace Tempo;
 #include "table.h"
 #include "table_conversors.h"
 
-//#include "ui_element.h"
+// #include "ui_element.h"
 
 #ifdef USE_LUA_JIT
 extern "C"
@@ -222,8 +222,7 @@ int writerFunction(lua_State *, const void *p, size_t sz, void *ud)
 std::string compileLuaFile(std::string path)
 {
 
-	
-    std::replace(path.begin(), path.end(), '.', '/');
+	std::replace(path.begin(), path.end(), '.', '/');
 
 	string filename = string("resources/Scripts/") + path + string(".lua");
 
@@ -1572,12 +1571,17 @@ namespace funcoes_ponte
 		{
 			Table ret;
 			lua_pushtable(L, material_table(api_grafica->pos_processamento_info));
+			vec4 cor = api_grafica->pos_processamento_info.cor;
+			print({"color", cor.x, cor.y, cor.z, cor.w});
 			return 1;
 		}
 		else
 		{
 			Table t = lua_totable(L, 2);
 			api_grafica->pos_processamento_info = table_material(t);
+			// cor
+			vec4 cor = api_grafica->pos_processamento_info.cor;
+			print({"color", cor.x, cor.y, cor.z, cor.w});
 			return 0;
 		}
 	}
@@ -1664,7 +1668,7 @@ namespace funcoes_ponte
 			return 0;
 		}
 	}
-	
+
 	int get_set_render_poly_mesh(lua_State *L)
 	{
 		if (lua_tonumber(L, 1) == get_lua)
@@ -1723,7 +1727,8 @@ namespace funcoes_ponte
 			}
 			mesh->mats = materials;
 			vector<shared_ptr<transform_>> objects;
-			for(string s : table_vString(t.getTable("objects"))){
+			for (string s : table_vString(t.getTable("objects")))
+			{
 				objects.push_back(string_ponteiro<objeto_jogo>(s)->pegar_componente<transform_>());
 			}
 			mesh->transforms = objects;
@@ -1858,7 +1863,7 @@ namespace funcoes_ponte
 			bu->rotacionarZ = t.getFloat("rotate_z");
 
 			bu->elasticidade = t.getFloat("elasticity");
-			
+
 			bu->gatilho = t.getFloat("triger");
 			bu->atrito = t.getFloat("friction");
 			bu->densidade = t.getFloat("density");
@@ -2087,6 +2092,8 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_set_render_poly_mesh", funcoes_ponte::get_set_render_poly_mesh),
 															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
 															  pair<string, lua_function>("set_keyframe", funcoes_ponte::set_keyframe),
+															  pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),
+
 														  }),
 		pair<string, map<string, lua_function>>("physics", {
 															   pair<string, lua_function>("get_set_physic_2D", funcoes_ponte::get_set_physic_2D),
@@ -2129,7 +2136,7 @@ namespace funcoes_ponte
 
 int register_function_set(lua_State *L, string set_de_funcoes)
 {
-	
+
 	if (set_de_funcoes == "all")
 	{
 		for (pair<string, map<string, lua_function>> p1 : funcoes_ponte::funcoes_ponte_map_secoes)
@@ -2163,9 +2170,10 @@ void load_base_lua_state(lua_State *L, string path)
 {
 
 	shared_ptr<string> compiledCode;
-	auto load_script_thread = [](string path , shared_ptr<string> *ret){*ret = carregar_script_lua(path);};
+	auto load_script_thread = [](string path, shared_ptr<string> *ret)
+	{  *ret = carregar_script_lua(path); };
 
-	thread cct(load_script_thread,path,&compiledCode);
+	thread cct(load_script_thread, path, &compiledCode);
 
 	luaL_openlibs(L);
 
@@ -2191,7 +2199,7 @@ void load_base_lua_state(lua_State *L, string path)
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
 
-	//shared_ptr<string> compiledCode = carregar_script_lua(path);
+	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
 
 	int loadResult = luaL_loadbuffer(L, compiledCode->c_str(), compiledCode->size(), "compiled_script");
@@ -2303,7 +2311,7 @@ public:
 
 	void adicionar_script(string s)
 	{
-		
+
 		if (estados_lua.find(s) != estados_lua.end())
 		{
 			lua_getglobal(estados_lua[s], "END");
@@ -2318,7 +2326,6 @@ public:
 
 		lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
 		lua_setglobal(L, "this_object_ptr");
-
 	}
 	void adicionar_scripts(vector<string> s)
 	{
@@ -2567,8 +2574,6 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 	pair<string, void (*)(objeto_jogo *, bool)>("render_poly_mesh", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<poly_mesh>(poly_mesh());}else{obj->remover_componente<poly_mesh>();} }),
 
-												
-
 };
 
 int add_component(lua_State *L)
@@ -2754,9 +2759,8 @@ int add_script_lua(lua_State *L)
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	if (argumentos == 2 && cl != NULL)
 	{
-		
+
 		cl->adicionar_script(lua_tostring(L, 2));
-		
 	}
 	return 0;
 }

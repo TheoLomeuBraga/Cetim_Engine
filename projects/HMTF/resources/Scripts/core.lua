@@ -23,6 +23,7 @@ require("objects.input")
 require("objects.gravity")
 
 require("objects.render_layer")
+require("objects.post_processing")
 
 local serializer = require("libs.serialize")
 
@@ -200,6 +201,11 @@ function load_configs()
 end
 
 function START()
+
+    post_processing:get()
+    post_processing.material = matreial:new()
+    post_processing.material.shader = "resources/Shaders/post_processing"
+    post_processing:set()
     
     layers:create()
 
