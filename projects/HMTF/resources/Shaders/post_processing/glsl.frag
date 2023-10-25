@@ -23,7 +23,7 @@ void main() {
     ret = color * texture(post_procesing_render_input[0], uv);
 
     //limit color pallet
-    int n = 8;
+    int n = 4;
     ret.x = (float(int(ret.x * n) + 0.5)) / n;
     ret.y = (float(int(ret.y * n) + 0.5)) / n;
     ret.z = (float(int(ret.z * n) + 0.5)) / n;
