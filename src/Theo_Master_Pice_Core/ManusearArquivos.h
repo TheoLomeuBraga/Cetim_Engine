@@ -990,6 +990,7 @@ namespace ManuseioDados
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
+			
 			add_loading_request(local);
 			gltf_loader::GLTFLoader gltf_loader(local);
 			gltf_loader.load();
@@ -1096,6 +1097,8 @@ namespace ManuseioDados
 
 			// ret.objetos.escala.x *= -1;
 			// ret.objetos.escala.z *= -1;
+
+			ret.nome = local;
 
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);

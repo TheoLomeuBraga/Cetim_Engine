@@ -266,16 +266,18 @@ cenary_builders = {
             add_mesh(nil)
             add_physics(false, false)
         elseif part_data.variables.type == "passage" then
+
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/passage")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/passage", "passage_target",
-                part_data.variables.passage_target)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/passage", "passage_target",part_data.variables.passage_target)
 
             add_mesh(nil)
             add_physics(false, true)
         elseif part_data.variables.type == "door_triger" then
             
             ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/door_triger")
+            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",part_data.variables.triger_target)
             add_mesh(nil)
 
         elseif part_data.variables.type == nil then
@@ -317,7 +319,7 @@ cenary_builders = {
             mesh_location:new("resources/Levels/3D/hub/hub.gltf", "Suzanne") })
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
 
-
+        
         --if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         ret.obj = deepcopy(cenary_builders.scene_part(father, layer, ceane_data.objects, yield))
@@ -325,6 +327,14 @@ cenary_builders = {
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object:new(value)
         end
+        
+        
+        ret.obj:add_component(components.lua_scripts)
+        ret.obj.components[components.lua_scripts]:add_script("game_scripts/door_manager")
+        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "map_file",ceane_data.path)
+        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "parts_ptr_list",ret.parts_ptr_list)
+        
+        
 
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
         cenary_builders.scene_poly_meshes = {}
