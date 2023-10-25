@@ -44,7 +44,7 @@ loading_screen = {
 
         local mat = matreial:new()
         mat.shader = "resources/Shaders/sprite"
-        mat.textures = { "resources/Textures/spiral.png" }
+        mat.textures = { "resources/Textures/spiral.svg" }
         loading_screen.spin_obj = create_render_shader(global_data:get_var("layers").hud, true, Vec3:new(0.8, -0.8, 0), Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
 
         
@@ -66,8 +66,8 @@ local scene_ptr_list = {}
 
 cenary_builders = {
 
-    yield_count_down_total_time = 15,
-    yield_count_down = 15,
+    yield_count_down_total_time = 5,
+    yield_count_down = 5,
 
     entity_part = function(father, layer, part_data, shader, use_oclusion, yield)
         local ret = game_object:new(create_object(father))
@@ -89,10 +89,6 @@ cenary_builders = {
             part_data.materials[key].shader = shader
         end
 
-
-
-        --print("position",part_data.id,part_data.position.x,part_data.position.y,part_data.position.z)
-        --[[]]
         if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
             ret:add_component(components.render_mesh)
             ret.components[components.render_mesh].layer = layer
@@ -179,7 +175,6 @@ cenary_builders = {
                 elseif part_data.variables.collision_shape == "sphere" then
                     ret.components[components.physics_3D].collision_shape = collision_shapes.sphere
                 end
-                --print(part_data.variables.collision_shape)
 
 
                 ret.components[components.physics_3D].triger = is_triger
@@ -278,16 +273,16 @@ cenary_builders = {
 
             add_mesh(nil)
             add_physics(false, true)
-        elseif part_data.variables.type == "door" then
+        elseif part_data.variables.type == "door_triger" then
+            
             ret:add_component(components.lua_scripts)
-            ret.components[components.lua_scripts]:add_script("game_scripts/door")
+            add_mesh(nil)
+
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end
-
-
+        
         if yield == true then
-            print("cenary_builders.yield_count_down", cenary_builders.yield_count_down)
             cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
             if cenary_builders.yield_count_down < 0 then
                 coroutine.yield()
@@ -296,7 +291,7 @@ cenary_builders = {
         end
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.scene_part(ret.object_ptr, layer, value)
+            cenary_builders.scene_part(ret.object_ptr, layer, value,yield)
         end
 
         return ret
@@ -308,8 +303,7 @@ cenary_builders = {
             parts_ptr_list = {},
             parts_list = {},
         }
-
-        --[[]]
+        
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures = { "resources/Textures/null.png" }
@@ -324,7 +318,7 @@ cenary_builders = {
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
 
 
-        if yield == nil then yield = false end
+        --if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         ret.obj = deepcopy(cenary_builders.scene_part(father, layer, ceane_data.objects, yield))
         ret.parts_ptr_list = deepcopy(scene_ptr_list)

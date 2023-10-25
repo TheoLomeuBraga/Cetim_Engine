@@ -449,6 +449,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->getMotionState()->setWorldTransform(tf);
+            bt_obj->setWorldTransform(tf);
         }
         else
         {
@@ -462,6 +463,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->getMotionState()->setWorldTransform(tf);
+            bt_obj->setWorldTransform(tf);
         }
         else
         {

@@ -21,9 +21,10 @@ local assets_needed = {
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
     new_asset_list_element(asset_types.image,"resources/Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
-    new_asset_list_element(asset_types.scene_3D,"resources/3D Models/basic_door.gltf"),
     
 }
+
+scene_data = nil
 
 function level:START()
 
@@ -50,13 +51,16 @@ function level:START()
     coroutine.yield()
 
     cenary_builders.cenary = create_object(layers.cenary)
-    cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
 
     coroutine.yield()
-
+    
+    scene_data = cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
+    
+    coroutine.yield()
     time:set_speed(1)
     
     loading_screen.close()
+
     camera = {}
     
 end
@@ -67,6 +71,10 @@ end
 
 function level:UPDATE()
 
+    
+    if scene_data ~= nil then
+        set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, false, "open_door_A",0.65)
+    end
     
     
 

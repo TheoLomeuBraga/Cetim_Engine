@@ -59,8 +59,6 @@ function UPDATE()
     inputs = global_data:get("inputs")
     inputs_last_frame = global_data:get("inputs_last_frame")
     
-
-    --[[]]
     if global_data:get("interacting") == 0 and inputs.interact > 0 and inputs_last_frame.interact < 1 then
         interact()
     end
