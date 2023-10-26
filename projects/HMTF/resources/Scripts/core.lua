@@ -85,7 +85,7 @@ function load_sceane_step()
     
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
         
-        previous_cenary = deepcopy(cenary)
+        previous_cenary = cenary
 
         cenary = require("level_loaders." .. name)
         cenary:START()

@@ -191,8 +191,8 @@ function shoot()
             (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
 
-        --local a = (i % #selected_wepom.bullet_origens) + 1
-        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,{ spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,selected_wepom.hit_scan, movement_inpulse, true, true, selected_wepom.color, "")
+        --summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,{ spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,selected_wepom.hit_scan, movement_inpulse, true, true, selected_wepom.color, "")
+        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,{ spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,selected_wepom.hit_scan, {x=0,y=0,z=0}, true, true, selected_wepom.color, "")
     end
 end
 
