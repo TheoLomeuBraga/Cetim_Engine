@@ -13,13 +13,25 @@ function splitString(inputString, delimiter)
     return result
 end
 
---[[]]
+
+function tablelength(T)
+    local count = 0
+    for _ in pairs(T) do
+        count = count + 1
+    end
+    return count
+end
+
+--[[
 function deepcopy(orig, copies)
+    
     copies = copies or {} -- Tabelas já copiadas
     local orig_type = type(orig)
     local copy
 
     if orig_type == 'table' then
+        print("A",tablelength(orig))
+
         if copies[orig] then
             -- Se a tabela já foi copiada, basta referenciá-la
             return copies[orig]
@@ -38,8 +50,103 @@ function deepcopy(orig, copies)
 
     return copy
 end
+]]
 
+function deepcopy(orig)
+    local copies = {} -- Tabelas já copiadas
+    local orig_type = type(orig)
+    local copy
 
+    if orig_type == 'table' then
+        copy = {}
+        copies[orig] = copy
+
+        -- Usamos uma fila para iterar por todas as tabelas a serem copiadas
+        local queue = {{original = orig, copy = copy}}
+        
+        while #queue > 0 do
+            local entry = table.remove(queue)
+            local original = entry.original
+            local copy = entry.copy
+
+            for orig_key, orig_value in pairs(original) do
+                if type(orig_key) == 'table' then
+                    if not copies[orig_key] then
+                        -- Se a chave ainda não foi copiada, copie-a
+                        local key_copy = {}
+                        copies[orig_key] = key_copy
+                        table.insert(queue, {original = orig_key, copy = key_copy})
+                    end
+                    orig_key = copies[orig_key]
+                end
+
+                if type(orig_value) == 'table' then
+                    if not copies[orig_value] then
+                        -- Se o valor ainda não foi copiado, copie-o
+                        local value_copy = {}
+                        copies[orig_value] = value_copy
+                        table.insert(queue, {original = orig_value, copy = value_copy})
+                    end
+                    orig_value = copies[orig_value]
+                end
+
+                copy[orig_key] = orig_value
+            end
+        end
+    else
+        copy = orig
+    end
+
+    return copy
+end
+
+function deepcopyjson(orig)
+    local copies = {} -- Tabelas já copiadas
+    local orig_type = type(orig)
+    local copy
+
+    if orig_type == 'table' then
+        copy = {}
+        copies[orig] = copy
+
+        -- Usamos uma fila para iterar por todas as tabelas a serem copiadas
+        local queue = {{original = orig, copy = copy}}
+        
+        while #queue > 0 do
+            local entry = table.remove(queue)
+            local original = entry.original
+            local copy = entry.copy
+
+            for orig_key, orig_value in pairs(original) do
+                if type(orig_key) == 'table' then
+                    if not copies[orig_key] then
+                        -- Se a chave ainda não foi copiada, copie-a
+                        local key_copy = {}
+                        copies[orig_key] = key_copy
+                        table.insert(queue, {original = orig_key, copy = key_copy})
+                    end
+                    orig_key = copies[orig_key]
+                end
+
+                if type(orig_value) == 'table' then
+                    if not copies[orig_value] then
+                        -- Se o valor ainda não foi copiado, copie-o
+                        local value_copy = {}
+                        copies[orig_value] = value_copy
+                        table.insert(queue, {original = orig_value, copy = value_copy})
+                    end
+                    orig_value = copies[orig_value]
+                end
+
+                copy[orig_key] = orig_value
+            end
+        end
+    elseif orig_type ~= 'function' then
+        copy = orig
+    end
+
+    return copy
+end
 
 function deepprint(tab)
     local orig_type = type(tab)
@@ -76,30 +183,7 @@ function tableprint(tab)
     end
 end
 
-function deepcopyjson(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopyjson(orig_key)] = deepcopyjson(orig_value)
-        end
-        setmetatable(copy, deepcopyjson(getmetatable(orig)))
-    else
-        if orig_type ~= 'function' then
-            copy = orig
-        end
-    end
-    return copy
-end
 
-function tablelength(T)
-    local count = 0
-    for _ in pairs(T) do
-        count = count + 1
-    end
-    return count
-end
 
 function lerp(A,B,time)
     return (A * time) + (B * (1 - time))

@@ -44,7 +44,7 @@ function transform_component:get_translation_position(x,y,z)
 end
 
 function transform_component:set_master(object_ptr)    
-    local ret = deepcopy(self)
+    local ret = (self)
     ret.object_ptr = object_ptr
     return ret
 end

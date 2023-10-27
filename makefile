@@ -1,8 +1,8 @@
 COMPILER := g++
 
-FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows
-FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj 
-FLAGS_LINUX := -std=c++17
+FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E
+FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj  -Wl,-E
+FLAGS_LINUX := -std=c++17 -Wl,-E
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 -DUSE_LUA_JIT
 DEFINITIONS_LINUX := -DLINUX -DUNIX -DUSE_LUA_JIT

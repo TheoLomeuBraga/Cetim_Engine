@@ -251,12 +251,6 @@ function UPDATE()
 
 
         if global_data:get("pause") < 1 and global_data:get("interacting") == 0 then
-            --interact
-            --[[
-            if inputs.interact > 0 and inputs_last_frame.interact < 1 then
-                interact()
-            end
-            ]]
 
             --move camera
             window:get()

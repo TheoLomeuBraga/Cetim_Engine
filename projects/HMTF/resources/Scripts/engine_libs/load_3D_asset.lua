@@ -65,7 +65,7 @@ function load_3D_asset(father, render_layer, object_3D)
     end
 
     
-    game_objects_in_cene_ret[object_3D.id] = deepcopy(ret)
+    game_objects_in_cene_ret[object_3D.id] = (ret)
 
-    return {ret,deepcopy(game_objects_in_cene_ret)}
+    return {ret,(game_objects_in_cene_ret)}
 end

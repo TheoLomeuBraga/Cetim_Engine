@@ -40,13 +40,13 @@ function START()
         this_object:add_component(components.render_mesh)
         this_object.components[components.render_mesh].layer = 2
         this_object.components[components.render_mesh].meshes_cout = 1
-        this_object.components[components.render_mesh].meshes = deepcopy({ mesh })
-        this_object.components[components.render_mesh].materials = deepcopy({ mat })
+        this_object.components[components.render_mesh].meshes = ({ mesh })
+        this_object.components[components.render_mesh].materials = ({ mat })
         this_object.components[components.render_mesh]:set()
 
         time:get()
         this_object.components[components.transform]:get()
-        local pos = deepcopy(this_object.components[components.transform].position)
+        local pos = (this_object.components[components.transform].position)
         local next_pos = { x = pos.x + (direction.x * speed * time.delta ) + (base_inpulse.x * time.delta), y = pos.y + (direction.y * speed * time.delta) + (base_inpulse.y * time.delta),z = pos.z + (direction.z * speed * time.delta) + (base_inpulse.z * time.delta) }
         this_object.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 
@@ -72,7 +72,7 @@ function UPDATE()
 
     
     this_object.components[components.transform]:get()
-    local pos =  deepcopy(this_object.components[components.transform].position)
+    local pos =  (this_object.components[components.transform].position)
     local next_pos = {x=(pos.x + (direction.x * speed * time.delta)) + (base_inpulse.x * time.delta),y=(pos.y + (direction.y * speed * time.delta)) + (base_inpulse.y * time.delta),z=(pos.z + (direction.z * speed * time.delta)) + (base_inpulse.z * time.delta)}
     this_object.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
     

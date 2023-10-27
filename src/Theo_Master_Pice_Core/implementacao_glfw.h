@@ -661,12 +661,15 @@ void IniciarJanela()
 	}
 }
 
+Tempo::Timer sw;
 void loop_janela()
 {
 
 	// tempo
-	Tempo::varTempRender = (Tempo::tempo - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
+	Tempo::varTempRender = sw.get();
 	Tempo::tempUltFrameRender = Tempo::tempo;
+	sw.clear();
+
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
 	Reindenizar();

@@ -2171,7 +2171,7 @@ void load_base_lua_state(lua_State *L, string path)
 
 	shared_ptr<string> compiledCode;
 	auto load_script_thread = [](string path, shared_ptr<string> *ret)
-	{  *ret = carregar_script_lua(path); };
+	{ *ret = carregar_script_lua(path); };
 
 	thread cct(load_script_thread, path, &compiledCode);
 
@@ -2252,6 +2252,29 @@ namespace funcoes_lua
 	}
 
 };
+
+vector<thread> lua_threads_to_clean;
+
+void clean_lua_threads()
+{
+
+    for (std::thread &thread : lua_threads_to_clean)
+    {
+        thread.join();
+    }
+    lua_threads_to_clean.clear();
+}
+
+
+void collect_lua_states_garbage(map<string, lua_State *> estados_lua)
+{
+	
+	for (pair<string, lua_State *> p : estados_lua)
+	{
+		lua_gc(p.second, LUA_GCCOLLECT, 0);
+	}
+}
+
 
 class componente_lua : public componente
 {
@@ -2361,6 +2384,16 @@ public:
 				lua_State *L = p.second;
 				lua_getglobal(L, "UPDATE");
 				lua_call(L, 0, 0);
+
+				lua_gc(L, LUA_GCCOLLECT, 0);
+				if(p.first != "game_scripts/charter"){
+					print({"KBs usage in",p.first,lua_gc(L, LUA_GCCOUNT, 0)});
+				}else{
+					//identificar variavel mais pesada
+					print({"KBs usage in",p.first,lua_gc(L, LUA_GCCOUNT, 0)});
+				}
+				
+
 			}
 			else
 			{
@@ -2371,6 +2404,10 @@ public:
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
+		
+		//thread t(collect_lua_states_garbage,estados_lua);
+		//lua_threads_to_clean.push_back(move(t));
+
 	}
 	void colidir(colis_info col)
 	{

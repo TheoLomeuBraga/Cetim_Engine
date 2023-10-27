@@ -74,7 +74,7 @@ function UPDATE()
         local bullet = bullets_list[key].object
 
         bullet.components[components.transform]:get()
-        local next_pos = deepcopy(bullet.components[components.transform].position)
+        local next_pos = (bullet.components[components.transform].position)
 
         next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta
         next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta
@@ -127,7 +127,7 @@ function summon_bullet(args)
             local bullet = game_object:new(create_object(layers.cenary))
 
             bullet:add_component(components.transform)
-            bullet.components[components.transform].position = deepcopy(args.pos)
+            bullet.components[components.transform].position = (args.pos)
             bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
             bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
             bullet.components[components.transform]:set()
@@ -136,9 +136,9 @@ function summon_bullet(args)
             bullet:add_component(components.render_mesh)
             bullet.components[components.render_mesh].layer = 2
             bullet.components[components.render_mesh].meshes_cout = 1
-            bullet.components[components.render_mesh].meshes = deepcopy({ args.mesh })
+            bullet.components[components.render_mesh].meshes = ({ args.mesh })
             mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 0.99 }
-            bullet.components[components.render_mesh].materials = deepcopy({ mat })
+            bullet.components[components.render_mesh].materials = ({ mat })
             bullet.components[components.render_mesh]:set()
 
             bullet:add_component(components.physics_3D)

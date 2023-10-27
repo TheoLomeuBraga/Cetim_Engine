@@ -721,14 +721,14 @@ float bullet_ultimo_tempo = 0;
 int maxSubSteps = 4;
 
 
-Tempo::Timer timer;
+//Tempo::Timer timer;
 
 void atualisar_global_bullet()
 {
 
     
 
-    float bullet_passo_tempo = timer.get() * Tempo::velocidadeTempo;
+    float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
 
     
     clean_collisions();
@@ -738,7 +738,7 @@ void atualisar_global_bullet()
     dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps);
     bullet_ultimo_tempo = Tempo::tempo;
 
-    timer.clear();
+    //timer.clear();
 
 }
 
