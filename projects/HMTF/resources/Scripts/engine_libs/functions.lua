@@ -22,7 +22,7 @@ function tablelength(T)
     return count
 end
 
---[[
+
 function deepcopy(orig, copies)
     
     copies = copies or {} -- Tabelas já copiadas
@@ -30,7 +30,7 @@ function deepcopy(orig, copies)
     local copy
 
     if orig_type == 'table' then
-        print("A",tablelength(orig))
+        --print("A",tablelength(orig))
 
         if copies[orig] then
             -- Se a tabela já foi copiada, basta referenciá-la
@@ -50,8 +50,9 @@ function deepcopy(orig, copies)
 
     return copy
 end
-]]
 
+
+--[[
 function deepcopy(orig)
     local copies = {} -- Tabelas já copiadas
     local orig_type = type(orig)
@@ -99,6 +100,7 @@ function deepcopy(orig)
 
     return copy
 end
+]]
 
 function deepcopyjson(orig)
     local copies = {} -- Tabelas já copiadas
@@ -217,6 +219,10 @@ function stop_coroutine_if_is_not_loaded(asset_list)
         end
     end
     
+end
+
+function memory_usage_info()
+    c_memory_usage_info(_G)
 end
 
 

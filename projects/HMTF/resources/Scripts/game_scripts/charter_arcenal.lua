@@ -128,12 +128,33 @@ function select_wepon(wepon)
     }
 end
 
+local hit_top = false
+local hit_down = false
+
+local inpulse = {}
+
+inputs = {}
+inputs_last_frame = {}
+
+function get_charter_data()
+    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
+    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
+    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+
+
+
+    inputs = global_data:get("inputs")
+    inputs_last_frame = global_data:get("inputs_last_frame")
+end
+
 function START()
     this_object = game_object:new(this_object_ptr)
     camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","camera_ptr"))
     this_object:add_component(components.audio_source)
 
     select_wepon(wepom_list.test_wepon)
+
+    get_charter_data()
 end
 
 local movement_inpulse = { x = 0, y = 0, z = 0 }
@@ -196,30 +217,13 @@ function shoot()
     end
 end
 
-local hit_top = false
-local hit_down = false
 
-local inpulse = {}
-
-inputs = {}
-inputs_last_frame = {}
-
-function get_charter_data()
-    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
-    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
-    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
-
-
-
-    inputs = global_data:get("inputs")
-    inputs_last_frame = global_data:get("inputs_last_frame")
-end
 
 function UPDATE()
     if global_data:get("pause") < 1 then
         time:get()
 
-        get_charter_data()
+        --get_charter_data()
 
         if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
             if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and  ( current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then

@@ -27,7 +27,7 @@ check_top = {}
 check_down = {}
 
 direction_reference = {}
-movement_inpulse = {}
+movement_inpulse = {x=0,y=0,z=0}
 
 local core_obj = {}
 
@@ -73,7 +73,7 @@ function START()
         true, collision_shapes.cylinder, nil, true)
 
 
-
+    
     this_object = game_object:new(this_object_ptr)
     this_object.components[components.transform]:change_rotation(0, 0, 0)
 
@@ -95,14 +95,7 @@ function START()
     direction_reference.components[components.transform]:set()
 
     this_object:add_component(components.audio_source)
-
-    --create_arm_cannon()
-
-    --start_arm_cannon_animation("normal",1,false)
-    --start_arm_cannon_animation("open",1,false)
-    --start_arm_cannon_animation("walk",1,true)
-    --start_arm_cannon_animation("spin",1,true)
-    --start_arm_cannon_animation("recoil",8,true)
+    --[[]]
 end
 
 speed = 12
@@ -166,6 +159,7 @@ function aproche_to_target_value(num, speed, target_value)
     return ret
 end
 
+--[[
 function interact()
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
     local ray_end_direction = camera.components[components.transform]:get_local_direction(0, 0, -10)
@@ -187,10 +181,14 @@ function interact()
         end
     end
 end
-
+]]
 
 
 function UPDATE()
+
+    
+    
+    
     if game_state == game_states.play then
         time:get()
         gravity:get()
@@ -209,6 +207,8 @@ function UPDATE()
         end
 
         enable_cursor(global_data:get("pause") > 0)
+        
+        
 
         local get_valid_touches_top = function(objs_touching)
             local valid_touches = 0
@@ -221,6 +221,8 @@ function UPDATE()
             end
             return valid_touches
         end
+
+        
 
         local get_valid_touches_down = function(objs_touching)
             local valid_touches = 0
@@ -246,9 +248,8 @@ function UPDATE()
         check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches_down(check_down.components[components.physics_3D].objs_touching) > 1
-        --print("AAAAA",#check_down.components[components.physics_3D].objs_touching,#check_down.components[components.physics_3D].colis_infos)
 
-
+        
 
         if global_data:get("pause") < 1 and global_data:get("interacting") == 0 then
 
@@ -266,7 +267,7 @@ function UPDATE()
                 this_object_physics_3D_seted = not this_object_physics_3D_seted
             end
 
-
+            
 
             --get floor info
             local hit = false
@@ -279,8 +280,7 @@ function UPDATE()
             end
 
             --get movement direction
-            local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward, 0,
-                -inputs.left)
+            local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward, 0,-inputs.left)
             local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
@@ -305,8 +305,10 @@ function UPDATE()
             if hit_top and inpulse_y > 0 then
                 inpulse_y = 0
             end
+            
 
-
+            local impulse = {x=0,y=0,z=0}
+            
             --move
             if hit_down and not (inpulse_y > 0) then
                 impulse = { x = (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
@@ -317,12 +319,16 @@ function UPDATE()
                     y = (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
                     z = (move_dir.z * (speed + speed_boost_air)) * time.sacale }
             end
+
             this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
+            
             movement_inpulse = deepcopy(impulse)
 
+            
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * gravity.force.y)
             end
+
         else
             this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
         end
@@ -334,11 +340,13 @@ function UPDATE()
         this_object.components[components.physics_3D]:get()
     end
 
-    --play_arm_cannon_animation()
+    
+
+    
+    memory_usage_info()
 end
 
 function COLLIDE(collision_info)
-    --deepprint(collision_info)
 end
 
 function END()

@@ -25,7 +25,7 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     end
     ret.components[components.physics_3D].collision_shape = shape
     if shape == collision_shapes.convex then
-        ret.components[components.physics_3D].collision_mesh = (cillision_mesh)
+        ret.components[components.physics_3D].collision_mesh = deepcopy(cillision_mesh)
     end
 
     if triger then
@@ -49,9 +49,9 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_dat
     ret = game_object:new(create_object(father))
 
     ret:add_component(components.transform)
-    ret.components[components.transform].position = (pos)
-    ret.components[components.transform].rotation = (rot)
-    ret.components[components.transform].scale = (sca)
+    ret.components[components.transform].position = deepcopy(pos)
+    ret.components[components.transform].rotation = deepcopy(rot)
+    ret.components[components.transform].scale = deepcopy(sca)
     ret.components[components.transform]:set()
 
     ret:add_component(components.physics_2D)
@@ -70,7 +70,7 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_dat
     end
     ret.components[components.physics_2D].collision_shape = shape
     if shape == collision_shapes.convex then
-        ret.components[components.physics_2D].vertex = (vertex_data)
+        ret.components[components.physics_2D].vertex = deepcopy(vertex_data)
     end
     ret.components[components.physics_2D].triger = triger
     ret.components[components.physics_2D]:set()

@@ -281,6 +281,93 @@ shared_ptr<string> carregar_script_lua(string local)
 	return mapeamento_scripts_lua.pegar(local);
 }
 
+namespace lua_debug
+{
+
+	size_t get_string_size(lua_State *L, int index)
+	{
+		if (lua_type(L, index) == LUA_TSTRING)
+		{
+			const char *str = lua_tostring(L, index);
+			if (str)
+			{
+				return strlen(str);
+			}
+		}
+		return 0;
+	}
+
+	size_t get_table_size(lua_State *L, int index)
+	{
+		if (lua_type(L, index) == LUA_TTABLE)
+		{
+			size_t size = 0;
+			lua_pushnil(L);
+			while (lua_next(L, index) != 0)
+			{
+				size += get_string_size(L, -1);
+				lua_pop(L, 1);
+			}
+			return size;
+		}
+		return 0;
+	}
+
+	/**/
+	int compare_variable_memory(lua_State *L)
+	{
+		int stack_size = lua_gettop(L);
+
+		size_t largest_variable_size = 0;
+		int largest_variable_index = -1;
+		const char *largest_variable_name = NULL;
+
+		for (int i = 1; i <= stack_size; i++)
+		{
+			// size_t variable_size = lua_gc(L, LUA_GCCOUNT, 0);
+			size_t variable_size = get_string_size(L, i) + get_table_size(L, i);
+
+			if (variable_size > largest_variable_size)
+			{
+				largest_variable_size = variable_size;
+				largest_variable_index = i;
+
+				// Verifique se a variável é uma tabela com uma chave
+				if (lua_istable(L, i))
+				{
+					lua_pushnil(L);
+					if (lua_next(L, i) != 0)
+					{
+						largest_variable_name = lua_tostring(L, -2);
+						lua_pop(L, 2); // Remova a chave e o valor da pilha
+					}
+				}
+			}
+		}
+
+		if (largest_variable_index > 0)
+		{
+			const char *variable_type = lua_typename(L, lua_type(L, largest_variable_index));
+			printf("A variável mais consumidora de memória é do tipo %s na posição %d e consome %zu bytes.\n", variable_type, largest_variable_index, largest_variable_size);
+
+			if (largest_variable_name)
+			{
+				printf("Nome ou chave da variável: %s\n", largest_variable_name);
+			}
+			else
+			{
+				printf("A variável não tem um nome ou chave identificável.\n");
+			}
+		}
+		else
+		{
+			printf("Nenhuma variável na pilha.\n");
+		}
+
+		return 0;
+	}
+};
+
 // aqui
 
 int add_component(lua_State *L);
@@ -728,6 +815,14 @@ namespace funcoes_ponte
 		lua_pushboolean(L, ret);
 		return 1;
 	}
+
+	
+	int memory_usage_info(lua_State *L){
+		print({"KBs usage", lua_gc(L, LUA_GCCOUNT, 0)});
+		//put the code here
+		return 0;
+	}
+	
 
 	// input
 
@@ -2054,6 +2149,7 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("memory", {
 															  pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
 															  pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
+															  pair<string, lua_function>("memory_usage_info", funcoes_ponte::memory_usage_info),
 														  }),
 		pair<string, map<string, lua_function>>("gravity", {
 															   pair<string, lua_function>("to_move", funcoes_ponte::to_move),
@@ -2258,23 +2354,21 @@ vector<thread> lua_threads_to_clean;
 void clean_lua_threads()
 {
 
-    for (std::thread &thread : lua_threads_to_clean)
-    {
-        thread.join();
-    }
-    lua_threads_to_clean.clear();
+	for (std::thread &thread : lua_threads_to_clean)
+	{
+		thread.join();
+	}
+	lua_threads_to_clean.clear();
 }
-
 
 void collect_lua_states_garbage(map<string, lua_State *> estados_lua)
 {
-	
+
 	for (pair<string, lua_State *> p : estados_lua)
 	{
 		lua_gc(p.second, LUA_GCCOLLECT, 0);
 	}
 }
-
 
 class componente_lua : public componente
 {
@@ -2385,29 +2479,30 @@ public:
 				lua_getglobal(L, "UPDATE");
 				lua_call(L, 0, 0);
 
+				
 				lua_gc(L, LUA_GCCOLLECT, 0);
-				if(p.first != "game_scripts/charter"){
-					print({"KBs usage in",p.first,lua_gc(L, LUA_GCCOUNT, 0)});
-				}else{
-					//identificar variavel mais pesada
-					print({"KBs usage in",p.first,lua_gc(L, LUA_GCCOUNT, 0)});
-				}
+
 				
 
 			}
 			else
 			{
-				lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
-				lua_setglobal(p.second, "this_object_ptr");
-				lua_getglobal(p.second, "START");
-				lua_call(p.second, 0, 0);
+				lua_State *L = p.second;
+				lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
+				lua_setglobal(L, "this_object_ptr");
+				lua_getglobal(L, "START");
+				lua_call(L, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
+
+				//lua_gc(L, LUA_GCSETPAUSE, 1);
+				//lua_gc(L, LUA_GCSETSTEPMUL, 400);
 			}
 		}
-		
-		//thread t(collect_lua_states_garbage,estados_lua);
-		//lua_threads_to_clean.push_back(move(t));
 
+		//collect_lua_states_garbage(estados_lua);
+
+		// thread t(collect_lua_states_garbage,estados_lua);
+		// lua_threads_to_clean.push_back(move(t));
 	}
 	void colidir(colis_info col)
 	{
