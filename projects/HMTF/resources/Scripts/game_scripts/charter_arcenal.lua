@@ -82,7 +82,8 @@ function run_animation()
         end
 
 
-        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,current_animation_state.time)
+        set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, false, current_animation_state.name,
+            current_animation_state.time)
     end
 end
 
@@ -90,7 +91,8 @@ local bullet_start_pos_id = 1
 function select_wepon(wepon)
     bullet_start_pos_id = 1
     local wepon_data = get_scene_3D(wepon.file)
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",false, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",
+        false, false)
     --local objects = cenary_builders.scene(camera.object_ptr, 4, wepon_data, false)
 
     current_animation_state = {
@@ -139,7 +141,8 @@ inputs_last_frame = {}
 function get_charter_data()
     hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
     hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
-    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter",
+        "movement_inpulse")
 
 
 
@@ -149,7 +152,8 @@ end
 
 function START()
     this_object = game_object:new(this_object_ptr)
-    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","camera_ptr"))
+    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/charter",
+        "camera_ptr"))
     this_object:add_component(components.audio_source)
 
     select_wepon(wepom_list.test_wepon)
@@ -189,7 +193,7 @@ function shoot()
             a = (i % #selected_wepom.bullet_origens) + 1
         end
         bullet_start_points[a] = camera.components[components.transform]:get_global_position(
-        selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
+            selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
     end
 
     local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
@@ -209,24 +213,42 @@ function shoot()
 
         if selected_wepom.spred > 0 then
             spred_direction = camera.components[components.transform]:get_local_direction(
-            (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
+                (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
 
-        --summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,{ spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,selected_wepom.hit_scan, movement_inpulse, true, true, selected_wepom.color, "")
-        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,{ spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,selected_wepom.hit_scan, {x=0,y=0,z=0}, true, true, selected_wepom.color, "")
+        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,
+            { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,
+            selected_wepom.hit_scan, { x = 0, y = 0, z = 0 }, true, true, selected_wepom.color, "")
     end
 end
 
-
-
 function UPDATE()
+    
     if global_data:get("pause") < 1 then
         time:get()
 
-        --get_charter_data()
+        
+        --hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
+        --hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
+        --movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
+
+        --[[
+        hit_top = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "hit_top")
+        hit_down = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "hit_down")
+        movement_inpulse = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "movement_inpulse")
+        ]]
+
+        for i = 1, 10, 1 do
+            c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "a",2)
+        end
+        
+        
+
+        inputs = global_data:get("inputs")
+        inputs_last_frame = global_data:get("inputs_last_frame")
 
         if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
-            if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and  ( current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then
+            if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and (current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then
                 current_animation_state = {
                     name = "walk",
                     loop = true,
@@ -235,7 +257,7 @@ function UPDATE()
                     finish = false,
                     duration = selected_wepom.data.animations["walk"].duration,
                 }
-            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and ( current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) or not hit_down then
+            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and (current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) or not hit_down then
                 current_animation_state = {
                     name = "normal",
                     loop = true,
@@ -246,9 +268,9 @@ function UPDATE()
                 }
             end
         end
-        
 
-        
+
+
 
         if next_shoot_timer > 0 then
             next_shoot_timer = next_shoot_timer - time.delta
@@ -265,12 +287,11 @@ function UPDATE()
             end
         end
 
-        
+
 
         if current_animation_state ~= nil then
             run_animation()
         end
-        
     end
 end
 

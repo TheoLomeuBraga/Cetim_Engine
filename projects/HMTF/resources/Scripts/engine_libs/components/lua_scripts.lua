@@ -7,22 +7,22 @@ lua_scripts_component = create_base_component(components.lua_scripts)
 lua_scripts_component.object_ptr = ""
 lua_scripts_component.scripts = {}
 function lua_scripts_component:add_script(script_name)
-    add_script_lua(self.object_ptr,script_name)
+    c_add_script_lua(self.object_ptr,script_name)
 end
 function lua_scripts_component:remove_script(script_name)
-    remove_script(self.object_ptr,script_name)
+    c_remove_script(self.object_ptr,script_name)
 end
 function lua_scripts_component:get_variable(script_name,variable_name)
-    return get_lua_var(self.object_ptr,script_name,variable_name)
+    return c_get_lua_var(self.object_ptr,script_name,variable_name)
 end
 function lua_scripts_component:set_variable(script_name,variable_name,value)
-    set_lua_var(self.object_ptr,script_name,variable_name,value)
+    c_set_lua_var(self.object_ptr,script_name,variable_name,value)
 end
 function lua_scripts_component:call_function(script_name,function_name,args_table)
-    return call_lua_function(self.object_ptr,script_name,function_name,args_table)
+    return c_call_lua_function(self.object_ptr,script_name,function_name,args_table)
 end
 function lua_scripts_component:has_script(script)
-    self.scripts = deepcopyjson(get_lua_component(self.object_ptr).scripts)
+    self.scripts = deepcopyjson(c_get_lua_component(self.object_ptr).scripts)
     for key, value in pairs(self.scripts) do
         if script == value then
             return true

@@ -185,8 +185,6 @@ end
 
 
 function UPDATE()
-
-    
     
     
     if game_state == game_states.play then
@@ -311,13 +309,13 @@ function UPDATE()
             
             --move
             if hit_down and not (inpulse_y > 0) then
-                impulse = { x = (move_dir.x * (speed + speed_boost)) + platform_movement.x * time.delta,
-                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y * time.delta,
-                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z * time.delta }
+                impulse = { x = (move_dir.x * (speed + speed_boost)) + platform_movement.x,
+                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y,
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z }
             else
-                impulse = { x = (move_dir.x * (speed + speed_boost_air)) * time.sacale,
-                    y = (move_dir.y * (speed + speed_boost_air)) + inpulse_y * time.sacale,
-                    z = (move_dir.z * (speed + speed_boost_air)) * time.sacale }
+                impulse = { x = (move_dir.x * (speed + speed_boost_air)),
+                    y = (move_dir.y * (speed + speed_boost_air)) + inpulse_y,
+                    z = (move_dir.z * (speed + speed_boost_air)) }
             end
 
             this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
@@ -343,7 +341,7 @@ function UPDATE()
     
 
     
-    memory_usage_info()
+    --memory_usage_info()
 end
 
 function COLLIDE(collision_info)

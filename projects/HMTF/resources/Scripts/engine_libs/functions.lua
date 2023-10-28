@@ -22,7 +22,7 @@ function tablelength(T)
     return count
 end
 
-
+--[[
 function deepcopy(orig, copies)
     
     copies = copies or {} -- Tabelas já copiadas
@@ -50,9 +50,9 @@ function deepcopy(orig, copies)
 
     return copy
 end
+]]
 
 
---[[
 function deepcopy(orig)
     local copies = {} -- Tabelas já copiadas
     local orig_type = type(orig)
@@ -100,7 +100,7 @@ function deepcopy(orig)
 
     return copy
 end
-]]
+
 
 function deepcopyjson(orig)
     local copies = {} -- Tabelas já copiadas

@@ -255,7 +255,7 @@ std::string compileLuaFile(std::string path)
 		}
 
 		std::stringstream compiledScript;
-		if (lua_dump(L, writerFunction, &compiledScript) != 0)
+		if (lua_dump(L, writerFunction, &compiledScript, 0) != 0)
 		{
 			std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
 			lua_close(L);
@@ -615,7 +615,7 @@ namespace funcoes_ponte
 
 	int set_time_scale(lua_State *L)
 	{
-		Tempo::velocidadeTempo = lua_tointeger(L, 1);
+		Tempo::velocidadeTempo = lua_tonumber(L, 1);
 		return 0;
 	}
 
@@ -816,13 +816,12 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	
-	int memory_usage_info(lua_State *L){
-		print({"KBs usage", lua_gc(L, LUA_GCCOUNT, 0)});
-		//put the code here
+	int memory_usage_info(lua_State *L)
+	{
+		print({"KBs usage", lua_gc(L, LUA_GCCOUNTB, 0)});
+		// put the code here
 		return 0;
 	}
-	
 
 	// input
 
@@ -2285,6 +2284,8 @@ void load_base_lua_state(lua_State *L, string path)
 	lua_setfield(L, -2, "cpath");
 	lua_pop(L, 1);
 
+	lua_gc(L, LUA_GCSTOP, 0);
+
 	lua_newtable(L);
 	for (int i = 0; i < argumentos.size(); i++)
 	{
@@ -2475,15 +2476,14 @@ public:
 		{
 			if (scripts_lua_iniciados[p.first])
 			{
+
 				lua_State *L = p.second;
-				lua_getglobal(L, "UPDATE");
+
+				//lua_gc(L, LUA_GCCOLLECT, 0);
+				lua_gc(L, LUA_GCSTEP, 0);
+
+				lua_getglobal(p.second, "UPDATE");
 				lua_call(L, 0, 0);
-
-				
-				lua_gc(L, LUA_GCCOLLECT, 0);
-
-				
-
 			}
 			else
 			{
@@ -2493,13 +2493,10 @@ public:
 				lua_getglobal(L, "START");
 				lua_call(L, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
-
-				//lua_gc(L, LUA_GCSETPAUSE, 1);
-				//lua_gc(L, LUA_GCSETSTEPMUL, 400);
 			}
 		}
 
-		//collect_lua_states_garbage(estados_lua);
+		// collect_lua_states_garbage(estados_lua);
 
 		// thread t(collect_lua_states_garbage,estados_lua);
 		// lua_threads_to_clean.push_back(move(t));
@@ -2928,33 +2925,46 @@ int get_lua_component(lua_State *L)
 
 int get_lua_var(lua_State *L)
 {
+	int argumentos = lua_gettop(L);
+
 	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	string script_name = lua_tostring(L, 2), var_name = lua_tostring(L, 3);
 
-	lua_getglobal(cl->estados_lua[script_name], var_name.c_str());
-	int lua_type_id = lua_type(cl->estados_lua[script_name], -1);
+	lua_State *clL = cl->estados_lua[script_name];
+
+	//print({"AAAAA", lua_gc(clL, LUA_GCCOUNT, 0), lua_gc(clL, LUA_GCCOUNTB, 0)});
+
+	lua_getglobal(clL, var_name.c_str());
+	int lua_type_id = lua_type(clL, -1);
+
 	if (lua_type_id == LUA_TNUMBER)
 	{
 		lua_pushnumber(L, cl->pegar_numero(script_name, var_name));
+		// print({"CCCCC","NUMBER"});
 	}
 	else if (lua_type_id == LUA_TSTRING)
 	{
 		lua_pushstring(L, cl->pegar_string(script_name, var_name).c_str());
+		// print({"CCCCC","STRING"});
 	}
 	else if (lua_type_id == LUA_TBOOLEAN)
 	{
 		lua_pushboolean(L, cl->pegar_boleana(script_name, var_name));
+		// print({"CCCCC","BOOLEAN"});
 	}
 	else if (lua_type_id == LUA_TTABLE)
 	{
 		lua_pushtable(L, cl->pegar_tabela(script_name, var_name));
+		// print({"CCCCC","TABLE"});
 	}
 	else if (lua_type_id == LUA_TNIL)
 	{
 		return 0;
 	}
 	return 1;
+
+	// print({"DDDDD",lua_gc(cl->estados_lua[script_name],LUA_GCCOUNT,0)});
 }
 
 int set_lua_var(lua_State *L)

@@ -4,8 +4,8 @@ FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E
 FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj  -Wl,-E
 FLAGS_LINUX := -std=c++17 -Wl,-E
 
-DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 -DUSE_LUA_JIT
-DEFINITIONS_LINUX := -DLINUX -DUNIX -DUSE_LUA_JIT
+DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
+DEFINITIONS_LINUX := -DLINUX -DUNIX 
 
 TARGET_ENGINE_WINDOWS := ./build/engine_theo_master_pice.exe
 TARGET_ENGINE_LINUX := ./build/engine_theo_master_pice
@@ -23,16 +23,16 @@ SRC_COMPILER_LUA = ./src/Lua_Compiler/lua_compiler.cpp
 
 INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Pice -I./src/Theo_Master_Pice_Core -I./src/Theo_Master_Pice_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 
-LIBS_ENGINE_WINDOWS := -lluajit-5.1 -lglfw3  -lglew32 -lopengl32 -lbox2d  -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_DEBIAN := -L./libs/linux  -lluajit -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_ARCH :=  -lluajit -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_POP := -L./libs/linux  -lluajit -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d  -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+LIBS_ENGINE_DEBIAN := -L./libs/linux  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+LIBS_ENGINE_ARCH :=  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+LIBS_ENGINE_POP := -L./libs/linux  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 
 LIBS_FONT_READER_WINDOWS := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 LIBS_FONT_READER_LINUX := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 
-LIBS_LUA_COMPILER_WINDOWS =   -lluajit-5.1
-LIBS_LUA_COMPILER_LINUX =  -L./libs/linux  -lluajit
+LIBS_LUA_COMPILER_WINDOWS =   -llua
+LIBS_LUA_COMPILER_LINUX =  -L./libs/linux  -llua
 
 windows: 
 	rm -f $(TARGET_LUA_COMPILER_WINDOWS) $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) ./build/font_reader_gtk.glade ./build/theme.css
