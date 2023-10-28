@@ -1,4 +1,4 @@
 #!/bin/sh
 export LD_LIBRARY_PATH=$(pwd)/libs/linux
-export vblank_mode=0
+#export vblank_mode=0
 $(pwd)/build/engine_theo_master_pice $(pwd)/projects/HMTF

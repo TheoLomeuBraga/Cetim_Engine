@@ -661,21 +661,26 @@ void IniciarJanela()
 	}
 }
 
-//Tempo::Timer sw;
+Tempo::Timer sw;
 void loop_janela()
 {
 
 	// tempo
-	//Tempo::varTempRender = sw.get();
-	//Tempo::tempUltFrameRender = Tempo::tempo;
-	//sw.clear();
+	float t = sw.get();
+	sw.clear();
+	Tempo::tempUltFrameRender = Tempo::varTempRender;
+	Tempo::varTempRender = t;
+	
+	
 	//sw = Tempo::Timer();
 
-	//Tempo::varTempRender = (Tempo::tempo - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
-	float t = Tempo::tempo;
-	Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
-	Tempo::tempUltFrameRender = t;
+	
+	//float t = Tempo::tempo;
+	//Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
+	//Tempo::tempUltFrameRender = t;
 
+	
+	
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
 	Reindenizar();

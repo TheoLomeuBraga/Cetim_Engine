@@ -15,7 +15,7 @@ namespace Tempo
 		using clock = std::chrono::high_resolution_clock;
 
 		std::chrono::time_point<clock> start_time;
-		std::chrono::duration<double> accumulated_time;
+		//std::chrono::duration<double> accumulated_time;
 
 	public:
 		Timer()
@@ -30,8 +30,9 @@ namespace Tempo
 
 		double get()
 		{
-			auto current_time = clock::now();
-			return (accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count());
+			//auto current_time = clock::now();
+			//return (accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count());
+			return std::chrono::duration_cast<std::chrono::duration<double>>(clock::now() - start_time).count();
 		}
 	};
 

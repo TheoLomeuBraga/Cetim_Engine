@@ -467,6 +467,9 @@ public:
 };
 
 // b2d_clear
+
+unsigned int box_2d_physics_fps = 60;
+
 void atualisar_global_box2D()
 {
 

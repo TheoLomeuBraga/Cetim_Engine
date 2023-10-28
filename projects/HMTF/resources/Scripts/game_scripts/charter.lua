@@ -318,6 +318,7 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air)) }
             end
 
+            --this_object.components[components.physics_3D]:add_impulse(impulse.x * time.delta, impulse.y * time.delta, impulse.z * time.delta)
             this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
             
             movement_inpulse = deepcopy(impulse)

@@ -228,15 +228,7 @@ function UPDATE()
         time:get()
 
         
-        --hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
-        --hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
-        --movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter","movement_inpulse")
-
-        --[[
-        hit_top = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "hit_top")
-        hit_down = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "hit_down")
-        movement_inpulse = c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "movement_inpulse")
-        ]]
+        get_charter_data()
 
         for i = 1, 10, 1 do
             c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "a",2)
