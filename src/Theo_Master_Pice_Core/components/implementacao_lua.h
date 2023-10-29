@@ -1952,9 +1952,10 @@ namespace funcoes_ponte
 			bu->dinamica = t.getFloat("boady_dynamic");
 			bu->forma = (char)t.getFloat("collision_shape");
 
-			bu->rotacionarX = t.getFloat("rotate_x");
-			bu->rotacionarY = t.getFloat("rotate_y");
-			bu->rotacionarZ = t.getFloat("rotate_z");
+			bu->rotacionarX = t.getFloat("rotate_x") > 0;
+			bu->rotacionarY = t.getFloat("rotate_y") > 0;
+			bu->rotacionarZ = t.getFloat("rotate_z") > 0;
+			//print({"rotate",bu->rotacionarX,bu->rotacionarY,bu->rotacionarZ});
 
 			bu->elasticidade = t.getFloat("elasticity");
 

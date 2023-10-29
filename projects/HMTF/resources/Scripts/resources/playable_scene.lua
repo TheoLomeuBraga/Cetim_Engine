@@ -29,32 +29,34 @@ menu = {
 
 loading_screen = {
     obj = nil,
-    spin_obj =  nil,
+    spin_obj = nil,
     cam = nil,
 
     open = function()
-
         loading_screen.obj = game_object:new(global_data:get_var("core_object_ptr"))
-        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image",{ path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
-        loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1,1000)
+        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image",
+            { path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
+        loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 },
+            90, 0.1, 1000)
         set_lisener_object(loading_screen.cam.object_ptr)
 
-        
-        
+
+
 
         local mat = matreial:new()
         mat.shader = "resources/Shaders/sprite"
         mat.textures = { "resources/Textures/spiral.svg" }
-        loading_screen.spin_obj = create_render_shader(global_data:get_var("layers").hud, true, Vec3:new(0.8, -0.8, 0), Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
+        loading_screen.spin_obj = create_render_shader(global_data:get_var("layers").hud, true, Vec3:new(0.8, -0.8, 0),
+            Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
 
-        
+
         loading_screen.obj.components[components.lua_scripts]:add_script("game_scripts/loading_sreen_script")
-        loading_screen.obj.components[components.lua_scripts]:set_variable("game_scripts/loading_sreen_script", "obj_ptr_to_rotate",loading_screen.spin_obj.object_ptr)
-        
+        loading_screen.obj.components[components.lua_scripts]:set_variable("game_scripts/loading_sreen_script",
+            "obj_ptr_to_rotate", loading_screen.spin_obj.object_ptr)
     end,
 
     close = function()
-        loading_screen.obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
+        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image", {})
         loading_screen.obj.components[components.lua_scripts]:remove_script("game_scripts/loading_sreen_script")
         remove_object(loading_screen.cam.object_ptr)
         remove_object(loading_screen.spin_obj.object_ptr)
@@ -163,6 +165,9 @@ cenary_builders = {
                 ret:add_component(components.physics_3D)
                 if rb then
                     ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+                    ret.components[components.physics_3D].rotate_x = false
+                    ret.components[components.physics_3D].rotate_y = false
+                    ret.components[components.physics_3D].rotate_z = false
                 else
                     ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
                 end
@@ -209,6 +214,9 @@ cenary_builders = {
             ret.components[components.physics_3D].triger = false
             ret.components[components.physics_3D].scale = { x = 0.5, y = 1, z = 1 }
             ret.components[components.physics_3D].friction = 2
+            ret.components[components.physics_3D].rotate_x = false
+            ret.components[components.physics_3D].rotate_y = false
+            ret.components[components.physics_3D].rotate_z = false
             ret.components[components.physics_3D]:set()
 
             table.insert(cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].objects,
@@ -266,25 +274,24 @@ cenary_builders = {
             add_mesh(nil)
             add_physics(false, false)
         elseif part_data.variables.type == "passage" then
-
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/passage")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/passage", "passage_target",part_data.variables.passage_target)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/passage", "passage_target",
+                part_data.variables.passage_target)
 
             add_mesh(nil)
             add_physics(false, true)
         elseif part_data.variables.type == "door_triger" then
-            
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/door_triger")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",part_data.variables.triger_target)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",
+                part_data.variables.triger_target)
             add_mesh(nil)
             add_physics(false, true)
-
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end
-        
+
         if yield == true then
             cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
             if cenary_builders.yield_count_down < 0 then
@@ -294,7 +301,7 @@ cenary_builders = {
         end
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.scene_part(ret.object_ptr, layer, value,yield)
+            cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
         end
 
         return ret
@@ -306,7 +313,7 @@ cenary_builders = {
             parts_ptr_list = {},
             parts_list = {},
         }
-        
+
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures = { "resources/Textures/null.png" }
@@ -320,7 +327,7 @@ cenary_builders = {
             mesh_location:new("resources/Levels/3D/hub/hub.gltf", "Suzanne") })
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
 
-        
+
         --if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         ret.obj = deepcopy(cenary_builders.scene_part(father, layer, ceane_data.objects, yield))
@@ -328,14 +335,15 @@ cenary_builders = {
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object:new(value)
         end
-        
-        
+
+
         ret.obj:add_component(components.lua_scripts)
         ret.obj.components[components.lua_scripts]:add_script("game_scripts/door_manager")
-        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "map_file",ceane_data.path)
-        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "parts_ptr_list",ret.parts_ptr_list)
-        
-        
+        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "map_file", ceane_data.path)
+        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "parts_ptr_list",
+            ret.parts_ptr_list)
+
+
 
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
         cenary_builders.scene_poly_meshes = {}
