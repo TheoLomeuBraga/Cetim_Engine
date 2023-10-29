@@ -368,8 +368,6 @@ public:
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
                 bt_obj_rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
-                
-                
             }
             else if (dinamica == estatico)
             {
@@ -480,6 +478,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
     void adicionar_impulso(vec3 forca)
@@ -487,6 +486,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
     void adicionar_velocidade(vec3 forca)
@@ -494,6 +494,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
 
@@ -502,6 +503,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
     void adicionar_impulso_rotativo(vec3 forca)
@@ -509,6 +511,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
     void aplicar_velocidade_rotativa(vec3 forca)
@@ -516,6 +519,7 @@ public:
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
+            bt_obj_rb->activate();
         }
     }
     ~bullet()
@@ -714,35 +718,30 @@ void get_bu_collisions_no_per_object()
 float bullet_ultimo_tempo = 0;
 int maxSubSteps = 6;
 
-float bullet_physics_fps = 59;
 float time_passed = 0;
 
 Tempo::Timer timer;
+float tempo_passado = 0;
 
+double bullet_time_step = (1.0 / 30.0);
 void atualisar_global_bullet()
 {
-    
-    /*
-    time_passed += timer.get();
-    timer.clear();
-    
-    float advancement_per_frame = 1 / bullet_physics_fps;
-    
-    if (time_passed > advancement_per_frame)
-    {
-        time_passed -= Tempo::varTempRender;
+    float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
+    tempo_passado += bullet_passo_tempo;
 
+    while (tempo_passado > bullet_time_step)
+    {
+        tempo_passado -= bullet_time_step;
         clean_collisions();
         get_3D_collisions();
         clean_bu_collisions_no_per_object();
         get_bu_collisions_no_per_object();
-        dynamicsWorld->stepSimulation(advancement_per_frame * Tempo::velocidadeTempo, maxSubSteps);
+        float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
+        dynamicsWorld->stepSimulation(bullet_time_step, maxSubSteps);
     }
-    */
-    
-    
 
-    /**/
+
+    /*
     clean_collisions();
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
@@ -750,8 +749,7 @@ void atualisar_global_bullet()
     float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
     dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps;
     bullet_ultimo_tempo = Tempo::tempo;
-    
-    
+    */
 }
 
 void iniciar_atualisar_global_bullet()
