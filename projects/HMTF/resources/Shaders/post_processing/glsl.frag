@@ -23,11 +23,15 @@ void main() {
     ret = color * texture(post_procesing_render_input[0], uv);
 
     //limit color pallet
+    const float numBits = 4.0;
+    ret = floor(ret * (pow(2.0, numBits) - 1.0)) / (pow(2.0, numBits) - 1.0);
+    /*
     int n = 8;
     ret.x = (float(int(ret.x * n) + 0.5)) / n;
     ret.y = (float(int(ret.y * n) + 0.5)) / n;
     ret.z = (float(int(ret.z * n) + 0.5)) / n;
     ret.w = (float(int(ret.w * n) + 0.5)) / n;
+    */
     
 
 }
