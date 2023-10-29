@@ -91,7 +91,7 @@ local bullet_start_pos_id = 1
 function select_wepon(wepon)
     bullet_start_pos_id = 1
     local wepon_data = get_scene_3D(wepon.file)
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/explosive_vertex_mesh",
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/mesh",
         false, false)
     --local objects = cenary_builders.scene(camera.object_ptr, 4, wepon_data, false)
 
@@ -138,6 +138,8 @@ local inpulse = {}
 inputs = {}
 inputs_last_frame = {}
 
+local movement_inpulse = { x = 0, y = 0, z = 0 }
+
 function get_charter_data()
     hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_top")
     hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/charter", "hit_down")
@@ -161,7 +163,7 @@ function START()
     get_charter_data()
 end
 
-local movement_inpulse = { x = 0, y = 0, z = 0 }
+
 
 
 function shoot()
@@ -233,12 +235,10 @@ function UPDATE()
         for i = 1, 10, 1 do
             c_get_lua_var(this_object.object_ptr,"game_scripts/charter", "a",2)
         end
-        
-        
 
         inputs = global_data:get("inputs")
         inputs_last_frame = global_data:get("inputs_last_frame")
-
+        
         if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
             if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and (current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then
                 current_animation_state = {
@@ -249,7 +249,7 @@ function UPDATE()
                     finish = false,
                     duration = selected_wepom.data.animations["walk"].duration,
                 }
-            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and (current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) or not hit_down then
+            elseif math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) == 0 and current_animation_state.name == "walk" and (current_animation_state.name ~= "pick_up" or (current_animation_state.name == "pick_up" and current_animation_state.finish)) or not hit_down then
                 current_animation_state = {
                     name = "normal",
                     loop = true,

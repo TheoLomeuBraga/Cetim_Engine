@@ -73,7 +73,7 @@ function level:UPDATE()
 
     
     if scene_data ~= nil then
-        set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, false, "open_door_A",0.65)
+        set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, false, "open_door_A",0.6)
     end
     
     

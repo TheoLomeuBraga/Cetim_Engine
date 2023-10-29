@@ -318,11 +318,17 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air)) }
             end
 
+            if inputs.action_2 > 0 then
+                local turbo_time_speed = 10
+                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
+                time:set_speed(1 / turbo_time_speed)
+            else 
+                time:set_speed(1)
+                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
+            end
             
-            this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
 
-            --this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * 20, impulse.y * 20, impulse.z * 20)
-            --time:set_speed(0.05)
+            
             
             movement_inpulse = deepcopy(impulse)
 

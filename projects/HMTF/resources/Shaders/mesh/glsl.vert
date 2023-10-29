@@ -17,14 +17,17 @@ void main() {
    vert_out.POS = vec4(position, 1);
    vert_out.UV = uv;
 
-   if(poly_mesh) {
-
+   if(ui) {
+      gl_Position = transform * vert_out.POS;
    } else {
-      if(ui) {
-         gl_Position = transform * vert_out.POS;
-      } else {
-         gl_Position = (projection * vision * transform) * vert_out.POS;
-      }
+      gl_Position = (projection * vision * transform) * vert_out.POS;
    }
+
+   //psx factor
+   int psx_factor = 8;
+   gl_Position.x = (float(int(gl_Position.x * psx_factor) + 0.5)) / psx_factor;
+   gl_Position.y = (float(int(gl_Position.y * psx_factor) + 0.5)) / psx_factor;
+   vert_out.UV.x = (float(int(vert_out.UV.x * psx_factor) + 0.5)) / psx_factor;
+   vert_out.UV.y = (float(int(vert_out.UV.y * psx_factor) + 0.5)) / psx_factor;
 
 }
