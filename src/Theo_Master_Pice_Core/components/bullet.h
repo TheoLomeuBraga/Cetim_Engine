@@ -354,7 +354,7 @@ public:
         else
         {
             btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
-            if (dinamica == dinamico)
+            if (dinamica == dinamico || dinamica == cinematico)
             {
                 btVector3 Inertia = btVector3(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
@@ -375,6 +375,23 @@ public:
                 bt_obj_rb = new btRigidBody(CI);
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
+            }
+            else if (dinamica == cinematico)
+            {
+
+                btVector3 Inertia = btVector3(0, 0, 0);
+                Shape->calculateLocalInertia(densidade, Inertia);
+                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
+                bt_obj_rb = new btRigidBody(CI);
+                bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
+                bt_obj_rb->setRestitution(elasticidade);
+                bt_obj_rb->setGravity(btVector3(0, 0, 0));
+                bt_obj_rb->setFriction(atrito);
+                bt_obj_rb->setActivationState(DISABLE_DEACTIVATION);
+                bt_obj_rb->setCollisionFlags(bt_obj_rb->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+                dynamicsWorld->addRigidBody(bt_obj_rb);
+                bt_obj = bt_obj_rb;
+                bt_obj_rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
             }
         }
 
@@ -715,41 +732,16 @@ void get_bu_collisions_no_per_object()
     }
 }
 
-float bullet_ultimo_tempo = 0;
-int maxSubSteps = 6;
-
-float time_passed = 0;
-
-Tempo::Timer timer;
-float tempo_passado = 0;
-
-double bullet_time_step = (1.0 / 30.0);
 void atualisar_global_bullet()
 {
-    float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
-    tempo_passado += bullet_passo_tempo;
 
-    while (tempo_passado > bullet_time_step)
-    {
-        tempo_passado -= bullet_time_step;
-        clean_collisions();
-        get_3D_collisions();
-        clean_bu_collisions_no_per_object();
-        get_bu_collisions_no_per_object();
-        float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
-        dynamicsWorld->stepSimulation(bullet_time_step, maxSubSteps);
-    }
-
-
-    /*
     clean_collisions();
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
     float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
-    dynamicsWorld->stepSimulation(bullet_passo_tempo, maxSubSteps;
-    bullet_ultimo_tempo = Tempo::tempo;
-    */
+    dynamicsWorld->stepSimulation(bullet_passo_tempo,0);
+    
 }
 
 void iniciar_atualisar_global_bullet()

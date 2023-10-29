@@ -78,7 +78,7 @@ function START()
     this_object.components[components.transform]:change_rotation(0, 0, 0)
 
     this_object:add_component(components.physics_3D)
-    this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
+    this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.kinematic
     this_object.components[components.physics_3D].rotate_x = false
     this_object.components[components.physics_3D].rotate_y = false
     this_object.components[components.physics_3D].rotate_z = false
@@ -320,6 +320,9 @@ function UPDATE()
 
             
             this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
+
+            --this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * 20, impulse.y * 20, impulse.z * 20)
+            --time:set_speed(0.05)
             
             movement_inpulse = deepcopy(impulse)
 

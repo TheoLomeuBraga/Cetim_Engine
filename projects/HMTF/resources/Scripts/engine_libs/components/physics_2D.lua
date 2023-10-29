@@ -7,7 +7,8 @@ require("objects.collision_shapes")
 --boady_dynamics
 boady_dynamics = {
     static = 0,
-    dynamic = 1
+    dynamic = 1,
+    kinematic = 2,
 }
 
 
