@@ -246,7 +246,7 @@ public:
 	const char *nome = "";
 	int X = 256, Y = 256;
 	bool janelaInteira = false, transparente = false;
-	int antiCerrilhado = 1;
+	int antiCerrilhado = 0;
 
 	JanelaConfig(const char *n, int x, int y, bool fs, bool transp)
 	{
