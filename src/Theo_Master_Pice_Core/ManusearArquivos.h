@@ -254,11 +254,11 @@ namespace ManuseioDados
 		}
 	}
 
-	ivec2 svg_res(266, 266);
+	ivec2 svg_res(256, 256);
 	//512
 
 	bool use_texture_max_size = true;
-	ivec2 texture_max_size(266, 266);
+	ivec2 texture_max_size(256, 256);
 
 	mapeamento_assets<imagem> mapeamento_imagems;
 	std::mutex mapeamento_imagems_mtx;

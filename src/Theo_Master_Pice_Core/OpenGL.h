@@ -704,13 +704,10 @@ public:
 	{
 		
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
+		glUniform1i(glGetUniformLocation(shader_s, "light_size"), light_size);
 
 		for(size_t i = 0; i < light_size; i++){
 
-		}
-
-		for(size_t i = light_size; i < 99; i++){
-			
 		}
 
 	}

@@ -23,7 +23,11 @@ struct Light {
   vec3 color;
   float intensity;
   float angle;  
-} light[99];
+} ;
+
+uniform Light light[99];
+
+light_size
 
 layout(location = 0) in struct Vertex
 {
