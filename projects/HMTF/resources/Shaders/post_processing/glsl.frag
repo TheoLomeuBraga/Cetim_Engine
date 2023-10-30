@@ -16,22 +16,41 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
     return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
+vec4 ditheredTextureColor(sampler2D tex, vec2 uv, float threshold) {
+    vec4 texColor = texture(tex, uv);
+    
+    // Coordenadas de dithering
+    ivec2 ditherCoords = ivec2(gl_FragCoord.xy) % 4;
 
+    // 1D dither matrix (flattened from the 4x4 matrix)
+    int ditherMatrix[16] = int[16](
+        0, 8, 2, 10,
+        12, 4, 14, 6,
+        3, 11, 1, 9,
+        15, 7, 13, 5
+    );
+
+    // Calculate the index for the 1D dither matrix
+    int ditherIndex = ditherCoords.x + ditherCoords.y * 4;
+
+    // Adjust the fragment color based on the dithering value
+    float ditherValue = float(ditherMatrix[ditherIndex]) / 15.0;
+    if (ditherValue < threshold) {
+        return vec4(0.0); // Black color
+    } else {
+        return texColor;
+    }
+}
 
 void main() {
 
     ret = color * texture(post_procesing_render_input[0], uv);
+    //ret = color * ditheredTextureColor(post_procesing_render_input[0], uv,0.001);
 
     //limit color pallet
     const float numBits = 4.0;
     ret = floor(ret * (pow(2.0, numBits) - 1.0)) / (pow(2.0, numBits) - 1.0);
-    /*
-    int n = 8;
-    ret.x = (float(int(ret.x * n) + 0.5)) / n;
-    ret.y = (float(int(ret.y * n) + 0.5)) / n;
-    ret.z = (float(int(ret.z * n) + 0.5)) / n;
-    ret.w = (float(int(ret.w * n) + 0.5)) / n;
-    */
-    
+
+    //add ditering
 
 }
