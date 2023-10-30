@@ -16,41 +16,49 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
     return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
-vec4 ditheredTextureColor(sampler2D tex, vec2 uv, float threshold) {
-    vec4 texColor = texture(tex, uv);
-    
-    // Coordenadas de dithering
-    ivec2 ditherCoords = ivec2(gl_FragCoord.xy) % 4;
-
-    // 1D dither matrix (flattened from the 4x4 matrix)
-    int ditherMatrix[16] = int[16](
-        0, 8, 2, 10,
-        12, 4, 14, 6,
-        3, 11, 1, 9,
-        15, 7, 13, 5
+// Função que aplica o dithering estilo PlayStation 1 a uma textura com ajuste de intensidade
+vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity) {
+    // Matriz de padrões de dithering
+    const mat3 ditherMatrix = mat3(
+        vec3( 1.0, 5.0, 3.0),
+        vec3( 7.0, 9.0, 6.0),
+        vec3( 4.0, 2.0, 8.0)
     );
 
-    // Calculate the index for the 1D dither matrix
-    int ditherIndex = ditherCoords.x + ditherCoords.y * 4;
+    // Tamanho da textura
+    vec2 textureSize = textureSize(texture, 0);
 
-    // Adjust the fragment color based on the dithering value
-    float ditherValue = float(ditherMatrix[ditherIndex]) / 15.0;
-    if (ditherValue < threshold) {
-        return vec4(0.0); // Black color
-    } else {
-        return texColor;
-    }
+    // Coordenada de textura ajustada
+    vec2 adjustedUV = uv * textureSize - 0.5;
+
+    // Índices inteiros para selecionar o padrão de dithering
+    ivec2 ditherIndex = ivec2(adjustedUV) % 3;
+
+    // Padrão de dithering na posição do pixel
+    float ditherValue = ditherMatrix[ditherIndex.x][ditherIndex.y] / 9.0;
+
+    // Ajuste da intensidade do dithering
+    ditherValue *= intensity;
+
+    // Coordenada de textura ajustada com o dithering
+    vec2 ditheredUV = (adjustedUV + ditherValue) / textureSize;
+
+    // Obtém a cor da textura na coordenada ditheredUV
+    vec4 color = texture2D(texture, ditheredUV);
+
+    return color;
 }
+
 
 void main() {
 
-    ret = color * texture(post_procesing_render_input[0], uv);
-    //ret = color * ditheredTextureColor(post_procesing_render_input[0], uv,0.001);
+    //ret = color * texture(post_procesing_render_input[0], uv);
+
+    //adicionar Dithering
+    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0.2);
 
     //limit color pallet
     const float numBits = 4.0;
     ret = floor(ret * (pow(2.0, numBits) - 1.0)) / (pow(2.0, numBits) - 1.0);
-
-    //add ditering
 
 }

@@ -90,8 +90,7 @@ local bullet_start_pos_id = 1
 function select_wepon(wepon)
     bullet_start_pos_id = 1
     local wepon_data = get_scene_3D(wepon.file)
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/mesh",
-        false, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/mesh",false, false)
     --local objects = cenary_builders.scene(camera.object_ptr, 4, wepon_data, false)
 
     current_animation_state = {
