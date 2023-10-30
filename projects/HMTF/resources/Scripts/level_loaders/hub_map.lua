@@ -62,18 +62,26 @@ function level:START()
     loading_screen.close()
 
     camera = {}
+
+    
     
 end
 
 
 
 
-
+local time_passed = 0
 function level:UPDATE()
 
     
+    
     if scene_data ~= nil then
-        set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, false, "open_door_A",0.6)
+        if time_passed < 0 then
+            time_passed = 1
+        end
+        time:get()
+        time_passed = time_passed - time.delta * time.sacale * 0.1
+        set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, true, "open_door_A",time_passed)
     end
     
     
