@@ -837,6 +837,8 @@ class API_grafica_classe
 public:
 	API_grafica_classe() {}
 
+	bool update_res = false;
+
 	string modelo_gpu;
 	bool pixel_perfeito = true;
 	ivec2 res_interna = ivec2(256, 256);

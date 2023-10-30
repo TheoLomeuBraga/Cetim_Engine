@@ -576,6 +576,8 @@ void MudarRes(int x, int y)
 	glfwSetWindowSize(janela, x, y);
 	int a, b;
 	glfwGetWindowSize(janela, &a, &b);
+	configuracoes::janelaConfig.X = x;
+	configuracoes::janelaConfig.Y = y;
 }
 
 bool janelaInteira = false;

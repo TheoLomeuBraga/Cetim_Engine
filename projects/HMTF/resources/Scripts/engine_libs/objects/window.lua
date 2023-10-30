@@ -1,6 +1,6 @@
 register_function_set("window")
 
-window = {resolution = {x = 256,y = 224},full_screen = false}
+window = {resolution = {x = 256,y = 256},full_screen = false}
 function window:get()
     --self.resolution.x,self.resolution.y,self.full_screen = get_window()
     new_window = get_set_window(get_lua)

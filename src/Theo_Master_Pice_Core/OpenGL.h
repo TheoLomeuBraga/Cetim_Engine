@@ -661,6 +661,7 @@ public:
 
 	void mudar_render_res(int X, int Y)
 	{
+		update_res = true;
 		glGenFramebuffers(1, &frame_buffer);
 		glViewport(0, 0, X, Y);
 	}
@@ -702,14 +703,13 @@ public:
 
 	void apply_light(unsigned int shader_s)
 	{
-		
+
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
 		glUniform1i(glGetUniformLocation(shader_s, "light_size"), light_size);
 
-		for(size_t i = 0; i < light_size; i++){
-
+		for (size_t i = 0; i < light_size; i++)
+		{
 		}
-
 	}
 
 	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
@@ -1278,8 +1278,6 @@ public:
 						glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
 						// cor
 						glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
-						
-						
 
 						// render
 						glUseProgram(shader_s);
@@ -1287,24 +1285,22 @@ public:
 						apply_material(shader_s, mat);
 						apply_light(shader_s);
 
-						unsigned int ui = glGetUniformLocation(shader_s, "ui"),transform = glGetUniformLocation(shader_s, "transform");
+						unsigned int ui = glGetUniformLocation(shader_s, "ui"), transform = glGetUniformLocation(shader_s, "transform");
 
 						for (shared_ptr<transform_> tf : PMESH->transforms)
 						{
-							
-							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 
+							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 
 							glUniform1i(ui, tf->UI);
 							glUniformMatrix4fv(transform, 1, GL_FALSE, &ajust[0][0]);
-							
+
 							glDrawElements(
 								GL_TRIANGLES,					 // mode
 								malhas[ma.get()].tamanho_indice, // count
 								GL_UNSIGNED_INT,				 // type
 								(void *)0						 // element array buffer offset
 							);
-
 						}
 					}
 				}
@@ -1338,6 +1334,51 @@ public:
 		}
 
 		glUniform1f(glGetUniformLocation(ShaderGL, "tempo"), Tempo::tempo);
+
+		/**/
+		if (update_res)
+		{
+			print({"AAAAA"});
+			//delete
+			glDeleteFramebuffers(1, &frame_buffer);
+			glDeleteRenderbuffers(1,&deeph_buffer);
+			for (int i = 0; i < SAIDAS_SHADER; i++)
+			{
+				glDeleteTextures(1, &frame_buffers_texturas[i]);
+			}
+			
+
+			//create
+
+			glGenFramebuffers(1, &frame_buffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
+			// deeph buffer
+			glGenRenderbuffers(1, &deeph_buffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, deeph_buffer);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, deeph_buffer);
+			// render texture
+			for (int i = 0; i < SAIDAS_SHADER; i++)
+			{
+				glGenTextures(1, &frame_buffers_texturas[i]);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+				if (pixel_perfeito)
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				}
+				else
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frame_buffers_texturas[i], 0);
+			}
+			update_res = false;
+		}
 
 		for (int i = 0; i < SAIDAS_SHADER; i++)
 		{
@@ -1407,7 +1448,7 @@ public:
 		glBindVertexArray(quad_array);
 		glUniform1i(tipo_vertice, 2);
 
-		//glUniform4f(glGetUniformLocation(pp_shader, "color"), pos_processamento_info.cor.x, pos_processamento_info.cor.y, pos_processamento_info.cor.z, pos_processamento_info.cor.w);
+		// glUniform4f(glGetUniformLocation(pp_shader, "color"), pos_processamento_info.cor.x, pos_processamento_info.cor.y, pos_processamento_info.cor.z, pos_processamento_info.cor.w);
 
 		// tempo
 		glUniform1f(glGetUniformLocation(pp_shader, "time"), Tempo::tempo);
@@ -1441,7 +1482,7 @@ public:
 		// cor
 		vec4 cor = pos_processamento_info.cor;
 		glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
-		//print({"color",cor.x, cor.y, cor.z, cor.w});
+		// print({"color",cor.x, cor.y, cor.z, cor.w});
 
 		// uv
 		vec4 uv = pos_processamento_info.uv_pos_sca;
