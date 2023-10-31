@@ -454,6 +454,8 @@ public:
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			if (pixel_perfeito)
 			{
@@ -560,8 +562,7 @@ public:
 				charters_bitmaps[f][char_fonte_atual.first] = vetor_ponteiro<unsigned char>(f->chars[char_fonte_atual.first].bitmap);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[char_fonte_atual.first].width, f->chars[char_fonte_atual.first].height, 0, GL_RED, GL_UNSIGNED_BYTE, charters_bitmaps[f][char_fonte_atual.first]);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				
 
 				if (f->pixel_perfect)
 				{
@@ -756,6 +757,8 @@ public:
 		{
 			glActiveTexture(GL_TEXTURE0 + NO_TEXTURAS + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(shader_s, local.c_str()), NO_TEXTURAS + i);
 		}
@@ -1338,7 +1341,6 @@ public:
 		/**/
 		if (update_res)
 		{
-			print({"AAAAA"});
 			//delete
 			glDeleteFramebuffers(1, &frame_buffer);
 			glDeleteRenderbuffers(1,&deeph_buffer);
@@ -1364,6 +1366,8 @@ public:
 
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 				if (pixel_perfeito)
 				{
@@ -1384,6 +1388,8 @@ public:
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res_interna.x, res_interna.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frame_buffers_texturas[i], 0);
 		}
@@ -1441,6 +1447,9 @@ public:
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), i);
 		}

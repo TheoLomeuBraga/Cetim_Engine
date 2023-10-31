@@ -178,6 +178,7 @@ cenary_builders = {
                 elseif part_data.variables.collision_shape == "cube" then
                     ret.components[components.physics_3D].collision_shape = collision_shapes.cube
                 elseif part_data.variables.collision_shape == "sphere" then
+                    ret.components[components.physics_3D].elasticity = 1
                     ret.components[components.physics_3D].collision_shape = collision_shapes.sphere
                 end
 

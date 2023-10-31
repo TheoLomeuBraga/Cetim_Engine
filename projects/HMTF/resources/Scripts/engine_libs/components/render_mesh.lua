@@ -18,7 +18,7 @@ end
 
 render_mesh_component = create_base_component(components.render_mesh)
 render_mesh_component.layer = 2
-render_mesh_component.use_oclusion = true
+render_mesh_component.use_oclusion = false
 render_mesh_component.normal_direction = normal_direction.both
 render_mesh_component.meshes = {}
 render_mesh_component.materials = {}

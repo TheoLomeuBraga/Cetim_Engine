@@ -220,7 +220,7 @@ function START()
     back_ground = create_render_shader(layers.sky_box, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
 
     window.resolution.x = 256
-    window.resolution.y = 256
+    window.resolution.y = 224
 
     window:set()
     gravity:set()

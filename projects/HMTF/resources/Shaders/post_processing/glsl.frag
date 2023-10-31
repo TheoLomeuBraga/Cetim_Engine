@@ -17,10 +17,10 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 }
 
 // Função que aplica o dithering estilo PlayStation 1 a uma textura com ajuste de intensidade
-vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity) {
+vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity,float palet_limitation_intensity) {
 
     vec2 textureSize2d = vec2(1,1) / textureSize(post_procesing_render_input[0],0) / 2;
-    uv = vec2(uv.x + textureSize2d.x,uv.y + textureSize2d.y);
+    //uv = vec2(uv.x + textureSize2d.x,uv.y + textureSize2d.y);
 
     // Matriz de padrões de dithering
     const mat3 ditherMatrix = mat3(
@@ -50,8 +50,7 @@ vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity) {
     // Obtém a cor da textura na coordenada ditheredUV
     vec4 color = texture2D(texture, ditheredUV);
 
-    const float numBits = 4.0;
-    color = floor(color * (pow(2.0, numBits) - 1.0)) / (pow(2.0, numBits) - 1.0);
+    color = floor(color * (pow(2.0, palet_limitation_intensity) - 1.0)) / (pow(2.0, palet_limitation_intensity) - 1.0);
 
     return color;
 }
@@ -64,7 +63,7 @@ void main() {
     //adicionar Dithering
     
 
-    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0);
+    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0.2,3);
 
     
 
