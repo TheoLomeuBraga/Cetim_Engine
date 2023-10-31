@@ -559,10 +559,11 @@ public:
 				glGenTextures(1, &fontes[f][char_fonte_atual.first]);
 				glBindTexture(GL_TEXTURE_2D, fontes[f][char_fonte_atual.first]);
 
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
 				charters_bitmaps[f][char_fonte_atual.first] = vetor_ponteiro<unsigned char>(f->chars[char_fonte_atual.first].bitmap);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[char_fonte_atual.first].width, f->chars[char_fonte_atual.first].height, 0, GL_RED, GL_UNSIGNED_BYTE, charters_bitmaps[f][char_fonte_atual.first]);
-
-				
 
 				if (f->pixel_perfect)
 				{
@@ -1341,16 +1342,15 @@ public:
 		/**/
 		if (update_res)
 		{
-			//delete
+			// delete
 			glDeleteFramebuffers(1, &frame_buffer);
-			glDeleteRenderbuffers(1,&deeph_buffer);
+			glDeleteRenderbuffers(1, &deeph_buffer);
 			for (int i = 0; i < SAIDAS_SHADER; i++)
 			{
 				glDeleteTextures(1, &frame_buffers_texturas[i]);
 			}
-			
 
-			//create
+			// create
 
 			glGenFramebuffers(1, &frame_buffer);
 			glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);

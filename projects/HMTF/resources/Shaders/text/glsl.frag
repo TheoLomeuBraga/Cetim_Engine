@@ -5,50 +5,57 @@ layout(location = 1) in vec2 uv;
 
 layout(location = 0) out vec4 ret;
 
-
-
-
-
-
-
-
-
-
 // material
  uniform sampler2D textures[6];
 uniform vec4 color;
-
-
-
-
-
-
-
-
-
-
-
-
 
 //fun�oes
 vec2 re_pos_uv(vec2 UV,vec4 UV_PosSca){
 return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
+vec4 applyXBRFilter(sampler2D tex, vec2 uv)
+{
+    ivec2 texSize = textureSize(tex, 0);
+    ivec2 uvInt = ivec2(uv * texSize);
+    vec2 texOffset = 1.0 / vec2(texSize);
 
+    // Coeficientes para o filtro XBR
+    float coef[12] = float[12](
+        1.0 / 256.0, 2.0 / 256.0, 1.0 / 256.0,
+        2.0 / 256.0, 4.0 / 256.0, 2.0 / 256.0,
+        1.0 / 256.0, 2.0 / 256.0, 1.0 / 256.0,
+        2.0 / 256.0, 4.0 / 256.0, 2.0 / 256.0
+    );
 
+    vec4 result = vec4(0.0);
 
+    for (int i = -1; i <= 1; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
+            ivec2 offset = ivec2(i, j);
+            vec2 sampleUV = (uvInt + offset) * texOffset;
+            vec4 sampleColor = texture(tex, sampleUV);
 
+            // Ponderação do filtro XBR
+            int coefIndex = (i + 1) * 3 + (j + 1);
+            result += coef[coefIndex] * sampleColor;
+        }
+    }
 
-
-
+    return result;
+}
 
 void main(){
-
-
-
- ret = color * vec4(1,1,1,texture(textures[0],uv ) );
-
+    
+    float f = applyXBRFilter(textures[0],uv).x;
+    if(f > 0.01){
+        f *= 20;
+    }else{
+        f = 0;
+    }
+    ret = vec4(color.x,color.y,color.z,f);
 
   
 }
