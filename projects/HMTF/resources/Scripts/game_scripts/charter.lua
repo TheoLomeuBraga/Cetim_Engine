@@ -113,7 +113,7 @@ camera_rotation = { x = 180, y = 0 }
 
 this_object_physics_3D_seted = false
 
-force_y = 12
+force_y = 24
 
 inpulse_y = 0
 
@@ -320,7 +320,7 @@ function UPDATE()
 
             if inputs.action_2 > 0 then
                 local turbo_time_speed = 10
-                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed * 2, impulse.y * turbo_time_speed * 2, impulse.z * turbo_time_speed * 2)
+                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
                 time:set_speed(1 / turbo_time_speed)
             else 
                 time:set_speed(1)
@@ -334,7 +334,7 @@ function UPDATE()
 
             
             if not hit_down then
-                inpulse_y = inpulse_y + (time.delta * gravity.force.y)
+                inpulse_y = inpulse_y + (time.delta * gravity.force.y * 2)
             end
 
         else
