@@ -320,7 +320,7 @@ function UPDATE()
 
             if inputs.action_2 > 0 then
                 local turbo_time_speed = 10
-                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
+                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed * 2, impulse.y * turbo_time_speed * 2, impulse.z * turbo_time_speed * 2)
                 time:set_speed(1 / turbo_time_speed)
             else 
                 time:set_speed(1)
