@@ -267,7 +267,9 @@ namespace ManuseioDados
 	{
 		bool jaCarregada = false;
 
-		int X = 1, Y = 1, canais = 4;
+		int X = 1;
+		int Y = 1;
+		int canais = 4;
 
 		unsigned char *data;
 
@@ -278,6 +280,7 @@ namespace ManuseioDados
 			
 			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
+				add_loading_request(local);
 				if (obterExtensaoArquivo(local) == "svg")
 				{
 
@@ -306,15 +309,17 @@ namespace ManuseioDados
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);
 				}
-				add_loading_request(local);
+				
 				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
 				if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
 				{
+					unsigned int sizex = std::min(X,texture_max_size.x);
+					unsigned int sizey = std::min(Y,texture_max_size.y);
 					unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
-					stbir_resize_uint8(data, X, Y, 0, data2, texture_max_size.x, texture_max_size.y, 0, canais);
+					stbir_resize_uint8(data,X ,  Y, 0, data2,sizex ,sizey , 0, canais);
 
-					imagem image = imagem(texture_max_size.x, texture_max_size.y, canais, data2);
+					imagem image = imagem(sizex, sizey, canais, data2);
 					image.local = local;
 
 					stbi_image_free(data);

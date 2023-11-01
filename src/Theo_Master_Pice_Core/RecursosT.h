@@ -128,13 +128,13 @@ public:
 
 	string local = "";
 	ivec2 res;
-	int ContagemPixels, canais, tamanho;
+	unsigned int ContagemPixels, canais, tamanho;
 	int mip_map;
 
 	vector<unsigned char> data;
 
 	imagem() {}
-	imagem(int x, int y, int c, unsigned char *dat)
+	imagem(unsigned int x, unsigned int y, unsigned int c, unsigned char *dat)
 	{
 		res.x = x;
 		res.y = y;
@@ -143,7 +143,7 @@ public:
 		tamanho = x * y * c;
 
 		data.resize(tamanho);
-		for (int i = 0; i < tamanho; i++)
+		for (unsigned int i = 0; i < tamanho; i++)
 		{
 			data[i] = dat[i];
 		}
@@ -151,7 +151,7 @@ public:
 		//delete[] dat;
 	}
 
-	imagem(int x, int y, int c, vector<unsigned char> dat)
+	imagem(unsigned int x, unsigned int y, unsigned int c, vector<unsigned char> dat)
 	{
 		res.x = x;
 		res.y = y;
@@ -175,15 +175,15 @@ public:
 		deletar();
 	}
 
-	vec4 pegarPixel(int x, int y)
+	vec4 pegarPixel(unsigned int x, unsigned int y)
 	{
-		int valor = canais * (res.x * y) + x;
+		unsigned int valor = canais * (res.x * y) + x;
 		return vec4(data[valor], data[valor + 1], data[valor + 2], data[valor + 3]);
 	}
 
-	void mudarPixel(int x, int y, vec4 cor)
+	void mudarPixel(unsigned int x, unsigned int y, vec4 cor)
 	{
-		int valor = canais * (res.x * y) + x;
+		unsigned int valor = canais * (res.x * y) + x;
 		data[valor] = cor.x;
 		data[valor + 1] = cor.y;
 		data[valor + 2] = cor.z;
@@ -191,9 +191,9 @@ public:
 	}
 };
 
-int pegar_inicio_pixel(ivec2 res, ivec2 local, int canais)
+int pegar_inicio_pixel(ivec2 res, ivec2 local, unsigned int canais)
 {
-	return (int)(canais * (res.x * local.y) + local.x);
+	return (unsigned int)(canais * (res.x * local.y) + local.x);
 }
 
 struct tile_struct
@@ -838,6 +838,7 @@ public:
 	API_grafica_classe() {}
 
 	bool update_res = false;
+	bool retro_texture_compresion = true;
 
 	string modelo_gpu;
 	bool pixel_perfeito = true;

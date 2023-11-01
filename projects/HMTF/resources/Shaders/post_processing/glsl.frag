@@ -63,7 +63,7 @@ void main() {
     //adicionar Dithering
     
 
-    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0.2,3);
+    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0.2,4);
 
     
 
