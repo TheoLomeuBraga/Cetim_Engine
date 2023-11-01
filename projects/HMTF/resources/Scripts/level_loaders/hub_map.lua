@@ -63,7 +63,7 @@ function level:START()
 
     camera = {}
 
-    
+    global_data:set_var("level_data",level.scene_3D_data)
     
 end
 
@@ -91,6 +91,7 @@ end
 function level:END()
     remove_object(cenary_builders.cenary)
     coroutine.yield()
+    global_data:set_var("level_data",{})
     clear_memory()
     coroutine.yield()
 end

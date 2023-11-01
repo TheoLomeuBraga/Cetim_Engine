@@ -2037,6 +2037,8 @@ namespace funcoes_ponte
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
 
+		lua_gc(lua_global_data, LUA_GCSTEP, 0);
+
 		return 0;
 	}
 
