@@ -19,13 +19,34 @@ body{
 
 .scrollable-div {
     width: 200%;
-    
     overflow: auto;
     left: 0;
     height: 90vh;
-
-    
     background-color: #01003a;
+
+}
+
+.scrollable-div-title{
+    background-color: #01003a;
+    color: white;
+    
+    text-align: left;
+    
+}
+
+.scrollable-div-button{
+    background-color: #01003a;
+    color: white;
+    border: 0;
+    float: left;
+    
+}
+
+.scrollable-div-button:hover{
+
+    color: rgb(238, 255, 0);
+    font-size: 120%;
+    transition: 0.5s;
 
 }
 
