@@ -288,7 +288,7 @@ cenary_builders = {
             ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",
                 part_data.variables.triger_target)
             add_mesh(nil)
-            add_physics(false, true)
+            add_physics(true, true)
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end

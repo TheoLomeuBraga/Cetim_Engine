@@ -2514,11 +2514,9 @@ public:
 			if (col.obj != NULL)
 			{
 
-				lua_getglobal(L, "COLLIDE");
-
-				lua_pushtable(L, colis_info_table(col));
-
-				lua_call(L, 1, 0);
+				//lua_getglobal(L, "COLLIDE");
+				//lua_pushtable(L, colis_info_table(col));
+				//lua_call(L, 1, 0);
 			}
 		}
 	}

@@ -206,7 +206,8 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
         
-        
+        this_object.components[components.physics_3D]:get()
+        --print(tablelength(this_object.components[components.physics_3D].objs_touching))
 
         local get_valid_touches_top = function(objs_touching)
             local valid_touches = 0
