@@ -63,7 +63,9 @@ function level:START()
 
     camera = {}
 
-    global_data:set_var("level_data",level.scene_3D_data)
+    global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
+
+    --global_data:set_var("level_data",level.scene_3D_data)
     
 end
 
@@ -74,7 +76,7 @@ local time_passed = 0
 function level:UPDATE()
 
     
-    
+    --[[
     if scene_data ~= nil then
         if time_passed < 0 then
             time_passed = 1
@@ -83,6 +85,7 @@ function level:UPDATE()
         time_passed = time_passed - time.delta * time.sacale * 0.1
         set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, true, "open_door_A",time_passed)
     end
+    ]]
     
     
 
@@ -91,7 +94,7 @@ end
 function level:END()
     remove_object(cenary_builders.cenary)
     coroutine.yield()
-    global_data:set_var("level_data",{})
+    global_data:set_var("level_animation_data",{})
     clear_memory()
     coroutine.yield()
 end

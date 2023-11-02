@@ -338,13 +338,6 @@ cenary_builders = {
         end
 
 
-        ret.obj:add_component(components.lua_scripts)
-        ret.obj.components[components.lua_scripts]:add_script("game_scripts/door_manager")
-        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "map_file", ceane_data.path)
-        ret.obj.components[components.lua_scripts]:set_variable("game_scripts/door_manager", "parts_ptr_list",
-            ret.parts_ptr_list)
-
-
 
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
         cenary_builders.scene_poly_meshes = {}

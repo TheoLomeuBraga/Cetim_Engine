@@ -1,0 +1,41 @@
+body{
+    background-color: rgb(29, 29, 29);
+    color: white;
+}
+
+.title {
+    text-align: center;
+
+}
+
+.page-div{
+    text-align: center;
+}
+
+
+.scrollable-div-container {
+    float: left;
+}
+
+.scrollable-div {
+    width: 200%;
+    
+    overflow: auto;
+    left: 0;
+    height: 90vh;
+
+    
+    background-color: #01003a;
+
+}
+
+#main_frame {
+    
+    height: 90vh;
+    width: 90%;
+    
+
+    display: inline-block;
+    border: 1px solid #01003a;
+    
+}
