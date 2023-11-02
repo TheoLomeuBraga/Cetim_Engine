@@ -8,7 +8,6 @@ require("short_cuts.create_render_shader")
 
 map_file = ""
 parts_ptr_list = {}
-
 doors_open = {}
 doors_open_progress = {}
 
