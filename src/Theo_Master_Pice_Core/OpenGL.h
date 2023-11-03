@@ -641,6 +641,10 @@ public:
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
 			// cor
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
+			// boneIds
+			glVertexAttribPointer(4, 3, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
+			// weights
+			glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
 
 			glDrawElements(
 				tipo,					   // mode

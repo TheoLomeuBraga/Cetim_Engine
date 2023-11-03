@@ -1,4 +1,11 @@
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in vec3 color;
+layout(location = 3) in ivec4 boneIds; 
+layout(location = 4) in vec4 weights;
+
 uniform bool shedow_mode;
+uniform bool skin_mode;
 uniform sampler2D texturas[12];
 uniform sampler2D post_procesing_render_input[6];
 uniform float inputs[32];
@@ -7,6 +14,10 @@ uniform float gama,time,metallic,softness;
 uniform bool ui;
 uniform mat4 projection,vision,transform;
 uniform vec4 uv_position_scale;
+
+const int MAX_BONES = 256;
+const int MAX_BONE_INFLUENCE = 4;
+uniform mat4 finalBonesMatrices[MAX_BONES];
 
 vec2 position = vec2(0, 0);
 vec2 ui_size = vec2(0.1, 0.1);

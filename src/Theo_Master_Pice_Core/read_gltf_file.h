@@ -69,6 +69,7 @@ namespace gltf_loader
 
     struct SubMesh
     {
+        bool skin = false;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
@@ -1030,7 +1031,7 @@ namespace gltf_loader
                 // Load bone IDs and weights (if available)
                 if (attributes.contains("JOINTS_0") && attributes.contains("WEIGHTS_0"))
                 {
-                    
+                    sm.skin = true;
                     size_t jointAccessorIndex = attributes["JOINTS_0"];
                     size_t weightAccessorIndex = attributes["WEIGHTS_0"];
                     auto jointData = getAttributeData(jointAccessorIndex);

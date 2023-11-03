@@ -928,6 +928,11 @@ namespace ManuseioDados
 
 			for (int i = 0; i < m.sub_meshes[a].positions.size(); i++)
 			{
+
+				if(m.sub_meshes[a].skin){
+					ma.pele = true;
+				}
+
 				vertice v;
 
 				v.posicao[0] = m.sub_meshes[a].positions[i].x;
