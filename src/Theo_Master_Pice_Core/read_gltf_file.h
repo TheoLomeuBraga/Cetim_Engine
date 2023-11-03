@@ -63,6 +63,16 @@ namespace gltf_loader
         std::string type;
     };
 
+    struct SubMesh
+    {
+        std::string name;
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec2> texcoords;
+        std::vector<unsigned int> indices;
+        size_t material = 0;
+    };
+
     struct Mesh
     {
         std::string name;
@@ -1091,16 +1101,16 @@ namespace gltf_loader
                     }
                     mesh.indices = new_indice;
 
-                    // print({mesh.name,".size()",mesh.indices.size() / 3, new_indice.size() / 3});
-
                     if (primitive.contains("material"))
                     {
                         mesh.material = primitive["material"].get<size_t>();
                     }
                 }
+                //break;
             }
 
             meshes.push_back(mesh);
+            
         }
 
         return true;
