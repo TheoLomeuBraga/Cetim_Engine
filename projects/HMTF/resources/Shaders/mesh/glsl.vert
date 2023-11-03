@@ -3,9 +3,10 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uv;
-layout(location = 2) in vec3 color;
-layout(location = 3) in ivec4 boneIds;
-layout(location = 4) in vec4 weights;
+layout(location = 2) in vec3 normal;
+layout(location = 3) in vec3 color;
+layout(location = 4) in ivec4 boneIds;
+layout(location = 5) in vec4 weights;
 
 const int MAX_BONES = 256;
 const int MAX_BONE_INFLUENCE = 4;
@@ -26,15 +27,23 @@ void main() {
    vert_out.UV = uv;
 
    if(skin_mode) {
-      mat4 skin_transform;
 
-      //test
-      skin_transform = finalBonesMatrices[0];
+
+      for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+         if(boneIds[i] == -1)
+            continue;
+         if(boneIds[i] >= MAX_BONES) {
+            vert_out.POS = vert_out.POS;
+            break;
+         }
+         vec4 localPosition = finalBonesMatrices[boneIds[i]] * vert_out.POS;
+         vert_out.POS += localPosition * weights[i];
+      }
 
       if(ui) {
-         gl_Position = skin_transform * vert_out.POS;
+         gl_Position = transform * vert_out.POS;
       } else {
-         gl_Position = (projection * vision * skin_transform) * vert_out.POS;
+         gl_Position = (projection * vision * transform) * vert_out.POS;
       }
    } else {
       if(ui) {

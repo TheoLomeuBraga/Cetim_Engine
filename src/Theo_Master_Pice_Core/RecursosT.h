@@ -521,7 +521,7 @@ struct vertice_struct
 	float uv[2] = {0, 0};
 	float normal[3] = {0, 0, 0};
 	float cor[3] = {0, 0, 0};
-	size_t id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
+	int id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
     float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 
 	bool operator==(const vertice_struct &v) const
