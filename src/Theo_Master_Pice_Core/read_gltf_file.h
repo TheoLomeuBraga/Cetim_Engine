@@ -37,6 +37,10 @@ T cyclicAccess(const std::vector<T> &vec, size_t id)
 #define ANIMATION_FPS_COUNT 20
 #endif
 
+#ifndef MAX_BONE_INFLUENCE
+#define MAX_BONE_INFLUENCE 4
+#endif
+
 namespace gltf_loader
 {
     struct scene
@@ -69,6 +73,8 @@ namespace gltf_loader
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
+        std::vector<size_t> BoneIDs;
+        std::vector<float> Weights;
         size_t material = 0;
     };
 
@@ -734,13 +740,11 @@ namespace gltf_loader
                 }
             }
 
-            
-
             textures.push_back(std::move(texture));
         }
-        
+
         originalTextureCount = countUniqueValues(textures);
-        
+
         return true;
     }
 
@@ -979,8 +983,10 @@ namespace gltf_loader
             for (const auto &primitive : meshJson["primitives"])
             {
 
+                // adicionar suporte bones
+
                 SubMesh sm;
-                
+
                 if (!primitive.contains("attributes"))
                 {
                     continue;
@@ -1018,6 +1024,25 @@ namespace gltf_loader
                     for (size_t i = 0; i < texcoordData.size(); i += 2)
                     {
                         sm.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
+                    }
+                }
+
+                // Load bone IDs and weights (if available)
+                if (attributes.contains("JOINTS_0") && attributes.contains("WEIGHTS_0"))
+                {
+                    
+                    size_t jointAccessorIndex = attributes["JOINTS_0"];
+                    size_t weightAccessorIndex = attributes["WEIGHTS_0"];
+                    auto jointData = getAttributeData(jointAccessorIndex);
+                    auto weightData = getAttributeData(weightAccessorIndex);
+                    for (size_t i = 0; i < jointData.size(); i += MAX_BONE_INFLUENCE)
+                    {
+                        for (size_t j = 0; j < MAX_BONE_INFLUENCE; j++)
+                        {
+                            print({"CCCCC",weightData[i + j]});
+                            sm.BoneIDs.push_back(static_cast<unsigned int>(jointData[i + j]));
+                            sm.Weights.push_back(weightData[i + j]);
+                        }
                     }
                 }
 
@@ -1104,12 +1129,11 @@ namespace gltf_loader
                         sm.material = primitive["material"].get<size_t>();
                     }
                 }
-                //break;
+                // break;
                 mesh.sub_meshes.push_back(sm);
             }
 
             meshes.push_back(mesh);
-            
         }
 
         return true;

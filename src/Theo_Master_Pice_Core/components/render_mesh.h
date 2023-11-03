@@ -16,9 +16,9 @@ public:
 	bool usar_oclusao = true;
 	float porcentagem_pode_ocupar_tela = 1;
 	uint8_t camada = 0;
-	map<string, float> shape_keys_state;
 	vector<shared_ptr<malha>> malhas;
 	vector<Material> mats;
+	vector<objeto_jogo*> bones;
 };
 
 #include "ecs/ecs.h"

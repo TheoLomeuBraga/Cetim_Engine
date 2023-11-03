@@ -513,12 +513,16 @@ public:
 };
 
 // 3D
+#define MAX_BONE_INFLUENCE 4
+#define base_bone_ids_and_weights {0,0,0,0}
 struct vertice_struct
 {
 	float posicao[3] = {0, 0, 0};
 	float uv[2] = {0, 0};
 	float normal[3] = {0, 0, 0};
 	float cor[3] = {0, 0, 0};
+	void* id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
+    float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 
 	bool operator==(const vertice_struct &v) const
 	{
@@ -565,7 +569,6 @@ public:
 	string arquivo_origem, nome;
 	vector<unsigned int> indice = {};
 	vector<vertice> vertices = {};
-	//map<string, vector<vertice>> shape_keys = {};
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{

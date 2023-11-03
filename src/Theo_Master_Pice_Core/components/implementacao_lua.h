@@ -510,6 +510,11 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		{
 			objects_ptrs[kfs.object_id]->pegar_componente<transform_>()->esca = kfs.scale;
 		}
+
+		shared_ptr<render_malha> rm = objects_ptrs[kfs.object_id]->pegar_componente<render_malha>();
+		if(rm != NULL){
+			rm->bones = objects_ptrs;
+		}
 	}
 };
 
