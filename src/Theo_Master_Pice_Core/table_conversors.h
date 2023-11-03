@@ -186,8 +186,9 @@ Material table_material(Table t)
         m.inputs[i] = inputs[i];
     }
     */
-   m.inputs = {};
-    for(pair<std::string, float> p : t.getTable("inputs").m_floatMap){
+    m.inputs = {};
+    for (pair<std::string, float> p : t.getTable("inputs").m_floatMap)
+    {
         m.inputs[p.first] = p.second;
     }
 
@@ -245,7 +246,7 @@ Table material_table(Material m)
     Table inputs;
     for (pair<std::string, float> p : m.inputs)
     {
-        inputs.setFloat(p.first,p.second);
+        inputs.setFloat(p.first, p.second);
     }
     t.setTable("inputs", inputs);
     return t;
@@ -465,8 +466,9 @@ Table scene_3D_table(cena_3D sceane)
 
         animations.push_back(animation);
     }
-    for(Table t : animations){
-        animations_map.setTable(t.getString("name"),t);
+    for (Table t : animations)
+    {
+        animations_map.setTable(t.getString("name"), t);
     }
     ret.setTable("animations", animations_map);
 

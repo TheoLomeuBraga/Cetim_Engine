@@ -914,12 +914,15 @@ namespace ManuseioDados
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
 			malha ma;
-			if(a > 0){
+			if (a > 0)
+			{
 				ma.nome = m.name + "." + to_string(a);
-			}else{
+			}
+			else
+			{
 				ma.nome = m.name;
 			}
-			
+
 			ma.indice = m.sub_meshes[a].indices;
 			ma.arquivo_origem = file_path;
 
@@ -978,6 +981,41 @@ namespace ManuseioDados
 				mat.texturas[0] = carregar_Imagem("resources/Textures/null.png");
 				ret.meus_materiais.push_back(mat);
 			}
+
+			int b = 1;
+			while (true)
+			{
+
+				string sub_mesh_name = mesh_name + "." + to_string(b);
+				if (cena.malhas.find(sub_mesh_name) != cena.malhas.end())
+				{
+					ret.minhas_malhas.push_back(cena.malhas[sub_mesh_name]);
+
+					
+					if (b < loader.meshes[mesh_index].sub_meshes.size())
+					{
+						int material_index = loader.meshes[mesh_index].sub_meshes[b].material;
+						if (material_index <= loader.materials.size() - 1 && loader.materials.size() != 0)
+						{
+							string material_name = loader.materials[material_index].name;
+							ret.meus_materiais.push_back(cena.materiais[material_name]);
+						}
+					}
+					else
+					{
+						Material mat;
+						mat.shad = "resources/Shaders/mesh";
+						mat.texturas[0] = carregar_Imagem("resources/Textures/null.png");
+						ret.meus_materiais.push_back(mat);
+					}
+
+					b++;
+				}
+				else
+				{
+					break;
+				}
+			}
 		}
 
 		// correct position in objects with no nodes
@@ -1011,15 +1049,14 @@ namespace ManuseioDados
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
 				vector<malha> malhas = converter_malha_gltf(gltf_loader.meshes[i], local);
-				for(malha m : malhas){
+				for (malha m : malhas)
+				{
 					ret.malhas.insert(pair<string, shared_ptr<malha>>(m.nome, make_shared<malha>(m)));
 				}
-				//ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(malhas[0])));
 			}
 
 			for (int i = 0; i < gltf_loader.textures.size(); i++)
 			{
-				// print({"gltf_loader.textures[i].uri",gltf_loader.textures[i].uri,Existe(gltf_loader.textures[i].uri)});
 				string svg_uri = trocarExtensaoArquivo(gltf_loader.textures[i].uri, "svg");
 				if (ManuseioDados::Existe(svg_uri))
 				{
