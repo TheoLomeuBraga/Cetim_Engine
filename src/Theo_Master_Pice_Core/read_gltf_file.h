@@ -65,7 +65,6 @@ namespace gltf_loader
 
     struct SubMesh
     {
-        std::string name;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
@@ -76,11 +75,7 @@ namespace gltf_loader
     struct Mesh
     {
         std::string name;
-        std::vector<glm::vec3> positions;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec2> texcoords;
-        std::vector<unsigned int> indices;
-        size_t material = 0;
+        std::vector<SubMesh> sub_meshes;
     };
 
     struct Node
@@ -983,6 +978,9 @@ namespace gltf_loader
 
             for (const auto &primitive : meshJson["primitives"])
             {
+
+                SubMesh sm;
+                
                 if (!primitive.contains("attributes"))
                 {
                     continue;
@@ -997,7 +995,7 @@ namespace gltf_loader
 
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        mesh.positions.emplace_back(positionData[i], positionData[i + 1], positionData[i + 2]);
+                        sm.positions.emplace_back(positionData[i], positionData[i + 1], positionData[i + 2]);
                     }
                 }
 
@@ -1008,7 +1006,7 @@ namespace gltf_loader
 
                     for (size_t i = 0; i < normalData.size(); i += 3)
                     {
-                        mesh.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
+                        sm.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
                     }
                 }
 
@@ -1019,7 +1017,7 @@ namespace gltf_loader
 
                     for (size_t i = 0; i < texcoordData.size(); i += 2)
                     {
-                        mesh.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
+                        sm.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
                     }
                 }
 
@@ -1042,7 +1040,7 @@ namespace gltf_loader
 
                         for (int i = 0; i < dataSize; i++)
                         {
-                            mesh.indices.push_back((unsigned int)indices[i]);
+                            sm.indices.push_back((unsigned int)indices[i]);
                         }
 
                         break;
@@ -1059,7 +1057,7 @@ namespace gltf_loader
                         // indices.resize(dataSize);
                         for (int i = 0; i < dataSize; i++)
                         {
-                            mesh.indices.push_back((unsigned int)indices[i]);
+                            sm.indices.push_back((unsigned int)indices[i]);
                         }
                         break;
                     }
@@ -1073,7 +1071,7 @@ namespace gltf_loader
 
                         for (int i = 0; i < dataSize; i++)
                         {
-                            mesh.indices.push_back((unsigned int)indices[i]);
+                            sm.indices.push_back((unsigned int)indices[i]);
                         }
 
                         break;
@@ -1085,28 +1083,29 @@ namespace gltf_loader
                     // corect mesh
                     // print({"mesh.indices.size() / 3",mesh.indices.size() / 3,mesh.indices.size() % 3});
                     vector<unsigned int> new_indice;
-                    for (int i = 0; i < mesh.indices.size() / 3; i += 3)
+                    for (int i = 0; i < sm.indices.size() / 3; i += 3)
                     {
 
-                        if ((mesh.indices[i] < mesh.indices.size() - 1 && mesh.indices[i + 1] < mesh.indices.size() - 1 && mesh.indices[i + 2] < mesh.indices.size() - 1))
+                        if ((sm.indices[i] < sm.indices.size() - 1 && sm.indices[i + 1] < sm.indices.size() - 1 && sm.indices[i + 2] < sm.indices.size() - 1))
                         {
-                            new_indice.push_back(mesh.indices[i]);
-                            new_indice.push_back(mesh.indices[i + 1]);
-                            new_indice.push_back(mesh.indices[i + 2]);
+                            new_indice.push_back(sm.indices[i]);
+                            new_indice.push_back(sm.indices[i + 1]);
+                            new_indice.push_back(sm.indices[i + 2]);
                         }
                         else
                         {
                             break;
                         }
                     }
-                    mesh.indices = new_indice;
+                    sm.indices = new_indice;
 
                     if (primitive.contains("material"))
                     {
-                        mesh.material = primitive["material"].get<size_t>();
+                        sm.material = primitive["material"].get<size_t>();
                     }
                 }
                 //break;
+                mesh.sub_meshes.push_back(sm);
             }
 
             meshes.push_back(mesh);

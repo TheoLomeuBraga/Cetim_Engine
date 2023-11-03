@@ -22,7 +22,7 @@ using namespace std;
 using json = nlohmann::json;
 
 #define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include <stb-master/stb_image_write.h>
 #include <stb-master/stb_image_resize.h>
@@ -184,7 +184,7 @@ namespace ManuseioDados
 	shared_ptr<fonte> carregar_fonte(string lugar)
 	{
 		ifstream file(lugar);
-		
+
 		std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
 		if (file)
 		{
@@ -255,7 +255,7 @@ namespace ManuseioDados
 	}
 
 	ivec2 svg_res(256, 256);
-	//512
+	// 512
 
 	bool use_texture_max_size = true;
 	ivec2 texture_max_size(256, 256);
@@ -277,7 +277,7 @@ namespace ManuseioDados
 
 		if (Existe(local))
 		{
-			
+
 			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -291,7 +291,7 @@ namespace ManuseioDados
 
 					if (!imagemSVG)
 					{
-						print({"Error loading SVG " , local});
+						print({"Error loading SVG ", local});
 					}
 
 					NSVGrasterizer *rast = nsvgCreateRasterizer();
@@ -309,21 +309,21 @@ namespace ManuseioDados
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);
 				}
-				
+
 				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
 				if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
 				{
-					unsigned int sizex = std::min(X,texture_max_size.x);
-					unsigned int sizey = std::min(Y,texture_max_size.y);
+					unsigned int sizex = std::min(X, texture_max_size.x);
+					unsigned int sizey = std::min(Y, texture_max_size.y);
 					unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
-					stbir_resize_uint8(data,X ,  Y, 0, data2,sizex ,sizey , 0, canais);
+					stbir_resize_uint8(data, X, Y, 0, data2, sizex, sizey, 0, canais);
 
 					imagem image = imagem(sizex, sizey, canais, data2);
 					image.local = local;
 
 					stbi_image_free(data);
-					//delete[] data;
+					// delete[] data;
 					delete[] data2;
 
 					remove_loading_request(local);
@@ -335,7 +335,7 @@ namespace ManuseioDados
 					image.local = local;
 
 					stbi_image_free(data);
-					//delete[] data;
+					// delete[] data;
 
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);
@@ -415,7 +415,7 @@ namespace ManuseioDados
 
 		if (Existe(local.c_str()))
 		{
-			
+
 			if (mapeamento_tilesets.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -523,10 +523,10 @@ namespace ManuseioDados
 	{
 
 		std::lock_guard<std::mutex> lock(mapeamento_tile_map_infos_mtx);
-		
+
 		if (Existe(local.c_str()))
 		{
-			
+
 			if (mapeamento_tile_map_infos.pegar(local).get() == NULL && has_loading_request(local) == false)
 			{
 				add_loading_request(local);
@@ -907,33 +907,41 @@ namespace ManuseioDados
 		}
 	}
 
-	malha converter_malha_gltf(gltf_loader::Mesh m, string file_path)
+	std::vector<malha> converter_malha_gltf(gltf_loader::Mesh m, string file_path)
 	{
-		malha ret;
-		ret.indice = m.indices;
-		ret.nome = m.name;
-		ret.arquivo_origem = file_path;
+		std::vector<malha> ret;
 
-		for (int i = 0; i < m.positions.size(); i++)
+		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
-			vertice v;
+			malha ma;
+			if(a > 0){
+				ma.nome = m.name + "." + to_string(a);
+			}else{
+				ma.nome = m.name;
+			}
+			
+			ma.indice = m.sub_meshes[a].indices;
+			ma.arquivo_origem = file_path;
 
-			v.posicao[0] = m.positions[i].x;
-			v.posicao[1] = m.positions[i].y;
-			v.posicao[2] = m.positions[i].z;
+			for (int i = 0; i < m.sub_meshes[a].positions.size(); i++)
+			{
+				vertice v;
 
-			v.normal[0] = m.normals[i].x;
-			v.normal[1] = m.normals[i].y;
-			v.normal[2] = m.normals[i].z;
+				v.posicao[0] = m.sub_meshes[a].positions[i].x;
+				v.posicao[1] = m.sub_meshes[a].positions[i].y;
+				v.posicao[2] = m.sub_meshes[a].positions[i].z;
 
-			v.uv[0] = m.texcoords[i].x;
-			v.uv[1] = m.texcoords[i].y;
+				v.normal[0] = m.sub_meshes[a].normals[i].x;
+				v.normal[1] = m.sub_meshes[a].normals[i].y;
+				v.normal[2] = m.sub_meshes[a].normals[i].z;
 
-			ret.vertices.push_back(v);
+				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
+				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
+
+				ma.vertices.push_back(v);
+			}
+			ret.push_back(ma);
 		}
-
-		// print({"nome_malha",ret.nome,"numero de triangulos",ret.indice.size() / 3});
-		// print({"nome_malha",ret.nome,"numero de vertices",ret.vertices.size()});
 
 		return ret;
 	}
@@ -956,7 +964,7 @@ namespace ManuseioDados
 			string mesh_name = loader.meshes[mesh_index].name;
 			ret.minhas_malhas.push_back(cena.malhas[mesh_name]);
 
-			int material_index = loader.meshes[mesh_index].material;
+			int material_index = loader.meshes[mesh_index].sub_meshes[0].material;
 
 			if (material_index <= loader.materials.size() - 1 && loader.materials.size() != 0)
 			{
@@ -995,14 +1003,18 @@ namespace ManuseioDados
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
-			
+
 			add_loading_request(local);
 			gltf_loader::GLTFLoader gltf_loader(local);
 			gltf_loader.load();
 
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(converter_malha_gltf(gltf_loader.meshes[i], local))));
+				vector<malha> malhas = converter_malha_gltf(gltf_loader.meshes[i], local);
+				for(malha m : malhas){
+					ret.malhas.insert(pair<string, shared_ptr<malha>>(m.nome, make_shared<malha>(m)));
+				}
+				//ret.malhas.insert(pair<string, shared_ptr<malha>>(gltf_loader.meshes[i].name, make_shared<malha>(malhas[0])));
 			}
 
 			for (int i = 0; i < gltf_loader.textures.size(); i++)
