@@ -4,12 +4,13 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uv;
 layout(location = 2) in vec3 color;
-layout(location = 3) in ivec4 boneIds; 
+layout(location = 3) in ivec4 boneIds;
 layout(location = 4) in vec4 weights;
 
 const int MAX_BONES = 256;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
+uniform bool skin_mode;
 
 out Vertex {
    vec4 POS;
@@ -24,10 +25,23 @@ void main() {
    vert_out.POS = vec4(position, 1);
    vert_out.UV = uv;
 
-   if(ui) {
-      gl_Position = transform * vert_out.POS;
+   if(skin_mode) {
+      mat4 skin_transform;
+
+      //test
+      skin_transform = finalBonesMatrices[0];
+
+      if(ui) {
+         gl_Position = skin_transform * vert_out.POS;
+      } else {
+         gl_Position = (projection * vision * skin_transform) * vert_out.POS;
+      }
    } else {
-      gl_Position = (projection * vision * transform) * vert_out.POS;
+      if(ui) {
+         gl_Position = transform * vert_out.POS;
+      } else {
+         gl_Position = (projection * vision * transform) * vert_out.POS;
+      }
    }
 
    //psx factor

@@ -641,10 +641,13 @@ public:
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
 			// cor
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
-			// boneIds
-			glVertexAttribPointer(4, 3, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
-			// weights
-			glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
+			if (ma->pele)
+			{
+				// boneIds
+				glVertexAttribPointer(4, 3, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
+				// weights
+				glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
+			}
 
 			glDrawElements(
 				tipo,					   // mode
@@ -1233,6 +1236,12 @@ public:
 
 							apply_material(shader_s, mat);
 							apply_light(shader_s);
+
+							if(ma->pele){
+								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
+							}else{
+								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
+							}
 
 							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 						}
