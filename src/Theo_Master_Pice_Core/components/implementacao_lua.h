@@ -515,7 +515,6 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		shared_ptr<render_malha> rm = objects_ptrs[kfs.object_id]->pegar_componente<render_malha>();
 		if(rm != NULL){
 			rm->bones = objects_ptrs;
-			print({"rm->bones.size()",rm->bones.size()});
 		}
 	}
 };
@@ -2063,7 +2062,7 @@ namespace funcoes_ponte
 
 	int set_keyframe(lua_State *L)
 	{
-
+		
 		int args_no = lua_gettop(L);
 
 		if (args_no == 5)
@@ -2077,6 +2076,8 @@ namespace funcoes_ponte
 			{
 				objects_ptrs.push_back(string_ponteiro<objeto_jogo>(objects_ptrs_str[i]));
 			}
+
+			
 
 			bool mix = lua_toboolean(L, 3);
 
@@ -2093,6 +2094,8 @@ namespace funcoes_ponte
 				animation_time = 0;
 			}
 
+			
+
 			float animation_frame = 0;
 			if (animation_time > ani.duration)
 			{
@@ -2103,7 +2106,8 @@ namespace funcoes_ponte
 				animation_frame = (animation_time * ani.keyFrames.size()) / ani.duration + 1;
 			}
 
-			/**/
+			
+			
 
 			float animation_frame_rest = animation_frame - (int)animation_frame;
 
@@ -2118,6 +2122,8 @@ namespace funcoes_ponte
 				animation_frame_rest = 0;
 			}
 
+			
+
 			if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
 			{
 				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
@@ -2127,10 +2133,15 @@ namespace funcoes_ponte
 			{
 				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs);
 			}
+
+			
+
 		}
 		else if (args_no == 6)
 		{
 		}
+
+		
 
 		return 0;
 	}

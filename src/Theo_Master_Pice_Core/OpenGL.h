@@ -646,7 +646,7 @@ public:
 				// boneIds
 				glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
 				// weights
-				glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
+				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
 			}
 
 			glDrawElements(
@@ -1202,7 +1202,7 @@ public:
 			// https://www.youtube.com/watch?v=LMpw7foANNA
 
 			// render_malha
-
+			
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
 			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
@@ -1211,6 +1211,7 @@ public:
 
 				if (RM->ligado)
 				{
+					
 					for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
 					{
 
@@ -1222,6 +1223,8 @@ public:
 						}
 						if (ma != NULL)
 						{
+
+							
 							// aplicar material
 							unsigned int shader_s = pegar_shader(mat.shad);
 							glUseProgram(shader_s);
@@ -1234,28 +1237,33 @@ public:
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
-							print({"RM->bones.size()",RM->bones.size()});
-							for (size_t i = 0; i < RM->bones.size(); i++)
-							{
-								shared_ptr<transform_> tf = RM->bones[i]->pegar_componente<transform_>();
-								if(tf != NULL){
-									mat4 matrix = tf->pegar_matriz();
-									glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE,&matrix[0][0] );
-									print({"i",i});
-								}
-								
-							}
-							
-
 							apply_material(shader_s, mat);
 							apply_light(shader_s);
-
-							if(ma->pele){
+							
+							
+							if (ma->pele)
+							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
-							}else{
+
+								print({"RM->bones.size()", RM->bones.size()});
+								
+								for (size_t i = 0; i < RM->bones.size(); i++)
+								{
+									shared_ptr<transform_> tf = RM->bones[i]->pegar_componente<transform_>();
+									if (tf != NULL)
+									{
+										mat4 matrix = tf->pegar_matriz();
+										glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE, &matrix[0][0]);
+										print({"i", i});
+									}
+								}
+							}
+							else
+							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
 							}
 
+							
 							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 						}
 					}
