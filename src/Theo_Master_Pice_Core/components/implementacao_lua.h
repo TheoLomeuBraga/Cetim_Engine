@@ -513,8 +513,9 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		
 		
 		shared_ptr<render_malha> rm = objects_ptrs[kfs.object_id]->pegar_componente<render_malha>();
-		if(rm != NULL){
+		if(rm != NULL ){
 			rm->bones = objects_ptrs;
+			print({"rm->bones.size()",rm->bones.size()});
 		}
 	}
 };

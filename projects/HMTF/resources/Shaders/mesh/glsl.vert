@@ -28,22 +28,19 @@ void main() {
 
    if(skin_mode) {
 
+      mat4 boneTransform = transform;
+
 
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
-         if(boneIds[i] == -1)
-            continue;
-         if(boneIds[i] >= MAX_BONES) {
-            vert_out.POS = vert_out.POS;
-            break;
-         }
-         vec4 localPosition = finalBonesMatrices[boneIds[i]] * vert_out.POS;
-         vert_out.POS += localPosition * weights[i];
+         int boneIndex = boneIds[i];
+         float weight = weights[i];
+         boneTransform += weight * finalBonesMatrices[boneIndex];
       }
 
       if(ui) {
-         gl_Position = transform * vert_out.POS;
+         gl_Position = boneTransform * vert_out.POS;
       } else {
-         gl_Position = (projection * vision * transform) * vert_out.POS;
+         gl_Position = (projection * vision * boneTransform) * vert_out.POS;
       }
    } else {
       if(ui) {
@@ -52,6 +49,8 @@ void main() {
          gl_Position = (projection * vision * transform) * vert_out.POS;
       }
    }
+
+   
 
    //psx factor
    int psx_factor = 8;

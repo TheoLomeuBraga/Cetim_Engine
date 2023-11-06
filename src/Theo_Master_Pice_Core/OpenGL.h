@@ -645,6 +645,7 @@ public:
 			{
 				// boneIds
 				glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
+
 				// weights
 				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
 			}
@@ -1244,17 +1245,16 @@ public:
 							if (ma->pele)
 							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
-
-								print({"RM->bones.size()", RM->bones.size()});
-								
+								print({"a",RM->bones.size()});
 								for (size_t i = 0; i < RM->bones.size(); i++)
 								{
+									print({"b", i});
 									shared_ptr<transform_> tf = RM->bones[i]->pegar_componente<transform_>();
 									if (tf != NULL)
 									{
 										mat4 matrix = tf->pegar_matriz();
 										glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE, &matrix[0][0]);
-										print({"i", i});
+										print({"c", i});
 									}
 								}
 							}
