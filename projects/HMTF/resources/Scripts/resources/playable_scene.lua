@@ -198,9 +198,7 @@ cenary_builders = {
                         part_data.materials[key] = deepcopy(value)
                     end
                 end
-
                 
-
                 ret:add_component(components.render_mesh)
                 ret.components[components.render_mesh].layer = layer
                 ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)

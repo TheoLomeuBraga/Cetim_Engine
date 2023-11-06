@@ -18,7 +18,7 @@ out Vertex {
    vec2 UV;
 } vert_out;
 
-uniform bool ui, poly_mesh;
+uniform bool ui;
 uniform mat4 projection, vision, transform;
 
 void main() {
@@ -28,13 +28,15 @@ void main() {
 
    if(skin_mode) {
 
-      mat4 boneTransform = transform;
+      mat4 boneTransform = mat4(0.0);
+      //mat4 boneTransform = transform;
 
 
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
          int boneIndex = boneIds[i];
          float weight = weights[i];
          boneTransform += weight * finalBonesMatrices[boneIndex];
+         //boneTransform = finalBonesMatrices[boneIndex];
       }
 
       if(ui) {
@@ -50,7 +52,7 @@ void main() {
       }
    }
 
-   
+
 
    //psx factor
    int psx_factor = 8;

@@ -907,7 +907,9 @@ namespace ManuseioDados
 		}
 	}
 
-	std::vector<malha> converter_malha_gltf(gltf_loader::Mesh m, string file_path)
+	size_t skin_count = 0;
+
+	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader,gltf_loader::Mesh m, string file_path)
 	{
 		std::vector<malha> ret;
 
@@ -945,6 +947,14 @@ namespace ManuseioDados
 
 				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
 				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
+
+				for(size_t i = 0; i < std::min(m.sub_meshes[a].BoneIDs.size(),(size_t)MAX_BONE_INFLUENCE); i++){
+					v.id_ossos[i] = m.sub_meshes[a].BoneIDs[i];
+				}
+
+				for(size_t i = 0; i < std::min(m.sub_meshes[a].Weights.size(),(size_t)MAX_BONE_INFLUENCE); i++){
+					v.peso_ossos[i] = m.sub_meshes[a].Weights[i];
+				}
 
 				ma.vertices.push_back(v);
 			}
@@ -1053,7 +1063,7 @@ namespace ManuseioDados
 
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				vector<malha> malhas = converter_malha_gltf(gltf_loader.meshes[i], local);
+				vector<malha> malhas = converter_malha_gltf(gltf_loader,gltf_loader.meshes[i], local);
 				for (malha m : malhas)
 				{
 					ret.malhas.insert(pair<string, shared_ptr<malha>>(m.nome, make_shared<malha>(m)));

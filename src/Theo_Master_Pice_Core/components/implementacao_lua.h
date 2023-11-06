@@ -496,6 +496,19 @@ vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float 
 
 void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs)
 {
+
+	for(objeto_jogo* obj : objects_ptrs){
+		shared_ptr<render_malha> rm = obj->pegar_componente<render_malha>();
+		if(rm != NULL){
+			rm->bones = objects_ptrs;
+			
+			if(rm->bones.size() > 0){
+				rm->bones = objects_ptrs;
+			}
+			
+		}
+	}
+
 	for (key_frame kfs : key_frames)
 	{
 		if (kfs.has_position)
@@ -512,11 +525,7 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		}
 		
 		
-		shared_ptr<render_malha> rm = objects_ptrs[kfs.object_id]->pegar_componente<render_malha>();
-		if(rm != NULL ){
-			rm->bones = objects_ptrs;
-			print({"rm->bones.size()",rm->bones.size()});
-		}
+		
 	}
 };
 

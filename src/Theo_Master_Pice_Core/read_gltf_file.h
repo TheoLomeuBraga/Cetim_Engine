@@ -85,6 +85,13 @@ namespace gltf_loader
         std::vector<SubMesh> sub_meshes;
     };
 
+    struct Skin
+    {
+        std::string name;
+        std::vector<size_t> jointIndices;
+        std::vector<glm::mat4> inverseBindMatrices;
+    };
+
     struct Node
     {
         std::string name = "";
@@ -94,6 +101,8 @@ namespace gltf_loader
         glm::quat rotation = glm::quat(1, 0, 0, 0);
         glm::vec3 scale = glm::vec3(1, 1, 1);
         std::vector<size_t> meshIndices, childrenIndices;
+        bool have_skin = false;
+        size_t skin;
         nlohmann::json extensions, extras;
     };
 
@@ -170,6 +179,7 @@ namespace gltf_loader
         std::vector<Node> nodes;
         std::vector<Animation> animations;
         std::vector<Texture> textures;
+        std::vector<Skin> skins;
         size_t originalTextureCount = 0;
         std::vector<Material> materials;
 
@@ -183,6 +193,8 @@ namespace gltf_loader
         bool loadAnimations();
         bool loadTextures();
         bool loadMaterials();
+        std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
+        bool loadSkins();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
         std::vector<uint8_t> getBufferData(size_t accessorIndex);
@@ -401,6 +413,12 @@ namespace gltf_loader
             if (nodeJson.contains("mesh"))
             {
                 nodeData.meshIndices.push_back(nodeJson["mesh"].get<size_t>());
+            }
+
+            if (nodeJson.contains("skin"))
+            {
+                nodeData.have_skin = true;
+                nodeData.skin = nodeJson["skin"].get<size_t>();
             }
 
             if (nodeJson.contains("children"))
@@ -849,6 +867,86 @@ namespace gltf_loader
         return true;
     }
 
+    std::vector<glm::mat4> GLTFLoader::getInverseBindMatrices(size_t accessorIndex)
+    {
+        const Accessor &accessor = accessors[accessorIndex];
+        const BufferView &bufferView = bufferViews[accessor.bufferView];
+        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+
+        size_t componentSize = 4 * sizeof(float); // Component size for float (assuming 4x4 matrices)
+        size_t numComponents = 16;                // Number of components for a 4x4 matrix
+
+        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
+        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
+        std::vector<glm::mat4> inverseBindMatrices(accessor.count);
+
+        for (size_t i = 0; i < accessor.count; ++i)
+        {
+            glm::mat4 inverseBindMatrix;
+
+            for (size_t row = 0; row < 4; ++row)
+            {
+                for (size_t col = 0; col < 4; ++col)
+                {
+                    float value = 0.0f;
+
+                    if (srcOffset + sizeof(float) <= buffer.size())
+                    {
+                        value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading inverse bind matrices.");
+                    }
+
+                    inverseBindMatrix[row][col] = value;
+                    srcOffset += componentSize;
+                }
+                srcOffset += byteStride - componentSize * numComponents;
+            }
+
+            inverseBindMatrices[i] = inverseBindMatrix;
+        }
+
+        return inverseBindMatrices;
+    }
+
+    bool GLTFLoader::loadSkins()
+    {
+        if (!gltf.contains("skins"))
+        {
+            return false; // Não há dados de skins no glTF
+        }
+
+        const nlohmann::json &skinsArray = gltf["skins"];
+        skins.reserve(skinsArray.size());
+
+        for (const auto &skinData : skinsArray)
+        {
+            Skin skin;
+
+            if (skinData.contains("name"))
+            {
+                skin.name = skinData["name"];
+            }
+
+            if (skinData.contains("joints"))
+            {
+                skin.jointIndices = skinData["joints"].get<std::vector<size_t>>();
+            }
+
+            if (skinData.contains("inverseBindMatrices"))
+            {
+                size_t accessorIndex = skinData["inverseBindMatrices"];
+                skin.inverseBindMatrices = getInverseBindMatrices(accessorIndex);
+            }
+
+            skins.push_back(skin);
+        }
+
+        return true;
+    }
+
     std::vector<float> GLTFLoader::getAttributeData(size_t accessorIndex)
     {
         const Accessor &accessor = accessors[accessorIndex];
@@ -928,11 +1026,36 @@ namespace gltf_loader
                     if (srcOffset + sizeof(uint16_t) <= buffer.size())
                     {
                         uint16_t uint16Value = *reinterpret_cast<const uint16_t *>(&buffer[srcOffset]);
-                        value = static_cast<float>(uint16Value) / 65535.0f;
+                        // value = static_cast<float>(uint16Value) / 65535.0f;
+                        value = static_cast<float>(uint16Value);
                     }
                     else
                     {
                         throw std::runtime_error("Buffer overflow while reading UNSIGNED_SHORT data.");
+                    }
+                }
+                else if (accessor.componentType == 5125) // UNSIGNED_INT
+                {
+                    if (srcOffset + sizeof(uint32_t) <= buffer.size())
+                    {
+                        uint32_t uint32Value = *reinterpret_cast<const uint32_t *>(&buffer[srcOffset]);
+                        value = static_cast<int>(uint32Value);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading UNSIGNED_INT bone IDs.");
+                    }
+                }
+                else if (accessor.componentType == 5121) // UNSIGNED_BYTE
+                {
+                    if (srcOffset + sizeof(uint8_t) <= buffer.size())
+                    {
+                        uint8_t uint32Value = *reinterpret_cast<const uint8_t *>(&buffer[srcOffset]);
+                        value = static_cast<int>(uint32Value);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading UNSIGNED_BYTE bone IDs.");
                     }
                 }
 
@@ -1040,7 +1163,6 @@ namespace gltf_loader
                     {
                         for (size_t j = 0; j < MAX_BONE_INFLUENCE; j++)
                         {
-                            print({"CCCCC",weightData[i + j]});
                             sm.BoneIDs.push_back(static_cast<unsigned int>(jointData[i + j]));
                             sm.Weights.push_back(weightData[i + j]);
                         }
