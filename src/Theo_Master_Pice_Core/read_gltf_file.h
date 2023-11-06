@@ -913,10 +913,14 @@ namespace gltf_loader
 
     bool GLTFLoader::loadSkins()
     {
+
+        
         if (!gltf.contains("skins"))
         {
             return false; // Não há dados de skins no glTF
         }
+
+        
 
         const nlohmann::json &skinsArray = gltf["skins"];
         skins.reserve(skinsArray.size());
@@ -935,14 +939,18 @@ namespace gltf_loader
                 skin.jointIndices = skinData["joints"].get<std::vector<size_t>>();
             }
 
+            /*
             if (skinData.contains("inverseBindMatrices"))
             {
                 size_t accessorIndex = skinData["inverseBindMatrices"];
                 skin.inverseBindMatrices = getInverseBindMatrices(accessorIndex);
             }
+            */
 
             skins.push_back(skin);
         }
+
+        
 
         return true;
     }
@@ -1282,6 +1290,8 @@ namespace gltf_loader
         loadAnimations();
         // print({"loadMaterials"});
         loadMaterials();
+        // print({"loadSkins"});
+        loadSkins();
         // print({"load end"});
 
         return true;

@@ -31,13 +31,20 @@ void main() {
       mat4 boneTransform = mat4(0.0);
       //mat4 boneTransform = transform;
 
+      
+
+
+      
 
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
          int boneIndex = boneIds[i];
          float weight = weights[i];
          boneTransform += weight * finalBonesMatrices[boneIndex];
-         //boneTransform = finalBonesMatrices[boneIndex];
+         //boneTransform += finalBonesMatrices[boneIndex];
+         
       }
+
+      //boneTransform += finalBonesMatrices[216];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;
@@ -51,8 +58,6 @@ void main() {
          gl_Position = (projection * vision * transform) * vert_out.POS;
       }
    }
-
-
 
    //psx factor
    int psx_factor = 8;

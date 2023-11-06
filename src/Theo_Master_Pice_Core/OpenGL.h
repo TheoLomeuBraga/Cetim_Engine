@@ -617,6 +617,13 @@ public:
 			glBindBuffer(GL_ARRAY_BUFFER, malhas[ma].malha_buffer);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(vertice) * ma->vertices.size(), &ma->vertices[0], GL_STATIC_DRAW);
 
+			/*
+			for(vertice v : ma->vertices){
+				print({"IDs",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
+				print({"peso_ossos",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
+			}
+			*/
+
 			glBindVertexArray(0);
 		}
 	}
@@ -1244,20 +1251,32 @@ public:
 							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
 
-								for (size_t i = 0; i < RM->bones.size(); i++)
+								//print({"RM->bones.size()",RM->bones.size()});
+								mat4 matrixes[256];
+								for (size_t i = 0; i < std::min(RM->bones.size(),(size_t)256); i++)
 								{
+
+									RM->usar_oclusao = false;
+
 									shared_ptr<transform_> tf = RM->bones[i]->pegar_componente<transform_>();
 									if (tf != NULL)
 									{
-										mat4 matrix = tf->pegar_matriz();
-										glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE, &matrix[0][0]);
+										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) *  tf->pegar_matriz();
+										
+									}else{
+										matrixes[i] = mat4(1.0);
 									}
 								}
+
+								//glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE, &matrix[0][0]);
+								glUniformMatrix4fv(glGetUniformLocation(shader_s, "finalBonesMatrices"), 256, GL_FALSE, &matrixes[0][0][0]);
+
 							}
 							else
 							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
 							}
+							
 
 							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 						}
