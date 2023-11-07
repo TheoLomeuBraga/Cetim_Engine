@@ -1004,8 +1004,17 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	mat4 buscar_offset_matrices()
+	mat4 buscar_offset_matrices(gltf_loader::GLTFLoader loader,size_t id)
 	{
+		for(gltf_loader::Skin s : loader.skins){
+			for (size_t i = 0; i < s.jointIndices.size(); i++)
+			{
+				if(s.jointIndices[i] == id){
+					return s.inverseBindMatrices[i];
+				}
+			}
+			
+		}
 		return mat4(1.0f);
 	}
 
@@ -1014,7 +1023,13 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 		ret.id = node.id;
-		// print({node.name});
+		
+		
+		mat4 offset_matrix = buscar_offset_matrices(loader,node.id);
+		if(offset_matrix != mat4(1.0f)){
+			
+			cena.offset_matrices[node.id] = offset_matrix;
+		}
 
 		ret.posicao = node.translation;
 		ret.quaternion = node.rotation;
