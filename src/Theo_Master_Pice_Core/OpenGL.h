@@ -660,6 +660,13 @@ public:
 			// weights
 			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
 
+			for(auto v : ma->vertices){
+				if(v.id_ossos[0] + v.id_ossos[1] + v.id_ossos[2] + v.id_ossos[3] > 0){
+					print({"AAAAA",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
+					print({"BBBBB",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
+				}
+			}
+
 			glDrawElements(
 				tipo,					   // mode
 				malhas[ma].tamanho_indice, // count
@@ -1265,7 +1272,7 @@ public:
 									if (bone_tf != NULL)
 									{
 										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz();
-										glm::vec3 position = glm::vec3(matrixes[i][3]);
+										//glm::vec3 position = glm::vec3(matrixes[i][3]);
 										// print({"AAAAA", i, position.x, position.y, position.z});
 									}
 									else

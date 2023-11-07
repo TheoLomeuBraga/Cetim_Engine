@@ -44,10 +44,11 @@ void main() {
          int boneIndex = boneIds[i];
          float weight = weights[i];
          boneTransform += weight * finalBonesMatrices[boneIndex];
+         //boneTransform += finalBonesMatrices[boneIndex];
          
       }
 
-      //boneTransform = finalBonesMatrices[215];
+      boneTransform = finalBonesMatrices[boneIds.x];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;
@@ -64,9 +65,9 @@ void main() {
 
    //psx factor
    int psx_factor = 8;
-   gl_Position.x = (float(int(gl_Position.x * psx_factor) + 0.5)) / psx_factor;
-   gl_Position.y = (float(int(gl_Position.y * psx_factor) + 0.5)) / psx_factor;
-   vert_out.UV.x = (float(int(vert_out.UV.x * psx_factor) + 0.5)) / psx_factor;
-   vert_out.UV.y = (float(int(vert_out.UV.y * psx_factor) + 0.5)) / psx_factor;
+   //gl_Position.x = (float(int(gl_Position.x * psx_factor) + 0.5)) / psx_factor;
+   //gl_Position.y = (float(int(gl_Position.y * psx_factor) + 0.5)) / psx_factor;
+   //vert_out.UV.x = (float(int(vert_out.UV.x * psx_factor) + 0.5)) / psx_factor;
+   //vert_out.UV.y = (float(int(vert_out.UV.y * psx_factor) + 0.5)) / psx_factor;
 
 }
