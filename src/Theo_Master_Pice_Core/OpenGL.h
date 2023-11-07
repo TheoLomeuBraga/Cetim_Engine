@@ -1242,7 +1242,14 @@ public:
 							// apply_transform(shader_s, tf, ca);
 							// ajustar
 							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+
+							mat4 ajust = tf->pegar_matriz();
+							if (ma->pele)
+							{					
+								ajust[3] = glm::vec4(glm::vec3(0,0,0), 1.0f);	
+							}
+							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
+
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
@@ -1264,9 +1271,11 @@ public:
 									shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
 									if (bone_tf != NULL)
 									{
-										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz();
-										//glm::vec3 position = glm::vec3(matrixes[i][3]);
-										// print({"AAAAA", i, position.x, position.y, position.z});
+										matrixes[i] = bone_tf->pegar_matriz_local();
+										//matrixes[i][3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
+										//matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
+
+										//  print({"AAAAA", i, position.x, position.y, position.z});
 									}
 									else
 									{

@@ -32,18 +32,21 @@ void main() {
 
    if(skin_mode) {
 
-      //mat4 boneTransform = mat4(0.0);
-      mat4 boneTransform = transform;
+      mat4 boneTransform = mat4(0.0);
+      //mat4 boneTransform = transform;
+      float weights_sum = weights.x + weights.y + weights.z + weights.w;
 
-      for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
-         int boneIndex = boneIds[i];
-         float weight = weights[i];
-         boneTransform += weight * finalBonesMatrices[boneIndex];
-         //boneTransform += finalBonesMatrices[boneIndex];
+      if(weights_sum > 0) {
+         for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+            int boneIndex = boneIds[i];
+            float weight = weights[i];
+            boneTransform += weight * finalBonesMatrices[boneIndex];
+         }
+      } else {
+         boneTransform = transform;
+      } 
 
-      }
-
-      //boneTransform = finalBonesMatrices[216];
+      //boneTransform = finalBonesMatrices[214];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;

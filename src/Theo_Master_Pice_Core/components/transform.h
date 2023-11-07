@@ -57,6 +57,22 @@ public:
 		return ret;
 	}
 
+	glm::mat4 pegar_matriz_local()
+	{
+		glm::mat4 ret;
+
+		ret = MatrizMundi;
+
+		ret = translate(ret, pos);
+
+		ret *= toMat4(quater);
+		ret = scale(ret, esca);
+
+		//matrizTransform = ret;
+
+		return ret;
+	}
+
 	glm::vec3 pegar_pos_global()
 	{
 		return glm::vec3(pegar_matriz()[3]); //
