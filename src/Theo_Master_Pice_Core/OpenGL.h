@@ -1276,16 +1276,13 @@ public:
 
 										
 										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
+
+										glUniformMatrix4fv(glGetUniformLocation(shader_s, ("finalBonesMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
 									}
 									else
 									{
 										matrixes[i] = mat4(1.0);
 									}
-								}
-
-								for (size_t i = 0; i < 256; i++)
-								{
-									glUniformMatrix4fv(glGetUniformLocation(shader_s, ("finalBonesMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
 								}
 							}
 							else
