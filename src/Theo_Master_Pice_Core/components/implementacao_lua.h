@@ -494,7 +494,7 @@ vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float 
 	return a;
 };
 
-void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs)
+void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs,map<size_t,mat4> offset_matrices)
 {
 
 	for(objeto_jogo* obj : objects_ptrs){
@@ -506,6 +506,15 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 				rm->bones = objects_ptrs;
 			}
 			
+		}
+	}
+
+	//apply offset_matrix
+	for(size_t i = 0 ; i < objects_ptrs.size();i++){
+		
+		shared_ptr<transform_> tf = objects_ptrs[i]->pegar_componente<transform_>();
+		if(tf != NULL && offset_matrices.find(i) != offset_matrices.end()){
+			tf->offset_matrix = offset_matrices[i];
 		}
 	}
 
@@ -2136,12 +2145,12 @@ namespace funcoes_ponte
 
 			if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
 			{
-				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
-				apply_key_frame_transform(kfs, objects_ptrs);
+				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)],animation_frame_rest);
+				apply_key_frame_transform(kfs, objects_ptrs,scene->offset_matrices);
 			}
 			else
 			{
-				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs);
+				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs,scene->offset_matrices);
 			}
 
 			

@@ -12,6 +12,7 @@ class transform_ : public componente
 {
 public:
 	glm::mat4 matrizTransform;
+	glm::mat4 offset_matrix = glm::mat4(1.0f);
 
 	transform_()
 	{
@@ -24,6 +25,8 @@ public:
 
 	bool UI = false;
 	transform_ *paiTF = NULL;
+
+	
 
 	int local_hierarquia;
 

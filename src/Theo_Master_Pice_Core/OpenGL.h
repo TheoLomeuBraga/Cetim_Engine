@@ -1272,7 +1272,7 @@ public:
 									if (bone_tf != NULL)
 									{
 
-										matrixes[i] = bone_tf->pegar_matriz();
+										matrixes[i] = bone_tf->pegar_matriz() * bone_tf->offset_matrix;
 
 										
 										matrixes[i] = glm::scale(mat4(1.0), vec3(-0.5, 0.5, -0.5)) * matrixes[i];

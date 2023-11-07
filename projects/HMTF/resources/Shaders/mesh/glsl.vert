@@ -42,7 +42,7 @@ void main() {
          boneTransform += finalBonesMatrices[boneIndex] * weight;
       }
 
-      boneTransform = finalBonesMatrices[214];
+      //boneTransform = finalBonesMatrices[214];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;

@@ -667,6 +667,7 @@ struct objeto_3D_struct
 	vec3 posicao = glm::vec3(0, 0, 0);
 	quat quaternion = glm::quat(1, 0, 0, 0);
 	vec3 escala = glm::vec3(1, 1, 1);
+	mat4 inverseBindMatrix = glm::mat4(1.0f);
 	vector<shared_ptr<malha>> minhas_malhas;
 	vector<Material> meus_materiais;
 	Table variaveis;
@@ -725,6 +726,7 @@ public:
 
 	objeto_3D objetos;
 	map<string, animacao> animacoes;
+	map<size_t,mat4> offset_matrices;
 	Table extras;
 };
 vec3 calculateNormal(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)

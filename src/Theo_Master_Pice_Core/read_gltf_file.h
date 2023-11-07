@@ -193,10 +193,9 @@ namespace gltf_loader
         bool loadAnimations();
         bool loadTextures();
         bool loadMaterials();
-        std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
         std::vector<std::vector<float>> getWeightsData(size_t accessorIndex);
         std::vector<std::vector<size_t>> getBoneIDsData(size_t accessorIndex);
-        std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex)
+        std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
         bool loadSkins();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
@@ -872,84 +871,28 @@ namespace gltf_loader
 
     std::vector<glm::mat4> GLTFLoader::getInverseBindMatrices(size_t accessorIndex)
     {
+        const std::vector<float> attributeData = getAttributeData(accessorIndex);
         const Accessor &accessor = accessors[accessorIndex];
-        const BufferView &bufferView = bufferViews[accessor.bufferView];
-        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+        const size_t numComponents = 16; // 4x4 matrix
+        const size_t numMatrices = accessor.count;
+        std::vector<glm::mat4> inverseBindMatrices(numMatrices);
 
-        size_t componentSize = 4 * sizeof(float); // Component size for float (assuming 4x4 matrices)
-        size_t numComponents = 16;                // Number of components for a 4x4 matrix
-
-        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
-        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
-        std::vector<glm::mat4> inverseBindMatrices(accessor.count);
-
-        for (size_t i = 0; i < accessor.count; ++i)
+        if (attributeData.size() != numMatrices * numComponents)
         {
-            glm::mat4 inverseBindMatrix;
-
-            for (size_t row = 0; row < 4; ++row)
-            {
-                for (size_t col = 0; col < 4; ++col)
-                {
-                    float value = 0.0f;
-
-                    if (srcOffset + sizeof(float) <= buffer.size())
-                    {
-                        value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Buffer overflow while reading inverse bind matrices.");
-                    }
-
-                    inverseBindMatrix[row][col] = value;
-                    srcOffset += componentSize;
-                }
-                srcOffset += byteStride - componentSize * numComponents;
-            }
-
-            inverseBindMatrices[i] = inverseBindMatrix;
+            throw std::runtime_error("Invalid inverse bind matrices data.");
         }
 
-        return inverseBindMatrices;
-    }
-
-    std::vector<glm::mat4> GLTFLoader::getInverseBindMatrices(size_t accessorIndex)
-    {
-        const Accessor &accessor = accessors[accessorIndex];
-        const BufferView &bufferView = bufferViews[accessor.bufferView];
-        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
-
-        size_t componentSize = 4 * sizeof(float); // Component size for float (assuming 4x4 matrices)
-        size_t numComponents = 16;                // Number of components for a 4x4 matrix
-
-        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
-        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
-        std::vector<glm::mat4> inverseBindMatrices(accessor.count);
-
-        for (size_t i = 0; i < accessor.count; ++i)
+        for (size_t i = 0; i < numMatrices; ++i)
         {
-            glm::mat4 inverseBindMatrix;
+            glm::mat4 inverseBindMatrix(1.0f); // Inicialize com a matriz de identidade
 
             for (size_t row = 0; row < 4; ++row)
             {
                 for (size_t col = 0; col < 4; ++col)
                 {
-                    float value = 0.0f;
-
-                    if (srcOffset + sizeof(float) <= buffer.size())
-                    {
-                        value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Buffer overflow while reading inverse bind matrices.");
-                    }
-
-                    inverseBindMatrix[row][col] = value;
-                    srcOffset += componentSize;
+                    size_t dataIdx = i * numComponents + row * 4 + col;
+                    inverseBindMatrix[row][col] = attributeData[dataIdx];
                 }
-                srcOffset += byteStride - componentSize * numComponents;
             }
 
             inverseBindMatrices[i] = inverseBindMatrix;
@@ -983,6 +926,7 @@ namespace gltf_loader
                 skin.jointIndices = skinData["joints"].get<std::vector<size_t>>();
             }
 
+            /**/
             if (skinData.contains("inverseBindMatrices"))
             {
                 size_t accessorIndex = skinData["inverseBindMatrices"];

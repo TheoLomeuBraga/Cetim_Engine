@@ -1004,7 +1004,12 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	objeto_3D node_3D_object(gltf_loader::Node node, vector<gltf_loader::Node> full_node_list, cena_3D cena, gltf_loader::GLTFLoader loader)
+	mat4 buscar_offset_matrices()
+	{
+		return mat4(1.0f);
+	}
+
+	objeto_3D node_3D_object(gltf_loader::Node node, vector<gltf_loader::Node> full_node_list, cena_3D &cena, gltf_loader::GLTFLoader loader)
 	{
 		objeto_3D ret;
 		ret.nome = node.name;
