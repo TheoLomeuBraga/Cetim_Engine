@@ -1275,7 +1275,7 @@ public:
 										matrixes[i] = bone_tf->pegar_matriz();
 
 										
-										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
+										matrixes[i] = glm::scale(mat4(1.0), vec3(-0.5, 0.5, -0.5)) * matrixes[i];
 										// matrixes[i][3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
 										// matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
 
