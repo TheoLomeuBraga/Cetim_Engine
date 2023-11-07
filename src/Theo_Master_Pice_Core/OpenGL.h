@@ -617,15 +617,6 @@ public:
 			glBindBuffer(GL_ARRAY_BUFFER, malhas[ma].malha_buffer);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(vertice) * ma->vertices.size(), &ma->vertices[0], GL_STATIC_DRAW);
 
-			/*
-			for(vertice v : ma->vertices){
-				if(v.id_ossos[0] + v.id_ossos[1] + v.id_ossos[2] + v.id_ossos[3] > 0){
-					print({"IDs",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
-					print({"peso_ossos",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
-				}
-			}
-			*/
-
 			glBindVertexArray(0);
 		}
 	}
@@ -655,17 +646,19 @@ public:
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
 
 			// boneIds
-			glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
+			glVertexAttribIPointer(4, 4, GL_INT, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
 
 			// weights
 			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
 
+			/*
 			for(auto v : ma->vertices){
 				if(v.id_ossos[0] + v.id_ossos[1] + v.id_ossos[2] + v.id_ossos[3] > 0){
 					print({"AAAAA",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
 					print({"BBBBB",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
 				}
 			}
+			*/
 
 			glDrawElements(
 				tipo,					   // mode
