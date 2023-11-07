@@ -39,8 +39,11 @@ void main() {
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
          int boneIndex = boneIds[i];
          float weight = weights[i];
-         boneTransform += weight * finalBonesMatrices[boneIndex];
+         boneTransform += finalBonesMatrices[boneIndex] * weight;
       }
+
+      boneTransform = finalBonesMatrices[214];
+
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;
       } else {

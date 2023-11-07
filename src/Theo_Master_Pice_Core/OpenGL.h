@@ -1276,10 +1276,6 @@ public:
 
 										
 										matrixes[i] = glm::scale(mat4(1.0), vec3(-0.5, 0.5, -0.5)) * matrixes[i];
-										// matrixes[i][3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
-										// matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
-
-										//  print({"AAAAA", i, position.x, position.y, position.z});
 									}
 									else
 									{

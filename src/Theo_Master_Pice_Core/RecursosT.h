@@ -1054,6 +1054,8 @@ quat graus_quat(vec3 r)
 	return quat(radians(r));
 }
 
+
+
 bool e_visivel(mat4 P, mat4 V, mat4 T, vector<vec3> pos)
 {
 	bool ret = false;

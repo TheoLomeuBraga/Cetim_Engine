@@ -196,6 +196,7 @@ namespace gltf_loader
         std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
         std::vector<std::vector<float>> getWeightsData(size_t accessorIndex);
         std::vector<std::vector<size_t>> getBoneIDsData(size_t accessorIndex);
+        std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex)
         bool loadSkins();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
@@ -913,6 +914,50 @@ namespace gltf_loader
         return inverseBindMatrices;
     }
 
+    std::vector<glm::mat4> GLTFLoader::getInverseBindMatrices(size_t accessorIndex)
+    {
+        const Accessor &accessor = accessors[accessorIndex];
+        const BufferView &bufferView = bufferViews[accessor.bufferView];
+        const std::vector<uint8_t> &buffer = buffersData[bufferView.buffer];
+
+        size_t componentSize = 4 * sizeof(float); // Component size for float (assuming 4x4 matrices)
+        size_t numComponents = 16;                // Number of components for a 4x4 matrix
+
+        size_t byteStride = bufferView.byteStride != 0 ? bufferView.byteStride : componentSize * numComponents;
+        size_t srcOffset = bufferView.byteOffset + accessor.byteOffset;
+        std::vector<glm::mat4> inverseBindMatrices(accessor.count);
+
+        for (size_t i = 0; i < accessor.count; ++i)
+        {
+            glm::mat4 inverseBindMatrix;
+
+            for (size_t row = 0; row < 4; ++row)
+            {
+                for (size_t col = 0; col < 4; ++col)
+                {
+                    float value = 0.0f;
+
+                    if (srcOffset + sizeof(float) <= buffer.size())
+                    {
+                        value = *reinterpret_cast<const float *>(&buffer[srcOffset]);
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Buffer overflow while reading inverse bind matrices.");
+                    }
+
+                    inverseBindMatrix[row][col] = value;
+                    srcOffset += componentSize;
+                }
+                srcOffset += byteStride - componentSize * numComponents;
+            }
+
+            inverseBindMatrices[i] = inverseBindMatrix;
+        }
+
+        return inverseBindMatrices;
+    }
+
     bool GLTFLoader::loadSkins()
     {
 
@@ -936,6 +981,12 @@ namespace gltf_loader
             if (skinData.contains("joints"))
             {
                 skin.jointIndices = skinData["joints"].get<std::vector<size_t>>();
+            }
+
+            if (skinData.contains("inverseBindMatrices"))
+            {
+                size_t accessorIndex = skinData["inverseBindMatrices"];
+                skin.inverseBindMatrices = getInverseBindMatrices(accessorIndex);
             }
 
             skins.push_back(skin);
