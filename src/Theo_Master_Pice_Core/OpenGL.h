@@ -619,10 +619,13 @@ public:
 
 			/*
 			for(vertice v : ma->vertices){
-				print({"IDs",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
-				print({"peso_ossos",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
+				if(v.id_ossos[0] + v.id_ossos[1] + v.id_ossos[2] + v.id_ossos[3] > 0){
+					print({"IDs",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
+					print({"peso_ossos",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
+				}
 			}
 			*/
+			
 
 			glBindVertexArray(0);
 		}
@@ -1258,10 +1261,10 @@ public:
 
 									RM->usar_oclusao = false;
 
-									shared_ptr<transform_> tf = RM->bones[i]->pegar_componente<transform_>();
-									if (tf != NULL)
+									shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
+									if (bone_tf != NULL)
 									{
-										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) *  tf->pegar_matriz();
+										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) *  bone_tf->pegar_matriz();
 										
 									}else{
 										matrixes[i] = mat4(1.0);

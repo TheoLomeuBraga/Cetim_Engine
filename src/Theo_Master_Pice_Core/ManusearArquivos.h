@@ -909,10 +909,12 @@ namespace ManuseioDados
 
 	size_t skin_count = 0;
 
-	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader,gltf_loader::Mesh m, string file_path)
+	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader, gltf_loader::Mesh m, string file_path)
 	{
 		std::vector<malha> ret;
 		bool add_skin_count = false;
+
+		size_t bone_advancement = 0;
 
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
@@ -932,7 +934,8 @@ namespace ManuseioDados
 			for (int i = 0; i < m.sub_meshes[a].positions.size(); i++)
 			{
 
-				if(m.sub_meshes[a].skin){
+				if (m.sub_meshes[a].skin)
+				{
 					ma.pele = true;
 				}
 
@@ -948,25 +951,61 @@ namespace ManuseioDados
 
 				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
 				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
-				
-				/**/
-				for(size_t i = 0; i < std::min(m.sub_meshes[a].BoneIDs.size(),(size_t)MAX_BONE_INFLUENCE); i++){
-					//print({"id_ossos",i,gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]]});
-					v.id_ossos[i] = gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]] ;
+
+				for (int b = 0; b < MAX_BONE_INFLUENCE; ++b)
+				{
+					v.id_ossos[b] = 0;
+					v.peso_ossos[b] = 0.0f;
+					if (b < m.sub_meshes[a].BoneIDs.size())
+					{
+						if (!m.sub_meshes[a].BoneIDs[b].empty())
+						{
+							v.id_ossos[b] = static_cast<int>(m.sub_meshes[a].BoneIDs[i][b]);
+						}
+					}
+					if (b < m.sub_meshes[a].Weights.size())
+					{
+						if (!m.sub_meshes[a].Weights[b].empty())
+						{
+							v.peso_ossos[b] = m.sub_meshes[a].Weights[i][b];
+						}
+					}
 				}
 
-				for(size_t i = 0; i < std::min(m.sub_meshes[a].Weights.size(),(size_t)MAX_BONE_INFLUENCE); i++){
+				/*
+				for (size_t i = 0; i < std::min(m.sub_meshes[a].BoneIDs.size(), (size_t)MAX_BONE_INFLUENCE); i++)
+				{
+					v.id_ossos[i] = gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]];
+					// print({"gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]]",gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]]});
+				}
+
+				for (size_t i = 0; i < std::min(m.sub_meshes[a].Weights.size(), (size_t)MAX_BONE_INFLUENCE); i+=MAX_BONE_INFLUENCE)
+				{
 					v.peso_ossos[i] = m.sub_meshes[a].Weights[i];
+					print({"WEIGHTs2",(i * MAX_BONE_INFLUENCE) + i,std::min(m.sub_meshes[a].Weights.size(),(size_t)MAX_BONE_INFLUENCE),m.sub_meshes[a].Weights[i]});
 				}
+				*/
 
-				if(m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0){ add_skin_count = true; }
-				
+				/*
+				size_t w = 0;
+				for (auto a : m.sub_meshes[a].Weights)
+				{
+					print({"WEIGHTs2",w, a});
+					w++;
+				}
+				*/
+
+				if (m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0)
+				{
+					add_skin_count = true;
+				}
 
 				ma.vertices.push_back(v);
 			}
 			ret.push_back(ma);
 
-			if(add_skin_count){
+			if (add_skin_count)
+			{
 				skin_count++;
 			}
 		}
@@ -1016,7 +1055,6 @@ namespace ManuseioDados
 				{
 					ret.minhas_malhas.push_back(cena.malhas[sub_mesh_name]);
 
-					
 					if (b < loader.meshes[mesh_index].sub_meshes.size())
 					{
 						int material_index = loader.meshes[mesh_index].sub_meshes[b].material;
@@ -1073,7 +1111,7 @@ namespace ManuseioDados
 
 			for (int i = 0; i < gltf_loader.meshes.size(); i++)
 			{
-				vector<malha> malhas = converter_malha_gltf(gltf_loader,gltf_loader.meshes[i], local);
+				vector<malha> malhas = converter_malha_gltf(gltf_loader, gltf_loader.meshes[i], local);
 				for (malha m : malhas)
 				{
 					ret.malhas.insert(pair<string, shared_ptr<malha>>(m.nome, make_shared<malha>(m)));

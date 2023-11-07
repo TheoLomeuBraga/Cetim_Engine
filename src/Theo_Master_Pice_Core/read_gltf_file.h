@@ -74,8 +74,8 @@ namespace gltf_loader
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
-        std::vector<size_t> BoneIDs;
-        std::vector<float> Weights;
+        std::vector<std::vector<size_t>> BoneIDs;
+        std::vector<std::vector<float>> Weights;
         size_t material = 0;
     };
 
@@ -194,6 +194,8 @@ namespace gltf_loader
         bool loadTextures();
         bool loadMaterials();
         std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
+        std::vector<std::vector<float>> getWeightsData(size_t accessorIndex);
+        std::vector<std::vector<size_t>> getBoneIDsData(size_t accessorIndex);
         bool loadSkins();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
@@ -914,13 +916,10 @@ namespace gltf_loader
     bool GLTFLoader::loadSkins()
     {
 
-        
         if (!gltf.contains("skins"))
         {
             return false; // Não há dados de skins no glTF
         }
-
-        
 
         const nlohmann::json &skinsArray = gltf["skins"];
         skins.reserve(skinsArray.size());
@@ -949,8 +948,6 @@ namespace gltf_loader
 
             skins.push_back(skin);
         }
-
-        
 
         return true;
     }
@@ -1096,6 +1093,58 @@ namespace gltf_loader
         return data;
     }
 
+    std::vector<std::vector<size_t>> GLTFLoader::getBoneIDsData(size_t accessorIndex)
+    {
+        std::vector<std::vector<size_t>> boneIDsData;
+
+        if (accessorIndex < accessors.size())
+        {
+            const std::vector<float> accessorData = getAttributeData(accessorIndex);
+
+            size_t numComponents = 4; // Assumindo 4 componentes para bone IDs
+
+            for (size_t i = 0; i < accessorData.size(); i += numComponents)
+            {
+                std::vector<size_t> boneIDs;
+
+                for (size_t j = 0; j < numComponents; ++j)
+                {
+                    boneIDs.push_back(static_cast<size_t>(accessorData[i + j]));
+                }
+
+                boneIDsData.push_back(boneIDs);
+            }
+        }
+
+        return boneIDsData;
+    }
+
+    std::vector<std::vector<float>> GLTFLoader::getWeightsData(size_t accessorIndex)
+    {
+        std::vector<std::vector<float>> weightsData;
+
+        if (accessorIndex < accessors.size())
+        {
+            const std::vector<float> accessorData = getAttributeData(accessorIndex);
+
+            size_t numComponents = 4; // Assumindo 4 componentes para pesos
+
+            for (size_t i = 0; i < accessorData.size(); i += numComponents)
+            {
+                std::vector<float> weights;
+
+                for (size_t j = 0; j < numComponents; ++j)
+                {
+                    weights.push_back(accessorData[i + j]);
+                }
+
+                weightsData.push_back(weights);
+            }
+        }
+
+        return weightsData;
+    }
+
     bool GLTFLoader::loadMeshes()
     {
         if (!gltf.contains("meshes"))
@@ -1159,22 +1208,39 @@ namespace gltf_loader
                     }
                 }
 
-                // Load bone IDs and weights (if available)
+                // Verifique se há dados BoneIDs e Weights
                 if (attributes.contains("JOINTS_0") && attributes.contains("WEIGHTS_0"))
                 {
-                    sm.skin = true;
                     size_t jointAccessorIndex = attributes["JOINTS_0"];
                     size_t weightAccessorIndex = attributes["WEIGHTS_0"];
-                    auto jointData = getAttributeData(jointAccessorIndex);
-                    auto weightData = getAttributeData(weightAccessorIndex);
-                    for (size_t i = 0; i < jointData.size(); i += MAX_BONE_INFLUENCE)
+
+                    // Obtenha os dados dos acessores de BoneIDs e Weights
+                    sm.BoneIDs = getBoneIDsData(jointAccessorIndex);
+                    sm.Weights = getWeightsData(weightAccessorIndex);
+
+                    /*
+                    for (auto a : sm.BoneIDs)
                     {
-                        for (size_t j = 0; j < MAX_BONE_INFLUENCE; j++)
+                        print({"B"});
+                        for (auto b : a)
                         {
-                            sm.BoneIDs.push_back(static_cast<unsigned int>(jointData[i + j]));
-                            sm.Weights.push_back(weightData[i + j]);
+                            print({"ID", b});
                         }
+                        print({"B"});
                     }
+                    */
+
+                    /*
+                     for (auto a : sm.Weights)
+                     {
+                         print({"A"});
+                         for (auto b : a)
+                         {
+                             print({"Weight", b});
+                         }
+                         print({"B"});
+                     }
+                     */
                 }
 
                 if (primitive.contains("indices"))

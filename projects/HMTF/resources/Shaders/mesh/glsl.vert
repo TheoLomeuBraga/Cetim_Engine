@@ -28,8 +28,8 @@ void main() {
 
    if(skin_mode) {
 
-      mat4 boneTransform = mat4(0.0);
-      //mat4 boneTransform = transform;
+      //mat4 boneTransform = mat4(0.0);
+      mat4 boneTransform = transform;
 
       
 
@@ -44,7 +44,7 @@ void main() {
          
       }
 
-      //boneTransform += finalBonesMatrices[216];
+      //boneTransform = finalBonesMatrices[216];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;
