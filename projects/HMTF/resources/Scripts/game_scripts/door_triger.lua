@@ -54,12 +54,12 @@ function UPDATE()
 
 
     if touch_player then
-        open_progres = open_progres + (time.delta * open_speed)
+        open_progres = open_progres + (time.delta * time.sacale * open_speed)
         if open_progres > 1 then
             open_progres = 1
         end
     else
-        open_progres = open_progres - (time.delta * open_speed)
+        open_progres = open_progres - (time.delta * time.sacale * open_speed)
         if open_progres < 0 then
             open_progres = 0
         end
