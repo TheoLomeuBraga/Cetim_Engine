@@ -934,10 +934,7 @@ namespace ManuseioDados
 			for (int i = 0; i < m.sub_meshes[a].positions.size(); i++)
 			{
 
-				if (m.sub_meshes[a].skin)
-				{
-					ma.pele = true;
-				}
+				
 
 				vertice v;
 
@@ -960,7 +957,10 @@ namespace ManuseioDados
 					{
 						if (!m.sub_meshes[a].BoneIDs[b].empty())
 						{
-							v.id_ossos[b] = static_cast<int>(m.sub_meshes[a].BoneIDs[i][b]);
+							v.id_ossos[b] = gltf_loader.skins[skin_count].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
+
+							//print({"skin.jointIndices2", v.id_ossos[b]});
+
 						}
 					}
 					if (b < m.sub_meshes[a].Weights.size())
@@ -968,32 +968,22 @@ namespace ManuseioDados
 						if (!m.sub_meshes[a].Weights[b].empty())
 						{
 							v.peso_ossos[b] = m.sub_meshes[a].Weights[i][b];
+							// print({"v.peso_ossos[b]",b,v.peso_ossos[b]});
+
+							ma.pele = true;
+							
 						}
 					}
+
+					
+					
 				}
 
-				/*
-				for (size_t i = 0; i < std::min(m.sub_meshes[a].BoneIDs.size(), (size_t)MAX_BONE_INFLUENCE); i++)
+				if (m.sub_meshes[a].skin)
 				{
-					v.id_ossos[i] = gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]];
-					// print({"gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]]",gltf_loader.skins[skin_count].jointIndices[m.sub_meshes[a].BoneIDs[i]]});
+					ma.pele = true;
+					print({"ma.pele",ma.pele});
 				}
-
-				for (size_t i = 0; i < std::min(m.sub_meshes[a].Weights.size(), (size_t)MAX_BONE_INFLUENCE); i+=MAX_BONE_INFLUENCE)
-				{
-					v.peso_ossos[i] = m.sub_meshes[a].Weights[i];
-					print({"WEIGHTs2",(i * MAX_BONE_INFLUENCE) + i,std::min(m.sub_meshes[a].Weights.size(),(size_t)MAX_BONE_INFLUENCE),m.sub_meshes[a].Weights[i]});
-				}
-				*/
-
-				/*
-				size_t w = 0;
-				for (auto a : m.sub_meshes[a].Weights)
-				{
-					print({"WEIGHTs2",w, a});
-					w++;
-				}
-				*/
 
 				if (m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0)
 				{
@@ -1002,6 +992,7 @@ namespace ManuseioDados
 
 				ma.vertices.push_back(v);
 			}
+
 			ret.push_back(ma);
 
 			if (add_skin_count)

@@ -938,14 +938,6 @@ namespace gltf_loader
                 skin.jointIndices = skinData["joints"].get<std::vector<size_t>>();
             }
 
-            /*
-            if (skinData.contains("inverseBindMatrices"))
-            {
-                size_t accessorIndex = skinData["inverseBindMatrices"];
-                skin.inverseBindMatrices = getInverseBindMatrices(accessorIndex);
-            }
-            */
-
             skins.push_back(skin);
         }
 

@@ -21,6 +21,10 @@ out Vertex {
 uniform bool ui;
 uniform mat4 projection, vision, transform;
 
+//finalBonesMatrices[212]
+//finalBonesMatrices[214]
+//finalBonesMatrices[216]
+
 void main() {
 
    vert_out.POS = vec4(position, 1);
@@ -40,11 +44,10 @@ void main() {
          int boneIndex = boneIds[i];
          float weight = weights[i];
          boneTransform += weight * finalBonesMatrices[boneIndex];
-         //boneTransform += finalBonesMatrices[boneIndex];
          
       }
 
-      //boneTransform = finalBonesMatrices[216];
+      //boneTransform = finalBonesMatrices[215];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;

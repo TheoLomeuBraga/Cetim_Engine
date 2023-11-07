@@ -242,7 +242,7 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			glEnableVertexAttribArray(i);
 		}
@@ -312,7 +312,7 @@ public:
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 6; i++)
 					{
 						glEnableVertexAttribArray(i);
 					}
@@ -625,7 +625,6 @@ public:
 				}
 			}
 			*/
-			
 
 			glBindVertexArray(0);
 		}
@@ -638,27 +637,28 @@ public:
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma].vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, malhas[ma].malha_buffer);
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				glEnableVertexAttribArray(i);
 			}
 
 			// posição
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
-			// uv
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, uv)));
-			// normal
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
-			// cor
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
-			if (ma->pele)
-			{
-				// boneIds
-				glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, id_ossos)));
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, posicao)));
 
-				// weights
-				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, peso_ossos)));
-			}
+			// uv
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, uv)));
+
+			// normal
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, normal)));
+
+			// cor
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
+
+			// boneIds
+			glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
+
+			// weights
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
 
 			glDrawElements(
 				tipo,					   // mode
@@ -1254,9 +1254,9 @@ public:
 							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
 
-								//print({"RM->bones.size()",RM->bones.size()});
 								mat4 matrixes[256];
-								for (size_t i = 0; i < std::min(RM->bones.size(),(size_t)256); i++)
+
+								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
 								{
 
 									RM->usar_oclusao = false;
@@ -1264,22 +1264,25 @@ public:
 									shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
 									if (bone_tf != NULL)
 									{
-										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) *  bone_tf->pegar_matriz();
-										
-									}else{
+										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz();
+										glm::vec3 position = glm::vec3(matrixes[i][3]);
+										// print({"AAAAA", i, position.x, position.y, position.z});
+									}
+									else
+									{
 										matrixes[i] = mat4(1.0);
 									}
 								}
 
-								//glUniformMatrix4fv(glGetUniformLocation(shader_s, (string("finalBonesMatrices[") + to_string(i) + string("]")).c_str()), 1, GL_FALSE, &matrix[0][0]);
-								glUniformMatrix4fv(glGetUniformLocation(shader_s, "finalBonesMatrices"), 256, GL_FALSE, &matrixes[0][0][0]);
-
+								for (size_t i = 0; i < 256; i++)
+								{
+									glUniformMatrix4fv(glGetUniformLocation(shader_s, ("finalBonesMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
+								}
 							}
 							else
 							{
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
 							}
-							
 
 							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
 						}
@@ -1320,7 +1323,7 @@ public:
 						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma.get()].vbo);
 						glBindBuffer(GL_ARRAY_BUFFER, malhas[ma.get()].malha_buffer);
 
-						for (int i = 0; i < 5; i++)
+						for (int i = 0; i < 6; i++)
 						{
 							glEnableVertexAttribArray(i);
 						}
