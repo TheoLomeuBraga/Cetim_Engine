@@ -1245,8 +1245,8 @@ public:
 
 							mat4 ajust = tf->pegar_matriz();
 							if (ma->pele)
-							{					
-								ajust[3] = glm::vec4(glm::vec3(0,0,0), 1.0f);	
+							{
+								ajust[3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
 							}
 							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
 
@@ -1271,9 +1271,13 @@ public:
 									shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
 									if (bone_tf != NULL)
 									{
-										matrixes[i] = bone_tf->pegar_matriz_local();
-										//matrixes[i][3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
-										//matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
+
+										matrixes[i] = bone_tf->pegar_matriz();
+
+										
+										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
+										// matrixes[i][3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
+										// matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
 
 										//  print({"AAAAA", i, position.x, position.y, position.z});
 									}

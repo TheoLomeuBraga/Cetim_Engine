@@ -34,24 +34,27 @@ void main() {
 
       mat4 boneTransform = mat4(0.0);
       //mat4 boneTransform = transform;
+
       float weights_sum = weights.x + weights.y + weights.z + weights.w;
 
       if(weights_sum > 0) {
          for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
             int boneIndex = boneIds[i];
-            float weight = weights[i];
+            float weight = weights[i] * 0.1;
             boneTransform += weight * finalBonesMatrices[boneIndex];
          }
       } else {
          boneTransform = transform;
       } 
 
+      boneTransform = transform;
+
       //boneTransform = finalBonesMatrices[214];
 
       if(ui) {
          gl_Position = boneTransform * vert_out.POS;
       } else {
-         gl_Position = (projection * vision * boneTransform) * vert_out.POS;
+         gl_Position = (projection * vision *  boneTransform ) * vert_out.POS;
       }
    } else {
       if(ui) {
