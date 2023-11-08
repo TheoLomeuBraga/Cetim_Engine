@@ -919,7 +919,7 @@ namespace ManuseioDados
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
 
-			print({"add_skin_count",add_skin_count});
+			//print({"add_skin_count",add_skin_count});
 
 			malha ma;
 			if (a > 0)
