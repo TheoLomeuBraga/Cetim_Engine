@@ -644,7 +644,7 @@ public:
 
 			// cor
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
-
+			
 			// boneIds
 			glVertexAttribIPointer(4, 4, GL_INT, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
 
@@ -1220,7 +1220,16 @@ public:
 
 				criar_oclusion_querie(obj);
 
-				if (RM->ligado)
+				bool is_skin = false;
+				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
+				{
+					if(RM->malhas[i]->pele){
+						is_skin = true;
+						break;
+					}
+				}
+
+				if (RM->ligado || is_skin)
 				{
 
 					for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
@@ -1274,7 +1283,6 @@ public:
 
 										matrixes[i] = bone_tf->pegar_matriz() * bone_tf->offset_matrix;
 
-										
 										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * matrixes[i];
 
 										glUniformMatrix4fv(glGetUniformLocation(shader_s, ("finalBonesMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
@@ -1372,6 +1380,94 @@ public:
 		}
 	}
 
+	bool is_transparent(Material mat)
+	{
+		return mat.cor.w < 1;
+	}
+
+	bool is_transparent(vector<Material> mats)
+	{
+		for (Material mat : mats)
+		{
+			if (mat.cor.w < 1)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool is_transparent(shared_ptr<objeto_jogo> obj)
+	{
+		/**/
+		shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+		if (PMESH != NULL && is_transparent(PMESH->mats))
+		{
+			return true;
+		}
+
+		shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
+		if (RM != NULL && is_transparent(RM->mats))
+		{
+			return true;
+		}
+
+		shared_ptr<render_sprite> RSP = obj->pegar_componente<render_sprite>();
+		if (RSP != NULL && is_transparent(RSP->mat))
+		{
+			return true;
+		}
+
+		shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
+		if (RTM != NULL && is_transparent(RTM->mat))
+		{
+			return true;
+		}
+
+		shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
+		if (RT != NULL && is_transparent(RT->mat))
+		{
+			return true;
+		}
+
+		shared_ptr<render_shader> RS = obj->pegar_componente<render_shader>();
+		if (RS != NULL && is_transparent(RS->mat))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	vector<vector<shared_ptr<objeto_jogo>>> separate_ordenate_objects(vector<shared_ptr<objeto_jogo>> objs, shared_ptr<objeto_jogo> cam)
+	{
+		/**/
+
+		vector<shared_ptr<objeto_jogo>> transparent;
+		vector<shared_ptr<objeto_jogo>> nontransparent;
+
+		for (shared_ptr<objeto_jogo> obj : objs)
+		{
+			if (is_transparent(obj))
+			{
+				transparent.push_back(obj);
+			}
+			else
+			{
+				nontransparent.push_back(obj);
+			}
+		}
+
+		if (cam->pegar_componente<transform_>() != NULL)
+		{
+			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
+		}
+
+		return {nontransparent, transparent};
+
+		// return {objs, {}};
+	}
+
 	void reindenizar_camada_objetos(vector<shared_ptr<objeto_jogo>> obj, shared_ptr<objeto_jogo> cam)
 	{
 
@@ -1455,12 +1551,23 @@ public:
 		}
 		glViewport(0, 0, res_interna.x, res_interna.y);
 
-		for (int i = 0; i < obj.size(); i++)
+		vector<vector<shared_ptr<objeto_jogo>>> orderd_objects = separate_ordenate_objects(obj, cam);
+
+		for (int i = 0; i < orderd_objects[0].size(); i++)
 		{
-			if (obj[i] > 0 && cam > 0)
+			if (orderd_objects[0][i] > 0 && cam > 0)
 			{
 
-				reindenizar_objeto(obj[i], cam);
+				reindenizar_objeto(orderd_objects[0][i], cam);
+			}
+		}
+
+		for (int i = 0; i < orderd_objects[1].size(); i++)
+		{
+			if (orderd_objects[1][i] > 0 && cam > 0)
+			{
+
+				reindenizar_objeto(orderd_objects[1][i], cam);
 			}
 		}
 	}

@@ -504,13 +504,6 @@ namespace gltf_loader
 
             if (!input.empty())
             {
-                /*
-                if (inputAccessor.min.size() > 0 && inputAccessor.max.size() > 0)
-                {
-                    startTime = inputAccessor.min[0];
-                    endTime = inputAccessor.max[0];
-                }
-                */
 
                 // Find the actual start and end times in this channel
                 float channelStartTime = input[0];

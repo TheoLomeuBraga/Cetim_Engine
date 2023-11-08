@@ -919,7 +919,7 @@ namespace ManuseioDados
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
 
-			//print({"add_skin_count",add_skin_count});
+			// print({"add_skin_count",add_skin_count});
 
 			malha ma;
 			if (a > 0)
@@ -950,24 +950,27 @@ namespace ManuseioDados
 				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
 				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
 
-				for (int b = 0; b < MAX_BONE_INFLUENCE; ++b)
+				if (gltf_loader.skins.size() > 0)
 				{
-					v.id_ossos[b] = 0;
-					v.peso_ossos[b] = 0.0f;
-					if (b < m.sub_meshes[a].BoneIDs.size())
+					for (int b = 0; b < MAX_BONE_INFLUENCE; ++b)
 					{
-						if (!m.sub_meshes[a].BoneIDs[b].empty())
+						v.id_ossos[b] = 0;
+						v.peso_ossos[b] = 0.0f;
+						if (b < m.sub_meshes[a].BoneIDs.size())
 						{
-							v.id_ossos[b] = gltf_loader.skins[skin_count].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
+							if (!m.sub_meshes[a].BoneIDs[b].empty())
+							{
+								v.id_ossos[b] = gltf_loader.skins[skin_count].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
+							}
 						}
-					}
-					if (b < m.sub_meshes[a].Weights.size())
-					{
-						if (!m.sub_meshes[a].Weights[b].empty())
+						if (b < m.sub_meshes[a].Weights.size())
 						{
-							v.peso_ossos[b] = m.sub_meshes[a].Weights[i][b];
+							if (!m.sub_meshes[a].Weights[b].empty())
+							{
+								v.peso_ossos[b] = m.sub_meshes[a].Weights[i][b];
 
-							ma.pele = true;
+								ma.pele = true;
+							}
 						}
 					}
 				}
@@ -975,7 +978,7 @@ namespace ManuseioDados
 				if (m.sub_meshes[a].skin)
 				{
 					ma.pele = true;
-					//print({"ma.pele", ma.pele});
+					// print({"ma.pele", ma.pele});
 				}
 
 				if (m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0)

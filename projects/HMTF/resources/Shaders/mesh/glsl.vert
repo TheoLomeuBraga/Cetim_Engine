@@ -35,6 +35,7 @@ void main() {
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
          int boneIndex = boneIds[i];
          float weight = weights[i];
+         if(weight == 0){break;}
          boneTransform += finalBonesMatrices[boneIndex] * weight;
       }
 
@@ -45,23 +46,7 @@ void main() {
       } else {
          gl_Position = (projection * vision * boneTransform) * vert_out.POS;
       }
-
-      /*
-      mat4 boneTransform = mat4(0.0);
-      //mat4 boneTransform = transform;
-      float weights_sum = weights.x + weights.y + weights.z + weights.w;
-
-      for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {
-         int boneIndex = boneIds[i];
-         float weight = weights[i];
-         boneTransform += weight * finalBonesMatrices[boneIndex];
-      }
-      if(ui) {
-         gl_Position = boneTransform * vert_out.POS;
-      } else {
-         gl_Position = (projection * vision * boneTransform) * vert_out.POS;
-      }
-      */
+      
    } else {
       if(ui) {
          gl_Position = transform * vert_out.POS;
@@ -73,8 +58,8 @@ void main() {
    int psx_factor = 8;
    gl_Position.x = (float(int(gl_Position.x * psx_factor) + 0.5)) / psx_factor;
    gl_Position.y = (float(int(gl_Position.y * psx_factor) + 0.5)) / psx_factor;
-   vert_out.UV.x = (float(int(vert_out.UV.x * psx_factor) + 0.5)) / psx_factor;
-   vert_out.UV.y = (float(int(vert_out.UV.y * psx_factor) + 0.5)) / psx_factor;
+   //vert_out.UV.x = (float(int(vert_out.UV.x * psx_factor) + 0.5)) / psx_factor;
+   //vert_out.UV.y = (float(int(vert_out.UV.y * psx_factor) + 0.5)) / psx_factor;
    
 
 }

@@ -9,6 +9,7 @@ require("short_cuts.create_render_shader")
 triger_target = ""
 open_speed = 2
 open_progres = 0
+update_open_progres = false
 
 level_animation_data = {}
 
@@ -31,40 +32,56 @@ function get_valid_touches()
     return false
 end
 
+start_base_animation = true
 touch_player = false
 
 function UPDATE()
-    this_physics_3d:get()
-
-    touch_player = get_valid_touches()
 
     time:get()
+
+    
+    this_physics_3d:get()
+
+    
+    touch_player = get_valid_touches()
+    
+    
+    
     if level_animation_data.path == nil then
         level_animation_data = global_data:get_var("level_animation_data")
         if level_animation_data == nil then
             level_animation_data = {}
         end
     else
-        set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "open_door_A", open_progres)
-
-        
-        set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
-        set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
+        if start_base_animation then
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "A", 0)
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "B", 0)
+            start_base_animation = false
+        end
+        if update_open_progres then
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "open_door_A",open_progres)
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
+        end
     end
 
+    --[[]]
 
-
+    update_open_progres = true
     if touch_player then
         open_progres = open_progres + (time.delta * time.sacale * open_speed)
         if open_progres > 1 then
             open_progres = 1
+            update_open_progres = false
         end
     else
         open_progres = open_progres - (time.delta * time.sacale * open_speed)
         if open_progres < 0 then
             open_progres = 0
+            update_open_progres = false
         end
     end
+    
 end
 
 function COLLIDE(collision_info)

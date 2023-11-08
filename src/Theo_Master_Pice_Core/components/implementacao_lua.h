@@ -510,6 +510,7 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 	}
 
 	//apply offset_matrix
+	/**/
 	for(size_t i = 0 ; i < objects_ptrs.size();i++){
 		
 		shared_ptr<transform_> tf = objects_ptrs[i]->pegar_componente<transform_>();
@@ -517,6 +518,7 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 			tf->offset_matrix = offset_matrices[i];
 		}
 	}
+	
 
 	for (key_frame kfs : key_frames)
 	{

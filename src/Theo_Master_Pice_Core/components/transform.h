@@ -169,7 +169,7 @@ public:
 
 float tf_distance(glm::vec3 a, shared_ptr<transform_> tf)
 {
-	return glm::length(a - tf->pos);
+	return glm::length(a - vec3(tf->matrizTransform[3]));
 }
 
 // Function to sort the input vector of vec3 points based on the distance from the given point
@@ -181,7 +181,7 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 	// Calculate the distances from the given point to each of the points in the input vector
 	for (int i = 0; i < objs.size(); i++)
 	{
-		tf_distance[i] = vec3_distance(point, objs[i]->pegar_componente<transform_>()->pos);
+		tf_distance[i] = vec3_distance(point, vec3(objs[i]->pegar_componente<transform_>()->matrizTransform[3]));
 	}
 
 	// Create an index vector and sort it based on the distances
