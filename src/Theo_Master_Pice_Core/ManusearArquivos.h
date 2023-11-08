@@ -918,6 +918,9 @@ namespace ManuseioDados
 
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
+
+			print({"add_skin_count",add_skin_count});
+
 			malha ma;
 			if (a > 0)
 			{
@@ -933,8 +936,6 @@ namespace ManuseioDados
 
 			for (int i = 0; i < m.sub_meshes[a].positions.size(); i++)
 			{
-
-				
 
 				vertice v;
 
@@ -958,9 +959,6 @@ namespace ManuseioDados
 						if (!m.sub_meshes[a].BoneIDs[b].empty())
 						{
 							v.id_ossos[b] = gltf_loader.skins[skin_count].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
-
-							//print({"skin.jointIndices2", v.id_ossos[b]});
-
 						}
 					}
 					if (b < m.sub_meshes[a].Weights.size())
@@ -968,21 +966,16 @@ namespace ManuseioDados
 						if (!m.sub_meshes[a].Weights[b].empty())
 						{
 							v.peso_ossos[b] = m.sub_meshes[a].Weights[i][b];
-							// print({"v.peso_ossos[b]",b,v.peso_ossos[b]});
 
 							ma.pele = true;
-							
 						}
 					}
-
-					
-					
 				}
 
 				if (m.sub_meshes[a].skin)
 				{
 					ma.pele = true;
-					print({"ma.pele",ma.pele});
+					//print({"ma.pele", ma.pele});
 				}
 
 				if (m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0)
@@ -994,26 +987,27 @@ namespace ManuseioDados
 			}
 
 			ret.push_back(ma);
+		}
 
-			if (add_skin_count)
-			{
-				skin_count++;
-			}
+		if (add_skin_count)
+		{
+			skin_count++;
 		}
 
 		return ret;
 	}
 
-	mat4 buscar_offset_matrices(gltf_loader::GLTFLoader loader,size_t id)
+	mat4 buscar_offset_matrices(gltf_loader::GLTFLoader loader, size_t id)
 	{
-		for(gltf_loader::Skin s : loader.skins){
+		for (gltf_loader::Skin s : loader.skins)
+		{
 			for (size_t i = 0; i < s.jointIndices.size(); i++)
 			{
-				if(s.jointIndices[i] == id){
+				if (s.jointIndices[i] == id)
+				{
 					return s.inverseBindMatrices[i];
 				}
 			}
-			
 		}
 		return mat4(1.0f);
 	}
@@ -1023,11 +1017,11 @@ namespace ManuseioDados
 		objeto_3D ret;
 		ret.nome = node.name;
 		ret.id = node.id;
-		
-		
-		mat4 offset_matrix = buscar_offset_matrices(loader,node.id);
-		if(offset_matrix != mat4(1.0f)){
-			
+
+		mat4 offset_matrix = buscar_offset_matrices(loader, node.id);
+		if (offset_matrix != mat4(1.0f))
+		{
+
 			cena.offset_matrices[node.id] = offset_matrix;
 		}
 

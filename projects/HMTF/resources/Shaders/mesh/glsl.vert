@@ -21,10 +21,6 @@ out Vertex {
 uniform bool ui;
 uniform mat4 projection, vision, transform;
 
-//finalBonesMatrices[212]
-//finalBonesMatrices[214]
-//finalBonesMatrices[216]
-
 void main() {
 
    vert_out.POS = vec4(position, 1);
@@ -33,7 +29,7 @@ void main() {
    if(skin_mode) {
 
       mat4 boneTransform = mat4(0.0);
-      //mat4 boneTransform = transform;
+      
       float weights_sum = weights.x + weights.y + weights.z + weights.w;
 
       for(int i = 0; i < MAX_BONE_INFLUENCE; i++) {

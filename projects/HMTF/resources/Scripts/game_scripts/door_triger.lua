@@ -49,6 +49,7 @@ function UPDATE()
 
         
         set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
+        set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
     end
 
 
