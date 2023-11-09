@@ -283,8 +283,6 @@ public:
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam, size_t camada)
 	{
 
-		
-
 		glDisable(GL_CULL_FACE);
 		unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 		glUseProgram(shader_s);
@@ -296,8 +294,6 @@ public:
 
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
-
-			
 
 			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
@@ -348,10 +344,7 @@ public:
 					}
 
 					glEndQuery(GL_SAMPLES_PASSED);
-
 				}
-
-				
 			}
 		}
 
@@ -774,7 +767,9 @@ public:
 				}
 				string nome_veriavel = string("textures[") + to_string(i) + string("]");
 				glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
-			}else{
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -1227,11 +1222,6 @@ public:
 			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
 
-				
-
-				
-				
-
 				bool is_skin = false;
 				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
 				{
@@ -1242,8 +1232,26 @@ public:
 					}
 				}
 
-				if(!is_skin){
+				mat4 matrixes[256];
+				string matrixes_ids[256];
+
+				if (is_skin)
+				{
 					criar_oclusion_querie(obj);
+
+					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
+					{
+
+						shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
+						if (bone_tf != NULL)
+						{
+
+							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
+
+							matrixes_ids[i] = ("finalBonesMatrices[" + std::to_string(i) + "]");
+							//glUniformMatrix4fv(glGetUniformLocation(shader_s, .c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
+						}
+					}
 				}
 
 				if (RM->ligado || is_skin)
@@ -1285,8 +1293,6 @@ public:
 
 							RM->usar_oclusao = false;
 
-							mat4 matrixes[256];
-
 							if (ma->pele)
 							{
 
@@ -1294,20 +1300,10 @@ public:
 
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
 
-								
-
 								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
-								{	
+								{
 
-									shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
-									if (bone_tf != NULL)
-									{
-
-										matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
-
-										glUniformMatrix4fv(glGetUniformLocation(shader_s, ("finalBonesMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
-
-									}
+									glUniformMatrix4fv(glGetUniformLocation(shader_s, matrixes_ids[i].c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
 								}
 							}
 							else
@@ -1656,7 +1652,9 @@ public:
 				glBindTexture(GL_TEXTURE_2D, texturas[pos_processamento_info.texturas[i].get()]);
 				string nome_veriavel = string("textures[") + to_string(i) + string("]");
 				glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), i);
-			}else{
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -1700,7 +1698,7 @@ public:
 
 		// transparency
 
-		//Benchmark_Timer bt("reindenizar_cenario");
+		// Benchmark_Timer bt("reindenizar_cenario");
 		Benchmark_Timer bt("reindenizar_cenario");
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -1753,8 +1751,6 @@ public:
 					escrever("erro camera faltando");
 				}
 			}
-
-			
 		}
 
 		ogl_aplicar_pos_processamento();
