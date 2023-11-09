@@ -31,7 +31,7 @@ using namespace Tempo;
 #include "table.h"
 #include "table_conversors.h"
 
-// #include "ui_element.h"
+#include "benchmark.h"
 
 #ifdef USE_LUA_JIT
 extern "C"
@@ -2508,6 +2508,8 @@ public:
 	}
 	void atualisar()
 	{
+
+		Benchmark_Timer bt("atualisar_lua");
 
 		for (pair<string, lua_State *> p : estados_lua)
 		{

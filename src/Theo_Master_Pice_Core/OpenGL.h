@@ -283,8 +283,21 @@ public:
 	void rodar_oclusion_queries(shared_ptr<objeto_jogo> cam, size_t camada)
 	{
 
+		
+
+		glDisable(GL_CULL_FACE);
+		unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
+		glUseProgram(shader_s);
+
+		if (!show_oclusion_querie)
+		{
+			glColorMask(false, false, false, false);
+		}
+
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
+
+			
 
 			shared_ptr<transform_> tf = p.first->pegar_componente<transform_>();
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
@@ -292,20 +305,10 @@ public:
 			if (camada == rm->camada)
 			{
 
-				glDisable(GL_CULL_FACE);
-
-				if (!show_oclusion_querie)
-				{
-					glColorMask(false, false, false, false);
-				}
-
 				if (tf != NULL && rm != NULL && rm->usar_oclusao)
 				{
 
 					glBeginQuery(GL_SAMPLES_PASSED, p.second);
-
-					unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
-					glUseProgram(shader_s);
 
 					// ajustar
 					glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
@@ -313,11 +316,6 @@ public:
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-
-					for (int i = 0; i < 6; i++)
-					{
-						glEnableVertexAttribArray(i);
-					}
 
 					for (char i = 0; i < rm->malhas.size(); i++)
 					{
@@ -338,6 +336,7 @@ public:
 						glBindBuffer(GL_ARRAY_BUFFER, malhas[m.get()].malha_buffer);
 
 						// posição
+						glEnableVertexAttribArray(0);
 						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
 
 						glDrawElements(
@@ -347,22 +346,26 @@ public:
 							(void *)0						// element array buffer offset
 						);
 					}
+
+					glEndQuery(GL_SAMPLES_PASSED);
+
 				}
 
-				glColorMask(true, true, true, true);
-				glEndQuery(GL_SAMPLES_PASSED);
-
-				if (usar_profundidade)
-				{
-					glEnable(GL_DEPTH_TEST);
-					glDepthFunc(GL_LESS);
-				}
-				else
-				{
-					glDisable(GL_DEPTH_TEST);
-				}
+				
 			}
 		}
+
+		if (usar_profundidade)
+		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LESS);
+		}
+		else
+		{
+			glDisable(GL_DEPTH_TEST);
+		}
+
+		glColorMask(true, true, true, true);
 	}
 
 	void pegar_oclusion_queries()
@@ -646,7 +649,7 @@ public:
 
 			// cor
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
-			
+
 			// boneIds
 			glVertexAttribIPointer(4, 4, GL_INT, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
 
@@ -1215,7 +1218,7 @@ public:
 			// https://www.youtube.com/watch?v=LMpw7foANNA
 
 			// render_malha
-			
+
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
 			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
@@ -1225,7 +1228,8 @@ public:
 				bool is_skin = false;
 				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
 				{
-					if(RM->malhas[i]->pele){
+					if (RM->malhas[i]->pele)
+					{
 						is_skin = true;
 						break;
 					}
@@ -1305,7 +1309,6 @@ public:
 					}
 				}
 			}
-		
 		}
 		else if (obj->pegar_componente<poly_mesh>() && cam->pegar_componente<camera>() != NULL)
 		{
@@ -1381,7 +1384,6 @@ public:
 				}
 			}
 		}
-	
 	}
 
 	bool is_transparent(Material mat)
@@ -1685,6 +1687,8 @@ public:
 
 		// transparency
 
+		Benchmark_Timer bt("reindenizar_cenario");
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
@@ -1736,8 +1740,10 @@ public:
 				}
 			}
 
-			ogl_aplicar_pos_processamento();
+			
 		}
+
+		ogl_aplicar_pos_processamento();
 	}
 
 	~OpenGL_API()
