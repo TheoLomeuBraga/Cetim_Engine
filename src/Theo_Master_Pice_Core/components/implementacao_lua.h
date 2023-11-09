@@ -85,6 +85,7 @@ void start_lua_global_data()
 {
 	print({"iniciando lua global data"});
 	lua_global_data = luaL_newstate();
+	lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
 }
 
 void lua_pushtable(lua_State *L, Table t)
@@ -2065,7 +2066,7 @@ namespace funcoes_ponte
 		}
 
 		//lua_gc(lua_global_data, LUA_GCSTEP, 0);
-		lua_gc(L, LUA_GCSETSTEPMUL, 1000);
+		
 
 		return 0;
 	}
@@ -2328,7 +2329,7 @@ void load_base_lua_state(lua_State *L, string path)
 	lua_setfield(L, -2, "cpath");
 	lua_pop(L, 1);
 
-	lua_gc(L, LUA_GCSTOP, 0);
+	lua_gc(L, LUA_GCSETSTEPMUL, 1000);
 
 	lua_newtable(L);
 	for (int i = 0; i < argumentos.size(); i++)
@@ -2509,7 +2510,7 @@ public:
 	void atualisar()
 	{
 
-		Benchmark_Timer bt("atualisar_lua");
+		//Benchmark_Timer bt("atualisar_lua");
 
 		for (pair<string, lua_State *> p : estados_lua)
 		{
@@ -2517,10 +2518,6 @@ public:
 			{
 
 				lua_State *L = p.second;
-				
-				//lua_gc(L, LUA_GCSTEP, 0);
-				lua_gc(L, LUA_GCSETSTEPMUL, 1000);
-
 
 				lua_getglobal(p.second, "UPDATE");
 				lua_call(L, 0, 0);
@@ -2533,6 +2530,7 @@ public:
 				lua_getglobal(L, "START");
 				lua_call(L, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
+				
 			}
 		}
 	}

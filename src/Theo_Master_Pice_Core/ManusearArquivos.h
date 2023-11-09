@@ -1258,6 +1258,7 @@ namespace ManuseioDados
 	};
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
 	{
+		
 		if (ManuseioDados::Existe(local))
 		{
 			return funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
