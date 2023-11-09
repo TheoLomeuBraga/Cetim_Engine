@@ -62,6 +62,7 @@ function UPDATE()
             set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "open_door_A",open_progres)
             set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
             set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
+            update_open_progres = false
         end
     end
 
@@ -69,6 +70,7 @@ function UPDATE()
 
     update_open_progres = true
     if touch_player then
+        
         open_progres = open_progres + (time.delta * time.sacale * open_speed)
         if open_progres > 1 then
             open_progres = 1
@@ -76,12 +78,15 @@ function UPDATE()
         end
     else
         open_progres = open_progres - (time.delta * time.sacale * open_speed)
+        
         if open_progres < 0 then
             open_progres = 0
             update_open_progres = false
         end
     end
     
+    
+
 end
 
 function COLLIDE(collision_info)

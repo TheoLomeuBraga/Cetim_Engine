@@ -8,7 +8,7 @@ c
 y
 backtrace
 
-gprof -p $(pwd)/build/engine_theo_master_pice gmon.out > relatorio.txt
+gprof -p $(pwd)/build/engine_theo_master_pice $(pwd)/projects/HMTF/gmon.out > relatorio.txt
 
 
 

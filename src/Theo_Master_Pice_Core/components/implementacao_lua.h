@@ -2064,7 +2064,8 @@ namespace funcoes_ponte
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
 
-		lua_gc(lua_global_data, LUA_GCSTEP, 0);
+		//lua_gc(lua_global_data, LUA_GCSTEP, 0);
+		lua_gc(L, LUA_GCSETSTEPMUL, 1000);
 
 		return 0;
 	}
@@ -2405,14 +2406,7 @@ void clean_lua_threads()
 	lua_threads_to_clean.clear();
 }
 
-void collect_lua_states_garbage(map<string, lua_State *> estados_lua)
-{
 
-	for (pair<string, lua_State *> p : estados_lua)
-	{
-		lua_gc(p.second, LUA_GCCOLLECT, 0);
-	}
-}
 
 class componente_lua : public componente
 {
@@ -2521,9 +2515,10 @@ public:
 			{
 
 				lua_State *L = p.second;
+				
+				//lua_gc(L, LUA_GCSTEP, 0);
+				lua_gc(L, LUA_GCSETSTEPMUL, 1000);
 
-				//lua_gc(L, LUA_GCCOLLECT, 0);
-				lua_gc(L, LUA_GCSTEP, 0);
 
 				lua_getglobal(p.second, "UPDATE");
 				lua_call(L, 0, 0);
@@ -2538,11 +2533,6 @@ public:
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
-
-		// collect_lua_states_garbage(estados_lua);
-
-		// thread t(collect_lua_states_garbage,estados_lua);
-		// lua_threads_to_clean.push_back(move(t));
 	}
 	void colidir(colis_info col)
 	{

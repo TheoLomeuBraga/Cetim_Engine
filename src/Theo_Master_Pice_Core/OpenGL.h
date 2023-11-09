@@ -1213,7 +1213,7 @@ public:
 			// https://www.youtube.com/watch?v=LMpw7foANNA
 
 			// render_malha
-
+			
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
 			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
 			{
@@ -1303,6 +1303,7 @@ public:
 					}
 				}
 			}
+		
 		}
 		else if (obj->pegar_componente<poly_mesh>() && cam->pegar_componente<camera>() != NULL)
 		{
@@ -1378,6 +1379,7 @@ public:
 				}
 			}
 		}
+	
 	}
 
 	bool is_transparent(Material mat)

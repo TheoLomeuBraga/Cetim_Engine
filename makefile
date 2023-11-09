@@ -2,7 +2,7 @@ COMPILER := g++
 
 FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E
 FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj  -Wl,-E
-FLAGS_LINUX := -std=c++17 -Wl,-E
+FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc #-pg -g
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
 DEFINITIONS_LINUX := -DLINUX -DUNIX 
