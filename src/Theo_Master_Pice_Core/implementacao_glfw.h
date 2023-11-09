@@ -7,6 +7,8 @@
 #include <chrono>
 #include <thread>
 
+#include "benchmark.h"
+
 GLFWwindow *janela;
 
 bool interromper_loop_input = false;
@@ -667,6 +669,8 @@ Tempo::Timer sw;
 void loop_janela()
 {
 
+	//Benchmark_Timer bt("window_loop");
+
 	// tempo
 	float t = sw.get();
 	sw.clear();
@@ -732,6 +736,7 @@ public:
 		iniciar();
 		do
 		{
+
 			fechar = glfwWindowShouldClose(janela) == 1;
 			loop_janela();
 		} while (fechar == false);

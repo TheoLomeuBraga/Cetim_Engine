@@ -13,6 +13,8 @@
 
 #include "implementacao_glfw.h"
 
+
+
 void InitImGui() {
     // Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -112,6 +114,8 @@ void configuracaoInicial()
 void comecar()
 {
 
+    
+
     configuracaoInicial();
 
     thread temp(Tempo::IniciarTempo);
@@ -128,6 +132,9 @@ void comecar()
 
 int main(int argc, char **argv)
 {
+
+    
+
     aplicar_argumentos(argc, argv);
 
     escrever("argumentos{");
@@ -150,6 +157,8 @@ int main(int argc, char **argv)
     escrever(pegar_local_aplicacao());
 
     comecar();
+
+    print_benchmark_results();
 
     return 0;
 }
