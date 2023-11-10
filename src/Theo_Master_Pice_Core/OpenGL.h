@@ -1696,7 +1696,7 @@ public:
 	void reindenizar_cenario()
 	{
 
-		Benchmark_Timer bt("reindenizar_cenario");
+		//Benchmark_Timer bt("Render_Sceane");
 
 		// transparency
 

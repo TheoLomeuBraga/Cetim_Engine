@@ -389,6 +389,9 @@ int get_lua_var(lua_State *L);
 int set_lua_var(lua_State *L);
 int call_lua_function(lua_State *L);
 
+//banchmark
+int make_banchmark(lua_State *L);
+
 // lambda labs
 
 void change_pos(objeto_jogo *obj, vec3 pos)
@@ -495,31 +498,34 @@ vector<key_frame> mix_keyframes(vector<key_frame> a, vector<key_frame> b, float 
 	return a;
 };
 
-void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs,map<size_t,mat4> offset_matrices)
+void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_jogo *> objects_ptrs, map<size_t, mat4> offset_matrices)
 {
 
-	for(objeto_jogo* obj : objects_ptrs){
+	for (objeto_jogo *obj : objects_ptrs)
+	{
 		shared_ptr<render_malha> rm = obj->pegar_componente<render_malha>();
-		if(rm != NULL){
+		if (rm != NULL)
+		{
 			rm->bones = objects_ptrs;
-			
-			if(rm->bones.size() > 0){
+
+			if (rm->bones.size() > 0)
+			{
 				rm->bones = objects_ptrs;
 			}
-			
 		}
 	}
 
-	//apply offset_matrix
+	// apply offset_matrix
 	/**/
-	for(size_t i = 0 ; i < objects_ptrs.size();i++){
-		
+	for (size_t i = 0; i < objects_ptrs.size(); i++)
+	{
+
 		shared_ptr<transform_> tf = objects_ptrs[i]->pegar_componente<transform_>();
-		if(tf != NULL && offset_matrices.find(i) != offset_matrices.end()){
+		if (tf != NULL && offset_matrices.find(i) != offset_matrices.end())
+		{
 			tf->offset_matrix = offset_matrices[i];
 		}
 	}
-	
 
 	for (key_frame kfs : key_frames)
 	{
@@ -535,9 +541,6 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		{
 			objects_ptrs[kfs.object_id]->pegar_componente<transform_>()->esca = kfs.scale;
 		}
-		
-		
-		
 	}
 };
 
@@ -785,6 +788,8 @@ namespace funcoes_ponte
 		mapeamento_scripts_lua.limpar_lixo();
 		return 0;
 	}
+
+	
 
 	// arquivos
 
@@ -1910,8 +1915,13 @@ namespace funcoes_ponte
 	// audio
 	int get_set_physic_3D(lua_State *L)
 	{
+
+		
+
 		if (lua_tonumber(L, 1) == get_lua)
 		{
+
+			Benchmark_Timer bt("get_set_physic_3D");
 
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
@@ -1984,7 +1994,7 @@ namespace funcoes_ponte
 			bu->rotacionarX = t.getFloat("rotate_x") > 0;
 			bu->rotacionarY = t.getFloat("rotate_y") > 0;
 			bu->rotacionarZ = t.getFloat("rotate_z") > 0;
-			//print({"rotate",bu->rotacionarX,bu->rotacionarY,bu->rotacionarZ});
+			// print({"rotate",bu->rotacionarX,bu->rotacionarY,bu->rotacionarZ});
 
 			bu->elasticidade = t.getFloat("elasticity");
 
@@ -2065,8 +2075,7 @@ namespace funcoes_ponte
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
 
-		//lua_gc(lua_global_data, LUA_GCSTEP, 0);
-		
+		// lua_gc(lua_global_data, LUA_GCSTEP, 0);
 
 		return 0;
 	}
@@ -2085,7 +2094,7 @@ namespace funcoes_ponte
 
 	int set_keyframe(lua_State *L)
 	{
-		
+
 		int args_no = lua_gettop(L);
 
 		if (args_no == 5)
@@ -2099,8 +2108,6 @@ namespace funcoes_ponte
 			{
 				objects_ptrs.push_back(string_ponteiro<objeto_jogo>(objects_ptrs_str[i]));
 			}
-
-			
 
 			bool mix = lua_toboolean(L, 3);
 
@@ -2117,8 +2124,6 @@ namespace funcoes_ponte
 				animation_time = 0;
 			}
 
-			
-
 			float animation_frame = 0;
 			if (animation_time > ani.duration)
 			{
@@ -2128,9 +2133,6 @@ namespace funcoes_ponte
 			{
 				animation_frame = (animation_time * ani.keyFrames.size()) / ani.duration + 1;
 			}
-
-			
-			
 
 			float animation_frame_rest = animation_frame - (int)animation_frame;
 
@@ -2145,26 +2147,19 @@ namespace funcoes_ponte
 				animation_frame_rest = 0;
 			}
 
-			
-
 			if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
 			{
-				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)],animation_frame_rest);
-				apply_key_frame_transform(kfs, objects_ptrs,scene->offset_matrices);
+				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
+				apply_key_frame_transform(kfs, objects_ptrs, scene->offset_matrices);
 			}
 			else
 			{
-				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs,scene->offset_matrices);
+				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
 			}
-
-			
-
 		}
 		else if (args_no == 6)
 		{
 		}
-
-		
 
 		return 0;
 	}
@@ -2194,6 +2189,8 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
 															  pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
 															  pair<string, lua_function>("memory_usage_info", funcoes_ponte::memory_usage_info),
+															  pair<string, lua_function>("make_banchmark", make_banchmark),
+
 														  }),
 		pair<string, map<string, lua_function>>("gravity", {
 															   pair<string, lua_function>("to_move", funcoes_ponte::to_move),
@@ -2407,8 +2404,6 @@ void clean_lua_threads()
 	lua_threads_to_clean.clear();
 }
 
-
-
 class componente_lua : public componente
 {
 	bool iniciado = false;
@@ -2417,6 +2412,7 @@ class componente_lua : public componente
 
 public:
 	map<string, lua_State *> estados_lua;
+	set<lua_State *> to_benchmark;
 
 	vector<string> pegar_lista_scripts()
 	{
@@ -2510,17 +2506,37 @@ public:
 	void atualisar()
 	{
 
-		//Benchmark_Timer bt("atualisar_lua");
-
 		for (pair<string, lua_State *> p : estados_lua)
 		{
+
 			if (scripts_lua_iniciados[p.first])
 			{
 
-				lua_State *L = p.second;
+				bool benchmark = false;
 
-				lua_getglobal(p.second, "UPDATE");
-				lua_call(L, 0, 0);
+				for (lua_State *ls : to_benchmark)
+				{
+					if (ls == p.second)
+					{
+						benchmark = true;
+						break;
+					}
+				}
+
+				if (benchmark)
+				{
+
+					Benchmark_Timer bt(p.first);
+					lua_State *L = p.second;
+					lua_getglobal(p.second, "UPDATE");
+					lua_call(L, 0, 0);
+				}
+				else
+				{
+					lua_State *L = p.second;
+					lua_getglobal(p.second, "UPDATE");
+					lua_call(L, 0, 0);
+				}
 			}
 			else
 			{
@@ -2530,12 +2546,12 @@ public:
 				lua_getglobal(L, "START");
 				lua_call(L, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
-				
 			}
 		}
 	}
 	void colidir(colis_info col)
 	{
+		/*
 		for (pair<string, lua_State *> p : estados_lua)
 		{
 			lua_State *L = p.second;
@@ -2543,11 +2559,12 @@ public:
 			if (col.obj != NULL)
 			{
 
-				//lua_getglobal(L, "COLLIDE");
-				//lua_pushtable(L, colis_info_table(col));
-				//lua_call(L, 1, 0);
+				lua_getglobal(L, "COLLIDE");
+				lua_pushtable(L, colis_info_table(col));
+				lua_call(L, 1, 0);
 			}
 		}
+		*/
 	}
 	void finalisar()
 	{
@@ -2964,7 +2981,7 @@ int get_lua_var(lua_State *L)
 
 	lua_State *clL = cl->estados_lua[script_name];
 
-	//print({"AAAAA", lua_gc(clL, LUA_GCCOUNT, 0), lua_gc(clL, LUA_GCCOUNTB, 0)});
+	// print({"AAAAA", lua_gc(clL, LUA_GCCOUNT, 0), lua_gc(clL, LUA_GCCOUNTB, 0)});
 
 	lua_getglobal(clL, var_name.c_str());
 	int lua_type_id = lua_type(clL, -1);
@@ -3034,4 +3051,13 @@ int call_lua_function(lua_State *L)
 	Table ret = cl->chamar_funcao_lua(script_name, func_name, t);
 	lua_pushtable(L, ret);
 	return 1;
+}
+
+int make_banchmark(lua_State *L)
+{
+	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
+	lua_State *L2 = cl->estados_lua[lua_tostring(L, 2)];
+	cl->to_benchmark.insert(L2);
+	return 0;
 }

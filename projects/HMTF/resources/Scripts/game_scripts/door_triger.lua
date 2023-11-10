@@ -20,6 +20,8 @@ function START()
     this_physics_3d = game_object:new(this_object_ptr).components[components.physics_3D]
     this_physics_3d.get_collision_info = true
     this_physics_3d:set()
+
+    make_banchmark(this_object_ptr,"game_scripts/door_triger")
 end
 
 function get_valid_touches()
@@ -37,11 +39,13 @@ touch_player = false
 
 function UPDATE()
 
+    
+
     time:get()
 
     
+    
     this_physics_3d:get()
-
     
     touch_player = get_valid_touches()
     
@@ -66,7 +70,7 @@ function UPDATE()
         end
     end
 
-    --[[]]
+    
 
     update_open_progres = true
     if touch_player then
