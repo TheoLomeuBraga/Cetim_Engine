@@ -21,7 +21,7 @@ function START()
     this_physics_3d.get_collision_info = true
     this_physics_3d:set()
 
-    make_banchmark(this_object_ptr,"game_scripts/door_triger")
+    --make_banchmark(this_object_ptr,"game_scripts/door_triger")
 end
 
 function get_valid_touches()

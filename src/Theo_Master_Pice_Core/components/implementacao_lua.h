@@ -1572,12 +1572,6 @@ namespace funcoes_ponte
 			ret.setFloat("friction", b2d->atrito);
 			ret.setFloat("density", b2d->densidade);
 			ret.setFloat("gravity_scale", b2d->escala_gravidade);
-			vector<string> objs_touching;
-			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
-			{
-				objs_touching.push_back(ponteiro_string(obj.get()));
-			}
-			ret.setTable("objs_touching", vString_table(objs_touching));
 			ret.setTable("collision_layer", info_camada_table(b2d->camada));
 			ret.setFloat("elasticity", b2d->elasticidade);
 			vector<Table> vertex;
@@ -1586,11 +1580,24 @@ namespace funcoes_ponte
 				vertex.push_back(vec2_table(v2));
 			}
 			ret.setTable("vertex", vTable_table(vertex));
+
+			
+			set<string> set_objs_touching;
+			
 			vector<Table> colis_infos;
 			for (colis_info ci : b2d->colis_infos)
 			{
 				colis_infos.push_back(colis_info_table(ci));
+				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
 			}
+
+			vector<string> objs_touching;
+			for(string s : set_objs_touching){
+				objs_touching.push_back(s);
+			}
+
+			ret.setTable("objs_touching", vString_table(objs_touching));
+
 			ret.setTable("colis_infos", vTable_table(colis_infos));
 			lua_pushtable(L, ret);
 			return 1;
@@ -1965,11 +1972,11 @@ namespace funcoes_ponte
 			}
 
 			vector<string> objs_touching;
-			for(string s : objs_touching){
+			for(string s : set_objs_touching){
 				objs_touching.push_back(s);
 			}
 
-			ret.setTable("objs_touching", vString_table((objs_touching)));
+			ret.setTable("objs_touching", vString_table(objs_touching));
 
 			ret.setTable("colis_infos", vTable_table(colis_infos));
 			
@@ -2578,6 +2585,8 @@ public:
 	}
 	void atualisar()
 	{
+
+		Benchmark_Timer bt("update_lua_scripts");
 
 		for (pair<string, lua_State *> p : estados_lua)
 		{
