@@ -1591,10 +1591,7 @@ namespace funcoes_ponte
 				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
 			}
 
-			vector<string> objs_touching;
-			for(string s : set_objs_touching){
-				objs_touching.push_back(s);
-			}
+			vector<string> objs_touching(set_objs_touching.begin(),set_objs_touching.end());
 
 			ret.setTable("objs_touching", vString_table(objs_touching));
 
@@ -1930,6 +1927,8 @@ namespace funcoes_ponte
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
 
+			
+
 			Table _mesh;
 			if (bu->collision_mesh != NULL)
 			{
@@ -1943,6 +1942,8 @@ namespace funcoes_ponte
 				_mesh.setString("name", "");
 				ret.setTable("collision_mesh", _mesh);
 			}
+
+			
 
 			ret.setTable("collision_layer", info_camada_table(bu->layer));
 			ret.setTable("scale", vec3_table(bu->escala));
@@ -1961,24 +1962,27 @@ namespace funcoes_ponte
 			ret.setFloat("gravity_scale", bu->gravity_force);
 
 			ret.setFloat("get_collision_info", bu->get_collision_info);
-			
-			set<string> set_objs_touching;
+
+
 			
 			vector<Table> colis_infos;
+			set<string> set_objs_touching;
+
+			colis_infos.reserve(bu->colis_infos.size());
+			
 			for (colis_info ci : bu->colis_infos)
 			{
 				colis_infos.push_back(colis_info_table(ci));
 				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
 			}
-
-			vector<string> objs_touching;
-			for(string s : set_objs_touching){
-				objs_touching.push_back(s);
-			}
-
-			ret.setTable("objs_touching", vString_table(objs_touching));
+			vector<string> objs_touching(set_objs_touching.begin(),set_objs_touching.end());
 
 			ret.setTable("colis_infos", vTable_table(colis_infos));
+
+			
+			ret.setTable("objs_touching", vString_table(objs_touching));
+
+			
 			
 
 			lua_pushtable(L, ret);
