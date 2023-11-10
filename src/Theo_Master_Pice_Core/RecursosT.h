@@ -148,7 +148,7 @@ public:
 			data[i] = dat[i];
 		}
 
-		//delete[] dat;
+		// delete[] dat;
 	}
 
 	imagem(unsigned int x, unsigned int y, unsigned int c, vector<unsigned char> dat)
@@ -351,7 +351,7 @@ public:
 
 	~fonte()
 	{
-		
+
 		remover_fonte(this);
 	}
 };
@@ -489,9 +489,9 @@ public:
 	int filtro[NO_TEXTURAS];
 	shared_ptr<imagem> texturas[NO_TEXTURAS];
 
-	//float inputs[NO_INPUTS];
-	
-	map<string,float> inputs = {};
+	// float inputs[NO_INPUTS];
+
+	map<string, float> inputs = {};
 
 	float interpolacao, gama = 1, metalico = 0, suave = 0;
 	vec4 cor = vec4(1, 1, 1, 1);
@@ -503,18 +503,37 @@ public:
 			texturas[i] = NULL;
 			filtro[i] = 0;
 		}
-		/*
-		for (int i = 0; i < NO_INPUTS; i++)
-		{
-			inputs[i] = 0;
-		}
-		*/
+	}
+
+	bool operator==(const Material &other) const
+	{
+		return (
+			shad == other.shad &&
+			lado_render == other.lado_render &&
+			equal(begin(filtro), end(filtro), begin(other.filtro)) &&
+			equal(begin(texturas), end(texturas), begin(other.texturas), [](const auto &a, const auto &b)
+				  { return a == b || (!a && !b); }) &&
+			inputs == other.inputs &&
+			interpolacao == other.interpolacao &&
+			gama == other.gama &&
+			metalico == other.metalico &&
+			suave == other.suave &&
+			cor == other.cor &&
+			uv_pos_sca == other.uv_pos_sca);
+	}
+
+	bool operator!=(const Material &other) const
+	{
+		return !(*this == other);
 	}
 };
 
 // 3D
 #define MAX_BONE_INFLUENCE 4
-#define base_bone_ids_and_weights {0,0,0,0}
+#define base_bone_ids_and_weights \
+	{                             \
+		0, 0, 0, 0                \
+	}
 struct vertice_struct
 {
 	float posicao[3] = {0, 0, 0};
@@ -522,7 +541,7 @@ struct vertice_struct
 	float normal[3] = {0, 0, 0};
 	float cor[3] = {0, 0, 0};
 	int id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
-    float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
+	float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 
 	bool operator==(const vertice_struct &v) const
 	{
@@ -634,10 +653,12 @@ public:
 	malha operator+(const malha &other) const
 	{
 		malha ret = *this;
-		for(unsigned int i : other.indice){
+		for (unsigned int i : other.indice)
+		{
 			ret.indice.push_back(i + vertices.size());
 		}
-		for(vertice v : other.vertices){
+		for (vertice v : other.vertices)
+		{
 			ret.vertices.push_back(v);
 		}
 		return ret;
@@ -645,10 +666,12 @@ public:
 
 	malha &operator+=(const malha &other)
 	{
-		for(unsigned int i : other.indice){
+		for (unsigned int i : other.indice)
+		{
 			this->indice.push_back(i + vertices.size());
 		}
-		for(vertice v : other.vertices){
+		for (vertice v : other.vertices)
+		{
 			this->vertices.push_back(v);
 		}
 		return *this;
@@ -726,7 +749,7 @@ public:
 
 	objeto_3D objetos;
 	map<string, animacao> animacoes;
-	map<size_t,mat4> offset_matrices;
+	map<size_t, mat4> offset_matrices;
 	Table extras;
 };
 vec3 calculateNormal(const glm::vec3 &a, const glm::vec3 &b, const glm::vec3 &c)
@@ -1056,8 +1079,6 @@ quat graus_quat(vec3 r)
 	return quat(radians(r));
 }
 
-
-
 bool e_visivel(mat4 P, mat4 V, mat4 T, vector<vec3> pos)
 {
 	bool ret = false;
@@ -1233,12 +1254,15 @@ class lista_ponteiros
 	}
 };
 
-std::vector<std::string> stringRemoveDuplicates(const std::vector<std::string>& vec) {
-    std::vector<std::string> result;
-    for (const std::string& str : vec) {
-        if (std::find(result.begin(), result.end(), str) == result.end()) {
-            result.push_back(str);
-        }
-    }
-    return result;
+std::vector<std::string> stringRemoveDuplicates(const std::vector<std::string> &vec)
+{
+	std::vector<std::string> result;
+	for (const std::string &str : vec)
+	{
+		if (std::find(result.begin(), result.end(), str) == result.end())
+		{
+			result.push_back(str);
+		}
+	}
+	return result;
 }

@@ -71,6 +71,10 @@ public:
 	map<shared_ptr<objeto_jogo>, int> oclusion_queries_resultados;
 	unsigned int oclusion_querie_in_view = 0;
 
+	string bone_matrixes_ids[256];
+
+	Material material_last_frame;
+
 	unsigned int CompilarShader_ogl(vector<pair<string, unsigned int>> shader)
 	{
 
@@ -410,6 +414,12 @@ public:
 
 		modelo_gpu = string(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
 
+		for (size_t i = 0; i < 256; i++)
+		{
+
+			bone_matrixes_ids[i] = ("finalBonesMatrices[" + std::to_string(i) + "]");
+		}
+
 		vector<pair<string, unsigned int>> sha;
 		sha.push_back(pair<string, unsigned int>(nome_shader_vert, GL_VERTEX_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
@@ -649,15 +659,6 @@ public:
 			// weights
 			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
 
-			/*
-			for(auto v : ma->vertices){
-				if(v.id_ossos[0] + v.id_ossos[1] + v.id_ossos[2] + v.id_ossos[3] > 0){
-					print({"AAAAA",v.id_ossos[0],v.id_ossos[1],v.id_ossos[2],v.id_ossos[3]});
-					print({"BBBBB",v.peso_ossos[0],v.peso_ossos[1],v.peso_ossos[2],v.peso_ossos[3]});
-				}
-			}
-			*/
-
 			glDrawElements(
 				tipo,					   // mode
 				malhas[ma].tamanho_indice, // count
@@ -741,89 +742,75 @@ public:
 
 	void apply_material(unsigned int shader_s, Material mat)
 	{
-		glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
-		glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
-		glUniform1f(glGetUniformLocation(shader_s, "softness"), mat.suave);
-		glUniform1f(glGetUniformLocation(shader_s, "metallic"), mat.metalico);
 
-		// texturas
-		for (int i = 0; i < NO_TEXTURAS; i++)
+		if (mat != material_last_frame)
 		{
-			if (mat.texturas[i] != NULL)
-			{
-				ogl_adicionar_textura(mat.texturas[i].get());
-				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
 
-				if (mat.filtro[i] > 0)
+			glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
+			glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
+			glUniform1f(glGetUniformLocation(shader_s, "softness"), mat.suave);
+			glUniform1f(glGetUniformLocation(shader_s, "metallic"), mat.metalico);
+
+			// texturas
+			for (int i = 0; i < NO_TEXTURAS; i++)
+			{
+				if (mat.texturas[i] != NULL)
 				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					ogl_adicionar_textura(mat.texturas[i].get());
+					glActiveTexture(GL_TEXTURE0 + i);
+					glBindTexture(GL_TEXTURE_2D, texturas[mat.texturas[i].get()]);
+
+					if (mat.filtro[i] > 0)
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					}
+					else
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					}
+					string nome_veriavel = string("textures[") + to_string(i) + string("]");
+					glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
 				}
 				else
 				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					break;
 				}
-				string nome_veriavel = string("textures[") + to_string(i) + string("]");
-				glUniform1i(glGetUniformLocation(shader_s, nome_veriavel.c_str()), i);
 			}
-			else
+
+			switch (mat.lado_render)
 			{
+			case lado_render_malha::both:
+				glDisable(GL_CULL_FACE);
+				break;
+
+			case lado_render_malha::front:
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+				break;
+
+			case lado_render_malha::back:
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
+
 				break;
 			}
+
+			for (pair<string, float> p : mat.inputs)
+			{
+				// print({"p.first",p.first,p.second});
+				glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
+			}
+
+			// cor
+			glUniform4f(glGetUniformLocation(shader_s, "color"), mat.cor.x, mat.cor.y, mat.cor.z, mat.cor.w);
+
+			// uv
+			glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), mat.uv_pos_sca.x, mat.uv_pos_sca.y, mat.uv_pos_sca.z, mat.uv_pos_sca.w);
+
+			material_last_frame = mat;
 		}
-
-		/*
-		for (int i = 0; i < SAIDAS_SHADER; i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + NO_TEXTURAS + i);
-			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
-			glUniform1i(glGetUniformLocation(shader_s, local.c_str()), NO_TEXTURAS + i);
-		}
-		*/
-
-		switch (mat.lado_render)
-		{
-		case lado_render_malha::both:
-			glDisable(GL_CULL_FACE);
-			break;
-
-		case lado_render_malha::front:
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-			break;
-
-		case lado_render_malha::back:
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_FRONT);
-
-			break;
-		}
-
-		// input
-		/*
-		for (int i = 0; i < NO_INPUTS; i++)
-		{
-			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-			glUniform1f(glGetUniformLocation(shader_s, nome_veriavel.c_str()), mat.inputs[i]);
-		}
-		*/
-
-		for (pair<string, float> p : mat.inputs)
-		{
-			// print({"p.first",p.first,p.second});
-			glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
-		}
-
-		// cor
-		glUniform4f(glGetUniformLocation(shader_s, "color"), mat.cor.x, mat.cor.y, mat.cor.z, mat.cor.w);
-
-		// uv
-		glUniform4f(glGetUniformLocation(shader_s, "uv_position_scale"), mat.uv_pos_sca.x, mat.uv_pos_sca.y, mat.uv_pos_sca.z, mat.uv_pos_sca.w);
 	}
 	void reindenizar_objeto(shared_ptr<objeto_jogo> obj, shared_ptr<objeto_jogo> cam)
 	{
@@ -832,6 +819,101 @@ public:
 		{
 			shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 			shared_ptr<camera> ca = cam->pegar_componente<camera>();
+
+			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
+			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
+			{
+
+				bool is_skin = false;
+				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
+				{
+					if (RM->malhas[i]->pele)
+					{
+						is_skin = true;
+						break;
+					}
+				}
+
+				mat4 matrixes[256];
+
+				if (is_skin)
+				{
+					criar_oclusion_querie(obj);
+
+					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
+					{
+
+						shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
+						if (bone_tf != NULL)
+						{
+							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
+						}
+					}
+				}
+
+				if (RM->ligado || is_skin)
+				{
+
+					for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
+					{
+
+						shared_ptr<malha> ma = RM->malhas[i];
+						Material mat = RM->mats[i];
+						if (malhas.find(ma.get()) == malhas.end())
+						{
+							adicionar_malha(ma.get());
+						}
+						if (ma != NULL)
+						{
+
+							// aplicar material
+							unsigned int shader_s = pegar_shader(mat.shad);
+							glUseProgram(shader_s);
+
+							// apply_transform(shader_s, tf, ca);
+							// ajustar
+							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+
+							mat4 ajust = tf->pegar_matriz();
+							if (ma->pele)
+							{
+								ajust[3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
+							}
+							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
+
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
+							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+
+							apply_material(shader_s, mat);
+							apply_light(shader_s);
+
+							RM->usar_oclusao = false;
+
+							if (ma->pele)
+							{
+
+								// Benchmark_Timer bt("render_bone_malha");
+
+								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
+
+								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
+								{
+
+									glUniformMatrix4fv(glGetUniformLocation(shader_s, bone_matrixes_ids[i].c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
+								}
+							}
+							else
+							{
+								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
+							}
+
+							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+						}
+					}
+				}
+				return;
+			}
 
 			// render_shader
 			shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
@@ -850,6 +932,8 @@ public:
 				glDisable(GL_CULL_FACE);
 				glBindVertexArray(quad_array);
 				glDrawArrays(GL_TRIANGLES, 0, rs->tamanho);
+
+				return;
 			}
 
 			// render texto
@@ -995,6 +1079,8 @@ public:
 						}
 					}
 				}
+
+				return;
 			}
 
 			// render tile map
@@ -1008,10 +1094,12 @@ public:
 				unsigned int shader_s = pegar_shader(rtm->mat.shad);
 				glUseProgram(shader_s);
 
-				glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
+				apply_material(shader_s, rtm->mat);
+
+				// glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
 
 				// tempo
-				glUniform1f(glGetUniformLocation(shader_s, "tempo"), Tempo::tempo);
+				// glUniform1f(glGetUniformLocation(shader_s, "tempo"), Tempo::tempo);
 
 				// transform
 
@@ -1161,6 +1249,7 @@ public:
 						}
 					}
 				}
+				return;
 			}
 
 			// render sprite
@@ -1173,6 +1262,7 @@ public:
 				// shader
 				unsigned int shader_s = pegar_shader(RS->mat.shad);
 				glUseProgram(shader_s);
+				apply_material(shader_s, RS->mat);
 
 				// tempo
 				glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
@@ -1195,7 +1285,7 @@ public:
 
 				// cor
 				vec4 cor = obj->pegar_componente<render_sprite>()->mat.cor;
-				glUniform4f(glGetUniformLocation(shader_s, "color"), cor.x, cor.y, cor.z, cor.w);
+				// glUniform4f(glGetUniformLocation(shader_s, "color"), cor.x, cor.y, cor.z, cor.w);
 
 				// uv
 				int tile_id = RS->tile_selecionado;
@@ -1212,110 +1302,13 @@ public:
 
 				// render
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				return;
 			}
 
 			// https://www.youtube.com/watch?v=LMpw7foANNA
 
 			// render_malha
-
-			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)
-			{
-
-				bool is_skin = false;
-				for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
-				{
-					if (RM->malhas[i]->pele)
-					{
-						is_skin = true;
-						break;
-					}
-				}
-
-				mat4 matrixes[256];
-				string matrixes_ids[256];
-
-				if (is_skin)
-				{
-					criar_oclusion_querie(obj);
-
-					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
-					{
-
-						shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
-						if (bone_tf != NULL)
-						{
-
-							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
-
-							matrixes_ids[i] = ("finalBonesMatrices[" + std::to_string(i) + "]");
-							//glUniformMatrix4fv(glGetUniformLocation(shader_s, .c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
-						}
-					}
-				}
-
-				if (RM->ligado || is_skin)
-				{
-
-					for (int i = 0; i < std::min<float>((int)RM->mats.size(), (int)RM->malhas.size()); i++)
-					{
-
-						shared_ptr<malha> ma = RM->malhas[i];
-						Material mat = RM->mats[i];
-						if (malhas.find(ma.get()) == malhas.end())
-						{
-							adicionar_malha(ma.get());
-						}
-						if (ma != NULL)
-						{
-
-							// aplicar material
-							unsigned int shader_s = pegar_shader(mat.shad);
-							glUseProgram(shader_s);
-
-							// apply_transform(shader_s, tf, ca);
-							// ajustar
-							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-
-							mat4 ajust = tf->pegar_matriz();
-							if (ma->pele)
-							{
-								ajust[3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
-							}
-							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
-
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
-
-							apply_material(shader_s, mat);
-							apply_light(shader_s);
-
-							RM->usar_oclusao = false;
-
-							if (ma->pele)
-							{
-
-								Benchmark_Timer bt("render_bone_malha");
-
-								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
-
-								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
-								{
-
-									glUniformMatrix4fv(glGetUniformLocation(shader_s, matrixes_ids[i].c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
-								}
-							}
-							else
-							{
-								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
-							}
-
-							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
-						}
-					}
-				}
-			}
 		}
 		else if (obj->pegar_componente<poly_mesh>() && cam->pegar_componente<camera>() != NULL)
 		{
@@ -1363,9 +1356,6 @@ public:
 						glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
 						// cor
 						glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
-
-						// render
-						glUseProgram(shader_s);
 
 						apply_material(shader_s, mat);
 						apply_light(shader_s);
@@ -1452,16 +1442,32 @@ public:
 		return false;
 	}
 
+	bool is_ui(shared_ptr<objeto_jogo> obj)
+	{
+		/**/
+		shared_ptr<transform_> TF = obj->pegar_componente<transform_>();
+		if (TF != NULL && TF->UI)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	vector<vector<shared_ptr<objeto_jogo>>> separate_ordenate_objects(vector<shared_ptr<objeto_jogo>> objs, shared_ptr<objeto_jogo> cam)
 	{
 		/**/
 
 		vector<shared_ptr<objeto_jogo>> transparent;
 		vector<shared_ptr<objeto_jogo>> nontransparent;
+		vector<shared_ptr<objeto_jogo>> ui;
 
 		for (shared_ptr<objeto_jogo> obj : objs)
 		{
-			if (is_transparent(obj))
+			if(is_ui(obj)){
+				ui.push_back(obj);
+			} 
+			else if (is_transparent(obj))
 			{
 				transparent.push_back(obj);
 			}
@@ -1476,13 +1482,15 @@ public:
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
 		}
 
-		return {nontransparent, transparent};
+		return {nontransparent,transparent,ui};
 
 		// return {objs, {}};
 	}
 
 	void reindenizar_camada_objetos(vector<shared_ptr<objeto_jogo>> obj, shared_ptr<objeto_jogo> cam)
 	{
+
+		
 
 		glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
 
@@ -1506,7 +1514,7 @@ public:
 			glDisable(GL_DEPTH_TEST);
 		}
 
-		glUniform1f(glGetUniformLocation(ShaderGL, "tempo"), Tempo::tempo);
+		// glUniform1f(glGetUniformLocation(ShaderGL, "tempo"), Tempo::tempo);
 
 		/**/
 		if (update_res)
@@ -1566,21 +1574,15 @@ public:
 
 		vector<vector<shared_ptr<objeto_jogo>>> orderd_objects = separate_ordenate_objects(obj, cam);
 
-		for (int i = 0; i < orderd_objects[0].size(); i++)
+		for (size_t a = 0; a < orderd_objects.size(); a++)
 		{
-			if (orderd_objects[0][i] > 0 && cam > 0)
+			for (int i = 0; i < orderd_objects[a].size(); i++)
 			{
+				if (orderd_objects[a][i] > 0 && cam > 0)
+				{
 
-				reindenizar_objeto(orderd_objects[0][i], cam);
-			}
-		}
-
-		for (int i = 0; i < orderd_objects[1].size(); i++)
-		{
-			if (orderd_objects[1][i] > 0 && cam > 0)
-			{
-
-				reindenizar_objeto(orderd_objects[1][i], cam);
+					reindenizar_objeto(orderd_objects[a][i], cam);
+				}
 			}
 		}
 	}
@@ -1667,19 +1669,17 @@ public:
 			glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), pos_processamento_info.inputs[i]);
 		}
 		*/
-		for (pair<string, float> p : pos_processamento_info.inputs)
-		{
-			glUniform1f(glGetUniformLocation(pp_shader, p.first.c_str()), p.second);
-		}
+
+		apply_material(pp_shader, pos_processamento_info);
 
 		// cor
-		vec4 cor = pos_processamento_info.cor;
-		glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
+		// vec4 cor = pos_processamento_info.cor;
+		// glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
 		// print({"color",cor.x, cor.y, cor.z, cor.w});
 
 		// uv
-		vec4 uv = pos_processamento_info.uv_pos_sca;
-		glUniform4f(glGetUniformLocation(pp_shader, "uv_position_scale"), uv.x, uv.y, uv.z, uv.w);
+		// vec4 uv = pos_processamento_info.uv_pos_sca;
+		// glUniform4f(glGetUniformLocation(pp_shader, "uv_position_scale"), uv.x, uv.y, uv.z, uv.w);
 
 		// glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -1696,10 +1696,9 @@ public:
 	void reindenizar_cenario()
 	{
 
-		// transparency
-
-		// Benchmark_Timer bt("reindenizar_cenario");
 		Benchmark_Timer bt("reindenizar_cenario");
+
+		// transparency
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
