@@ -53,7 +53,7 @@ game_state = 0
 
 
 
-
+this_physics_3d = {}
 
 
 function START()
@@ -78,16 +78,17 @@ function START()
     this_object.components[components.transform]:change_rotation(0, 0, 0)
 
     this_object:add_component(components.physics_3D)
-    this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.kinematic
-    this_object.components[components.physics_3D].rotate_x = false
-    this_object.components[components.physics_3D].rotate_y = false
-    this_object.components[components.physics_3D].rotate_z = false
-    this_object.components[components.physics_3D].friction = 0
-    this_object.components[components.physics_3D].gravity_scale = 0
-    this_object.components[components.physics_3D].triger = false
-    this_object.components[components.physics_3D].collision_shape = collision_shapes.capsule
-    this_object.components[components.physics_3D].scale = Vec3:new(1, 2, 1)
-    this_object.components[components.physics_3D]:set()
+    this_physics_3d = this_object.components[components.physics_3D]
+    this_physics_3d.boady_dynamic = boady_dynamics.kinematic
+    this_physics_3d.rotate_x = false
+    this_physics_3d.rotate_y = false
+    this_physics_3d.rotate_z = false
+    this_physics_3d.friction = 0
+    this_physics_3d.gravity_scale = 0
+    this_physics_3d.triger = false
+    this_physics_3d.collision_shape = collision_shapes.capsule
+    this_physics_3d.scale = Vec3:new(1, 2, 1)
+    this_physics_3d:set()
 
 
     direction_reference = game_object:new(this_object_ptr)
@@ -184,8 +185,10 @@ end
 ]]
 
 
+
 function UPDATE()
     
+
     
     if game_state == game_states.play then
         time:get()
@@ -206,8 +209,7 @@ function UPDATE()
 
         enable_cursor(global_data:get("pause") > 0)
         
-        this_object.components[components.physics_3D]:get()
-        --print(tablelength(this_object.components[components.physics_3D].objs_touching))
+        this_physics_3d:get()
 
         local get_valid_touches_top = function(objs_touching)
             local valid_touches = 0
@@ -262,7 +264,7 @@ function UPDATE()
                 math.min(camera_rotation.y - ((inputs.analog_view_y) * mouse_sensitivity / 2.5), 90), -90)
 
             if not this_object_physics_3D_seted then
-                this_object.components[components.physics_3D]:set()
+                this_physics_3d:set()
                 this_object_physics_3D_seted = not this_object_physics_3D_seted
             end
 
@@ -321,11 +323,11 @@ function UPDATE()
 
             if inputs.action_2 > 0 then
                 local turbo_time_speed = 10
-                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
+                this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
                 time:set_speed(1 / turbo_time_speed)
             else 
                 time:set_speed(1)
-                this_object.components[components.physics_3D]:set_linear_velocity(impulse.x, impulse.y, impulse.z)
+                this_physics_3d:set_linear_velocity(impulse.x, impulse.y, impulse.z)
             end
             
 
@@ -339,14 +341,14 @@ function UPDATE()
             end
 
         else
-            this_object.components[components.physics_3D]:set_linear_velocity(0, 0, 0)
+            this_physics_3d:set_linear_velocity(0, 0, 0)
         end
 
         camera.components[components.transform]:change_rotation(-camera_rotation.y, 0, 0)
         this_object.components[components.transform]:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data:get("pause") < 1
 
-        this_object.components[components.physics_3D]:get()
+        this_physics_3d:get()
     end
 
     

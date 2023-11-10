@@ -389,7 +389,7 @@ int get_lua_var(lua_State *L);
 int set_lua_var(lua_State *L);
 int call_lua_function(lua_State *L);
 
-//banchmark
+// banchmark
 int make_banchmark(lua_State *L);
 
 // lambda labs
@@ -788,8 +788,6 @@ namespace funcoes_ponte
 		mapeamento_scripts_lua.limpar_lixo();
 		return 0;
 	}
-
-	
 
 	// arquivos
 
@@ -1916,12 +1914,10 @@ namespace funcoes_ponte
 	int get_set_physic_3D(lua_State *L)
 	{
 
-		
-
 		if (lua_tonumber(L, 1) == get_lua)
 		{
 
-			Benchmark_Timer bt("get_set_physic_3D");
+			// 
 
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
@@ -1957,19 +1953,26 @@ namespace funcoes_ponte
 			ret.setFloat("density", bu->densidade);
 			ret.setFloat("gravity_scale", bu->gravity_force);
 
-			vector<string> objs_touching;
-			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
-			{
-				objs_touching.push_back(ponteiro_string(obj));
-			}
-			ret.setTable("objs_touching", vString_table(stringRemoveDuplicates(objs_touching)));
+			ret.setFloat("get_collision_info", bu->get_collision_info);
+			
+			set<string> set_objs_touching;
+			
 			vector<Table> colis_infos;
 			for (colis_info ci : bu->colis_infos)
 			{
 				colis_infos.push_back(colis_info_table(ci));
+				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
 			}
+
+			vector<string> objs_touching;
+			for(string s : objs_touching){
+				objs_touching.push_back(s);
+			}
+
+			ret.setTable("objs_touching", vString_table((objs_touching)));
+
 			ret.setTable("colis_infos", vTable_table(colis_infos));
-			ret.setFloat("get_collision_info", bu->get_collision_info);
+			
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -2006,6 +2009,73 @@ namespace funcoes_ponte
 			bu->aplay();
 			return 0;
 		}
+	}
+
+	int get_objects_coliding(lua_State *L)
+	{
+
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+
+		if (b2d != NULL)
+		{
+			
+			vector<string> objs_touching;
+			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
+			{
+				objs_touching.push_back(ponteiro_string(obj.get()));
+			}
+			lua_pushtable(L, vString_table(objs_touching));
+
+			return 1;
+		}
+		else if (bu != NULL)
+		{
+			vector<string> objs_touching;
+			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
+			{
+				objs_touching.push_back(ponteiro_string(obj));
+			}
+			lua_pushtable(L, vString_table(objs_touching));
+
+			return 1;
+		}
+
+		return 0;
+	}
+
+	int get_collision_infos(lua_State *L)
+	{
+
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		shared_ptr<box_2D> b2d = obj->pegar_componente<box_2D>();
+		shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
+
+		if (b2d != NULL)
+		{
+			vector<Table> colis_infos;
+			for (colis_info ci : b2d->colis_infos)
+			{
+				colis_infos.push_back(colis_info_table(ci));
+			}
+			lua_pushtable(L, vTable_table(colis_infos));
+
+			return 1;
+		}
+		else if (bu != NULL)
+		{
+			vector<Table> colis_infos;
+			for (colis_info ci : bu->colis_infos)
+			{
+				colis_infos.push_back(colis_info_table(ci));
+			}
+			lua_pushtable(L, vTable_table(colis_infos));
+
+			return 1;
+		}
+
+		return 0;
 	}
 
 	int raycast_3D(lua_State *L)
@@ -2242,7 +2312,10 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
 															   pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
 															   pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
+															   pair<string, lua_function>("get_objects_coliding", funcoes_ponte::get_objects_coliding),
+															   pair<string, lua_function>("get_collision_infos", funcoes_ponte::get_collision_infos),
 															   pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
+
 														   }),
 		pair<string, map<string, lua_function>>("audio", {
 															 pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),

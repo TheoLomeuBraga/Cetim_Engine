@@ -221,6 +221,12 @@ function stop_coroutine_if_is_not_loaded(asset_list)
     
 end
 
+
+
+function make_banchmark(ptr,script)
+    c_make_banchmark(ptr,script)
+end
+
 function memory_usage_info()
     c_memory_usage_info(_G)
 end

@@ -25,6 +25,7 @@ function START()
 end
 
 function get_valid_touches()
+    --print("#this_physics_3d.objs_touching",#this_physics_3d.objs_touching)
     for key, value in pairs(this_physics_3d.objs_touching) do
         local obj = game_object:new(value)
         if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/charter") then
@@ -47,6 +48,8 @@ function UPDATE()
     
     this_physics_3d:get()
     
+    
+
     touch_player = get_valid_touches()
     
     
@@ -88,8 +91,6 @@ function UPDATE()
             update_open_progres = false
         end
     end
-    
-    
 
 end
 
