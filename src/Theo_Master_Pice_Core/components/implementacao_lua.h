@@ -1969,12 +1969,18 @@ namespace funcoes_ponte
 			set<string> set_objs_touching;
 
 			colis_infos.reserve(bu->colis_infos.size());
+
+			//print({bu->colis_infos.size()});
 			
 			for (colis_info ci : bu->colis_infos)
 			{
-				colis_infos.push_back(colis_info_table(ci));
+				colis_infos.emplace_back(colis_info_table(ci));
+				
 				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
+				
 			}
+
+			
 			vector<string> objs_touching(set_objs_touching.begin(),set_objs_touching.end());
 
 			ret.setTable("colis_infos", vTable_table(colis_infos));
