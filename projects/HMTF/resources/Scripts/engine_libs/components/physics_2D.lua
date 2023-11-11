@@ -26,7 +26,7 @@ function collision_layer_info:new()
 end
 
 physics_2D_component = create_base_component(components.physics_2D)
-physics_2D_component.scale = {x=1,y=1}
+physics_2D_component.scale = { x = 1, y = 1 }
 physics_2D_component.boady_dynamic = boady_dynamics.static
 physics_2D_component.collision_shape = collision_shapes.tile
 physics_2D_component.gravity_scale = 1
@@ -43,7 +43,7 @@ physics_2D_component.vertex = {}
 function physics_2D_component:clean()
     self = create_base_component(components.physics_2D)
     self.object_ptr = object_ptr
-    self.scale = {x=1,y=1}
+    self.scale = { x = 1, y = 1 }
     self.boady_dynamic = boady_dynamics.static
     self.collision_shape = collision_shapes.tile
     self.gravity_scale = 1
@@ -75,32 +75,43 @@ function physics_2D_component:get()
     self.vertex = deepcopyjson(j.vertex)
 end
 
-    function physics_2D_component:set()
-        get_set_physic_2D(set_lua, deepcopyjson(self))
-    end
+function physics_2D_component:set()
+    get_set_physic_2D(set_lua, deepcopyjson(self))
+end
 
-    function physics_2D_component:to_move(speed_x, speed_y)
-        to_move(self.object_ptr, speed_x, speed_y)
-    end
+function physics_2D_component:to_move(speed_x, speed_y)
+    to_move(self.object_ptr, speed_x, speed_y)
+end
 
-    function physics_2D_component:add_force(force_x, force_y)
-        add_force(self.object_ptr, force_x, force_y)
-    end
-    function physics_2D_component:add_impulse(force_x, force_y)
-        add_impulse(self.object_ptr, force_x, force_y)
-    end
-    function physics_2D_component:set_linear_velocity(force_x, force_y)
-        set_linear_velocity(self.object_ptr, force_x, force_y)
-    end
-    
-    function physics_2D_component:add_rotative_force(force_x)
-        add_rotative_force(self.object_ptr, force_x)
-    end
-    function physics_2D_component:add_rotative_impulse(force_x)
-        add_rotative_impulse(self.object_ptr, force_x)
-    end
-    function physics_2D_component:set_angular_velocity(force_x)
-        set_angular_velocity(self.object_ptr, force_x)
-    end
+function physics_2D_component:add_force(force_x, force_y)
+    add_force(self.object_ptr, force_x, force_y)
+end
+
+function physics_2D_component:add_impulse(force_x, force_y)
+    add_impulse(self.object_ptr, force_x, force_y)
+end
+
+function physics_2D_component:set_linear_velocity(force_x, force_y)
+    set_linear_velocity(self.object_ptr, force_x, force_y)
+end
+
+function physics_2D_component:add_rotative_force(force_x)
+    add_rotative_force(self.object_ptr, force_x)
+end
+
+function physics_2D_component:add_rotative_impulse(force_x)
+    add_rotative_impulse(self.object_ptr, force_x)
+end
+
+function physics_2D_component:set_angular_velocity(force_x)
+    set_angular_velocity(self.object_ptr, force_x)
+end
+function physics_2D_component:get_collision_infos()
+    return get_collision_infos(self.object_ptr)
+end
+function physics_2D_component:get_objects_coliding()
+    return get_objects_coliding(self.object_ptr)
+end
+
 
 component_map[components.physics_2D] = physics_2D_component:new(nil)

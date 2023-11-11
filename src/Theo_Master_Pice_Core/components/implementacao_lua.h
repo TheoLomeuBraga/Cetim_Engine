@@ -2021,23 +2021,29 @@ namespace funcoes_ponte
 		if (b2d != NULL)
 		{
 
-			vector<string> objs_touching;
+			set<string> objs_touching;
 			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
 			{
-				objs_touching.push_back(ponteiro_string(obj.get()));
+				objs_touching.insert(ponteiro_string(obj.get()));
 			}
-			lua_pushtable(L, vString_table(objs_touching));
+			vector<string> vs(objs_touching.begin(),objs_touching.end());
+			lua_pushtable(L, vString_table(vs));
 
 			return 1;
 		}
 		else if (bu != NULL)
 		{
-			vector<string> objs_touching;
+			
+			set<string> objs_touching;
 			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
 			{
-				objs_touching.push_back(ponteiro_string(obj));
+				objs_touching.insert(ponteiro_string(obj));
 			}
-			lua_pushtable(L, vString_table(objs_touching));
+			
+			vector<string> vs(objs_touching.begin(),objs_touching.end());
+			
+			lua_pushtable(L, vString_table(vs));
+			
 
 			return 1;
 		}

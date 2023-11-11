@@ -25,7 +25,7 @@ function START()
 end
 
 function get_valid_touches()
-    for key, value in pairs(this_physics_3d.objs_touching) do
+    for key, value in pairs(this_physics_3d:get_objects_coliding()) do
         local obj = game_object:new(value)
         if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/charter") then
             return true
@@ -44,7 +44,7 @@ function UPDATE()
     time:get()
 
     
-    this_physics_3d:get()
+    --this_physics_3d:get()
     
     
     

@@ -63,6 +63,12 @@ end
 function physics_3D_component:set_angular_velocity(force_x, force_y,force_z)
     set_angular_velocity(self.object_ptr, force_x,force_y,force_z)
 end
+function physics_3D_component:get_collision_infos()
+    return get_collision_infos(self.object_ptr)
+end
+function physics_3D_component:get_objects_coliding()
+    return get_objects_coliding(self.object_ptr)
+end
 
 function physics_3D_component:clean()
     self.scale = { x = 1, y = 1, z = 1 }

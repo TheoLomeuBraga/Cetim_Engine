@@ -286,8 +286,6 @@ public:
 
 		if (em_cena)
 		{
-
-
 			map<string, shared_ptr<componente>> componentes_copy = componentes;
 
 			for (pair<string, shared_ptr<componente>> p : componentes_copy)

@@ -242,13 +242,13 @@ function UPDATE()
 
         --hit top
         check_top.components[components.transform]:change_position(pos.x, pos.y + 1.75, pos.z)
-        check_top.components[components.physics_3D]:get()
-        hit_top = get_valid_touches_top(check_top.components[components.physics_3D].objs_touching) > 0
+        
+        hit_top = get_valid_touches_top(check_top.components[components.physics_3D]:get_objects_coliding()) > 0
 
         --hit down
         check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
-        hit_down = get_valid_touches_down(check_down.components[components.physics_3D].objs_touching) > 1
+        hit_down = get_valid_touches_down(check_down.components[components.physics_3D]:get_objects_coliding()) > 1
 
         
 

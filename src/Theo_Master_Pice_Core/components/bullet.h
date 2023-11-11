@@ -553,7 +553,6 @@ public:
 
     virtual btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper *colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper *colObj1Wrap, int partId1, int index1)
     {
-        shared_ptr<bullet> bu;
         colis_info collisionInfo;
 
         collisionInfo.pos = btToGlm(cp.getPositionWorldOnA());
@@ -562,7 +561,7 @@ public:
 
         objeto_jogo *A = collisionObject_obj[const_cast<btCollisionObject *>(colObj0Wrap->getCollisionObject())].get();
         objeto_jogo *B = collisionObject_obj[const_cast<btCollisionObject *>(colObj1Wrap->getCollisionObject())].get();
-        bu = A->pegar_componente<bullet>();
+        shared_ptr<bullet> bu = A->pegar_componente<bullet>();
 
         if (bu->get_collision_info)
         {
@@ -571,13 +570,6 @@ public:
             physics_3D_collisionInfos.emplace_back(collisionInfo);
             bu->colis_infos.emplace_back(collisionInfo);
         }
-
-        // collisionInfo.obj = B;
-        // collisionInfo.cos_obj = A;
-        // physics_3D_collisionInfos.push_back(collisionInfo);
-
-        // bu = ((objeto_jogo *)collisionInfo.obj)->pegar_componente<bullet>();
-        // bu->colis_infos.push_back(collisionInfo);
 
         return 0; // return 0 to process all collisions
     }
