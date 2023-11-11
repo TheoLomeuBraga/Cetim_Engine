@@ -1581,9 +1581,8 @@ namespace funcoes_ponte
 			}
 			ret.setTable("vertex", vTable_table(vertex));
 
-			
 			set<string> set_objs_touching;
-			
+
 			vector<Table> colis_infos;
 			for (colis_info ci : b2d->colis_infos)
 			{
@@ -1591,7 +1590,7 @@ namespace funcoes_ponte
 				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
 			}
 
-			vector<string> objs_touching(set_objs_touching.begin(),set_objs_touching.end());
+			vector<string> objs_touching(set_objs_touching.begin(), set_objs_touching.end());
 
 			ret.setTable("objs_touching", vString_table(objs_touching));
 
@@ -1921,13 +1920,11 @@ namespace funcoes_ponte
 		if (lua_tonumber(L, 1) == get_lua)
 		{
 
-			// 
+			//
 
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<bullet> bu = obj->pegar_componente<bullet>();
-
-			
 
 			Table _mesh;
 			if (bu->collision_mesh != NULL)
@@ -1942,8 +1939,6 @@ namespace funcoes_ponte
 				_mesh.setString("name", "");
 				ret.setTable("collision_mesh", _mesh);
 			}
-
-			
 
 			ret.setTable("collision_layer", info_camada_table(bu->layer));
 			ret.setTable("scale", vec3_table(bu->escala));
@@ -1963,33 +1958,21 @@ namespace funcoes_ponte
 
 			ret.setFloat("get_collision_info", bu->get_collision_info);
 
-
-			
 			vector<Table> colis_infos;
 			set<string> set_objs_touching;
 
-			colis_infos.reserve(bu->colis_infos.size());
-
-			//print({bu->colis_infos.size()});
 			
-			for (colis_info ci : bu->colis_infos)
-			{
-				colis_infos.emplace_back(colis_info_table(ci));
-				
-				set_objs_touching.insert(ponteiro_string(ci.cos_obj));
-				
+
+			
+			colis_infos.resize(bu->colis_infos.size());
+			for(size_t i = 0 ; i < bu->colis_infos.size(); i++){
+				colis_infos[i] = colis_info_table(bu->colis_infos[i]);
+				set_objs_touching.insert(ponteiro_string(bu->colis_infos[i].cos_obj));
 			}
-
+			vector<string> objs_touching(set_objs_touching.begin(), set_objs_touching.end());
 			
-			vector<string> objs_touching(set_objs_touching.begin(),set_objs_touching.end());
-
 			ret.setTable("colis_infos", vTable_table(colis_infos));
-
-			
 			ret.setTable("objs_touching", vString_table(objs_touching));
-
-			
-			
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -2037,7 +2020,7 @@ namespace funcoes_ponte
 
 		if (b2d != NULL)
 		{
-			
+
 			vector<string> objs_touching;
 			for (shared_ptr<objeto_jogo> obj : b2d->objs_touching)
 			{

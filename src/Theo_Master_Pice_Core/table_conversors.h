@@ -307,10 +307,10 @@ Table info_camada_table(info_camada ic)
 Table colis_info_table(colis_info col)
 {
     Table ret;
-    ret.setString("object", ponteiro_string(col.obj));
+    //ret.setString("object", ponteiro_string(col.obj));
     ret.setString("collision_object", ponteiro_string(col.cos_obj));
-    ret.setFloat("triger", col.sensor);
-    ret.setFloat("colliding", col.colidindo);
+    //ret.setFloat("triger", col.sensor);
+    //ret.setFloat("colliding", col.colidindo);
     ret.setFloat("distance", col.distancia);
     ret.setTable("position", vec3_table(col.pos));
     ret.setFloat("speed", col.velocidade);

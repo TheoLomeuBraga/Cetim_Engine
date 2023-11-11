@@ -44,8 +44,8 @@ function UPDATE()
     time:get()
 
     
-    
     this_physics_3d:get()
+    
     
     
 
