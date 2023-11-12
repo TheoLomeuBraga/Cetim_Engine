@@ -1,8 +1,8 @@
 COMPILER := g++
 
-FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -flto -s -O3
-FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj  -Wl,-E
-FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc # -flto -s -O3 # -march=native #-pg -g
+FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -s -O3 -ffast-math 
+FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -s -O3 -ffast-math
+FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc # -flto -s -O3 -ffast-math  # -march=native #-pg -g
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
 DEFINITIONS_LINUX := -DLINUX -DUNIX 
