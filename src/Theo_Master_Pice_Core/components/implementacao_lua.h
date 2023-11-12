@@ -2585,7 +2585,7 @@ public:
 	void atualisar()
 	{
 
-		Benchmark_Timer bt("update_lua_scripts");
+		//Benchmark_Timer bt("update_lua_scripts");
 
 		for (pair<string, lua_State *> p : estados_lua)
 		{

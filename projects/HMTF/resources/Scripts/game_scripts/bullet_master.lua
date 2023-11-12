@@ -66,10 +66,12 @@ end
 function UPDATE()
     time:get()
 
-    --local timer = stopwatch:new()
+    
 
     for key, value in pairs(bullets_list) do
+
         bullets_list[key].timer = bullets_list[key].timer - (time.delta * time.sacale)
+        
 
         local bullet = bullets_list[key].object
 
@@ -95,15 +97,16 @@ function UPDATE()
             remove_object(bullets_list[key].object.object_ptr)
             remove_bullet(key)
         end
+        
 
-
-        bullet.components[components.physics_3D]:get()
-        for key, value in pairs(bullet.components[components.physics_3D].colis_infos) do
-            --print(value.object)
+        --[[
+        local objects_coliding = bullet.components[components.physics_3D]:get_objects_coliding()
+        for key, value in pairs(objects_coliding) do
+            print(value.object)
         end
+        ]]
     end
-
-    --print(timer:getTime())
+    
 end
 
 function COLLIDE(collision_info)
@@ -137,7 +140,7 @@ function summon_bullet(args)
             bullet.components[components.render_mesh].layer = 2
             bullet.components[components.render_mesh].meshes_cout = 1
             bullet.components[components.render_mesh].meshes = ({ args.mesh })
-            mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 0.99 }
+            mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
             bullet.components[components.render_mesh].materials = ({ mat })
             bullet.components[components.render_mesh]:set()
 

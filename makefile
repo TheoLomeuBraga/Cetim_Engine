@@ -1,6 +1,6 @@
 COMPILER := g++
 
-FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -O3
+FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -flto -s -O3
 FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj  -Wl,-E
 FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc # -flto -s -O3 # -march=native #-pg -g
 

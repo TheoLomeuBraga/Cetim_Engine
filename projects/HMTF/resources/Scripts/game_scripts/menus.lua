@@ -108,6 +108,8 @@ end
 function set_full_screen()
     window:get()
     window.full_screen = not window.full_screen 
+    window.resolution.x = 256
+    window.resolution.y = 224
     window:set()
 end
 
