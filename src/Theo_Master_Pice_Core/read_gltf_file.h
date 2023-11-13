@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <zlib.h>
 #include "base64.h"
 
 bool file_exist(string nome)
@@ -198,7 +199,8 @@ namespace gltf_loader
         std::vector<std::vector<size_t>> getBoneIDsData(size_t accessorIndex);
         std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
         bool loadSkins();
-        std::vector<float> getAttributeData(size_t accessorIndex);
+        std::vector<uint8_t> decompressZlib(const std::vector<uint8_t> &compressedData);
+            std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
         std::vector<uint8_t> getBufferData(size_t accessorIndex);
     };
@@ -1054,6 +1056,47 @@ namespace gltf_loader
         return attributeData;
     }
 
+    std::vector<uint8_t> GLTFLoader::decompressZlib(const std::vector<uint8_t> &compressedData)
+    {
+        z_stream stream;
+        stream.zalloc = Z_NULL;
+        stream.zfree = Z_NULL;
+        stream.opaque = Z_NULL;
+        stream.avail_in = compressedData.size();
+        stream.next_in = const_cast<Bytef *>(compressedData.data());
+
+        if (inflateInit(&stream) != Z_OK)
+        {
+            throw std::runtime_error("Error initializing zlib.");
+        }
+
+        std::vector<uint8_t> decompressedData(1024); // Initial size, can be adjusted
+        do
+        {
+            stream.avail_out = decompressedData.size();
+            stream.next_out = decompressedData.data();
+
+            int result = inflate(&stream, Z_NO_FLUSH);
+            if (result == Z_NEED_DICT || result == Z_DATA_ERROR || result == Z_MEM_ERROR)
+            {
+                inflateEnd(&stream);
+                throw std::runtime_error("Error during zlib decompression.");
+            }
+
+            size_t decompressedSize = decompressedData.size() - stream.avail_out;
+            if (decompressedSize == 0)
+            {
+                break; // No more data to decompress
+            }
+
+            decompressedData.resize(decompressedData.size() * 2); // Double the size for more space
+        } while (stream.avail_out == 0);
+
+        inflateEnd(&stream);
+        decompressedData.resize(decompressedData.size() - stream.avail_out);
+        return decompressedData;
+    }
+
     std::vector<uint8_t> GLTFLoader::getBufferData(size_t accessorIndex)
     {
         const Accessor &accessor = accessors[accessorIndex];
@@ -1176,12 +1219,14 @@ namespace gltf_loader
                     {
                         sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2]);
                     }
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        sm.colors.emplace_back(0,0,0);
+                        sm.colors.emplace_back(0, 0, 0);
                     }
                 }
 
@@ -1194,12 +1239,14 @@ namespace gltf_loader
                     {
                         sm.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
                     }
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        sm.normals.emplace_back(0,0,0);
+                        sm.normals.emplace_back(0, 0, 0);
                     }
                 }
 
@@ -1212,12 +1259,14 @@ namespace gltf_loader
                     {
                         sm.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
                     }
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        sm.texcoords.emplace_back(0,0);
+                        sm.texcoords.emplace_back(0, 0);
                     }
                 }
 
@@ -1230,7 +1279,6 @@ namespace gltf_loader
                     // Obtenha os dados dos acessores de BoneIDs e Weights
                     sm.BoneIDs = getBoneIDsData(jointAccessorIndex);
                     sm.Weights = getWeightsData(weightAccessorIndex);
-                    
                 }
 
                 if (primitive.contains("indices"))
