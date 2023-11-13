@@ -947,6 +947,10 @@ namespace ManuseioDados
 				v.normal[1] = m.sub_meshes[a].normals[i].y;
 				v.normal[2] = m.sub_meshes[a].normals[i].z;
 
+				v.cor[0] = m.sub_meshes[a].colors[i].x;
+				v.cor[1] = m.sub_meshes[a].colors[i].y;
+				v.cor[2] = m.sub_meshes[a].colors[i].z;
+
 				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
 				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
 

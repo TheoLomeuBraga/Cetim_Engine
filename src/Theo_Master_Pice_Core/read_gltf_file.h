@@ -72,6 +72,7 @@ namespace gltf_loader
         bool skin = false;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
+        std::vector<glm::vec3> colors;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
         std::vector<std::vector<size_t>> BoneIDs;
@@ -1166,6 +1167,24 @@ namespace gltf_loader
                     }
                 }
 
+                if (attributes.contains("COLOR_0"))
+                {
+                    size_t colorAccessorIndex = attributes["COLOR_0"].get<size_t>();
+                    std::vector<float> colorData = getAttributeData(colorAccessorIndex);
+
+                    for (size_t i = 0; i < colorData.size(); i += 3)
+                    {
+                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2]);
+                    }
+                }else{
+                    size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
+                    std::vector<float> positionData = getAttributeData(positionAccessorIndex);
+                    for (size_t i = 0; i < positionData.size(); i += 3)
+                    {
+                        sm.colors.emplace_back(0,0,0);
+                    }
+                }
+
                 if (attributes.contains("NORMAL"))
                 {
                     size_t normalAccessorIndex = attributes["NORMAL"].get<size_t>();
@@ -1174,6 +1193,13 @@ namespace gltf_loader
                     for (size_t i = 0; i < normalData.size(); i += 3)
                     {
                         sm.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
+                    }
+                }else{
+                    size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
+                    std::vector<float> positionData = getAttributeData(positionAccessorIndex);
+                    for (size_t i = 0; i < positionData.size(); i += 3)
+                    {
+                        sm.normals.emplace_back(0,0,0);
                     }
                 }
 
@@ -1186,6 +1212,13 @@ namespace gltf_loader
                     {
                         sm.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
                     }
+                }else{
+                    size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
+                    std::vector<float> positionData = getAttributeData(positionAccessorIndex);
+                    for (size_t i = 0; i < positionData.size(); i += 3)
+                    {
+                        sm.texcoords.emplace_back(0,0);
+                    }
                 }
 
                 // Verifique se há dados BoneIDs e Weights
@@ -1197,30 +1230,7 @@ namespace gltf_loader
                     // Obtenha os dados dos acessores de BoneIDs e Weights
                     sm.BoneIDs = getBoneIDsData(jointAccessorIndex);
                     sm.Weights = getWeightsData(weightAccessorIndex);
-
-                    /*
-                    for (auto a : sm.BoneIDs)
-                    {
-                        print({"B"});
-                        for (auto b : a)
-                        {
-                            print({"ID", b});
-                        }
-                        print({"B"});
-                    }
-                    */
-
-                    /*
-                     for (auto a : sm.Weights)
-                     {
-                         print({"A"});
-                         for (auto b : a)
-                         {
-                             print({"Weight", b});
-                         }
-                         print({"B"});
-                     }
-                     */
+                    
                 }
 
                 if (primitive.contains("indices"))
