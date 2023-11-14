@@ -6,6 +6,7 @@ layout(location = 0) out vec4 ret;
 in Vertex {
    vec4 POS;
    vec2 UV;
+   vec3 COLOR;
 } vert_out;
 
 // material

@@ -17,22 +17,6 @@ bool file_exist(string nome)
     return true;
 }
 
-template <typename T>
-T cyclicAccess(const std::vector<T> &vec, size_t id)
-{
-    if (vec.empty())
-    {
-        throw std::runtime_error("Error: The vector is empty.");
-    }
-
-    if (id >= vec.size())
-    {
-        id = id % vec.size();
-    }
-
-    return vec[id];
-}
-
 #ifndef ANIMATION_FPS_COUNT
 #define ANIMATION_FPS_COUNT 20
 #endif
