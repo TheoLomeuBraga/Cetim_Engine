@@ -56,7 +56,7 @@ namespace gltf_loader
         bool skin = false;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
-        std::vector<glm::vec3> colors;
+        std::vector<glm::vec4> colors;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
         std::vector<std::vector<size_t>> BoneIDs;
@@ -975,8 +975,8 @@ namespace gltf_loader
                     if (srcOffset + sizeof(uint16_t) <= buffer.size())
                     {
                         uint16_t uint16Value = *reinterpret_cast<const uint16_t *>(&buffer[srcOffset]);
-                        // value = static_cast<float>(uint16Value) / 65535.0f;
-                        value = static_cast<float>(uint16Value);
+                        value = static_cast<float>(uint16Value) / 65535.0f;
+                        //value = static_cast<float>(uint16Value);
                     }
                     else
                     {
@@ -1135,18 +1135,18 @@ namespace gltf_loader
                     size_t colorAccessorIndex = attributes["COLOR_0"].get<size_t>();
                     std::vector<float> colorData = getAttributeData(colorAccessorIndex);
 
-                    for (size_t i = 0; i < colorData.size(); i += 3)
+                    for (size_t i = 0; i < colorData.size(); i += 4)
                     {
-                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2]);
-                        print({"AAAAA",colorData[i], colorData[i + 1], colorData[i + 2]});
+                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]);
+                        print({"AAAAA",colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]});
                     }
                     
                 }else{
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
-                    for (size_t i = 0; i < positionData.size(); i += 3)
+                    for (size_t i = 0; i < positionData.size() / 3; i++)
                     {
-                        sm.colors.emplace_back(0,0,0);
+                        sm.colors.emplace_back(1,1,1,1);
                     }
                 }
 
@@ -1227,8 +1227,8 @@ namespace gltf_loader
 
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
-                        // size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
+                        size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
+                        //size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
