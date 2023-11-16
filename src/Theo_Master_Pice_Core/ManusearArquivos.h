@@ -955,6 +955,8 @@ namespace ManuseioDados
 					v.cor[0] = m.sub_meshes[a].colors[i].x;
 					v.cor[1] = m.sub_meshes[a].colors[i].y;
 					v.cor[2] = m.sub_meshes[a].colors[i].z;
+
+					if(v.cor[0] + v.cor[1] + v.cor[2] > 0){print({"color",v.cor[0],v.cor[1],v.cor[2]});}
 				}
 
 				if (m.sub_meshes[a].texcoords.size() > 0)

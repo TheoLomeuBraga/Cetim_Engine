@@ -165,7 +165,6 @@ namespace gltf_loader
         std::vector<Animation> animations;
         std::vector<Texture> textures;
         std::vector<Skin> skins;
-        size_t originalTextureCount = 0;
         std::vector<Material> materials;
 
         bool loadBuffers();
@@ -485,7 +484,7 @@ namespace gltf_loader
         {
             const AnimationSampler &sampler = animation.samplers[channel.samplerIndex];
             Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-            std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
+            std::vector<float> input = getAttributeData(inputAccessor.bufferView);
 
             if (!input.empty())
             {
@@ -536,8 +535,8 @@ namespace gltf_loader
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
 
-        const std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
-        const std::vector<float> output = getAttributeData(outputAccessor.bufferView - originalTextureCount);
+        const std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+        const std::vector<float> output = getAttributeData(outputAccessor.bufferView);
 
         // Find the keyframes surrounding the specified time
         size_t index1 = 0, index2 = 0;
@@ -672,24 +671,6 @@ namespace gltf_loader
         return true;
     }
 
-    int countUniqueValues(const std::vector<Texture> &values)
-    {
-        std::set<std::string> uniqueValues;
-
-        for (const Texture &value : values)
-        {
-            // Verifique se o valor já está no conjunto de valores únicos.
-            if (uniqueValues.find(value.uri) == uniqueValues.end())
-            {
-                // Se não estiver, adicione-o ao conjunto e conte como um valor original.
-                uniqueValues.insert(value.uri);
-            }
-        }
-
-        // O tamanho do conjunto uniqueValues agora é a contagem de valores originais.
-        return uniqueValues.size();
-    }
-
     bool GLTFLoader::loadTextures()
     {
         if (gltf.find("textures") == gltf.end())
@@ -741,8 +722,6 @@ namespace gltf_loader
 
             textures.push_back(std::move(texture));
         }
-
-        originalTextureCount = countUniqueValues(textures);
 
         return true;
     }
@@ -1312,27 +1291,27 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        // print({"loadBuffers"});
+        //print({"loadBuffers"});
         loadBuffers();
-        // print({"loadBufferViews"});
+        //print({"loadBufferViews"});
         loadBufferViews();
-        // print({"loadAccessors"});
+        //print({"loadAccessors"});
         loadAccessors();
-        // print({"loadTextures"});
+        //print({"loadTextures"});
         loadTextures();
-        // print({"loadMeshes"});
+        //print({"loadMeshes"});
         loadMeshes();
-        // print({"loadScenes"});
+        //print({"loadScenes"});
         loadScenes();
-        // print({"loadNodes"});
+        //print({"loadNodes"});
         loadNodes();
-        // print({"loadAnimations"});
+        //print({"loadAnimations"});
         loadAnimations();
-        // print({"loadMaterials"});
+        //print({"loadMaterials"});
         loadMaterials();
-        // print({"loadSkins"});
+        //print({"loadSkins"});
         loadSkins();
-        // print({"load end"});
+        //print({"load end"});
 
         return true;
     }
