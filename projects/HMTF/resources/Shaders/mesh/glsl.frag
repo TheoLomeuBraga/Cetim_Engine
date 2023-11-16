@@ -22,7 +22,7 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 void main() {
 
    if(vert_out.COLOR.x + vert_out.COLOR.y + vert_out.COLOR.z > 0){
-      ret = color * texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale)) * vec4(vert_out.COLOR,1);
+      ret = color * texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale)) * vec4(vert_out.COLOR.x,vert_out.COLOR.y,vert_out.COLOR.z,1);
    }else{
       ret = color * texture(textures[0], re_pos_uv(vert_out.UV, uv_position_scale));
    }

@@ -1138,7 +1138,9 @@ namespace gltf_loader
                     for (size_t i = 0; i < colorData.size(); i += 3)
                     {
                         sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2]);
+                        print({"AAAAA",colorData[i], colorData[i + 1], colorData[i + 2]});
                     }
+                    
                 }else{
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
