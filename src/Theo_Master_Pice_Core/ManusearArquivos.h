@@ -943,16 +943,27 @@ namespace ManuseioDados
 				v.posicao[1] = m.sub_meshes[a].positions[i].y;
 				v.posicao[2] = m.sub_meshes[a].positions[i].z;
 
-				v.normal[0] = m.sub_meshes[a].normals[i].x;
-				v.normal[1] = m.sub_meshes[a].normals[i].y;
-				v.normal[2] = m.sub_meshes[a].normals[i].z;
+				if (m.sub_meshes[a].normals.size() > 0)
+				{
+					v.normal[0] = m.sub_meshes[a].normals[i].x;
+					v.normal[1] = m.sub_meshes[a].normals[i].y;
+					v.normal[2] = m.sub_meshes[a].normals[i].z;
+				}
 
-				v.cor[0] = m.sub_meshes[a].colors[i].x;
-				v.cor[1] = m.sub_meshes[a].colors[i].y;
-				v.cor[2] = m.sub_meshes[a].colors[i].z;
+				if (m.sub_meshes[a].colors.size() > 0)
+				{
+					v.cor[0] = m.sub_meshes[a].colors[i].x;
+					v.cor[1] = m.sub_meshes[a].colors[i].y;
+					v.cor[2] = m.sub_meshes[a].colors[i].z;
 
-				v.uv[0] = m.sub_meshes[a].texcoords[i].x;
-				v.uv[1] = m.sub_meshes[a].texcoords[i].y;
+					
+				}
+
+				if (m.sub_meshes[a].texcoords.size() > 0)
+				{
+					v.uv[0] = m.sub_meshes[a].texcoords[i].x;
+					v.uv[1] = m.sub_meshes[a].texcoords[i].y;
+				}
 
 				if (gltf_loader.skins.size() > 0)
 				{
@@ -1262,7 +1273,7 @@ namespace ManuseioDados
 	};
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
 	{
-		
+
 		if (ManuseioDados::Existe(local))
 		{
 			return funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);

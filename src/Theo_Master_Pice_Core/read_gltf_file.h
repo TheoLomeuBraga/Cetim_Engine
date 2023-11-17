@@ -17,22 +17,6 @@ bool file_exist(string nome)
     return true;
 }
 
-template <typename T>
-T cyclicAccess(const std::vector<T> &vec, size_t id)
-{
-    if (vec.empty())
-    {
-        throw std::runtime_error("Error: The vector is empty.");
-    }
-
-    if (id >= vec.size())
-    {
-        id = id % vec.size();
-    }
-
-    return vec[id];
-}
-
 #ifndef ANIMATION_FPS_COUNT
 #define ANIMATION_FPS_COUNT 20
 #endif
@@ -72,7 +56,7 @@ namespace gltf_loader
         bool skin = false;
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
-        std::vector<glm::vec3> colors;
+        std::vector<glm::vec4> colors;
         std::vector<glm::vec2> texcoords;
         std::vector<unsigned int> indices;
         std::vector<std::vector<size_t>> BoneIDs;
@@ -181,7 +165,6 @@ namespace gltf_loader
         std::vector<Animation> animations;
         std::vector<Texture> textures;
         std::vector<Skin> skins;
-        size_t originalTextureCount = 0;
         std::vector<Material> materials;
 
         bool loadBuffers();
@@ -501,7 +484,7 @@ namespace gltf_loader
         {
             const AnimationSampler &sampler = animation.samplers[channel.samplerIndex];
             Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
-            std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
+            std::vector<float> input = getAttributeData(inputAccessor.bufferView);
 
             if (!input.empty())
             {
@@ -552,8 +535,8 @@ namespace gltf_loader
         Accessor &inputAccessor = accessors[sampler.inputAccessorIndex];
         Accessor &outputAccessor = accessors[sampler.outputAccessorIndex];
 
-        const std::vector<float> input = getAttributeData(inputAccessor.bufferView - originalTextureCount);
-        const std::vector<float> output = getAttributeData(outputAccessor.bufferView - originalTextureCount);
+        const std::vector<float> input = getAttributeData(inputAccessor.bufferView);
+        const std::vector<float> output = getAttributeData(outputAccessor.bufferView);
 
         // Find the keyframes surrounding the specified time
         size_t index1 = 0, index2 = 0;
@@ -688,24 +671,6 @@ namespace gltf_loader
         return true;
     }
 
-    int countUniqueValues(const std::vector<Texture> &values)
-    {
-        std::set<std::string> uniqueValues;
-
-        for (const Texture &value : values)
-        {
-            // Verifique se o valor já está no conjunto de valores únicos.
-            if (uniqueValues.find(value.uri) == uniqueValues.end())
-            {
-                // Se não estiver, adicione-o ao conjunto e conte como um valor original.
-                uniqueValues.insert(value.uri);
-            }
-        }
-
-        // O tamanho do conjunto uniqueValues agora é a contagem de valores originais.
-        return uniqueValues.size();
-    }
-
     bool GLTFLoader::loadTextures()
     {
         if (gltf.find("textures") == gltf.end())
@@ -757,8 +722,6 @@ namespace gltf_loader
 
             textures.push_back(std::move(texture));
         }
-
-        originalTextureCount = countUniqueValues(textures);
 
         return true;
     }
@@ -1012,8 +975,8 @@ namespace gltf_loader
                     if (srcOffset + sizeof(uint16_t) <= buffer.size())
                     {
                         uint16_t uint16Value = *reinterpret_cast<const uint16_t *>(&buffer[srcOffset]);
-                        // value = static_cast<float>(uint16Value) / 65535.0f;
-                        value = static_cast<float>(uint16Value);
+                        value = static_cast<float>(uint16Value) / 65535.0f;
+                        //value = static_cast<float>(uint16Value);
                     }
                     else
                     {
@@ -1172,16 +1135,18 @@ namespace gltf_loader
                     size_t colorAccessorIndex = attributes["COLOR_0"].get<size_t>();
                     std::vector<float> colorData = getAttributeData(colorAccessorIndex);
 
-                    for (size_t i = 0; i < colorData.size(); i += 3)
+                    for (size_t i = 0; i < colorData.size(); i += 4)
                     {
-                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2]);
+                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]);
+                        print({"AAAAA",colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]});
                     }
+                    
                 }else{
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
-                    for (size_t i = 0; i < positionData.size(); i += 3)
+                    for (size_t i = 0; i < positionData.size() / 3; i++)
                     {
-                        sm.colors.emplace_back(0,0,0);
+                        sm.colors.emplace_back(1,1,1,1);
                     }
                 }
 
@@ -1262,8 +1227,8 @@ namespace gltf_loader
 
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
-                        // size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
-                        size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
+                        size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
+                        //size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
@@ -1328,27 +1293,27 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        // print({"loadBuffers"});
+        //print({"loadBuffers"});
         loadBuffers();
-        // print({"loadBufferViews"});
+        //print({"loadBufferViews"});
         loadBufferViews();
-        // print({"loadAccessors"});
+        //print({"loadAccessors"});
         loadAccessors();
-        // print({"loadTextures"});
+        //print({"loadTextures"});
         loadTextures();
-        // print({"loadMeshes"});
+        //print({"loadMeshes"});
         loadMeshes();
-        // print({"loadScenes"});
+        //print({"loadScenes"});
         loadScenes();
-        // print({"loadNodes"});
+        //print({"loadNodes"});
         loadNodes();
-        // print({"loadAnimations"});
+        //print({"loadAnimations"});
         loadAnimations();
-        // print({"loadMaterials"});
+        //print({"loadMaterials"});
         loadMaterials();
-        // print({"loadSkins"});
+        //print({"loadSkins"});
         loadSkins();
-        // print({"load end"});
+        //print({"load end"});
 
         return true;
     }

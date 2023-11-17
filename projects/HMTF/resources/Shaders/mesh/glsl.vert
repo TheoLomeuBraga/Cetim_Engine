@@ -16,6 +16,7 @@ uniform bool skin_mode;
 out Vertex {
    vec4 POS;
    vec2 UV;
+   vec3 COLOR;
 } vert_out;
 
 uniform bool ui;
@@ -25,6 +26,7 @@ void main() {
 
    vert_out.POS = vec4(position, 1);
    vert_out.UV = uv;
+   vert_out.COLOR = color;
 
    if(skin_mode) {
 
