@@ -328,6 +328,8 @@ cenary_builders = {
             mesh_location:new("resources/Levels/3D/hub/hub.gltf", "Suzanne") })
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
 
+        
+
 
         --if yield == nil then yield = false end
         cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
