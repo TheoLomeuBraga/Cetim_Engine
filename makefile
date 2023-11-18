@@ -7,8 +7,8 @@ FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc # -flto -s -O3 -ffast-math  # -m
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0 
 DEFINITIONS_LINUX := -DLINUX -DUNIX 
 
-TARGET_ENGINE_WINDOWS := ./build/engine_theo_master_pice.exe
-TARGET_ENGINE_LINUX := ./build/engine_theo_master_pice
+TARGET_ENGINE_WINDOWS := ./build/cetim_engine.exe
+TARGET_ENGINE_LINUX := ./build/cetim_engine
 
 TARGET_FONT_READER_WINDOWS := ./build/font_reader_gtk.exe
 TARGET_FONT_READER_LINUX := ./build/font_reader_gtk
@@ -17,11 +17,11 @@ TARGET_LUA_COMPILER_WINDOWS := ./build/lua_conpiler.exe
 TARGET_LUA_COMPILER_LINUX := ./build/lua_conpiler
 
 SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/backends/imgui_impl_glfw.cpp  
-SRC_ENGINE := ./src/Theo_Master_Pice/TMP.cpp  $(SRC_IMGUI)
+SRC_ENGINE := ./src/Cetim_Engine/TMP.cpp  $(SRC_IMGUI)
 SRC_READER := ./src/font_reader_gtk/font_reader_gtk.cpp
 SRC_COMPILER_LUA = ./src/Lua_Compiler/lua_compiler.cpp
 
-INCLUDE_DIRS := -I./src/Font_Reader -I./src/Theo_Master_Pice -I./src/Theo_Master_Pice_Core -I./src/Theo_Master_Pice_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+INCLUDE_DIRS := -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 
 LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d  -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 LIBS_ENGINE_DEBIAN := -L./libs/linux  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
