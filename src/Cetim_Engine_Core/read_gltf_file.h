@@ -1138,7 +1138,6 @@ namespace gltf_loader
                     for (size_t i = 0; i < colorData.size(); i += 4)
                     {
                         sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]);
-                        print({"AAAAA",colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]});
                     }
                     
                 }else{
