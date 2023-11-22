@@ -36,7 +36,8 @@ local is_player_touch = function(objs_touching)
                 obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","upgrades",upgrades)
 
             end
-            
+
+            obj_touching.components[components.lua_scripts]:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
 
             remove_object(this_object_ptr)
             return true
