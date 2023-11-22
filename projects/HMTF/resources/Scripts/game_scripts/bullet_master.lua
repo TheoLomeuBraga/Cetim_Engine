@@ -70,7 +70,7 @@ function UPDATE()
 
     for key, value in pairs(bullets_list) do
 
-        bullets_list[key].timer = bullets_list[key].timer - (time.delta * time.sacale)
+        bullets_list[key].timer = bullets_list[key].timer - (time.delta * time.scale)
         
 
         local bullet = bullets_list[key].object
@@ -78,18 +78,18 @@ function UPDATE()
         bullet.components[components.transform]:get()
         local next_pos = (bullet.components[components.transform].position)
 
-        next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta * time.sacale
-        next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta * time.sacale
-        next_pos.z = next_pos.z + bullets_list[key].base_impulse.z * time.delta * time.sacale
+        next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta * time.scale
+        next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta * time.scale
+        next_pos.z = next_pos.z + bullets_list[key].base_impulse.z * time.delta * time.scale
 
         local id = bullets_list[key].id
-        next_pos.x = next_pos.x + (bullets_list[key].spred[id].x * bullets_list[key].speed) * time.delta * time.sacale
-        next_pos.y = next_pos.y + (bullets_list[key].spred[id].y * bullets_list[key].speed) * time.delta * time.sacale
-        next_pos.z = next_pos.z + (bullets_list[key].spred[id].z * bullets_list[key].speed) * time.delta * time.sacale
+        next_pos.x = next_pos.x + (bullets_list[key].spred[id].x * bullets_list[key].speed) * time.delta * time.scale
+        next_pos.y = next_pos.y + (bullets_list[key].spred[id].y * bullets_list[key].speed) * time.delta * time.scale
+        next_pos.z = next_pos.z + (bullets_list[key].spred[id].z * bullets_list[key].speed) * time.delta * time.scale
 
-        next_pos.x = next_pos.x + (bullets_list[key].direction.x * bullets_list[key].speed) * time.delta * time.sacale
-        next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta * time.sacale
-        next_pos.z = next_pos.z + (bullets_list[key].direction.z * bullets_list[key].speed) * time.delta * time.sacale
+        next_pos.x = next_pos.x + (bullets_list[key].direction.x * bullets_list[key].speed) * time.delta * time.scale
+        next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta * time.scale
+        next_pos.z = next_pos.z + (bullets_list[key].direction.z * bullets_list[key].speed) * time.delta * time.scale
 
         bullet.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 

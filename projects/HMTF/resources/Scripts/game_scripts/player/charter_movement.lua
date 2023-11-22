@@ -327,6 +327,7 @@ function UPDATE()
                 time:set_speed(1 / turbo_time_speed)
             else 
                 time:set_speed(1)
+                time:get()
                 this_physics_3d:set_linear_velocity(impulse.x, impulse.y, impulse.z)
             end
             

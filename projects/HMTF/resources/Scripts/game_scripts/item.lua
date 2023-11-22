@@ -8,6 +8,9 @@ require("short_cuts.create_render_shader")
 
 this_object = nil
 
+rotate = true
+local rotation = 0
+
 function START()
     this_object = game_object:new(this_object_ptr)
 end
@@ -29,6 +32,12 @@ function UPDATE()
         remove_object(this_object_ptr)
     end
 
+    if rotate then
+        time:get()
+
+        this_object.components[components.transform]:change_rotation(0,rotation,0)
+        rotation = rotation + (time.delta * time.scale * 180)
+    end
 end
 
 function COLLIDE(collision_info)

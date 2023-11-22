@@ -8,7 +8,10 @@ function time:set_speed(speed)
     c_set_time_scale(speed)
 end
 function time:get()
-    self.time, self.delta,self.sacale = get_time()
+    local t = c_get_time()
+    time.time = t.time
+    time.delta = t.delta
+    time.scale = t.scale
 end
 
 stopwatch = {} -- A "classe" MyClass

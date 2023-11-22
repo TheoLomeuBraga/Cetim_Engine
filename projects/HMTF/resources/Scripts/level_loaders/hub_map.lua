@@ -82,7 +82,7 @@ function level:UPDATE()
             time_passed = 1
         end
         time:get()
-        time_passed = time_passed - time.delta * time.sacale * 0.1
+        time_passed = time_passed - time.delta * time.scale * 0.1
         set_keyframe("resources/Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, true, "open_door_A",time_passed)
     end
     ]]

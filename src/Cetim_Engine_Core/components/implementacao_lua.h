@@ -639,10 +639,13 @@ namespace funcoes_ponte
 	// time
 	int get_time(lua_State *L)
 	{
-		lua_pushnumber(L, Tempo::tempo);
-		lua_pushnumber(L, Tempo::varTempRender);
-		lua_pushnumber(L, Tempo::velocidadeTempo);
-		return 3;
+
+		Table ret;
+		ret.setFloat("time", Tempo::tempo);
+		ret.setFloat("delta", Tempo::varTempRender);
+		ret.setFloat("scale", Tempo::velocidadeTempo);
+		lua_pushtable(L, ret);
+		return 1;
 	}
 
 	int set_time_scale(lua_State *L)
