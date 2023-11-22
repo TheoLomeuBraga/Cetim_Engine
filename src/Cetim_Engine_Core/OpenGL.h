@@ -798,9 +798,21 @@ public:
 
 					break;
 				}
-			}else{
+
+				/*
+				if (usar_profundidade)
+				{
+					glEnable(GL_DEPTH_TEST);
+					glDepthFunc(GL_LESS);
+				}
+				*/
+			}
+			else
+			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
+				
+				//glDisable(GL_DEPTH_TEST);
 			}
 
 			for (pair<string, float> p : mat.inputs)
