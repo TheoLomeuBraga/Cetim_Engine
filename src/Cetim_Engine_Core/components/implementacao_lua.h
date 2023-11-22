@@ -2571,15 +2571,13 @@ public:
 		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
 		reverse(pairs.begin(), pairs.end());
 
-		for (pair<string, lua_State *> p : estados_lua)
+		for (pair<string, lua_State *> p : pairs)
 		{
 
 			// pair<string, lua_State *> p = pairs[i];
 
 			if (!scripts_lua_iniciados[p.first])
 			{
-
-				print({"AAAAA", p.first});
 
 				// esse objetoget_tile_set_tile
 				lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
@@ -2603,7 +2601,9 @@ public:
 
 		// for (int i = 0 ; i < pairs.size() ; i++)
 		// for (int i = pairs.size() - 1; i >= 0; i--)
-		for (pair<string, lua_State *> p : estados_lua)
+
+		bool shold_start = false;
+		for (pair<string, lua_State *> p : pairs)
 		{
 
 			// pair<string, lua_State *> p = pairs[i];
@@ -2639,16 +2639,12 @@ public:
 			}
 			else
 			{
-				print({"AAAAA", p.first});
-
-				// esse objetoget_tile_set_tile
-				lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
-				lua_setglobal(p.second, "this_object_ptr");
-
-				lua_getglobal(p.second, "START");
-				lua_call(p.second, 0, 0);
-				scripts_lua_iniciados[p.first] = true;
+				shold_start = true;
 			}
+		}
+
+		if(shold_start){
+			iniciar();
 		}
 	}
 	void colidir(colis_info col)
