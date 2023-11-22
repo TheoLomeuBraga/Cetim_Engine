@@ -473,8 +473,7 @@ public:
 		}
 		
 		joysticks_input = ji;
-
-		print({"BBBBB"});
+		
 		return joysticks_input;
 	}
 
