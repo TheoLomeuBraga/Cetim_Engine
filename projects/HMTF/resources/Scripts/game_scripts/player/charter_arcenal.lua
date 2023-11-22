@@ -139,9 +139,9 @@ inputs_last_frame = {}
 local movement_inpulse = { x = 0, y = 0, z = 0 }
 
 function get_charter_data()
-    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter", "hit_top")
-    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter", "hit_down")
-    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter",
+    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement", "hit_top")
+    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement", "hit_down")
+    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement",
         "movement_inpulse")
 
 
@@ -152,8 +152,7 @@ end
 
 function START()
     this_object = game_object:new(this_object_ptr)
-    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter",
-        "camera_ptr"))
+    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
     this_object:add_component(components.audio_source)
 
     select_wepon(wepom_list.test_wepon)
@@ -231,7 +230,7 @@ function UPDATE()
         get_charter_data()
 
         for i = 1, 10, 1 do
-            c_get_lua_var(this_object.object_ptr,"game_scripts/player/charter", "a",2)
+            c_get_lua_var(this_object.object_ptr,"game_scripts/player/charter_movement", "a",2)
         end
 
         inputs = global_data:get("inputs")

@@ -1961,16 +1961,14 @@ namespace funcoes_ponte
 			vector<Table> colis_infos;
 			set<string> set_objs_touching;
 
-			
-
-			
 			colis_infos.resize(bu->colis_infos.size());
-			for(size_t i = 0 ; i < bu->colis_infos.size(); i++){
+			for (size_t i = 0; i < bu->colis_infos.size(); i++)
+			{
 				colis_infos[i] = colis_info_table(bu->colis_infos[i]);
 				set_objs_touching.insert(ponteiro_string(bu->colis_infos[i].cos_obj));
 			}
 			vector<string> objs_touching(set_objs_touching.begin(), set_objs_touching.end());
-			
+
 			ret.setTable("colis_infos", vTable_table(colis_infos));
 			ret.setTable("objs_touching", vString_table(objs_touching));
 
@@ -2026,24 +2024,23 @@ namespace funcoes_ponte
 			{
 				objs_touching.insert(ponteiro_string(obj.get()));
 			}
-			vector<string> vs(objs_touching.begin(),objs_touching.end());
+			vector<string> vs(objs_touching.begin(), objs_touching.end());
 			lua_pushtable(L, vString_table(vs));
 
 			return 1;
 		}
 		else if (bu != NULL)
 		{
-			
+
 			set<string> objs_touching;
 			for (objeto_jogo *obj : bu_collisions_no_per_object[obj])
 			{
 				objs_touching.insert(ponteiro_string(obj));
 			}
-			
-			vector<string> vs(objs_touching.begin(),objs_touching.end());
-			
+
+			vector<string> vs(objs_touching.begin(), objs_touching.end());
+
 			lua_pushtable(L, vString_table(vs));
-			
 
 			return 1;
 		}
@@ -2570,25 +2567,44 @@ public:
 	{
 
 		iniciado = true;
-		for (pair<string, lua_State *> p : estados_lua)
+
+		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
+
+		for (int i = 0 ; i < pairs.size() ; i++)
+		//for (int i = pairs.size() - 1; i > 1; i--)
 		{
 
-			// esse objetoget_tile_set_tile
-			lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
-			lua_setglobal(p.second, "this_object_ptr");
+			pair<string, lua_State *> p = pairs[i];
 
-			lua_getglobal(p.second, "START");
-			lua_call(p.second, 0, 0);
-			scripts_lua_iniciados[p.first] = true;
+			if (!scripts_lua_iniciados[p.first])
+			{
+
+				print({"AAAAA", p.first});
+
+				// esse objetoget_tile_set_tile
+				lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
+				lua_setglobal(p.second, "this_object_ptr");
+
+				lua_getglobal(p.second, "START");
+				lua_call(p.second, 0, 0);
+				scripts_lua_iniciados[p.first] = true;
+			}
 		}
 	}
 	void atualisar()
 	{
 
-		//Benchmark_Timer bt("update_lua_scripts");
+		// Benchmark_Timer bt("update_lua_scripts");
 
-		for (pair<string, lua_State *> p : estados_lua)
+		iniciar();
+
+		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
+
+		for (int i = 0 ; i < pairs.size() ; i++)
+		//for (int i = pairs.size() - 1; i > 1; i--)
 		{
+
+			pair<string, lua_State *> p = pairs[i];
 
 			if (scripts_lua_iniciados[p.first])
 			{
@@ -2618,15 +2634,6 @@ public:
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
 				}
-			}
-			else
-			{
-				lua_State *L = p.second;
-				lua_pushstring(L, ponteiro_string(esse_objeto.get()).c_str());
-				lua_setglobal(L, "this_object_ptr");
-				lua_getglobal(L, "START");
-				lua_call(L, 0, 0);
-				scripts_lua_iniciados[p.first] = true;
 			}
 		}
 	}
