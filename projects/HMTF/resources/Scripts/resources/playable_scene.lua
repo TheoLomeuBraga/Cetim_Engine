@@ -198,7 +198,7 @@ cenary_builders = {
                         part_data.materials[key] = deepcopy(value)
                     end
                 end
-                
+
                 ret:add_component(components.render_mesh)
                 ret.components[components.render_mesh].layer = layer
                 ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
@@ -206,6 +206,24 @@ cenary_builders = {
                 ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
                 ret.components[components.render_mesh]:set()
             end
+        end
+
+        local change_ret = function()
+            local ret2 = game_object:new(create_object(father))
+
+            scene_ptr_list[part_data.id] = ret2.object_ptr
+
+            ret2:add_component(components.transform)
+            ret2.components[components.transform].position = deepcopy(part_data.position)
+            ret2.components[components.transform].rotation = deepcopy(part_data.rotation)
+
+            if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
+                ret2.components[components.transform].scale = Vec3:new(1, 1, 1)
+            else
+                ret2.components[components.transform].scale = deepcopy(part_data.scale)
+            end
+
+            ret2.components[components.transform]:set()
         end
 
         if part_data.variables.type == "test_poly_mesh" then
@@ -229,26 +247,59 @@ cenary_builders = {
             add_physics(true, false)
             add_mesh(nil)
         elseif part_data.variables.type == "item" then
-            
-            add_physics(false, true)
-            add_mesh(nil)
+            ret:add_component(components.transform)
+            ret.components[components.transform].position = deepcopy(part_data.position)
+            ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+
+            if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
+                ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+            else
+                ret.components[components.transform].scale = deepcopy(part_data.scale)
+            end
+
+            if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
+                ret:add_component(components.physics_3D)
+                ret.components[components.physics_3D].boady_dynamic = boady_dynamics.kinematic
+
+                ret.components[components.physics_3D].collision_shape = collision_shapes.convex
+                ret.components[components.physics_3D].collision_mesh = deepcopyjson(part_data.meshes[1])
+
+                ret.components[components.physics_3D].triger = true
+                ret.components[components.physics_3D].scale = deepcopyjson(part_data.scale)
+                ret.components[components.physics_3D].friction = 2
+                ret.components[components.physics_3D].get_collision_info = true
+                ret.components[components.physics_3D]:set()
+            end
+
+            ret:add_component(components.render_mesh)
+            ret.components[components.render_mesh].layer = layer
+            ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
+            ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
+            ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
+            ret.components[components.render_mesh]:set()
+
+
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/item")
+
+            change_ret()
 
         elseif part_data.variables.type == "camera" then
             ret:add_component(components.camera)
             ret.components[components.camera]:set()
         elseif part_data.variables.type == "player_start" then
-            ret:add_component(components.lua_scripts)
             ret:add_component(components.physics_3D)
-            
+            ret.components[components.physics_3D].get_collision_info = true
+            ret.components[components.physics_3D]:set()
+
+            ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_data")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_interaction")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_arcenal")
-            
-            
-            
+
+            change_ret()
+
         elseif part_data.variables.type == "music" then
             ret:add_component(components.audio_source)
             ret.components[components.audio_source].path = "resources/Audio/musics/" ..
@@ -297,13 +348,15 @@ cenary_builders = {
         elseif part_data.variables.type == "door_triger" then
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/door_triger")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",part_data.variables.triger_target)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",
+                part_data.variables.triger_target)
 
             if part_data.variables.key ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
+                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",
+                    part_data.variables.key)
             end
-            
-            
+
+
             add_mesh(nil)
             add_physics(true, true)
         elseif part_data.variables.type == nil then
@@ -345,7 +398,7 @@ cenary_builders = {
             mesh_location:new("resources/Levels/3D/hub/hub.gltf", "Suzanne") })
         cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
 
-        
+
 
 
         --if yield == nil then yield = false end

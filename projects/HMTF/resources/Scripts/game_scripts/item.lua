@@ -10,11 +10,25 @@ this_object = nil
 
 function START()
     this_object = game_object:new(this_object_ptr)
-    this_object.components[components.physics_3D].get_collision_info = true
-    this_object.components[components.physics_3D]:set()
+end
+
+local is_player_touch = function(objs_touching)
+    for key, value in pairs(objs_touching) do
+        local obj_touching = game_object:new(value)
+        if obj_touching.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+            return true
+        end
+    end
+    return false
 end
 
 function UPDATE()
+    local player_touch = is_player_touch(this_object.components[components.physics_3D]:get_objects_coliding())
+    
+    if player_touch then
+        remove_object(this_object_ptr)
+    end
+
 end
 
 function COLLIDE(collision_info)
