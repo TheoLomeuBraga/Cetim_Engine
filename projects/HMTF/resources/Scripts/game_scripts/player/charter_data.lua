@@ -1,5 +1,8 @@
 
 
+
+upgrades = {}
+
 keys = {}
 
 function START()

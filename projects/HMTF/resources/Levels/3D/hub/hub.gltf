@@ -1962,7 +1962,9 @@
 		},
 		{
 			"extras":{
-				"type":"item"
+				"type":"item",
+				"item_type":"key",
+				"item_name":"red"
 			},
 			"mesh":57,
 			"name":"key",

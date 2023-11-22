@@ -281,6 +281,9 @@ cenary_builders = {
 
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/item")
+            ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_type",part_data.variables.item_type)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_name",part_data.variables.item_name)
+            
 
             change_ret()
 
