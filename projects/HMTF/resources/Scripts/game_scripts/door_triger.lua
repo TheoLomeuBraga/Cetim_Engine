@@ -15,20 +15,42 @@ level_animation_data = {}
 
 this_physics_3d = {}
 
+key_to_open = nil
+
 
 function START()
     this_physics_3d = game_object:new(this_object_ptr).components[components.physics_3D]
     this_physics_3d.get_collision_info = true
     this_physics_3d:set()
-
-    --make_banchmark(this_object_ptr,"game_scripts/door_triger")
 end
 
 function get_valid_touches()
     for key, value in pairs(this_physics_3d:get_objects_coliding()) do
+
+        local have_charter_data
+
         local obj = game_object:new(value)
-        if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_movement") then
-            return true
+
+        if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+
+            if key_to_open == nil then
+
+                return true
+
+            elseif obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+
+                local keys = obj.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data", "keys")
+                
+                for key, value in pairs(keys) do
+
+                    if key_to_open == value then
+                        return true
+                    end
+                    
+                end
+
+            end
+            
         end
         
     end

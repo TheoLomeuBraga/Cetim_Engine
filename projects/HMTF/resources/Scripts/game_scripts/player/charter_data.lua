@@ -1,3 +1,7 @@
+
+
+keys = {}
+
 function START()
 end
 

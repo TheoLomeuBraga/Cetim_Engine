@@ -236,7 +236,7 @@ cenary_builders = {
             ret:add_component(components.physics_3D)
             
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_health")
+            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_data")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_interaction")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_arcenal")
             
@@ -290,8 +290,13 @@ cenary_builders = {
         elseif part_data.variables.type == "door_triger" then
             ret:add_component(components.lua_scripts)
             ret.components[components.lua_scripts]:add_script("game_scripts/door_triger")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",
-                part_data.variables.triger_target)
+            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",part_data.variables.triger_target)
+
+            if part_data.variables.key ~= nil then
+                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
+            end
+            
+            
             add_mesh(nil)
             add_physics(true, true)
         elseif part_data.variables.type == nil then

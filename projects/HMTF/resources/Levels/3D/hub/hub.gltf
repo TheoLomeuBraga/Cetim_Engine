@@ -1351,7 +1351,8 @@
 		{
 			"extras":{
 				"type":"door_triger",
-				"triger_target":"open_door_A"
+				"triger_target":"open_door_A",
+				"key":"gold"
 			},
 			"mesh":42,
 			"name":"Cube.023",
