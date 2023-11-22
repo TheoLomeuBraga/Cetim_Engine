@@ -2576,8 +2576,7 @@ public:
 
 			// pair<string, lua_State *> p = pairs[i];
 
-			// if (!scripts_lua_iniciados[p.first])
-			if (true)
+			if (!scripts_lua_iniciados[p.first])
 			{
 
 				print({"AAAAA", p.first});
