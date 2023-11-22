@@ -2569,16 +2569,17 @@ public:
 		iniciado = true;
 
 		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
+		reverse(pairs.begin(), pairs.end());
 
-		for (int i = 0 ; i < pairs.size() ; i++)
-		//for (int i = pairs.size() - 1; i > 1; i--)
+		for (pair<string, lua_State *> p : estados_lua)
 		{
 
-			pair<string, lua_State *> p = pairs[i];
+			// pair<string, lua_State *> p = pairs[i];
 
-			if (!scripts_lua_iniciados[p.first])
+			// if (!scripts_lua_iniciados[p.first])
+			if (true)
 			{
-				
+
 				print({"AAAAA", p.first});
 
 				// esse objetoget_tile_set_tile
@@ -2596,15 +2597,17 @@ public:
 
 		// Benchmark_Timer bt("update_lua_scripts");
 
-		iniciar();
+		// iniciar();
 
 		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
+		reverse(pairs.begin(), pairs.end());
 
-		for (int i = 0 ; i < pairs.size() ; i++)
-		//for (int i = pairs.size() - 1; i > 1; i--)
+		// for (int i = 0 ; i < pairs.size() ; i++)
+		// for (int i = pairs.size() - 1; i >= 0; i--)
+		for (pair<string, lua_State *> p : estados_lua)
 		{
 
-			pair<string, lua_State *> p = pairs[i];
+			// pair<string, lua_State *> p = pairs[i];
 
 			if (scripts_lua_iniciados[p.first])
 			{
@@ -2634,6 +2637,18 @@ public:
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
 				}
+			}
+			else
+			{
+				print({"AAAAA", p.first});
+
+				// esse objetoget_tile_set_tile
+				lua_pushstring(p.second, ponteiro_string(esse_objeto.get()).c_str());
+				lua_setglobal(p.second, "this_object_ptr");
+
+				lua_getglobal(p.second, "START");
+				lua_call(p.second, 0, 0);
+				scripts_lua_iniciados[p.first] = true;
 			}
 		}
 	}

@@ -241,6 +241,7 @@ cenary_builders = {
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_health")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
             
+            
         elseif part_data.variables.type == "music" then
             ret:add_component(components.audio_source)
             ret.components[components.audio_source].path = "resources/Audio/musics/" ..
