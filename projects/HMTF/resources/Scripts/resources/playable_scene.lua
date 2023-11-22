@@ -228,6 +228,13 @@ cenary_builders = {
         elseif part_data.variables.type == "rb" then
             add_physics(true, false)
             add_mesh(nil)
+        elseif part_data.variables.type == "item" then
+            
+            add_physics(false, true)
+            add_mesh(nil)
+            ret:add_component(components.lua_scripts)
+            ret.components[components.lua_scripts]:add_script("game_scripts/item")
+
         elseif part_data.variables.type == "camera" then
             ret:add_component(components.camera)
             ret.components[components.camera]:set()
