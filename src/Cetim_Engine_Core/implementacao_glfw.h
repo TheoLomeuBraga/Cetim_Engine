@@ -247,7 +247,9 @@ namespace controle
 			if (glfwJoystickPresent(i))
 			{
 				count++;
-			}else{
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -255,7 +257,7 @@ namespace controle
 		return count;
 	}
 
-	#ifdef LINUX
+#ifdef LINUX
 	map<std::string, std::string> ajust_keys_map = {
 		pair<std::string, std::string>("0", "a"),
 		pair<std::string, std::string>("1", "b"),
@@ -279,9 +281,9 @@ namespace controle
 		pair<std::string, std::string>("axis_2", "lt"),
 		pair<std::string, std::string>("axis_5", "rt"),
 	};
-	#endif
+#endif
 
-	#ifdef WINDOWS
+#ifdef WINDOWS
 	map<std::string, std::string> ajust_keys_map = {
 		pair<std::string, std::string>("0", "a"),
 		pair<std::string, std::string>("1", "b"),
@@ -305,8 +307,7 @@ namespace controle
 		pair<std::string, std::string>("axis_4", "lt"),
 		pair<std::string, std::string>("axis_5", "rt"),
 	};
-	#endif
-	
+#endif
 
 	static std::vector<int> prevJoystickButtonsState;
 
@@ -314,39 +315,38 @@ namespace controle
 	{
 		std::unordered_map<std::string, int> joystickKeyMap;
 
-			if (glfwJoystickPresent(joystick))
+		if (glfwJoystickPresent(joystick))
+		{
+			int buttonCount;
+			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
+
+			if (prevJoystickButtonsState.empty())
 			{
-				int buttonCount;
-				const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
-
-				if (prevJoystickButtonsState.empty())
-				{
-					prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
-				}
-
-				for (int i = 0; i < buttonCount; ++i)
-				{
-					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
-					{
-						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-					}
-					else if (buttons[i] == GLFW_PRESS)
-					{
-						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-					}
-					else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
-					{
-						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
-					}
-					else
-					{
-						joystickKeyMap[std::to_string(i)] = 0;
-					}
-
-					prevJoystickButtonsState[i] = buttons[i];
-				}
+				prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
 			}
-		
+
+			for (int i = 0; i < buttonCount; ++i)
+			{
+				if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
+				{
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+				}
+				else if (buttons[i] == GLFW_PRESS)
+				{
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+				}
+				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
+				{
+					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
+				}
+				else
+				{
+					joystickKeyMap[std::to_string(i)] = 0;
+				}
+
+				prevJoystickButtonsState[i] = buttons[i];
+			}
+		}
 
 		return joystickKeyMap;
 	}
@@ -355,37 +355,38 @@ namespace controle
 	{
 		std::unordered_map<std::string, float> joystickAxes;
 
-			if (glfwJoystickPresent(joystick))
+		if (glfwJoystickPresent(joystick))
+		{
+			int axisCount;
+
+			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
+
+			for (int i = 0; i < axisCount; ++i)
 			{
-				int axisCount;
-				const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
 
-				for (int i = 0; i < axisCount; ++i)
+#ifdef LINUX
+				if (i == 2 || i == 5)
 				{
-					#ifdef LINUX
-					if (i == 2 || i == 5)
-					{
-						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-					}
-					else
-					{
-						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
-					}
-					#endif
-
-					#ifdef WINDOWS
-					if (i == 4 || i == 5)
-					{
-						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-					}
-					else
-					{
-						joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
-					}
-					#endif
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
 				}
+				else
+				{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				}
+#endif
+
+#ifdef WINDOWS
+				if (i == 4 || i == 5)
+				{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+				}
+				else
+				{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				}
+#endif
 			}
-		
+		}
 
 		return joystickAxes;
 	}
@@ -456,15 +457,24 @@ public:
 	}
 	vector<joystick> get_joysticks_input()
 	{
-		vector<joystick> ji = {};
-		ji.resize(controle::countConnectedJoysticks());
-		for (int i = 0; i < joysticks_input.size(); i++)
-		{
-			ji[i].botoes = controle::generateJoystickKeyMap(i);
-			ji[i].eixos = controle::generateJoystickAxes(i);
-		}
 
+		unsigned char joysticks_count = controle::countConnectedJoysticks();
+		vector<joystick> ji = {};
+
+		if (joysticks_count > 0)
+		{
+
+			ji.resize(joysticks_count);
+			for (int i = 0; i < joysticks_input.size(); i++)
+			{
+				ji[i].botoes = controle::generateJoystickKeyMap(i);
+				ji[i].eixos = controle::generateJoystickAxes(i);
+			}
+		}
+		
 		joysticks_input = ji;
+
+		print({"BBBBB"});
 		return joysticks_input;
 	}
 
@@ -599,8 +609,8 @@ void IniciarJanela()
 	monitor_res.x = mode->width;
 	monitor_res.y = mode->height;
 
-	glfwWindowHint(GLFW_SAMPLES, configuracoes::janelaConfig.antiCerrilhado); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);							  // We want OpenGL 3.3
+	glfwWindowHint(GLFW_SAMPLES, configuracoes::janelaConfig.antiCerrilhado);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
@@ -669,24 +679,20 @@ Tempo::Timer sw;
 void loop_janela()
 {
 
-	//Benchmark_Timer bt("window_loop");
+	// Benchmark_Timer bt("window_loop");
 
 	// tempo
 	float t = sw.get();
 	sw.clear();
 	Tempo::tempUltFrameRender = Tempo::varTempRender;
 	Tempo::varTempRender = t;
-	
-	
-	//sw = Tempo::Timer();
 
-	
-	//float t = Tempo::tempo;
-	//Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
-	//Tempo::tempUltFrameRender = t;
+	// sw = Tempo::Timer();
 
-	
-	
+	// float t = Tempo::tempo;
+	// Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
+	// Tempo::tempUltFrameRender = t;
+
 	Tempo::FPS = 1 / Tempo::varTempRender;
 
 	Reindenizar();
