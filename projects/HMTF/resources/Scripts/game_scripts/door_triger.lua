@@ -83,14 +83,15 @@ function UPDATE()
         end
     else
         if start_base_animation then
-            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "A", 0)
-            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "B", 0)
+            --set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "A", 0)
+            --set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, false, "B", 0)
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, triger_target,0)
             start_base_animation = false
         end
         if update_open_progres then
-            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "open_door_A",open_progres)
-            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
-            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
+            set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, triger_target,open_progres)
+            --set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "A", open_progres)
+            --set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, "B", open_progres)
             update_open_progres = false
         end
     end

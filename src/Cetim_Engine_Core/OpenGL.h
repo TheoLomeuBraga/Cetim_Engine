@@ -779,22 +779,28 @@ public:
 				}
 			}
 
-			switch (mat.lado_render)
+			if (mat.cor.w == 1)
 			{
-			case lado_render_malha::both:
-				glDisable(GL_CULL_FACE);
-				break;
+				switch (mat.lado_render)
+				{
+				case lado_render_malha::both:
+					glDisable(GL_CULL_FACE);
+					break;
 
-			case lado_render_malha::front:
+				case lado_render_malha::front:
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_BACK);
+					break;
+
+				case lado_render_malha::back:
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_FRONT);
+
+					break;
+				}
+			}else{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
-				break;
-
-			case lado_render_malha::back:
-				glEnable(GL_CULL_FACE);
-				glCullFace(GL_FRONT);
-
-				break;
 			}
 
 			for (pair<string, float> p : mat.inputs)
@@ -1464,9 +1470,10 @@ public:
 
 		for (shared_ptr<objeto_jogo> obj : objs)
 		{
-			if(is_ui(obj)){
+			if (is_ui(obj))
+			{
 				ui.push_back(obj);
-			} 
+			}
 			else if (is_transparent(obj))
 			{
 				transparent.push_back(obj);
@@ -1482,15 +1489,13 @@ public:
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
 		}
 
-		return {nontransparent,transparent,ui};
+		return {nontransparent, transparent, ui};
 
 		// return {objs, {}};
 	}
 
 	void reindenizar_camada_objetos(vector<shared_ptr<objeto_jogo>> obj, shared_ptr<objeto_jogo> cam)
 	{
-
-		
 
 		glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
 
@@ -1696,7 +1701,7 @@ public:
 	void reindenizar_cenario()
 	{
 
-		//Benchmark_Timer bt("Render_Sceane");
+		// Benchmark_Timer bt("Render_Sceane");
 
 		// transparency
 
