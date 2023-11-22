@@ -2666,7 +2666,10 @@ public:
 	}
 	void finalisar()
 	{
-		for (pair<string, lua_State *> p : estados_lua)
+		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
+		reverse(pairs.begin(), pairs.end());
+
+		for (pair<string, lua_State *> p : pairs)
 		{
 
 			lua_State *L = p.second;
