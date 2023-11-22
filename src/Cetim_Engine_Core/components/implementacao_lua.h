@@ -2483,11 +2483,11 @@ void clean_lua_threads()
 class componente_lua : public componente
 {
 	bool iniciado = false;
-	map<string, shared_ptr<string>> scripts_lua_string;
-	map<string, bool> scripts_lua_iniciados;
+	unordered_map<string, shared_ptr<string>> scripts_lua_string;
+	unordered_map<string, bool> scripts_lua_iniciados;
 
 public:
-	map<string, lua_State *> estados_lua;
+	unordered_map<string, lua_State *> estados_lua;
 	set<lua_State *> to_benchmark;
 
 	vector<string> pegar_lista_scripts()
@@ -2500,7 +2500,7 @@ public:
 		return ret;
 	}
 
-	map<string, lua_State *> pegar_estados_lua()
+	unordered_map<string, lua_State *> pegar_estados_lua()
 	{
 		return estados_lua;
 	}
@@ -2578,7 +2578,7 @@ public:
 
 			if (!scripts_lua_iniciados[p.first])
 			{
-
+				
 				print({"AAAAA", p.first});
 
 				// esse objetoget_tile_set_tile
@@ -3003,7 +3003,7 @@ int have_script(lua_State *L)
 	shared_ptr<componente_lua> cl = obj->pegar_componente<componente_lua>();
 	if (argumentos == 2 && cl != NULL)
 	{
-		map<string, lua_State *> m = cl->pegar_estados_lua();
+		unordered_map<string, lua_State *> m = cl->pegar_estados_lua();
 		if (m.find(lua_tostring(L, 2)) != m.end())
 		{
 			output = true;

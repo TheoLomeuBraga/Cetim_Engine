@@ -235,11 +235,11 @@ cenary_builders = {
             ret:add_component(components.lua_scripts)
             ret:add_component(components.physics_3D)
             
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
+            
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_arcenal")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_interaction")
             ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_health")
-            
+            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
             
         elseif part_data.variables.type == "music" then
             ret:add_component(components.audio_source)
