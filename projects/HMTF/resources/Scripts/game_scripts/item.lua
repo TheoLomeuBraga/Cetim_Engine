@@ -9,7 +9,7 @@ require("short_cuts.create_render_shader")
 this_object = nil
 
 rotate = true
-local rotation = 0
+
 
 item_type = "key"
 item_name = "red"
@@ -46,6 +46,8 @@ local is_player_touch = function(objs_touching)
     end
     return false
 end
+
+local rotation = 0
 
 function UPDATE()
     local player_touch = is_player_touch(this_object.components[components.physics_3D]:get_objects_coliding())

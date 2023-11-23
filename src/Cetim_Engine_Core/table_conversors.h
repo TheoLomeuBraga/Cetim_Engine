@@ -323,7 +323,7 @@ Table json_table(const json &j)
     Table table;
     for (auto &el : j.items())
     {
-        if (el.value().is_number_float())
+        if (el.value().is_number())
         {
             table.setFloat(el.key(), el.value().get<float>());
         }

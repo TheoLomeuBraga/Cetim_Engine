@@ -13,7 +13,6 @@ keys = {}
 consumables = {}
 
 function play_pick_up_sound(args)
-    print("args",args[1])
     return {}
 end
 

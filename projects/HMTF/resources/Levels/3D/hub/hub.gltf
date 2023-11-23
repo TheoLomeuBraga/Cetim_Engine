@@ -1967,7 +1967,7 @@
 				"type":"item",
 				"item_type":"key",
 				"item_name":"red",
-				"amount":1
+				"amount":1.0
 			},
 			"mesh":57,
 			"name":"key",
