@@ -283,6 +283,12 @@ cenary_builders = {
             ret.components[components.lua_scripts]:add_script("game_scripts/item")
             ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_type",part_data.variables.item_type)
             ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_name",part_data.variables.item_name)
+
+            if part_data.variables.amount ~= nil then
+                ret.components[components.lua_scripts]:set_variable("game_scripts/item", "amount",part_data.variables.amount)
+            end
+            
+            
             
 
             change_ret()
@@ -355,8 +361,7 @@ cenary_builders = {
                 part_data.variables.triger_target)
 
             if part_data.variables.key ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",
-                    part_data.variables.key)
+                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
             end
 
 

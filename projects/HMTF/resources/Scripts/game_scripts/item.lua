@@ -13,6 +13,7 @@ local rotation = 0
 
 item_type = "key"
 item_name = "red"
+amount = 1
 
 function START()
     this_object = game_object:new(this_object_ptr)
