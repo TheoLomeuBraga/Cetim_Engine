@@ -799,20 +799,26 @@ public:
 					break;
 				}
 
-				/*
+				
 				if (usar_profundidade)
 				{
 					glEnable(GL_DEPTH_TEST);
 					glDepthFunc(GL_LESS);
 				}
-				*/
+				
+
+				
+
 			}
 			else
 			{
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
+
 				
-				//glDisable(GL_DEPTH_TEST);
+
+				
+
 			}
 
 			for (pair<string, float> p : mat.inputs)
@@ -1499,6 +1505,7 @@ public:
 		if (cam->pegar_componente<transform_>() != NULL)
 		{
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
+
 		}
 
 		return {nontransparent, transparent, ui};
@@ -1597,8 +1604,13 @@ public:
 			{
 				if (orderd_objects[a][i] > 0 && cam > 0)
 				{
-
+					if(is_transparent(orderd_objects[a][i])){
+						glDepthMask(GL_FALSE);
+					}
+					
 					reindenizar_objeto(orderd_objects[a][i], cam);
+
+					glDepthMask(GL_TRUE);
 				}
 			}
 		}
