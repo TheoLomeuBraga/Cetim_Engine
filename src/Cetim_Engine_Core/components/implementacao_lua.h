@@ -3112,7 +3112,7 @@ int get_lua_var(lua_State *L)
 	}
 	else if (lua_type_id == LUA_TNIL)
 	{
-		return 0;
+		lua_pushnil(L);
 	}
 	return 1;
 
