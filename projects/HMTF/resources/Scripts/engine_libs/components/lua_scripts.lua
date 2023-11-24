@@ -1,7 +1,43 @@
 register_function_set("script")
-
 require("components.base_component")
 require("components.component_index")
+
+local function_meta_table = {
+    __index = function (self, key)
+        return function(args)
+            --print(self.object_ptr,self.script_name,key,args[1])
+            return c_call_lua_function(self.__object_ptr__,self.__script_name__,key,args)
+        end 
+    end
+}
+
+local var_meta_table = {
+    
+}
+
+local call_meta_table = {
+    __call = function (self,object_ptr,script_name)
+        local ret =  {
+            __object_ptr__ = object_ptr,
+            __script_name__ = script_name,
+            functions = {
+                __object_ptr__ = object_ptr,
+                __script_name__ = script_name,
+            },
+            variables = {
+                __object_ptr__ = object_ptr,
+                __script_name__ = script_name,
+            },
+        }
+        --print("AAAAA",ret.object_ptr,ret.script_name)
+        setmetatable(ret.functions,function_meta_table)
+        setmetatable(ret.variables,var_meta_table)
+        return ret
+    end
+}
+
+simple_lua_script_manager = {}
+setmetatable(simple_lua_script_manager,call_meta_table)
 
 lua_scripts_component = create_base_component(components.lua_scripts)
 lua_scripts_component.object_ptr = ""

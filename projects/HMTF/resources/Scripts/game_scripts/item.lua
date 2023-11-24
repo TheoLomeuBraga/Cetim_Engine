@@ -23,6 +23,8 @@ local is_player_touch = function(objs_touching)
     for key, value in pairs(objs_touching) do
         local obj_touching = game_object:new(value)
         if obj_touching.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+
+            local charter_data = simple_lua_script_manager(obj.object_ptr,"game_scripts/player/charter_data")
             
             if item_type == "key" then
 
@@ -36,9 +38,20 @@ local is_player_touch = function(objs_touching)
                 table.insert(upgrades,item_name)
                 obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","upgrades",upgrades)
 
+            elseif item_type == "consumable" then 
+                
+                local consumables = obj_touching.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data","consumables")
+                if consumables[item_name] == nil then
+                    consumables[item_name] = 0
+                end
+                consumables[item_name] = consumables[item_name] + amount
+                obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","consumables",consumables)
+
             end
 
-            obj_touching.components[components.lua_scripts]:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
+            --obj_touching.components[components.lua_scripts]:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
+            print(charter_data.functions.play_pick_up_sound)
+            charter_data.functions.play_pick_up_sound({item_type})
 
             remove_object(this_object_ptr)
             return true

@@ -27,11 +27,11 @@ end
 function get_valid_touches()
     for key, value in pairs(this_physics_3d:get_objects_coliding()) do
 
-        local have_charter_data
-
         local obj = game_object:new(value)
 
         if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+
+            
 
             if key_to_open == nil then
 
