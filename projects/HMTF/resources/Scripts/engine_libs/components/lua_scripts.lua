@@ -97,9 +97,9 @@ function lua_scripts_component:has_script(script)
 end
 
 function lua_scripts_component:get()
-    local script_list = deepcopyjson(get_lua_component(self.object_ptr).scripts)
+    local script_list = get_lua_component(self.object_ptr).scripts
     for key, value in pairs(script_list) do
-        self.scripts[key] = simple_lua_script_manager(self.object_ptr, key)
+        self.scripts[value] = simple_lua_script_manager(self.object_ptr, value)
     end
 end
 
