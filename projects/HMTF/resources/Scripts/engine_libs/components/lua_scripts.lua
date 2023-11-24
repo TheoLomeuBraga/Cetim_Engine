@@ -15,7 +15,7 @@ local var_meta_table = {
     
 }
 
-local call_meta_table = {
+local simple_lua_script_manager_meta_table = {
     __call = function (self,object_ptr,script_name)
         local ret =  {
             __object_ptr__ = object_ptr,
@@ -37,7 +37,7 @@ local call_meta_table = {
 }
 
 simple_lua_script_manager = {}
-setmetatable(simple_lua_script_manager,call_meta_table)
+setmetatable(simple_lua_script_manager,simple_lua_script_manager_meta_table)
 
 lua_scripts_component = create_base_component(components.lua_scripts)
 lua_scripts_component.object_ptr = ""
