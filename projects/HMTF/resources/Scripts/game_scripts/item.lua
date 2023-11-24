@@ -22,30 +22,33 @@ end
 local is_player_touch = function(objs_touching)
     for key, value in pairs(objs_touching) do
         local obj_touching = game_object:new(value)
-        if obj_touching.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
 
-            local charter_data = simple_lua_script_manager(obj.object_ptr,"game_scripts/player/charter_data")
+        local charter_data = simple_lua_script_manager(obj.object_ptr,"game_scripts/player/charter_data")
+
+        if charter_data ~= false then
+
+            
             
             if item_type == "key" then
 
-                local keys = obj_touching.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data","keys")
+                local keys = charter_data.variables.keys
                 table.insert(keys,item_name)
-                obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","keys",keys)
+                charter_data.variables.keys = keys
 
             elseif item_type == "upgrade" then 
 
-                local upgrades = obj_touching.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data","upgrades")
+                local upgrades = charter_data.variables.upgrades
                 table.insert(upgrades,item_name)
-                obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","upgrades",upgrades)
+                charter_data.variables.upgrades = upgrades
 
             elseif item_type == "consumable" then 
                 
-                local consumables = obj_touching.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data","consumables")
+                local consumables = charter_data.variables.consumables
                 if consumables[item_name] == nil then
                     consumables[item_name] = 0
                 end
                 consumables[item_name] = consumables[item_name] + amount
-                obj_touching.components[components.lua_scripts]:set_variable("game_scripts/player/charter_data","consumables",consumables)
+                charter_data.variables.consumables = consumables
 
             end
 
