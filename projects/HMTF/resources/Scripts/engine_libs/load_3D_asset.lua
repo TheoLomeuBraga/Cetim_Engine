@@ -27,7 +27,6 @@ function load_3D_asset(father, render_layer, object_3D)
         ret.name = object_3D.name
 
         if object_type == "test_rb" then
-            ret:add_component(components.physics_3D)
             ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
 
             ret.components[components.physics_3D].collision_shape = collision_shapes.convex
@@ -35,7 +34,6 @@ function load_3D_asset(father, render_layer, object_3D)
 
             ret.components[components.physics_3D]:set()
         elseif object_type == "test_sb" then
-            ret:add_component(components.physics_3D)
             ret.components[components.physics_3D].boady_dynamic = boady_dynamics.static
 
             ret.components[components.physics_3D].collision_shape = collision_shapes.convex
@@ -48,7 +46,6 @@ function load_3D_asset(father, render_layer, object_3D)
         if object_type == nil then
             ret = game_object:new(create_object(father))
             ret.name = object_3D.name
-            ret:add_component(components.transform)
             ret.components[components.transform].position = deepcopyjson(object_3D.position)
             ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
             ret.components[components.transform].scale = deepcopyjson(object_3D.scale)

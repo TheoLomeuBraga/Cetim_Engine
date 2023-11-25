@@ -63,7 +63,6 @@ function START()
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera_ptr = camera.object_ptr
-    camera:add_component(components.audio_source)
     set_lisener_object(camera.object_ptr)
 
     layers = global_data:get_var("layers")
@@ -76,8 +75,7 @@ function START()
     
     this_object = game_object:new(this_object_ptr)
     this_object.components[components.transform]:change_rotation(0, 0, 0)
-
-    this_object:add_component(components.physics_3D)
+    
     this_physics_3d = this_object.components[components.physics_3D]
     this_physics_3d.boady_dynamic = boady_dynamics.kinematic
     this_physics_3d.rotate_x = false

@@ -30,6 +30,13 @@ function get_set_object(get_set,obj)
     return c_get_set_object(get_set,obj)
 end
 
+local componenta_meta_table = {
+    __index = function(self, key)
+        add_component(self.object_ptr, key)
+        rawset(self.components, key, component_map[key]:new(self.object_ptr))
+
+    end
+}
 
 game_object = {}
 function game_object:new(object_ptr,not_recreate)
@@ -40,6 +47,8 @@ function game_object:new(object_ptr,not_recreate)
     obj.father = ""
     obj.children_ptr = {}
     obj.children = {}
+
+    setmetatable(obj.components, componenta_meta_table)
 
     function obj:add_component(component_name)
         add_component(self.object_ptr, component_name)
