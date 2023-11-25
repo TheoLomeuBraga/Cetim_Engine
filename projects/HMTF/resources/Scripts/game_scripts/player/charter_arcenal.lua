@@ -151,9 +151,9 @@ function get_charter_data()
 end
 
 function START()
-    this_object = game_object:new(this_object_ptr)
-    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
-    this_object:add_component(components.audio_source)
+    this_object = game_object(this_object_ptr)
+    camera = game_object(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
+
 
     select_wepon(wepom_list.test_wepon)
 

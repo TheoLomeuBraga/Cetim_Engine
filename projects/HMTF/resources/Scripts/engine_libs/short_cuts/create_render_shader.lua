@@ -5,7 +5,7 @@ require("components.transform")
 require("components.render_shader")
 
 function create_render_shader(father,is_ui,pos,rot,sca,layer,mat)
-    ret = game_object:new(create_object(father))
+    ret = game_object(create_object(father))
     ret.components[components.transform].is_ui = is_ui
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)

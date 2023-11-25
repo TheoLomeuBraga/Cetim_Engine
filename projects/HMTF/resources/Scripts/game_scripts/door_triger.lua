@@ -19,7 +19,7 @@ key_to_open = nil
 
 
 function START()
-    this_physics_3d = game_object:new(this_object_ptr).components[components.physics_3D]
+    this_physics_3d = game_object(this_object_ptr).components[components.physics_3D]
     this_physics_3d.get_collision_info = true
     this_physics_3d:set()
 end
@@ -27,7 +27,7 @@ end
 function get_valid_touches()
     for key, value in pairs(this_physics_3d:get_objects_coliding()) do
 
-        local obj = game_object:new(value)
+        local obj = game_object(value)
 
         if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
 

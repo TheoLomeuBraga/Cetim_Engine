@@ -65,7 +65,7 @@ end
 
 function new_game()
     print("new_game")
-    core_obj = game_object:new(global_data:get_var("core_object_ptr"))
+    core_obj = game_object(global_data:get_var("core_object_ptr"))
     --core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", {"test_map"})
     core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", {"hub_map"})
 end
@@ -221,7 +221,7 @@ function START()
 
     local layers = global_data:get_var("layers")
 
-    this_object = game_object:new(this_object_ptr)
+    this_object = game_object(this_object_ptr)
     
     local style = ui_style:new()
 

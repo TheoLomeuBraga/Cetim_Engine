@@ -24,8 +24,10 @@ local is_player_touch = function(objs_touching)
         local obj_touching = game_object:new(value)
 
         obj_touching.components[lua_scripts]:get()
+        
 
-        local charter_data = simple_lua_script_manager(obj.object_ptr,"game_scripts/player/charter_data")
+
+        local charter_data = simple_lua_script_manager(obj_touching.object_ptr,"game_scripts/player/charter_data")
 
         if charter_data ~= false then
 

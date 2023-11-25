@@ -5,9 +5,7 @@ require("components.camera")
 
 
 function create_camera_perspective(father,pos,rot,zoom,ncf,fcp)
-    ret = game_object:new(create_object(father)) 
-    ret:add_component(components.transform)
-    ret:add_component(components.camera)
+    ret = game_object(create_object(father)) 
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
     ret.components[components.camera].type = camera_view_types.perspective
@@ -21,9 +19,7 @@ function create_camera_perspective(father,pos,rot,zoom,ncf,fcp)
 end
 
 function create_camera_ortho(father,pos,rot,scale_x,scale_y,res_x,res_y,ncf,fcp)
-    ret = game_object:new(create_object(father)) 
-    ret:add_component(components.transform)
-    ret:add_component(components.camera)
+    ret = game_object(create_object(father)) 
     
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)

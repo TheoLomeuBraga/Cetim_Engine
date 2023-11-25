@@ -59,11 +59,10 @@ this_physics_3d = {}
 function START()
     global_data:set("player_object_ptr", this_object_ptr)
 
-    core_obj = game_object:new(global_data:get("core_object_ptr"))
+    core_obj = game_object(global_data:get("core_object_ptr"))
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera_ptr = camera.object_ptr
-    camera:add_component(components.audio_source)
     set_lisener_object(camera.object_ptr)
 
     layers = global_data:get_var("layers")
@@ -74,10 +73,9 @@ function START()
 
 
     
-    this_object = game_object:new(this_object_ptr)
+    this_object = game_object(this_object_ptr)
     this_object.components[components.transform]:change_rotation(0, 0, 0)
 
-    this_object:add_component(components.physics_3D)
     this_physics_3d = this_object.components[components.physics_3D]
     this_physics_3d.boady_dynamic = boady_dynamics.kinematic
     this_physics_3d.rotate_x = false
@@ -91,12 +89,8 @@ function START()
     this_physics_3d:set()
 
 
-    direction_reference = game_object:new(this_object_ptr)
-    direction_reference:add_component(components.transform)
+    direction_reference = game_object(this_object_ptr)
     direction_reference.components[components.transform]:set()
-
-    this_object:add_component(components.audio_source)
-    --[[]]
 end
 
 speed = 12
@@ -175,7 +169,7 @@ function interact()
     hit, hit_info = raycast_3D(ray_start, ray_end)
 
     if hit then
-        local hit_object = game_object:new(hit_info.collision_object)
+        local hit_object = game_object(hit_info.collision_object)
 
         if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
             hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage", "interact", {})
@@ -214,7 +208,7 @@ function UPDATE()
         local get_valid_touches_top = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
-                local obj_touching = game_object:new(value)
+                local obj_touching = game_object(value)
                 obj_touching.components[components.physics_3D]:get()
                 if not obj_touching.components[components.physics_3D].triger and obj_touching.components[components.physics_3D].boady_dynamic == boady_dynamics.static then
                     valid_touches = valid_touches + 1
@@ -228,7 +222,7 @@ function UPDATE()
         local get_valid_touches_down = function(objs_touching)
             local valid_touches = 0
             for key, value in pairs(objs_touching) do
-                local obj_touching = game_object:new(value)
+                local obj_touching = game_object(value)
                 obj_touching.components[components.physics_3D]:get()
                 if not obj_touching.components[components.physics_3D].triger then
                     valid_touches = valid_touches + 1

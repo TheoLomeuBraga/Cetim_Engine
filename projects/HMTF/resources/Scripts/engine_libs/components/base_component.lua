@@ -30,5 +30,11 @@ end
 function create_base_component(component_name)
     local ret = base_component:new(nil)
     ret.component_name = component_name
+    --[[
+    setmetatable(ret,{
+        __call = function (this,object_ptr)
+            this:new(object_ptr)
+        end
+    })]]
     return ret
 end

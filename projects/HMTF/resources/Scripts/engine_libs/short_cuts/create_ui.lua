@@ -65,9 +65,9 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     
 
     local ret = {
-        main_obj = game_object:new(main_obj_ptr),
-        button_obj = game_object:new(button_obj_ptr),
-        text_obj = game_object:new(text_obj_ptr),
+        main_obj = game_object(main_obj_ptr),
+        button_obj = game_object(button_obj_ptr),
+        text_obj = game_object(text_obj_ptr),
         text = text,
         image = image,
         click_function = click_function,
@@ -86,9 +86,6 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     }
 
     --transform
-    ret.main_obj:add_component(components.transform)
-    ret.button_obj:add_component(components.transform)
-    ret.text_obj:add_component(components.transform)
     function ret:set_transform( pos, sca)
         self.main_obj.components[components.transform].is_ui = true
         self.button_obj.components[components.transform].is_ui = true
@@ -113,8 +110,6 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     ret:set_transform( pos, sca)
 
     --style
-    ret.button_obj:add_component(components.render_shader)
-    ret.text_obj:add_component(components.render_text)
 
     if category == 3 then
         ret.text_obj.components[components.render_text].text_location_x = render_text_location.right

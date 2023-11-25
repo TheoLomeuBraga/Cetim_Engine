@@ -30,14 +30,13 @@ mesh = {
 }
 
 function START()
-    this_object = game_object:new(this_object_ptr)
+    this_object = game_object(this_object_ptr)
 
     if mesh.file ~= "" then
         local mat = matreial:new()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"
         mat.color = { r = 1, g = 0, b = 0, a = 1 }
-        this_object:add_component(components.render_mesh)
         this_object.components[components.render_mesh].layer = 2
         this_object.components[components.render_mesh].meshes_cout = 1
         this_object.components[components.render_mesh].meshes = ({ mesh })
@@ -50,8 +49,7 @@ function START()
         local next_pos = { x = pos.x + (direction.x * speed * time.delta ) + (base_inpulse.x * time.delta), y = pos.y + (direction.y * speed * time.delta) + (base_inpulse.y * time.delta),z = pos.z + (direction.z * speed * time.delta) + (base_inpulse.z * time.delta) }
         this_object.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
 
-        
-        this_object:add_component(components.physics_3D)
+
         this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
         this_object.components[components.physics_3D].collision_shape = collision_shapes.sphere
         this_object.components[components.physics_3D].gravity_scale = 0

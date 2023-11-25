@@ -9,7 +9,7 @@ local obj_to_rotate = nil
 
 function START()
     if obj_ptr_to_rotate ~= nil then
-        obj_to_rotate = game_object:new(obj_ptr_to_rotate)
+        obj_to_rotate = game_object(obj_ptr_to_rotate)
     end
 end
 

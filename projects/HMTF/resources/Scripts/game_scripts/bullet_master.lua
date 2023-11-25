@@ -58,9 +58,6 @@ function START()
 
     mat.shader = "resources/Shaders/mesh"
     mat.textures[1] = "resources/Textures/white.png"
-
-    --poly_mesh_object = game_object:new(create_object(layers.cenary))
-    --poly_mesh_object:add_component(components.render_poly_mesh)
 end
 
 function UPDATE()
@@ -127,24 +124,20 @@ function summon_bullet(args)
         if args.hit_scan > 0 then
             
         else
-            local bullet = game_object:new(create_object(layers.cenary))
+            local bullet = game_object(create_object(layers.cenary))
 
-            bullet:add_component(components.transform)
             bullet.components[components.transform].position = (args.pos)
             bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
             bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
             bullet.components[components.transform]:set()
 
-            --[[]]
-            bullet:add_component(components.render_mesh)
             bullet.components[components.render_mesh].layer = 2
             bullet.components[components.render_mesh].meshes_cout = 1
             bullet.components[components.render_mesh].meshes = ({ args.mesh })
             mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
             bullet.components[components.render_mesh].materials = ({ mat })
             bullet.components[components.render_mesh]:set()
-
-            bullet:add_component(components.physics_3D)
+            
             bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
             bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere
             bullet.components[components.physics_3D].gravity_scale = 0

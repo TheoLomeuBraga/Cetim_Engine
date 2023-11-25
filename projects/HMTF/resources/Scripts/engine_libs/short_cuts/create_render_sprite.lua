@@ -4,9 +4,9 @@ require("components.transform")
 require("components.render_sprite")
 
 function create_sprite(father,is_ui,pos,rot,sca,mat,layer,sprite_id,tileset_local)
-    ret = game_object:new(create_object(father))
+    ret = game_object(create_object(father))
 
-    ret:add_component(components.transform)
+    
     ret.components[components.transform].is_ui = is_ui
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
@@ -14,7 +14,7 @@ function create_sprite(father,is_ui,pos,rot,sca,mat,layer,sprite_id,tileset_loca
     ret.components[components.transform]:set()
 
     
-    ret:add_component(components.render_sprite)
+    
     ret.components[components.render_sprite].material = deepcopy(mat)
     ret.components[components.render_sprite].layer = layer
     ret.components[components.render_sprite].selected_tile = sprite_id

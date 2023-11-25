@@ -44,7 +44,7 @@ function load_3D_asset(father, render_layer, object_3D)
 
     else
         if object_type == nil then
-            ret = game_object:new(create_object(father))
+            ret = game_object(create_object(father))
             ret.name = object_3D.name
             ret.components[components.transform].position = deepcopyjson(object_3D.position)
             ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)

@@ -8,16 +8,15 @@ require("objects.collision_shapes")
 
 
 function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_mesh,triger)
-    ret = game_object:new(create_object(father))
+    ret = game_object(create_object(father))
 
-    ret:add_component(components.transform)
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
     ret.components[components.transform].scale = deepcopy({x=1,y=1,z=1})
     ret.components[components.transform]:set()
 
     
-    ret:add_component(components.physics_3D)
+    
     if rigid_boady then
         ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
     else
@@ -46,15 +45,15 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
 end
 
 function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_data,triger)
-    ret = game_object:new(create_object(father))
+    ret = game_object(create_object(father))
 
-    ret:add_component(components.transform)
+    
     ret.components[components.transform].position = deepcopy(pos)
     ret.components[components.transform].rotation = deepcopy(rot)
     ret.components[components.transform].scale = deepcopy(sca)
     ret.components[components.transform]:set()
 
-    ret:add_component(components.physics_2D)
+    
 
     if sca.x == 0 then
         sca.x = 1

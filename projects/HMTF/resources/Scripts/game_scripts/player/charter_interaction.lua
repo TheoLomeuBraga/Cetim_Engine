@@ -25,8 +25,8 @@ camera = nil
 
 function START()
     global_data:set("interacting",0)
-    this_object = game_object:new(this_object_ptr)
-    camera = game_object:new(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
+    this_object = game_object(this_object_ptr)
+    camera = game_object(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
 end
 
 interacting = false
@@ -46,7 +46,7 @@ function interact()
     hit, hit_info = raycast_3D(ray_start, ray_end)
 
     if hit then
-        local hit_object = game_object:new(hit_info.collision_object)
+        local hit_object = game_object(hit_info.collision_object)
 
         if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
             hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage", "interact", {})

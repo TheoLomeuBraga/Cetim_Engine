@@ -25,7 +25,7 @@ is_free = false
 function START()
     global_data:set_var("camera_object_ptr",this_object_ptr)
 
-    this_object = game_object:new(this_object_ptr)
+    this_object = game_object(this_object_ptr)
     
     this_object.components[components.transform]:get()
     current_pos = deepcopy(this_object.components[components.transform].position)

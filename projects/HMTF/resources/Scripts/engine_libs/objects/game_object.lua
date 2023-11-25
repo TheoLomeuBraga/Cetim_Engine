@@ -120,3 +120,8 @@ function game_object:new(object_ptr, not_recreate)
 
     return obj
 end
+setmetatable(game_object,{
+    __call = function (self,object_ptr, not_recreate)
+        return game_object:new(object_ptr, not_recreate)
+    end
+})
