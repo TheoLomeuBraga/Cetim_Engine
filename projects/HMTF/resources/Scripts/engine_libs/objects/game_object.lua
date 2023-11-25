@@ -63,8 +63,6 @@ function game_object:new(object_ptr, not_recreate)
     setmetatable(obj.components, componenta_meta_table)
 
     function obj:add_component(component_name)
-        --add_component(self.object_ptr, component_name)
-        --self.components[component_name] = component_map[component_name]:new(self.object_ptr)
         return self.components[component_name]
     end
 
@@ -80,7 +78,8 @@ function game_object:new(object_ptr, not_recreate)
     function obj:get_components()
         for key, value in pairs(components) do
             if self:have_component(value) then
-                self.components[value] = component_map[value]:new(self.object_ptr)
+                --self.components[value] = component_map[value].new(component_map[value],self.object_ptr)
+                self.components[value] = component_map[value](component_map[value],self.object_ptr)
             end
         end
     end
@@ -122,6 +121,6 @@ function game_object:new(object_ptr, not_recreate)
 end
 setmetatable(game_object,{
     __call = function (self,object_ptr, not_recreate)
-        return game_object:new(object_ptr, not_recreate)
+        return self:new(object_ptr, not_recreate)
     end
 })

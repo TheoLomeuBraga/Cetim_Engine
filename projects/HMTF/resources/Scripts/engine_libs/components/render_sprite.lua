@@ -28,4 +28,4 @@ end
     function render_sprite_component:set()
         get_set_sprite_render(set_lua,self)
     end
-component_map[components.render_sprite] = render_sprite_component:new(nil)
+component_map[components.render_sprite] = apply_component_metatable(render_sprite_component:new(nil))

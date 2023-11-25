@@ -114,4 +114,4 @@ function physics_2D_component:get_objects_coliding()
 end
 
 
-component_map[components.physics_2D] = physics_2D_component:new(nil)
+component_map[components.physics_2D] = apply_component_metatable(physics_2D_component:new(nil))

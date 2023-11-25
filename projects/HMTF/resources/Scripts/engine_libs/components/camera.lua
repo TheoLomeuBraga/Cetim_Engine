@@ -39,4 +39,4 @@ end
 function camera_component:set()
     get_set_camera(set_lua,deepcopyjson(self))
 end
-component_map[components.camera] = camera_component:new(nil)
+component_map[components.camera] = apply_component_metatable(camera_component:new(nil))

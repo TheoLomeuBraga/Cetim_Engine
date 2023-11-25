@@ -40,4 +40,4 @@ end
 function render_mesh_component:set()
     get_set_render_mesh(set_lua,deepcopyjson(self))
 end
-component_map[components.render_mesh] = render_mesh_component:new(nil)
+component_map[components.render_mesh] = apply_component_metatable(render_mesh_component:new(nil))

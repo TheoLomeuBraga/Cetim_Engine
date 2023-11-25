@@ -43,4 +43,4 @@ end
 function render_poly_mesh_component:set()
     get_set_render_poly_mesh(set_lua,deepcopyjson(self))
 end
-component_map[components.render_poly_mesh] = render_poly_mesh_component:new(nil)
+component_map[components.render_poly_mesh] = apply_component_metatable(render_poly_mesh_component:new(nil))

@@ -106,4 +106,4 @@ end
 function lua_scripts_component:set()
 end
 
-component_map[components.lua_scripts] = lua_scripts_component:new(nil)
+component_map[components.lua_scripts] = apply_component_metatable(lua_scripts_component:new(nil))

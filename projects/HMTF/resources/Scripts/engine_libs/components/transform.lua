@@ -74,4 +74,4 @@ end
 
 
 
-component_map[components.transform] = transform_component:new(nil)
+component_map[components.transform] = apply_component_metatable(transform_component:new(nil))

@@ -53,4 +53,4 @@ end
     function render_text_component:get_text_size()
         return get_text_size(self.object_ptr)
     end
-component_map[components.render_text] = render_text_component:new(nil)
+component_map[components.render_text] = apply_component_metatable(render_text_component:new(nil))

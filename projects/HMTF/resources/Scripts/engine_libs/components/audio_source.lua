@@ -51,4 +51,4 @@ function audio_component:new(object_ptr)
 
     return a
 end
-component_map[components.audio_source] = audio_component
+component_map[components.audio_source] = apply_component_metatable(audio_component)

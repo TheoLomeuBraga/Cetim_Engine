@@ -111,4 +111,4 @@ function physics_3D_component:set()
     get_set_physic_3D(set_lua, deepcopyjson(self))
 end
 
-component_map[components.physics_3D] = physics_3D_component:new(nil)
+component_map[components.physics_3D] = apply_component_metatable(physics_3D_component:new(nil))

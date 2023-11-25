@@ -17,15 +17,18 @@ function render_tile_map_component:clean()
     self.tile_set_local = ""
     self.tile_map_local = ""
 end
-    function render_tile_map_component:get()
-        j = get_set_render_tilemap(get_lua,self.object_ptr)
-        self.layer = j.layer
-        self.material = deepcopyjson(j.material)
-        self.render_tilemap_only_layer = j.render_tilemap_only_layer
-        self.tile_set_local = j.tile_set_local
-        self.tile_map_local = j.tile_map_local
-    end
-    function render_tile_map_component:set()
-        get_set_render_tilemap(set_lua,deepcopyjson(self))
-    end
-component_map[components.render_tile_map] = render_tile_map_component:new(nil)
+
+function render_tile_map_component:get()
+    j = get_set_render_tilemap(get_lua, self.object_ptr)
+    self.layer = j.layer
+    self.material = deepcopyjson(j.material)
+    self.render_tilemap_only_layer = j.render_tilemap_only_layer
+    self.tile_set_local = j.tile_set_local
+    self.tile_map_local = j.tile_map_local
+end
+
+function render_tile_map_component:set()
+    get_set_render_tilemap(set_lua, deepcopyjson(self))
+end
+
+component_map[components.render_tile_map] = apply_component_metatable(render_tile_map_component:new(nil))
