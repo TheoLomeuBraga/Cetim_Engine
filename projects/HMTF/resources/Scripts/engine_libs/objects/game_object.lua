@@ -33,7 +33,7 @@ end
 local componenta_meta_table = {
     __index = function(self, key)
         add_component(self.object_ptr, key)
-        rawset(self.components, key, component_map[key]:new(self.object_ptr))
+        rawset(self, key, component_map[key]:new(self.object_ptr))
 
     end
 }
