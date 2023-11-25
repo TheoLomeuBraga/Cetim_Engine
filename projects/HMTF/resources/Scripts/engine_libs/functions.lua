@@ -22,35 +22,6 @@ function tablelength(T)
     return count
 end
 
---[[
-function deepcopy(orig, copies)
-    
-    copies = copies or {} -- Tabelas já copiadas
-    local orig_type = type(orig)
-    local copy
-
-    if orig_type == 'table' then
-        --print("A",tablelength(orig))
-
-        if copies[orig] then
-            -- Se a tabela já foi copiada, basta referenciá-la
-            return copies[orig]
-        end
-
-        copy = {}
-        copies[orig] = copy -- Registre esta tabela como copiada
-
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig), copies))
-    else
-        copy = orig
-    end
-
-    return copy
-end
-]]
 
 
 function deepcopy(orig)

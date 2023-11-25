@@ -13,6 +13,7 @@ menu = {
             menu.obj = game_object:new(create_object(global_data:get_var("layers").hud))
             menu.obj:add_component(components.transform)
             menu.obj.components[components.transform]:set()
+            
             menu.obj:add_component(components.lua_scripts)
             menu.obj.components[components.lua_scripts]:add_script("game_scripts/menus")
             menu.obj.components[components.lua_scripts]:set_variable("game_scripts/menus", "menu_selectred", "pause")
