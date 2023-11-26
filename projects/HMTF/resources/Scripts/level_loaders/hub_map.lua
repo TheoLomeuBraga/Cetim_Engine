@@ -22,7 +22,10 @@ local assets_needed = {
     new_asset_list_element(asset_types.image,"resources/Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
 
-    
+    new_asset_list_element(asset_types.audio,"resources/Audio/sounds/jump.wav"),
+    new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_1.wav"),
+    new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_2.wav"),
+    new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_3.wav"),
     
 }
 
