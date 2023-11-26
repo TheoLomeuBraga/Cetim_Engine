@@ -92,12 +92,12 @@ cenary_builders = {
 
         if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
             
-            ret.components[components.render_mesh].layer = layer
-            ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
-            ret.components[components.render_mesh].meshes = part_data.meshes
-            ret.components[components.render_mesh].materials = part_data.materials
-            ret.components[components.render_mesh].use_oclusion = use_oclusion
-            ret.components[components.render_mesh]:set()
+            ret.components.render_mesh.layer = layer
+            ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
+            ret.components.render_mesh.meshes = part_data.meshes
+            ret.components.render_mesh.materials = part_data.materials
+            ret.components.render_mesh.use_oclusion = use_oclusion
+            ret.components.render_mesh:set()
         end
 
 
@@ -198,11 +198,11 @@ cenary_builders = {
                 end
 
                 
-                ret.components[components.render_mesh].layer = layer
-                ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
-                ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
-                ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
-                ret.components[components.render_mesh]:set()
+                ret.components.render_mesh.layer = layer
+                ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
+                ret.components.render_mesh.meshes = deepcopy(part_data.meshes)
+                ret.components.render_mesh.materials = deepcopy(part_data.materials)
+                ret.components.render_mesh:set()
             end
         end
 
@@ -267,11 +267,11 @@ cenary_builders = {
             end
 
             
-            ret.components[components.render_mesh].layer = layer
-            ret.components[components.render_mesh].meshes_cout = math.min(#part_data.meshes, #part_data.materials)
-            ret.components[components.render_mesh].meshes = deepcopy(part_data.meshes)
-            ret.components[components.render_mesh].materials = deepcopy(part_data.materials)
-            ret.components[components.render_mesh]:set()
+            ret.components.render_mesh.layer = layer
+            ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
+            ret.components.render_mesh.meshes = deepcopy(part_data.meshes)
+            ret.components.render_mesh.materials = deepcopy(part_data.materials)
+            ret.components.render_mesh:set()
 
 
             
@@ -305,23 +305,23 @@ cenary_builders = {
             change_ret()
 
         elseif part_data.variables.type == "music" then
-            ret.components[components.audio_source].path = "resources/Audio/musics/" ..
+            ret.components.audio_source.path = "resources/Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
-            ret.components[components.audio_source].loop = true
-            ret.components[components.audio_source].volume = 5
-            ret.components[components.audio_source].min_distance = 5
-            ret.components[components.audio_source].atenuation = 1
-            ret.components[components.audio_source]:set()
+            ret.components.audio_source.loop = true
+            ret.components.audio_source.volume = 5
+            ret.components.audio_source.min_distance = 5
+            ret.components.audio_source.atenuation = 1
+            ret.components.audio_source:set()
 
             add_mesh(nil)
         elseif part_data.variables.type == "sound" then
-            ret.components[components.audio_source].path = "resources/Audio/sounds/" ..
+            ret.components.audio_source.path = "resources/Audio/sounds/" ..
                 part_data.variables.sound_source .. ".wav"
-            ret.components[components.audio_source].loop = true
-            ret.components[components.audio_source].volume = 5
-            ret.components[components.audio_source].min_distance = 5
-            ret.components[components.audio_source].atenuation = 1
-            ret.components[components.audio_source]:set()
+            ret.components.audio_source.loop = true
+            ret.components.audio_source.volume = 5
+            ret.components.audio_source.min_distance = 5
+            ret.components.audio_source.atenuation = 1
+            ret.components.audio_source:set()
 
             add_mesh(nil)
         elseif part_data.variables.type == "mensage" then

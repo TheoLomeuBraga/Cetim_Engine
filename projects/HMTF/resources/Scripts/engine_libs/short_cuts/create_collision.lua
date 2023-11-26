@@ -61,18 +61,18 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_dat
     if sca.y == 0 then
         sca.y = 1
     end
-    ret.components[components.physics_2D].scale = {x = sca.x,y = sca.y}
+    ret.components.physics_2D.scale = {x = sca.x,y = sca.y}
     if rigid_boady then
-        ret.components[components.physics_2D].boady_dynamic = boady_dynamics.dynamic
+        ret.components.physics_2D.boady_dynamic = boady_dynamics.dynamic
     else
-        ret.components[components.physics_2D].boady_dynamic = boady_dynamics.static
+        ret.components.physics_2D.boady_dynamic = boady_dynamics.static
     end
-    ret.components[components.physics_2D].collision_shape = shape
+    ret.components.physics_2D.collision_shape = shape
     if shape == collision_shapes.convex then
-        ret.components[components.physics_2D].vertex = deepcopy(vertex_data)
+        ret.components.physics_2D.vertex = deepcopy(vertex_data)
     end
-    ret.components[components.physics_2D].triger = triger
-    ret.components[components.physics_2D]:set()
+    ret.components.physics_2D.triger = triger
+    ret.components.physics_2D:set()
 
     --ret.components.transform:change_position(pos.x,pos.y,pos.z)
     --ret.components.transform:change_rotation(rot.x,rot.y,rot.z)

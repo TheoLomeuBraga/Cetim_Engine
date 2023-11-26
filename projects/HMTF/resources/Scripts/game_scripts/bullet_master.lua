@@ -131,12 +131,12 @@ function summon_bullet(args)
             bullet.components.transform.scale = { x = 0.25, y = 0.25, z = 0.25 }
             bullet.components.transform:set()
 
-            bullet.components[components.render_mesh].layer = 2
-            bullet.components[components.render_mesh].meshes_cout = 1
-            bullet.components[components.render_mesh].meshes = ({ args.mesh })
+            bullet.components.render_mesh.layer = 2
+            bullet.components.render_mesh.meshes_cout = 1
+            bullet.components.render_mesh.meshes = ({ args.mesh })
             mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
-            bullet.components[components.render_mesh].materials = ({ mat })
-            bullet.components[components.render_mesh]:set()
+            bullet.components.render_mesh.materials = ({ mat })
+            bullet.components.render_mesh:set()
             
             bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
             bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere

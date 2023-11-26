@@ -180,9 +180,9 @@ function shoot()
         duration = selected_wepom.data.animations["shoot"].duration,
     }
 
-    camera.components[components.audio_source].path = selected_wepom.shoot_sound
-    camera.components[components.audio_source].volume = 20
-    camera.components[components.audio_source]:set()
+    camera.components.audio_source.path = selected_wepom.shoot_sound
+    camera.components.audio_source.volume = 20
+    camera.components.audio_source:set()
     --selected_wepom.bullet_origens
 
     local bullet_start_points = {}

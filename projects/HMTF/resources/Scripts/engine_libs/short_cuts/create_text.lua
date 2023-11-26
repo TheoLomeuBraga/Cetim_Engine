@@ -12,11 +12,11 @@ function create_text(father,is_ui,pos,rot,sca,material,layer,text,font)
     ret.components.transform.scale = deepcopy(sca)
     ret.components.transform:set()
     
-    ret.components[components.render_text].layer = layer
-    ret.components[components.render_text].material = deepcopy(material)
-    ret.components[components.render_text].font = font
-    ret.components[components.render_text].text = text
-    ret.components[components.render_text]:set()
+    ret.components.render_text.layer = layer
+    ret.components.render_text.material = deepcopy(material)
+    ret.components.render_text.font = font
+    ret.components.render_text.text = text
+    ret.components.render_text:set()
     
     return ret
 end

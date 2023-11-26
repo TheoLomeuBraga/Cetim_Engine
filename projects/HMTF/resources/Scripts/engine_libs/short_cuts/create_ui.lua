@@ -112,21 +112,21 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     --style
 
     if category == 3 then
-        ret.text_obj.components[components.render_text].text_location_x = render_text_location.right
-        ret.text_obj.components[components.render_text].text_location_y = render_text_location.down
+        ret.text_obj.components.render_text.text_location_x = render_text_location.right
+        ret.text_obj.components.render_text.text_location_y = render_text_location.down
     else
-        ret.text_obj.components[components.render_text].text_location_x = render_text_location.center
-        ret.text_obj.components[components.render_text].text_location_y = render_text_location.center
+        ret.text_obj.components.render_text.text_location_x = render_text_location.center
+        ret.text_obj.components.render_text.text_location_y = render_text_location.center
     end
     
-    ret.text_obj.components[components.render_text].text = text
-    ret.text_obj.components[components.render_text].layer = layer
-    ret.text_obj.components[components.render_text]:set()
+    ret.text_obj.components.render_text.text = text
+    ret.text_obj.components.render_text.layer = layer
+    ret.text_obj.components.render_text:set()
 
-    ret.button_obj.components[components.render_shader].layer = layer
-    ret.button_obj.components[components.render_shader]:set()
+    ret.button_obj.components.render_shader.layer = layer
+    ret.button_obj.components.render_shader:set()
 
-    ret.button_obj.components[components.render_shader]:set()
+    ret.button_obj.components.render_shader:set()
 
     function ret:set_style(style)
         self.style = deepcopy(style)
@@ -149,10 +149,10 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             render_shader_mat.textures[1] = image
         end
 
-        self.button_obj.components[components.render_shader].material = deepcopy(render_shader_mat)
-        self.button_obj.components[components.render_shader]:set()
+        self.button_obj.components.render_shader.material = deepcopy(render_shader_mat)
+        self.button_obj.components.render_shader:set()
 
-        self.text_obj.components[components.render_text].font = self.style.text_font
+        self.text_obj.components.render_text.font = self.style.text_font
         
         if text ~= nil and text ~= "" then
             local render_text_mat = matreial:new()
@@ -160,11 +160,11 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             render_text_mat.color = deepcopy(self.style.text_color)
 
             
-            self.text_obj.components[components.render_text].material = deepcopy(render_text_mat)
+            self.text_obj.components.render_text.material = deepcopy(render_text_mat)
             
             
 
-            self.text_obj.components[components.render_text]:set()
+            self.text_obj.components.render_text:set()
         end
         
     end
@@ -172,8 +172,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     ret:set_style(style)
 
     function ret:set_text(new_text)
-        self.text_obj.components[components.render_text].text = new_text
-        self.text_obj.components[components.render_text]:set()
+        self.text_obj.components.render_text.text = new_text
+        self.text_obj.components.render_text:set()
         self.text = new_text
     end
 
@@ -200,28 +200,28 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             
     
             if  not self.hover then
-                self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color)
-                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color.r
-                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color.g
-                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color.b
-                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color.a
+                self.button_obj.components.render_shader.material.color = deepcopy(self.style.color)
+                self.button_obj.components.render_shader.material.inputs["border_color_x"] = self.style.border_color.r
+                self.button_obj.components.render_shader.material.inputs["border_color_y"] = self.style.border_color.g
+                self.button_obj.components.render_shader.material.inputs["border_color_z"] = self.style.border_color.b
+                self.button_obj.components.render_shader.material.inputs["border_color_w"] = self.style.border_color.a
             elseif  self.hover and not self.click then
-                self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_hover)
-                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color_hover.r
-                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color_hover.g
-                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color_hover.b
-                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color_hover.a
+                self.button_obj.components.render_shader.material.color = deepcopy(self.style.color_hover)
+                self.button_obj.components.render_shader.material.inputs["border_color_x"] = self.style.border_color_hover.r
+                self.button_obj.components.render_shader.material.inputs["border_color_y"] = self.style.border_color_hover.g
+                self.button_obj.components.render_shader.material.inputs["border_color_z"] = self.style.border_color_hover.b
+                self.button_obj.components.render_shader.material.inputs["border_color_w"] = self.style.border_color_hover.a
             elseif self.hover and  self.click then
-                self.button_obj.components[components.render_shader].material.color = deepcopy(self.style.color_click)
-                self.button_obj.components[components.render_shader].material.inputs["border_color_x"] = self.style.border_color_click.r
-                self.button_obj.components[components.render_shader].material.inputs["border_color_y"] = self.style.border_color_click.g
-                self.button_obj.components[components.render_shader].material.inputs["border_color_z"] = self.style.border_color_click.b
-                self.button_obj.components[components.render_shader].material.inputs["border_color_w"] = self.style.border_color_click.a
+                self.button_obj.components.render_shader.material.color = deepcopy(self.style.color_click)
+                self.button_obj.components.render_shader.material.inputs["border_color_x"] = self.style.border_color_click.r
+                self.button_obj.components.render_shader.material.inputs["border_color_y"] = self.style.border_color_click.g
+                self.button_obj.components.render_shader.material.inputs["border_color_z"] = self.style.border_color_click.b
+                self.button_obj.components.render_shader.material.inputs["border_color_w"] = self.style.border_color_click.a
             end
-            self.button_obj.components[components.render_shader]:set()
+            self.button_obj.components.render_shader:set()
         else
-            self.text_obj.components[components.render_text].text = self.text
-            self.text_obj.components[components.render_text]:set()
+            self.text_obj.components.render_text.text = self.text
+            self.text_obj.components.render_text:set()
         end
         
 
@@ -231,8 +231,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             end
             self.click_last_frame = self.click
 
-            self.text_obj.components[components.render_text].text = self.text
-            self.text_obj.components[components.render_text]:set()
+            self.text_obj.components.render_text.text = self.text
+            self.text_obj.components.render_text:set()
         end
 
         if self.category == 2 then
@@ -270,12 +270,12 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             
             
             if keyboard_text ~= "" then
-                self.text_obj.components[components.render_text].text = keyboard_text
+                self.text_obj.components.render_text.text = keyboard_text
             else
-                self.text_obj.components[components.render_text].text = self.text
+                self.text_obj.components.render_text.text = self.text
             end
             
-            self.text_obj.components[components.render_text]:set()
+            self.text_obj.components.render_text:set()
 
             self.insertion_mode_last_frame = self.insertion_mode
             self.click_last_frame = self.click

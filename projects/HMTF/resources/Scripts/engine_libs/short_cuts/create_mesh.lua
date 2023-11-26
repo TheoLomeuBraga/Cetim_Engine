@@ -13,10 +13,10 @@ function create_mesh(father,is_ui,pos,rot,sca,layer,mats,meshes_locations)
     ret.components.transform.scale = deepcopy(sca)
     ret.components.transform:set()
 
-    ret.components[components.render_mesh].layer = layer
-    ret.components[components.render_mesh].meshes_cout = math.min(tablelength(meshes_locations),tablelength(mats))
-    ret.components[components.render_mesh].meshes = deepcopy(meshes_locations)
-    ret.components[components.render_mesh].materials = deepcopy(mats)
-    ret.components[components.render_mesh]:set()
+    ret.components.render_mesh.layer = layer
+    ret.components.render_mesh.meshes_cout = math.min(tablelength(meshes_locations),tablelength(mats))
+    ret.components.render_mesh.meshes = deepcopy(meshes_locations)
+    ret.components.render_mesh.materials = deepcopy(mats)
+    ret.components.render_mesh:set()
     return ret
 end

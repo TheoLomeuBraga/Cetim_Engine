@@ -37,11 +37,11 @@ function START()
         mat.shader = "resources/Shaders/mesh"
         mat.textures[1] = "resources/Textures/white.png"
         mat.color = { r = 1, g = 0, b = 0, a = 1 }
-        this_object.components[components.render_mesh].layer = 2
-        this_object.components[components.render_mesh].meshes_cout = 1
-        this_object.components[components.render_mesh].meshes = ({ mesh })
-        this_object.components[components.render_mesh].materials = ({ mat })
-        this_object.components[components.render_mesh]:set()
+        this_object.components.render_mesh.layer = 2
+        this_object.components.render_mesh.meshes_cout = 1
+        this_object.components.render_mesh.meshes = ({ mesh })
+        this_object.components.render_mesh.materials = ({ mat })
+        this_object.components.render_mesh:set()
 
         time:get()
         this_object.components.transform:get()

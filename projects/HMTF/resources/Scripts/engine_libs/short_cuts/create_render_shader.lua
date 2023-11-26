@@ -12,8 +12,8 @@ function create_render_shader(father,is_ui,pos,rot,sca,layer,mat)
     ret.components.transform.scale = deepcopy(sca)
     ret.components.transform:set()
 
-    ret.components[components.render_shader].layer = layer
-    ret.components[components.render_shader].material = deepcopy(mat)
-    ret.components[components.render_shader]:set()
+    ret.components.render_shader.layer = layer
+    ret.components.render_shader.material = deepcopy(mat)
+    ret.components.render_shader:set()
     return ret
 end

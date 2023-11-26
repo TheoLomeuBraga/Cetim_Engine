@@ -15,11 +15,11 @@ function create_sprite(father,is_ui,pos,rot,sca,mat,layer,sprite_id,tileset_loca
 
     
     
-    ret.components[components.render_sprite].material = deepcopy(mat)
-    ret.components[components.render_sprite].layer = layer
-    ret.components[components.render_sprite].selected_tile = sprite_id
-    ret.components[components.render_sprite].tile_set_local = tileset_local
-    ret.components[components.render_sprite]:set()
+    ret.components.render_sprite.material = deepcopy(mat)
+    ret.components.render_sprite.layer = layer
+    ret.components.render_sprite.selected_tile = sprite_id
+    ret.components.render_sprite.tile_set_local = tileset_local
+    ret.components.render_sprite:set()
     
     
     return ret
