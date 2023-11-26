@@ -24,7 +24,7 @@ function base_component:new(object_ptr)
     self:clean()
     local ret = deepcopy(self)
     ret.object_ptr = object_ptr
-    return ret
+    return apply_component_metatable(ret)
 end
 function base_component:have()    
     return have_component(self.object_ptr, self.component_name)
