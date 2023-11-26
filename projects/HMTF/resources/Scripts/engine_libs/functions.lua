@@ -169,6 +169,7 @@ asset_types = {
     tile_map = 4,
     scene_3D = 5,
     audio = 6,
+    script = 7,
 }
 
 function new_asset_list_element(type,path)

@@ -271,13 +271,19 @@ std::string compileLuaFile(std::string path)
 	return "";
 }
 
+set<string> lua_scripts_loading_requests_files;
 mapeamento_assets<string> mapeamento_scripts_lua;
+std::mutex scripts_mtx;
 
 shared_ptr<string> carregar_script_lua(string local)
 {
-	if (mapeamento_scripts_lua.pegar(local) == NULL)
+	std::lock_guard<std::mutex> lock(scripts_mtx);
+	if (lua_scripts_loading_requests_files.find(local) == lua_scripts_loading_requests_files.end())
 	{
-		mapeamento_scripts_lua.aplicar(local, compileLuaFile(local));
+		if (mapeamento_scripts_lua.pegar(local) == NULL)
+		{
+			mapeamento_scripts_lua.aplicar(local, compileLuaFile(local));
+		}
 	}
 	return mapeamento_scripts_lua.pegar(local);
 }
@@ -855,6 +861,17 @@ namespace funcoes_ponte
 				loader.detach();
 			}
 		}
+		else if (asset_type == 7)
+		{
+			ret = mapeamento_scripts_lua.pegar(file_path) != NULL;
+			if (!ret && load && lua_scripts_loading_requests_files.find(file_path) == lua_scripts_loading_requests_files.end())
+			{
+				thread loader(carregar_script_lua, file_path);
+				loader.detach();
+			}
+		}
+
+		//
 
 		lua_pushboolean(L, ret);
 		return 1;
@@ -2655,7 +2672,8 @@ public:
 			}
 		}
 
-		if(shold_start){
+		if (shold_start)
+		{
 			iniciar();
 		}
 	}
