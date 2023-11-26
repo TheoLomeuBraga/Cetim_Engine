@@ -15,8 +15,8 @@ end
 
 function create_3D_audio(father,pos,music_path,loop,volume,min_distance,atenuation)
     ret = game_object(create_object(father)) 
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform]:set()
+    ret.components.transform.position = deepcopy(pos)
+    ret.components.transform:set()
     ret.components[components.audio_source].path = music_path
     ret.components[components.audio_source].loop = loop
     ret.components[components.audio_source].volume = volume

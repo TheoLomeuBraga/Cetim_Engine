@@ -74,7 +74,7 @@ function START()
 
     
     this_object = game_object(this_object_ptr)
-    this_object.components[components.transform]:change_rotation(0, 0, 0)
+    this_object.components.transform:change_rotation(0, 0, 0)
 
     this_physics_3d = this_object.components[components.physics_3D]
     this_physics_3d.boady_dynamic = boady_dynamics.kinematic
@@ -90,7 +90,7 @@ function START()
 
 
     direction_reference = game_object(this_object_ptr)
-    direction_reference.components[components.transform]:set()
+    direction_reference.components.transform:set()
 end
 
 speed = 12
@@ -156,8 +156,8 @@ end
 
 --[[
 function interact()
-    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
-    local ray_end_direction = camera.components[components.transform]:get_local_direction(0, 0, -10)
+    local ray_start = camera.components.transform:get_global_position(0, 0, 0)
+    local ray_end_direction = camera.components.transform:get_local_direction(0, 0, -10)
     local ray_end = {
         x = ray_start.x - ray_end_direction.x,
         y = ray_start.y - ray_end_direction.y,
@@ -171,8 +171,8 @@ function interact()
     if hit then
         local hit_object = game_object(hit_info.collision_object)
 
-        if hit_object.components ~= nil and hit_object.components[components.lua_scripts] ~= nil and hit_object.components[components.lua_scripts]:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
-            hit_object.components[components.lua_scripts]:call_function("game_scripts/mensage", "interact", {})
+        if hit_object.components ~= nil and hit_object.components.lua_scripts ~= nil and hit_object.components.lua_scripts:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
+            hit_object.components.lua_scripts:call_function("game_scripts/mensage", "interact", {})
         end
     end
 end
@@ -231,16 +231,16 @@ function UPDATE()
             return valid_touches
         end
 
-        this_object.components[components.transform]:get()
-        local pos = deepcopy(this_object.components[components.transform].position)
+        this_object.components.transform:get()
+        local pos = deepcopy(this_object.components.transform.position)
 
         --hit top
-        check_top.components[components.transform]:change_position(pos.x, pos.y + 1.75, pos.z)
+        check_top.components.transform:change_position(pos.x, pos.y + 1.75, pos.z)
         
         hit_top = get_valid_touches_top(check_top.components[components.physics_3D]:get_objects_coliding()) > 0
 
         --hit down
-        check_down.components[components.transform]:change_position(pos.x, pos.y - 1.75, pos.z)
+        check_down.components.transform:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches_down(check_down.components[components.physics_3D]:get_objects_coliding()) > 1
 
@@ -268,14 +268,14 @@ function UPDATE()
             local hit = false
             local hit_info = {}
             hit, hit_info = raycast_3D(
-                direction_reference.components[components.transform]:get_global_position(0, -1, 0),
-                direction_reference.components[components.transform]:get_global_position(0, -10, 0))
+                direction_reference.components.transform:get_global_position(0, -1, 0),
+                direction_reference.components.transform:get_global_position(0, -10, 0))
             if not hit or not hit_down then
                 hit_info.normal = { x = 0, y = 1, z = 0 }
             end
 
             --get movement direction
-            local input_dir = direction_reference.components[components.transform]:get_local_direction(inputs.foward, 0,-inputs.left)
+            local input_dir = direction_reference.components.transform:get_local_direction(inputs.foward, 0,-inputs.left)
             local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
@@ -339,8 +339,8 @@ function UPDATE()
             this_physics_3d:set_linear_velocity(0, 0, 0)
         end
 
-        camera.components[components.transform]:change_rotation(-camera_rotation.y, 0, 0)
-        this_object.components[components.transform]:change_rotation(0, camera_rotation.x, 0)
+        camera.components.transform:change_rotation(-camera_rotation.y, 0, 0)
+        this_object.components.transform:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data:get("pause") < 1
 
         this_physics_3d:get()

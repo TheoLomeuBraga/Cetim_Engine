@@ -19,9 +19,9 @@ end
 function COLLIDE(collision_info)
     if enable then
         local obj_colide = game_object(collision_info.collision_object)
-        if obj_colide.components ~= nil and obj_colide.components[components.lua_scripts] ~= nil and obj_colide.components[components.lua_scripts]:has_script("game_scripts/player/charter_movement") then
+        if obj_colide.components ~= nil and obj_colide.components.lua_scripts ~= nil and obj_colide.components.lua_scripts:has_script("game_scripts/player/charter_movement") then
             local core_obj = game_object(global_data:get_var("core_object_ptr"))
-            core_obj.components[components.lua_scripts]:call_function("core", "load_sceane", { passage_target })
+            core_obj.components.lua_scripts:call_function("core", "load_sceane", { passage_target })
             enable = false
         end
     end

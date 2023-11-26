@@ -37,7 +37,7 @@ function level:START()
     time:set_speed(0)
 
     core_obj = game_object(global_data:get_var("core_object_ptr"))
-    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
+    core_obj.components.lua_scripts:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
 
     
 
@@ -56,7 +56,7 @@ function level:START()
 
     coroutine.yield()
 
-    core_obj.components[components.lua_scripts]:call_function("core","set_load_image",{})
+    core_obj.components.lua_scripts:call_function("core","set_load_image",{})
 
     coroutine.yield()
     

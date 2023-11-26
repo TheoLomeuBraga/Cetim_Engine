@@ -7,11 +7,11 @@ function create_sprite(father,is_ui,pos,rot,sca,mat,layer,sprite_id,tileset_loca
     ret = game_object(create_object(father))
 
     
-    ret.components[components.transform].is_ui = is_ui
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
-    ret.components[components.transform]:set()
+    ret.components.transform.is_ui = is_ui
+    ret.components.transform.position = deepcopy(pos)
+    ret.components.transform.rotation = deepcopy(rot)
+    ret.components.transform.scale = deepcopy(sca)
+    ret.components.transform:set()
 
     
     

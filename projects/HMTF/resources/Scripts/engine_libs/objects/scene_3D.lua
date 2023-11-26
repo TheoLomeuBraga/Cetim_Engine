@@ -159,22 +159,22 @@ function apply_key_frame(game_objects_list, key_frame)
     for k, kfn in pairs(key_frame) do
 
         if kfn.has_position == 1 then
-            game_objects_list[kfn.target_id].components[components.transform].position = deepcopy(kfn.position)
-            game_objects_list[kfn.target_id].components[components.transform]:change_position(kfn.position.x,kfn.position.y,kfn.position.z)
+            game_objects_list[kfn.target_id].components.transform.position = deepcopy(kfn.position)
+            game_objects_list[kfn.target_id].components.transform:change_position(kfn.position.x,kfn.position.y,kfn.position.z)
             --print(kfn.position.x,kfn.position.y,kfn.position.z)
         end
 
         if kfn.has_rotation == 1 then
-            game_objects_list[kfn.target_id].components[components.transform].rotation = deepcopy(kfn.rotation)
-            game_objects_list[kfn.target_id].components[components.transform]:change_rotation(kfn.rotation.x,kfn.rotation.y,kfn.rotation.z)
+            game_objects_list[kfn.target_id].components.transform.rotation = deepcopy(kfn.rotation)
+            game_objects_list[kfn.target_id].components.transform:change_rotation(kfn.rotation.x,kfn.rotation.y,kfn.rotation.z)
         end
 
         if kfn.has_scale == 1 then
-            game_objects_list[kfn.target_id].components[components.transform].scale = deepcopy(kfn.scale)
-            game_objects_list[kfn.target_id].components[components.transform]:change_scale(kfn.scale.x,kfn.scale.y,kfn.scale.z)
+            game_objects_list[kfn.target_id].components.transform.scale = deepcopy(kfn.scale)
+            game_objects_list[kfn.target_id].components.transform:change_scale(kfn.scale.x,kfn.scale.y,kfn.scale.z)
         end
 
-        game_objects_list[kfn.target_id].components[components.transform]:set()
+        game_objects_list[kfn.target_id].components.transform:set()
 
     end
 end

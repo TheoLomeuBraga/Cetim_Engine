@@ -10,10 +10,10 @@ require("objects.collision_shapes")
 function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_mesh,triger)
     ret = game_object(create_object(father))
 
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy({x=1,y=1,z=1})
-    ret.components[components.transform]:set()
+    ret.components.transform.position = deepcopy(pos)
+    ret.components.transform.rotation = deepcopy(rot)
+    ret.components.transform.scale = deepcopy({x=1,y=1,z=1})
+    ret.components.transform:set()
 
     
     
@@ -38,8 +38,8 @@ function create_collision_3D(father, pos, rot, sca, rigid_boady,shape,cillision_
     ret.components[components.physics_3D].scale = (sca)
     ret.components[components.physics_3D]:set()
 
-    --ret.components[components.transform]:change_position(pos.x,pos.y,pos.z)
-    --ret.components[components.transform]:change_rotation(rot.x,rot.y,rot.z)
+    --ret.components.transform:change_position(pos.x,pos.y,pos.z)
+    --ret.components.transform:change_rotation(rot.x,rot.y,rot.z)
     
     return ret
 end
@@ -48,10 +48,10 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_dat
     ret = game_object(create_object(father))
 
     
-    ret.components[components.transform].position = deepcopy(pos)
-    ret.components[components.transform].rotation = deepcopy(rot)
-    ret.components[components.transform].scale = deepcopy(sca)
-    ret.components[components.transform]:set()
+    ret.components.transform.position = deepcopy(pos)
+    ret.components.transform.rotation = deepcopy(rot)
+    ret.components.transform.scale = deepcopy(sca)
+    ret.components.transform:set()
 
     
 
@@ -74,8 +74,8 @@ function create_collision_2D(father, pos, rot, sca, rigid_boady,shape,vertex_dat
     ret.components[components.physics_2D].triger = triger
     ret.components[components.physics_2D]:set()
 
-    --ret.components[components.transform]:change_position(pos.x,pos.y,pos.z)
-    --ret.components[components.transform]:change_rotation(rot.x,rot.y,rot.z)
+    --ret.components.transform:change_position(pos.x,pos.y,pos.z)
+    --ret.components.transform:change_rotation(rot.x,rot.y,rot.z)
     
     return ret
 end

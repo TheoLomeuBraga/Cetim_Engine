@@ -27,11 +27,11 @@ function START()
 
     this_object = game_object(this_object_ptr)
     
-    this_object.components[components.transform]:get()
-    current_pos = deepcopy(this_object.components[components.transform].position)
-    current_rot = { x = this_object.components[components.transform].rotation.x,
-        y = this_object.components[components.transform].rotation.y }
-    this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
+    this_object.components.transform:get()
+    current_pos = deepcopy(this_object.components.transform.position)
+    current_rot = { x = this_object.components.transform.rotation.x,
+        y = this_object.components.transform.rotation.y }
+    this_object.components.transform:change_rotation(current_rot.y, current_rot.x, 0)
 
     
 end
@@ -58,15 +58,15 @@ function run_rotation()
         current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
         current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
         current_rot.y = math.max(-90, math.min(90, current_rot.y))
-        this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
+        this_object.components.transform:change_rotation(current_rot.y, current_rot.x, 0)
         keys_axis:set_cursor_position(screen_center.x, screen_center.y)
     end
     ]]
     current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
     current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
     current_rot.y = math.max(-90, math.min(90, current_rot.y))
-    this_object.components[components.transform]:change_rotation(current_rot.y, current_rot.x, 0)
-    this_object.components[components.transform]:get()
+    this_object.components.transform:change_rotation(current_rot.y, current_rot.x, 0)
+    this_object.components.transform:get()
     keys_axis:set_cursor_position(screen_center.x, screen_center.y)
 
 end
@@ -83,20 +83,20 @@ function run_movement()
 
     speed = speed * speed_multplier
 
-    this_object.components[components.transform]:get()
-    current_pos = deepcopy(this_object.components[components.transform].position)
+    this_object.components.transform:get()
+    current_pos = deepcopy(this_object.components.transform.position)
 
     local additional_pos = { x = 0, y = 0, z = 0 }
 
     --X
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.w]) == 1 then
-        local dir = this_object.components[components.transform]:get_local_direction(0, 0, 1)
+        local dir = this_object.components.transform:get_local_direction(0, 0, 1)
         additional_pos.x = additional_pos.x + (dir.x * speed)
         additional_pos.y = additional_pos.y + (dir.y * speed)
         additional_pos.z = additional_pos.z + (dir.z * speed)
     end
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.s]) == 1 then
-        local dir = this_object.components[components.transform]:get_local_direction(0, 0, -1)
+        local dir = this_object.components.transform:get_local_direction(0, 0, -1)
         additional_pos.x = additional_pos.x + (dir.x * speed)
         additional_pos.y = additional_pos.y + (dir.y * speed)
         additional_pos.z = additional_pos.z + (dir.z * speed)
@@ -104,13 +104,13 @@ function run_movement()
 
     --Y
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.a]) == 1 then
-        local dir = this_object.components[components.transform]:get_local_direction(1, 0, 0)
+        local dir = this_object.components.transform:get_local_direction(1, 0, 0)
         additional_pos.x = additional_pos.x + (dir.x * speed)
         additional_pos.y = additional_pos.y + (dir.y * speed)
         additional_pos.z = additional_pos.z + (dir.z * speed)
     end
     if keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.d]) == 1 then
-        local dir = this_object.components[components.transform]:get_local_direction(-1, 0, 0)
+        local dir = this_object.components.transform:get_local_direction(-1, 0, 0)
         additional_pos.x = additional_pos.x + (dir.x * speed)
         additional_pos.y = additional_pos.y + (dir.y * speed)
         additional_pos.z = additional_pos.z + (dir.z * speed)
@@ -125,7 +125,7 @@ function run_movement()
     end
 
     --move
-    this_object.components[components.transform]:change_position(current_pos.x + additional_pos.x,
+    this_object.components.transform:change_position(current_pos.x + additional_pos.x,
     current_pos.y + additional_pos.y, current_pos.z + additional_pos.z)
 end
 

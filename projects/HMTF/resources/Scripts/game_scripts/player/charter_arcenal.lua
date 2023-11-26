@@ -139,9 +139,9 @@ inputs_last_frame = {}
 local movement_inpulse = { x = 0, y = 0, z = 0 }
 
 function get_charter_data()
-    hit_top = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement", "hit_top")
-    hit_down = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement", "hit_down")
-    movement_inpulse = this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement",
+    hit_top = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement", "hit_top")
+    hit_down = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement", "hit_down")
+    movement_inpulse = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement",
         "movement_inpulse")
 
 
@@ -152,7 +152,7 @@ end
 
 function START()
     this_object = game_object(this_object_ptr)
-    camera = game_object(this_object.components[components.lua_scripts]:get_variable("game_scripts/player/charter_movement","camera_ptr"))
+    camera = game_object(this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement","camera_ptr"))
 
 
     select_wepon(wepom_list.test_wepon)
@@ -191,12 +191,12 @@ function shoot()
         if i > #selected_wepom.bullet_origens then
             a = (i % #selected_wepom.bullet_origens) + 1
         end
-        bullet_start_points[a] = camera.components[components.transform]:get_global_position(
+        bullet_start_points[a] = camera.components.transform:get_global_position(
             selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
     end
 
-    local ray_start = camera.components[components.transform]:get_global_position(0, 0, 0)
-    local ray_end = camera.components[components.transform]:get_global_position(0, 0, 1000)
+    local ray_start = camera.components.transform:get_global_position(0, 0, 0)
+    local ray_end = camera.components.transform:get_global_position(0, 0, 1000)
     local hit = false
     local hit_info = {}
     hit, hit_info = raycast_3D(ray_start, ray_end)
@@ -208,10 +208,10 @@ function shoot()
     end
 
     for i = 1, selected_wepom.projectile_count, 1 do
-        local spred_direction = camera.components[components.transform]:get_local_direction(0, 0, 1)
+        local spred_direction = camera.components.transform:get_local_direction(0, 0, 1)
 
         if selected_wepom.spred > 0 then
-            spred_direction = camera.components[components.transform]:get_local_direction(
+            spred_direction = camera.components.transform:get_local_direction(
                 (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
         end
 

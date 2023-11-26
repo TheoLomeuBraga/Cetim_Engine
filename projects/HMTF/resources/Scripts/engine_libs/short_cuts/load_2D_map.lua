@@ -29,10 +29,10 @@ function load_2D_map(father,pos,rot,sca,tile_map_path,tile_set_path,mat)
 
     --map_object
     ret.map_object = game_object(create_object(father))
-    ret.map_object.components[components.transform].position = deepcopy(pos)
-    ret.map_object.components[components.transform].rotation = deepcopy(rot)
-    ret.map_object.components[components.transform].scale = deepcopy(sca)
-    ret.map_object.components[components.transform]:set()
+    ret.map_object.components.transform.position = deepcopy(pos)
+    ret.map_object.components.transform.rotation = deepcopy(rot)
+    ret.map_object.components.transform.scale = deepcopy(sca)
+    ret.map_object.components.transform:set()
     
     ret.map_object.components[components.render_tile_map].render_tilemap_only_layer = -1
     ret.map_object.components[components.render_tile_map].tile_map_local = tile_map_path

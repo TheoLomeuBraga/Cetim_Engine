@@ -87,24 +87,24 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
     --transform
     function ret:set_transform( pos, sca)
-        self.main_obj.components[components.transform].is_ui = true
-        self.button_obj.components[components.transform].is_ui = true
-        self.text_obj.components[components.transform].is_ui = true
+        self.main_obj.components.transform.is_ui = true
+        self.button_obj.components.transform.is_ui = true
+        self.text_obj.components.transform.is_ui = true
 
-        self.button_obj.components[components.transform].position = deepcopy(pos)
-        self.button_obj.components[components.transform].scale = deepcopy(sca)
+        self.button_obj.components.transform.position = deepcopy(pos)
+        self.button_obj.components.transform.scale = deepcopy(sca)
 
         if category == 3 then
-            self.text_obj.components[components.transform].position = {x= pos.x+(sca.x * style.border_size / 2),y=pos.y + (sca.y * style.border_size / 2),z=0}
+            self.text_obj.components.transform.position = {x= pos.x+(sca.x * style.border_size / 2),y=pos.y + (sca.y * style.border_size / 2),z=0}
         else
-            self.text_obj.components[components.transform].position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y - (text_size / 2),z=0}
+            self.text_obj.components.transform.position = {x= (sca.x / 2) + pos.x,y=-(sca.y / 2) + pos.y - (text_size / 2),z=0}
         end
         
-        self.text_obj.components[components.transform].scale = {x=text_size,y=text_size,z=text_size}
+        self.text_obj.components.transform.scale = {x=text_size,y=text_size,z=text_size}
 
-        self.main_obj.components[components.transform]:set()
-        self.button_obj.components[components.transform]:set()
-        self.text_obj.components[components.transform]:set()
+        self.main_obj.components.transform:set()
+        self.button_obj.components.transform:set()
+        self.text_obj.components.transform:set()
     end
 
     ret:set_transform( pos, sca)
@@ -186,11 +186,11 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 y = keys_axis:get_input(input_devices.mouse, "normalized_y"),
             }
     
-            self.button_obj.components[components.transform]:get()
-            local pos  = deepcopy(self.button_obj.components[components.transform].position)
+            self.button_obj.components.transform:get()
+            local pos  = deepcopy(self.button_obj.components.transform.position)
             pos.x      = (pos.x + 1) / 2
             pos.y      = 1 - ((pos.y + 1) / 2) 
-            local sca  = deepcopy(self.button_obj.components[components.transform].scale)
+            local sca  = deepcopy(self.button_obj.components.transform.scale)
             sca.x      = sca.x / 2
             sca.y      = sca.y / 2
             

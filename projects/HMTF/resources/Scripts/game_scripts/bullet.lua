@@ -44,10 +44,10 @@ function START()
         this_object.components[components.render_mesh]:set()
 
         time:get()
-        this_object.components[components.transform]:get()
-        local pos = (this_object.components[components.transform].position)
+        this_object.components.transform:get()
+        local pos = (this_object.components.transform.position)
         local next_pos = { x = pos.x + (direction.x * speed * time.delta ) + (base_inpulse.x * time.delta), y = pos.y + (direction.y * speed * time.delta) + (base_inpulse.y * time.delta),z = pos.z + (direction.z * speed * time.delta) + (base_inpulse.z * time.delta) }
-        this_object.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
+        this_object.components.transform:change_position(next_pos.x, next_pos.y, next_pos.z)
 
 
         this_object.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
@@ -69,10 +69,10 @@ function UPDATE()
     time:get()
 
     
-    this_object.components[components.transform]:get()
-    local pos =  (this_object.components[components.transform].position)
+    this_object.components.transform:get()
+    local pos =  (this_object.components.transform.position)
     local next_pos = {x=(pos.x + (direction.x * speed * time.delta)) + (base_inpulse.x * time.delta),y=(pos.y + (direction.y * speed * time.delta)) + (base_inpulse.y * time.delta),z=(pos.z + (direction.z * speed * time.delta)) + (base_inpulse.z * time.delta)}
-    this_object.components[components.transform]:change_position(next_pos.x,next_pos.y,next_pos.z)
+    this_object.components.transform:change_position(next_pos.x,next_pos.y,next_pos.z)
     
     
     

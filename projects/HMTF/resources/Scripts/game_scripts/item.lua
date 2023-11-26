@@ -56,7 +56,7 @@ local is_player_touch = function(objs_touching)
 
             end
 
-            --obj_touching.components[components.lua_scripts]:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
+            --obj_touching.components.lua_scripts:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
             charter_data.functions.play_pick_up_sound({item_type})
 
             
@@ -76,7 +76,7 @@ function UPDATE()
     if rotate then
         time:get()
 
-        this_object.components[components.transform]:change_rotation(0,rotation,0)
+        this_object.components.transform:change_rotation(0,rotation,0)
         rotation = rotation + (time.delta * time.scale * 180)
     end
 end

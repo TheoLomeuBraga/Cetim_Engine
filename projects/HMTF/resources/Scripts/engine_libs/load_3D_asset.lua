@@ -46,10 +46,10 @@ function load_3D_asset(father, render_layer, object_3D)
         if object_type == nil then
             ret = game_object(create_object(father))
             ret.name = object_3D.name
-            ret.components[components.transform].position = deepcopyjson(object_3D.position)
-            ret.components[components.transform].rotation = deepcopyjson(object_3D.rotation)
-            ret.components[components.transform].scale = deepcopyjson(object_3D.scale)
-            ret.components[components.transform]:set()
+            ret.components.transform.position = deepcopyjson(object_3D.position)
+            ret.components.transform.rotation = deepcopyjson(object_3D.rotation)
+            ret.components.transform.scale = deepcopyjson(object_3D.scale)
+            ret.components.transform:set()
         elseif object_type == "player_start" then
             test_3D_game.camera = assets_from_map.player(test_3D_game.objects_layesrs.camera, deepcopyjson(object_3D.position), deepcopyjson(object_3D.rotation))
             --test_3D_game.camera = assets_from_map.free_camera(test_3D_game.objects_layesrs.camera, Vec3:new(-object_3D.position.x,object_3D.position.y,-object_3D.position.z), deepcopyjson(object_3D.rotation))

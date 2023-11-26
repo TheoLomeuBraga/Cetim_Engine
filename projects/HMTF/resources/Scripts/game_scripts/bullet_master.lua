@@ -72,8 +72,8 @@ function UPDATE()
 
         local bullet = bullets_list[key].object
 
-        bullet.components[components.transform]:get()
-        local next_pos = (bullet.components[components.transform].position)
+        bullet.components.transform:get()
+        local next_pos = (bullet.components.transform.position)
 
         next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta * time.scale
         next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta * time.scale
@@ -88,7 +88,7 @@ function UPDATE()
         next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta * time.scale
         next_pos.z = next_pos.z + (bullets_list[key].direction.z * bullets_list[key].speed) * time.delta * time.scale
 
-        bullet.components[components.transform]:change_position(next_pos.x, next_pos.y, next_pos.z)
+        bullet.components.transform:change_position(next_pos.x, next_pos.y, next_pos.z)
 
         if bullets_list[key].timer <= 0 then
             remove_object(bullets_list[key].object.object_ptr)
@@ -126,10 +126,10 @@ function summon_bullet(args)
         else
             local bullet = game_object(create_object(layers.cenary))
 
-            bullet.components[components.transform].position = (args.pos)
-            bullet.components[components.transform].rotation = { x = 0, y = 0, z = 0 }
-            bullet.components[components.transform].scale = { x = 0.25, y = 0.25, z = 0.25 }
-            bullet.components[components.transform]:set()
+            bullet.components.transform.position = (args.pos)
+            bullet.components.transform.rotation = { x = 0, y = 0, z = 0 }
+            bullet.components.transform.scale = { x = 0.25, y = 0.25, z = 0.25 }
+            bullet.components.transform:set()
 
             bullet.components[components.render_mesh].layer = 2
             bullet.components[components.render_mesh].meshes_cout = 1

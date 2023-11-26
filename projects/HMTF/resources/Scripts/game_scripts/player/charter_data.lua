@@ -18,15 +18,10 @@ consumables = {}
 
 function play_pick_up_sound(args)
     
-   
-    
-    
     this_object = game_object(this_object_ptr)
-    local au = this_object.components.audio
+    local au = this_object.components.audio_source
     au:get()
     au.volume = 20
-    
-    
 
     if args[1] == "key" then
 

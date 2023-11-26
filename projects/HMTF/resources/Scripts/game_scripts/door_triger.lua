@@ -26,10 +26,10 @@ end
 
 function get_valid_touches()
     for key, value in pairs(this_physics_3d:get_objects_coliding()) do
-
+        
         local obj = game_object(value)
 
-        if obj.components[components.lua_scripts] ~= nil and obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
+        if obj.components.lua_scripts ~= nil and obj.components.lua_scripts:has_script("game_scripts/player/charter_data") then
 
             
 
@@ -37,9 +37,10 @@ function get_valid_touches()
 
                 return true
 
-            elseif obj.components[components.lua_scripts]:has_script("game_scripts/player/charter_data") then
-
-                local keys = obj.components[components.lua_scripts]:get_variable("game_scripts/player/charter_data", "keys")
+            elseif obj.components.lua_scripts:has_script("game_scripts/player/charter_data") then
+                
+                deepprint(obj.components.lua_scripts.scripts)
+                local keys = obj.components.lua_scripts.scripts["game_scripts/player/charter_data"].variables.keys
                 
                 for key, value in pairs(keys) do
 

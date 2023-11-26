@@ -11,10 +11,10 @@ menu = {
     open = function()
         if menu.obj == nil then
             menu.obj = game_object(create_object(global_data:get_var("layers").hud))
-            menu.obj.components[components.transform]:set()
+            menu.obj.components.transform:set()
             
-            menu.obj.components[components.lua_scripts]:add_script("game_scripts/menus")
-            menu.obj.components[components.lua_scripts]:set_variable("game_scripts/menus", "menu_selectred", "pause")
+            menu.obj.components.lua_scripts:add_script("game_scripts/menus")
+            menu.obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selectred", "pause")
         end
     end,
 
@@ -33,7 +33,7 @@ loading_screen = {
 
     open = function()
         loading_screen.obj = game_object(global_data:get_var("core_object_ptr"))
-        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image",
+        loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image",
             { path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
         loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 },
             90, 0.1, 1000)
@@ -49,14 +49,14 @@ loading_screen = {
             Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
 
 
-        loading_screen.obj.components[components.lua_scripts]:add_script("game_scripts/loading_sreen_script")
-        loading_screen.obj.components[components.lua_scripts]:set_variable("game_scripts/loading_sreen_script",
+        loading_screen.obj.components.lua_scripts:add_script("game_scripts/loading_sreen_script")
+        loading_screen.obj.components.lua_scripts:set_variable("game_scripts/loading_sreen_script",
             "obj_ptr_to_rotate", loading_screen.spin_obj.object_ptr)
     end,
 
     close = function()
-        loading_screen.obj.components[components.lua_scripts]:call_function("core", "set_load_image", {})
-        loading_screen.obj.components[components.lua_scripts]:remove_script("game_scripts/loading_sreen_script")
+        loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image", {})
+        loading_screen.obj.components.lua_scripts:remove_script("game_scripts/loading_sreen_script")
         remove_object(loading_screen.cam.object_ptr)
         remove_object(loading_screen.spin_obj.object_ptr)
     end,
@@ -75,16 +75,16 @@ cenary_builders = {
         entity_ptr_list[part_data.id] = ret.object_ptr
 
         
-        ret.components[components.transform].position = deepcopy(part_data.position)
-        ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+        ret.components.transform.position = deepcopy(part_data.position)
+        ret.components.transform.rotation = deepcopy(part_data.rotation)
 
         if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
-            ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+            ret.components.transform.scale = Vec3:new(1, 1, 1)
         else
-            ret.components[components.transform].scale = deepcopy(part_data.scale)
+            ret.components.transform.scale = deepcopy(part_data.scale)
         end
 
-        ret.components[components.transform]:set()
+        ret.components.transform:set()
 
         for key, value in pairs(part_data.materials) do
             part_data.materials[key].shader = shader
@@ -148,16 +148,16 @@ cenary_builders = {
         scene_ptr_list[part_data.id] = ret.object_ptr
 
         
-        ret.components[components.transform].position = deepcopy(part_data.position)
-        ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+        ret.components.transform.position = deepcopy(part_data.position)
+        ret.components.transform.rotation = deepcopy(part_data.rotation)
 
         if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
-            ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+            ret.components.transform.scale = Vec3:new(1, 1, 1)
         else
-            ret.components[components.transform].scale = deepcopy(part_data.scale)
+            ret.components.transform.scale = deepcopy(part_data.scale)
         end
 
-        ret.components[components.transform]:set()
+        ret.components.transform:set()
 
         local add_physics = function(rb, is_triger)
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
@@ -212,16 +212,16 @@ cenary_builders = {
             scene_ptr_list[part_data.id] = ret2.object_ptr
 
             
-            ret2.components[components.transform].position = deepcopy(part_data.position)
-            ret2.components[components.transform].rotation = deepcopy(part_data.rotation)
+            ret2.components.transform.position = deepcopy(part_data.position)
+            ret2.components.transform.rotation = deepcopy(part_data.rotation)
 
             if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
-                ret2.components[components.transform].scale = Vec3:new(1, 1, 1)
+                ret2.components.transform.scale = Vec3:new(1, 1, 1)
             else
-                ret2.components[components.transform].scale = deepcopy(part_data.scale)
+                ret2.components.transform.scale = deepcopy(part_data.scale)
             end
 
-            ret2.components[components.transform]:set()
+            ret2.components.transform:set()
         end
 
         if part_data.variables.type == "test_poly_mesh" then
@@ -244,13 +244,13 @@ cenary_builders = {
             add_physics(true, false)
             add_mesh(nil)
         elseif part_data.variables.type == "item" then
-            ret.components[components.transform].position = deepcopy(part_data.position)
-            ret.components[components.transform].rotation = deepcopy(part_data.rotation)
+            ret.components.transform.position = deepcopy(part_data.position)
+            ret.components.transform.rotation = deepcopy(part_data.rotation)
 
             if part_data.scale.x == 0 and part_data.scale.y == 0 and part_data.scale.z == 0 then
-                ret.components[components.transform].scale = Vec3:new(1, 1, 1)
+                ret.components.transform.scale = Vec3:new(1, 1, 1)
             else
-                ret.components[components.transform].scale = deepcopy(part_data.scale)
+                ret.components.transform.scale = deepcopy(part_data.scale)
             end
 
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
@@ -275,12 +275,12 @@ cenary_builders = {
 
 
             
-            ret.components[components.lua_scripts]:add_script("game_scripts/item")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_type",part_data.variables.item_type)
-            ret.components[components.lua_scripts]:set_variable("game_scripts/item", "item_name",part_data.variables.item_name)
+            ret.components.lua_scripts:add_script("game_scripts/item")
+            ret.components.lua_scripts:set_variable("game_scripts/item", "item_type",part_data.variables.item_type)
+            ret.components.lua_scripts:set_variable("game_scripts/item", "item_name",part_data.variables.item_name)
 
             if part_data.variables.amount ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/item", "amount",part_data.variables.amount)
+                ret.components.lua_scripts:set_variable("game_scripts/item", "amount",part_data.variables.amount)
             end
             
             
@@ -290,17 +290,17 @@ cenary_builders = {
 
         elseif part_data.variables.type == "camera" then
             
-            ret.components[components.camera]:set()
+            ret.components.camera:set()
         elseif part_data.variables.type == "player_start" then
             
             ret.components[components.physics_3D].get_collision_info = true
             ret.components[components.physics_3D]:set()
 
             
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_movement")
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_data")
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_interaction")
-            ret.components[components.lua_scripts]:add_script("game_scripts/player/charter_arcenal")
+            ret.components.lua_scripts:add_script("game_scripts/player/charter_movement")
+            ret.components.lua_scripts:add_script("game_scripts/player/charter_data")
+            ret.components.lua_scripts:add_script("game_scripts/player/charter_interaction")
+            ret.components.lua_scripts:add_script("game_scripts/player/charter_arcenal")
 
             change_ret()
 
@@ -325,33 +325,33 @@ cenary_builders = {
 
             add_mesh(nil)
         elseif part_data.variables.type == "mensage" then
-            ret.components[components.lua_scripts]:add_script("game_scripts/mensage")
+            ret.components.lua_scripts:add_script("game_scripts/mensage")
 
             local mensage = part_data.variables.mensage
             local mensage_index = part_data.variables.mensage_index
             if mensage_index ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/mensage", "mensage_index",
+                ret.components.lua_scripts:set_variable("game_scripts/mensage", "mensage_index",
                     mensage_index)
             elseif mensage ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/mensage", "mensage", mensage)
+                ret.components.lua_scripts:set_variable("game_scripts/mensage", "mensage", mensage)
             end
 
             add_mesh(nil)
             add_physics(false, false)
         elseif part_data.variables.type == "passage" then
-            ret.components[components.lua_scripts]:add_script("game_scripts/passage")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/passage", "passage_target",
+            ret.components.lua_scripts:add_script("game_scripts/passage")
+            ret.components.lua_scripts:set_variable("game_scripts/passage", "passage_target",
                 part_data.variables.passage_target)
 
             add_mesh(nil)
             add_physics(false, true)
         elseif part_data.variables.type == "door_triger" then
-            ret.components[components.lua_scripts]:add_script("game_scripts/door_triger")
-            ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "triger_target",
+            ret.components.lua_scripts:add_script("game_scripts/door_triger")
+            ret.components.lua_scripts:set_variable("game_scripts/door_triger", "triger_target",
                 part_data.variables.triger_target)
 
             if part_data.variables.key ~= nil then
-                ret.components[components.lua_scripts]:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
+                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
             end
 
 
