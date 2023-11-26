@@ -11,17 +11,23 @@
 #include <thread>
 #include <mutex>
 
+
+
 mapeamento_assets<sf::SoundBuffer> buffers_som_sfml;
+
+std::set<std::string> sfml_loading_requests_files = {};
 std::mutex buffers_som_sfml_mtx;
 
 shared_ptr<sf::SoundBuffer> carregar_audio_buffer_sfml(string local)
 {
 	std::lock_guard<std::mutex> lock(buffers_som_sfml_mtx);
+	sfml_loading_requests_files.insert(local);
 	if (buffers_som_sfml.pegar(local) == NULL)
 	{
 		buffers_som_sfml.aplicar(local, sf::SoundBuffer());
 		buffers_som_sfml.pegar(local)->loadFromFile(local);
 	}
+	sfml_loading_requests_files.erase(local);
 	return buffers_som_sfml.pegar(local);
 }
 

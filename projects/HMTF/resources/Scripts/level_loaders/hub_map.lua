@@ -21,6 +21,8 @@ local assets_needed = {
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
     new_asset_list_element(asset_types.image,"resources/Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
+
+    
     
 }
 

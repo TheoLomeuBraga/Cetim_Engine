@@ -54,3 +54,4 @@ function audio_component:set()
 end
 
 component_map[components.audio_source] = apply_component_metatable(audio_component:new(nil))
+component_map[components.audio] = apply_component_metatable(audio_component:new(nil))

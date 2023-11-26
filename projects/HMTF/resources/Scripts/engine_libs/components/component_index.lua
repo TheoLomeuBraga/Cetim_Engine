@@ -10,6 +10,7 @@ components = {
     physics_2D = "physics_2D",
     physics_3D = "physics_3D",
     audio_source = "audio_source",
+    audio = "audio_source",
     lua_scripts = "lua_scripts",
     render_poly_mesh = "render_poly_mesh",
 }
@@ -24,5 +25,6 @@ render_mesh = "render_mesh"
 physics_2D = "physics_2D"
 physics_3D = "physics_3D"
 audio_source = "audio_source"
+audio = "audio_source"
 lua_scripts = "lua_scripts"
 render_poly_mesh = "render_poly_mesh"

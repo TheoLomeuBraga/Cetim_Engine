@@ -846,6 +846,15 @@ namespace funcoes_ponte
 				loader.detach();
 			}
 		}
+		else if (asset_type == 6)
+		{
+			ret = buffers_som_sfml.pegar(file_path) != NULL;
+			if (!ret && load && sfml_loading_requests_files.find(file_path) != sfml_loading_requests_files.end())
+			{
+				thread loader(carregar_audio_buffer_sfml, file_path);
+				loader.detach();
+			}
+		}
 
 		lua_pushboolean(L, ret);
 		return 1;

@@ -68,7 +68,7 @@ namespace ManuseioDados
 		return nomeArquivo + "." + novaExtensao; // Se não houver extensão, adiciona a nova extensão
 	}
 
-	std::map<std::string, char> loading_requests_files = {};
+	std::set<std::string> loading_requests_files = {};
 
 	bool has_loading_request(std::string file)
 	{
@@ -82,7 +82,7 @@ namespace ManuseioDados
 	void add_loading_request(std::string file)
 	{
 		loading_requests_no += 1;
-		loading_requests_files.insert(pair<std::string, char>(file, 0));
+		loading_requests_files.insert(file);
 	}
 
 	void remove_loading_request(std::string file)

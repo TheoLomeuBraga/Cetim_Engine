@@ -22,7 +22,7 @@ function play_pick_up_sound(args)
     
     
     this_object = game_object(this_object_ptr)
-    local au = this_object.components.audio_source
+    local au = this_object.components.audio
     au:get()
     au.volume = 20
     
