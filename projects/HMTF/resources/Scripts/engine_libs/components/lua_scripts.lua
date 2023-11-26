@@ -87,8 +87,8 @@ function lua_scripts_component:call_function(script_name, function_name, args_ta
 end
 
 function lua_scripts_component:has_script(script)
-    self.scripts = deepcopyjson(c_get_lua_component(self.object_ptr).scripts)
-    for key, value in pairs(self.scripts) do
+    local scrs = deepcopyjson(c_get_lua_component(self.object_ptr).scripts)
+    for key, value in pairs(scrs) do
         if script == value then
             return true
         end

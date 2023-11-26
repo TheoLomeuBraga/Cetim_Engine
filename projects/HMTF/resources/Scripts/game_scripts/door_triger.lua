@@ -39,7 +39,7 @@ function get_valid_touches()
 
             elseif obj.components.lua_scripts:has_script("game_scripts/player/charter_data") then
                 
-                deepprint(obj.components.lua_scripts.scripts)
+                
                 local keys = obj.components.lua_scripts.scripts["game_scripts/player/charter_data"].variables.keys
                 
                 for key, value in pairs(keys) do
