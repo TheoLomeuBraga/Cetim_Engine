@@ -67,9 +67,6 @@ local scene_ptr_list = {}
 
 cenary_builders = {
 
-    yield_count_down_total_time = 5,
-    yield_count_down = 5,
-
     entity_part = function(father, layer, part_data, shader, use_oclusion, yield)
         local ret = game_object(create_object(father))
         entity_ptr_list[part_data.id] = ret.object_ptr
@@ -104,11 +101,7 @@ cenary_builders = {
 
 
         if yield == true then
-            cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
-            if cenary_builders.yield_count_down < 1 then
-                coroutine.yield()
-                cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-            end
+            coroutine.yield()
         end
 
         for key, value in pairs(part_data.children) do
@@ -126,7 +119,6 @@ cenary_builders = {
         }
 
         if yield == nil then yield = false end
-        cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         local entity_parts = cenary_builders.entity_part(father, layer, ceane_data.objects, shader, use_oclusion, yield)
 
         ret.obj = deepcopy(entity_parts)
@@ -362,11 +354,7 @@ cenary_builders = {
         end
 
         if yield == true then
-            cenary_builders.yield_count_down = cenary_builders.yield_count_down - 1
-            if cenary_builders.yield_count_down < 0 then
-                coroutine.yield()
-                cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
-            end
+            coroutine.yield()
         end
 
         for key, value in pairs(part_data.children) do
@@ -399,7 +387,6 @@ cenary_builders = {
 
 
         --if yield == nil then yield = false end
-        cenary_builders.yield_count_down = cenary_builders.yield_count_down_total_time
         ret.obj = deepcopy(cenary_builders.scene_part(father, layer, ceane_data.objects, yield))
         ret.parts_ptr_list = deepcopy(scene_ptr_list)
         for key, value in pairs(ret.parts_ptr_list) do

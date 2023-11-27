@@ -16,16 +16,27 @@ local level = {
 core_obj = {}
 
 local assets_needed = {
-    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/hub/hub.gltf"),
+    
     new_asset_list_element(asset_types.image,"resources/Textures/loading.png"),
-    new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
+    
     new_asset_list_element(asset_types.image,"resources/Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
+    new_asset_list_element(asset_types.scene_3D,"resources/3D Models/arm_cannon.gltf"),
+    new_asset_list_element(asset_types.scene_3D,"resources/Levels/3D/hub/hub.gltf"),
 
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/jump.wav"),
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_1.wav"),
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_2.wav"),
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_3.wav"),
+
+    new_asset_list_element(asset_types.script,"game_scripts/player/charter_arcenal"),
+    new_asset_list_element(asset_types.script,"game_scripts/player/charter_data"),
+    new_asset_list_element(asset_types.script,"game_scripts/player/charter_interaction"),
+    new_asset_list_element(asset_types.script,"game_scripts/player/charter_movement"),
+
+    
+    new_asset_list_element(asset_types.script,"game_scripts/door_triger"),
+    new_asset_list_element(asset_types.script,"game_scripts/item"),
     
 }
 
@@ -58,9 +69,13 @@ function level:START()
     cenary_builders.cenary = create_object(layers.cenary)
 
     coroutine.yield()
+
+    print("A")
     
     scene_data = cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
     
+    print("B")
+
     coroutine.yield()
     time:set_speed(1)
     

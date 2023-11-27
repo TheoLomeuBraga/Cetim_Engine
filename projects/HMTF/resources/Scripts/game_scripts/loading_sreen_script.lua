@@ -18,7 +18,7 @@ local sw = stopwatch:new()
 function UPDATE()
     time:get()
 
-
+    
     
     if obj_to_rotate ~= nil then
         obj_to_rotate.components.transform:get()
