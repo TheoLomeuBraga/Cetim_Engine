@@ -2433,6 +2433,8 @@ void load_base_lua_state(lua_State *L, string path)
 
 	thread cct(load_script_thread, path, &compiledCode);
 
+	
+
 	luaL_openlibs(L);
 
 	// configurar diretorio
@@ -2458,6 +2460,8 @@ void load_base_lua_state(lua_State *L, string path)
 	}
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
+
+	
 
 	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
