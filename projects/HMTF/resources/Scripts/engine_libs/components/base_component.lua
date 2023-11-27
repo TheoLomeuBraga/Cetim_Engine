@@ -2,14 +2,13 @@ base_component = {}
 base_component.component_name = ""
 base_component.object_ptr = ""
 
-local metatable_component = {
-    __call = function (self,object_ptr)
-        return self:new(object_ptr)
-    end
-}
-
 function apply_component_metatable(component)
-    setmetatable(component,metatable_component)
+    setmetatable(component,{
+        __call = function (self,object_ptr)
+            add_component(object_ptr, self.component_name)
+            return self:new(object_ptr)
+        end
+    })
     return component
 end
 
