@@ -256,12 +256,28 @@ std::string compileLuaFile(std::string path)
 		}
 
 		std::stringstream compiledScript;
+
+		#ifdef USE_LUA_JIT
+
+		if (lua_dump(L, writerFunction, &compiledScript) != 0)
+		{
+			std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
+			lua_close(L);
+			return "";
+		}
+
+		#else
+
 		if (lua_dump(L, writerFunction, &compiledScript, 0) != 0)
 		{
 			std::cerr << "Error: Failed to dump compiled Lua script" << std::endl;
 			lua_close(L);
 			return "";
 		}
+
+		#endif
+		
+		
 
 		lua_close(L);
 
