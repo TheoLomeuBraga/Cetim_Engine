@@ -355,9 +355,15 @@ cenary_builders = {
             add_mesh(nil)
         end
 
+        print("A",part_data.name)
+        if #part_data.materials > 0 and #part_data.materials[1].textures then
+            print(part_data.materials[1].textures[1])
+        end
+        
         if yield == true then
             coroutine.yield()
         end
+        print("B")
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
