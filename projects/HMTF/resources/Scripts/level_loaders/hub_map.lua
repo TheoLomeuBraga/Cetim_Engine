@@ -18,6 +18,8 @@ core_obj = {}
 local assets_needed = {
     
     new_asset_list_element(asset_types.image,"resources/Textures/loading.png"),
+    new_asset_list_element(asset_types.image,"resources/Textures/null.png"),
+    new_asset_list_element(asset_types.image,"resources/Textures/null.svg"),
     
     new_asset_list_element(asset_types.image,"resources/Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.scene_3D,"resources/3D Models/bullets.gltf"),
@@ -35,6 +37,8 @@ local assets_needed = {
     new_asset_list_element(asset_types.script,"game_scripts/player/charter_movement"),
 
     
+
+    new_asset_list_element(asset_types.script,"game_scripts/mensage"),
     new_asset_list_element(asset_types.script,"game_scripts/door_triger"),
     new_asset_list_element(asset_types.script,"game_scripts/item"),
     
@@ -69,12 +73,8 @@ function level:START()
     cenary_builders.cenary = create_object(layers.cenary)
 
     coroutine.yield()
-
-    print("A")
     
     scene_data = cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
-    
-    print("B")
 
     coroutine.yield()
     time:set_speed(1)

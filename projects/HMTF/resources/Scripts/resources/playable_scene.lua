@@ -134,6 +134,8 @@ cenary_builders = {
     scene_poly_meshes = {},
 
     scene_part = function(father, layer, part_data, yield)
+
+        --print(part_data.name)
         local ret = {}
         ret = game_object(create_object(father))
 

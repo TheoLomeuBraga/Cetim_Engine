@@ -238,7 +238,7 @@ namespace gltf_loader
                 }
                 else
                 {
-                    std::string bufferPath = baseDir + "/" + uri;
+                    std::string bufferPath = baseDir + uri;
                     std::ifstream bufferFile(bufferPath, std::ios::binary);
                     if (!bufferFile.is_open())
                     {
@@ -699,7 +699,7 @@ namespace gltf_loader
 
                         if (imageJson.find("uri") != imageJson.end())
                         {
-                            texture.uri = baseDir + "/" + imageJson["uri"].get<std::string>();
+                            texture.uri = baseDir + imageJson["uri"].get<std::string>();
                         }
                         else if (imageJson.find("name") != imageJson.end())
                         {
