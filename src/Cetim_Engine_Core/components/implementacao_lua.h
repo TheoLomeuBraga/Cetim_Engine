@@ -2641,7 +2641,7 @@ public:
 	void atualisar()
 	{
 
-		// Benchmark_Timer bt("update_lua_scripts");
+		//Benchmark_Timer bt("update_lua_scripts");
 
 		// iniciar();
 
