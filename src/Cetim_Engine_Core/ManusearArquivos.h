@@ -906,11 +906,12 @@ namespace ManuseioDados
 			importar_map_thread(local, r);
 		}
 	}
-
+	
 	size_t skin_count = 0;
 
 	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader, gltf_loader::Mesh m, string file_path)
 	{
+		
 		std::vector<malha> ret;
 		bool add_skin_count = false;
 
@@ -1011,7 +1012,7 @@ namespace ManuseioDados
 		{
 			skin_count++;
 		}
-
+		
 		return ret;
 	}
 
@@ -1123,6 +1124,8 @@ namespace ManuseioDados
 
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
+
+		skin_count = 0;
 		cena_3D ret;
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)

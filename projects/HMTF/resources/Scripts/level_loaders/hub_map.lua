@@ -88,13 +88,9 @@ function level:START()
     
     loading_screen.close()
 
-    print("F")
-
     camera = {}
 
     global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
-
-    print("G")
 
     --global_data:set_var("level_data",level.scene_3D_data)
     
