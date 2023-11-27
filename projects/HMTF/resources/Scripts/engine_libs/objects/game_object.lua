@@ -33,16 +33,10 @@ end
 local componenta_meta_table = {
     __index = function(self, key)
         add_component(self.__object_ptr__, key)
-        local ret = component_map[key]:new(self.__object_ptr__)
+        local ret = component_map[key](self.__object_ptr__)
         rawset(self, key, ret)
         return ret
     end,
-    __newindex = function(self, key, value)
-        add_component(self.__object_ptr__, key)
-        local ret = value
-        rawset(self, key, ret)
-        return ret
-    end
 }
 
 game_object = {}
@@ -79,7 +73,7 @@ function game_object:new(object_ptr, not_recreate)
         for key, value in pairs(components) do
             if self:have_component(value) then
                 --self.components[value] = component_map[value].new(component_map[value],self.object_ptr)
-                self.components[value] = component_map[value](component_map[value],self.object_ptr)
+                self.components[value] = component_map[value](self.object_ptr)
             end
         end
     end
@@ -107,7 +101,7 @@ function game_object:new(object_ptr, not_recreate)
 
             for i, v in pairs(components) do
                 if self:have_component(v) then
-                    self.components[v] = component_map[v]:new(self.object_ptr)
+                    self.components[v] = component_map[v](self.object_ptr)
                     self.components[v]:get()
                 end
             end
