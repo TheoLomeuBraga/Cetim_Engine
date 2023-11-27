@@ -187,7 +187,9 @@ function stop_coroutine_if_is_not_loaded(asset_list)
     end
 
     for key, value in pairs(asset_list) do
+        --print(value.path)
         while not is_loaded(value.type,value.path,false) do
+            
             coroutine.yield()
         end
     end

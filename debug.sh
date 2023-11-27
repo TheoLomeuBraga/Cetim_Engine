@@ -1,5 +1,5 @@
 export LD_LIBRARY_PATH=$(pwd)/libs/linux
-gdb $(pwd)/build/engine_theo_master_pice
+gdb $(pwd)/build/cetim_engine
 c
 y
 set auto-solib-add off
@@ -8,20 +8,20 @@ c
 y
 backtrace
 
-gprof -p $(pwd)/build/engine_theo_master_pice $(pwd)/projects/HMTF/gmon.out > relatorio.txt
+gprof -p $(pwd)/build/cetim_engine $(pwd)/projects/HMTF/gmon.out > relatorio.txt
 
 
 
 
 
 export PATH="$HOME/.local/bin:$PATH"
-gprof $(pwd)/build/engine_theo_master_pice | gprof2dot | dot -Tpng -o output.png
+gprof $(pwd)/build/cetim_engine | gprof2dot | dot -Tpng -o output.png
 
 
 #windows
-$(pwd)/build/engine_theo_master_pice.exe C:\\Theo_Master_Pice\\projects\\HMTF
+$(pwd)/build/cetim_engine.exe C:\\Theo_Master_Pice\\projects\\HMTF
 
-gdb $(pwd)/build/engine_theo_master_pice
+gdb $(pwd)/build/cetim_engine
 c
 set auto-solib-add off
 run C:\Theo_Master_Peace\projects\HMTF

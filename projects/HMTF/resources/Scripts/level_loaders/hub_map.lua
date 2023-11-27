@@ -63,12 +63,17 @@ function level:START()
     loading_screen.open()
 
     coroutine.yield()
-    --coroutine.yield()
+    
+    --print("stop_coroutine_if_is_not_loaded start")
 
     stop_coroutine_if_is_not_loaded(assets_needed)
 
+    --print("stop_coroutine_if_is_not_loaded end")
+
     coroutine.yield()
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/hub/hub.gltf")
+
+    
 
     coroutine.yield()
 
@@ -83,9 +88,13 @@ function level:START()
     
     loading_screen.close()
 
+    print("F")
+
     camera = {}
 
     global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
+
+    print("G")
 
     --global_data:set_var("level_data",level.scene_3D_data)
     
