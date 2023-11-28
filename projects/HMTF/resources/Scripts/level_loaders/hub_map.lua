@@ -92,15 +92,15 @@ function level:START()
 
     --print("GGGGG")
     
-    loading_screen.close()
-
-    time:set_speed(1)
+    
 
     camera = {}
 
     global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
 
-    --global_data:set_var("level_data",level.scene_3D_data)
+    loading_screen.close()
+
+    time:set_speed(1)
     
 end
 
