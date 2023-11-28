@@ -69,6 +69,7 @@ void ShutdownImGui() {
 #include "init_lib_functions.h"
 #include "render_mesh.h"
 #include <bitset>
+#include "table_conversors.h"
 
 #include "ecs/ecs.h"
 #include "ecs/ecs_components_systems/ecs_name.h"

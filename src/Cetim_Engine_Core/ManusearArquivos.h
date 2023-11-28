@@ -1274,12 +1274,15 @@ namespace ManuseioDados
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".map", importar_map),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_gltf),
 	};
+
+	
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
 	{
 
 		if (ManuseioDados::Existe(local))
 		{
-			return funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
+			shared_ptr<cena_3D> ret = funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
+			return ret;
 		}
 		else
 		{

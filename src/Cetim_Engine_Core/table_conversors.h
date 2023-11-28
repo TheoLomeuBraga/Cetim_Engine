@@ -497,3 +497,20 @@ Table scene_3D_table(cena_3D sceane)
     ret.setTable("extra", sceane.extras);
     return ret;
 }
+
+
+unordered_map<shared_ptr<cena_3D>,Table> scene_3D_table_cache;
+Table scene_3D_table_with_cache(shared_ptr<cena_3D> sceane){
+    if(scene_3D_table_cache.find(sceane) == scene_3D_table_cache.end()){
+        scene_3D_table_cache[sceane] = scene_3D_table(*sceane.get());
+    }
+    return scene_3D_table_cache[sceane];
+}
+
+void register_scene_3D_table(shared_ptr<cena_3D> sceane){
+    scene_3D_table_with_cache(sceane);
+}
+
+void clean_scene_3D_table_cache(){
+    scene_3D_table_cache.clear();
+}

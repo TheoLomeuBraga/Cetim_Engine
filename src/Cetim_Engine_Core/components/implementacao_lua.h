@@ -811,6 +811,7 @@ namespace funcoes_ponte
 		ManuseioDados::mapeamento_tile_map_infos.limpar_lixo();
 		ManuseioDados::cenas_3D.limpar_lixo();
 		mapeamento_scripts_lua.limpar_lixo();
+		clean_scene_3D_table_cache();
 		return 0;
 	}
 
@@ -2203,9 +2204,9 @@ namespace funcoes_ponte
 		Table ret;
 		string path = lua_tostring(L, 1);
 		
-		cena_3D scene = *ManuseioDados::carregar_modelo_3D(path).get();
+		shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(path);
 
-		ret = scene_3D_table(scene);
+		ret = scene_3D_table_with_cache(scene);
 
 		lua_pushtable(L, ret);
 		
