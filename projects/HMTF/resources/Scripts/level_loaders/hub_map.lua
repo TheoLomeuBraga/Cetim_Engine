@@ -70,6 +70,8 @@ function level:START()
 
     --print("stop_coroutine_if_is_not_loaded end")
 
+    --print("CCCCC")
+
     coroutine.yield()
     level.scene_3D_data = get_scene_3D("resources/Levels/3D/hub/hub.gltf")
 
@@ -77,16 +79,23 @@ function level:START()
 
     coroutine.yield()
 
+    --print("DDDDD")
     cenary_builders.cenary = create_object(layers.cenary)
 
     coroutine.yield()
     
     scene_data = cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
 
+    --print("FFFFF")
+
     coroutine.yield()
-    time:set_speed(1)
+    
+
+    --print("GGGGG")
     
     loading_screen.close()
+
+    time:set_speed(1)
 
     camera = {}
 

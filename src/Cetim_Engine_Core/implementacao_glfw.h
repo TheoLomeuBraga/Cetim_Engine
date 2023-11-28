@@ -566,7 +566,6 @@ void Reindenizar()
 	cena_objetos_selecionados->atualisar();
 	cena_objetos_selecionados->atualisar_transforms();
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-
 	reindenizar_cenario();
 
 	for (function<void()> f : Depois_Render_Func)
@@ -693,9 +692,7 @@ void loop_janela()
 	// Tempo::tempUltFrameRender = t;
 
 	Tempo::FPS = 1 / Tempo::varTempRender;
-
 	Reindenizar();
-
 	glfwPollEvents();
 
 	// Swap buffers

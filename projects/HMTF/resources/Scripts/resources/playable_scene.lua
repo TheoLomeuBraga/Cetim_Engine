@@ -135,10 +135,10 @@ cenary_builders = {
 
     scene_part = function(father, layer, part_data, yield)
 
-        --print(part_data.name)
+        
         local ret = {}
         ret = game_object(create_object(father))
-
+        
         scene_ptr_list[part_data.id] = ret.object_ptr
 
         
@@ -152,6 +152,8 @@ cenary_builders = {
         end
 
         ret.components.transform:set()
+
+        
 
         local add_physics = function(rb, is_triger)
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
@@ -183,6 +185,7 @@ cenary_builders = {
         end
 
         local add_mesh = function(color)
+            
             if part_data.meshes ~= nil and part_data.materials ~= nil then
                 if color ~= nil then
                     for key, value in pairs(part_data.materials) do
@@ -354,16 +357,12 @@ cenary_builders = {
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end
-
-        --print("A",part_data.name)
-        --if #part_data.materials > 0 and #part_data.materials[1].textures then
-        --    print(part_data.materials[1].textures[1])
-        --end
         
         if yield == true then
+            
             coroutine.yield()
         end
-        --print("B")
+        
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
