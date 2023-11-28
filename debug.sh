@@ -19,12 +19,12 @@ gprof $(pwd)/build/cetim_engine | gprof2dot | dot -Tpng -o output.png
 
 
 #windows
-$(pwd)/build/cetim_engine.exe C:\\Theo_Master_Pice\\projects\\HMTF
+$(pwd)/build/cetim_engine.exe C:\\Cetim_Engine\\projects\\HMTF
 
 gdb $(pwd)/build/cetim_engine
 c
 set auto-solib-add off
-run C:\Theo_Master_Peace\projects\HMTF
+run C:\Cetim_Engine\projects\HMTF
 c
 y
 backtrace
