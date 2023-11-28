@@ -308,10 +308,10 @@ Table info_camada_table(info_camada ic)
 Table colis_info_table(colis_info col)
 {
     Table ret;
-    //ret.setString("object", ponteiro_string(col.obj));
+    // ret.setString("object", ponteiro_string(col.obj));
     ret.setString("collision_object", ponteiro_string(col.cos_obj));
-    //ret.setFloat("triger", col.sensor);
-    //ret.setFloat("colliding", col.colidindo);
+    // ret.setFloat("triger", col.sensor);
+    // ret.setFloat("colliding", col.colidindo);
     ret.setFloat("distance", col.distancia);
     ret.setTable("position", vec3_table(col.pos));
     ret.setFloat("speed", col.velocidade);
@@ -407,113 +407,91 @@ Table scene_3D_table(cena_3D sceane)
 
     ret.setString("path", sceane.nome);
 
-    vector<Table> meshes;
-    auto convert_meshes = [=](vector<Table> &meshes,Table &ret){
-        for (pair<string, shared_ptr<malha>> p : sceane.malhas)
-    {
-        Table this_mesh;
-        this_mesh.setString("file", p.second->arquivo_origem);
-        this_mesh.setString("name", p.second->nome);
-        meshes.push_back(this_mesh);
-    }
-    ret.setTable("meshes", vTable_table(meshes));
-    };
-    thread t1(convert_meshes,std::ref(meshes),std::ref(ret));
-    
-
-    vector<Table> materials;
-    auto convert_materials = [=](vector<Table> &materials,Table &ret){
-        for (pair<string, Material> p : sceane.materiais)
-    {
-        materials.push_back(material_table(p.second));
-    }
-    ret.setTable("materials", vTable_table(materials));
-    };
-    thread t2(convert_materials,std::ref(materials),std::ref(ret));
-    
-
-    vector<string> textures;
-    auto convetr_textures = [=](vector<string> &textures,Table &ret){
-        for (pair<string, shared_ptr<imagem>> p : sceane.texturas)
-    {
-        textures.push_back(p.first);
-    }
-    ret.setTable("textures", vString_table(textures));
-    };
-    thread t3(convetr_textures,std::ref(textures),std::ref(ret));
-    
-    
     vector<Table> animations;
     Table animations_map;
-    for (pair<string, animacao> p : sceane.animacoes)
-    {
-        Table animation;
 
-        animation.setString("name", p.second.nome);
-        animation.setFloat("start_time", p.second.start_time);
-        animation.setFloat("duration", p.second.duration);
-        
-        /*
-        vector<Table> key_frame_set_table;
-        for (vector<key_frame> kfs : p.second.keyFrames)
+    auto convert_animations = [=](vector<Table> &animations, Table &animations_map, Table &ret)
+    {
+        for (pair<string, animacao> p : sceane.animacoes)
         {
-            vector<Table> key_frames_table;
-            for (key_frame kf : kfs)
-            {
-                Table kf_table;
+            Table animation;
 
-                kf_table.setFloat("target_id", kf.object_id + 1);
-
-                kf_table.setFloat("has_position", kf.has_position);
-                kf_table.setFloat("has_scale", kf.has_scale);
-                kf_table.setFloat("has_rotation", kf.has_rotation);
-
-                kf_table.setTable("position", vec3_table(kf.position));
-                kf_table.setTable("scale", vec3_table(kf.scale));
-                kf_table.setTable("rotation", vec3_table(quat_graus(kf.rotation)));
-
-                key_frames_table.push_back(kf_table);
-            }
-            key_frame_set_table.push_back(vTable_table(key_frames_table));
+            animation.setString("name", p.second.nome);
+            animation.setFloat("start_time", p.second.start_time);
+            animation.setFloat("duration", p.second.duration);
+            animations.push_back(animation);
         }
-        animation.setTable("key_frames", vTable_table(key_frame_set_table));
-        */
 
-        animations.push_back(animation);
-    }
-    for (Table t : animations)
+        for (Table t : animations)
+        {
+            animations_map.setTable(t.getString("name"), t);
+        }
+    }; 
+    thread t4(convert_animations, std::ref(animations), std::ref(animations_map), std::ref(ret));
+
+    vector<Table> meshes;
+    auto convert_meshes = [=](vector<Table> &meshes, Table &ret)
     {
-        animations_map.setTable(t.getString("name"), t);
-    }
-    ret.setTable("animations", animations_map);
+        for (pair<string, shared_ptr<malha>> p : sceane.malhas)
+        {
+            Table this_mesh;
+            this_mesh.setString("file", p.second->arquivo_origem);
+            this_mesh.setString("name", p.second->nome);
+            meshes.push_back(this_mesh);
+        }
+        ret.setTable("meshes", vTable_table(meshes));
+    };
+    thread t1(convert_meshes, std::ref(meshes), std::ref(ret));
 
+    vector<Table> materials;
+    auto convert_materials = [=](vector<Table> &materials, Table &ret)
+    {
+        for (pair<string, Material> p : sceane.materiais)
+        {
+            materials.push_back(material_table(p.second));
+        }
+        ret.setTable("materials", vTable_table(materials));
+    };
+    thread t2(convert_materials, std::ref(materials), std::ref(ret));
+
+    vector<string> textures;
+    auto convetr_textures = [=](vector<string> &textures, Table &ret)
+    {
+        for (pair<string, shared_ptr<imagem>> p : sceane.texturas)
+        {
+            textures.push_back(p.first);
+        }
+        ret.setTable("textures", vString_table(textures));
+    };
+    thread t3(convetr_textures, std::ref(textures), std::ref(ret));
 
     t1.join();
     t2.join();
     t3.join();
-    //t4.join();
+    t4.join();
 
-    
-    
-
+    ret.setTable("animations", animations_map);
     ret.setTable("objects", object_3D_table(sceane.objetos));
     ret.setTable("extra", sceane.extras);
     return ret;
 }
 
-
-unordered_map<shared_ptr<cena_3D>,Table> scene_3D_table_cache;
-Table scene_3D_table_with_cache(shared_ptr<cena_3D> sceane){
-    if(scene_3D_table_cache.find(sceane) == scene_3D_table_cache.end()){
+unordered_map<shared_ptr<cena_3D>, Table> scene_3D_table_cache;
+Table scene_3D_table_with_cache(shared_ptr<cena_3D> sceane)
+{
+    if (scene_3D_table_cache.find(sceane) == scene_3D_table_cache.end())
+    {
         scene_3D_table_cache[sceane] = scene_3D_table(*sceane.get());
     }
     return scene_3D_table_cache[sceane];
 }
 
-void register_scene_3D_table(shared_ptr<cena_3D> sceane){
+void register_scene_3D_table(shared_ptr<cena_3D> sceane)
+{
     scene_3D_table_with_cache(sceane);
 }
 
-void clean_scene_3D_table_cache(){
+void clean_scene_3D_table_cache()
+{
     scene_3D_table_cache.clear();
 }
