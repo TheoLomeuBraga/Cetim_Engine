@@ -442,7 +442,7 @@ Table scene_3D_table(cena_3D sceane)
     };
     thread t3(convetr_textures,std::ref(textures),std::ref(ret));
     
-
+    
     vector<Table> animations;
     Table animations_map;
     for (pair<string, animacao> p : sceane.animacoes)
@@ -452,7 +452,8 @@ Table scene_3D_table(cena_3D sceane)
         animation.setString("name", p.second.nome);
         animation.setFloat("start_time", p.second.start_time);
         animation.setFloat("duration", p.second.duration);
-
+        
+        /*
         vector<Table> key_frame_set_table;
         for (vector<key_frame> kfs : p.second.keyFrames)
         {
@@ -476,6 +477,7 @@ Table scene_3D_table(cena_3D sceane)
             key_frame_set_table.push_back(vTable_table(key_frames_table));
         }
         animation.setTable("key_frames", vTable_table(key_frame_set_table));
+        */
 
         animations.push_back(animation);
     }
@@ -484,6 +486,7 @@ Table scene_3D_table(cena_3D sceane)
         animations_map.setTable(t.getString("name"), t);
     }
     ret.setTable("animations", animations_map);
+
 
     t1.join();
     t2.join();
