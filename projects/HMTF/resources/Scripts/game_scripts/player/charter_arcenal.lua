@@ -88,10 +88,13 @@ end
 
 local bullet_start_pos_id = 1
 function select_wepon(wepon)
+    
     bullet_start_pos_id = 1
+    
     local wepon_data = get_scene_3D(wepon.file)
+    
+    
     local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/mesh",false, false)
-    --local objects = cenary_builders.scene(camera.object_ptr, 4, wepon_data, false)
 
     current_animation_state = {
         name = "pick_up",
@@ -139,10 +142,9 @@ inputs_last_frame = {}
 local movement_inpulse = { x = 0, y = 0, z = 0 }
 
 function get_charter_data()
-    hit_top = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement", "hit_top")
-    hit_down = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement", "hit_down")
-    movement_inpulse = this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement",
-        "movement_inpulse")
+    hit_top = this_object.components.lua_scripts.scripts["game_scripts/player/charter_movement"].variables.hit_top
+    hit_down = this_object.components.lua_scripts.scripts["game_scripts/player/charter_movement"].variables.hit_down
+    hit_down = this_object.components.lua_scripts.scripts["game_scripts/player/charter_movement"].variables.movement_inpulse
 
 
 
@@ -151,13 +153,16 @@ function get_charter_data()
 end
 
 function START()
+
+    
     this_object = game_object(this_object_ptr)
     camera = game_object(this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement","camera_ptr"))
+    get_charter_data()
 
-
+    
     select_wepon(wepom_list.test_wepon)
 
-    get_charter_data()
+    
 end
 
 

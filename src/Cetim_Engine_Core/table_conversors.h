@@ -6,6 +6,7 @@
 
 #include <nlohmann/json.hpp>
 #include <unordered_map>
+#include <thread>
 
 using json = nlohmann::json;
 
@@ -407,7 +408,8 @@ Table scene_3D_table(cena_3D sceane)
     ret.setString("path", sceane.nome);
 
     vector<Table> meshes;
-    for (pair<string, shared_ptr<malha>> p : sceane.malhas)
+    auto convert_meshes = [=](vector<Table> &meshes,Table &ret){
+        for (pair<string, shared_ptr<malha>> p : sceane.malhas)
     {
         Table this_mesh;
         this_mesh.setString("file", p.second->arquivo_origem);
@@ -415,20 +417,31 @@ Table scene_3D_table(cena_3D sceane)
         meshes.push_back(this_mesh);
     }
     ret.setTable("meshes", vTable_table(meshes));
+    };
+    thread t1(convert_meshes,std::ref(meshes),std::ref(ret));
+    
 
     vector<Table> materials;
-    for (pair<string, Material> p : sceane.materiais)
+    auto convert_materials = [=](vector<Table> &materials,Table &ret){
+        for (pair<string, Material> p : sceane.materiais)
     {
         materials.push_back(material_table(p.second));
     }
     ret.setTable("materials", vTable_table(materials));
+    };
+    thread t2(convert_materials,std::ref(materials),std::ref(ret));
+    
 
     vector<string> textures;
-    for (pair<string, shared_ptr<imagem>> p : sceane.texturas)
+    auto convetr_textures = [=](vector<string> &textures,Table &ret){
+        for (pair<string, shared_ptr<imagem>> p : sceane.texturas)
     {
         textures.push_back(p.first);
     }
     ret.setTable("textures", vString_table(textures));
+    };
+    thread t3(convetr_textures,std::ref(textures),std::ref(ret));
+    
 
     vector<Table> animations;
     Table animations_map;
@@ -471,6 +484,11 @@ Table scene_3D_table(cena_3D sceane)
         animations_map.setTable(t.getString("name"), t);
     }
     ret.setTable("animations", animations_map);
+
+    t1.join();
+    t2.join();
+    t3.join();
+    //t4.join();
 
     
     

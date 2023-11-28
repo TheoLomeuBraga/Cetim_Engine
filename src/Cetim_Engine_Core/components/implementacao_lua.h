@@ -2202,11 +2202,13 @@ namespace funcoes_ponte
 	{
 		Table ret;
 		string path = lua_tostring(L, 1);
-
+		
 		cena_3D scene = *ManuseioDados::carregar_modelo_3D(path).get();
 
 		ret = scene_3D_table(scene);
+
 		lua_pushtable(L, ret);
+		
 		return 1;
 	}
 
@@ -2623,6 +2625,8 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
+			//print({p.first,"start"});
+
 			// pair<string, lua_State *> p = pairs[i];
 
 			if (!scripts_lua_iniciados[p.first])
@@ -2636,6 +2640,7 @@ public:
 				lua_call(p.second, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
 			}
+			//print({p.first,"end"});
 		}
 	}
 	void atualisar()
@@ -2655,8 +2660,9 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
+			
 			// pair<string, lua_State *> p = pairs[i];
-
+			
 			if (scripts_lua_iniciados[p.first])
 			{
 
@@ -2690,6 +2696,7 @@ public:
 			{
 				shold_start = true;
 			}
+			
 		}
 
 		if (shold_start)
