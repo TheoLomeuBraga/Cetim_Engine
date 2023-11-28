@@ -21,7 +21,7 @@ gprof $(pwd)/build/cetim_engine | gprof2dot | dot -Tpng -o output.png
 #windows
 $(pwd)/build/cetim_engine.exe C:\\Cetim_Engine\\projects\\HMTF
 
-gdb $(pwd)/build/cetim_engine
+gdb $(pwd)/build/cetim_engine.exe
 c
 set auto-solib-add off
 run C:\Cetim_Engine\projects\HMTF
