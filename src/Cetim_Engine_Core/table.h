@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <map>
 
 class Table {
 public:
     std::unordered_map<std::string, float> m_floatMap;
     std::unordered_map<std::string, std::string> m_stringMap;
-    std::unordered_map<std::string, Table> m_tableMap;
+    std::map<std::string, Table> m_tableMap;
 
     bool haveFloat(const std::string& key){
         if(m_floatMap.find(key) != m_floatMap.end()){return true;}else{return false;}

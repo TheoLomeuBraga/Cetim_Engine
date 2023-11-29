@@ -1,3 +1,4 @@
+#include <sstream>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <nlohmann/json.hpp>
@@ -5,7 +6,7 @@ using json = nlohmann::json;
 #include <fstream>
 #include <vector>
 #include <map>
-
+#include <string>
 #include <iostream>
 
 #define AAAAA std::cout << "AAAAA\n";

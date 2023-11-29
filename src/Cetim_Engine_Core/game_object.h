@@ -114,7 +114,7 @@ public:
 		instancias += 1;
 	}
 
-	objeto_jogo(bool en_cena)
+	objeto_jogo(bool em_cena)
 	{
 		instancias += 1;
 		this->em_cena = em_cena;

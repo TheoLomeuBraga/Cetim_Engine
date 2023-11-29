@@ -1,6 +1,15 @@
 #pragma once
 
+
 #include <iostream>
+#include <codecvt>
+#include <cstdint>
+#include <fstream>
+#include <iomanip>
+#include <string>
+#include <locale>
+
+
 #include <functional>
 using namespace std;
 
@@ -18,6 +27,14 @@ enum render_text_location
 	RIGHT = 5
 
 };
+
+std::wstring convert_to_wstring(const std::string& text) {
+    // Cria um objeto de conversão de caracteres de UTF-8 para UTF-16
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+
+    // Converte a string UTF-8 para wstring UTF-16
+    return converter.from_bytes(text);
+}
 
 class render_texto : public componente
 {
@@ -174,8 +191,7 @@ public:
 
 	void set_text_by_string(string text)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		texto = converter.from_bytes(text.c_str());
+		texto = convert_to_wstring(text);
 	}
 
 	render_texto() {}

@@ -1,4 +1,5 @@
 #pragma once
+#include <sstream>
 #include <math.h>
 #include <vector>
 #include <fstream>
