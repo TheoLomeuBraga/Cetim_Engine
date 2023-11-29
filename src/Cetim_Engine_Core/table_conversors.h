@@ -497,5 +497,6 @@ void register_scene_3D_table(shared_ptr<cena_3D> sceane)
 
 void clean_scene_3D_table_cache()
 {
+    std::lock_guard<std::mutex> lock(scene_3D_table_cache_mtx);
     scene_3D_table_cache.clear();
 }
