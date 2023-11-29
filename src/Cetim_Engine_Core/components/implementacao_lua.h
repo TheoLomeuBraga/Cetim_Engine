@@ -865,7 +865,13 @@ namespace funcoes_ponte
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
 			if (!ret && load && !ManuseioDados::has_loading_request(file_path))
 			{
-				thread loader(ManuseioDados::carregar_modelo_3D, file_path);
+				//thread loader(ManuseioDados::carregar_modelo_3D, file_path);
+				//loader.detach();
+				auto load_3D_model = [=](){
+					register_scene_3D_table(ManuseioDados::carregar_modelo_3D(file_path));
+					//ManuseioDados::carregar_modelo_3D(file_path);
+				};
+				thread loader(load_3D_model);
 				loader.detach();
 			}
 		}

@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <thread>
+#include <mutex>
 
 using json = nlohmann::json;
 
@@ -418,7 +419,7 @@ Table scene_3D_table(cena_3D sceane)
 
             animation.setString("name", p.second.nome);
             animation.setFloat("start_time", p.second.start_time);
-            animation.setFloat("duration", p.second.duration);
+            animation.setFloat("duration", p.second.duration); 
             animations.push_back(animation);
         }
 
@@ -477,8 +478,11 @@ Table scene_3D_table(cena_3D sceane)
 }
 
 unordered_map<shared_ptr<cena_3D>, Table> scene_3D_table_cache;
+std::mutex scene_3D_table_cache_mtx;
+
 Table scene_3D_table_with_cache(shared_ptr<cena_3D> sceane)
 {
+    std::lock_guard<std::mutex> lock(scene_3D_table_cache_mtx);
     if (scene_3D_table_cache.find(sceane) == scene_3D_table_cache.end())
     {
         scene_3D_table_cache[sceane] = scene_3D_table(*sceane.get());
