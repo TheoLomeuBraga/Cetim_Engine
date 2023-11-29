@@ -227,6 +227,8 @@ function shoot()
 end
 
 function UPDATE()
+
+    
     
     if global_data:get("pause") < 1 then
         time:get()

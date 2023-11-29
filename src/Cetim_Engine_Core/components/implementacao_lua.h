@@ -865,11 +865,8 @@ namespace funcoes_ponte
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
 			if (!ret && load && !ManuseioDados::has_loading_request(file_path))
 			{
-				//thread loader(ManuseioDados::carregar_modelo_3D, file_path);
-				//loader.detach();
 				auto load_3D_model = [=](){
 					register_scene_3D_table(ManuseioDados::carregar_modelo_3D(file_path));
-					//ManuseioDados::carregar_modelo_3D(file_path);
 				};
 				thread loader(load_3D_model);
 				loader.detach();
@@ -2207,14 +2204,9 @@ namespace funcoes_ponte
 
 	int get_scene_3D(lua_State *L)
 	{
-		Table ret;
 		string path = lua_tostring(L, 1);
-		
-		shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(path);
 
-		ret = scene_3D_table_with_cache(scene);
-
-		lua_pushtable(L, ret);
+		lua_pushtable(L, scene_3D_table_with_cache(ManuseioDados::carregar_modelo_3D(path)));
 		
 		return 1;
 	}
