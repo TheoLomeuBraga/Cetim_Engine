@@ -207,7 +207,7 @@ namespace gltf_loader
         }
 
         // Get base directory from the file path
-        baseDir = std::filesystem::path(filename).parent_path().string();
+        baseDir = std::filesystem::__cxx11::path(filename).parent_path().string();
         if (!baseDir.empty())
         {
             baseDir += "/";

@@ -7,7 +7,7 @@
 #include "scene.h"
 #include "game_object.h"
 #include "transform.h"
-
+#include <filesystem>
 #include <thread>
 #include <mutex>
 
@@ -25,7 +25,7 @@ shared_ptr<sf::SoundBuffer> carregar_audio_buffer_sfml(string local)
 	if (buffers_som_sfml.pegar(local) == NULL)
 	{
 		buffers_som_sfml.aplicar(local, sf::SoundBuffer());
-		buffers_som_sfml.pegar(local)->loadFromFile(local);
+		buffers_som_sfml.pegar(local)->loadFromFile(local.c_str());
 	}
 	sfml_loading_requests_files.erase(local);
 	return buffers_som_sfml.pegar(local);
@@ -51,7 +51,7 @@ public:
 	// https://www.sfml-dev.org/tutorials/2.5/audio-spatialization.php
 
 	audio_info info;
-	sf::Sound som;
+	shared_ptr<sf::Sound> som;
 	shared_ptr<sf::SoundBuffer> buffer;
 
 	shared_ptr<transform_> tf = NULL;
@@ -60,21 +60,22 @@ public:
 	{
 
 		buffer = carregar_audio_buffer_sfml(info.nome);
-		som.setBuffer(*buffer.get());
+		som = make_shared<sf::Sound>(*buffer.get());
+		som->setBuffer(*buffer.get());
 
-		som.setPlayingOffset(sf::seconds(info.tempo));
-		som.setVolume(info.volume);
-		som.setLoop(info.loop);
-		som.setPitch(info.velocidade);
-		som.setMinDistance(info.min_distance);
-		som.setAttenuation(info.atenuation);
+		som->setPlayingOffset(sf::seconds(info.tempo));
+		som->setVolume(info.volume);
+		som->setLoop(info.loop);
+		som->setPitch(info.velocidade);
+		som->setMinDistance(info.min_distance);
+		som->setAttenuation(info.atenuation);
 		if (info.pausa)
 		{
-			som.pause();
+			som->pause();
 		}
 		else
 		{
-			som.play();
+			som->play();
 		}
 		tf = esse_objeto->pegar_componente<transform_>();
 	}
@@ -83,12 +84,12 @@ public:
 	{
 		audio_info ret;
 
-		ret.tempo = som.getPlayingOffset().asSeconds();
-		ret.volume = som.getVolume();
-		ret.loop = som.getLoop();
-		ret.velocidade = som.getPitch();
-		ret.min_distance = som.getMinDistance();
-		ret.atenuation = som.getAttenuation();
+		ret.tempo = som->getPlayingOffset().asSeconds();
+		ret.volume = som->getVolume();
+		ret.loop = som->getLoop();
+		ret.velocidade = som->getPitch();
+		ret.min_distance = som->getMinDistance();
+		ret.atenuation = som->getAttenuation();
 
 		return ret;
 	}
@@ -112,27 +113,25 @@ public:
 			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
 			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
 
-			sf::Listener::setPosition(lpos.x, lpos.y, lpos.z);
-			sf::Listener::setUpVector(lup.x, lup.y, lup.z);
-			sf::Listener::setDirection(ldir.x, ldir.y, ldir.z);
+			sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
+			sf::Listener::setUpVector(sf::Vector3f(lup.x, lup.y, lup.z));
+			sf::Listener::setDirection(sf::Vector3f(ldir.x, ldir.y, ldir.z));
 
 			vec3 gpos = tf->pegar_pos_global();
-			//som.setPosition(-gpos.x, gpos.y, -gpos.z);
-			som.setPosition(gpos.x, gpos.y, gpos.z);
+			//som->setPosition(-gpos.x, gpos.y, -gpos.z);
+			som->setPosition(sf::Vector3f(gpos.x, gpos.y, gpos.z));
 
 		}
 		else
 		{
-			sf::Listener::setPosition(0,0,0);
-			sf::Listener::setUpVector(0,1,0);
-			sf::Listener::setDirection(0,0,-1);
-			som.setPosition(0,0,0);
+			sf::Listener::setPosition(sf::Vector3f(0,0,0));
+			sf::Listener::setUpVector(sf::Vector3f(0,1,0));
+			sf::Listener::setDirection(sf::Vector3f(0,0,-1));
+			som->setPosition(sf::Vector3f(0,0,0));
 		}
 	}
 
-	sfml_audio()
-	{
-	}
+	sfml_audio(){}
 	sfml_audio(audio_info info)
 	{
 		this->info = info;
@@ -140,6 +139,6 @@ public:
 
 	void finalisar()
 	{
-		som.pause();
+		som->pause();
 	}
 };
