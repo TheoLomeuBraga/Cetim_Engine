@@ -1,5 +1,5 @@
-#COMPILER := g++
-COMPILER := clang++ 
+COMPILER := g++
+#COMPILER := clang++ -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions
 
 FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -s -O3 -ffast-math 
 FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -s -O3 -ffast-math

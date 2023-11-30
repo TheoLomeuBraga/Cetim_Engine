@@ -431,7 +431,7 @@ Table scene_3D_table(cena_3D sceane)
     thread t4(convert_animations, std::ref(animations), std::ref(animations_map), std::ref(ret));
 
     vector<Table> meshes;
-    auto convert_meshes = [=](vector<Table> &meshes, Table &ret)
+    auto convert_meshes = [&]()
     {
         for (pair<string, shared_ptr<malha>> p : sceane.malhas)
         {
@@ -442,10 +442,10 @@ Table scene_3D_table(cena_3D sceane)
         }
         ret.setTable("meshes", vTable_table(meshes));
     };
-    thread t1(convert_meshes, std::ref(meshes), std::ref(ret));
+    thread t1(convert_meshes);
 
     vector<Table> materials;
-    auto convert_materials = [=](vector<Table> &materials, Table &ret)
+    auto convert_materials = [&]()
     {
         for (pair<string, Material> p : sceane.materiais)
         {
@@ -453,10 +453,10 @@ Table scene_3D_table(cena_3D sceane)
         }
         ret.setTable("materials", vTable_table(materials));
     };
-    thread t2(convert_materials, std::ref(materials), std::ref(ret));
+    thread t2(convert_materials);
 
     vector<string> textures;
-    auto convetr_textures = [=](vector<string> &textures, Table &ret)
+    auto convetr_textures = [&]()
     {
         for (pair<string, shared_ptr<imagem>> p : sceane.texturas)
         {
@@ -464,7 +464,7 @@ Table scene_3D_table(cena_3D sceane)
         }
         ret.setTable("textures", vString_table(textures));
     };
-    thread t3(convetr_textures, std::ref(textures), std::ref(ret));
+    thread t3(convetr_textures);
 
     t1.join();
     t2.join();
