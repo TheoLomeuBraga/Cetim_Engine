@@ -267,8 +267,7 @@ public:
 
 	void atualisar()
 	{
-
-		esvasiar_lixeira();
+		
 		esvasiar_lixeira();
 		clean_lists();
 

@@ -117,6 +117,19 @@ void lua_pushtable(lua_State *L, Table t)
 		lua_pushstring(L, p.second.c_str());
 		lua_settable(L, -3);
 	}
+	for (std::pair<std::string, lua_CFunction> p : t.m_lua_functionMap)
+	{
+		if (isNumber(p.first))
+		{
+			lua_pushnumber(L, stringToFloat(p.first));
+		}
+		else
+		{
+			lua_pushstring(L, p.first.c_str());
+		}
+		lua_pushcfunction(L, p.second);
+		lua_settable(L, -3);
+	}
 	for (std::pair<std::string, Table> p : t.m_tableMap)
 	{
 		if (isNumber(p.first))
@@ -179,6 +192,12 @@ Table lua_totable(lua_State *L, int index)
 			// The value is a number
 			float value = lua_toboolean(L, -1);
 			t.setFloat(key, value);
+		}
+		else if (lua_type(L, -1) == LUA_TFUNCTION)
+		{
+			// The value is a number
+			lua_CFunction value = lua_tocfunction(L, -1);
+			t.setLuaFunction(key, value);
 		}
 		else if (lua_type(L, -1) == LUA_TTABLE)
 		{
