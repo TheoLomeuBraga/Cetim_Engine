@@ -15,6 +15,7 @@ using namespace Tempo;
 #include "render_sprite.h"
 #include "render_tilemap.h"
 #include "bullet.h"
+#include "ui_element.h"
 #include "light.h"
 #include "poly_mesh.h"
 

@@ -36,6 +36,10 @@ class ui_componente : public componente
 {
 public:
 
+    static vec2 cursor_position;
+
+    unsigned char type;
+
     ui_componente *father;
 
     vec2 position;
@@ -51,7 +55,7 @@ public:
     shared_ptr<objeto_jogo> background_obj;
     shared_ptr<objeto_jogo> border_obj;
 
-    ui_element() {}
+    ui_componente() {}
 
     void iniciar() {
 
@@ -74,5 +78,7 @@ public:
         border_obj->excluir();
     }
 
-    ~ui_element() {}
+    ~ui_componente() {}
 };
+
+vec2 ui_componente::cursor_position = vec2(0,0);
