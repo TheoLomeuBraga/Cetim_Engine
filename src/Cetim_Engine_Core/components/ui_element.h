@@ -41,22 +41,14 @@ class ui_componente : public componente
 public:
 
     static vec2 cursor_position;
-
     uint8_t camada = 0;
     bool ligado = true;
-
     ui_type type;
     render_text_location text_location_x,text_location_y;
-
     shared_ptr<ui_componente> father;
-
     vec2 position = vec2(0.25,0.25),scale = vec2(0.5,0.5);
-
     ui_style normal_style,hover_style,click_style;
-
     wstring text;
-
-    
 
     ui_componente() {}
 
@@ -84,7 +76,7 @@ public:
             father = NULL;
         }
 
-        
+
 
     }
 
