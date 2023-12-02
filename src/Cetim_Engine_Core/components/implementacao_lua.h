@@ -1762,6 +1762,11 @@ namespace funcoes_ponte
 	}
 	// geral render
 
+	int test_new_ui(lua_State *L){
+		test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)));
+		return 0;
+	}
+
 	// post_processing
 	int get_set_post_processing(lua_State *L)
 	{
@@ -2369,6 +2374,7 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
 															  pair<string, lua_function>("set_keyframe", funcoes_ponte::set_keyframe),
 															  pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),
+															  pair<string, lua_function>("test_new_ui", funcoes_ponte::test_new_ui),
 
 														  }),
 		pair<string, map<string, lua_function>>("physics", {

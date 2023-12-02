@@ -100,6 +100,8 @@ function level:START()
 
     loading_screen.close()
 
+    test_new_ui(layers.hud)
+
     time:set_speed(1)
     
 end

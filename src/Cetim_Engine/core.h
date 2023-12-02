@@ -156,7 +156,7 @@ void iniciarTeste3()
 	cena_objetos_selecionados = &cena;
 	cena_objetos_selecionados->adicionar_objeto(core);
 	
-	test_ui();
+	//test_ui();
 }
 
 shared_ptr<objeto_jogo> obj;

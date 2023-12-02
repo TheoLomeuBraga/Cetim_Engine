@@ -55,10 +55,6 @@ public:
 
     void iniciar() {
 
-        esse_objeto->adicionar_componente<transform_>(transform_());
-        tf = esse_objeto->pegar_componente<transform_>();
-        tf->UI = true;
-
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/text";
@@ -69,6 +65,7 @@ public:
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
         text_obj->pegar_componente<render_texto>()->camada = render_layer;
+        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo";
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
 
         mat.shad = "resources/Shaders/ui_componente";
@@ -104,11 +101,11 @@ public:
         text_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
         text_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
 
-        background_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
-        background_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
+        background_obj->pegar_componente<transform_>()->pos = vec3(-0.1,0.1,-1);
+        background_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,0.1);
 
         border_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
-        border_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
+        border_obj->pegar_componente<transform_>()->esca = vec3(0,0,0);
 
         
 
@@ -126,7 +123,7 @@ public:
 vec2 ui_componente::cursor_position = vec2(0,0);
 
 
-void test_ui(){
+void test_ui(objeto_jogo* father){
     shared_ptr<objeto_jogo> test_obj =  novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
@@ -137,5 +134,5 @@ void test_ui(){
     uic->hover_style = style;
     uic->click_style = style;
     
-    cena_objetos_selecionados->adicionar_objeto(test_obj);
+    cena_objetos_selecionados->adicionar_objeto(father,test_obj);
 }
