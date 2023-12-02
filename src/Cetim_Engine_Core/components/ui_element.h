@@ -46,7 +46,7 @@ public:
     ui_type type;
     render_text_location text_location_x,text_location_y;
     shared_ptr<ui_componente> father;
-    vec2 position = vec2(0.25,0.25),scale = vec2(0.5,0.5);
+    vec2 global_position = vec2(0,0), position = vec2(0.25,0.25),scale = vec2(0.5,0.5);
     ui_style normal_style,hover_style,click_style;
     wstring text;
 
@@ -59,24 +59,32 @@ public:
         tf->UI = true;
 
         text_obj = novo_objeto_jogo();
+        text_obj->adicionar_componente<transform_>(transform_());
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
 
         background_obj = novo_objeto_jogo();
+        background_obj->adicionar_componente<transform_>(transform_());
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,background_obj);
 
         border_obj = novo_objeto_jogo();
+        border_obj->adicionar_componente<transform_>(transform_());
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
 
     }
 
 	void atualisar() {
+
         if(esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<ui_componente>() != NULL){
             father = esse_objeto->pai->pegar_componente<ui_componente>();
+            global_position += father.global_position + global_position
         }else{
             father = NULL;
+            global_position = position;
         }
 
+        
 
+        
 
     }
 
