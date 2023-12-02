@@ -155,6 +155,7 @@ void iniciarTeste3()
 	core->pegar_componente<componente_lua>()->adicionar_script("core");
 	cena_objetos_selecionados = &cena;
 	cena_objetos_selecionados->adicionar_objeto(core);
+	
 	test_ui();
 }
 

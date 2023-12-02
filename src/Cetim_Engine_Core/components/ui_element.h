@@ -40,6 +40,7 @@ class ui_componente : public componente
     shared_ptr<objeto_jogo> text_obj,background_obj,border_obj;
 public:
 
+    uint8_t render_layer = 4;
     static vec2 cursor_position;
     uint8_t camada = 0;
     bool ligado = true;
@@ -58,16 +59,34 @@ public:
         tf = esse_objeto->pegar_componente<transform_>();
         tf->UI = true;
 
+        Material mat;
+        mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+        mat.shad = "resources/Shaders/text";
+
         text_obj = novo_objeto_jogo();
         text_obj->adicionar_componente<transform_>(transform_());
+        text_obj->pegar_componente<transform_>()->UI = true;
+        text_obj->adicionar_componente<render_texto>(render_texto());
+        text_obj->pegar_componente<render_texto>()->mat = mat;
+        text_obj->pegar_componente<render_texto>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
 
+        mat.shad = "resources/Shaders/ui_componente";
+        
         background_obj = novo_objeto_jogo();
         background_obj->adicionar_componente<transform_>(transform_());
+        background_obj->pegar_componente<transform_>()->UI = true;
+        background_obj->adicionar_componente<render_shader>(render_shader());
+        background_obj->pegar_componente<render_shader>()->mat = mat;
+        background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,background_obj);
 
         border_obj = novo_objeto_jogo();
         border_obj->adicionar_componente<transform_>(transform_());
+        border_obj->pegar_componente<transform_>()->UI = true;
+        border_obj->adicionar_componente<render_shader>(render_shader());
+        border_obj->pegar_componente<render_shader>()->mat = mat;
+        border_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
 
     }
@@ -76,7 +95,7 @@ public:
 
         if(esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<ui_componente>() != NULL){
             father = esse_objeto->pai->pegar_componente<ui_componente>();
-            global_position += father.global_position + global_position
+            global_position += father->global_position + global_position;
         }else{
             father = NULL;
             global_position = position;
