@@ -101,7 +101,14 @@ public:
             global_position = position;
         }
 
-        
+        text_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
+        text_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
+
+        background_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
+        background_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
+
+        border_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
+        border_obj->pegar_componente<transform_>()->esca = vec3(1,1,1);
 
         
 
