@@ -36,7 +36,7 @@ enum ui_type {
 
 class ui_componente : public componente
 {
-    //shared_ptr<transform_> tf;
+    shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> text_obj,background_obj,border_obj;
 public:
 
@@ -70,6 +70,15 @@ public:
         background_obj->pegar_componente<render_shader>()->mat = mat;
         background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,background_obj);
+
+        border_obj = novo_objeto_jogo();
+        border_obj->adicionar_componente<transform_>(transform_());
+        border_obj->pegar_componente<transform_>()->UI = true;
+        border_obj->adicionar_componente<render_shader>(render_shader());
+        border_obj->pegar_componente<render_shader>()->mat = mat;
+        border_obj->pegar_componente<render_shader>()->camada = render_layer;
+        cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
+
         
         mat.shad = "resources/Shaders/text";
         text_obj = novo_objeto_jogo();
@@ -80,23 +89,11 @@ public:
         text_obj->pegar_componente<render_texto>()->camada = render_layer;
         text_obj->pegar_componente<render_texto>()->texto = L"ola mundo";
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
-        
-
-
-        text_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
-        text_obj->pegar_componente<transform_>()->esca = vec3(0.01,0.01,0.01);
-
-        background_obj->pegar_componente<transform_>()->pos = vec3(-0.1,0.1,0);
-        background_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,0.1);
-
-        border_obj->pegar_componente<transform_>()->pos = vec3(-0.15,0.15,0);
-        border_obj->pegar_componente<transform_>()->esca = vec3(0.2,0.2,0.2);
 
     }
 
 	void atualisar() {
 
-        /*
         if(esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<ui_componente>() != NULL){
             father = esse_objeto->pai->pegar_componente<ui_componente>();
             global_position += father->global_position + global_position;
@@ -105,9 +102,16 @@ public:
             global_position = position;
         }
 
-        
+        text_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
+        text_obj->pegar_componente<transform_>()->esca = vec3(0.01,0.01,0.01);
 
-        */
+        background_obj->pegar_componente<transform_>()->pos = vec3(-0.1,0.1,0);
+        background_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,0.1);
+
+        border_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
+        border_obj->pegar_componente<transform_>()->esca = vec3(0,0,0);
+
+        
 
     }
 
