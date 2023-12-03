@@ -70,15 +70,6 @@ public:
         background_obj->pegar_componente<render_shader>()->mat = mat;
         background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,background_obj);
-
-        border_obj = novo_objeto_jogo();
-        border_obj->adicionar_componente<transform_>(transform_());
-        border_obj->pegar_componente<transform_>()->UI = true;
-        border_obj->adicionar_componente<render_shader>(render_shader());
-        border_obj->pegar_componente<render_shader>()->mat = mat;
-        border_obj->pegar_componente<render_shader>()->camada = render_layer;
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
-
         
         mat.shad = "resources/Shaders/text";
         text_obj = novo_objeto_jogo();
