@@ -40,8 +40,11 @@ class ui_componente : public componente
     shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
 
 public:
-    uint8_t render_layer = 4;
+
     static vec2 cursor_position;
+    static bool click;
+
+    uint8_t render_layer = 4;
     uint8_t camada = 0;
     bool ligado = true;
     ui_type type;
@@ -93,6 +96,11 @@ public:
         text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nx_X_x\nola mundo";
         text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, text_obj);
+    }
+
+    bool is_above(){
+        
+        return false;
     }
 
     void atualisar()
@@ -168,6 +176,7 @@ public:
 };
 
 vec2 ui_componente::cursor_position = vec2(0, 0);
+bool ui_componente::click = false;
 
 void test_ui(objeto_jogo *father)
 {
