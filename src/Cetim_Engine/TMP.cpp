@@ -68,6 +68,7 @@ void ShutdownImGui() {
 #include "read_map_file.h"
 #include "init_lib_functions.h"
 #include "render_mesh.h"
+#include "ui_element.h"
 #include <bitset>
 #include "table_conversors.h"
 
@@ -103,7 +104,7 @@ void configuracaoInicial()
     Antes_Render_Func.push_back(iniciar_atualisar_global_box2D);
     Antes_Render_Func.push_back(iniciar_atualisar_global_bullet);
 
-    //Antes_Render_Func.push_back(atualisar_global_bullet);
+    Antes_Render_Func.push_back(update_ui_componente_test);
 
     Antes_Render_Func.push_back(get_input_using_threads);
 

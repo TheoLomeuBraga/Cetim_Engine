@@ -12,6 +12,8 @@ using namespace std;
 
 #include "LoopPrincipal.h"
 
+#include "input.h"
+
 struct ui_style_struct
 {
     vec4 color = vec4(1, 0, 0, 1);
@@ -40,7 +42,6 @@ class ui_componente : public componente
     shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
 
 public:
-
     static vec2 cursor_position;
     static bool click;
 
@@ -67,7 +68,7 @@ public:
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/ui_componente";
 
-         mat.cor = vec4(1, 0, 0, 1);
+        mat.cor = vec4(1, 0, 0, 1);
         border_obj = novo_objeto_jogo();
         border_obj->adicionar_componente<transform_>(transform_());
         border_obj->pegar_componente<transform_>()->UI = true;
@@ -98,8 +99,16 @@ public:
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, text_obj);
     }
 
-    bool is_above(){
-        
+    bool is_above()
+    {
+        vec2 acurate_pos = vec2(mix(-1, 1, global_position.x + position.x), mix(-1, 1, global_position.y + position.y));
+        if (false)
+        {
+            if (false)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -121,25 +130,21 @@ public:
 
         ui_style current_state = normal_style;
 
-        auto mix = [](float x, float y, float t)
-        {
-            return x * (1.0f - t) + y * t;
-        };
+        
 
-        vec2 acurate_pos = vec2(mix(-1,1,global_position.x + position.x),mix(-1,1,global_position.y + position.y));
+        vec2 acurate_pos = vec2(mix(-1, 1, global_position.x + position.x), mix(-1, 1, global_position.y + position.y));
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
-        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0) ;
+        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0);
         border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
         border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
         background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - scale.x / 2, acurate_pos.y + scale.y / 2, 0);
-        background_obj->pegar_componente<transform_>()->esca = vec3(scale.x, scale.y, 1) ;
+        background_obj->pegar_componente<transform_>()->esca = vec3(scale.x, scale.y, 1);
         background_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
-
 
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
@@ -149,20 +154,31 @@ public:
 
         mat.shad = "resources/Shaders/ui_componente";
         mat.cor = current_state.background_color;
-        if(current_state.background_image != NULL){
+        if (current_state.background_image != NULL)
+        {
             mat.texturas[0] = current_state.background_image;
-        }else{
+        }
+        else
+        {
             mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         }
         background_obj->pegar_componente<render_shader>()->mat = mat;
 
         mat.cor = current_state.border_color;
-        if(current_state.border_image != NULL){
+        if (current_state.border_image != NULL)
+        {
             mat.texturas[0] = current_state.border_image;
-        }else{
+        }
+        else
+        {
             mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         }
         border_obj->pegar_componente<render_shader>()->mat = mat;
+
+
+        if(is_above()){
+            print({"is above me"});
+        }
     }
 
     void finalisar()
@@ -174,9 +190,14 @@ public:
 
     ~ui_componente() {}
 };
-
 vec2 ui_componente::cursor_position = vec2(0, 0);
 bool ui_componente::click = false;
+
+void update_ui_componente_test(){
+    ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
+    ui_componente::cursor_position.y = mix(1.0,0.0,manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+    //print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
+}
 
 void test_ui(objeto_jogo *father)
 {
