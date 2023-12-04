@@ -203,6 +203,7 @@ bool ui_componente::click = false;
 void update_ui_componente_test(){
     ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
     ui_componente::cursor_position.y = mix(1.0,0.0,manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+    ui_componente::click = manuseio_inputs->mouse_input.botoes["left"]; 
     //print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
 }
 
@@ -216,7 +217,9 @@ void test_ui(objeto_jogo *father)
     ui_style style;
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
     uic->normal_style = style;
+    style.border_color = vec4(1, 0.5, 0.5, 1);
     uic->hover_style = style;
+    style.border_color = vec4(1, 0.9, 0.9, 1);
     uic->click_style = style;
     uic->current_state = style;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
