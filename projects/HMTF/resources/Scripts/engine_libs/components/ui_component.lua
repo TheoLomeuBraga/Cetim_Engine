@@ -6,7 +6,7 @@ require("components.component_index")
 --camera
 
 
-camera_component = create_base_component(components.ui_component)
+ui_component = create_base_component(components.ui_component)
 
 
 function ui_component:clean()

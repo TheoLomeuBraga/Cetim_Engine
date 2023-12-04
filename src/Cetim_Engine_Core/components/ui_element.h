@@ -64,6 +64,15 @@ public:
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/ui_componente";
 
+         mat.cor = vec4(1, 0, 0, 1);
+        border_obj = novo_objeto_jogo();
+        border_obj->adicionar_componente<transform_>(transform_());
+        border_obj->pegar_componente<transform_>()->UI = true;
+        border_obj->adicionar_componente<render_shader>(render_shader());
+        border_obj->pegar_componente<render_shader>()->mat = mat;
+        border_obj->pegar_componente<render_shader>()->camada = render_layer;
+        cena_objetos_selecionados->adicionar_objeto(esse_objeto, border_obj);
+
         mat.cor = vec4(0, 1, 0, 1);
         background_obj = novo_objeto_jogo();
         background_obj->adicionar_componente<transform_>(transform_());
@@ -72,15 +81,6 @@ public:
         background_obj->pegar_componente<render_shader>()->mat = mat;
         background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, background_obj);
-
-        mat.cor = vec4(1, 0, 0, 1);
-        border_obj = novo_objeto_jogo();
-        border_obj->adicionar_componente<transform_>(transform_());
-        border_obj->pegar_componente<transform_>()->UI = true;
-        border_obj->adicionar_componente<render_shader>(render_shader());
-        border_obj->pegar_componente<render_shader>()->mat = mat;
-        border_obj->pegar_componente<render_shader>()->camada = render_layer;
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto, border_obj);
 
         mat.cor = vec4(0, 0, 1, 1);
         mat.shad = "resources/Shaders/text";
@@ -124,13 +124,37 @@ public:
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
-        background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0);
-        background_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
+        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0) ;
+        border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
+        border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
+
+        background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - scale.x / 2, acurate_pos.y + scale.y / 2, 0);
+        background_obj->pegar_componente<transform_>()->esca = vec3(scale.x, scale.y, 1) ;
         background_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
-        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - scale.x / 2, acurate_pos.y + scale.y / 2, 0);
-        border_obj->pegar_componente<transform_>()->esca = vec3(scale.x, scale.y, 1);
-        border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
+
+        Material mat;
+        mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+        mat.shad = "resources/Shaders/text";
+        mat.cor = current_state.color;
+        text_obj->pegar_componente<render_texto>()->mat = mat;
+
+        mat.shad = "resources/Shaders/ui_componente";
+        mat.cor = current_state.background_color;
+        if(current_state.background_image != NULL){
+            mat.texturas[0] = current_state.background_image;
+        }else{
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+        }
+        background_obj->pegar_componente<render_shader>()->mat = mat;
+
+        mat.cor = current_state.border_color;
+        if(current_state.border_image != NULL){
+            mat.texturas[0] = current_state.border_image;
+        }else{
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+        }
+        border_obj->pegar_componente<render_shader>()->mat = mat;
     }
 
     void finalisar()
