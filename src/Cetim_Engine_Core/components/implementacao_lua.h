@@ -2933,6 +2933,9 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<fonte_luz>(fonte_luz());}else{obj->remover_componente<fonte_luz>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_poly_mesh", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<poly_mesh>(poly_mesh());}else{obj->remover_componente<poly_mesh>();} }),
+	pair<string, void (*)(objeto_jogo *, bool)>("ui_component", [](objeto_jogo *obj, bool add)
+												{if(add){obj->adicionar_componente<ui_componente>(ui_componente());}else{obj->remover_componente<ui_componente>();} }),
+												
 
 };
 
@@ -3017,6 +3020,9 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 										  { return obj->tem_componente<fonte_luz>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("render_poly_mesh", [](objeto_jogo *obj)
 										  { return obj->tem_componente<poly_mesh>(); }),
+	pair<string, bool (*)(objeto_jogo *)>("ui_component", [](objeto_jogo *obj)
+										  { return obj->tem_componente<ui_componente>(); }),
+										  
 
 };
 int have_component(lua_State *L)

@@ -13,6 +13,8 @@ components = {
     audio = "audio_source",
     lua_scripts = "lua_scripts",
     render_poly_mesh = "render_poly_mesh",
+    ui_component = "ui_component",
+    ui = "ui_component",
 }
 
 transform = "transform"
@@ -28,3 +30,5 @@ audio_source = "audio_source"
 audio = "audio_source"
 lua_scripts = "lua_scripts"
 render_poly_mesh = "render_poly_mesh"
+ui_component = "ui_component"
+ui = "ui_component"
