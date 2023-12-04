@@ -60,9 +60,19 @@ public:
         //tf->UI = true;
 
         Material mat;
-        mat.shad = "resources/Shaders/ui_componente";
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+
+        mat.shad = "resources/Shaders/ui_componente";
+        mat.cor = vec4(1,0,0,1);
+        border_obj = novo_objeto_jogo();
+        border_obj->adicionar_componente<transform_>(transform_());
+        border_obj->pegar_componente<transform_>()->UI = true;
+        border_obj->adicionar_componente<render_shader>(render_shader());
+        border_obj->pegar_componente<render_shader>()->mat = mat;
+        border_obj->pegar_componente<render_shader>()->camada = render_layer;
+        cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
         
+        mat.cor = vec4(0,1,0,1);
         background_obj = novo_objeto_jogo();
         background_obj->adicionar_componente<transform_>(transform_());
         background_obj->pegar_componente<transform_>()->UI = true;
@@ -71,15 +81,7 @@ public:
         background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,background_obj);
 
-        border_obj = novo_objeto_jogo();
-        border_obj->adicionar_componente<transform_>(transform_());
-        border_obj->pegar_componente<transform_>()->UI = true;
-        border_obj->adicionar_componente<render_shader>(render_shader());
-        border_obj->pegar_componente<render_shader>()->mat = mat;
-        border_obj->pegar_componente<render_shader>()->camada = render_layer;
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto,border_obj);
-
-        
+        mat.cor = vec4(0,0,1,1);
         mat.shad = "resources/Shaders/text";
         text_obj = novo_objeto_jogo();
         text_obj->adicionar_componente<transform_>(transform_());
@@ -87,8 +89,12 @@ public:
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
         text_obj->pegar_componente<render_texto>()->camada = render_layer;
-        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo";
+        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nola mundo\nola mundo";
+        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
+        
+
+        
 
     }
 
@@ -102,15 +108,30 @@ public:
             global_position = position;
         }
 
+        //vec3 pos = background_obj->pegar_componente<transform_>()->pos;
+        //print({"background_obj pos",pos.x,pos.y,pos.z});
+
+        //pos = border_obj->pegar_componente<transform_>()->pos;
+        //print({"border_obj pos",pos.x,pos.y,pos.z});
+
+        
         text_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
-        text_obj->pegar_componente<transform_>()->esca = vec3(0.01,0.01,0.01);
+        text_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,1);
+        text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0,0,0));
+        /**/
 
-        background_obj->pegar_componente<transform_>()->pos = vec3(-0.1,0.1,0);
-        background_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,0.1);
+        
+        background_obj->pegar_componente<transform_>()->pos = vec3(-0.05,0.05,0);
+        background_obj->pegar_componente<transform_>()->esca = vec3(0.1,0.1,1);
+        background_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0,0,0));
+        /**/
 
-        border_obj->pegar_componente<transform_>()->pos = vec3(0,0,0);
-        border_obj->pegar_componente<transform_>()->esca = vec3(0,0,0);
-
+        
+        border_obj->pegar_componente<transform_>()->pos = vec3(-0.1,0.1,0);
+        border_obj->pegar_componente<transform_>()->esca = vec3(0.2,0.2,1);
+        border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0,0,0));
+        /**/
+        
         
 
     }
@@ -131,6 +152,7 @@ void test_ui(objeto_jogo* father){
     shared_ptr<objeto_jogo> test_obj =  novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
+    uic->camada = 4;
 
     ui_style style;
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");

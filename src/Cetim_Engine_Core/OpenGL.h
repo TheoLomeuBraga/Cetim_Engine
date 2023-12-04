@@ -972,11 +972,22 @@ public:
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
 
+				#define texto rt->texto
+
+				unsigned int count_linhas = 0;
+				for (int i = 0; i < texto.size(); i++)
+				{
+					if (texto.at(i) == '\n')
+					{
+						count_linhas++;
+					}
+				}
+
 				shared_ptr<fonte> font = rt->font;
 
 				if (font != NULL)
 				{
-#define texto rt->texto
+
 
 					vec2 tamanho_texto = vec2(0, 0);
 					vector<vec2> tamanho_linhas = {};
@@ -990,7 +1001,7 @@ public:
 
 					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
 					float altura_linha = 0;
-					int no_linha = 0;
+					unsigned int no_linha = 0;
 					float tamanho_linha = 0;
 
 					for (int i = 0; i < texto.size(); i++)
@@ -1007,7 +1018,7 @@ public:
 							pos_char.x += rt->tamanho_espaco;
 							if (pos_char.x > rt->tamanho_max_linha)
 							{
-								altura_linha -= +rt->espaco_entre_linhas;
+								altura_linha -= rt->espaco_entre_linhas;
 								no_linha++;
 								pos_char.x = 0;
 							}
@@ -1045,7 +1056,7 @@ public:
 
 							if (rt->text_location_y == render_text_location::CENTER)
 							{
-								pos_letra.y = pos_letra.y - (tamanho_texto.y / 2);
+								pos_letra.y = pos_letra.y - ((rt->espaco_entre_linhas * count_linhas) / 2);
 							}
 							else if (rt->text_location_y == render_text_location::TOP)
 							{
