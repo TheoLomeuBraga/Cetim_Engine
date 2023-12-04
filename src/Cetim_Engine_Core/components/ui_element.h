@@ -127,7 +127,17 @@ public:
         }
         */
 
-        current_state = normal_style;
+        
+
+        if(is_above()){
+            if(click){
+                current_state = click_style;
+            }else{
+                current_state = hover_style;
+            }
+        }else{
+            current_state = normal_style;
+        }
 
         
 
@@ -174,7 +184,7 @@ public:
         }
         border_obj->pegar_componente<render_shader>()->mat = mat;
 
-
+        
         
     }
 
