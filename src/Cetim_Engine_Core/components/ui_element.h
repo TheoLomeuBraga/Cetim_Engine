@@ -52,7 +52,7 @@ public:
     render_text_location text_location_x, text_location_y;
     shared_ptr<ui_componente> father;
     vec2 global_position = vec2(0, 0), position = vec2(0.5, 0.5), scale = vec2(0.2, 0.2);
-    ui_style normal_style, hover_style, click_style;
+    ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
 
     ui_componente() {}
@@ -101,10 +101,9 @@ public:
 
     bool is_above()
     {
-        vec2 acurate_pos = vec2(mix(-1, 1, global_position.x + position.x), mix(-1, 1, global_position.y + position.y));
-        if (false)
+        if (ui_componente::cursor_position.x > position.x - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < position.x + ((scale.x - current_state.border_size) / 2) )
         {
-            if (false)
+            if (ui_componente::cursor_position.y > position.y - ((scale.y - current_state.border_size) / 2) && ui_componente::cursor_position.y < position.y + ((scale.y - current_state.border_size) / 2))
             {
                 return true;
             }
@@ -128,7 +127,7 @@ public:
         }
         */
 
-        ui_style current_state = normal_style;
+        current_state = normal_style;
 
         
 
@@ -176,9 +175,7 @@ public:
         border_obj->pegar_componente<render_shader>()->mat = mat;
 
 
-        if(is_above()){
-            print({"is above me"});
-        }
+        
     }
 
     void finalisar()
@@ -211,5 +208,6 @@ void test_ui(objeto_jogo *father)
     uic->normal_style = style;
     uic->hover_style = style;
     uic->click_style = style;
+    uic->current_state = style;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
 }
