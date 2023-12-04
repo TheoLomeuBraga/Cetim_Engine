@@ -1042,7 +1042,8 @@ public:
 							}
 
 							pos_char.x += pos_adi_char.x;
-							vec3 pos_letra = vec3(pos_char.x, altura_linha + ((((float)sca_char.y) / (float)font->quality)), 0);
+							float size_char_y = ((((float)sca_char.y) / (float)font->quality));
+							vec3 pos_letra = vec3(pos_char.x, altura_linha + size_char_y, 0);
 
 							if (rt->text_location_x == render_text_location::CENTER)
 							{
@@ -1056,7 +1057,7 @@ public:
 
 							if (rt->text_location_y == render_text_location::CENTER)
 							{
-								pos_letra.y = pos_letra.y - ((rt->espaco_entre_linhas * count_linhas) / 2);
+								pos_letra.y = (pos_letra.y + (rt->espaco_entre_linhas / 2) * count_linhas) - size_char_y / 2;
 							}
 							else if (rt->text_location_y == render_text_location::TOP)
 							{

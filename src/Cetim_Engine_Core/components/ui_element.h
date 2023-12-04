@@ -89,7 +89,7 @@ public:
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
         text_obj->pegar_componente<render_texto>()->camada = render_layer;
-        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nola mundo\nola mundo";
+        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nxXx\nola mundo";
         text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
         cena_objetos_selecionados->adicionar_objeto(esse_objeto,text_obj);
         
