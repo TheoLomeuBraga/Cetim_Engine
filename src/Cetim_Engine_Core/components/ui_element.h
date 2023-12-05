@@ -59,8 +59,7 @@ public:
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
 
-    lua_State *function_reference_lua_state = NULL;
-    int function_reference_lua;
+    
     void (*function_reference)(string id)  = function_reference_example;
 
 
@@ -224,7 +223,7 @@ void update_ui_componente_test(){
     //print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
 }
 
-void test_ui(objeto_jogo *father)//,lua_State *function_reference_lua_state,int function_reference_lua)
+void test_ui(objeto_jogo *father)
 {
     
     shared_ptr<objeto_jogo> test_obj = novo_objeto_jogo();
