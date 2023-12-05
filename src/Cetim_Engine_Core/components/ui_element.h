@@ -36,6 +36,10 @@ enum ui_type
     button = 2,
 };
 
+void function_reference_example(string id){
+    print({id});
+}
+
 class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
@@ -44,7 +48,7 @@ class ui_componente : public componente
 public:
     static vec2 cursor_position;
     static bool click;
-
+    string id;
     uint8_t render_layer = 4;
     uint8_t camada = 0;
     bool ligado = true;
@@ -54,6 +58,11 @@ public:
     vec2 global_position = vec2(0, 0), position = vec2(0.5, 0.5), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
+
+    lua_State *function_reference_lua_state = NULL;
+    int function_reference_lua;
+    void (*function_reference)(string id)  = function_reference_example;
+
 
     ui_componente() {}
 
@@ -132,6 +141,10 @@ public:
         if(is_above()){
             if(click){
                 current_state = click_style;
+                function_reference(id);
+                if(function_reference_lua_state != NULL){
+                    //function_reference_lua_state
+                }
             }else{
                 current_state = hover_style;
             }
@@ -195,7 +208,11 @@ public:
         border_obj->excluir();
     }
 
-    ~ui_componente() {}
+    ~ui_componente() {
+        if(function_reference_lua_state == NULL){
+            luaL_unref(function_reference_lua_state, LUA_REGISTRYINDEX, function_reference_lua);
+        }
+    }
 };
 vec2 ui_componente::cursor_position = vec2(0, 0);
 bool ui_componente::click = false;
@@ -207,12 +224,17 @@ void update_ui_componente_test(){
     //print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
 }
 
-void test_ui(objeto_jogo *father)
+void test_ui(objeto_jogo *father)//,lua_State *function_reference_lua_state,int function_reference_lua)
 {
+    
     shared_ptr<objeto_jogo> test_obj = novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
     uic->camada = 4;
+    uic->id = "test_button";
+
+    //uic->function_reference_lua_state = function_reference_lua_state;
+    //uic->function_reference_lua = function_reference_lua;
 
     ui_style style;
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
@@ -223,4 +245,7 @@ void test_ui(objeto_jogo *father)
     uic->click_style = style;
     uic->current_state = style;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
+
+
+    
 }

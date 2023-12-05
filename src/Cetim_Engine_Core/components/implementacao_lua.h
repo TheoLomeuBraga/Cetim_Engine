@@ -1763,7 +1763,7 @@ namespace funcoes_ponte
 	// geral render
 
 	int test_new_ui(lua_State *L){
-		test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)));
+		test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)));//,L,lua_tointeger(L, 2));
 		return 0;
 	}
 
