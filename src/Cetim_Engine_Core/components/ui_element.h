@@ -36,8 +36,8 @@ enum ui_type
     button = 2,
 };
 
-void function_reference_example(string id){
-    print({id});
+void function_reference_example(string state,string id){
+    print({state,id});
 }
 
 class ui_componente : public componente
@@ -52,15 +52,16 @@ public:
     uint8_t render_layer = 4;
     uint8_t camada = 0;
     bool ligado = true;
+    vec2 acurate_pos = vec2(0,0);
     ui_type type;
     render_text_location text_location_x, text_location_y;
     shared_ptr<ui_componente> father;
-    vec2 global_position = vec2(0, 0), position = vec2(0.5, 0.5), scale = vec2(0.2, 0.2);
+    vec2 base_position = vec2(0, 0), position = vec2(0.5, 0.5), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
 
     
-    void (*function_reference)(string id)  = function_reference_example;
+    void (*function_reference)(string state,string id)  = function_reference_example;
 
 
     ui_componente() {}
@@ -122,25 +123,25 @@ public:
     void atualisar()
     {
 
-        /*
+        
         if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<ui_componente>() != NULL)
         {
             father = esse_objeto->pai->pegar_componente<ui_componente>();
-            global_position += father->global_position + global_position;
+            base_position = father->acurate_pos;
         }
         else
         {
             father = NULL;
-            global_position = position;
+            base_position = acurate_pos;
         }
-        */
+        /**/
 
         
 
         if(is_above()){
             if(click){
                 current_state = click_style;
-                function_reference(id);
+                function_reference("click",id);
             }else{
                 current_state = hover_style;
             }
@@ -150,7 +151,7 @@ public:
 
         
 
-        vec2 acurate_pos = vec2(mix(-1, 1, global_position.x + position.x), mix(-1, 1, global_position.y + position.y));
+        acurate_pos = vec2(mix(-1, 1, base_position.x + position.x), mix(-1, 1, base_position.y + position.y));
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
@@ -225,10 +226,6 @@ void test_ui(objeto_jogo *father)
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
     uic->camada = 4;
     uic->id = "test_button";
-
-    //uic->function_reference_lua_state = function_reference_lua_state;
-    //uic->function_reference_lua = function_reference_lua;
-
     ui_style style;
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
     uic->normal_style = style;
@@ -239,6 +236,23 @@ void test_ui(objeto_jogo *father)
     uic->current_state = style;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
 
+    /*
+    shared_ptr<objeto_jogo> test_obj2 = novo_objeto_jogo();
+    test_obj2->adicionar_componente<ui_componente>(ui_componente());
+    shared_ptr<ui_componente> uic2 = test_obj2->pegar_componente<ui_componente>();
+    uic2->camada = 4;
+    uic2->id = "test_button";
+    style = ui_style();
+    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
+    uic2->normal_style = style;
+    style.border_color = vec4(1, 0.5, 0.5, 1);
+    uic2->hover_style = style;
+    style.border_color = vec4(1, 0.9, 0.9, 1);
+    uic2->click_style = style;
+    uic2->current_state = style;
+    uic2->position = vec2(0.2,0.2);
+    cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
+    */
 
     
 }
