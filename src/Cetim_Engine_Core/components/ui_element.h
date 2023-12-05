@@ -141,9 +141,6 @@ public:
             if(click){
                 current_state = click_style;
                 function_reference(id);
-                if(function_reference_lua_state != NULL){
-                    //function_reference_lua_state
-                }
             }else{
                 current_state = hover_style;
             }
@@ -208,9 +205,6 @@ public:
     }
 
     ~ui_componente() {
-        if(function_reference_lua_state == NULL){
-            luaL_unref(function_reference_lua_state, LUA_REGISTRYINDEX, function_reference_lua);
-        }
     }
 };
 vec2 ui_componente::cursor_position = vec2(0, 0);
