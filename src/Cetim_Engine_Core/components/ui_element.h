@@ -18,7 +18,7 @@ using namespace std;
 
 struct ui_style_struct
 {
-    vec4 color = vec4(1, 0, 0, 1);
+    vec4 text_color = vec4(1, 0, 0, 1);
     vec4 background_color = vec4(0, 1, 0, 1);
     vec4 border_color = vec4(0, 0, 1, 1);
 
@@ -226,7 +226,7 @@ public:
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/text";
-        mat.cor = current_state.color;
+        mat.cor = current_state.text_color;
         text_obj->pegar_componente<render_texto>()->mat = mat;
 
         mat.shad = "resources/Shaders/ui_componente";
