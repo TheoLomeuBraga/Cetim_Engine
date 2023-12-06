@@ -37,7 +37,7 @@ enum ui_type
 };
 
 void function_reference_example(string state,string id){
-    print({state,id});
+    //print({id,state});
 }
 
 class ui_componente : public componente
@@ -45,6 +45,8 @@ class ui_componente : public componente
     shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
     vec2  base_position = vec2(0,0);
+
+    bool first_click_frame = false;
 
 public:
     static vec2 cursor_position;
@@ -59,9 +61,10 @@ public:
     vec2  position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
+    
 
     
-    void (*function_reference)(string state,string id)  = function_reference_example;
+    void (*function_reference)(string id,string state)  = function_reference_example;
 
 
     ui_componente() {}
@@ -143,12 +146,20 @@ public:
         if(is_above()){
             if(click){
                 current_state = click_style;
-                function_reference("click",id);
+                if(!first_click_frame){
+                    function_reference(id,"click");
+                }else{
+                    function_reference(id,"hold");
+                }
+                first_click_frame = true;
             }else{
                 current_state = hover_style;
+                function_reference(id,"hover");
+                first_click_frame = false;
             }
         }else{
             current_state = normal_style;
+            first_click_frame = false;
         }
 
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) -1, ((position.y + base_position.y) * 2) -1);
@@ -224,7 +235,7 @@ void test_ui(objeto_jogo *father)
     shared_ptr<objeto_jogo> test_obj = novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
-    uic->position = vec2(0.1,0.2);
+    uic->position = vec2(0.1,0.6);
     uic->camada = 4;
     uic->id = "test_button";
     ui_style style;
@@ -251,7 +262,7 @@ void test_ui(objeto_jogo *father)
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
     uic2->current_state = style;
-    uic2->position = vec2(0.2,0.4);
+    uic2->position = vec2(0.2,-0.2);
     cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
     
 
