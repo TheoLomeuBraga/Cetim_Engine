@@ -110,7 +110,7 @@ public:
     bool is_above()
     {
         //print({position.y - ((scale.y - current_state.border_size) / 2),position.y + ((scale.y - current_state.border_size) / 2)});
-        if (ui_componente::cursor_position.x > position.x - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < position.x + ((scale.x - current_state.border_size) / 2) )
+        if (ui_componente::cursor_position.x >  position.x - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < position.x + ((scale.x - current_state.border_size) / 2) )
         {
             float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
             print({"new_cursor_position_y",new_cursor_position_y});
@@ -125,19 +125,18 @@ public:
     void atualisar()
     {
 
-        vec2  base_position;
+        vec2  base_position = vec2(0,0);
 
+        /**/
         father = esse_objeto->pai->pegar_componente<ui_componente>();
         
         if (esse_objeto->pai != NULL && father != NULL)
         {
-            
             base_position = father->position;
         }
         else
         {
             father = NULL;
-            base_position = vec2(0,0);
         }
 
         
@@ -228,6 +227,7 @@ void test_ui(objeto_jogo *father)
     shared_ptr<objeto_jogo> test_obj = novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
+    uic->position = vec2(0.1,0.5);
     uic->camada = 4;
     uic->id = "test_button";
     ui_style style;
