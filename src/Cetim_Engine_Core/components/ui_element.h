@@ -151,7 +151,7 @@ public:
             current_state = normal_style;
         }
 
-        vec2 acurate_pos = vec2((position.x * 2) -1, (position.y * 2) -1);
+        vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) -1, ((position.y + base_position.y) * 2) -1);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
@@ -252,7 +252,7 @@ void test_ui(objeto_jogo *father)
     uic2->click_style = style;
     uic2->current_state = style;
     uic2->position = vec2(0.2,0.4);
-    cena_objetos_selecionados->adicionar_objeto(father, test_obj2);
+    cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
     
 
     
