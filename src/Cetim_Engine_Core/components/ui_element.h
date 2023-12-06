@@ -14,6 +14,8 @@ using namespace std;
 
 #include "input.h"
 
+#include "table.h"
+
 struct ui_style_struct
 {
     vec4 color = vec4(1, 0, 0, 1);
@@ -36,20 +38,20 @@ enum ui_type
     button = 2,
 };
 
-void function_reference_example(string state,string id){
-    //print({id,state});
+void function_reference_example(string state, string id)
+{
+    // print({id,state});
 }
 
 class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
-    vec2  base_position = vec2(0,0);
+    vec2 base_position = vec2(0, 0);
 
     bool first_click_frame = false;
 
 public:
-
     static vec2 cursor_position;
     static bool click;
     string id;
@@ -61,15 +63,26 @@ public:
     ui_type type;
     render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
-    vec2  position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
-    ui_style normal_style, hover_style, click_style,current_state;
+    vec2 position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
+    ui_style normal_style, hover_style, click_style, current_state;
     wstring text;
     string state = "none";
-    
 
-    
-    void (*function_reference)(string id,string state)  = function_reference_example;
+    void (*function_reference)(string id, string state) = function_reference_example;
+    LuaFunctionWrapper lua_function = {NULL, ""};
 
+    void call_lua_function(string state, string id)
+    {
+        if (lua_function.L != NULL)
+        {
+            lua_getglobal(lua_function.L,lua_function.functionRef.c_str());
+
+            lua_pushstring(lua_function.L, id.c_str());
+            lua_pushstring(lua_function.L, state.c_str());
+
+            lua_pcall(lua_function.L, 2, 1, 0);
+        }
+    }
 
     ui_componente() {}
 
@@ -114,10 +127,10 @@ public:
 
     bool is_above()
     {
-        if (ui_componente::cursor_position.x > (base_position.x +  position.x) - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < (base_position.x +  position.x) + ((scale.x - current_state.border_size) / 2) )
+        if (ui_componente::cursor_position.x > (base_position.x + position.x) - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < (base_position.x + position.x) + ((scale.x - current_state.border_size) / 2))
         {
-            //float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            if (ui_componente::cursor_position.y > (base_position.y +  position.y) - ((scale.y - current_state.border_size) / 2) && ui_componente::cursor_position.y < (base_position.y +  position.y) + ((scale.y - current_state.border_size) / 2))
+            // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
+            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / 2) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / 2))
             {
                 return true;
             }
@@ -128,11 +141,11 @@ public:
     void atualisar()
     {
 
-        base_position = vec2(0,0);
+        base_position = vec2(0, 0);
 
         /**/
         father = esse_objeto->pai->pegar_componente<ui_componente>();
-        
+
         if (esse_objeto->pai != NULL && father != NULL)
         {
             base_position = father->position;
@@ -142,47 +155,63 @@ public:
             father = NULL;
         }
 
-        
-        
-        if(is_above()){
-            if(click){
+        if (is_above())
+        {
+            if (click)
+            {
                 current_state = click_style;
-                if(!first_click_frame){
-                    function_reference(id,"click");
+                if (!first_click_frame)
+                {
+                    function_reference(id, "click");
+                    call_lua_function(id, "click");
                     state = "click";
-                }else{
-                    function_reference(id,"hold");
+                }
+                else
+                {
+                    function_reference(id, "hold");
+                    call_lua_function(id, "hold");
                     state = "hold";
                 }
                 first_click_frame = true;
-            }else{
+            }
+            else
+            {
                 current_state = hover_style;
-                function_reference(id,"hover");
+                function_reference(id, "hover");
+                call_lua_function(id, "hover");
                 first_click_frame = false;
                 state = "hover";
             }
-        }else{
+        }
+        else
+        {
             current_state = normal_style;
             first_click_frame = false;
             state = "none";
         }
 
-        vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) -1, ((position.y + base_position.y) * 2) -1);
+        vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * text_size, scale.y * text_size, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
-        if(text_location_x == render_text_location::LEFT){
+        if (text_location_x == render_text_location::LEFT)
+        {
             text_obj->pegar_componente<transform_>()->pos.x += scale.x / 2;
-        }else if(text_location_x == render_text_location::RIGHT){
+        }
+        else if (text_location_x == render_text_location::RIGHT)
+        {
             text_obj->pegar_componente<transform_>()->pos.x -= scale.x / 2;
         }
 
         /**/
-        if(text_location_y == render_text_location::TOP){
+        if (text_location_y == render_text_location::TOP)
+        {
             text_obj->pegar_componente<transform_>()->pos.y -= (scale.y / 2);
-        }else if(text_location_y == render_text_location::DOWN){
+        }
+        else if (text_location_y == render_text_location::DOWN)
+        {
             text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
         }
 
@@ -223,7 +252,6 @@ public:
         }
         border_obj->pegar_componente<render_shader>()->mat = mat;
 
-        
         border_obj->pegar_componente<render_shader>()->camada = render_layer;
         background_obj->pegar_componente<render_shader>()->camada = render_layer;
         text_obj->pegar_componente<render_texto>()->camada = render_layer;
@@ -242,26 +270,28 @@ public:
         border_obj->excluir();
     }
 
-    ~ui_componente() {
+    ~ui_componente()
+    {
     }
 };
 vec2 ui_componente::cursor_position = vec2(0, 0);
 bool ui_componente::click = false;
 
-void update_ui_componente_test(){
+void update_ui_componente_test()
+{
     ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
-    ui_componente::cursor_position.y = mix(1.0,0.0,manuseio_inputs->mouse_input.movimentos["normalized_y"]);
-    ui_componente::click = manuseio_inputs->mouse_input.botoes["left"]; 
-    //print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
+    ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+    ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
+    // print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
 }
 
-void test_ui(objeto_jogo *father)
+void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
 {
-    
+
     shared_ptr<objeto_jogo> test_obj = novo_objeto_jogo();
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
-    uic->position = vec2(0.1,0.6);
+    uic->position = vec2(0.1, 0.6);
     uic->camada = 4;
     uic->id = "test_button";
     ui_style style;
@@ -274,6 +304,7 @@ void test_ui(objeto_jogo *father)
     uic->current_state = style;
     uic->text_location_x = render_text_location::LEFT;
     uic->text_location_y = render_text_location::TOP;
+    uic->lua_function = lw;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
 
     /**/
@@ -290,11 +321,9 @@ void test_ui(objeto_jogo *father)
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
     uic2->current_state = style;
-    uic2->position = vec2(0.2,-0.2);
+    uic2->position = vec2(0.2, -0.2);
     uic2->text_location_x = render_text_location::RIGHT;
     uic2->text_location_y = render_text_location::DOWN;
+    uic2->lua_function = lw;
     cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
-    
-
-    
 }

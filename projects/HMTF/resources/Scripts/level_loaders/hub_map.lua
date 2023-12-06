@@ -47,8 +47,8 @@ local assets_needed = {
 
 scene_data = nil
 
-function button_func(id)
-    print("lua",id)
+function button_func(id,state)
+    print("lua",id,state)
     
 end
 
@@ -105,7 +105,7 @@ function level:START()
 
     loading_screen.close()
 
-    test_new_ui(layers.hud,button_func)
+    test_new_ui(layers.hud,"button_func")
 
     time:set_speed(1)
     

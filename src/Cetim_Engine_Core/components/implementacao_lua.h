@@ -277,7 +277,7 @@ std::string compileLuaFile(std::string path)
 
 		std::stringstream compiledScript;
 
-		#ifdef USE_LUA_JIT
+#ifdef USE_LUA_JIT
 
 		if (lua_dump(L, writerFunction, &compiledScript) != 0)
 		{
@@ -286,7 +286,7 @@ std::string compileLuaFile(std::string path)
 			return "";
 		}
 
-		#else
+#else
 
 		if (lua_dump(L, writerFunction, &compiledScript, 0) != 0)
 		{
@@ -295,9 +295,7 @@ std::string compileLuaFile(std::string path)
 			return "";
 		}
 
-		#endif
-		
-		
+#endif
 
 		lua_close(L);
 
@@ -885,7 +883,8 @@ namespace funcoes_ponte
 			ret = ManuseioDados::cenas_3D.pegar(file_path) != NULL;
 			if (!ret && load && !ManuseioDados::has_loading_request(file_path))
 			{
-				auto load_3D_model = [=](){
+				auto load_3D_model = [=]()
+				{
 					register_scene_3D_table(ManuseioDados::carregar_modelo_3D(file_path));
 				};
 				thread loader(load_3D_model);
@@ -1762,8 +1761,20 @@ namespace funcoes_ponte
 	}
 	// geral render
 
-	int test_new_ui(lua_State *L){
-		test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)));//,L,lua_tointeger(L, 2));
+	int test_new_ui(lua_State *L)
+	{
+
+		if (lua_tostring(L,2))
+		{
+			LuaFunctionWrapper lw;
+			lw.L = L;
+			lw.functionRef = lua_tostring(L, 2);
+			test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)), lw);
+		}
+
+		
+
+		//,L,lua_tointeger(L, 2));
 		return 0;
 	}
 
@@ -2232,7 +2243,7 @@ namespace funcoes_ponte
 		string path = lua_tostring(L, 1);
 
 		lua_pushtable(L, scene_3D_table_with_cache(ManuseioDados::carregar_modelo_3D(path)));
-		
+
 		return 1;
 	}
 
@@ -2460,8 +2471,6 @@ void load_base_lua_state(lua_State *L, string path)
 
 	thread cct(load_script_thread, path, &compiledCode);
 
-	
-
 	luaL_openlibs(L);
 
 	// configurar diretorio
@@ -2487,8 +2496,6 @@ void load_base_lua_state(lua_State *L, string path)
 	}
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
-
-	
 
 	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
@@ -2650,7 +2657,7 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
-			//print({p.first,"start"});
+			// print({p.first,"start"});
 
 			// pair<string, lua_State *> p = pairs[i];
 
@@ -2665,13 +2672,13 @@ public:
 				lua_call(p.second, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
 			}
-			//print({p.first,"end"});
+			// print({p.first,"end"});
 		}
 	}
 	void atualisar()
 	{
 
-		//Benchmark_Timer bt("update_lua_scripts");
+		// Benchmark_Timer bt("update_lua_scripts");
 
 		// iniciar();
 
@@ -2685,9 +2692,8 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
-			
 			// pair<string, lua_State *> p = pairs[i];
-			
+
 			if (scripts_lua_iniciados[p.first])
 			{
 
@@ -2721,7 +2727,6 @@ public:
 			{
 				shold_start = true;
 			}
-			
 		}
 
 		if (shold_start)
@@ -2935,7 +2940,6 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 												{if(add){obj->adicionar_componente<poly_mesh>(poly_mesh());}else{obj->remover_componente<poly_mesh>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("ui_component", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<ui_componente>(ui_componente());}else{obj->remover_componente<ui_componente>();} }),
-												
 
 };
 
@@ -3022,7 +3026,6 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 										  { return obj->tem_componente<poly_mesh>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("ui_component", [](objeto_jogo *obj)
 										  { return obj->tem_componente<ui_componente>(); }),
-										  
 
 };
 int have_component(lua_State *L)

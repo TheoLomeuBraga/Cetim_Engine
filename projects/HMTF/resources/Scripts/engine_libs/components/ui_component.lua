@@ -3,8 +3,6 @@ register_function_set("render")
 require("components.base_component")
 require("components.component_index")
 
---camera
-
 
 ui_component = create_base_component(components.ui_component)
 

@@ -20,6 +20,11 @@ extern "C"
 
 #endif
 
+struct LuaFunctionWrapper{
+    lua_State *L;        // Estado Lua
+    std::string functionRef;     // Referência da função Lua no registrador
+};
+typedef struct LuaFunctionWrapper LuaFunctionWrapper;
 
 class Table {
 public:
