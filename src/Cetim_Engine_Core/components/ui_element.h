@@ -54,6 +54,7 @@ public:
     string id;
     uint8_t render_layer = 4;
     uint8_t camada = 0;
+    float text_size = 0.1;
     bool ligado = true;
     ui_type type;
     render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
@@ -167,8 +168,21 @@ public:
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) -1, ((position.y + base_position.y) * 2) -1);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
-        text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
+        text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * text_size, scale.y * text_size, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
+
+        if(text_location_x == render_text_location::LEFT){
+            text_obj->pegar_componente<transform_>()->pos.x += scale.x / 2;
+        }else if(text_location_x == render_text_location::RIGHT){
+            text_obj->pegar_componente<transform_>()->pos.x -= scale.x / 2;
+        }
+
+        /**/
+        if(text_location_y == render_text_location::TOP){
+            text_obj->pegar_componente<transform_>()->pos.y -= (scale.y / 2);
+        }else if(text_location_y == render_text_location::DOWN){
+            text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
+        }
 
         border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0);
         border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
@@ -253,6 +267,8 @@ void test_ui(objeto_jogo *father)
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic->click_style = style;
     uic->current_state = style;
+    uic->text_location_x = render_text_location::LEFT;
+    uic->text_location_y = render_text_location::TOP;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
 
     /**/
@@ -270,6 +286,8 @@ void test_ui(objeto_jogo *father)
     uic2->click_style = style;
     uic2->current_state = style;
     uic2->position = vec2(0.2,-0.2);
+    uic2->text_location_x = render_text_location::RIGHT;
+    uic2->text_location_y = render_text_location::DOWN;
     cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
     
 
