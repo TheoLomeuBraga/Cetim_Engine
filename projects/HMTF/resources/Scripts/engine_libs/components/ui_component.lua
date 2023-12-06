@@ -19,6 +19,7 @@ struct ui_style_struct
 };
 ]]
 
+
 advanced_ui_style = {}
 function advanced_ui_style:new()
     return {
@@ -31,6 +32,12 @@ function advanced_ui_style:new()
         text_font = "",
     }
 end
+
+setmetatable(advanced_ui_style,{
+    __call=function (self)
+        return self:new()
+    end
+})
 
 ui_component = create_base_component(components.ui_component)
 ui_component.object_ptr = ""

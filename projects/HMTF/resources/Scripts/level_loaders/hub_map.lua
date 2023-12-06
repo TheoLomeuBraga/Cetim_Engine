@@ -5,6 +5,7 @@ require("objects.game_object")
 require("components.physics_3D")
 require("objects.scene_3D")
 require("components.audio_source")
+require("components.ui_component")
 require("resources.playable_scene")
 
 local level = {
@@ -104,7 +105,7 @@ function level:START()
     global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
 
     loading_screen.close()
-
+    
     test_new_ui(layers.hud,"button_func")
 
     time:set_speed(1)

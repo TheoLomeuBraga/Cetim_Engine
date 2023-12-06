@@ -477,6 +477,16 @@ Table scene_3D_table(cena_3D sceane)
     return ret;
 }
 
+ui_style table_advanced_ui_style(Table s){
+    ui_style s;
+    return s;
+}
+
+Table advanced_ui_style_table(ui_style s){
+    Table s;
+    return s;
+}
+
 unordered_map<shared_ptr<cena_3D>, Table> scene_3D_table_cache;
 std::mutex scene_3D_table_cache_mtx;
 
