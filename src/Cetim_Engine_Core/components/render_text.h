@@ -43,7 +43,7 @@ public:
 	shared_ptr<fonte> font;
 	bool ligado = true;
 	uint8_t camada = 0;
-	float tamanho_max_linha = 34;
+	float tamanho_max_linha = 1000;
 	float tamanho_espaco = 1;
 	bool uniform_space_between_characters = false;
 	float espaco_entre_linhas = 3;

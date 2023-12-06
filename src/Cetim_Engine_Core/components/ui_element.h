@@ -49,13 +49,15 @@ class ui_componente : public componente
     bool first_click_frame = false;
 
 public:
+
     static vec2 cursor_position;
     static bool click;
     string id;
     uint8_t render_layer = 4;
     uint8_t camada = 0;
     float text_size = 0.1;
-    bool ligado = true;
+    float space_betwen_lines = 2;
+    bool uniform_spaces_betwen_chars = false;
     ui_type type;
     render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
@@ -228,6 +230,9 @@ public:
 
         text_obj->pegar_componente<render_texto>()->text_location_x = text_location_x;
         text_obj->pegar_componente<render_texto>()->text_location_y = text_location_y;
+
+        text_obj->pegar_componente<render_texto>()->uniform_space_between_characters = uniform_spaces_betwen_chars;
+        text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = space_betwen_lines;
     }
 
     void finalisar()
