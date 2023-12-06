@@ -251,7 +251,7 @@ void test_ui(objeto_jogo *father)
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
     uic2->current_state = style;
-    uic2->position = vec2(0.0,0.2);
+    uic2->position = vec2(0.2,0.4);
     cena_objetos_selecionados->adicionar_objeto(father, test_obj2);
     
 
