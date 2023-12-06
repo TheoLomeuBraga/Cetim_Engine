@@ -52,11 +52,10 @@ public:
     uint8_t render_layer = 4;
     uint8_t camada = 0;
     bool ligado = true;
-    vec2 acurate_pos = vec2(0,0);
     ui_type type;
     render_text_location text_location_x, text_location_y;
     shared_ptr<ui_componente> father;
-    vec2 base_position = vec2(0, 0), position = vec2(0.5, 0.5), scale = vec2(0.2, 0.2);
+    vec2  position = vec2(0.1, 0.5), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
 
@@ -123,18 +122,20 @@ public:
     void atualisar()
     {
 
+        vec2  base_position;
+
+        father = esse_objeto->pai->pegar_componente<ui_componente>();
         
-        if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<ui_componente>() != NULL)
+        if (esse_objeto->pai != NULL && father != NULL)
         {
-            father = esse_objeto->pai->pegar_componente<ui_componente>();
-            base_position = father->acurate_pos;
+            
+            base_position = father->position;
         }
         else
         {
             father = NULL;
-            base_position = acurate_pos;
+            base_position = vec2(0,0);
         }
-        /**/
 
         
 
@@ -151,7 +152,7 @@ public:
 
         
 
-        acurate_pos = vec2(mix(-1, 1, base_position.x + position.x), mix(-1, 1, base_position.y + position.y));
+        vec2 acurate_pos = vec2(mix(-1, 1, position.x) + base_position.x, mix(-1, 1,position.y) + base_position.y);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
@@ -236,7 +237,7 @@ void test_ui(objeto_jogo *father)
     uic->current_state = style;
     cena_objetos_selecionados->adicionar_objeto(father, test_obj);
 
-    /*
+    /**/
     shared_ptr<objeto_jogo> test_obj2 = novo_objeto_jogo();
     test_obj2->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic2 = test_obj2->pegar_componente<ui_componente>();
@@ -250,9 +251,9 @@ void test_ui(objeto_jogo *father)
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
     uic2->current_state = style;
-    uic2->position = vec2(0.2,0.2);
+    uic2->position = vec2(0.0,0.2);
     cena_objetos_selecionados->adicionar_objeto(test_obj, test_obj2);
-    */
+    
 
     
 }
