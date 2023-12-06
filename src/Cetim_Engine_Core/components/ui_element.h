@@ -44,6 +44,7 @@ class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
+    vec2  base_position = vec2(0,0);
 
 public:
     static vec2 cursor_position;
@@ -110,11 +111,11 @@ public:
     bool is_above()
     {
         //print({position.y - ((scale.y - current_state.border_size) / 2),position.y + ((scale.y - current_state.border_size) / 2)});
-        if (ui_componente::cursor_position.x >  position.x - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < position.x + ((scale.x - current_state.border_size) / 2) )
+        if (ui_componente::cursor_position.x > (base_position.x +  position.x) - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < (base_position.x +  position.x) + ((scale.x - current_state.border_size) / 2) )
         {
             float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            print({"new_cursor_position_y",new_cursor_position_y});
-            if (new_cursor_position_y > position.y - ((scale.y - current_state.border_size) / 2) && new_cursor_position_y < position.y + ((scale.y - current_state.border_size) / 2))
+            //print({"new_cursor_position_y",new_cursor_position_y});
+            if (new_cursor_position_y > (base_position.y +  position.y) - ((scale.y - current_state.border_size) / 2) && new_cursor_position_y < (base_position.y +  position.y) + ((scale.y - current_state.border_size) / 2))
             {
                 return true;
             }
@@ -125,7 +126,7 @@ public:
     void atualisar()
     {
 
-        vec2  base_position = vec2(0,0);
+        base_position = vec2(0,0);
 
         /**/
         father = esse_objeto->pai->pegar_componente<ui_componente>();
