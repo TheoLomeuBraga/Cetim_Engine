@@ -56,7 +56,7 @@ public:
     ui_type type;
     render_text_location text_location_x, text_location_y;
     shared_ptr<ui_componente> father;
-    vec2  position = vec2(0.1, 0.5), scale = vec2(0.2, 0.2);
+    vec2  position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
 
@@ -110,12 +110,10 @@ public:
 
     bool is_above()
     {
-        //print({position.y - ((scale.y - current_state.border_size) / 2),position.y + ((scale.y - current_state.border_size) / 2)});
         if (ui_componente::cursor_position.x > (base_position.x +  position.x) - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < (base_position.x +  position.x) + ((scale.x - current_state.border_size) / 2) )
         {
-            float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            //print({"new_cursor_position_y",new_cursor_position_y});
-            if (new_cursor_position_y > (base_position.y +  position.y) - ((scale.y - current_state.border_size) / 2) && new_cursor_position_y < (base_position.y +  position.y) + ((scale.y - current_state.border_size) / 2))
+            //float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
+            if (ui_componente::cursor_position.y > (base_position.y +  position.y) - ((scale.y - current_state.border_size) / 2) && ui_componente::cursor_position.y < (base_position.y +  position.y) + ((scale.y - current_state.border_size) / 2))
             {
                 return true;
             }
