@@ -155,7 +155,7 @@ public:
 
         
 
-        vec2 acurate_pos = vec2(mix(-1, 1, position.x) + base_position.x, mix(-1, 1,position.y) + base_position.y);
+        vec2 acurate_pos = vec2(mix(-1, 1, position.x) , mix(-1, 1,position.y));
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * 0.1, scale.y * 0.1, 1);
