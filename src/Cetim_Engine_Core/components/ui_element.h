@@ -56,11 +56,12 @@ public:
     uint8_t camada = 0;
     bool ligado = true;
     ui_type type;
-    render_text_location text_location_x, text_location_y;
+    render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
     vec2  position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style,current_state;
     wstring text;
+    string state = "none";
     
 
     
@@ -86,7 +87,6 @@ public:
         border_obj->pegar_componente<transform_>()->UI = true;
         border_obj->adicionar_componente<render_shader>(render_shader());
         border_obj->pegar_componente<render_shader>()->mat = mat;
-        border_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, border_obj);
 
         mat.cor = vec4(0, 1, 0, 1);
@@ -95,7 +95,6 @@ public:
         background_obj->pegar_componente<transform_>()->UI = true;
         background_obj->adicionar_componente<render_shader>(render_shader());
         background_obj->pegar_componente<render_shader>()->mat = mat;
-        background_obj->pegar_componente<render_shader>()->camada = render_layer;
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, background_obj);
 
         mat.cor = vec4(0, 0, 1, 1);
@@ -105,7 +104,6 @@ public:
         text_obj->pegar_componente<transform_>()->UI = true;
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
-        text_obj->pegar_componente<render_texto>()->camada = render_layer;
         text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nx_X_x\nola mundo";
         text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, text_obj);
@@ -142,24 +140,28 @@ public:
         }
 
         
-
+        
         if(is_above()){
             if(click){
                 current_state = click_style;
                 if(!first_click_frame){
                     function_reference(id,"click");
+                    state = "click";
                 }else{
                     function_reference(id,"hold");
+                    state = "hold";
                 }
                 first_click_frame = true;
             }else{
                 current_state = hover_style;
                 function_reference(id,"hover");
                 first_click_frame = false;
+                state = "hover";
             }
         }else{
             current_state = normal_style;
             first_click_frame = false;
+            state = "none";
         }
 
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) -1, ((position.y + base_position.y) * 2) -1);
@@ -206,7 +208,12 @@ public:
         border_obj->pegar_componente<render_shader>()->mat = mat;
 
         
-        
+        border_obj->pegar_componente<render_shader>()->camada = render_layer;
+        background_obj->pegar_componente<render_shader>()->camada = render_layer;
+        text_obj->pegar_componente<render_texto>()->camada = render_layer;
+
+        text_obj->pegar_componente<render_texto>()->text_location_x = text_location_x;
+        text_obj->pegar_componente<render_texto>()->text_location_y = text_location_y;
     }
 
     void finalisar()
