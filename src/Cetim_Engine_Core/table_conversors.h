@@ -52,6 +52,20 @@ Table vec4_table(vec4 v)
     return t;
 }
 
+vec4 table_color(Table t)
+{
+    return vec4(t.getFloat("r"), t.getFloat("g"), t.getFloat("b"), t.getFloat("a"));
+}
+Table color_table(vec4 v)
+{
+    Table t;
+    t.setFloat("r", v.x);
+    t.setFloat("g", v.y);
+    t.setFloat("b", v.z);
+    t.setFloat("a", v.w);
+    return t;
+}
+
 quat table_quat(Table t)
 {
     return quat(t.getFloat("x"), t.getFloat("y"), t.getFloat("z"), t.getFloat("w"));
@@ -480,9 +494,9 @@ Table scene_3D_table(cena_3D sceane)
 ui_style table_advanced_ui_style(Table s){
     ui_style ret;
 
-    ret.text_color = table_vec4(s.getTable("text_color"));
-    ret.background_color = table_vec4(s.getTable("background_color"));
-    ret.border_color = table_vec4(s.getTable("border_color"));
+    ret.text_color = table_color(s.getTable("text_color"));
+    ret.background_color = table_color(s.getTable("background_color"));
+    ret.border_color = table_color(s.getTable("border_color"));
 
     ret.border_size = s.getFloat("border_size");
 
@@ -497,9 +511,9 @@ ui_style table_advanced_ui_style(Table s){
 Table advanced_ui_style_table(ui_style s){
     Table ret;
 
-    ret.setTable("text_color",vec4_table(s.text_color));
-    ret.setTable("background_color",vec4_table(s.background_color));
-    ret.setTable("border_color",vec4_table(s.border_color));
+    ret.setTable("text_color",color_table(s.text_color));
+    ret.setTable("background_color",color_table(s.background_color));
+    ret.setTable("border_color",color_table(s.border_color));
 
     ret.setFloat("border_size",s.border_size);
 

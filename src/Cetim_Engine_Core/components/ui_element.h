@@ -118,8 +118,7 @@ public:
         text_obj->pegar_componente<transform_>()->UI = true;
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
-        text_obj->pegar_componente<render_texto>()->texto = L"ola mundo\nx_X_x\nola mundo";
-        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
+        
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, text_obj);
     }
 
@@ -259,6 +258,9 @@ public:
 
         text_obj->pegar_componente<render_texto>()->uniform_space_between_characters = uniform_spaces_betwen_chars;
         text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = space_betwen_lines;
+
+        text_obj->pegar_componente<render_texto>()->texto = text;
+        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
     }
 
     void finalisar()

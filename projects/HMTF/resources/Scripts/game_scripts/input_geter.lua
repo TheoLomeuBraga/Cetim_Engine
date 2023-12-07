@@ -3,6 +3,9 @@ require("objects.input")
 require("functions")
 require("math")
 
+require("components.extras")
+require("components.ui_component")
+
 inputs_last_frame = {}
 
 inputs = {
@@ -52,6 +55,9 @@ function UPDATE()
         analog_view_y = av_y,
         menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
     }
+
+    
+    set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")})
 
     inputs.action_1 = math.max(0,inputs.action_1)
     inputs.action_2 = math.max(0,inputs.action_2)

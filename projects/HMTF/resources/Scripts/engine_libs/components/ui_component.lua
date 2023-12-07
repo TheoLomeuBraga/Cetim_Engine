@@ -19,6 +19,10 @@ struct ui_style_struct
 };
 ]]
 
+function set_ui_curson_location(v2)
+    c_set_ui_curson_location(v2)
+end
+
 render_text_location = {
     none = 0,
     center = 1,
@@ -62,7 +66,7 @@ ui_component.scale = { x = 0.2, y = 0.2 }
 ui_component.normal_style = advanced_ui_style()
 ui_component.hover_style = advanced_ui_style()
 ui_component.click_style = advanced_ui_style()
-ui_component.text = "a"
+ui_component.text = ""
 ui_component.state = ""
 
 
@@ -85,7 +89,7 @@ function ui_component:clean()
 end
 
 function ui_component:get()
-    local u = get_set_ui_component(get_lua,self.object_ptr)
+    local u = get_set_ui_component(get_lua, self.object_ptr)
     self.type = u.type
     self.layer = u.layer
     self.id = u.id
@@ -104,11 +108,11 @@ function ui_component:get()
 end
 
 function ui_component:set()
-    get_set_ui_component(set_lua,deepcopyjson(self))
+    get_set_ui_component(set_lua, deepcopyjson(self))
 end
 
 function ui_component:set_interaction_function(global_func_name)
-    set_ui_component_function(self.object_ptr,global_func_name)
+    set_ui_component_function(self.object_ptr, global_func_name)
 end
 
-component_map[components.ui_component] = apply_component_metatable(camera_component:new(nil))
+component_map[components.ui_component] = apply_component_metatable(ui_component:new(nil))
