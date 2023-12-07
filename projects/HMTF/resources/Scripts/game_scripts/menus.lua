@@ -269,16 +269,13 @@ function START()
     pause_menu_objects.title = game_object(create_object(create_object(this_object.object_ptr)))
 
     local ui_manager = pause_menu_objects.title.components.ui_component
-    ui_manager.normal_style = deepcopy(adv_ui)
-
-    adv_ui.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    adv_ui.background_color = { r = 1, g = 1, b = 0, a = 1 }
-    
-    ui_manager.hover_style = adv_ui
-    ui_manager.click_style = adv_ui
+    ui_manager.normal_style = deepcopy(adv_ui)    
+    ui_manager.hover_style = deepcopy(adv_ui)
+    ui_manager.click_style = deepcopy(adv_ui)
     ui_manager.text = "HMTF"
+    ui_manager.text_size = 0.2
 
-    ui_manager.position = {x=0.5,y=0.8}
+    ui_manager.position = {x=0.5,y=0.85}
     ui_manager.scale = { x = 2, y = 2 }
 
     ui_manager.text_location_x = render_text_location.center

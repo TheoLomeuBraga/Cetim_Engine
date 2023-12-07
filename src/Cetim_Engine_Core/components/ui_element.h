@@ -190,7 +190,7 @@ public:
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
-        text_obj->pegar_componente<transform_>()->esca = vec3(scale.x * text_size, scale.y * text_size, 1);
+        text_obj->pegar_componente<transform_>()->esca = vec3(text_size, text_size, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
         if (text_location_x == render_text_location::LEFT)
