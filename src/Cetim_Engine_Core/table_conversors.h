@@ -478,13 +478,25 @@ Table scene_3D_table(cena_3D sceane)
 }
 
 ui_style table_advanced_ui_style(Table s){
-    ui_style s;
-    return s;
+    ui_style ret;
+
+    ret.text_color = table_vec4(s.getTable("text_color"));
+    ret.background_color = table_vec4(s.getTable("background_color"));
+    ret.border_color = table_vec4(s.getTable("border_color"));
+
+    ret.border_size = s.getFloat("border_size");
+
+    ret.background_image = ManuseioDados::carregar_Imagem(s.getString("background_image"));
+    ret.border_image = ManuseioDados::carregar_Imagem(s.getString("border_image"));
+
+    ret.text_font = ManuseioDados::carregar_fonte(s.getString("text_font"));
+
+    return ret;
 }
 
 Table advanced_ui_style_table(ui_style s){
-    Table s;
-    return s;
+    Table ret;
+    return ret;
 }
 
 unordered_map<shared_ptr<cena_3D>, Table> scene_3D_table_cache;
