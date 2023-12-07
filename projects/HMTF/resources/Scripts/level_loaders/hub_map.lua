@@ -106,7 +106,11 @@ function level:START()
 
     loading_screen.close()
     
-    
+    game_object(layers.hud):add_component(components.ui)
+    local ui=ui_component(layers.hud)
+    ui:get()
+    ui.position = {x=0.5,y=0.5}
+    ui:set()
 
     time:set_speed(1)
     

@@ -35,9 +35,9 @@ function advanced_ui_style:new()
         background_color = { r = 0, g = 1, b = 0, a = 1 },
         border_color = { r = 0, g = 0, b = 1, a = 1 },
         border_size = 0.05,
-        background_image = "",
-        border_image = "",
-        text_font = "",
+        background_image = "resources/Textures/null.svg",
+        border_image = "resources/Textures/null.svg",
+        text_font = "resources/Fonts/Glowworm Regular.json",
     }
 end
 
@@ -62,7 +62,7 @@ ui_component.scale = { x = 0.2, y = 0.2 }
 ui_component.normal_style = advanced_ui_style()
 ui_component.hover_style = advanced_ui_style()
 ui_component.click_style = advanced_ui_style()
-ui_component.text = ""
+ui_component.text = "a"
 ui_component.state = ""
 
 

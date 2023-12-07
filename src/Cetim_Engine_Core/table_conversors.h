@@ -503,10 +503,17 @@ Table advanced_ui_style_table(ui_style s){
 
     ret.setFloat("border_size",s.border_size);
 
-    ret.setString("background_image",s.background_image->local);
-    ret.setString("border_image",s.border_image->local);
-
-    ret.setString("text_font",s.text_font->path);
+    
+    if(s.background_image != NULL){
+        ret.setString("background_image",s.background_image->local);
+    }
+    if(s.border_image != NULL){
+        ret.setString("border_image",s.border_image->local);
+    }
+    if(s.text_font != NULL){
+        ret.setString("text_font",s.text_font->path);
+    }
+    
 
     return ret;
 }

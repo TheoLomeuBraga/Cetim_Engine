@@ -1975,9 +1975,11 @@ namespace funcoes_ponte
 			ret.setTable("position", vec2_table(ui->position));
 			ret.setTable("scale", vec2_table(ui->scale) );
 
+			
 			ret.setTable("normal_style", advanced_ui_style_table(ui->normal_style) );
 			ret.setTable("hover_style", advanced_ui_style_table(ui->hover_style) );
 			ret.setTable("click_style", advanced_ui_style_table(ui->click_style) );
+			
 
 			lua_pushtable(L, ret);
 			return 1;
