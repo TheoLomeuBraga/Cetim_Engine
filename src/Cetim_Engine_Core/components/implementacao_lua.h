@@ -1950,6 +1950,48 @@ namespace funcoes_ponte
 		}
 	}
 
+	int set_ui_curson_location(lua_State *L){
+		ui_componente::cursor_position = table_vec2(lua_totable(L,1))
+	}
+
+	int get_set_ui_component(lua_State *L)
+	{
+		if (lua_tonumber(L, 1) == get_lua)
+		{
+			Table ret;
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+			shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
+
+
+
+			lua_pushtable(L, ret);
+			return 1;
+		}
+		else
+		{
+
+			Table t = lua_totable(L, 2);
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
+			shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
+
+
+
+			return 0;
+		}
+	}
+
+	int set_ui_component_function(lua_State *L){
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L,1));
+		shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
+		if(string(lua_tostring(L,2)) != ""){
+			ui->lua_function = {L,lua_tostring(L,2)};
+		}else{
+			ui->lua_function = {NULL,""};
+		}
+	}
+
+	
+
 	int raycast_2D(lua_State *L)
 	{
 		Table ret;
@@ -2385,7 +2427,10 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
 															  pair<string, lua_function>("set_keyframe", funcoes_ponte::set_keyframe),
 															  pair<string, lua_function>("get_set_post_processing", funcoes_ponte::get_set_post_processing),
-															  pair<string, lua_function>("test_new_ui", funcoes_ponte::test_new_ui),
+															  pair<string, lua_function>("set_ui_curson_location", funcoes_ponte::set_ui_curson_location),
+															  pair<string, lua_function>("get_set_ui_component", funcoes_ponte::get_set_ui_component),
+															  pair<string, lua_function>("set_ui_component_function", funcoes_ponte::set_ui_component_function),
+															  
 
 														  }),
 		pair<string, map<string, lua_function>>("physics", {

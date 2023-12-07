@@ -60,7 +60,6 @@ public:
     float text_size = 0.1;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
-    ui_type type;
     render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
     vec2 position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
