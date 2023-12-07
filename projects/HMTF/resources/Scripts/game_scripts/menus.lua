@@ -234,12 +234,14 @@ function START()
     local style = ui_style:new()
 
     style.border_size = 0
+
+    style.border_size = 0
     style.color = { r = 0, g = 0.2, b = 0.2, a = 1 }
     style.color_click = { r = 0, g = 0, b = 0, a = 0 }
 
+    local adv_ui = advanced_ui_style()
+
     if in_main_menu ~= 0 then
-        
-        local adv_ui = advanced_ui_style()
         adv_ui.text_color = { r = 0, g = 1, b = 0.2, a = 1 }
         adv_ui.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
         adv_ui.border_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
@@ -250,22 +252,47 @@ function START()
         pause_menu_objects.back_ground_image = game_object(this_object.object_ptr)
         local ui_manager = pause_menu_objects.back_ground_image.components.ui_component
 
-        ui_manager.position = {x=0.5,y=0.5}
-        ui_manager.scale = {x=2,y=2}
-
-        
+        ui_manager.position = { x = 0.5, y = 0.5 }
+        ui_manager.scale = { x = 2, y = 2 }
 
         ui_manager.normal_style = adv_ui
         ui_manager.hover_style = adv_ui
         ui_manager.click_style = adv_ui
 
         ui_manager:set()
-
     end
 
+    adv_ui.text_color = { r = 0, g = 1, b = 0, a = 0 }
+    adv_ui.background_color = { r = 0, g = 0, b = 0, a = 0 }
+    adv_ui.border_color = { r = 0, g = 0, b = 0, a = 0 }
+
+    pause_menu_objects.title = game_object(create_object(create_object(this_object.object_ptr)))
+
+    local ui_manager = pause_menu_objects.title.components.ui_component
+    ui_manager.normal_style = deepcopy(adv_ui)
+
+    adv_ui.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    adv_ui.background_color = { r = 1, g = 1, b = 0, a = 1 }
+    
+    ui_manager.hover_style = adv_ui
+    ui_manager.click_style = adv_ui
+    ui_manager.text = "HMTF"
+
+    ui_manager.position = {x=0.5,y=0.8}
+    ui_manager.scale = { x = 2, y = 2 }
+
+    ui_manager.text_location_x = render_text_location.center
+    ui_manager.text_location_y = render_text_location.center
+
+    ui_manager:set()
+
+    --[[
     style.color = { r = 0, g = 0, b = 0, a = 0 }
     pause_menu_objects.title = create_ui(this_object.object_ptr, { x = -1, y = 1.75, z = 0 }, { x = 2, y = 2, z = 2 }, 5,
         style, "HMTF", 0.2, "resources/Textures/null.png", nil, ui_category.display)
+    ]]
+
+
 
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
     style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }

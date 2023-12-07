@@ -211,7 +211,6 @@ Table lua_totable(lua_State *L, int index)
 	return t;
 }
 
-
 std::wstring lua_towstring(lua_State *L, int index)
 {
 	const char *utf8Str = luaL_checkstring(L, index);
@@ -1765,15 +1764,13 @@ namespace funcoes_ponte
 	int test_new_ui(lua_State *L)
 	{
 
-		if (lua_tostring(L,2))
+		if (lua_tostring(L, 2))
 		{
 			LuaFunctionWrapper lw;
 			lw.L = L;
 			lw.functionRef = lua_tostring(L, 2);
 			test_ui(string_ponteiro<objeto_jogo>(lua_tostring(L, 1)), lw);
 		}
-
-		
 
 		//,L,lua_tointeger(L, 2));
 		return 0;
@@ -1951,8 +1948,16 @@ namespace funcoes_ponte
 		}
 	}
 
-	int set_ui_curson_location(lua_State *L){
-		ui_componente::cursor_position = table_vec2(lua_totable(L,1));
+	int set_ui_curson_location(lua_State *L)
+	{
+		vec2 cursor_pos = table_vec2(lua_totable(L, 1));
+		cursor_pos.y = mix(1.0, 0.0, cursor_pos.y);
+		ui_componente::cursor_position = cursor_pos;
+		ui_componente::click = lua_toboolean(L, 2);
+
+		// ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
+		// ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+		// ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
 		return 0;
 	}
 
@@ -1973,13 +1978,11 @@ namespace funcoes_ponte
 			ret.setFloat("text_location_x", ui->text_location_x);
 			ret.setFloat("text_location_y", ui->text_location_y);
 			ret.setTable("position", vec2_table(ui->position));
-			ret.setTable("scale", vec2_table(ui->scale) );
+			ret.setTable("scale", vec2_table(ui->scale));
 
-			
-			ret.setTable("normal_style", advanced_ui_style_table(ui->normal_style) );
-			ret.setTable("hover_style", advanced_ui_style_table(ui->hover_style) );
-			ret.setTable("click_style", advanced_ui_style_table(ui->click_style) );
-			
+			ret.setTable("normal_style", advanced_ui_style_table(ui->normal_style));
+			ret.setTable("hover_style", advanced_ui_style_table(ui->hover_style));
+			ret.setTable("click_style", advanced_ui_style_table(ui->click_style));
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -2009,18 +2012,20 @@ namespace funcoes_ponte
 		}
 	}
 
-	int set_ui_component_function(lua_State *L){
-		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L,1));
+	int set_ui_component_function(lua_State *L)
+	{
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
-		if(string(lua_tostring(L,2)) != ""){
-			ui->lua_function = {L,lua_tostring(L,2)};
-		}else{
-			ui->lua_function = {NULL,""};
+		if (string(lua_tostring(L, 2)) != "")
+		{
+			ui->lua_function = {L, lua_tostring(L, 2)};
+		}
+		else
+		{
+			ui->lua_function = {NULL, ""};
 		}
 		return 0;
 	}
-
-	
 
 	int raycast_2D(lua_State *L)
 	{
@@ -2460,7 +2465,6 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("set_ui_curson_location", funcoes_ponte::set_ui_curson_location),
 															  pair<string, lua_function>("get_set_ui_component", funcoes_ponte::get_set_ui_component),
 															  pair<string, lua_function>("set_ui_component_function", funcoes_ponte::set_ui_component_function),
-															  
 
 														  }),
 		pair<string, map<string, lua_function>>("physics", {

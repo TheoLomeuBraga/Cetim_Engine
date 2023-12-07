@@ -19,8 +19,8 @@ struct ui_style_struct
 };
 ]]
 
-function set_ui_curson_location(v2)
-    c_set_ui_curson_location(v2)
+function set_ui_curson_location(v2,click)
+    c_set_ui_curson_location(v2,click)
 end
 
 render_text_location = {

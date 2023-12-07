@@ -124,10 +124,10 @@ public:
 
     bool is_above()
     {
-        if (ui_componente::cursor_position.x > (base_position.x + position.x) - ((scale.x - current_state.border_size) / 2) && ui_componente::cursor_position.x < (base_position.x + position.x) + ((scale.x - current_state.border_size) / 2))
+        if (ui_componente::cursor_position.x > (base_position.x + position.x) - ((scale.x - current_state.border_size) / (scale.x * 2)) && ui_componente::cursor_position.x < (base_position.x + position.x) + ((scale.x - current_state.border_size) / (scale.x * 2)))
         {
             // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / 2) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / 2))
+            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / (scale.x * 2)) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / (scale.y * 2)))
             {
                 return true;
             }
@@ -284,10 +284,9 @@ bool ui_componente::click = false;
 
 void update_ui_componente_test()
 {
-    ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
-    ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
-    ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
-    // print({"cursor_position",ui_componente::cursor_position.x,ui_componente::cursor_position.y});
+    //ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
+    //ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+    //ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
 }
 
 void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
