@@ -59,7 +59,7 @@ public:
     float text_size = 0.1;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
-    render_text_location text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
+    unsigned char text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
     vec2 position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
     ui_style normal_style, hover_style, click_style, current_state;
@@ -268,6 +268,11 @@ public:
         border_obj->excluir();
     }
 
+    void set_text_by_string(string t)
+	{
+		text = convert_to_wstring(t);
+	}
+
     ~ui_componente()
     {
     }
@@ -290,7 +295,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     test_obj->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic = test_obj->pegar_componente<ui_componente>();
     uic->position = vec2(0.1, 0.6);
-    uic->camada = 4;
+    uic->render_layer = 4;
     uic->id = "test_button";
     ui_style style;
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
@@ -309,7 +314,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     shared_ptr<objeto_jogo> test_obj2 = novo_objeto_jogo();
     test_obj2->adicionar_componente<ui_componente>(ui_componente());
     shared_ptr<ui_componente> uic2 = test_obj2->pegar_componente<ui_componente>();
-    uic2->camada = 4;
+    uic2->render_layer = 4;
     uic2->id = "test_button";
     style = ui_style();
     style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");

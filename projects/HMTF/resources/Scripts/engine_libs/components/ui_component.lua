@@ -91,7 +91,7 @@ function ui_component:get()
     self.id = u.id
     self.text = u.text
     self.text_size = u.text_size
-    self.uniform_spaces_betwen_chars = u.uniform_spaces_betwen_chars
+    self.uniform_spaces_betwen_chars = u.uniform_spaces_betwen_chars > 0
     self.text_location_x = u.text_location_x
     self.text_location_y = u.text_location_y
     self.positiom = u.positiom
@@ -104,6 +104,7 @@ function ui_component:get()
 end
 
 function ui_component:set()
+    get_set_ui_component(set_lua,deepcopyjson(self))
 end
 
 function ui_component:set_interaction_function(global_func_name)

@@ -1989,7 +1989,19 @@ namespace funcoes_ponte
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
 			shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
 
-
+			ui->render_layer = t.getFloat("layer") - 1;
+			ui->set_text_by_string(t.getString("text"));
+			ui->state = t.getString("text");
+			ui->text_size = t.getFloat("text_size");
+			ui->space_betwen_lines = t.getFloat("space_betwen_lines");
+			ui->uniform_spaces_betwen_chars = t.getFloat("uniform_spaces_betwen_chars");
+			ui->text_location_x = t.getFloat("text_location_x");
+			ui->text_location_y = t.getFloat("text_location_y");
+			ui->position = table_vec2(t.getTable("position"));
+			ui->scale = table_vec2(t.getTable("scale"));
+			ui->normal_style = table_advanced_ui_style(t.getTable("normal_style"));
+			ui->hover_style = table_advanced_ui_style(t.getTable("hover_style"));
+			ui->click_style = table_advanced_ui_style(t.getTable("click_style"));
 
 			return 0;
 		}

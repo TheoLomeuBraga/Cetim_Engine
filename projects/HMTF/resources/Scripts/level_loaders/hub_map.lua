@@ -106,7 +106,7 @@ function level:START()
 
     loading_screen.close()
     
-    --test_new_ui(layers.hud,"button_func")
+    
 
     time:set_speed(1)
     
