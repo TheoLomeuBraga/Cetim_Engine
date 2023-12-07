@@ -56,7 +56,6 @@ public:
     static bool click;
     string id;
     uint8_t render_layer = 4;
-    uint8_t camada = 0;
     float text_size = 0.1;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;

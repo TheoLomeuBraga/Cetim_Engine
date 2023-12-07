@@ -211,6 +211,7 @@ Table lua_totable(lua_State *L, int index)
 	return t;
 }
 
+
 std::wstring lua_towstring(lua_State *L, int index)
 {
 	const char *utf8Str = luaL_checkstring(L, index);
@@ -1951,7 +1952,8 @@ namespace funcoes_ponte
 	}
 
 	int set_ui_curson_location(lua_State *L){
-		ui_componente::cursor_position = table_vec2(lua_totable(L,1))
+		ui_componente::cursor_position = table_vec2(lua_totable(L,1));
+		return 0;
 	}
 
 	int get_set_ui_component(lua_State *L)
@@ -1961,8 +1963,21 @@ namespace funcoes_ponte
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			shared_ptr<ui_componente> ui = obj->pegar_componente<ui_componente>();
+			ret.setFloat("layer", ui->render_layer + 1);
+			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+			ret.setString("text", converter.to_bytes(ui->text));
+			ret.setString("state", ui->state);
+			ret.setFloat("text_size", ui->text_size);
+			ret.setFloat("space_betwen_lines", ui->space_betwen_lines);
+			ret.setFloat("uniform_spaces_betwen_chars", ui->uniform_spaces_betwen_chars);
+			ret.setFloat("text_location_x", ui->text_location_x);
+			ret.setFloat("text_location_y", ui->text_location_y);
+			ret.setTable("position", vec2_table(ui->position));
+			ret.setTable("scale", vec2_table(ui->scale) );
 
-
+			ret.setTable("normal_style", advanced_ui_style_table(ui->normal_style) );
+			ret.setTable("hover_style", advanced_ui_style_table(ui->hover_style) );
+			ret.setTable("click_style", advanced_ui_style_table(ui->click_style) );
 
 			lua_pushtable(L, ret);
 			return 1;
@@ -1988,6 +2003,7 @@ namespace funcoes_ponte
 		}else{
 			ui->lua_function = {NULL,""};
 		}
+		return 0;
 	}
 
 	
