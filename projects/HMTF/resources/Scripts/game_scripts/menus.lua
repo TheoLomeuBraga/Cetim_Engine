@@ -69,39 +69,41 @@ function load_game()
     print("load_game")
 end
 
-function call_start_menu()
-    menu_selectred = "start"
+function call_start_menu(state,id)
+    if state == "click" then
+        menu_selectred = "start"
 
 
 
 
-    local style = ui_style:new()
-    style.border_size = 0
-    style.color = { r = 0.2, g = 0.2, b = 0.2, a = 1 }
-    style.color_click = { r = 0, g = 0, b = 0, a = 0 }
-    start_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 0.6, z = 0 },
-        { x = 2, y = 1.6, z = 2 }, 5, style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
+        local style = ui_style:new()
+        style.border_size = 0
+        style.color = { r = 0.2, g = 0.2, b = 0.2, a = 1 }
+        style.color_click = { r = 0, g = 0, b = 0, a = 0 }
+        start_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 0.6, z = 0 },
+            { x = 2, y = 1.6, z = 2 }, 5, style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
 
 
 
-    style.text_color = { r = 0, g = 1, b = 1, a = 1 }
-    style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
-    style.border_size = 0.1
-    style.border_color = { r = 0, g = 0, b = 0, a = 0 }
-    style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    start_menu_objects.new_game_button = create_ui(this_object.object_ptr, { x = -0.5, y = 0.5, z = 0 },
-        { x = 1, y = 0.25, z = 2 }, 5, style, "NEW GAME", 0.075, "resources/Textures/white.png", new_game,
-        ui_category.button)
+        style.text_color = { r = 0, g = 1, b = 1, a = 1 }
+        style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
+        style.border_size = 0.1
+        style.border_color = { r = 0, g = 0, b = 0, a = 0 }
+        style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
+        start_menu_objects.new_game_button = create_ui(this_object.object_ptr, { x = -0.5, y = 0.5, z = 0 },
+            { x = 1, y = 0.25, z = 2 }, 5, style, "NEW GAME", 0.075, "resources/Textures/white.png", new_game,
+            ui_category.button)
 
-    style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    start_menu_objects.load_game_button = create_ui(this_object.object_ptr, { x = -0.6, y = 0, z = 0 },
-        { x = 1.2, y = 0.25, z = 2 }, 5, style, "LOAD GAME", 0.075, "resources/Textures/white.png", load_game,
-        ui_category.button)
+        style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+        start_menu_objects.load_game_button = create_ui(this_object.object_ptr, { x = -0.6, y = 0, z = 0 },
+            { x = 1.2, y = 0.25, z = 2 }, 5, style, "LOAD GAME", 0.075, "resources/Textures/white.png", load_game,
+            ui_category.button)
 
-    style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    start_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 },
-        { x = 0.4, y = 0.25, z = 2 }, 5, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu,
-        ui_category.button)
+        style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+        start_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 },
+            { x = 0.4, y = 0.25, z = 2 }, 5, style, "BACK", 0.075, "resources/Textures/white.png", exit_to_pause_menu,
+            ui_category.button)
+    end
 end
 
 function set_full_screen()
@@ -231,6 +233,8 @@ function START()
 
     this_object = game_object(this_object_ptr)
 
+    --logo
+
     local style = ui_style:new()
 
     style.border_size = 0
@@ -269,13 +273,14 @@ function START()
     pause_menu_objects.title = game_object(create_object(create_object(this_object.object_ptr)))
 
     local ui_manager = pause_menu_objects.title.components.ui_component
-    ui_manager.normal_style = deepcopy(adv_ui)    
-    ui_manager.hover_style = deepcopy(adv_ui)
-    ui_manager.click_style = deepcopy(adv_ui)
+    local adv_ui_copy = deepcopy(adv_ui)
+    ui_manager.normal_style = adv_ui_copy
+    ui_manager.hover_style = adv_ui_copy
+    ui_manager.click_style = adv_ui_copy
     ui_manager.text = "HMTF"
     ui_manager.text_size = 0.2
 
-    ui_manager.position = {x=0.5,y=0.85}
+    ui_manager.position = { x = 0.5, y = 0.85 }
     ui_manager.scale = { x = 2, y = 2 }
 
     ui_manager.text_location_x = render_text_location.center
@@ -283,14 +288,47 @@ function START()
 
     ui_manager:set()
 
+    --button start
+
+    local transparent_color = { r = 0, g = 0, b = 0, a = 0 }
+    local hover_border_color = { r = 1, g = 1, b = 1, a = 1 }
+
+    local normal_style = advanced_ui_style()
+    normal_style.background_color = transparent_color
+    normal_style.border_size = 0
+    normal_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
+    normal_style.border_color = transparent_color
+    normal_style.background_color = transparent_color
+    normal_style.background_image = "resources/Textures/white.png"
+    normal_style.border_image = "resources/Textures/white.png"
+
+    local hover_style = advanced_ui_style()
+    hover_style.border_color = hover_border_color
+    hover_style.background_color = transparent_color
+    hover_style.border_size = 0.05
+    hover_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
+    hover_style.background_image = "resources/Textures/white.png"
+    hover_style.border_image = "resources/Textures/white.png"
+
+    pause_menu_objects.start_button = game_object(create_object(create_object(this_object.object_ptr)))
+    local ui_manager = pause_menu_objects.start_button.components.ui_component
+    ui_manager.normal_style = normal_style
+    ui_manager.hover_style = hover_style
+    ui_manager.click_style = hover_style
+
+    ui_manager.position = { x = 0.5, y = 0.7 }
+    ui_manager.scale = { x = 0.5, y = 0.25 }
+
+    ui_manager.text = "START"
+
+    ui_manager:set_interaction_function("call_start_menu")
+
+    ui_manager.text_size = 0.075
+
+    ui_manager:set()
+
+
     --[[
-    style.color = { r = 0, g = 0, b = 0, a = 0 }
-    pause_menu_objects.title = create_ui(this_object.object_ptr, { x = -1, y = 1.75, z = 0 }, { x = 2, y = 2, z = 2 }, 5,
-        style, "HMTF", 0.2, "resources/Textures/null.png", nil, ui_category.display)
-    ]]
-
-
-
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
     style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
     style.border_size = 0.1
@@ -301,6 +339,8 @@ function START()
             { x = 0.5, y = 0.25, z = 2 }, 5, style, "START", 0.075, "resources/Textures/null.png", call_start_menu,
             ui_category.button)
     end
+    ]]
+
     style.text_color = { r = 1, g = 1, b = 0, a = 1 }
     pause_menu_objects.config_button = create_ui(this_object.object_ptr, { x = -0.3, y = 0, z = 0 },
         { x = 0.6, y = 0.25, z = 2 }, 5, style, "CONFIG", 0.075, "resources/Textures/null.png", call_config_menu,

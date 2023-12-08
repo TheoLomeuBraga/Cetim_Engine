@@ -46,7 +46,7 @@ void function_reference_example(string state, string id)
 class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
-    shared_ptr<objeto_jogo> text_obj, background_obj, border_obj;
+    shared_ptr<objeto_jogo> base_obj, text_obj, background_obj, border_obj;
     vec2 base_position = vec2(0, 0);
 
     bool first_click_frame = false;
@@ -73,7 +73,7 @@ public:
     {
         if (lua_function.L != NULL)
         {
-            lua_getglobal(lua_function.L,lua_function.functionRef.c_str());
+            lua_getglobal(lua_function.L, lua_function.functionRef.c_str());
 
             lua_pushstring(lua_function.L, id.c_str());
             lua_pushstring(lua_function.L, state.c_str());
@@ -95,13 +95,16 @@ public:
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/ui_componente";
 
+        base_obj = novo_objeto_jogo();
+        cena_objetos_selecionados->adicionar_objeto(esse_objeto, base_obj);
+
         mat.cor = vec4(1, 0, 0, 1);
         border_obj = novo_objeto_jogo();
         border_obj->adicionar_componente<transform_>(transform_());
         border_obj->pegar_componente<transform_>()->UI = true;
         border_obj->adicionar_componente<render_shader>(render_shader());
         border_obj->pegar_componente<render_shader>()->mat = mat;
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto, border_obj);
+        cena_objetos_selecionados->adicionar_objeto(base_obj, border_obj);
 
         mat.cor = vec4(0, 1, 0, 1);
         background_obj = novo_objeto_jogo();
@@ -109,7 +112,7 @@ public:
         background_obj->pegar_componente<transform_>()->UI = true;
         background_obj->adicionar_componente<render_shader>(render_shader());
         background_obj->pegar_componente<render_shader>()->mat = mat;
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto, background_obj);
+        cena_objetos_selecionados->adicionar_objeto(base_obj, background_obj);
 
         mat.cor = vec4(0, 0, 1, 1);
         mat.shad = "resources/Shaders/text";
@@ -118,16 +121,28 @@ public:
         text_obj->pegar_componente<transform_>()->UI = true;
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
-        
-        cena_objetos_selecionados->adicionar_objeto(esse_objeto, text_obj);
+
+        cena_objetos_selecionados->adicionar_objeto(base_obj, text_obj);
     }
 
     bool is_above()
     {
+        /*
         if (ui_componente::cursor_position.x > (base_position.x + position.x) - ((scale.x - current_state.border_size) / (scale.x * 2)) && ui_componente::cursor_position.x < (base_position.x + position.x) + ((scale.x - current_state.border_size) / (scale.x * 2)))
         {
             // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / (scale.x * 2)) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / (scale.y * 2)))
+            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / (scale.y * 2)) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / (scale.y * 2)))
+            {
+                return true;
+            }
+        }
+        */
+        vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
+        acurate_pos += vec2(scale.x / 2, scale.y / 2);
+        if (ui_componente::cursor_position.x > acurate_pos.x && ui_componente::cursor_position.x < acurate_pos.x + scale.x)
+        {
+            // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
+            if (ui_componente::cursor_position.y > acurate_pos.y && ui_componente::cursor_position.y < acurate_pos.y + scale.y)
             {
                 return true;
             }
@@ -271,9 +286,9 @@ public:
     }
 
     void set_text_by_string(string t)
-	{
-		text = convert_to_wstring(t);
-	}
+    {
+        text = convert_to_wstring(t);
+    }
 
     ~ui_componente()
     {
@@ -284,9 +299,9 @@ bool ui_componente::click = false;
 
 void update_ui_componente_test()
 {
-    //ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
-    //ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
-    //ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
+    // ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
+    // ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
+    // ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
 }
 
 void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)

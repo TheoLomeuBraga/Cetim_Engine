@@ -83,8 +83,7 @@ function UPDATE()
     global_data:set("inputs_last_frame",inputs_last_frame)
     inputs_last_frame = deepcopy(inputs)
 
-    
-    set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1)
+    set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
 end
 
 function COLLIDE(collision_info)

@@ -1951,7 +1951,7 @@ namespace funcoes_ponte
 	int set_ui_curson_location(lua_State *L)
 	{
 		vec2 cursor_pos = table_vec2(lua_totable(L, 1));
-		cursor_pos.y = mix(1.0, 0.0, cursor_pos.y);
+		cursor_pos.y = (cursor_pos.y * 2);
 		ui_componente::cursor_position = cursor_pos;
 		ui_componente::click = lua_toboolean(L, 2);
 
