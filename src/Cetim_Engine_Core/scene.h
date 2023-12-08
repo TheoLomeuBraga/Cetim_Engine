@@ -296,6 +296,8 @@ public:
 			if (TF_filho != NULL)
 			{
 				TF_filho->paiTF = TF.get();
+			}else{
+				TF_filho->paiTF == NULL;
 			}
 
 			atualisar_transform_objeto(ob);

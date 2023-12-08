@@ -26,11 +26,12 @@ public:
 	bool UI = false;
 	transform_ *paiTF = NULL;
 
+
 	
 
 	int local_hierarquia;
 
-	bool usar_pai_matriz;
+	bool usar_pai = true;
 	mat4 pai_matriz;
 
 	glm::vec3 pos = vec3(0, 0, 0), esca = vec3(1, 1, 1), rot = vec3(0, 0, 0);
@@ -41,7 +42,7 @@ public:
 	{
 		glm::mat4 ret;
 
-		if (paiTF == NULL)
+		if (paiTF == NULL || !usar_pai)
 		{
 			ret = MatrizMundi;
 		}

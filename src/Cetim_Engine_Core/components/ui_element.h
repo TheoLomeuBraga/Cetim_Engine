@@ -102,6 +102,7 @@ public:
         border_obj = novo_objeto_jogo();
         border_obj->adicionar_componente<transform_>(transform_());
         border_obj->pegar_componente<transform_>()->UI = true;
+        border_obj->pegar_componente<transform_>()->usar_pai = false;
         border_obj->adicionar_componente<render_shader>(render_shader());
         border_obj->pegar_componente<render_shader>()->mat = mat;
         cena_objetos_selecionados->adicionar_objeto(base_obj, border_obj);
@@ -110,6 +111,7 @@ public:
         background_obj = novo_objeto_jogo();
         background_obj->adicionar_componente<transform_>(transform_());
         background_obj->pegar_componente<transform_>()->UI = true;
+        background_obj->pegar_componente<transform_>()->usar_pai = false;
         background_obj->adicionar_componente<render_shader>(render_shader());
         background_obj->pegar_componente<render_shader>()->mat = mat;
         cena_objetos_selecionados->adicionar_objeto(base_obj, background_obj);
@@ -119,6 +121,7 @@ public:
         text_obj = novo_objeto_jogo();
         text_obj->adicionar_componente<transform_>(transform_());
         text_obj->pegar_componente<transform_>()->UI = true;
+        text_obj->pegar_componente<transform_>()->usar_pai = false;
         text_obj->adicionar_componente<render_texto>(render_texto());
         text_obj->pegar_componente<render_texto>()->mat = mat;
 
@@ -138,6 +141,7 @@ public:
         }
         */
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
+        //vec2 acurate_pos = vec2(((position.x + base_position.x)), ((position.y + base_position.y)));
         acurate_pos += vec2(scale.x / 2, scale.y / 2);
         if (ui_componente::cursor_position.x > acurate_pos.x && ui_componente::cursor_position.x < acurate_pos.x + scale.x)
         {
@@ -280,9 +284,11 @@ public:
 
     void finalisar()
     {
-        text_obj->excluir();
-        background_obj->excluir();
-        border_obj->excluir();
+        //text_obj->excluir();
+        //background_obj->excluir();
+        //border_obj->excluir();
+
+        base_obj->excluir();
     }
 
     void set_text_by_string(string t)

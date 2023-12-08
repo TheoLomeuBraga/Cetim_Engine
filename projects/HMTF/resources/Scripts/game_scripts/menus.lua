@@ -318,15 +318,36 @@ function START()
 
     ui_manager.position = { x = 0.5, y = 0.7 }
     ui_manager.scale = { x = 0.5, y = 0.25 }
+    ui_manager.text_size = 0.075
 
     ui_manager.text = "START"
 
     ui_manager:set_interaction_function("call_start_menu")
 
-    ui_manager.text_size = 0.075
+    
 
     ui_manager:set()
 
+    --button config
+
+    --[[]]
+    pause_menu_objects.config_button = game_object(create_object(create_object(this_object.object_ptr)))
+    local ui_manager = pause_menu_objects.config_button.components.ui_component
+
+    ui_manager.normal_style = normal_style
+    normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    ui_manager.hover_style = hover_style
+    ui_manager.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    ui_manager.click_style = hover_style
+
+    ui_manager.position = { x = 0.5, y = 0.45 }
+    ui_manager.scale = { x = 0.5, y = 0.25 }
+    ui_manager.text_size = 0.075
+
+    ui_manager.text = "CONFIG"
+
+    ui_manager:set()
+    
 
     --[[
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
@@ -341,10 +362,12 @@ function START()
     end
     ]]
 
+    --[[
     style.text_color = { r = 1, g = 1, b = 0, a = 1 }
     pause_menu_objects.config_button = create_ui(this_object.object_ptr, { x = -0.3, y = 0, z = 0 },
         { x = 0.6, y = 0.25, z = 2 }, 5, style, "CONFIG", 0.075, "resources/Textures/null.png", call_config_menu,
         ui_category.button)
+    ]]
 
     style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     pause_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 },
