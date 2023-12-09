@@ -69,7 +69,7 @@ function load_game()
     print("load_game")
 end
 
-function call_start_menu(state,id)
+function call_start_menu(state, id)
     if state == "click" then
         menu_selectred = "start"
 
@@ -166,63 +166,72 @@ function save_configs()
     serializer.save_table("config/configs_save.lua", configs)
 end
 
-function call_config_menu()
-    menu_selectred = "config"
+function call_config_menu(state, id)
+    if state == "click" then
+        menu_selectred = "config"
 
-    local style = ui_style:new()
-    style.border_size = 0
-    style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
-    style.color_click = { r = 0, g = 0, b = 0, a = 0 }
-    config_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 },
-        { x = 2, y = 2, z = 2 }, 5, style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
+        local style = ui_style:new()
+        style.border_size = 0
+        style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
+        style.color_click = { r = 0, g = 0, b = 0, a = 0 }
+        config_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 },
+            { x = 2, y = 2, z = 2 }, 5, style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
 
-    style.color = { r = 0, g = 0, b = 0, a = 0 }
-    style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    config_menu_objects.title = create_ui(this_object.object_ptr, { x = -1, y = 1.75, z = 0 }, { x = 2, y = 2, z = 2 }, 5,
-        style, "CONFIG", 0.2, "resources/Textures/white.png", nil, ui_category.display)
+        style.color = { r = 0, g = 0, b = 0, a = 0 }
+        style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+        config_menu_objects.title = create_ui(this_object.object_ptr, { x = -1, y = 1.75, z = 0 },
+            { x = 2, y = 2, z = 2 }, 5,
+            style, "CONFIG", 0.2, "resources/Textures/white.png", nil, ui_category.display)
 
-    style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
-    style.border_size = 0.1
-    style.border_color = { r = 0, g = 0, b = 0, a = 0 }
-    style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 },
-        { x = 0.2, y = 0.2, z = 2 }, 5, style, "<", 0.075, "resources/Textures/white.png",
-        save_config_and_exit_to_pause_menu, ui_category.button)
-
-
-    style.text_color = { r = 0, g = 1, b = 0, a = 1 }
-    config_menu_objects.volume_controler_button_decrease = create_ui(this_object.object_ptr, { x = -1, y = 0.5, z = 0 },
-        { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png", decrease_volume,
-        ui_category.button)
-    config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -0.8, y = 0.5, z = 0 },
-        { x = 1.6, y = 0.25, z = 2 }, 5, style, "volume: " .. get_set_global_volume(), 0.075,
-        "resources/Textures/null.png", set_volume, ui_category.input_fild)
-    config_menu_objects.volume_controler_button_increase = create_ui(this_object.object_ptr, { x = 0.8, y = 0.5, z = 0 },
-        { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png", increase_volume,
-        ui_category.button)
-    config_menu_objects.sensitivity_controler_button_decrease = create_ui(this_object.object_ptr,
-        { x = -1, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png",
-        decrease_sensitivity, ui_category.button)
-    config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 },
-        { x = 1.6, y = 0.25, z = 2 }, 5, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"), 0.05,
-        "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
-    config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr,
-        { x = 0.8, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png",
-        increase_sensitivity, ui_category.button)
-    local is_full_screen = "false"
+        style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+        style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
+        style.border_size = 0.1
+        style.border_color = { r = 0, g = 0, b = 0, a = 0 }
+        style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
+        config_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -1, y = 0.9, z = 0 },
+            { x = 0.2, y = 0.2, z = 2 }, 5, style, "<", 0.075, "resources/Textures/white.png",
+            save_config_and_exit_to_pause_menu, ui_category.button)
 
 
-    if window.full_screen then
-        is_full_screen = "true"
+        style.text_color = { r = 0, g = 1, b = 0, a = 1 }
+        config_menu_objects.volume_controler_button_decrease = create_ui(this_object.object_ptr,
+            { x = -1, y = 0.5, z = 0 },
+            { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png", decrease_volume,
+            ui_category.button)
+        config_menu_objects.volume_controler = create_ui(this_object.object_ptr, { x = -0.8, y = 0.5, z = 0 },
+            { x = 1.6, y = 0.25, z = 2 }, 5, style, "volume: " .. get_set_global_volume(), 0.075,
+            "resources/Textures/null.png", set_volume, ui_category.input_fild)
+        config_menu_objects.volume_controler_button_increase = create_ui(this_object.object_ptr,
+            { x = 0.8, y = 0.5, z = 0 },
+            { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png", increase_volume,
+            ui_category.button)
+        config_menu_objects.sensitivity_controler_button_decrease = create_ui(this_object.object_ptr,
+            { x = -1, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png",
+            decrease_sensitivity, ui_category.button)
+        config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 },
+            { x = 1.6, y = 0.25, z = 2 }, 5, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"),
+            0.05,
+            "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
+        config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr,
+            { x = 0.8, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, ">", 0.075, "resources/Textures/null.png",
+            increase_sensitivity, ui_category.button)
+        local is_full_screen = "false"
+
+
+        if window.full_screen then
+            is_full_screen = "true"
+        end
+        config_menu_objects.full_screen_controler = create_ui(this_object.object_ptr, { x = -0.8, y = -0.5, z = 0 },
+            { x = 1.6, y = 0.25, z = 2 }, 5, style, "full_screen: " .. is_full_screen, 0.05,
+            "resources/Textures/null.png",
+            set_full_screen, ui_category.button)
     end
-    config_menu_objects.full_screen_controler = create_ui(this_object.object_ptr, { x = -0.8, y = -0.5, z = 0 },
-        { x = 1.6, y = 0.25, z = 2 }, 5, style, "full_screen: " .. is_full_screen, 0.05, "resources/Textures/null.png",
-        set_full_screen, ui_category.button)
 end
 
-function exit()
-    window:close()
+function exit(state, id)
+    if state == "click" then
+        window:close()
+    end
 end
 
 function START()
@@ -324,7 +333,7 @@ function START()
 
     ui_manager:set_interaction_function("call_start_menu")
 
-    
+
 
     ui_manager:set()
 
@@ -345,9 +354,30 @@ function START()
     ui_manager.text_size = 0.075
 
     ui_manager.text = "CONFIG"
+    ui_manager:set_interaction_function("call_config_menu")
 
     ui_manager:set()
-    
+
+    --button exit
+
+    pause_menu_objects.config_button = game_object(create_object(create_object(this_object.object_ptr)))
+    local ui_manager = pause_menu_objects.config_button.components.ui_component
+
+    ui_manager.normal_style = normal_style
+    normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    ui_manager.hover_style = hover_style
+    ui_manager.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    ui_manager.click_style = hover_style
+
+    ui_manager.position = { x = 0.5, y = 0.2 }
+    ui_manager.scale = { x = 0.5, y = 0.2 }
+    ui_manager.text_size = 0.075
+
+    ui_manager.text = "QUIT"
+    ui_manager:set_interaction_function("exit")
+
+    ui_manager:set()
+
 
     --[[
     style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
@@ -367,11 +397,12 @@ function START()
     pause_menu_objects.config_button = create_ui(this_object.object_ptr, { x = -0.3, y = 0, z = 0 },
         { x = 0.6, y = 0.25, z = 2 }, 5, style, "CONFIG", 0.075, "resources/Textures/null.png", call_config_menu,
         ui_category.button)
-    ]]
+    
 
     style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     pause_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 },
         { x = 0.4, y = 0.25, z = 2 }, 5, style, "QUIT", 0.075, "resources/Textures/null.png", exit, ui_category.button)
+    ]]
 end
 
 function UPDATE()

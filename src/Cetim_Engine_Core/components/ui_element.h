@@ -153,7 +153,7 @@ public:
             //return true;
             float new_cursor_position_y = (-ui_componente::cursor_position.y + 1);
             //if (ui_componente::cursor_position.y > acurate_pos.y && ui_componente::cursor_position.y < acurate_pos.y + scale.y)
-            if (new_cursor_position_y > acurate_pos.y && new_cursor_position_y < acurate_pos.y + scale.y )
+            if (new_cursor_position_y < acurate_pos.y && new_cursor_position_y > acurate_pos.y - scale.y )
             {
                 return true;
             }
