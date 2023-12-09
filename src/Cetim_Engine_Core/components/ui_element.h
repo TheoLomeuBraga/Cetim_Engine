@@ -146,13 +146,9 @@ public:
         vec2 acurate_pos = vec2(position.x + base_position.x, position.y + base_position.y);
         acurate_pos += vec2(-scale.x / 2, scale.y / 2);
 
-        print({"acurate_pos.x",acurate_pos.x,ui_componente::cursor_position.x});
-
         if (ui_componente::cursor_position.x > acurate_pos.x && ui_componente::cursor_position.x < acurate_pos.x + scale.x)
         {
-            //return true;
             float new_cursor_position_y = (-ui_componente::cursor_position.y + 1);
-            //if (ui_componente::cursor_position.y > acurate_pos.y && ui_componente::cursor_position.y < acurate_pos.y + scale.y)
             if (new_cursor_position_y < acurate_pos.y && new_cursor_position_y > acurate_pos.y - scale.y )
             {
                 return true;
