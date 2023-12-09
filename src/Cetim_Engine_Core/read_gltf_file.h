@@ -68,6 +68,8 @@ namespace gltf_loader
     {
         std::string name;
         std::vector<SubMesh> sub_meshes;
+        bool have_skin = false;
+        size_t skin;
     };
 
     struct Skin
@@ -181,6 +183,7 @@ namespace gltf_loader
         std::vector<std::vector<size_t>> getBoneIDsData(size_t accessorIndex);
         std::vector<glm::mat4> getInverseBindMatrices(size_t accessorIndex);
         bool loadSkins();
+        bool assigneSkinsToMeshes();
         std::vector<float> getAttributeData(size_t accessorIndex);
         bool loadMeshes();
         std::vector<uint8_t> getBufferData(size_t accessorIndex);
@@ -1290,6 +1293,18 @@ namespace gltf_loader
         return true;
     }
 
+    bool GLTFLoader::assigneSkinsToMeshes(){
+        for(Node n : nodes){
+            if(n.have_skin){
+                for(size_t st : n.meshIndices){
+                    meshes[st].have_skin = n.have_skin;
+                    meshes[st].skin = n.skin;
+                }
+            }
+        }
+        return true;
+    }
+
     bool GLTFLoader::load()
     {
         //print({"loadBuffers"});
@@ -1312,6 +1327,7 @@ namespace gltf_loader
         loadMaterials();
         //print({"loadSkins"});
         loadSkins();
+        assigneSkinsToMeshes();
         //print({"load end"});
 
         return true;

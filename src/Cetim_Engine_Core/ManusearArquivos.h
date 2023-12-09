@@ -907,7 +907,7 @@ namespace ManuseioDados
 		}
 	}
 	
-	size_t skin_count = 0;
+	//size_t skin_count = 0;
 
 	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader, gltf_loader::Mesh m, string file_path)
 	{
@@ -976,7 +976,7 @@ namespace ManuseioDados
 						{
 							if (!m.sub_meshes[a].BoneIDs[b].empty())
 							{
-								v.id_ossos[b] = gltf_loader.skins[skin_count].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
+								v.id_ossos[b] = gltf_loader.skins[m.skin].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
 							}
 						}
 						if (b < m.sub_meshes[a].Weights.size())
@@ -997,10 +997,12 @@ namespace ManuseioDados
 					// print({"ma.pele", ma.pele});
 				}
 
+				/*
 				if (m.sub_meshes[a].BoneIDs.size() > 0 || m.sub_meshes[a].Weights.size() > 0)
 				{
 					add_skin_count = true;
 				}
+				*/
 
 				ma.vertices.push_back(v);
 			}
@@ -1008,10 +1010,12 @@ namespace ManuseioDados
 			ret.push_back(ma);
 		}
 
+		/*
 		if (add_skin_count)
 		{
 			skin_count++;
 		}
+		*/
 		
 		return ret;
 	}
@@ -1125,7 +1129,7 @@ namespace ManuseioDados
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 
-		skin_count = 0;
+		//skin_count = 0;
 		cena_3D ret;
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
