@@ -304,8 +304,8 @@ function START()
 
     local hover_style = advanced_ui_style()
     hover_style.border_color = hover_border_color
-    hover_style.background_color = transparent_color
-    hover_style.border_size = 0.05
+    hover_style.background_color = hover_border_color
+    hover_style.border_size = 0
     hover_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
     hover_style.background_image = "resources/Textures/white.png"
     hover_style.border_image = "resources/Textures/white.png"
@@ -317,7 +317,7 @@ function START()
     ui_manager.click_style = hover_style
 
     ui_manager.position = { x = 0.5, y = 0.7 }
-    ui_manager.scale = { x = 0.5, y = 0.25 }
+    ui_manager.scale = { x = 0.5, y = 0.2 }
     ui_manager.text_size = 0.075
 
     ui_manager.text = "START"
@@ -341,7 +341,7 @@ function START()
     ui_manager.click_style = hover_style
 
     ui_manager.position = { x = 0.5, y = 0.45 }
-    ui_manager.scale = { x = 0.5, y = 0.25 }
+    ui_manager.scale = { x = 0.5, y = 0.2 }
     ui_manager.text_size = 0.075
 
     ui_manager.text = "CONFIG"

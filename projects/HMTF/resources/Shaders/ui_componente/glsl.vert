@@ -4,7 +4,7 @@
 layout(location = 0) out vec4 POS;
 layout(location = 1) out vec2 UV;
 
-vec3 top_side_box_data[6] = vec3[6](vec3(0, 0, 0), vec3(1, 0, 0), vec3(1, 1, 0), vec3(1, 1, 0), vec3(0, 1, 0), vec3(0, 0, 0));
+vec3 top_side_box_data[6] = vec3[6](vec3(0, 0, 0), vec3(2, 0, 0), vec3(2, 2, 0), vec3(2, 2, 0), vec3(0, 2, 0), vec3(0, 0, 0));
 
 uniform bool ui;
 uniform mat4 projection, vision, transform;

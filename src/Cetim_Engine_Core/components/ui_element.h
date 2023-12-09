@@ -140,13 +140,20 @@ public:
             }
         }
         */
-        vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
-        //vec2 acurate_pos = vec2(((position.x + base_position.x)), ((position.y + base_position.y)));
-        acurate_pos += vec2(scale.x / 2, scale.y / 2);
+
+       
+
+        vec2 acurate_pos = vec2(position.x + base_position.x, position.y + base_position.y);
+        acurate_pos += vec2(-scale.x / 2, scale.y / 2);
+
+        print({"acurate_pos.x",acurate_pos.x,ui_componente::cursor_position.x});
+
         if (ui_componente::cursor_position.x > acurate_pos.x && ui_componente::cursor_position.x < acurate_pos.x + scale.x)
         {
-            // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            if (ui_componente::cursor_position.y > acurate_pos.y && ui_componente::cursor_position.y < acurate_pos.y + scale.y)
+            //return true;
+            float new_cursor_position_y = (-ui_componente::cursor_position.y + 1);
+            //if (ui_componente::cursor_position.y > acurate_pos.y && ui_componente::cursor_position.y < acurate_pos.y + scale.y)
+            if (new_cursor_position_y > acurate_pos.y && new_cursor_position_y < acurate_pos.y + scale.y )
             {
                 return true;
             }
@@ -231,11 +238,11 @@ public:
             text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
         }
 
-        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size) / 2, acurate_pos.y + (scale.y + current_state.border_size) / 2, 0);
+        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size), acurate_pos.y + (scale.y + current_state.border_size), 0);
         border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
         border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
-        background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - scale.x / 2, acurate_pos.y + scale.y / 2, 0);
+        background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x), acurate_pos.y + (scale.y), 0);
         background_obj->pegar_componente<transform_>()->esca = vec3(scale.x, scale.y, 1);
         background_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
