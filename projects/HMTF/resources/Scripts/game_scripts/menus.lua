@@ -235,7 +235,86 @@ function exit(state, id)
     end
 end
 
+function show_pause_menu(on)
+    if on then
+        --logo
 
+        local style = ui_style:new()
+
+        style.border_size = 0
+
+        style.border_size = 0
+        style.color = { r = 0, g = 0.2, b = 0.2, a = 1 }
+        style.color_click = { r = 0, g = 0, b = 0, a = 0 }
+
+        local adv_ui = advanced_ui_style()
+
+        if in_main_menu ~= 0 then
+            adv_ui.text_color = { r = 0, g = 1, b = 0.2, a = 1 }
+            adv_ui.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
+            adv_ui.border_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
+            adv_ui.border_size = 0
+            adv_ui.background_image = "resources/Textures/null.png"
+            adv_ui.border_image = "resources/Textures/null.png"
+
+            pause_menu_objects.back_ground_image = create_advanced_ui_element(this_object.object_ptr, { x = 0.5, y = 0.5 },{ x = 1, y = 1 }, "", nil, adv_ui)
+
+            
+        end
+
+        adv_ui.text_color = { r = 0, g = 1, b = 0, a = 0 }
+        adv_ui.background_color = { r = 0, g = 0, b = 0, a = 0 }
+        adv_ui.border_color = { r = 0, g = 0, b = 0, a = 0 }
+
+        adv_ui.text_size = 0.2
+
+        pause_menu_objects.base_object = create_advanced_ui_element(this_object.object_ptr, { x = 0, y = 0 },
+            { x = 0.0, y = 0.0 }, "", "call_start_menu", { normal_style, hover_style })
+
+        pause_menu_objects.title = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            { x = 0.5, y = 0.85 }, { x = 2, y = 2 }, "HMTF", nil, adv_ui)
+
+        --button start
+
+        local transparent_color = { r = 0, g = 0, b = 0, a = 0 }
+        local hover_border_color = { r = 1, g = 1, b = 1, a = 1 }
+
+        local normal_style = advanced_ui_style()
+        normal_style.background_color = transparent_color
+        normal_style.border_size = 0
+        normal_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
+        normal_style.border_color = transparent_color
+        normal_style.background_color = transparent_color
+        normal_style.background_image = "resources/Textures/white.png"
+        normal_style.border_image = "resources/Textures/white.png"
+
+        local hover_style = advanced_ui_style()
+        hover_style.border_color = hover_border_color
+        hover_style.background_color = hover_border_color
+        hover_style.border_size = 0
+        hover_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
+        hover_style.background_image = "resources/Textures/white.png"
+        hover_style.border_image = "resources/Textures/white.png"
+
+        normal_style.text_size = 0.075
+        hover_style.text_size = 0.075
+
+
+
+        pause_menu_objects.start_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            { x = 0.5, y = 0.7 }, { x = 0.5, y = 0.2 }, "START", "call_start_menu", { normal_style, hover_style })
+
+        normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            { x = 0.5, y = 0.45 }, { x = 0.5, y = 0.2 }, "CONFIG", "call_config_menu", { normal_style, hover_style })
+
+        normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            { x = 0.5, y = 0.2 }, { x = 0.5, y = 0.2 }, "QUIT", "exit", { normal_style, hover_style })
+    else
+        remove_object(pause_menu_objects.base_object.object_ptr)
+    end
+end
 
 function START()
     global_data:set_var("pause", 1)
@@ -245,84 +324,7 @@ function START()
 
     this_object = game_object(this_object_ptr)
 
-    --logo
-
-    local style = ui_style:new()
-
-    style.border_size = 0
-
-    style.border_size = 0
-    style.color = { r = 0, g = 0.2, b = 0.2, a = 1 }
-    style.color_click = { r = 0, g = 0, b = 0, a = 0 }
-
-    local adv_ui = advanced_ui_style()
-
-    if in_main_menu ~= 0 then
-        adv_ui.text_color = { r = 0, g = 1, b = 0.2, a = 1 }
-        adv_ui.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
-        adv_ui.border_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
-        adv_ui.border_size = 0
-        adv_ui.background_image = "resources/Textures/null.png"
-        adv_ui.border_image = "resources/Textures/null.png"
-
-        pause_menu_objects.back_ground_image = game_object(this_object.object_ptr)
-        local ui_manager = pause_menu_objects.back_ground_image.components.ui_component
-
-        ui_manager.position = { x = 0.5, y = 0.5 }
-        ui_manager.scale = { x = 2, y = 2 }
-
-        ui_manager.normal_style = adv_ui
-        ui_manager.hover_style = adv_ui
-        ui_manager.click_style = adv_ui
-
-        ui_manager:set()
-    end
-
-    adv_ui.text_color = { r = 0, g = 1, b = 0, a = 0 }
-    adv_ui.background_color = { r = 0, g = 0, b = 0, a = 0 }
-    adv_ui.border_color = { r = 0, g = 0, b = 0, a = 0 }
-
-    adv_ui.text_size = 0.2
-
-    pause_menu_objects.base_object = create_advanced_ui_element(this_object.object_ptr,{ x = -0.5, y = -0.5 },{ x = 0.0, y = 0.0 },"","call_start_menu",{normal_style,hover_style})
-
-    pause_menu_objects.title = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },"HMTF",nil,adv_ui)
-
-    --button start
-
-    local transparent_color = { r = 0, g = 0, b = 0, a = 0 }
-    local hover_border_color = { r = 1, g = 1, b = 1, a = 1 }
-
-    local normal_style = advanced_ui_style()
-    normal_style.background_color = transparent_color
-    normal_style.border_size = 0
-    normal_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
-    normal_style.border_color = transparent_color
-    normal_style.background_color = transparent_color
-    normal_style.background_image = "resources/Textures/white.png"
-    normal_style.border_image = "resources/Textures/white.png"
-
-    local hover_style = advanced_ui_style()
-    hover_style.border_color = hover_border_color
-    hover_style.background_color = hover_border_color
-    hover_style.border_size = 0
-    hover_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
-    hover_style.background_image = "resources/Textures/white.png"
-    hover_style.border_image = "resources/Textures/white.png"
-
-    normal_style.text_size = 0.075
-    hover_style.text_size = 0.075
-
-    
-
-    pause_menu_objects.start_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
-
-    normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.45 },{ x = 0.5, y = 0.2 },"CONFIG","call_config_menu",{normal_style,hover_style})
-
-    normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.2 },{ x = 0.5, y = 0.2 },"QUIT","exit",{normal_style,hover_style})
-
+    show_pause_menu(true)
 end
 
 function UPDATE()

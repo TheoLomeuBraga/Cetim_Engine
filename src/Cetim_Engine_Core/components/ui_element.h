@@ -155,7 +155,7 @@ public:
         if (esse_objeto->pai != NULL && father != NULL)
         {
             base_position = father->position + father->base_position;
-            print({"father->base_position",father->base_position.x,father->base_position.y});
+            //print({"father->base_position",father->base_position.x,father->base_position.y});
         }
         else
         {
