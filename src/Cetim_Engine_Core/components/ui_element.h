@@ -277,7 +277,6 @@ public:
         //text_obj->excluir();
         //background_obj->excluir();
         //border_obj->excluir();
-
         base_obj->excluir();
     }
 

@@ -500,6 +500,9 @@ ui_style table_advanced_ui_style(Table s){
 
     ret.border_size = s.getFloat("border_size");
     ret.text_size = s.getFloat("text_size");
+    ret.space_betwen_lines = s.getFloat("space_betwen_lines");
+    ret.uniform_spaces_betwen_chars = s.getFloat("uniform_spaces_betwen_chars");
+    
 
     ret.background_image = ManuseioDados::carregar_Imagem(s.getString("background_image"));
     ret.border_image = ManuseioDados::carregar_Imagem(s.getString("border_image"));
@@ -518,6 +521,10 @@ Table advanced_ui_style_table(ui_style s){
 
     ret.setFloat("border_size",s.border_size);
     ret.setFloat("text_size",s.text_size);
+    ret.setFloat("space_betwen_lines",s.space_betwen_lines);
+    ret.setFloat("uniform_spaces_betwen_chars",s.uniform_spaces_betwen_chars);
+    
+    
 
     
     if(s.background_image != NULL){
