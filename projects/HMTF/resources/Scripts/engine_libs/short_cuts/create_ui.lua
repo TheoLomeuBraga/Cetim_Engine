@@ -302,7 +302,7 @@ end
 
 function create_advanced_ui_element(father,position,scale,text,interaction_function_name,styles)
 
-    local ret = game_object(create_object(create_object(father)))
+    local ret = game_object(create_object((father)))
     local ui_manager = ret.components.ui_component
 
     ui_manager.position = deepcopy(position)

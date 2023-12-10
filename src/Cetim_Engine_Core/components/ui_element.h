@@ -147,14 +147,15 @@ public:
     void atualisar()
     {
 
+        
         base_position = vec2(0, 0);
-
         /**/
         father = esse_objeto->pai->pegar_componente<ui_componente>();
 
         if (esse_objeto->pai != NULL && father != NULL)
         {
-            base_position = father->position;
+            base_position = father->position + father->base_position;
+            print({"father->base_position",father->base_position.x,father->base_position.y});
         }
         else
         {
@@ -197,6 +198,7 @@ public:
         }
 
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
+        //print({"base_position",base_position.x,base_position.y});
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(current_style.text_size, current_style.text_size, 1);

@@ -284,7 +284,9 @@ function START()
 
     adv_ui.text_size = 0.2
 
-    pause_menu_objects.title = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },"HMTF",nil,adv_ui)
+    pause_menu_objects.base_object = create_advanced_ui_element(this_object.object_ptr,{ x = -0.5, y = -0.5 },{ x = 0.0, y = 0.0 },"","call_start_menu",{normal_style,hover_style})
+
+    pause_menu_objects.title = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },"HMTF",nil,adv_ui)
 
     --button start
 
@@ -311,13 +313,15 @@ function START()
     normal_style.text_size = 0.075
     hover_style.text_size = 0.075
 
-    pause_menu_objects.start_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
+    
+
+    pause_menu_objects.start_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
 
     normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    pause_menu_objects.config_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.45 },{ x = 0.5, y = 0.2 },"CONFIG","call_config_menu",{normal_style,hover_style})
+    pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.45 },{ x = 0.5, y = 0.2 },"CONFIG","call_config_menu",{normal_style,hover_style})
 
     normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    pause_menu_objects.config_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.2 },{ x = 0.5, y = 0.2 },"QUIT","exit",{normal_style,hover_style})
+    pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,{ x = 0.5, y = 0.2 },{ x = 0.5, y = 0.2 },"QUIT","exit",{normal_style,hover_style})
 
 end
 
