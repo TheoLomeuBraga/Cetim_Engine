@@ -313,43 +313,11 @@ function START()
 
     pause_menu_objects.start_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
 
-    pause_menu_objects.config_button = game_object(create_object(create_object(this_object.object_ptr)))
-    local ui_manager = pause_menu_objects.config_button.components.ui_component
-
-    ui_manager.normal_style = normal_style
     normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    ui_manager.hover_style = hover_style
-    ui_manager.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    ui_manager.click_style = hover_style
+    pause_menu_objects.config_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.45 },{ x = 0.5, y = 0.2 },"CONFIG","call_config_menu",{normal_style,hover_style})
 
-    ui_manager.position = { x = 0.5, y = 0.45 }
-    ui_manager.scale = { x = 0.5, y = 0.2 }
-    ui_manager.text_size = 0.075
-
-    ui_manager.text = "CONFIG"
-    ui_manager:set_interaction_function("call_config_menu")
-
-    ui_manager:set()
-
-    --button exit
-
-    pause_menu_objects.config_button = game_object(create_object(create_object(this_object.object_ptr)))
-    local ui_manager = pause_menu_objects.config_button.components.ui_component
-
-    ui_manager.normal_style = normal_style
     normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    ui_manager.hover_style = hover_style
-    ui_manager.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    ui_manager.click_style = hover_style
-
-    ui_manager.position = { x = 0.5, y = 0.2 }
-    ui_manager.scale = { x = 0.5, y = 0.2 }
-    ui_manager.text_size = 0.075
-
-    ui_manager.text = "QUIT"
-    ui_manager:set_interaction_function("exit")
-
-    ui_manager:set()
+    pause_menu_objects.config_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.2 },{ x = 0.5, y = 0.2 },"QUIT","exit",{normal_style,hover_style})
 
 end
 
