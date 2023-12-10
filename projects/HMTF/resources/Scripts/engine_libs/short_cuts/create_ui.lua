@@ -300,65 +300,41 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     return ret
 end
 
-ui_element_for_matrix = {}
-function ui_element_for_matrix:new()
-    return {
-        --pos = {x=1,y=1}, 
-        sca = {x=1,y=1}, 
-        button_obj = {},
-        text_obj = {},
-        style = nil,
-        text = "",
-        text_size = 0.05, 
-        image = "resources/Textures/white.png",
-        hover_function = nil,
-        click_function = nil,
-        category = ui_category.display
-    }
-end
+function create_advanced_ui_element(father,position,scale,text_size,text,interaction_function_name,styles)
 
-function ui_element_matrix_example()
-    local a = ui_element_for_matrix:new()
-    a.text = "a"
+    local ret = game_object(create_object(create_object(father)))
+    local ui_manager = ret.components.ui_component
 
-    local b = ui_element_for_matrix:new()
-    b.text = "b"
+    ui_manager.position = deepcopy(position)
+    ui_manager.scale = deepcopy(scale)
+    ui_manager.text_size = text_size
+    ui_manager.text = text
+    
 
-    local c = ui_element_for_matrix:new()
-    c.text = "a"
-
-    return {
-        {deepcopy(a)},
-        {deepcopy(a)},{deepcopy(b)},
-        {deepcopy(a)},{deepcopy(b)},{deepcopy(c)},
-    }
-end
-
-
-function create_ui_list(father,pos,sca,layer,style,elements_size,ui_element_matrix)
-    local ret = {
-        main_obj = {},
-
-        button_selected = {x = -1,y = -1},
-
-        elements_size = deepcopy(elements_size),
-
-        style = deepcopy(style),
-
-        ui_element_matrix = deepcopy(ui_element_matrix),
-        
-
-    }
-
-    function ret:UPDATE()
-        
+    if interaction_function_name ~= "" and interaction_function_name ~= nil then
+        ui_manager:set_interaction_function(interaction_function_name)
     end
-
-    function ret:END()
-        if self.main_obj.object_ptr ~= nil then
-            remove_object(self.main_obj.object_ptr)
+    
+    
+    if styles[1] == nil then
+        ui_manager.normal_style = deepcopy(styles)
+        ui_manager.hover_style = ui_manager.normal_style
+        ui_manager.click_style = ui_manager.normal_style
+    else
+        ui_manager.normal_style = deepcopy(styles[1])
+        ui_manager.hover_style = ui_manager.normal_style
+        ui_manager.click_style = ui_manager.normal_style
+        if styles[2] ~= nil then
+            ui_manager.hover_style = deepcopy(styles[2])
+        end
+        if styles[3] ~= nil then
+            ui_manager.click_style = deepcopy(styles[3])
         end
     end
 
+    ui_manager:set()
+
     return ret
 end
+
+

@@ -279,23 +279,7 @@ function START()
     adv_ui.background_color = { r = 0, g = 0, b = 0, a = 0 }
     adv_ui.border_color = { r = 0, g = 0, b = 0, a = 0 }
 
-    pause_menu_objects.title = game_object(create_object(create_object(this_object.object_ptr)))
-
-    local ui_manager = pause_menu_objects.title.components.ui_component
-    local adv_ui_copy = deepcopy(adv_ui)
-    ui_manager.normal_style = adv_ui_copy
-    ui_manager.hover_style = adv_ui_copy
-    ui_manager.click_style = adv_ui_copy
-    ui_manager.text = "HMTF"
-    ui_manager.text_size = 0.2
-
-    ui_manager.position = { x = 0.5, y = 0.85 }
-    ui_manager.scale = { x = 2, y = 2 }
-
-    ui_manager.text_location_x = render_text_location.center
-    ui_manager.text_location_y = render_text_location.center
-
-    ui_manager:set()
+    pause_menu_objects.title = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },0.2,"HMTF",nil,adv_ui)
 
     --button start
 

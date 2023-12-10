@@ -130,19 +130,6 @@ public:
 
     bool is_above()
     {
-        /*
-        if (ui_componente::cursor_position.x > (base_position.x + position.x) - ((scale.x - current_state.border_size) / (scale.x * 2)) && ui_componente::cursor_position.x < (base_position.x + position.x) + ((scale.x - current_state.border_size) / (scale.x * 2)))
-        {
-            // float new_cursor_position_y = -ui_componente::cursor_position.y + 1.0;
-            if (ui_componente::cursor_position.y > (base_position.y + position.y) - ((scale.y - current_state.border_size) / (scale.y * 2)) && ui_componente::cursor_position.y < (base_position.y + position.y) + ((scale.y - current_state.border_size) / (scale.y * 2)))
-            {
-                return true;
-            }
-        }
-        */
-
-       
-
         vec2 acurate_pos = vec2(position.x + base_position.x, position.y + base_position.y);
         acurate_pos += vec2(-scale.x / 2, scale.y / 2);
 
