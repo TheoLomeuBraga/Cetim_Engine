@@ -228,11 +228,14 @@ function call_config_menu(state, id)
     end
 end
 
+local block_exit_button = false
 function exit(state, id)
     if state == "click" then
         window:close()
     end
 end
+
+
 
 function START()
     global_data:set_var("pause", 1)
@@ -305,33 +308,11 @@ function START()
     hover_style.background_image = "resources/Textures/white.png"
     hover_style.border_image = "resources/Textures/white.png"
 
-    adv_ui.text_size = 0.075
+    normal_style.text_size = 0.075
+    hover_style.text_size = 0.075
 
     pause_menu_objects.start_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
 
-    --[[
-    pause_menu_objects.start_button = game_object(create_object(create_object(this_object.object_ptr)))
-    local ui_manager = pause_menu_objects.start_button.components.ui_component
-    ui_manager.normal_style = normal_style
-    ui_manager.hover_style = hover_style
-    ui_manager.click_style = hover_style
-
-    ui_manager.position = { x = 0.5, y = 0.7 }
-    ui_manager.scale = { x = 0.5, y = 0.2 }
-    ui_manager.text_size = 0.075
-
-    ui_manager.text = "START"
-
-    ui_manager:set_interaction_function("call_start_menu")
-
-    
-
-    ui_manager:set()
-    ]]
-
-    --button config
-
-    --[[]]
     pause_menu_objects.config_button = game_object(create_object(create_object(this_object.object_ptr)))
     local ui_manager = pause_menu_objects.config_button.components.ui_component
 
@@ -370,31 +351,6 @@ function START()
 
     ui_manager:set()
 
-
-    --[[
-    style.color_hover = { r = 0, g = 0, b = 0, a = 0 }
-    style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
-    style.border_size = 0.1
-    style.border_color = { r = 0, g = 0, b = 0, a = 0 }
-    style.border_color_hover = { r = 1, g = 1, b = 1, a = 1 }
-    if in_main_menu ~= 0 then
-        pause_menu_objects.start_button = create_ui(this_object.object_ptr, { x = -0.25, y = 0.5, z = 0 },
-            { x = 0.5, y = 0.25, z = 2 }, 5, style, "START", 0.075, "resources/Textures/null.png", call_start_menu,
-            ui_category.button)
-    end
-    ]]
-
-    --[[
-    style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    pause_menu_objects.config_button = create_ui(this_object.object_ptr, { x = -0.3, y = 0, z = 0 },
-        { x = 0.6, y = 0.25, z = 2 }, 5, style, "CONFIG", 0.075, "resources/Textures/null.png", call_config_menu,
-        ui_category.button)
-    
-
-    style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    pause_menu_objects.exit_button = create_ui(this_object.object_ptr, { x = -0.2, y = -0.5, z = 0 },
-        { x = 0.4, y = 0.25, z = 2 }, 5, style, "QUIT", 0.075, "resources/Textures/null.png", exit, ui_category.button)
-    ]]
 end
 
 function UPDATE()
