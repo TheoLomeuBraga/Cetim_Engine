@@ -279,7 +279,9 @@ function START()
     adv_ui.background_color = { r = 0, g = 0, b = 0, a = 0 }
     adv_ui.border_color = { r = 0, g = 0, b = 0, a = 0 }
 
-    pause_menu_objects.title = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },0.2,"HMTF",nil,adv_ui)
+    adv_ui.text_size = 0.2
+
+    pause_menu_objects.title = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.85 },{ x = 2, y = 2 },"HMTF",nil,adv_ui)
 
     --button start
 
@@ -303,6 +305,11 @@ function START()
     hover_style.background_image = "resources/Textures/white.png"
     hover_style.border_image = "resources/Textures/white.png"
 
+    adv_ui.text_size = 0.075
+
+    pause_menu_objects.start_button = create_advanced_ui_element(this_object.object_ptr,{ x = 0.5, y = 0.7 },{ x = 0.5, y = 0.2 },"START","call_start_menu",{normal_style,hover_style})
+
+    --[[
     pause_menu_objects.start_button = game_object(create_object(create_object(this_object.object_ptr)))
     local ui_manager = pause_menu_objects.start_button.components.ui_component
     ui_manager.normal_style = normal_style
@@ -317,9 +324,10 @@ function START()
 
     ui_manager:set_interaction_function("call_start_menu")
 
-
+    
 
     ui_manager:set()
+    ]]
 
     --button config
 

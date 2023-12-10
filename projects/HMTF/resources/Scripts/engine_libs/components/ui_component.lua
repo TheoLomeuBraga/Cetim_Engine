@@ -39,6 +39,9 @@ function advanced_ui_style:new()
         background_color = { r = 0, g = 1, b = 0, a = 1 },
         border_color = { r = 0, g = 0, b = 1, a = 1 },
         border_size = 0.05,
+        text_size = 0.1,
+        uniform_space_between_characters = 0,
+        space_betwen_lines = 2,
         background_image = "resources/Textures/null.svg",
         border_image = "resources/Textures/null.svg",
         text_font = "resources/Fonts/Glowworm Regular.json",
@@ -57,8 +60,6 @@ ui_component.type = ""
 ui_component.layer = 5
 ui_component.id = ""
 ui_component.text = ""
-ui_component.text_size = 0.1
-ui_component.uniform_spaces_betwen_chars = false
 ui_component.text_location_x = render_text_location.center
 ui_component.text_location_y = render_text_location.center
 ui_component.positiom = { x = 0.5, y = 0.5 }
@@ -75,7 +76,6 @@ function ui_component:clean()
     self.layer = 5
     self.id = ""
     self.text = ""
-    self.text_size = 0.1
     self.uniform_spaces_betwen_chars = false
     self.text_location_x = render_text_location.center
     self.text_location_y = render_text_location.center
@@ -94,8 +94,6 @@ function ui_component:get()
     self.layer = u.layer
     self.id = u.id
     self.text = u.text
-    self.text_size = u.text_size
-    self.uniform_spaces_betwen_chars = u.uniform_spaces_betwen_chars > 0
     self.text_location_x = u.text_location_x
     self.text_location_y = u.text_location_y
     self.positiom = u.positiom

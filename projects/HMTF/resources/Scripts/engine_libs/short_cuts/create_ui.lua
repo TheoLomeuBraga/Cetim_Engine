@@ -300,14 +300,13 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     return ret
 end
 
-function create_advanced_ui_element(father,position,scale,text_size,text,interaction_function_name,styles)
+function create_advanced_ui_element(father,position,scale,text,interaction_function_name,styles)
 
     local ret = game_object(create_object(create_object(father)))
     local ui_manager = ret.components.ui_component
 
     ui_manager.position = deepcopy(position)
     ui_manager.scale = deepcopy(scale)
-    ui_manager.text_size = text_size
     ui_manager.text = text
     
 

@@ -1972,14 +1972,10 @@ namespace funcoes_ponte
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 			ret.setString("text", converter.to_bytes(ui->text));
 			ret.setString("state", ui->state);
-			ret.setFloat("text_size", ui->text_size);
-			ret.setFloat("space_betwen_lines", ui->space_betwen_lines);
-			ret.setFloat("uniform_spaces_betwen_chars", ui->uniform_spaces_betwen_chars);
 			ret.setFloat("text_location_x", ui->text_location_x);
 			ret.setFloat("text_location_y", ui->text_location_y);
 			ret.setTable("position", vec2_table(ui->position));
 			ret.setTable("scale", vec2_table(ui->scale));
-
 			ret.setTable("normal_style", advanced_ui_style_table(ui->normal_style));
 			ret.setTable("hover_style", advanced_ui_style_table(ui->hover_style));
 			ret.setTable("click_style", advanced_ui_style_table(ui->click_style));
@@ -1997,9 +1993,6 @@ namespace funcoes_ponte
 			ui->render_layer = t.getFloat("layer") - 1;
 			ui->set_text_by_string(t.getString("text"));
 			ui->state = t.getString("text");
-			ui->text_size = t.getFloat("text_size");
-			ui->space_betwen_lines = t.getFloat("space_betwen_lines");
-			ui->uniform_spaces_betwen_chars = t.getFloat("uniform_spaces_betwen_chars");
 			ui->text_location_x = t.getFloat("text_location_x");
 			ui->text_location_y = t.getFloat("text_location_y");
 			ui->position = table_vec2(t.getTable("position"));

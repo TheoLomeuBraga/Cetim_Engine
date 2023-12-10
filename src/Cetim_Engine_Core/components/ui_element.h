@@ -22,7 +22,8 @@ struct ui_style_struct
     vec4 background_color = vec4(0, 1, 0, 1);
     vec4 border_color = vec4(0, 0, 1, 1);
 
-    float border_size = 0.05;
+    float text_size = 0.1 ,border_size = 0.05,space_betwen_lines = 2;
+    bool uniform_spaces_betwen_chars = false;
 
     shared_ptr<imagem> background_image = NULL;
     shared_ptr<imagem> border_image = NULL;
@@ -56,13 +57,12 @@ public:
     static bool click;
     string id;
     uint8_t render_layer = 4;
-    float text_size = 0.1;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
     unsigned char text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
     vec2 position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
-    ui_style normal_style, hover_style, click_style, current_state;
+    ui_style normal_style, hover_style, click_style, current_style;
     wstring text;
     string state = "none";
 
@@ -165,7 +165,7 @@ public:
         {
             if (click)
             {
-                current_state = click_style;
+                current_style = click_style;
                 if (!first_click_frame)
                 {
                     function_reference(id, "click");
@@ -182,7 +182,7 @@ public:
             }
             else
             {
-                current_state = hover_style;
+                current_style = hover_style;
                 function_reference(id, "hover");
                 call_lua_function(id, "hover");
                 first_click_frame = false;
@@ -191,7 +191,7 @@ public:
         }
         else
         {
-            current_state = normal_style;
+            current_style = normal_style;
             first_click_frame = false;
             state = "none";
         }
@@ -199,7 +199,7 @@ public:
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
-        text_obj->pegar_componente<transform_>()->esca = vec3(text_size, text_size, 1);
+        text_obj->pegar_componente<transform_>()->esca = vec3(current_style.text_size, current_style.text_size, 1);
         text_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
         if (text_location_x == render_text_location::LEFT)
@@ -221,8 +221,8 @@ public:
             text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
         }
 
-        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_state.border_size), acurate_pos.y + (scale.y + current_state.border_size), 0);
-        border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_state.border_size, scale.y + current_state.border_size, 1);
+        border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_style.border_size), acurate_pos.y + (scale.y + current_style.border_size), 0);
+        border_obj->pegar_componente<transform_>()->esca = vec3(scale.x + current_style.border_size, scale.y + current_style.border_size, 1);
         border_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
         background_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x), acurate_pos.y + (scale.y), 0);
@@ -232,14 +232,14 @@ public:
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
         mat.shad = "resources/Shaders/text";
-        mat.cor = current_state.text_color;
+        mat.cor = current_style.text_color;
         text_obj->pegar_componente<render_texto>()->mat = mat;
 
         mat.shad = "resources/Shaders/ui_componente";
-        mat.cor = current_state.background_color;
-        if (current_state.background_image != NULL)
+        mat.cor = current_style.background_color;
+        if (current_style.background_image != NULL)
         {
-            mat.texturas[0] = current_state.background_image;
+            mat.texturas[0] = current_style.background_image;
         }
         else
         {
@@ -247,10 +247,10 @@ public:
         }
         background_obj->pegar_componente<render_shader>()->mat = mat;
 
-        mat.cor = current_state.border_color;
-        if (current_state.border_image != NULL)
+        mat.cor = current_style.border_color;
+        if (current_style.border_image != NULL)
         {
-            mat.texturas[0] = current_state.border_image;
+            mat.texturas[0] = current_style.border_image;
         }
         else
         {
@@ -265,8 +265,8 @@ public:
         text_obj->pegar_componente<render_texto>()->text_location_x = text_location_x;
         text_obj->pegar_componente<render_texto>()->text_location_y = text_location_y;
 
-        text_obj->pegar_componente<render_texto>()->uniform_space_between_characters = uniform_spaces_betwen_chars;
-        text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = space_betwen_lines;
+        text_obj->pegar_componente<render_texto>()->uniform_space_between_characters = current_style.uniform_spaces_betwen_chars;
+        text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = current_style.space_betwen_lines;
 
         text_obj->pegar_componente<render_texto>()->texto = text;
         text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
@@ -316,7 +316,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic->click_style = style;
-    uic->current_state = style;
+    uic->current_style = style;
     uic->text_location_x = render_text_location::LEFT;
     uic->text_location_y = render_text_location::TOP;
     uic->lua_function = lw;
@@ -335,7 +335,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic2->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
-    uic2->current_state = style;
+    uic2->current_style = style;
     uic2->position = vec2(0.2, -0.2);
     uic2->text_location_x = render_text_location::RIGHT;
     uic2->text_location_y = render_text_location::DOWN;

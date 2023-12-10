@@ -499,6 +499,7 @@ ui_style table_advanced_ui_style(Table s){
     ret.border_color = table_color(s.getTable("border_color"));
 
     ret.border_size = s.getFloat("border_size");
+    ret.text_size = s.getFloat("text_size");
 
     ret.background_image = ManuseioDados::carregar_Imagem(s.getString("background_image"));
     ret.border_image = ManuseioDados::carregar_Imagem(s.getString("border_image"));
@@ -516,6 +517,7 @@ Table advanced_ui_style_table(ui_style s){
     ret.setTable("border_color",color_table(s.border_color));
 
     ret.setFloat("border_size",s.border_size);
+    ret.setFloat("text_size",s.text_size);
 
     
     if(s.background_image != NULL){
