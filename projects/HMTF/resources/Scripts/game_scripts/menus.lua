@@ -56,6 +56,7 @@ end
 function save_config_and_exit_to_pause_menu()
     save_configs()
     exit_to_pause_menu()
+    show_pause_menu(true)
 end
 
 function new_game()
@@ -168,6 +169,7 @@ end
 
 function call_config_menu(state, id)
     if state == "click" then
+        show_pause_menu(false)
         menu_selectred = "config"
 
         local style = ui_style:new()

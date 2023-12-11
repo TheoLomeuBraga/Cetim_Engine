@@ -1971,6 +1971,9 @@ namespace funcoes_ponte
 			ret.setFloat("layer", ui->render_layer + 1);
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 			ret.setString("text", converter.to_bytes(ui->text));
+			ret.setFloat("ui_type", ui->ui_type);
+			ret.setString("id", ui->id);
+			ret.setString("data", ui->data);
 			ret.setString("state", ui->state);
 			ret.setFloat("text_location_x", ui->text_location_x);
 			ret.setFloat("text_location_y", ui->text_location_y);
@@ -1993,6 +1996,10 @@ namespace funcoes_ponte
 			ui->render_layer = t.getFloat("layer") - 1;
 			ui->set_text_by_string(t.getString("text"));
 			ui->state = t.getString("text");
+			
+			ui->ui_type = t.getFloat("ui_type");
+			ui->id = t.getString("id");
+			ui->id = t.getString("data");
 			ui->text_location_x = t.getFloat("text_location_x");
 			ui->text_location_y = t.getFloat("text_location_y");
 			ui->position = table_vec2(t.getTable("position"));

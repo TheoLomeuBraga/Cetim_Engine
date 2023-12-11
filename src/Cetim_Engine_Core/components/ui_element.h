@@ -34,9 +34,9 @@ typedef struct ui_style_struct ui_style;
 
 enum ui_type
 {
-    lable = 0,
-    text = 1,
-    button = 2,
+    common = 0,
+    check_box = 1,
+    slider = 2,
 };
 
 void function_reference_example(string state, string id)
@@ -55,7 +55,8 @@ class ui_componente : public componente
 public:
     static vec2 cursor_position;
     static bool click;
-    string id;
+    unsigned char ui_type = common;
+    string id,data;
     uint8_t render_layer = 4;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
@@ -77,8 +78,9 @@ public:
 
             lua_pushstring(lua_function.L, id.c_str());
             lua_pushstring(lua_function.L, state.c_str());
+            lua_pushstring(lua_function.L, data.c_str());
 
-            lua_pcall(lua_function.L, 2, 1, 0);
+            lua_pcall(lua_function.L, 3, 0, 0);
         }
     }
 
