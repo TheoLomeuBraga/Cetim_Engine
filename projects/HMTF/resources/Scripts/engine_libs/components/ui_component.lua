@@ -32,6 +32,12 @@ render_text_location = {
     right = 5
 }
 
+ui_types = {
+    common = 0,
+    check_box = 1,
+    slider = 2,
+}
+
 advanced_ui_style = {}
 function advanced_ui_style:new()
     return {
