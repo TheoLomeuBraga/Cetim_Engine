@@ -210,21 +210,21 @@ public:
 
         if (text_location_x == render_text_location::LEFT)
         {
-            text_obj->pegar_componente<transform_>()->pos.x += scale.x / 2;
+            text_obj->pegar_componente<transform_>()->pos.x += scale.x;
         }
         else if (text_location_x == render_text_location::RIGHT)
         {
-            text_obj->pegar_componente<transform_>()->pos.x -= scale.x / 2;
+            text_obj->pegar_componente<transform_>()->pos.x -= scale.x;
         }
 
         /**/
         if (text_location_y == render_text_location::TOP)
         {
-            text_obj->pegar_componente<transform_>()->pos.y -= (scale.y / 2);
+            text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
         }
         else if (text_location_y == render_text_location::DOWN)
         {
-            text_obj->pegar_componente<transform_>()->pos.y += (scale.y / 2);
+            text_obj->pegar_componente<transform_>()->pos.y -= (scale.y / 2);
         }
 
         border_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x - (scale.x + current_style.border_size), acurate_pos.y + (scale.y + current_style.border_size), 0);
