@@ -48,9 +48,11 @@ class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> base_obj, text_obj, background_obj, border_obj;
+    
     vec2 base_position = vec2(0, 0);
 
     bool first_click_frame = false;
+    ui_style current_style;
 
 public:
     static vec2 cursor_position;
@@ -63,7 +65,7 @@ public:
     unsigned char text_location_x = render_text_location::RIGHT, text_location_y = render_text_location::CENTER;
     shared_ptr<ui_componente> father;
     vec2 position = vec2(0.0, 0.0), scale = vec2(0.2, 0.2);
-    ui_style normal_style, hover_style, click_style, current_style;
+    ui_style normal_style, hover_style, click_style;
     wstring text;
     string state = "none";
 
@@ -319,7 +321,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic->click_style = style;
-    uic->current_style = style;
+    //uic->current_style = style;
     uic->text_location_x = render_text_location::LEFT;
     uic->text_location_y = render_text_location::TOP;
     uic->lua_function = lw;
@@ -338,7 +340,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic2->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
-    uic2->current_style = style;
+    //uic2->current_style = style;
     uic2->position = vec2(0.2, -0.2);
     uic2->text_location_x = render_text_location::RIGHT;
     uic2->text_location_y = render_text_location::DOWN;

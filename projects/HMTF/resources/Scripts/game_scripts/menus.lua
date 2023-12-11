@@ -51,6 +51,8 @@ function exit_to_pause_menu()
     config_menu_objects = {}
 
     slider_objects = {}
+
+    show_pause_menu(true)
 end
 
 function save_config_and_exit_to_pause_menu()
@@ -74,7 +76,7 @@ function call_start_menu(state, id)
     if state == "click" then
         menu_selectred = "start"
 
-
+        show_pause_menu(false)
 
 
         local style = ui_style:new()
@@ -172,6 +174,14 @@ function call_config_menu(state, id)
         show_pause_menu(false)
         menu_selectred = "config"
 
+        local adv_ui = advanced_ui_style()
+        adv_ui.text_color = { r = 1, g = 1, b = 1, a = 1 }
+        adv_ui.background_color = { r = 0, g = 0, b = 0, a = 1 }
+        adv_ui.border_color = { r = 0, g = 0, b = 0, a = 1 }
+        adv_ui.border_size = 0
+        adv_ui.background_image = "resources/Textures/null.png"
+        adv_ui.border_image = "resources/Textures/null.png"
+
         local style = ui_style:new()
         style.border_size = 0
         style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
@@ -239,16 +249,6 @@ end
 
 function show_pause_menu(on)
     if on then
-        --logo
-
-        local style = ui_style:new()
-
-        style.border_size = 0
-
-        style.border_size = 0
-        style.color = { r = 0, g = 0.2, b = 0.2, a = 1 }
-        style.color_click = { r = 0, g = 0, b = 0, a = 0 }
-
         local adv_ui = advanced_ui_style()
 
         if in_main_menu ~= 0 then
@@ -259,9 +259,8 @@ function show_pause_menu(on)
             adv_ui.background_image = "resources/Textures/null.png"
             adv_ui.border_image = "resources/Textures/null.png"
 
-            pause_menu_objects.back_ground_image = create_advanced_ui_element(this_object.object_ptr,ui_types.common, { x = 0.5, y = 0.5 },{ x = 1, y = 1 }, "", nil, adv_ui)
-
-            
+            pause_menu_objects.back_ground_image = create_advanced_ui_element(this_object.object_ptr, ui_types.common,
+                { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil, adv_ui)
         end
 
         adv_ui.text_color = { r = 0, g = 1, b = 0, a = 0 }
@@ -270,10 +269,12 @@ function show_pause_menu(on)
 
         adv_ui.text_size = 0.2
 
-        pause_menu_objects.base_object = create_advanced_ui_element(this_object.object_ptr,ui_types.common, { x = 0, y = 0 },
+        pause_menu_objects.base_object = create_advanced_ui_element(this_object.object_ptr, ui_types.common,
+            { x = 0, y = 0 },
             { x = 0.0, y = 0.0 }, "", "call_start_menu", { normal_style, hover_style })
 
-        pause_menu_objects.title = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,ui_types.common,{ x = 0.5, y = 0.85 }, { x = 2, y = 2 }, "HMTF", nil, adv_ui)
+        pause_menu_objects.title = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr, ui_types.common,
+            { x = 0.5, y = 0.85 }, { x = 2, y = 2 }, "HMTF", nil, adv_ui)
 
         --button start
 
@@ -288,27 +289,26 @@ function show_pause_menu(on)
         normal_style.background_color = transparent_color
         normal_style.background_image = "resources/Textures/white.png"
         normal_style.border_image = "resources/Textures/white.png"
+        normal_style.text_size = 0.075
 
-        local hover_style = advanced_ui_style()
+        local hover_style = deepcopy(normal_style)
         hover_style.border_color = hover_border_color
         hover_style.background_color = hover_border_color
-        hover_style.border_size = 0
-        hover_style.text_color = { r = 0.25, g = 1, b = 1, a = 1 }
-        hover_style.background_image = "resources/Textures/white.png"
-        hover_style.border_image = "resources/Textures/white.png"
-
-        normal_style.text_size = 0.075
-        hover_style.text_size = 0.075
 
 
 
-        pause_menu_objects.start_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,ui_types.common,{ x = 0.5, y = 0.7 }, { x = 0.5, y = 0.2 }, "START", "call_start_menu", { normal_style, hover_style })
+        pause_menu_objects.start_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            ui_types.common, { x = 0.5, y = 0.7 }, { x = 0.5, y = 0.2 }, "START", "call_start_menu",
+            { normal_style, hover_style })
 
         normal_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
-        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,ui_types.common,{ x = 0.5, y = 0.45 }, { x = 0.5, y = 0.2 }, "CONFIG", "call_config_menu", { normal_style, hover_style })
+        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            ui_types.common, { x = 0.5, y = 0.45 }, { x = 0.5, y = 0.2 }, "CONFIG", "call_config_menu",
+            { normal_style, hover_style })
 
         normal_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
-        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,ui_types.common,{ x = 0.5, y = 0.2 }, { x = 0.5, y = 0.2 }, "QUIT", "exit", { normal_style, hover_style })
+        pause_menu_objects.config_button = create_advanced_ui_element(pause_menu_objects.base_object.object_ptr,
+            ui_types.common, { x = 0.5, y = 0.2 }, { x = 0.5, y = 0.2 }, "QUIT", "exit", { normal_style, hover_style })
     else
         remove_object(pause_menu_objects.base_object.object_ptr)
     end
