@@ -61,7 +61,7 @@ function interact(args)
     adv_ui.text_size = 0.05
 
     dialog_box_father = create_object(global_data:get("layers").hud)
-    dialog_box = create_advanced_ui_element(dialog_box_father, ui_types.common, { x = 0.5, y = 0.2 }, { x = 0.9, y = 0.5 },
+    dialog_box = create_ui_element(dialog_box_father, ui_types.common, { x = 0.5, y = 0.2 }, { x = 0.9, y = 0.5 },
         mensage_list[mensage_list_index], nil, adv_ui)
     dialog_box.components.ui_component.text_location_x = render_text_location.right
     dialog_box.components.ui_component.text_location_y = render_text_location.top
@@ -110,7 +110,7 @@ function next_interaction()
             adv_ui.text_size = 0.05
 
             dialog_box_father = create_object(global_data:get("layers").hud)
-            dialog_box = create_advanced_ui_element(dialog_box_father, ui_types.common, { x = 0.5, y = 0.2 },{ x = 0.9, y = 0.5 }, mensage_list[mensage_list_index], nil, adv_ui)
+            dialog_box = create_ui_element(dialog_box_father, ui_types.common, { x = 0.5, y = 0.2 },{ x = 0.9, y = 0.5 }, mensage_list[mensage_list_index], nil, adv_ui)
             dialog_box.components.ui_component.text_location_x = render_text_location.right
             dialog_box.components.ui_component.text_location_y = render_text_location.top
             dialog_box.components.ui_component:set()

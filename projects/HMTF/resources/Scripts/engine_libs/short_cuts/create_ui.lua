@@ -54,7 +54,7 @@ local ui_object_example = {
 
 }
 
-
+--deprecado
 
 function create_ui(father, pos, sca, layer, style, text,text_size, image, click_function,category)
     --object
@@ -302,12 +302,12 @@ end
 
 
 
-function create_advanced_ui_element(father,ui_type,position,scale,text,interaction_function_name,styles)
+function create_ui_element(father,ui_type,position,scale,text,interaction_function_name,styles)
 
     local ret = game_object(create_object((father)))
     local ui_manager = ret.components.ui_component
 
-    ui_manager.type = 0
+    ui_manager.type = ui_type
 
     ui_manager.id = ret.object_ptr
 
