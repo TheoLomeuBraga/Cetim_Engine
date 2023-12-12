@@ -57,7 +57,6 @@ end
 
 function save_config_and_exit_to_pause_menu()
     save_configs()
-    exit_to_pause_menu()
     show_pause_menu(true)
 end
 
@@ -182,19 +181,21 @@ function call_config_menu(state, id)
         adv_ui.background_image = "resources/Textures/null.png"
         adv_ui.border_image = "resources/Textures/null.png"
 
+        --[[
         local style = ui_style:new()
         style.border_size = 0
         style.color = { r = 0.25, g = 0.25, b = 0.25, a = 1 }
         style.color_click = { r = 0, g = 0, b = 0, a = 0 }
         config_menu_objects.back_ground_image = create_ui(this_object.object_ptr, { x = -1, y = 1, z = 0 },{ x = 2, y = 2, z = 2 }, 5, style, "", 0, "resources/Textures/white.png", nil, ui_category.display)
+        ]]
 
-        --[[]]
         local background_style = advanced_ui_style()
         background_style.text_color = { r = 0.1, g = 0.1, b = 0.1, a = 1 }
         background_style.background_color = { r = 0.1, g = 0.1, b = 0.1, a = 1 }
         background_style.border_color = { r = 0.1, g = 0.1, b = 0.1, a = 1 }
-        --config_menu_objects.back_ground_image = create_ui_element(this_object.object_ptr,0,{x=0.5,y=0.5},{x=1,y=1},"",nil,background_style)
-        
+        config_menu_objects.back_ground_image = create_ui_element(this_object.object_ptr,0,{x=0.5,y=0.5},{x=1,y=1},"",nil,background_style)
+
+        --
 
         style.color = { r = 0, g = 0, b = 0, a = 0 }
         style.text_color = { r = 1, g = 1, b = 0, a = 1 }
