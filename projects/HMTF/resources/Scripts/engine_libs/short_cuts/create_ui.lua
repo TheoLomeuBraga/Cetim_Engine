@@ -307,6 +307,8 @@ function create_ui_element(father,ui_type,position,scale,text,interaction_functi
     local ret = game_object(create_object((father)))
     local ui_manager = ret.components.ui_component
 
+    ui_manager.layer = 5
+
     ui_manager.type = ui_type
 
     ui_manager.id = ret.object_ptr
@@ -314,7 +316,9 @@ function create_ui_element(father,ui_type,position,scale,text,interaction_functi
     ui_manager.position = deepcopy(position)
     ui_manager.scale = deepcopy(scale)
     ui_manager.text = text
-    
+
+    ui_manager.text_location_x = render_text_location.center
+    ui_manager.text_location_y = render_text_location.center
 
     if interaction_function_name ~= "" and interaction_function_name ~= nil then
         ui_manager:set_interaction_function(interaction_function_name)

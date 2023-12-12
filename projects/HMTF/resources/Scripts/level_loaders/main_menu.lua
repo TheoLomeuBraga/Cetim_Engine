@@ -27,8 +27,8 @@ function menu:START()
     menu.menu_obj.components.transform:set()
 
     menu.menu_obj.components.lua_scripts:add_script("game_scripts/menus")
-    menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "in_main_menu", 1)
-    menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selectred", "pause")
+    --menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "in_main_menu", 1)
+    menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selectred", "main_menu")
 
 end
 

@@ -1013,16 +1013,6 @@ public:
 							no_linha++;
 							pos_char.x = 0;
 						}
-						else if (letra == ' ')
-						{
-							pos_char.x += rt->tamanho_espaco;
-							if (pos_char.x > rt->tamanho_max_linha)
-							{
-								altura_linha -= rt->espaco_entre_linhas;
-								no_linha++;
-								pos_char.x = 0;
-							}
-						}
 						else
 						{
 

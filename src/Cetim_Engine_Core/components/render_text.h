@@ -139,18 +139,7 @@ public:
 				no_linha++;
 				pos_char.x = 0;
 			}
-			else if (letra == ' ')
-			{
-				pos_char.x += tamanho_espaco;
-				if (pos_char.x > tamanho_max_linha)
-				{
-					altura_linha -= +espaco_entre_linhas;
-					ret[no_linha] = vec2(pos_char.x,espaco_entre_linhas);
-					ret.push_back(vec2(0,0));
-					no_linha++;
-					pos_char.x = 0;
-				}
-			}
+			
 			else
 			{
 
