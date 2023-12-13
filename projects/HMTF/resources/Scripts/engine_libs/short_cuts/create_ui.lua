@@ -54,7 +54,7 @@ local ui_object_example = {
 
 }
 
---deprecado
+--deprecated
 
 function create_ui(father, pos, sca, layer, style, text,text_size, image, click_function,category)
     --object
@@ -300,6 +300,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
     return ret
 end
 
+--new
+
 
 
 function create_ui_element(father,ui_type,position,scale,text,interaction_function_name,styles)
@@ -346,4 +348,20 @@ function create_ui_element(father,ui_type,position,scale,text,interaction_functi
     return ret
 end
 
+function generate_arows(arg,spaces_per_char)
+    if spaces_per_char == nil then
+        spaces_per_char = 1
+    end
+    local ret = ">"
+    for i = 1, #arg * spaces_per_char, 1 do
+        ret = ret .. "  "
+    end
+    ret = ret .. "<"
+    return ret
+end
 
+function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style)
+    local ret1 = create_ui_element(father,ui_type,position,scale,text,interaction_function_name,style)
+    local ret2 = create_ui_element(father,ui_type,position,scale,generate_arows(text),interaction_function_name,{deepcopy(empty_style),style})
+    return {ret1,ret2}
+end

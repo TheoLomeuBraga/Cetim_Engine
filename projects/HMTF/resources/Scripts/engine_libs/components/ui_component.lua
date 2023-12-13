@@ -60,6 +60,15 @@ setmetatable(advanced_ui_style, {
     end
 })
 
+empty_style = advanced_ui_style:new()
+empty_style.text_color = { r = 0, g = 0, b = 0, a = 0 }
+empty_style.background_color = { r = 0, g = 0, b = 0, a = 0 }
+empty_style.border_color = { r = 0, g = 0, b = 0, a = 0 }
+empty_style.border_size = 0
+empty_style.text_size = 0
+empty_style.background_image = "resources/Textures/white.png"
+empty_style.border_image = "resources/Textures/white.png"
+
 ui_component = create_base_component(components.ui_component)
 ui_component.object_ptr = ""
 ui_component.type = ""

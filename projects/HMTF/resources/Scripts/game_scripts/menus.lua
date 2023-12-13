@@ -11,6 +11,8 @@ require("objects.window")
 local serializer = require("libs.serialize")
 require("math")
 
+
+
 in_main_menu = 0
 
 menu_types = {
@@ -23,7 +25,7 @@ menu_selectred = "pause"
 local menu_objects = {}
 local menus_locations = {
     title = 0,
-    start = 1
+    start = 1,
 }
 
 function select_menu(pos)
@@ -31,18 +33,17 @@ function select_menu(pos)
     menu_objects.base.components.ui_component:set()
 end
 
-function start_button_func(state, id)
+function go_to_start_menu(state, id)
     if state == "click" then
         select_menu(menu_types.start)
     end
 end
 
-local empty_style = advanced_ui_style()
-empty_style.text_color = { r = 0, g = 0, b = 0, a = 0 }
-empty_style.background_color = { r = 0, g = 0, b = 0, a = 0 }
-empty_style.border_color = { r = 0, g = 0, b = 0, a = 0 }
-empty_style.border_size = 0
-empty_style.text_size = 0
+function go_to_title_menu(state, id)
+    if state == "click" then
+        select_menu(menu_types.title)
+    end
+end
 
 
 
@@ -63,15 +64,18 @@ function start_title_menu()
     menu_objects.start_text = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
         { x = 0.2, y = 0.2 }, "start", nil, start_style)
 
-
-    menu_objects.start_button = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
-        { x = 0.25, y = 0.2 }, ">         <", "start_button_func", { deepcopy(empty_style), start_style, start_style })
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },{ x = 0.25, y = 0.2 },  "start", "go_to_start_menu", start_style)
 
     
 end
 
 function start_start_menu()
-    print("AAAAA")
+    local button = deepcopy(empty_style)
+    button.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    button.text_size = 0.1
+
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },{ x = 0.5, y = 0.15 }, "back", "go_to_title_menu", button)
+
 end
 
 function start_all_menus()
@@ -83,8 +87,7 @@ function start_all_menus()
         background_style.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
         background_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
         background_style.background_image = "resources/Textures/null.png"
-        menu_objects.back_ground_image = create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
-            { x = 1, y = 1 }, "", nil, background_style)
+        create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },{ x = 1, y = 1 }, "", nil, background_style)
     end
 
 
