@@ -21,6 +21,7 @@ menu_types = {
     title = "title",
     start = "start",
     config = "config",
+    play = "play",
     pause = "pause",
 }
 menu_selectred = "pause"
@@ -28,6 +29,8 @@ local menu_objects = {}
 local menus_locations = {
     title = 0,
     start = 1,
+    config = 2,
+    play = 3,
 }
 
 function select_menu(pos)
@@ -47,6 +50,17 @@ function go_to_title_menu(state, id)
     end
 end
 
+function go_to_config_menu(state, id)
+    if state == "click" then
+        select_menu(menu_types.config)
+    end
+end
+
+function go_to_play_menu(state, id)
+    if state == "click" then
+        select_menu(menu_types.play)
+    end
+end
 
 
 
@@ -77,14 +91,23 @@ function start_start_menu()
     button.text_size = 0.1
 
     button.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },{ x = 0.5, y = 0.15 }, "play", "go_to_title_menu", button,arow_style)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },{ x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button,arow_style)
 
     button.text_color = { r = 0, g = 1, b = 1, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },{ x = 0.5, y = 0.15 }, "config", "go_to_title_menu", button,arow_style)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },{ x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button,arow_style)
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },{ x = 0.5, y = 0.15 }, "back", "go_to_title_menu", button,arow_style)
 
+end
+
+function start_config_menu()
+    --title
+    local title_style = deepcopy(empty_style)
+    title_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
+    title_style.text_size = 0.1
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 },
+        { x = 2, y = 2 }, "config", nil, title_style)
 end
 
 function start_all_menus()
@@ -108,6 +131,7 @@ function start_all_menus()
 
     start_title_menu()
     start_start_menu()
+    start_config_menu()
 end
 
 function START()
