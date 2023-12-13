@@ -1999,7 +1999,7 @@ namespace funcoes_ponte
 			
 			ui->ui_type = t.getFloat("ui_type");
 			ui->id = t.getString("id");
-			ui->id = t.getString("data");
+			ui->data = t.getString("data");
 			ui->text_location_x = t.getFloat("text_location_x");
 			ui->text_location_y = t.getFloat("text_location_y");
 			ui->position = table_vec2(t.getTable("position"));

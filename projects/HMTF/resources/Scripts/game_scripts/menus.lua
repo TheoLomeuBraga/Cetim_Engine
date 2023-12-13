@@ -11,6 +11,8 @@ require("objects.window")
 local serializer = require("libs.serialize")
 require("math")
 
+
+
 local arow_style = deepcopy(empty_style)
 arow_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
 arow_style.text_size = 0.1
@@ -38,6 +40,8 @@ function select_menu(pos)
     menu_objects.base.components.ui_component:set()
 end
 
+--button functions
+
 function go_to_start_menu(state, id)
     if state == "click" then
         select_menu(menu_types.start)
@@ -62,8 +66,15 @@ function go_to_play_menu(state, id)
     end
 end
 
-
-
+function toogle_full_screen(state, id)
+    if state == "click" then
+        window:get()
+        window.full_screen = not window.full_screen
+        window.resolution.x = 256
+        window.resolution.y = 224
+        window:set()
+    end
+end
 
 function start_title_menu()
     --title
@@ -80,25 +91,26 @@ function start_title_menu()
     menu_objects.start_text = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
         { x = 0.2, y = 0.2 }, "start", nil, start_style)
 
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },{ x = 0.25, y = 0.2 },  "start", "go_to_start_menu", start_style,arow_style)
-
-    
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
+        { x = 0.25, y = 0.2 }, "start", "go_to_start_menu", start_style, arow_style)
 end
 
 function start_start_menu()
     local button = deepcopy(empty_style)
-    
+
     button.text_size = 0.1
 
     button.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },{ x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button,arow_style)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
+        { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style)
 
     button.text_color = { r = 0, g = 1, b = 1, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },{ x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button,arow_style)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
+        { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },{ x = 0.5, y = 0.15 }, "back", "go_to_title_menu", button,arow_style)
-
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
+        { x = 0.5, y = 0.15 }, "back", "go_to_title_menu", button, arow_style)
 end
 
 function start_config_menu()
@@ -106,8 +118,13 @@ function start_config_menu()
     local title_style = deepcopy(empty_style)
     title_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
     title_style.text_size = 0.1
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 },
-        { x = 2, y = 2 }, "config", nil, title_style)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 },{ x = 2, y = 2 }, "config", nil, title_style)
+
+    local button = deepcopy(title_style)
+
+
+    button.text_size = 0.06
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.2 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
 end
 
 function start_all_menus()
@@ -119,7 +136,8 @@ function start_all_menus()
         background_style.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
         background_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
         background_style.background_image = "resources/Textures/null.png"
-        create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },{ x = 1, y = 1 }, "", nil, background_style)
+        create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil,
+            background_style)
     end
 
 

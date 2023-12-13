@@ -9,6 +9,8 @@ require("short_cuts.create_render_shader")
 require("objects.input")
 require("objects.window")
 
+
+
 ui_style = {}
 function ui_style:new()
     return {
@@ -361,7 +363,7 @@ function generate_arows(arg,spaces_per_char)
 end
 
 function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style,arow_style,arow_func)
-    local ret1 = create_ui_element(father,ui_type,position,scale,text,interaction_function_name,style)
+    local ret1 = create_ui_element(father,ui_type,position,scale,text,nil,style)
     if arow_style == nil then
         arow_style = deepcopy(style)
     end
