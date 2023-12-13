@@ -22,7 +22,7 @@ struct ui_style_struct
     vec4 background_color = vec4(0, 1, 0, 1);
     vec4 border_color = vec4(0, 0, 1, 1);
 
-    float text_size = 0.1 ,border_size = 0.05,space_betwen_lines = 2;
+    float text_size = 0.1, border_size = 0.05, space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
 
     shared_ptr<imagem> background_image = NULL;
@@ -48,17 +48,17 @@ class ui_componente : public componente
 {
     shared_ptr<transform_> tf;
     shared_ptr<objeto_jogo> base_obj, text_obj, background_obj, border_obj;
-    
+
     vec2 base_position = vec2(0, 0);
 
-    bool first_click_frame = false;
+    
     ui_style current_style;
 
 public:
     static vec2 cursor_position;
-    static bool click;
+    static bool click,click_last_frame,first_click_frame;
     unsigned char ui_type = common;
-    string id,data;
+    string id, data;
     uint8_t render_layer = 4;
     float space_betwen_lines = 2;
     bool uniform_spaces_betwen_chars = false;
@@ -140,7 +140,7 @@ public:
         if (ui_componente::cursor_position.x > acurate_pos.x && ui_componente::cursor_position.x < acurate_pos.x + scale.x)
         {
             float new_cursor_position_y = (-ui_componente::cursor_position.y + 1);
-            if (new_cursor_position_y < acurate_pos.y && new_cursor_position_y > acurate_pos.y - scale.y )
+            if (new_cursor_position_y < acurate_pos.y && new_cursor_position_y > acurate_pos.y - scale.y)
             {
                 return true;
             }
@@ -151,7 +151,6 @@ public:
     void atualisar()
     {
 
-        
         base_position = vec2(0, 0);
         /**/
         father = esse_objeto->pai->pegar_componente<ui_componente>();
@@ -159,12 +158,14 @@ public:
         if (esse_objeto->pai != NULL && father != NULL)
         {
             base_position = father->position + father->base_position;
-            //print({"father->base_position",father->base_position.x,father->base_position.y});
+            // print({"father->base_position",father->base_position.x,father->base_position.y});
         }
         else
         {
             father = NULL;
         }
+
+        /*
 
         if (is_above())
         {
@@ -184,6 +185,7 @@ public:
                     state = "hold";
                 }
                 first_click_frame = true;
+
             }
             else
             {
@@ -193,6 +195,7 @@ public:
                 first_click_frame = false;
                 state = "hover";
             }
+
         }
         else
         {
@@ -201,8 +204,47 @@ public:
             state = "none";
         }
 
+        */
+
+       if (is_above() && lua_function.L != NULL)
+        {
+            if (click)
+            {
+                current_style = click_style;
+                if (!click_last_frame)
+                {
+                    function_reference(id, "click");
+                    call_lua_function(id, "click");
+                    state = "click";
+                    click_last_frame = true;
+                }
+                else
+                {
+                    function_reference(id, "hold");
+                    call_lua_function(id, "hold");
+                    state = "hold";
+                }
+                
+
+            }
+            else
+            {
+                current_style = hover_style;
+                function_reference(id, "hover");
+                call_lua_function(id, "hover");
+                state = "hover";
+            }
+
+        }
+        else
+        {
+            current_style = normal_style;
+            state = "none";
+        }
+
+        
+
         vec2 acurate_pos = vec2(((position.x + base_position.x) * 2) - 1, ((position.y + base_position.y) * 2) - 1);
-        //print({"base_position",base_position.x,base_position.y});
 
         text_obj->pegar_componente<transform_>()->pos = vec3(acurate_pos.x, acurate_pos.y, 0);
         text_obj->pegar_componente<transform_>()->esca = vec3(current_style.text_size, current_style.text_size, 1);
@@ -280,9 +322,9 @@ public:
 
     void finalisar()
     {
-        //text_obj->excluir();
-        //background_obj->excluir();
-        //border_obj->excluir();
+        // text_obj->excluir();
+        // background_obj->excluir();
+        // border_obj->excluir();
         base_obj->excluir();
     }
 
@@ -296,13 +338,13 @@ public:
     }
 };
 vec2 ui_componente::cursor_position = vec2(0, 0);
+bool ui_componente::click_last_frame = false;
 bool ui_componente::click = false;
+bool ui_componente::first_click_frame = false;
 
-void update_ui_componente_test()
+void update_ui_components()
 {
-    // ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
-    // ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
-    // ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
+    ui_componente::click_last_frame = ui_componente::click;
 }
 
 void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
@@ -321,7 +363,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic->click_style = style;
-    //uic->current_style = style;
+    // uic->current_style = style;
     uic->text_location_x = render_text_location::LEFT;
     uic->text_location_y = render_text_location::TOP;
     uic->lua_function = lw;
@@ -340,7 +382,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic2->hover_style = style;
     style.border_color = vec4(1, 0.9, 0.9, 1);
     uic2->click_style = style;
-    //uic2->current_style = style;
+    // uic2->current_style = style;
     uic2->position = vec2(0.2, -0.2);
     uic2->text_location_x = render_text_location::RIGHT;
     uic2->text_location_y = render_text_location::DOWN;
