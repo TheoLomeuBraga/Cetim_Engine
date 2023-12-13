@@ -14,17 +14,21 @@ require("math")
 in_main_menu = 0
 
 menu_types = {
-    pause = "pause",
+    title = "title",
     start = "start",
     config = "config",
+    pause = "pause",
 }
 menu_selectred = "pause"
 local menu_objects = {}
-local menus_locations = {}
+local menus_locations = {
+    title = 0,
+    start = 1
+}
 
 function select_menu(pos)
-    menu_objects.base.components.transform.position.x = pos
-    menu_objects.base.components.transform:set()
+    menu_objects.base.components.ui_component.position.x = menus_locations[pos]
+    menu_objects.base.components.ui_component:set()
 end
 
 function start_button_func(state, id)
@@ -44,7 +48,7 @@ empty_style.text_size = 0
 
 
 
-function start_start_menu()
+function start_title_menu()
     --title
     local title_style = deepcopy(empty_style)
     title_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
@@ -63,7 +67,11 @@ function start_start_menu()
     menu_objects.start_button = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
         { x = 0.25, y = 0.2 }, ">         <", "start_button_func", { deepcopy(empty_style), start_style, start_style })
 
-    menus_locations.title = 0
+    
+end
+
+function start_start_menu()
+    print("AAAAA")
 end
 
 function start_all_menus()
@@ -86,8 +94,8 @@ function start_all_menus()
     menu_objects.base = create_ui_element(this_object.object_ptr, ui_types.common, { x = 0, y = 0 }, { x = 0, y = 0 }, "",
         nil, deepcopy(empty_style))
 
+    start_title_menu()
     start_start_menu()
-    menus_locations[menu_types.start] = 0
 end
 
 function START()
