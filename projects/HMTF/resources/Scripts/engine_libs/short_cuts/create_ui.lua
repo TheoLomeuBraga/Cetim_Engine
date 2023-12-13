@@ -352,16 +352,22 @@ function generate_arows(arg,spaces_per_char)
     if spaces_per_char == nil then
         spaces_per_char = 1
     end
-    local ret = ">"
+    local ret = "> "
     for i = 1, #arg * spaces_per_char, 1 do
         ret = ret .. "  "
     end
-    ret = ret .. "<"
+    ret = ret .. " <"
     return ret
 end
 
-function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style)
+function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style,arow_style,arow_func)
     local ret1 = create_ui_element(father,ui_type,position,scale,text,interaction_function_name,style)
-    local ret2 = create_ui_element(father,ui_type,position,scale,generate_arows(text),interaction_function_name,{deepcopy(empty_style),style})
+    if arow_style == nil then
+        arow_style = deepcopy(style)
+    end
+    if arow_func == nil then
+        arow_func = generate_arows
+    end
+    local ret2 = create_ui_element(father,ui_type,position,scale,arow_func(text),interaction_function_name,{deepcopy(empty_style),arow_style})
     return {ret1,ret2}
 end
