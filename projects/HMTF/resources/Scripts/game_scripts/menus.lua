@@ -120,9 +120,17 @@ function start_config_menu()
     title_style.text_size = 0.1
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 },{ x = 2, y = 2 }, "config", nil, title_style)
 
+    exit_style = deepcopy(title_style)
+    exit_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    exit_hover_style = deepcopy(exit_style)
+    exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 },{ x = 0.1, y = 0.1 }, "<", "go_to_start_menu", {exit_style,exit_hover_style})
+
+    --add sensitivity control
+    
+    --add volume control
+
     local button = deepcopy(title_style)
-
-
     button.text_size = 0.06
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.2 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
 end
