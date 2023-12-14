@@ -147,7 +147,11 @@ function start_config_menu()
     
     --add volume control
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.4 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.35 },{ x = 0.5, y = 0.17 }, "^", "drag_test", {title_style,arow_style,arow_style})
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.35 },{ x = 0.2, y = 0.15 }, "^", "drag_test", {title_style,arow_style,arow_style})
+
+    local slider_bar = deepcopy(title_style)
+    slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.38 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
 
     local button = deepcopy(title_style)
     button.text_size = 0.06
