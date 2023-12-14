@@ -76,6 +76,18 @@ function toogle_full_screen(state, id)
     end
 end
 
+function drag_test(state, id)
+    if state == "hold" then
+        local drag_obj = game_object(id)
+        local pos = drag_obj.components.ui_component.position
+        pos.x = pos.x + global_data:get("inputs").mouse_view_x
+        --pos.x = -0.5 + global_data:get("inputs").mouse_pos_x
+        drag_obj.components.ui_component:set()
+        
+    end
+    print(state)
+end
+
 function start_title_menu()
     --title
     local title_style = deepcopy(empty_style)
@@ -125,6 +137,9 @@ function start_config_menu()
     exit_hover_style = deepcopy(exit_style)
     exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 },{ x = 0.1, y = 0.1 }, "<", "go_to_start_menu", {exit_style,exit_hover_style})
+
+    --drag button test
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
 
     --add sensitivity control
     

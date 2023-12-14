@@ -72,14 +72,14 @@ public:
     void (*function_reference)(string id, string state) = function_reference_example;
     LuaFunctionWrapper lua_function = {NULL, ""};
 
-    void call_lua_function(string state, string id)
+    void call_lua_function(string id, string state)
     {
         if (lua_function.L != NULL)
         {
             lua_getglobal(lua_function.L, lua_function.functionRef.c_str());
 
-            lua_pushstring(lua_function.L, id.c_str());
             lua_pushstring(lua_function.L, state.c_str());
+            lua_pushstring(lua_function.L, id.c_str());
             lua_pushstring(lua_function.L, data.c_str());
 
             lua_pcall(lua_function.L, 3, 0, 0);
@@ -165,47 +165,6 @@ public:
             father = NULL;
         }
 
-        /*
-
-        if (is_above())
-        {
-            if (click)
-            {
-                current_style = click_style;
-                if (!first_click_frame)
-                {
-                    function_reference(id, "click");
-                    call_lua_function(id, "click");
-                    state = "click";
-                }
-                else
-                {
-                    function_reference(id, "hold");
-                    call_lua_function(id, "hold");
-                    state = "hold";
-                }
-                first_click_frame = true;
-
-            }
-            else
-            {
-                current_style = hover_style;
-                function_reference(id, "hover");
-                call_lua_function(id, "hover");
-                first_click_frame = false;
-                state = "hover";
-            }
-
-        }
-        else
-        {
-            current_style = normal_style;
-            first_click_frame = false;
-            state = "none";
-        }
-
-        */
-
        if (is_above() && lua_function.L != NULL)
         {
             if (click)
@@ -234,7 +193,6 @@ public:
                 call_lua_function(id, "hover");
                 state = "hover";
             }
-
         }
         else
         {

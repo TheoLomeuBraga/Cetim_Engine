@@ -49,6 +49,8 @@ function UPDATE()
         interact = keys_axis:get_input(input_devices.keyboard,"e") + keys_axis:get_input_joystick(1,"y"),
         action_1 = keys_axis:get_input(input_devices.mouse,"left") + (keys_axis:get_input_joystick(1,"rt")) ,
         action_2 = keys_axis:get_input(input_devices.mouse,"right") + (keys_axis:get_input_joystick(1,"lt")) ,
+        mouse_pos_x = keys_axis:get_input(input_devices.mouse,"normalized_x"),
+        mouse_pos_y = keys_axis:get_input(input_devices.mouse,"normalized_y"),
         mouse_view_x = keys_axis:get_input(input_devices.mouse,"movement_x"),
         mouse_view_y = keys_axis:get_input(input_devices.mouse,"movement_y"),
         analog_view_x = av_x,

@@ -79,7 +79,7 @@ ui_component.data = ""
 ui_component.text = ""
 ui_component.text_location_x = render_text_location.center
 ui_component.text_location_y = render_text_location.center
-ui_component.positiom = { x = 0.5, y = 0.5 }
+ui_component.position = { x = 0.5, y = 0.5 }
 ui_component.scale = { x = 0.2, y = 0.2 }
 ui_component.normal_style = advanced_ui_style()
 ui_component.hover_style = advanced_ui_style()
@@ -98,7 +98,7 @@ function ui_component:clean()
     self.uniform_spaces_betwen_chars = false
     self.text_location_x = render_text_location.center
     self.text_location_y = render_text_location.center
-    self.positiom = { x = 0.5, y = 0.5 }
+    self.position = { x = 0.5, y = 0.5 }
     self.scale = { x = 0.2, y = 0.2 }
     self.normal_style = advanced_ui_style()
     self.hover_style = advanced_ui_style()
@@ -117,7 +117,7 @@ function ui_component:get()
     self.text = u.text
     self.text_location_x = u.text_location_x
     self.text_location_y = u.text_location_y
-    self.positiom = u.positiom
+    self.position = u.position
     self.scale = u.scale
     self.normal_style = u.normal_style
     self.hover_style = u.hover_style
