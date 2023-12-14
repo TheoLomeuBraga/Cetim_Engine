@@ -76,12 +76,35 @@ function toogle_full_screen(state, id)
     end
 end
 
-function drag_test(state, id)
+sensitivity_display = {}
+function sensitivity_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data:get("inputs").mouse_view_x
         pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
+
+        local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.24
+        sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
+
+        sensitivity_display.components.ui_component:set()
+        drag_obj.components.ui_component:set()
+        
+    end
+end
+
+volume_display = {}
+function volume_slider(state, id)
+    if state == "hold" then
+        local drag_obj = game_object(id)
+        local pos = drag_obj.components.ui_component.position
+        pos.x = pos.x + global_data:get("inputs").mouse_view_x
+        pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
+
+        local volume = math.floor((pos.x + 1.8) * 168)
+        volume_display.components.ui_component.text = "volume: " .. volume .. "%"
+
+        volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
         
     end
@@ -143,19 +166,25 @@ function start_config_menu()
     --create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
 
     --add sensitivity control
-
-    
-    --add volume control
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.4 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.35 },{ x = 0.2, y = 0.15 }, "^", "drag_test", {title_style,arow_style,arow_style})
+    sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity", nil, title_style)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.55 },{ x = 0.2, y = 0.15 }, "^", "sensitivity_slider", {title_style,arow_style,arow_style})
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.38 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.58 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
+    
+    --add volume control
+    volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
 
+    local slider_bar = deepcopy(title_style)
+    slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.28 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
+
+    --toogle_full_screen
     local button = deepcopy(title_style)
     button.text_size = 0.06
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.2 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
 end
 
 function start_all_menus()
