@@ -81,11 +81,10 @@ function drag_test(state, id)
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data:get("inputs").mouse_view_x
-        --pos.x = -0.5 + global_data:get("inputs").mouse_pos_x
+        pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
         drag_obj.components.ui_component:set()
         
     end
-    print(state)
 end
 
 function start_title_menu()
@@ -138,12 +137,17 @@ function start_config_menu()
     exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 },{ x = 0.1, y = 0.1 }, "<", "go_to_start_menu", {exit_style,exit_hover_style})
 
+    title_style.text_color = { r = 1, g = 1, b = 1, a = 1 }
+
     --drag button test
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
+    --create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
 
     --add sensitivity control
+
     
     --add volume control
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.4 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.35 },{ x = 0.5, y = 0.17 }, "^", "drag_test", {title_style,arow_style,arow_style})
 
     local button = deepcopy(title_style)
     button.text_size = 0.06
