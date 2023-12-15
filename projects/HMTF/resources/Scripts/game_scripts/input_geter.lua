@@ -34,7 +34,7 @@ function START()
     inputs_last_frame = deepcopy(inputs)
 end
 
-local main_input_method = "keyboard"
+main_input_method = "keyboard"
 function UPDATE()
 
     local analog_foward =  apply_death_zone(keys_axis:get_input_joystick(1,"ly"),0.2)
@@ -64,6 +64,8 @@ function UPDATE()
     elseif analog_foward + analog_left + av_x + av_y > 0 then
         main_input_method = "joystick"
     end
+
+    inputs.main_input_method = main_input_method
 
     
     
