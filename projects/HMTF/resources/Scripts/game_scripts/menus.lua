@@ -42,13 +42,29 @@ end
 
 function save_configs()
     window:get()
-    configs = {
+    local configs = {
         volume = get_set_global_volume(),
         mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
         full_screen = window.full_screen
     }
 
     serializer.save_table("config/configs_save.lua", configs)
+end
+
+function load_configs()
+    local configs = serializer.load_table("config/configs_save.lua")
+    if configs ~= nil then
+        serializer.save_table("config/configs_save.lua",configs)
+        get_set_global_volume(configs.volume)
+        global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
+        window.full_screen = configs.full_screen
+        window:set()
+    else
+        get_set_global_volume(100)
+        global_data:set_var("mouse_sensitivity",6)
+        window.full_screen = false
+        window:set()
+    end
 end
 
 --button functions
@@ -95,7 +111,7 @@ function sensitivity_slider(state, id)
         pos.x = pos.x + global_data:get("inputs").mouse_view_x
         pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
 
-        local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.24
+        local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.3
         sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
         global_data:set_var("mouse_sensitivity", sensitivity)
 
@@ -179,11 +195,15 @@ function start_config_menu()
     --drag button test
     --create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
 
-    local loaded_configs = serializer.load_table("config/configs_save.lua")
+    
 
     --add sensitivity control
+
+    
     sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity", nil, title_style)
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.55 },{ x = 0.2, y = 0.15 }, "^", "sensitivity_slider", {title_style,arow_style,arow_style})
+
+    local sensitivity_slider_pos = 0.5
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },{ x = 0.2, y = 0.15 }, "^", "sensitivity_slider", {title_style,arow_style,arow_style})
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -191,7 +211,9 @@ function start_config_menu()
     
     --add volume control
     volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
+
+    local volume_slider_pos = 0.5
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
