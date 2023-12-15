@@ -35,7 +35,6 @@ function START()
     inputs_last_frame = deepcopy(inputs)
 end
 
-local analog_mouse_position = {x=0.5,y=0.5}
 local main_input_method = "keyboard"
 function UPDATE()
     time:get()
@@ -64,7 +63,6 @@ function UPDATE()
 
     if keys_axis:get_input(input_devices.mouse,"movement_x") + keys_axis:get_input(input_devices.mouse,"movement_y") + keys_axis:get_input(input_devices.mouse,"left") > 0.01 then
         main_input_method = "keyboard"
-        analog_mouse_position = {x=0.5,y=0.5}
     elseif analog_foward + analog_left + av_x + av_y > 0 then
         main_input_method = "joystick"
     end

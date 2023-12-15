@@ -40,6 +40,17 @@ function select_menu(pos)
     menu_objects.base.components.ui_component:set()
 end
 
+function save_configs()
+    window:get()
+    configs = {
+        volume = get_set_global_volume(),
+        mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
+        full_screen = window.full_screen
+    }
+
+    serializer.save_table("config/configs_save.lua", configs)
+end
+
 --button functions
 
 function go_to_start_menu(state, id)
@@ -86,6 +97,7 @@ function sensitivity_slider(state, id)
 
         local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.24
         sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
+        global_data:set_var("mouse_sensitivity", sensitivity)
 
         sensitivity_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
@@ -103,6 +115,8 @@ function volume_slider(state, id)
 
         local volume = math.floor((pos.x + 1.8) * 168)
         volume_display.components.ui_component.text = "volume: " .. volume .. "%"
+
+        get_set_global_volume(volume)
 
         volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
@@ -164,6 +178,8 @@ function start_config_menu()
 
     --drag button test
     --create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
+
+    local loaded_configs = serializer.load_table("config/configs_save.lua")
 
     --add sensitivity control
     sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity", nil, title_style)
@@ -231,6 +247,7 @@ end
 function END()
     time:set_speed(1)
     global_data:set_var("pause", 0)
+    save_configs()
 end
 
 function COLLIDE(collision_info)
