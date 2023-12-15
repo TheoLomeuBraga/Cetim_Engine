@@ -1,5 +1,6 @@
 require("objects.global_data")
 require("objects.input")
+require("objects.time")
 require("functions")
 require("math")
 
@@ -36,6 +37,7 @@ end
 
 main_input_method = "keyboard"
 function UPDATE()
+    time:get()
 
     local analog_foward =  apply_death_zone(keys_axis:get_input_joystick(1,"ly"),0.2)
     local analog_left =  apply_death_zone(keys_axis:get_input_joystick(1,"lx"),0.2)
