@@ -69,9 +69,16 @@ end
 
 --button functions
 
+function quit_game(state, id)
+    if state == "click" then
+        window:close()
+    end
+end
+
 function go_to_start_menu(state, id)
     if state == "click" then
         select_menu(menu_types.start)
+        save_configs()
     end
 end
 
@@ -174,7 +181,7 @@ function start_start_menu()
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-        { x = 0.5, y = 0.15 }, "back", "go_to_title_menu", button, arow_style)
+        { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style)
 end
 
 function start_config_menu()
@@ -199,10 +206,12 @@ function start_config_menu()
 
     --add sensitivity control
 
+    local configs = serializer.load_table("config/configs_save.lua")
     
-    sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity", nil, title_style)
+    
+    sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity: " .. configs.mouse_sensitivity, nil, title_style)
 
-    local sensitivity_slider_pos = 0.5
+    local sensitivity_slider_pos = ((configs.mouse_sensitivity / 30) * 0.6) + 0.2 
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },{ x = 0.2, y = 0.15 }, "^", "sensitivity_slider", {title_style,arow_style,arow_style})
 
     local slider_bar = deepcopy(title_style)
@@ -210,9 +219,11 @@ function start_config_menu()
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.58 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
     
     --add volume control
-    volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume", nil, title_style)
+    volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume: " .. configs.volume .. "%", nil, title_style)
 
-    local volume_slider_pos = 0.5
+    local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2 
+    print(volume_slider_pos)
+    --local volume_slider_pos = 0.5
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
 
     local slider_bar = deepcopy(title_style)
