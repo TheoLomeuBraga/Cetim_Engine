@@ -34,6 +34,7 @@ function START()
     inputs_last_frame = deepcopy(inputs)
 end
 
+local main_input_method = "keyboard"
 function UPDATE()
 
     local analog_foward =  apply_death_zone(keys_axis:get_input_joystick(1,"ly"),0.2)
@@ -57,6 +58,14 @@ function UPDATE()
         analog_view_y = av_y,
         menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
     }
+
+    if keys_axis:get_input(input_devices.mouse,"movement_x") + keys_axis:get_input(input_devices.mouse,"movement_y") + keys_axis:get_input(input_devices.mouse,"left") > 0.01 then
+        main_input_method = "keyboard"
+        print(main_input_method)
+    elseif analog_foward + analog_left + av_x + av_y > 0 then
+        main_input_method = "joystick"
+        print(main_input_method)
+    end
 
     
     
@@ -85,7 +94,12 @@ function UPDATE()
     global_data:set("inputs_last_frame",inputs_last_frame)
     inputs_last_frame = deepcopy(inputs)
 
-    set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
+    
+    if main_input_method == "keyboard" then
+        set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
+    elseif main_input_method == "joystick" then
+    end
+    
 end
 
 function COLLIDE(collision_info)
