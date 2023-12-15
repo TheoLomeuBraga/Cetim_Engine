@@ -100,6 +100,16 @@ function go_to_play_menu(state, id)
     end
 end
 
+function new_game(state, id)
+    if state == "click" then
+        print("new_game")
+        core_obj = game_object(global_data:get_var("core_object_ptr"))
+        --core_obj.components.lua_scripts:call_function("core", "load_sceane", {"test_map"})
+        core_obj.components.lua_scripts:call_function("core", "load_sceane", { "hub_map" })
+    end
+    
+end
+
 function toogle_full_screen(state, id)
     if state == "click" then
         window:get()
@@ -236,6 +246,24 @@ function start_config_menu()
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
 end
 
+function start_play_menu()
+    local button = deepcopy(empty_style)
+
+    button.text_size = 0.1
+
+    button.text_color = { r = 0.2, g = 1, b = 0.2, a = 1 }
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.8 },
+        { x = 0.5, y = 0.15 }, "new game", "new_game", button, arow_style)
+
+    button.text_color = { r = 0, g = 1, b = 1, a = 1 }
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.5 },
+        { x = 0.5, y = 0.15 }, "load game", nil, button, arow_style)
+
+    button.text_color = { r = 1, g = 0, b = 0, a = 1 }
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.2 },
+        { x = 0.5, y = 0.15 }, "back", "go_to_start_menu", button, arow_style)
+end
+
 function start_all_menus()
     local base_x_location = 0
 
@@ -259,6 +287,8 @@ function start_all_menus()
     start_title_menu()
     start_start_menu()
     start_config_menu()
+    start_play_menu()
+    
 end
 
 function START()
