@@ -24,7 +24,7 @@ this_object = nil
 camera = nil
 
 function START()
-    global_data:set("interacting",0)
+    global_data.interacting = 0
     this_object = game_object(this_object_ptr)
     camera = game_object(this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement","camera_ptr"))
 end
@@ -56,10 +56,10 @@ end
 
 function UPDATE()
 
-    inputs = global_data:get("inputs")
-    inputs_last_frame = global_data:get("inputs_last_frame")
+    inputs = global_data.inputs
+    inputs_last_frame = global_data.inputs_last_frame
     
-    if global_data:get("interacting") == 0 and inputs.interact > 0 and inputs_last_frame.interact < 1 then
+    if global_data.interacting == 0 and inputs.interact > 0 and inputs_last_frame.interact < 1 then
         interact()
     end
     

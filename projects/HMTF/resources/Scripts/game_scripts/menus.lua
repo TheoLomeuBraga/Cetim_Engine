@@ -46,7 +46,7 @@ function save_configs()
     window:get()
     local configs = {
         volume = get_set_global_volume(),
-        mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
+        mouse_sensitivity = global_data.mouse_sensitivity,
         full_screen = window.full_screen
     }
 
@@ -58,12 +58,12 @@ function load_configs()
     if configs ~= nil then
         serializer.save_table("config/configs_save.lua", configs)
         get_set_global_volume(configs.volume)
-        global_data:set_var("mouse_sensitivity", configs.mouse_sensitivity)
+        global_data.mouse_sensitivity = configs.mouse_sensitivity
         window.full_screen = configs.full_screen
         window:set()
     else
         get_set_global_volume(100)
-        global_data:set_var("mouse_sensitivity", 6)
+        global_data.mouse_sensitivity = 6
         window.full_screen = false
         window:set()
     end
@@ -75,7 +75,7 @@ local going_to_main_menu = false
 function go_to_main_menu(state, id)
     if state == "click" then
         remove_object(this_object_ptr)
-        game_object(global_data:get_var("core_object_ptr")).components.lua_scripts.scripts["core"].functions.load_sceane({ "main_menu" })
+        game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane({ "main_menu" })
         going_to_main_menu = true
     end
 end
@@ -120,7 +120,7 @@ end
 function new_game(state, id)
     if state == "click" then
         print("new_game")
-        core_obj = game_object(global_data:get_var("core_object_ptr"))
+        core_obj = game_object(global_data.core_object_ptr)
         core_obj.components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
     end
 end
@@ -140,12 +140,12 @@ function sensitivity_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
-        pos.x = pos.x + global_data:get("inputs").mouse_view_x
+        pos.x = pos.x + global_data.inputs.mouse_view_x
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
         local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.3
         sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
-        global_data:set_var("mouse_sensitivity", sensitivity)
+        global_data.mouse_sensitivity = sensitivity
 
         sensitivity_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
@@ -157,7 +157,7 @@ function volume_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
-        pos.x = pos.x + global_data:get("inputs").mouse_view_x
+        pos.x = pos.x + global_data.inputs.mouse_view_x
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
         local volume = math.floor((pos.x + 1.8) * 168)
@@ -343,7 +343,7 @@ function START()
     global_data.pause = 1
     time:set_speed(0)
 
-    local layers = global_data:get_var("layers")
+    local layers = global_data.layers
 
     this_object = game_object(this_object_ptr)
 

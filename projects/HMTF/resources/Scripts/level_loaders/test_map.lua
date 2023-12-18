@@ -19,11 +19,11 @@ local assets_needed = {
 }
 
 function level:START()
-    local layers = global_data:get_var("layers")
+    local layers = global_data.layers
     
     time:set_speed(0)
 
-    core_obj = game_object(global_data:get_var("core_object_ptr"))
+    core_obj = game_object(global_data.core_object_ptr)
     core_obj.components.lua_scripts:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
 
     local camera = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)

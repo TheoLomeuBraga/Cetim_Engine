@@ -16,8 +16,6 @@ require("objects.time")
 require("short_cuts.create_collision")
 require("short_cuts.create_mesh")
 
-require("objects.global_data")
-
 local mat = matreial:new()
 
 local layers = {}
@@ -53,7 +51,7 @@ function remove_bullet(adres)
 end
 
 function START()
-    layers = global_data:get_var("layers")
+    layers = global_data.layers
 
 
     mat.shader = "resources/Shaders/mesh"

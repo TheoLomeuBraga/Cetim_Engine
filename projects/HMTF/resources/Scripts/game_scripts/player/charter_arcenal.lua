@@ -148,8 +148,8 @@ function get_charter_data()
 
 
 
-    inputs = global_data:get("inputs")
-    inputs_last_frame = global_data:get("inputs_last_frame")
+    inputs = global_data.inputs
+    inputs_last_frame = global_data.inputs_last_frame
 end
 
 function START()
@@ -230,7 +230,7 @@ function UPDATE()
 
     
     
-    if global_data:get("pause") < 1 then
+    if global_data.pause < 1 then
         time:get()
 
         
@@ -240,8 +240,8 @@ function UPDATE()
             c_get_lua_var(this_object.object_ptr,"game_scripts/player/charter_movement", "a",2)
         end
 
-        inputs = global_data:get("inputs")
-        inputs_last_frame = global_data:get("inputs_last_frame")
+        inputs = global_data.inputs
+        inputs_last_frame = global_data.inputs_last_frame
         
         if current_animation_state.name ~= "shoot" or current_animation_state.name == "shoot" and current_animation_state.finish then
             if hit_down and math.abs(movement_inpulse.x) + math.abs(movement_inpulse.z) > 0 and current_animation_state.name ~= "walk" and (current_animation_state.name ~= "pick_up" or current_animation_state.name == "pick_up" and current_animation_state.finish) then

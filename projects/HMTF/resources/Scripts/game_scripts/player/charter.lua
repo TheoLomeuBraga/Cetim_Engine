@@ -57,15 +57,15 @@ this_physics_3d = {}
 
 
 function START()
-    global_data:set("player_object_ptr", this_object_ptr)
+    global_data.player_object_ptr = this_object_ptr
 
-    core_obj = game_object(global_data:get("core_object_ptr"))
+    core_obj = game_object(global_data.core_object_ptr)
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera_ptr = camera.object_ptr
     set_lisener_object(camera.object_ptr)
 
-    layers = global_data:get_var("layers")
+    layers = global_data.layers
     check_top = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75), true,
         collision_shapes.cylinder, nil, true)
     check_down = create_collision_3D(layers.cenary, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(0.75, 0.75, 0.75),
@@ -189,16 +189,16 @@ function UPDATE()
         time:get()
         gravity:get()
 
-        mouse_sensitivity = global_data:get("mouse_sensitivity")
+        mouse_sensitivity = global_data.mouse_sensitivity
 
-        inputs = global_data:get("inputs")
-        inputs_last_frame = global_data:get("inputs_last_frame")
+        inputs = global_data.inputs
+        inputs_last_frame = global_data.inputs_last_frame
 
         if global_data.open_pause_menu_ptr ~= "" and not (inputs_last_frame.menu > 0) then
             menus.open_pause_menu()
         end
 
-        enable_cursor(global_data:get("pause") > 0)
+        enable_cursor(global_data.pause > 0)
         
         this_physics_3d:get()
 
@@ -243,7 +243,7 @@ function UPDATE()
 
         
 
-        if global_data:get("pause") < 1 and global_data:get("interacting") == 0 then
+        if global_data.pause < 1 and global_data.interacting == 0 then
 
             --move camera
             window:get()
@@ -337,7 +337,7 @@ function UPDATE()
 
         camera.components.transform:change_rotation(-camera_rotation.y, 0, 0)
         this_object.components.transform:change_rotation(0, camera_rotation.x, 0)
-        pause_last_frame = global_data:get("pause") < 1
+        pause_last_frame = global_data.pause < 1
 
         this_physics_3d:get()
     end
@@ -355,5 +355,5 @@ function END()
     remove_object(camera.object_ptr)
     remove_object(check_top.object_ptr)
     remove_object(check_down.object_ptr)
-    global_data:set("player_object_ptr", "")
+    global_data.player_object_ptr = ""
 end

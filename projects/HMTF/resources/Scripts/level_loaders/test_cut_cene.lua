@@ -32,11 +32,11 @@ function level:START()
 
     
 
-    local layers = global_data:get_var("layers")
+    local layers = global_data.layers
     
     time:set_speed(0)
 
-    core_obj = game_object(global_data:get_var("core_object_ptr"))
+    core_obj = game_object(global_data.core_object_ptr)
     core_obj.components.lua_scripts:call_function("core","set_load_image",{path = "resources/Textures/loading.png",color={r=1,g=1,b=1}})
 
     

@@ -9,8 +9,8 @@ require("short_cuts.create_render_shader")
 menus = {
     open_pause_menu = function()
         if global_data.open_pause_menu_ptr == nil then
-            global_data.open_pause_menu_ptr = create_object(global_data:get_var("layers").hud)
-        local menu_obj = game_object(create_object(global_data:get_var("layers").hud))
+            global_data.open_pause_menu_ptr = create_object(global_data.layers.hud)
+        local menu_obj = game_object(create_object(global_data.layers.hud))
         menu_obj.components.transform:set()
             
         menu_obj.components.lua_scripts:add_script("game_scripts/menus")
@@ -26,7 +26,7 @@ loading_screen = {
     cam = nil,
 
     open = function()
-        loading_screen.obj = game_object(global_data:get_var("core_object_ptr"))
+        loading_screen.obj = game_object(global_data.core_object_ptr)
         loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image",
             { path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
         loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 },
@@ -39,7 +39,7 @@ loading_screen = {
         local mat = matreial:new()
         mat.shader = "resources/Shaders/sprite"
         mat.textures = { "resources/Textures/spiral.svg" }
-        loading_screen.spin_obj = create_render_shader(global_data:get_var("layers").hud, true, Vec3:new(0.8, -0.8, 0),
+        loading_screen.spin_obj = create_render_shader(global_data.layers.hud, true, Vec3:new(0.8, -0.8, 0),
             Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
 
 

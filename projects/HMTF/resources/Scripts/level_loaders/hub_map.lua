@@ -58,7 +58,7 @@ function level:START()
     --print("AAAAA")
     coroutine.yield()
 
-    local layers = global_data:get_var("layers")
+    local layers = global_data.layers
     
     time:set_speed(0)
 
@@ -102,7 +102,7 @@ function level:START()
 
     camera = {}
 
-    global_data:set_var("level_animation_data",{path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list})
+    global_data.level_animation_data = {path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
     
@@ -137,7 +137,7 @@ end
 function level:END()
     remove_object(cenary_builders.cenary)
     coroutine.yield()
-    global_data:set_var("level_animation_data",{})
+    global_data.level_animation_data = {}
     clear_memory()
     coroutine.yield()
 end

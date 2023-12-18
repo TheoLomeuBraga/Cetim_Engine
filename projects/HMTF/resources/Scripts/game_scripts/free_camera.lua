@@ -23,7 +23,7 @@ current_rot = { x = 0, y = 0 }
 is_free = false
 
 function START()
-    global_data:set_var("camera_object_ptr",this_object_ptr)
+    global_data.camera_object_ptr = this_object_ptr
 
     this_object = game_object(this_object_ptr)
     

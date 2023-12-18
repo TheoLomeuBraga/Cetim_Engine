@@ -191,12 +191,12 @@ function load_configs()
     if configs ~= nil then
         serializer.save_table("config/configs_save.lua",configs)
         get_set_global_volume(configs.volume)
-        global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
+        global_data.mouse_sensitivity=configs.mouse_sensitivity
         window.full_screen = configs.full_screen
         window:set()
     else
         get_set_global_volume(100)
-        global_data:set_var("mouse_sensitivity",6)
+        global_data.mouse_sensitivity = 6
         window.full_screen = false
         window:set()
     end
@@ -228,9 +228,9 @@ function START()
     gravity:set()
     
 
-    global_data:set_var("core_object_ptr", this_object_ptr)
-    global_data:set_var("mouse_sensitivity", 6)
-    global_data:set_var("layers", layers)
+    global_data.core_object_ptr = this_object_ptr
+    global_data.mouse_sensitivity = 6
+    global_data.layers = layers
 
     this_object = game_object(this_object_ptr)
     this_object.components.lua_scripts:add_script("game_scripts/input_geter")
@@ -240,7 +240,7 @@ function START()
     
     load_configs()
     load_sceane("main_menu")
-    global_data:set_var("localization_file","resources/localization/AmericanEnglish.json")
+    global_data.localization_file = "resources/localization/AmericanEnglish.json"
 
     
     

@@ -78,7 +78,7 @@ function UPDATE()
     
     
     if level_animation_data.path == nil then
-        level_animation_data = global_data:get_var("level_animation_data")
+        level_animation_data = global_data.layers
         if level_animation_data == nil then
             level_animation_data = {}
         end

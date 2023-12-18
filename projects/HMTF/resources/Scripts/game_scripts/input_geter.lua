@@ -92,11 +92,11 @@ function UPDATE()
     
 
     
-    global_data:set("inputs",inputs)
-    global_data:set("inputs_last_frame",inputs_last_frame)
+    global_data.inputs = inputs
+    global_data.inputs_last_frame = inputs_last_frame
     inputs_last_frame = deepcopy(inputs)
 
-    local joystick_cursor_pos = global_data:get_var("joystick_cursor_position")
+    local joystick_cursor_pos = global_data.joystick_cursor_position
     if main_input_method == "keyboard" then
         set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
     elseif main_input_method == "joystick" and joystick_cursor_pos ~= nil then

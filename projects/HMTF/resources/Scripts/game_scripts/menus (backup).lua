@@ -63,7 +63,7 @@ end
 function new_game()
     print("new_game")
     --core_obj.components.lua_scripts:call_function("core", "load_sceane", {"test_map"})
-    game_object(global_data:get_var("core_object_ptr")).components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
+    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
 end
 
 function load_game()
@@ -116,21 +116,21 @@ function set_full_screen()
 end
 
 function increase_sensitivity()
-    global_data:set_var("mouse_sensitivity", global_data:get_var("mouse_sensitivity") + 1)
+    global_data.mouse_sensitivity = global_data.mouse_sensitivity + 1
 end
 
 function set_sensitivity(sensitivity)
     print("sensitivity", sensitivity)
     local sensitivityValue = tonumber(sensitivity)
     if sensitivityValue then
-        global_data:set_var("mouse_sensitivity", sensitivityValue)
+        global_data.mouse_sensitivity = sensitivityValue
     else
         print("insert an valid value")
     end
 end
 
 function decrease_sensitivity()
-    global_data:set_var("mouse_sensitivity", global_data:get_var("mouse_sensitivity") - 1)
+    global_data.mouse_sensitivity = global_data.mouse_sensitivity - 1
 end
 
 function increase_volume()
@@ -160,7 +160,7 @@ function save_configs()
     window:get()
     configs = {
         volume = get_set_global_volume(),
-        mouse_sensitivity = global_data:get_var("mouse_sensitivity"),
+        mouse_sensitivity = global_data.mouse_sensitivity,
         full_screen = window.full_screen
     }
 
@@ -237,7 +237,7 @@ function call_config_menu(state, id)
             { x = -1, y = 0, z = 0 }, { x = 0.2, y = 0.25, z = 2 }, 5, style, "<", 0.075, "resources/Textures/null.png",
             decrease_sensitivity, ui_category.button)
         config_menu_objects.mouse_sensitivity = create_ui(this_object.object_ptr, { x = -0.8, y = 0, z = 0 },
-            { x = 1.6, y = 0.25, z = 2 }, 5, style, "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity"),
+            { x = 1.6, y = 0.25, z = 2 }, 5, style, "mouse_sensitivity: " .. global_data.mouse_sensitivity,
             0.05,
             "resources/Textures/null.png", set_sensitivity, ui_category.input_fild)
         config_menu_objects.sensitivity_controler_button_increase = create_ui(this_object.object_ptr,
@@ -331,10 +331,10 @@ function show_pause_menu(on)
 end
 
 function START()
-    global_data:set_var("pause", 1)
+    global_data.pause = 1
     time:set_speed(0)
 
-    local layers = global_data:get_var("layers")
+    local layers = global_data.layers
 
     this_object = game_object(this_object_ptr)
 
@@ -368,7 +368,7 @@ function UPDATE()
         end
 
         config_menu_objects.volume_controler.text = "volume: " .. get_set_global_volume()
-        config_menu_objects.mouse_sensitivity.text = "mouse_sensitivity: " .. global_data:get_var("mouse_sensitivity")
+        config_menu_objects.mouse_sensitivity.text = "mouse_sensitivity: " .. global_data.mouse_sensitivity
 
         window:get()
         local is_full_screen = "false"
@@ -387,7 +387,7 @@ end
 
 function END()
     time:set_speed(1)
-    global_data:set_var("pause", 0)
+    global_data.pause = 0
 end
 
 function COLLIDE(collision_info)
