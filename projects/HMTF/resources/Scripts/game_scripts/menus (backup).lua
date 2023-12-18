@@ -27,7 +27,7 @@ menu_types = {
 
 in_main_menu = 0
 
-menu_selectred = "pause"
+menu_selected = "pause"
 
 pause_menu_objects = {}
 
@@ -38,7 +38,7 @@ config_menu_objects = {}
 in_menu = false
 
 function exit_to_pause_menu()
-    menu_selectred = "pause"
+    menu_selected = "pause"
 
     for index, value in pairs(start_menu_objects) do
         value:END()
@@ -73,7 +73,7 @@ end
 
 function call_start_menu(state, id)
     if state == "click" then
-        menu_selectred = "start"
+        menu_selected = "start"
 
         show_pause_menu(false)
 
@@ -171,7 +171,7 @@ end
 function call_config_menu(state, id)
     if state == "click" then
         show_pause_menu(false)
-        menu_selectred = "config"
+        menu_selected = "config"
 
         local adv_ui = advanced_ui_style()
         adv_ui.text_color = { r = 1, g = 1, b = 1, a = 1 }
@@ -343,7 +343,7 @@ function START()
 end
 
 function UPDATE()
-    if menu_selectred == "pause" then
+    if menu_selected == "pause" then
         for key, value in pairs(pause_menu_objects) do
             if value.UPDATE ~= nil then
                 value:UPDATE()
@@ -351,7 +351,7 @@ function UPDATE()
         end
     end
 
-    if menu_selectred == "start" then
+    if menu_selected == "start" then
         if tablelength(start_menu_objects) == 0 then
             call_start_menu()
         end
@@ -363,7 +363,7 @@ function UPDATE()
         end
     end
 
-    if menu_selectred == "config" then
+    if menu_selected == "config" then
         if tablelength(config_menu_objects) == 0 then
             call_config_menu()
         end

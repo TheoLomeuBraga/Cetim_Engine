@@ -68,6 +68,7 @@ lua_scripts_component.object_ptr = ""
 lua_scripts_component.scripts = {}
 function lua_scripts_component:add_script(script_name)
     c_add_script_lua(self.object_ptr, script_name)
+    self.scripts[script_name] = simple_lua_script_manager(self.object_ptr, script_name)
 end
 
 function lua_scripts_component:remove_script(script_name)

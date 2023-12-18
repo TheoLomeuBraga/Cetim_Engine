@@ -9,13 +9,12 @@ require("short_cuts.create_render_shader")
 menu = {
     obj = nil,
     open = function()
-        if menu.obj == nil then
-            menu.obj = game_object(create_object(global_data:get_var("layers").hud))
-            menu.obj.components.transform:set()
+        menu.obj = game_object(create_object(global_data:get_var("layers").hud))
+        menu.obj.components.transform:set()
             
-            menu.obj.components.lua_scripts:add_script("game_scripts/menus")
-            menu.obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selectred", "pause")
-        end
+        menu.obj.components.lua_scripts:add_script("game_scripts/menus")
+        --menu.obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selected", "pause")
+        menu.obj.components.lua_scripts.scripts["game_scripts/menus"].variables.menu_selected = "pause"
     end,
 
     close = function(menu_obj)

@@ -23,3 +23,13 @@ end
 function global_data:set(var_name,var_value)
     global_data_set_var(var_name,var_value)
 end
+
+local global_data_metatable = {
+    __index = function(self, key)
+        return global_data_get_var(key)
+    end,
+    __newindex = function(self, key,value)
+        global_data_set_var(key,value)
+    end
+}
+setmetatable(global_data, global_data_metatable)

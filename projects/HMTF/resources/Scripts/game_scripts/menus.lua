@@ -19,6 +19,8 @@ arow_style.text_size = 0.1
 
 in_main_menu = 0
 
+
+
 menu_types = {
     title = "title",
     start = "start",
@@ -26,7 +28,7 @@ menu_types = {
     play = "play",
     pause = "pause",
 }
-menu_selectred = "pause"
+menu_selected = "pause"
 local menu_objects = {}
 local menus_locations = {
     title = 0,
@@ -71,7 +73,13 @@ end
 
 function quit_game(state, id)
     if state == "click" then
-        window:close()
+        if in_main_menu > 0 then
+            window:close()
+        else
+            
+            remove_object(this_object_ptr)
+            
+        end
     end
 end
 
@@ -104,8 +112,7 @@ function new_game(state, id)
     if state == "click" then
         print("new_game")
         core_obj = game_object(global_data:get_var("core_object_ptr"))
-        --core_obj.components.lua_scripts:call_function("core", "load_sceane", {"test_map"})
-        core_obj.components.lua_scripts:call_function("core", "load_sceane", { "hub_map" })
+        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
     end
     
 end
@@ -232,7 +239,6 @@ function start_config_menu()
     volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume: " .. configs.volume .. "%", nil, title_style)
 
     local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2 
-    print(volume_slider_pos)
     --local volume_slider_pos = 0.5
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
 
@@ -275,6 +281,14 @@ function start_all_menus()
         background_style.background_image = "resources/Textures/null.png"
         create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil,
             background_style)
+    else
+        --background
+        local background_style = deepcopy(empty_style)
+        background_style.background_color = { r = 0.25, g = 0.25, b = 0.25, a = 0.75 }
+        background_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
+        background_style.background_image = "resources/Textures/white.png"
+        create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil,
+            background_style)
     end
 
 
@@ -288,6 +302,10 @@ function start_all_menus()
     start_start_menu()
     start_config_menu()
     start_play_menu()
+
+    if in_main_menu < 1 then
+        select_menu(menu_types.start)
+    end
     
 end
 
