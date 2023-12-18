@@ -76,9 +76,7 @@ function quit_game(state, id)
         if in_main_menu > 0 then
             window:close()
         else
-            
             remove_object(this_object_ptr)
-            
         end
     end
 end
@@ -322,13 +320,17 @@ function START()
 end
 
 function UPDATE()
-
+    if global_data.inputs.menu > 0 and global_data.inputs_last_frame.menu < 1 then
+        remove_object(this_object_ptr)
+    end
+    --
 end
 
 function END()
     time:set_speed(1)
-    global_data:set_var("pause", 0)
+    global_data.pause = 0
     save_configs()
+    global_data.open_pause_menu_ptr = nil
 end
 
 function COLLIDE(collision_info)

@@ -194,12 +194,8 @@ function UPDATE()
         inputs = global_data:get("inputs")
         inputs_last_frame = global_data:get("inputs_last_frame")
 
-        if inputs.menu > 0 and not (inputs_last_frame.menu > 0) then
-            if menu.obj == nil then
-                menu.open()
-            else
-                menu.close()
-            end
+        if global_data.open_pause_menu_ptr ~= "" and not (inputs_last_frame.menu > 0) then
+            menus.open_pause_menu()
         end
 
         enable_cursor(global_data:get("pause") > 0)

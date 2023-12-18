@@ -182,8 +182,6 @@ end
 
 function UPDATE()
     
-
-    
     if game_state == game_states.play then
         time:get()
         gravity:get()
@@ -194,10 +192,9 @@ function UPDATE()
         inputs_last_frame = global_data:get("inputs_last_frame")
 
         if inputs.menu > 0 and not (inputs_last_frame.menu > 0) then
-            if menu.obj == nil then
-                menu.open()
-            else
-                menu.close()
+            
+            if global_data.pause_menu_obj_ptr == nil then
+                menus.open_pause_menu()
             end
         end
 

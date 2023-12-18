@@ -2309,6 +2309,10 @@ namespace funcoes_ponte
 			lua_pushtable(lua_global_data, lua_totable(L, 2));
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
+		else if (lua_type_id == LUA_TNIL){
+			lua_pushnil(lua_global_data);
+			lua_setglobal(lua_global_data, var_name.c_str());
+		}
 
 		// lua_gc(lua_global_data, LUA_GCSTEP, 0);
 
