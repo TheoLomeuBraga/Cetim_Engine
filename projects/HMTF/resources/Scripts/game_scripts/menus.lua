@@ -56,14 +56,14 @@ end
 function load_configs()
     local configs = serializer.load_table("config/configs_save.lua")
     if configs ~= nil then
-        serializer.save_table("config/configs_save.lua",configs)
+        serializer.save_table("config/configs_save.lua", configs)
         get_set_global_volume(configs.volume)
-        global_data:set_var("mouse_sensitivity",configs.mouse_sensitivity)
+        global_data:set_var("mouse_sensitivity", configs.mouse_sensitivity)
         window.full_screen = configs.full_screen
         window:set()
     else
         get_set_global_volume(100)
-        global_data:set_var("mouse_sensitivity",6)
+        global_data:set_var("mouse_sensitivity", 6)
         window.full_screen = false
         window:set()
     end
@@ -71,13 +71,24 @@ end
 
 --button functions
 
+local going_to_main_menu = false
+function go_to_main_menu(state, id)
+    if state == "click" then
+        remove_object(this_object_ptr)
+        game_object(global_data:get_var("core_object_ptr")).components.lua_scripts.scripts["core"].functions.load_sceane({ "main_menu" })
+        going_to_main_menu = true
+    end
+end
+
 function quit_game(state, id)
     if state == "click" then
-        if in_main_menu > 0 then
-            window:close()
-        else
-            remove_object(this_object_ptr)
-        end
+        window:close()
+    end
+end
+
+function resume_game(state, id)
+    if state == "click" then
+        remove_object(this_object_ptr)
     end
 end
 
@@ -112,7 +123,6 @@ function new_game(state, id)
         core_obj = game_object(global_data:get_var("core_object_ptr"))
         core_obj.components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
     end
-    
 end
 
 function toogle_full_screen(state, id)
@@ -131,7 +141,7 @@ function sensitivity_slider(state, id)
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data:get("inputs").mouse_view_x
-        pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
+        pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
         local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.3
         sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
@@ -139,7 +149,6 @@ function sensitivity_slider(state, id)
 
         sensitivity_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
-        
     end
 end
 
@@ -149,7 +158,7 @@ function volume_slider(state, id)
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data:get("inputs").mouse_view_x
-        pos.x = math.min(0.8 - 2,math.max(0.2 - 2,pos.x))
+        pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
         local volume = math.floor((pos.x + 1.8) * 168)
         volume_display.components.ui_component.text = "volume: " .. volume .. "%"
@@ -158,7 +167,6 @@ function volume_slider(state, id)
 
         volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
-        
     end
 end
 
@@ -186,17 +194,33 @@ function start_start_menu()
 
     button.text_size = 0.1
 
-    button.text_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
-        { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style)
+    if in_main_menu > 0 then
+        button.text_color = { r = 1, g = 1, b = 0, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
+            { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style)
 
-    button.text_color = { r = 0, g = 1, b = 1, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
-        { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
+        button.text_color = { r = 0, g = 1, b = 1, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
 
-    button.text_color = { r = 1, g = 0, b = 0, a = 1 }
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-        { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style)
+        button.text_color = { r = 1, g = 0, b = 0, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
+            { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style)
+    else
+        
+        button.text_color = { r = 0, g = 1, b = 1, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
+            { x = 0.5, y = 0.15 }, "resume", "resume_game", button, arow_style)
+
+        
+        button.text_color = { r = 1, g = 1, b = 0, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
+
+            button.text_color = { r = 1, g = 0, b = 0, a = 1 }
+            create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
+                { x = 0.5, y = 0.15 }, "main menu", "go_to_main_menu", button, arow_style)
+    end
 end
 
 function start_config_menu()
@@ -204,50 +228,59 @@ function start_config_menu()
     local title_style = deepcopy(empty_style)
     title_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
     title_style.text_size = 0.1
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 },{ x = 2, y = 2 }, "config", nil, title_style)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.85 }, { x = 2, y = 2 }, "config",
+        nil, title_style)
 
     exit_style = deepcopy(title_style)
     exit_style.text_color = { r = 1, g = 0, b = 0, a = 1 }
     exit_hover_style = deepcopy(exit_style)
     exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 },{ x = 0.1, y = 0.1 }, "<", "go_to_start_menu", {exit_style,exit_hover_style})
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 }, { x = 0.1, y = 0.1 }, "<",
+        "go_to_start_menu", { exit_style, exit_hover_style })
 
     title_style.text_color = { r = 1, g = 1, b = 1, a = 1 }
 
     --drag button test
     --create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.5 },{ x = 0.1, y = 0.1 }, "", "drag_test", exit_hover_style)
 
-    
+
 
     --add sensitivity control
 
     local configs = serializer.load_table("config/configs_save.lua")
-    
-    
-    sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },{ x = 0.5, y = 0.17 }, "sensitivity: " .. configs.mouse_sensitivity, nil, title_style)
 
-    local sensitivity_slider_pos = ((configs.mouse_sensitivity / 30) * 0.6) + 0.2 
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },{ x = 0.2, y = 0.15 }, "^", "sensitivity_slider", {title_style,arow_style,arow_style})
+
+    sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },
+        { x = 0.5, y = 0.17 }, "sensitivity: " .. configs.mouse_sensitivity, nil, title_style)
+
+    local sensitivity_slider_pos = ((configs.mouse_sensitivity / 30) * 0.6) + 0.2
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },
+        { x = 0.2, y = 0.15 }, "^", "sensitivity_slider", { title_style, arow_style, arow_style })
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.58 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
-    
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.58 }, { x = 0.6, y = 0.005 }, "",
+        nil, slider_bar)
+
     --add volume control
-    volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },{ x = 0.5, y = 0.17 }, "volume: " .. configs.volume .. "%", nil, title_style)
+    volume_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.3 },
+        { x = 0.5, y = 0.17 }, "volume: " .. configs.volume .. "%", nil, title_style)
 
-    local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2 
+    local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2
     --local volume_slider_pos = 0.5
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },{ x = 0.2, y = 0.15 }, "^", "volume_slider", {title_style,arow_style,arow_style})
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },
+        { x = 0.2, y = 0.15 }, "^", "volume_slider", { title_style, arow_style, arow_style })
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
-    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.28 },{ x = 0.6, y = 0.005 }, "", nil, slider_bar)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.28 }, { x = 0.6, y = 0.005 }, "",
+        nil, slider_bar)
 
     --toogle_full_screen
     local button = deepcopy(title_style)
     button.text_size = 0.06
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 }, { x = 0.5, y = 0.17 },"toogle full screen", "toogle_full_screen", button)
+    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 },
+        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", button)
 end
 
 function start_play_menu()
@@ -304,11 +337,10 @@ function start_all_menus()
     if in_main_menu < 1 then
         select_menu(menu_types.start)
     end
-    
 end
 
 function START()
-    global_data:set_var("pause", 1)
+    global_data.pause = 1
     time:set_speed(0)
 
     local layers = global_data:get_var("layers")
@@ -327,10 +359,13 @@ function UPDATE()
 end
 
 function END()
-    time:set_speed(1)
-    global_data.pause = 0
+    if not going_to_main_menu then
+        time:set_speed(1)
+        global_data.pause = 0
+    end
     save_configs()
     global_data.open_pause_menu_ptr = nil
+    
 end
 
 function COLLIDE(collision_info)
