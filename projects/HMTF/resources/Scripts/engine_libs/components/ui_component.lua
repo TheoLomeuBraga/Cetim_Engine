@@ -1,4 +1,5 @@
 register_function_set("render")
+register_function_set("input")
 
 require("components.base_component")
 require("components.component_index")
@@ -21,6 +22,11 @@ struct ui_style_struct
 
 function set_ui_curson_location(v2,click)
     c_set_ui_curson_location(v2,click)
+end
+
+
+function set_ui_selection_id(id,click)
+    c_set_ui_selection_id(id,click)
 end
 
 render_text_location = {
@@ -74,6 +80,7 @@ ui_component.object_ptr = ""
 ui_component.type = ""
 ui_component.layer = 5
 ui_component.ui_type = 0
+ui_component.selection_id = 0
 ui_component.id = ""
 ui_component.data = ""
 ui_component.text = ""
@@ -92,6 +99,7 @@ function ui_component:clean()
     self.type = ""
     self.layer = 5
     self.ui_type = 0
+    self.selection_id = 0
     self.id = ""
     self.data = ""
     self.text = ""
@@ -112,6 +120,7 @@ function ui_component:get()
     self.type = u.type
     self.layer = u.layer
     self.ui_type = u.ui_type
+    self.selection_id = u.selection_id
     self.id = u.id
     self.data = u.data
     self.text = u.text

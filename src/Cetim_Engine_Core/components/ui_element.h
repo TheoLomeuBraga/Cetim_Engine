@@ -56,8 +56,11 @@ class ui_componente : public componente
 
 public:
     static vec2 cursor_position;
+    static unsigned int selection_possition;
     static bool click,click_last_frame,first_click_frame;
+    
     unsigned char ui_type = common;
+    unsigned int selection_id;
     string id, data;
     uint8_t render_layer = 4;
     float space_betwen_lines = 2;
@@ -134,6 +137,7 @@ public:
 
     bool is_above()
     {
+        print({selection_possition , selection_id});
         vec2 acurate_pos = vec2(position.x + base_position.x, position.y + base_position.y);
         acurate_pos += vec2(-scale.x / 2, scale.y / 2);
 
@@ -144,6 +148,8 @@ public:
             {
                 return true;
             }
+        }else if(selection_id > 0 || selection_possition == selection_id){
+            return true;
         }
         return false;
     }
@@ -296,6 +302,7 @@ public:
     }
 };
 vec2 ui_componente::cursor_position = vec2(0, 0);
+unsigned int ui_componente::selection_possition = 0;
 bool ui_componente::click_last_frame = false;
 bool ui_componente::click = false;
 bool ui_componente::first_click_frame = false;

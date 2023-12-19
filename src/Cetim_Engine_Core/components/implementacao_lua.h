@@ -1951,13 +1951,15 @@ namespace funcoes_ponte
 	int set_ui_curson_location(lua_State *L)
 	{
 		vec2 cursor_pos = table_vec2(lua_totable(L, 1));
-		//cursor_pos.y = -(cursor_pos.y-1);
 		ui_componente::cursor_position = cursor_pos;
 		ui_componente::click = lua_toboolean(L, 2);
+		return 0;
+	}
 
-		// ui_componente::cursor_position.x = manuseio_inputs->mouse_input.movimentos["normalized_x"];
-		// ui_componente::cursor_position.y = mix(1.0, 0.0, manuseio_inputs->mouse_input.movimentos["normalized_y"]);
-		// ui_componente::click = manuseio_inputs->mouse_input.botoes["left"];
+	int set_ui_selection_id(lua_State *L)
+	{
+		ui_componente::selection_possition = lua_tonumber(L, 1);
+		ui_componente::click = lua_toboolean(L, 2);
 		return 0;
 	}
 
@@ -1972,6 +1974,7 @@ namespace funcoes_ponte
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 			ret.setString("text", converter.to_bytes(ui->text));
 			ret.setFloat("ui_type", ui->ui_type);
+			ret.setFloat("selection_id", ui->selection_id);
 			ret.setString("id", ui->id);
 			ret.setString("data", ui->data);
 			ret.setString("state", ui->state);
@@ -1996,8 +1999,8 @@ namespace funcoes_ponte
 			ui->render_layer = t.getFloat("layer") - 1;
 			ui->set_text_by_string(t.getString("text"));
 			ui->state = t.getString("text");
-			
 			ui->ui_type = t.getFloat("ui_type");
+			ui->selection_id = t.getFloat("selection_id");
 			ui->id = t.getString("id");
 			ui->data = t.getString("data");
 			ui->text_location_x = t.getFloat("text_location_x");
@@ -2413,6 +2416,7 @@ namespace funcoes_ponte
 															   }),
 		pair<string, map<string, lua_function>>("input", {
 															 pair<string, lua_function>("set_cursor_position", funcoes_ponte::set_cursor_position),
+															 pair<string, lua_function>("set_ui_selection_id", funcoes_ponte::set_ui_selection_id),
 															 pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 															 pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 															 pair<string, lua_function>("get_input", funcoes_ponte::get_input),
