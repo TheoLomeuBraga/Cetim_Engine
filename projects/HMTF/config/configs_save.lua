@@ -1,1 +1,1 @@
-do local _={full_screen=false,volume=100,mouse_sensitivity=20.099999999999998};return _;end
+do local _={full_screen=false,mouse_sensitivity=20.099999999999998,volume=100};return _;end
