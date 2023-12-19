@@ -63,7 +63,7 @@ function UPDATE()
 
     if keys_axis:get_input(input_devices.mouse,"movement_x") + keys_axis:get_input(input_devices.mouse,"movement_y") + keys_axis:get_input(input_devices.mouse,"left") > 0.01 then
         main_input_method = "keyboard"
-    elseif analog_foward + analog_left + av_x + av_y > 0 then
+    elseif analog_foward + analog_left + av_x + av_y > 0 or analog_foward + analog_left + av_x + av_y < 0  then
         main_input_method = "joystick"
     end
 
@@ -96,14 +96,15 @@ function UPDATE()
     global_data.inputs_last_frame = inputs_last_frame
     inputs_last_frame = deepcopy(inputs)
 
-    local joystick_cursor_pos = global_data.joystick_cursor_position
+    
     if main_input_method == "keyboard" then
+        set_ui_selection_id(0,false)
         set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
-    elseif main_input_method == "joystick" and joystick_cursor_pos ~= nil then
-        set_ui_curson_location({x=joystick_cursor_pos.x,y=joystick_cursor_pos.y},inputs.action_1 > 0)
-    else
-        set_ui_curson_location({x=0.5,y=0.5},false)
+    elseif main_input_method == "joystick" then
+        set_ui_curson_location({x=0,y=0},false)
+        set_ui_selection_id(global_data.ui_selection_id,inputs.action_1 > 0)
     end
+    print(main_input_method)
     
 end
 

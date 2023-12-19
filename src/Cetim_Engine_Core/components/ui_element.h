@@ -137,7 +137,6 @@ public:
 
     bool is_above()
     {
-        print({selection_possition , selection_id});
         vec2 acurate_pos = vec2(position.x + base_position.x, position.y + base_position.y);
         acurate_pos += vec2(-scale.x / 2, scale.y / 2);
 
@@ -148,7 +147,7 @@ public:
             {
                 return true;
             }
-        }else if(selection_id > 0 || selection_possition == selection_id){
+        }else if(selection_id > 0 && selection_possition == selection_id){
             return true;
         }
         return false;
