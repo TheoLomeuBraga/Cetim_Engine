@@ -104,7 +104,6 @@ function UPDATE()
         set_ui_curson_location({x=0,y=0},false)
         set_ui_selection_id(global_data.ui_selection_id,inputs.action_1 > 0)
     end
-    print(main_input_method)
     
 end
 

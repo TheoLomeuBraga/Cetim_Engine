@@ -2160,7 +2160,6 @@ namespace funcoes_ponte
 			bu->rotacionarX = t.getFloat("rotate_x") > 0;
 			bu->rotacionarY = t.getFloat("rotate_y") > 0;
 			bu->rotacionarZ = t.getFloat("rotate_z") > 0;
-			// print({"rotate",bu->rotacionarX,bu->rotacionarY,bu->rotacionarZ});
 
 			bu->elasticidade = t.getFloat("elasticity");
 
