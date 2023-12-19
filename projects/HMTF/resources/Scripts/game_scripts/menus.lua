@@ -191,7 +191,7 @@ function start_title_menu()
         { x = 0.2, y = 0.2 }, "start", nil, start_style)
 
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
-        { x = 0.25, y = 0.2 }, "start", "go_to_start_menu", start_style, arow_style)
+        { x = 0.25, y = 0.2 }, "start", "go_to_start_menu", start_style, arow_style,1)
 end
 
 function start_start_menu()
@@ -202,29 +202,29 @@ function start_start_menu()
     if in_main_menu > 0 then
         button.text_color = { r = 1, g = 1, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
-            { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style)
+            { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style,2)
 
         button.text_color = { r = 0, g = 1, b = 1, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
-            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style,3)
 
         button.text_color = { r = 1, g = 0, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-            { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style)
+            { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style,4)
     else
         
         button.text_color = { r = 0, g = 1, b = 1, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
-            { x = 0.5, y = 0.15 }, "resume", "resume_game", button, arow_style)
+            { x = 0.5, y = 0.15 }, "resume", "resume_game", button, arow_style,2)
 
         
         button.text_color = { r = 1, g = 1, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
-            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style)
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style,3)
 
             button.text_color = { r = 1, g = 0, b = 0, a = 1 }
             create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-                { x = 0.5, y = 0.15 }, "main menu", "go_to_main_menu", button, arow_style)
+                { x = 0.5, y = 0.15 }, "main menu", "go_to_main_menu", button, arow_style,4)
     end
 end
 
@@ -241,7 +241,7 @@ function start_config_menu()
     exit_hover_style = deepcopy(exit_style)
     exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 }, { x = 0.1, y = 0.1 }, "<",
-        "go_to_start_menu", { exit_style, exit_hover_style })
+        "go_to_start_menu", { exit_style, exit_hover_style },5)
 
     title_style.text_color = { r = 1, g = 1, b = 1, a = 1 }
 
@@ -260,7 +260,7 @@ function start_config_menu()
 
     local sensitivity_slider_pos = ((configs.mouse_sensitivity / 30) * 0.6) + 0.2
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },
-        { x = 0.2, y = 0.15 }, "^", "sensitivity_slider", { title_style, arow_style, arow_style })
+        { x = 0.2, y = 0.15 }, "^", "sensitivity_slider", { title_style, arow_style, arow_style },6)
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -274,7 +274,7 @@ function start_config_menu()
     local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2
     --local volume_slider_pos = 0.5
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },
-        { x = 0.2, y = 0.15 }, "^", "volume_slider", { title_style, arow_style, arow_style })
+        { x = 0.2, y = 0.15 }, "^", "volume_slider", { title_style, arow_style, arow_style },7)
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -285,7 +285,7 @@ function start_config_menu()
     local button = deepcopy(title_style)
     button.text_size = 0.06
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 },
-        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", button)
+        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", button,8)
 end
 
 function start_play_menu()
@@ -295,15 +295,15 @@ function start_play_menu()
 
     button.text_color = { r = 0.2, g = 1, b = 0.2, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.8 },
-        { x = 0.5, y = 0.15 }, "new game", "new_game", button, arow_style)
+        { x = 0.5, y = 0.15 }, "new game", "new_game", button, arow_style,9)
 
     button.text_color = { r = 0, g = 1, b = 1, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.5 },
-        { x = 0.5, y = 0.15 }, "load game", "go_to_load_menu", button, arow_style)
+        { x = 0.5, y = 0.15 }, "load game", "go_to_load_menu", button, arow_style,10)
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.2 },
-        { x = 0.5, y = 0.15 }, "back", "go_to_start_menu", button, arow_style)
+        { x = 0.5, y = 0.15 }, "back", "go_to_start_menu", button, arow_style,11)
 end
 
 function start_all_menus()
@@ -364,10 +364,12 @@ function UPDATE()
     
     if global_data.inputs.foward == 1 and global_data.inputs_last_frame.foward ~= 1 then
         global_data.ui_selection_id = global_data.ui_selection_id - 1
+        print(global_data.ui_selection_id)
     end
 
     if global_data.inputs.foward == -1 and global_data.inputs_last_frame.foward ~= -1 then
         global_data.ui_selection_id = global_data.ui_selection_id + 1
+        print(global_data.ui_selection_id)
     end
 end
 

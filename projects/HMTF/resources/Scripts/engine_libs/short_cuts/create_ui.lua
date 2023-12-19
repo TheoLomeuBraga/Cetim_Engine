@@ -374,6 +374,6 @@ function create_ui_element_with_arows(father,ui_type,position,scale,text,interac
     if arow_func == nil then
         arow_func = generate_arows
     end
-    local ret2 = create_ui_element(father,ui_type,position,scale,arow_func(text),interaction_function_name,{deepcopy(empty_style),selection_id,arow_style})
+    local ret2 = create_ui_element(father,ui_type,position,scale,arow_func(text),interaction_function_name,{deepcopy(empty_style),arow_style},selection_id)
     return {ret1,ret2}
 end
