@@ -111,7 +111,7 @@ public:
 			
 			vec3 lpos = listener_transform->pegar_pos_global();
 			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
-			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
+			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
 
 			sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
 			sf::Listener::setUpVector(sf::Vector3f(lup.x, lup.y, lup.z));
