@@ -412,7 +412,14 @@ function UPDATE()
         global_data.ui_selection_id = global_data.ui_selection_id + 1
     end
 
-    global_data.ui_selection_id = math.max(ui_selection_max_min[1],math.min(ui_selection_max_min[2],global_data.ui_selection_id))
+    --global_data.ui_selection_id = math.max(ui_selection_max_min[1],math.min(ui_selection_max_min[2],global_data.ui_selection_id))
+
+    if global_data.ui_selection_id < ui_selection_max_min[1] then
+        global_data.ui_selection_id = ui_selection_max_min[2]
+    
+    elseif global_data.ui_selection_id > ui_selection_max_min[2] then
+        global_data.ui_selection_id = ui_selection_max_min[1]
+    end
 end
 
 function END()
