@@ -19,7 +19,7 @@ arow_style.text_size = 0.1
 
 in_main_menu = 0
 
-
+local ui_selection_max_min = {1,1}
 
 menu_types = {
     title = "title",
@@ -96,6 +96,7 @@ function go_to_start_menu(state, id)
     if state == "click" then
         select_menu(menu_types.start)
         save_configs()
+        ui_selection_max_min = {2,4}
     end
 end
 
@@ -107,18 +108,21 @@ end
 function go_to_title_menu(state, id)
     if state == "click" then
         select_menu(menu_types.title)
+        ui_selection_max_min = {1,1}
     end
 end
 
 function go_to_config_menu(state, id)
     if state == "click" then
         select_menu(menu_types.config)
+        ui_selection_max_min = {5,8}
     end
 end
 
 function go_to_play_menu(state, id)
     if state == "click" then
         select_menu(menu_types.play)
+        ui_selection_max_min = {9,11}
     end
 end
 
@@ -145,7 +149,22 @@ function sensitivity_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
+        
         pos.x = pos.x + global_data.inputs.mouse_view_x
+        pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
+
+        local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.3
+        sensitivity_display.components.ui_component.text = "sensitivity: " .. sensitivity
+        global_data.mouse_sensitivity = sensitivity
+
+        sensitivity_display.components.ui_component:set()
+        drag_obj.components.ui_component:set()
+    elseif state == "hover" then
+        local drag_obj = game_object(id)
+        local pos = drag_obj.components.ui_component.position
+        
+        time:get()
+        pos.x = pos.x + (-global_data.inputs.left * time.delta * 0.5)
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
         local sensitivity = math.floor((pos.x + 1.8) * 168) * 0.3
@@ -160,6 +179,7 @@ end
 volume_display = {}
 function volume_slider(state, id)
     if state == "hold" then
+
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data.inputs.mouse_view_x
@@ -172,6 +192,22 @@ function volume_slider(state, id)
 
         volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
+
+    elseif state == "hover" then
+
+        local drag_obj = game_object(id)
+        local pos = drag_obj.components.ui_component.position
+        pos.x = pos.x + (-global_data.inputs.left * time.delta * 0.5)
+        pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
+
+        local volume = math.floor((pos.x + 1.8) * 168)
+        volume_display.components.ui_component.text = "volume: " .. volume .. "%"
+
+        get_set_global_volume(volume)
+
+        volume_display.components.ui_component:set()
+        drag_obj.components.ui_component:set()
+
     end
 end
 
@@ -284,8 +320,8 @@ function start_config_menu()
     --toogle_full_screen
     local button = deepcopy(title_style)
     button.text_size = 0.06
-    create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 },
-        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", button,8)
+    create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 },
+        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", { title_style, arow_style, arow_style },8)
 end
 
 function start_play_menu()
@@ -341,6 +377,7 @@ function start_all_menus()
 
     if in_main_menu < 1 then
         select_menu(menu_types.start)
+        ui_selection_max_min = {2,4}
     end
 end
 
@@ -364,13 +401,13 @@ function UPDATE()
     
     if global_data.inputs.foward == 1 and global_data.inputs_last_frame.foward ~= 1 then
         global_data.ui_selection_id = global_data.ui_selection_id - 1
-        print(global_data.ui_selection_id)
     end
 
     if global_data.inputs.foward == -1 and global_data.inputs_last_frame.foward ~= -1 then
         global_data.ui_selection_id = global_data.ui_selection_id + 1
-        print(global_data.ui_selection_id)
     end
+
+    global_data.ui_selection_id = math.max(ui_selection_max_min[1],math.min(ui_selection_max_min[2],global_data.ui_selection_id))
 end
 
 function END()
