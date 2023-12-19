@@ -126,7 +126,7 @@ public:
 		{
 			sf::Listener::setPosition(sf::Vector3f(0,0,0));
 			sf::Listener::setUpVector(sf::Vector3f(0,1,0));
-			sf::Listener::setDirection(sf::Vector3f(0,0,-1));
+			sf::Listener::setDirection(sf::Vector3f(0,0,1));
 			som->setPosition(sf::Vector3f(0,0,0));
 		}
 	}
