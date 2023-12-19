@@ -97,6 +97,7 @@ function go_to_start_menu(state, id)
         select_menu(menu_types.start)
         save_configs()
         ui_selection_max_min = {2,4}
+        global_data.ui_selection_id = 2
     end
 end
 
@@ -109,6 +110,7 @@ function go_to_title_menu(state, id)
     if state == "click" then
         select_menu(menu_types.title)
         ui_selection_max_min = {1,1}
+        global_data.ui_selection_id = 1
     end
 end
 
@@ -116,6 +118,7 @@ function go_to_config_menu(state, id)
     if state == "click" then
         select_menu(menu_types.config)
         ui_selection_max_min = {5,8}
+        global_data.ui_selection_id = 5
     end
 end
 
@@ -123,6 +126,7 @@ function go_to_play_menu(state, id)
     if state == "click" then
         select_menu(menu_types.play)
         ui_selection_max_min = {9,11}
+        global_data.ui_selection_id = 9
     end
 end
 
@@ -378,6 +382,7 @@ function start_all_menus()
     if in_main_menu < 1 then
         select_menu(menu_types.start)
         ui_selection_max_min = {2,4}
+        global_data.ui_selection_id = 2
     end
 end
 
