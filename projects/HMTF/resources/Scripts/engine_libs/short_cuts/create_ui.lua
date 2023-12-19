@@ -306,7 +306,7 @@ end
 
 
 
-function create_ui_element(father,ui_type,position,scale,text,interaction_function_name,styles)
+function create_ui_element(father,ui_type,position,scale,text,interaction_function_name,styles,selection_id)
 
     local ret = game_object(create_object((father)))
     local ui_manager = ret.components.ui_component
@@ -314,6 +314,10 @@ function create_ui_element(father,ui_type,position,scale,text,interaction_functi
     ui_manager.layer = 5
 
     ui_manager.type = ui_type
+
+    if selection_id ~= nil then
+        ui_manager.selection_id = selection_id
+    end
 
     ui_manager.id = ret.object_ptr
 
@@ -362,7 +366,7 @@ function generate_arows(arg,spaces_per_char)
     return ret
 end
 
-function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style,arow_style,arow_func)
+function create_ui_element_with_arows(father,ui_type,position,scale,text,interaction_function_name,style,arow_style,selection_id,arow_func)
     local ret1 = create_ui_element(father,ui_type,position,scale,text,nil,style)
     if arow_style == nil then
         arow_style = deepcopy(style)
@@ -370,6 +374,6 @@ function create_ui_element_with_arows(father,ui_type,position,scale,text,interac
     if arow_func == nil then
         arow_func = generate_arows
     end
-    local ret2 = create_ui_element(father,ui_type,position,scale,arow_func(text),interaction_function_name,{deepcopy(empty_style),arow_style})
+    local ret2 = create_ui_element(father,ui_type,position,scale,arow_func(text),interaction_function_name,{deepcopy(empty_style),selection_id,arow_style})
     return {ret1,ret2}
 end

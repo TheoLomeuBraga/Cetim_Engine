@@ -99,6 +99,11 @@ function go_to_start_menu(state, id)
     end
 end
 
+function go_to_load_menu(state, id)
+    if state == "click" then
+    end
+end
+
 function go_to_title_menu(state, id)
     if state == "click" then
         select_menu(menu_types.title)
@@ -294,7 +299,7 @@ function start_play_menu()
 
     button.text_color = { r = 0, g = 1, b = 1, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.5 },
-        { x = 0.5, y = 0.15 }, "load game", nil, button, arow_style)
+        { x = 0.5, y = 0.15 }, "load game", "go_to_load_menu", button, arow_style)
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.2 },
@@ -348,14 +353,22 @@ function START()
     this_object = game_object(this_object_ptr)
 
     start_all_menus()
-    --show_pause_menu(true)
+    
+    global_data.ui_selection_id = 1
 end
 
 function UPDATE()
     if global_data.inputs.menu > 0 and global_data.inputs_last_frame.menu < 1 then
         remove_object(this_object_ptr)
     end
-    --
+    
+    if global_data.inputs.foward == 1 and global_data.inputs_last_frame.foward ~= 1 then
+        global_data.ui_selection_id = global_data.ui_selection_id - 1
+    end
+
+    if global_data.inputs.foward == -1 and global_data.inputs_last_frame.foward ~= -1 then
+        global_data.ui_selection_id = global_data.ui_selection_id + 1
+    end
 end
 
 function END()
