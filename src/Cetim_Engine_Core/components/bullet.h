@@ -314,7 +314,7 @@ public:
         }
 
         btTransform transform;
-        
+
         vec3 position = vec3(0, 0, 0);
         transform.setOrigin(glmToBt(position));
         quat quaternion;
@@ -328,8 +328,7 @@ public:
             quaternion = tf->quater;
             transform.setOrigin(glmToBt(position));
             transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
-            
-        }   
+        }
 
         if (gatilho)
         {
@@ -365,51 +364,28 @@ public:
                 shared_ptr<bullet> pai_bu;
                 shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
 
-                
+                shared_ptr<transform_> pai_tf = esse_objeto->pai->pegar_componente<transform_>();
 
                 if (tf != NULL && esse_objeto->pegar_componente<transform_>() != NULL && esse_objeto->pai->pegar_componente<bullet>() != NULL)
                 {
-                    
+
                     pai_bu = esse_objeto->pai->pegar_componente<bullet>();
-                    
-                    
-                    
                 }
 
-                // variaveis declaradas fora
-                /*
-                compound = new btCompoundShape();
-
-                pai_bu->compound = new btCompoundShape();
-                */
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                
 
-                
+                btTransform localtf;
+                localtf.setIdentity();
+                compound->addChildShape(localtf, Shape);
+                CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
 
-                if (pai_bu != NULL)
-                {
-                    
-                    pai_bu->compound->addChildShape(transform, Shape);
-                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, Shape, btVector3(0, 0, 0));
-                    
-                    
-                }
-                else
-                {
-
-                    compound->addChildShape(transform, Shape);
-                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, Shape, btVector3(0, 0, 0));
-                    
-                    
-                }
+                //
 
                 bt_obj_rb = new btRigidBody(CI);
 
                 dynamicsWorld->addRigidBody(bt_obj_rb);
 
                 bt_obj = bt_obj_rb;
-
             }
             else if (dinamica == cinematico)
             {
