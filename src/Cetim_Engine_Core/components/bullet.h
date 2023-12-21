@@ -380,23 +380,23 @@ public:
                     localtf.setIdentity();
                     compound->addChildShape(localtf, Shape);
                     CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+
+                    bt_obj_rb = new btRigidBody(CI);
+                    dynamicsWorld->addRigidBody(bt_obj_rb);
+                    bt_obj = bt_obj_rb;
                 }
                 else
                 {
-                    //pai_bu->MotionState
                     btTransform localtf;
                     localtf.setIdentity();
                     compound->addChildShape(localtf, Shape);
-                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+                    
+                    
+                    pai_bu->compound->addChildShape(transform, compound);
+                    
                 }
 
                 //
-
-                bt_obj_rb = new btRigidBody(CI);
-
-                dynamicsWorld->addRigidBody(bt_obj_rb);
-
-                bt_obj = bt_obj_rb;
             }
             else if (dinamica == cinematico)
             {
@@ -489,14 +489,17 @@ public:
     {
         btTransform tf = getObjectTransform(bt_obj);
         tf.setOrigin(btVector3(pos.x, pos.y, pos.z));
-        if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+        if (bt_obj != NULL && bt_obj_rb != NULL && bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
             bt_obj_rb->getMotionState()->setWorldTransform(tf);
             bt_obj->setWorldTransform(tf);
         }
         else
         {
-            bt_obj->setWorldTransform(tf);
+            if(bt_obj != NULL){
+                bt_obj->setWorldTransform(tf);
+            }
+            
         }
     }
     void mudar_rot(quat rot)
@@ -505,12 +508,17 @@ public:
         tf.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            bt_obj_rb->getMotionState()->setWorldTransform(tf);
-            bt_obj->setWorldTransform(tf);
+            if(bt_obj_rb != NULL && bt_obj != NULL){
+                bt_obj_rb->getMotionState()->setWorldTransform(tf);
+                bt_obj->setWorldTransform(tf);
+            }
+            
         }
         else
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj->setWorldTransform(tf);
+            }
         }
     }
     void mudar_rot(vec3 rot)
@@ -521,24 +529,30 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
     void adicionar_impulso(vec3 forca)
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
     void adicionar_velocidade(vec3 forca)
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
 
@@ -546,24 +560,30 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
     void adicionar_impulso_rotativo(vec3 forca)
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
     void aplicar_velocidade_rotativa(vec3 forca)
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
+            if(bt_obj_rb != NULL && bt_obj != NULL){
             bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
             bt_obj_rb->activate();
+            }
         }
     }
     ~bullet()
