@@ -330,6 +330,7 @@ public:
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL)
         {
+            
             position = tf->pos;
             quaternion = tf->quater;
             transform.setOrigin(glmToBt(position));

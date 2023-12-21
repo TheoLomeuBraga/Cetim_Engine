@@ -1,5 +1,5 @@
 export LD_LIBRARY_PATH=$(pwd)/libs/linux
-gdb $(pwd)/build/cetim_engine
+flatpak-spawn --host gdb $(pwd)/build/cetim_engine
 c
 y
 set auto-solib-add off
