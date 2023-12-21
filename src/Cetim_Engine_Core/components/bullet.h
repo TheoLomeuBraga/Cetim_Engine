@@ -333,7 +333,8 @@ public:
 
                 tf->pos = tf->pegar_pos_global();
                 tf->quater = tf->pegar_qua_global();
-
+                //tf->esca = tf->pegar_scale_global();
+                //print({"tf->esca",tf->esca.x,tf->esca.y,tf->esca.z});
                 tf->usar_pai = false;
             }
             

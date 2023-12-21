@@ -25,8 +25,6 @@ public:
 		matrizTransform = MatrizMundi;
 	}
 
-	
-
 	int local_hierarquia;
 
 	bool usar_pai = true;
@@ -34,7 +32,7 @@ public:
 
 	glm::vec3 pos = vec3(0, 0, 0), esca = vec3(1, 1, 1), rot = vec3(0, 0, 0);
 
-	quat quater;
+	quat quater = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	glm::mat4 pegar_matriz()
 	{
@@ -86,6 +84,16 @@ public:
 	glm::vec3 pegar_graus_global()
 	{
 		return quat_graus(pegar_qua_global());
+	}
+	glm::vec3 pegar_scale_global()
+	{
+		glm::vec3 scale;
+		glm::mat4 matrix = pegar_matriz();
+		scale.x = glm::length(glm::vec3(matrix[0][0], matrix[0][1], matrix[0][2]));
+		scale.y = glm::length(glm::vec3(matrix[1][0], matrix[1][1], matrix[1][2]));
+		scale.z = glm::length(glm::vec3(matrix[2][0], matrix[2][1], matrix[2][2]));
+
+		return scale;
 	}
 
 	vec3 pegar_direcao_local(vec3 dir)
