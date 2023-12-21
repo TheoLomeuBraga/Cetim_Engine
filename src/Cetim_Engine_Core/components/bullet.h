@@ -374,10 +374,21 @@ public:
 
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
 
-                btTransform localtf;
-                localtf.setIdentity();
-                compound->addChildShape(localtf, Shape);
-                CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+                if (pai_bu == NULL)
+                {
+                    btTransform localtf;
+                    localtf.setIdentity();
+                    compound->addChildShape(localtf, Shape);
+                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+                }
+                else
+                {
+                    //pai_bu->MotionState
+                    btTransform localtf;
+                    localtf.setIdentity();
+                    compound->addChildShape(localtf, Shape);
+                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+                }
 
                 //
 
