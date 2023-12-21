@@ -318,6 +318,8 @@ public:
         vec3 position = vec3(0, 0, 0);
         transform.setOrigin(glmToBt(position));
         quat quaternion;
+        compound = new btCompoundShape();
+        
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL)
         {
@@ -365,6 +367,8 @@ public:
             }
             else if (dinamica == estatico)
             {
+                
+
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
                 bt_obj_rb = new btRigidBody(CI);
                 dynamicsWorld->addRigidBody(bt_obj_rb);
@@ -373,9 +377,11 @@ public:
             else if (dinamica == cinematico)
             {
 
+                
+
                 btVector3 Inertia = btVector3(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
-                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
+                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, Inertia);
                 bt_obj_rb = new btRigidBody(CI);
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 bt_obj_rb->setRestitution(elasticidade);
