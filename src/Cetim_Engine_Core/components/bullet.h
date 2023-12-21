@@ -165,7 +165,7 @@ public:
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
     btRigidBody *bt_obj_rb = NULL;
-    btCompoundShape* compound = NULL;
+    btCompoundShape *compound = NULL;
     shared_ptr<std::string> mesh_shape_address = NULL;
     vector<objeto_jogo *> objs_touching;
     vector<colis_info> colis_infos;
@@ -314,28 +314,22 @@ public:
         }
 
         btTransform transform;
-        transform.setIdentity();
+        
         vec3 position = vec3(0, 0, 0);
         transform.setOrigin(glmToBt(position));
         quat quaternion;
         compound = new btCompoundShape();
-        
+
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL)
         {
 
-            
-            
             position = tf->pos;
             quaternion = tf->quater;
             transform.setOrigin(glmToBt(position));
             transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
-
-            // position = tf->pegar_pos_global();
-            // quaternion = tf->pegar_qua_global();
-            // transform.setOrigin(glmToBt(position));
-            // transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
-        }
+            
+        }   
 
         if (gatilho)
         {
@@ -367,17 +361,57 @@ public:
             }
             else if (dinamica == estatico)
             {
+
+                shared_ptr<bullet> pai_bu;
+                shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
+
                 
 
+                if (tf != NULL && esse_objeto->pegar_componente<transform_>() != NULL && esse_objeto->pai->pegar_componente<bullet>() != NULL)
+                {
+                    
+                    pai_bu = esse_objeto->pai->pegar_componente<bullet>();
+                    
+                    
+                    
+                }
+
+                // variaveis declaradas fora
+                /*
+                compound = new btCompoundShape();
+
+                pai_bu->compound = new btCompoundShape();
+                */
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
                 bt_obj_rb = new btRigidBody(CI);
+
                 dynamicsWorld->addRigidBody(bt_obj_rb);
+
+                if (pai_bu != NULL)
+                {
+                    
+                    
+                    
+                    
+                    
+
+                    pai_bu->compound->addChildShape(transform, Shape);
+
+                    
+                    
+                }
+                else
+                {
+                    
+                    compound->addChildShape(transform, Shape);
+                    
+                }
+
                 bt_obj = bt_obj_rb;
+
             }
             else if (dinamica == cinematico)
             {
-
-                
 
                 btVector3 Inertia = btVector3(0, 0, 0);
                 Shape->calculateLocalInertia(densidade, Inertia);
@@ -442,10 +476,11 @@ public:
                 dynamicsWorld->removeCollisionObject(bt_obj);
             }
             //*/
-            if(compound != NULL){
+            if (compound != NULL)
+            {
                 delete compound;
             }
-            
+
             deleteCollisionObject(bt_obj);
             if (collisionObject_obj.find(bt_obj) != collisionObject_obj.end())
             {
@@ -736,11 +771,10 @@ void atualisar_global_bullet()
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
     float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
-    if(Tempo::velocidadeTempo > 0){
-        dynamicsWorld->stepSimulation(bullet_passo_tempo,0);
+    if (Tempo::velocidadeTempo > 0)
+    {
+        dynamicsWorld->stepSimulation(bullet_passo_tempo, 0);
     }
-    
-    
 }
 
 void iniciar_atualisar_global_bullet()
