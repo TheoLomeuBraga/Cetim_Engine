@@ -383,29 +383,30 @@ public:
                 pai_bu->compound = new btCompoundShape();
                 */
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
-                bt_obj_rb = new btRigidBody(CI);
+                
 
-                dynamicsWorld->addRigidBody(bt_obj_rb);
+                
 
                 if (pai_bu != NULL)
                 {
                     
-                    
-                    
-                    
-                    
-
                     pai_bu->compound->addChildShape(transform, Shape);
-
+                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, Shape, btVector3(0, 0, 0));
                     
                     
                 }
                 else
                 {
-                    
+
                     compound->addChildShape(transform, Shape);
+                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, Shape, btVector3(0, 0, 0));
+                    
                     
                 }
+
+                bt_obj_rb = new btRigidBody(CI);
+
+                dynamicsWorld->addRigidBody(bt_obj_rb);
 
                 bt_obj = bt_obj_rb;
 
