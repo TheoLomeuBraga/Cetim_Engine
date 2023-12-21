@@ -13,6 +13,8 @@ class transform_ : public componente
 public:
 	glm::mat4 matrizTransform;
 	glm::mat4 offset_matrix = glm::mat4(1.0f);
+	bool UI = false;
+	transform_ *paiTF = NULL;
 
 	transform_()
 	{
@@ -22,10 +24,6 @@ public:
 	{
 		matrizTransform = MatrizMundi;
 	}
-
-	bool UI = false;
-	transform_ *paiTF = NULL;
-
 
 	
 
@@ -56,7 +54,7 @@ public:
 		ret *= toMat4(quater);
 		ret = scale(ret, esca);
 
-		//matrizTransform = ret;
+		// matrizTransform = ret;
 
 		return ret;
 	}
@@ -72,23 +70,18 @@ public:
 		ret *= toMat4(quater);
 		ret = scale(ret, esca);
 
-		//matrizTransform = ret;
+		// matrizTransform = ret;
 
 		return ret;
 	}
 
 	glm::vec3 pegar_pos_global()
 	{
-		return glm::vec3(pegar_matriz()[3]); 
+		return glm::vec3(pegar_matriz()[3]);
 	}
 	glm::quat pegar_qua_global()
 	{
-		vec3 nada;
-		vec4 nada2;
-		vec3 nada3;
-		quat qua;
-		glm::decompose(matrizTransform, nada, qua, nada3, nada, nada2);
-		return qua;
+		return glm::quat(glm::mat3(pegar_matriz()));
 	}
 	glm::vec3 pegar_graus_global()
 	{
@@ -245,10 +238,10 @@ namespace transform_ecs
 		{
 			glm::mat4 ret;
 
-			transform_data *father =  NULL;
-			transform_data *tf =  &transforms_map[p.first];
+			transform_data *father = NULL;
+			transform_data *tf = &transforms_map[p.first];
 
-			if (have_component(p.first,"family"))
+			if (have_component(p.first, "family"))
 			{
 				ret = father->matrix;
 			}
@@ -280,13 +273,13 @@ namespace transform_ecs
 
 	glm::vec3 pegar_pos_global(entity id)
 	{
-		transform_data *tf =  &transforms_map[id];
-		
+		transform_data *tf = &transforms_map[id];
+
 		return glm::vec3(tf->matrix[3]);
 	}
 	glm::quat pegar_qua_global(entity id)
 	{
-		transform_data *tf =  &transforms_map[id];
+		transform_data *tf = &transforms_map[id];
 
 		vec3 nada;
 		vec4 nada2;
@@ -297,7 +290,7 @@ namespace transform_ecs
 	}
 	glm::vec3 pegar_graus_global(entity id)
 	{
-		transform_data *tf =  &transforms_map[id];
+		transform_data *tf = &transforms_map[id];
 
 		vec3 nada;
 		vec4 nada2;
@@ -308,27 +301,27 @@ namespace transform_ecs
 		return quat_graus(qua);
 	}
 
-	vec3 pegar_direcao_local(entity id,vec3 dir)
+	vec3 pegar_direcao_local(entity id, vec3 dir)
 	{
-		transform_data *tf =  &transforms_map[id];
+		transform_data *tf = &transforms_map[id];
 
 		glm::mat4 translationMatrix = glm::translate(tf->matrix, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - glm::vec3(tf->matrix[3]);
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
 
-	vec3 pegar_direcao_global(entity id,vec3 dir)
+	vec3 pegar_direcao_global(entity id, vec3 dir)
 	{
-		transform_data *tf =  &transforms_map[id];
+		transform_data *tf = &transforms_map[id];
 
 		glm::mat4 translationMatrix = glm::translate(tf->matrix, dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
 
-	vec3 mover_direcao(entity id,vec3 dir)
+	vec3 mover_direcao(entity id, vec3 dir)
 	{
-		transform_data *tf =  &transforms_map[id];
+		transform_data *tf = &transforms_map[id];
 
 		vec3 nada;
 		vec4 nada2;

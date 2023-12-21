@@ -176,7 +176,6 @@ public:
     void iniciar()
     {
         bu_collisions_no_per_object[esse_objeto.get()] = {};
-        
 
         transform.setIdentity();
 
@@ -326,9 +325,22 @@ public:
         if (tf != NULL)
         {
 
-            position = tf->pos;
             quaternion = tf->quater;
-            transform.setOrigin(glmToBt(position));
+
+            if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<transform_>() != NULL)
+            {
+                tf->paiTF = esse_objeto->pai->pegar_componente<transform_>().get();
+
+                tf->pos = tf->pegar_pos_global();
+                tf->quater = tf->pegar_qua_global();
+
+                tf->usar_pai = false;
+            }
+            
+
+            
+
+            transform.setOrigin(glmToBt(tf->pos));
             transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
         }
 
@@ -374,14 +386,11 @@ public:
                     pai_bu = esse_objeto->pai->pegar_componente<bullet>();
                 }
 
-                
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape);
                 bt_obj_rb = new btRigidBody(CI);
 
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
-
-                
 
                 //
             }
