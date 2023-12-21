@@ -170,11 +170,15 @@ public:
     vector<objeto_jogo *> objs_touching;
     vector<colis_info> colis_infos;
     bool get_collision_info = false;
+    btTransform transform;
+    btCollisionShape *Shape;
 
     void iniciar()
     {
         bu_collisions_no_per_object[esse_objeto.get()] = {};
-        btCollisionShape *Shape;
+        
+
+        transform.setIdentity();
 
         if (forma == formato_colisao::caixa)
         {
@@ -313,8 +317,6 @@ public:
             }
         }
 
-        btTransform transform;
-
         vec3 position = vec3(0, 0, 0);
         transform.setOrigin(glmToBt(position));
         quat quaternion;
@@ -372,29 +374,14 @@ public:
                     pai_bu = esse_objeto->pai->pegar_componente<bullet>();
                 }
 
-                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, btVector3(0, 0, 0));
+                
+                btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape);
+                bt_obj_rb = new btRigidBody(CI);
 
-                if (pai_bu == NULL)
-                {
-                    btTransform localtf;
-                    localtf.setIdentity();
-                    compound->addChildShape(localtf, Shape);
-                    CI = btRigidBody::btRigidBodyConstructionInfo(0, MotionState, compound, btVector3(0, 0, 0));
+                dynamicsWorld->addRigidBody(bt_obj_rb);
+                bt_obj = bt_obj_rb;
 
-                    bt_obj_rb = new btRigidBody(CI);
-                    dynamicsWorld->addRigidBody(bt_obj_rb);
-                    bt_obj = bt_obj_rb;
-                }
-                else
-                {
-                    btTransform localtf;
-                    localtf.setIdentity();
-                    compound->addChildShape(localtf, Shape);
-                    
-                    
-                    pai_bu->compound->addChildShape(transform, compound);
-                    
-                }
+                
 
                 //
             }
@@ -496,10 +483,10 @@ public:
         }
         else
         {
-            if(bt_obj != NULL){
+            if (bt_obj != NULL)
+            {
                 bt_obj->setWorldTransform(tf);
             }
-            
         }
     }
     void mudar_rot(quat rot)
@@ -508,16 +495,17 @@ public:
         tf.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
                 bt_obj_rb->getMotionState()->setWorldTransform(tf);
                 bt_obj->setWorldTransform(tf);
             }
-            
         }
         else
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj->setWorldTransform(tf);
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj->setWorldTransform(tf);
             }
         }
     }
@@ -529,9 +517,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
@@ -539,9 +528,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
@@ -549,9 +539,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
@@ -560,9 +551,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
@@ -570,9 +562,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
@@ -580,9 +573,10 @@ public:
     {
         if (bt_obj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
         {
-            if(bt_obj_rb != NULL && bt_obj != NULL){
-            bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
-            bt_obj_rb->activate();
+            if (bt_obj_rb != NULL && bt_obj != NULL)
+            {
+                bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
+                bt_obj_rb->activate();
             }
         }
     }
