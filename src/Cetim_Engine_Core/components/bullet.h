@@ -327,7 +327,7 @@ public:
 
             quaternion = tf->quater;
 
-            if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<transform_>() != NULL)
+            if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<transform_>() != NULL )
             {
                 tf->paiTF = esse_objeto->pai->pegar_componente<transform_>().get();
 
