@@ -109,16 +109,6 @@ void deleteCollisionObject(btCollisionObject *object)
         }
     }
 
-    // Delete the collision shape
-
-    /*
-    btCollisionShape *shape = object->getCollisionShape();
-    if (shape)
-    {
-        delete shape;
-    }
-    */
-
     btClean_Meshes_shapes();
 
     // Finally, delete the collision object itself
@@ -175,6 +165,7 @@ public:
     info_camada layer;
     btCollisionObject *bt_obj = NULL;
     btRigidBody *bt_obj_rb = NULL;
+    btCompoundShape* compound = NULL;
     shared_ptr<std::string> mesh_shape_address = NULL;
     vector<objeto_jogo *> objs_touching;
     vector<colis_info> colis_infos;
@@ -445,6 +436,10 @@ public:
                 dynamicsWorld->removeCollisionObject(bt_obj);
             }
             //*/
+            if(compound != NULL){
+                delete compound;
+            }
+            
             deleteCollisionObject(bt_obj);
             if (collisionObject_obj.find(bt_obj) != collisionObject_obj.end())
             {
