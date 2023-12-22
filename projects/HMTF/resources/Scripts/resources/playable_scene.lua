@@ -299,7 +299,7 @@ cenary_builders = {
             ret.components.audio_source.path = "resources/Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = true
-            ret.components.audio_source.volume = 5
+            ret.components.audio_source.volume = 10
             ret.components.audio_source.min_distance = 5
             ret.components.audio_source.atenuation = 1
             ret.components.audio_source:set()
@@ -309,7 +309,7 @@ cenary_builders = {
             ret.components.audio_source.path = "resources/Audio/sounds/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = true
-            ret.components.audio_source.volume = 5
+            ret.components.audio_source.volume = 10
             ret.components.audio_source.min_distance = 5
             ret.components.audio_source.atenuation = 1
             ret.components.audio_source:set()
