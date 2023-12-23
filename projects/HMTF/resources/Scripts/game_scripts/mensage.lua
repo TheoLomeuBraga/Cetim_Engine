@@ -29,14 +29,9 @@ function interact(args)
     global_data.interacting = 1
     
     if mensage_index ~= nil then
-        print("AAAAA")
         local mensage_indexs = splitString(mensage_index, ":")
-        print("BBBBB")
         local localization_data = serializer.load_table_json(global_data.localization_file)
-        print("CCCCC")
         mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]], "\n")
-        print("DDDDD")
-        print(mensage_indexs[1],mensage_indexs[2])
     end
 
 
