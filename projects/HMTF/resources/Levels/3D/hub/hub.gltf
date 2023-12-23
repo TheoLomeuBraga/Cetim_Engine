@@ -139,7 +139,7 @@
 			"extras":{
 				"type":"mensage",
 				"mensage":"hello world",
-				"mensage_index":"signals:hello"
+				"mensage_index":"signals:test_roon"
 			},
 			"mesh":0,
 			"name":"Cube.002",

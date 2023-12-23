@@ -1,6 +1,7 @@
 {
     "signals" : {
-        "hello" : "hello world\nwelcome"
+        "hello" : "hello world\nwelcome",
+        "test_roon" : "this is an test roon\npease enjoy"
     }
 }
   
