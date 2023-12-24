@@ -182,6 +182,8 @@ namespace ManuseioDados
 		return s2.c_str();
 	}
 
+	unsigned char font_quality = 20;
+
 	mapeamento_assets<fonte> mapeamento_fontes;
 	std::mutex mapeamento_fontes_mtx;
 
