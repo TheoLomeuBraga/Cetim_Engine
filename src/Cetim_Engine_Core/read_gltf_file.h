@@ -200,7 +200,7 @@ namespace gltf_loader
 
         try
         {
-            // file >> gltf;
+            
             gltf = json::parse(file);
         }
         catch (const std::exception &e)

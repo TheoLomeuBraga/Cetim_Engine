@@ -400,7 +400,7 @@ function START()
 end
 
 function UPDATE()
-    if global_data.inputs.menu > 0 and global_data.inputs_last_frame.menu < 1 then
+    if global_data.inputs.menu > 0 and global_data.inputs_last_frame.menu < 1 and in_main_menu < 1 then
         remove_object(this_object_ptr)
     end
     
