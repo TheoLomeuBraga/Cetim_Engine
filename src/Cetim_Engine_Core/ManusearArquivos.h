@@ -39,6 +39,10 @@ using json = nlohmann::json;
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
+//fontes
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <thread>
 #include <mutex>
 
