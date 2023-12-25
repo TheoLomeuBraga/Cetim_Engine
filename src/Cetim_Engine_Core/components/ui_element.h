@@ -279,7 +279,7 @@ public:
         text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = current_style.space_betwen_lines;
 
         text_obj->pegar_componente<render_texto>()->texto = text;
-        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
+        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
     }
 
     void finalisar()
@@ -320,7 +320,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic->render_layer = 4;
     uic->id = "test_button";
     ui_style style;
-    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
+    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
     uic->normal_style = style;
     style.border_color = vec4(1, 0.5, 0.5, 1);
     uic->hover_style = style;
@@ -339,7 +339,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic2->render_layer = 4;
     uic2->id = "test_button";
     style = ui_style();
-    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.json");
+    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
     uic2->normal_style = style;
     style.border_color = vec4(1, 0.5, 0.5, 1);
     uic2->hover_style = style;

@@ -39,7 +39,7 @@ using json = nlohmann::json;
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
-//fontes
+// fontes
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -182,7 +182,7 @@ namespace ManuseioDados
 		return s2.c_str();
 	}
 
-	unsigned char font_quality = 20;
+	unsigned char font_quality = 40;
 
 	mapeamento_assets<fonte> mapeamento_fontes;
 	std::mutex mapeamento_fontes_mtx;
@@ -196,11 +196,74 @@ namespace ManuseioDados
 		{
 			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
 			{
+
 				add_loading_request(lugar);
-				string S;
-				file >> S;
 
 				fonte f;
+				f.path = lugar;
+				f.quality = font_quality;
+
+				FT_Library ft;
+				if (FT_Init_FreeType(&ft))
+				{
+					std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+				}
+
+				FT_Face face;
+
+				if (FT_New_Face(ft, lugar.c_str(), 0, &face))
+				{
+					std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+				}
+
+				FT_Set_Pixel_Sizes(face, 0, font_quality);
+
+				
+
+				std::map<wchar_t, caractere_info> chars;
+
+				FT_UInt glyphIndex;
+				FT_ULong charCode = FT_Get_First_Char(face, &glyphIndex);
+				while (glyphIndex != 0)
+				{
+					FT_Load_Char(face, charCode, FT_LOAD_RENDER);
+					pair<wchar_t, caractere_info> cp;
+
+					wchar_t charcter = (wchar_t)charCode;
+					cp.first = charcter;
+					cp.second.char_ = charcter;
+					cp.second.width = face->glyph->bitmap.width;
+					cp.second.height = face->glyph->bitmap.rows;
+					cp.second.left = face->glyph->bitmap_left;
+					cp.second.top = face->glyph->bitmap_top;
+					cp.second.pitch = face->glyph->bitmap.pitch;
+					cp.second.adivancement = (float)face->glyph->advance.x / 64;
+
+					std::vector<uint8_t> bm(cp.second.width * cp.second.height);
+					for(size_t i = 0 ; i < cp.second.width * cp.second.height ; i++){
+						bm[i] = face->glyph->bitmap.buffer[i];
+					}
+					cp.second.bitmap = bm;
+
+					print({charCode, cp.second.width * cp.second.height});
+
+
+					chars.insert(cp);
+
+					charCode = FT_Get_Next_Char(face, charCode, &glyphIndex);
+				}
+
+				f.chars = chars;
+
+				FT_Done_Face(face);
+				FT_Done_FreeType(ft);
+
+				
+
+				/*
+
+				string S;
+				file >> S;
 
 				json JSON = json::parse(S);
 
@@ -227,7 +290,7 @@ namespace ManuseioDados
 				}
 				f.chars = chars;
 				f.path = lugar;
-
+				*/
 				remove_loading_request(lugar);
 				return mapeamento_fontes.aplicar(lugar, f);
 			}
@@ -912,12 +975,12 @@ namespace ManuseioDados
 			importar_map_thread(local, r);
 		}
 	}
-	
-	//size_t skin_count = 0;
+
+	// size_t skin_count = 0;
 
 	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader, gltf_loader::Mesh m, string file_path)
 	{
-		
+
 		std::vector<malha> ret;
 		bool add_skin_count = false;
 
@@ -962,8 +1025,6 @@ namespace ManuseioDados
 					v.cor[0] = m.sub_meshes[a].colors[i].x;
 					v.cor[1] = m.sub_meshes[a].colors[i].y;
 					v.cor[2] = m.sub_meshes[a].colors[i].z;
-
-					
 				}
 
 				if (m.sub_meshes[a].texcoords.size() > 0)
@@ -1022,7 +1083,7 @@ namespace ManuseioDados
 			skin_count++;
 		}
 		*/
-		
+
 		return ret;
 	}
 
@@ -1135,7 +1196,7 @@ namespace ManuseioDados
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 
-		//skin_count = 0;
+		// skin_count = 0;
 		cena_3D ret;
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
@@ -1285,7 +1346,6 @@ namespace ManuseioDados
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_gltf),
 	};
 
-	
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
 	{
 
@@ -1320,5 +1380,4 @@ namespace ManuseioDados
 			carregar_malha_thread(local, nome, r);
 		}
 	}
-
 }

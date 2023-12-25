@@ -347,7 +347,7 @@ class fonte : public asset
 public:
 	string path;
 	int quality;
-	bool pixel_perfect;
+	bool pixel_perfect = true;
 	std::map<wchar_t, caractere_info> chars;
 
 	~fonte()
