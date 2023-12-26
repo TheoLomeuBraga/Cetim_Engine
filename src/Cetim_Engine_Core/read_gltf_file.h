@@ -49,6 +49,7 @@ namespace gltf_loader
         size_t count;
         std::vector<float> min = {}, max = {};
         std::string type;
+        nlohmann::json extensions, extras;
     };
 
     struct SubMesh
@@ -62,6 +63,7 @@ namespace gltf_loader
         std::vector<std::vector<size_t>> BoneIDs;
         std::vector<std::vector<float>> Weights;
         size_t material = 0;
+        
     };
 
     struct Mesh
@@ -70,6 +72,7 @@ namespace gltf_loader
         std::vector<SubMesh> sub_meshes;
         bool have_skin = false;
         size_t skin;
+        nlohmann::json extensions, extras;
     };
 
     struct Skin
@@ -123,8 +126,8 @@ namespace gltf_loader
         float start_time = 0, duration = 0;
         std::vector<AnimationChannel> channels = {};
         std::vector<AnimationSampler> samplers = {};
-        // std::vector<AnimationKeyFrame> keyFrames = {};
         std::vector<std::vector<AnimationKeyFrame>> keyFrames = {};
+        nlohmann::json extensions, extras;
     };
 
     struct Texture
@@ -200,7 +203,7 @@ namespace gltf_loader
 
         try
         {
-            
+
             gltf = json::parse(file);
         }
         catch (const std::exception &e)
@@ -472,6 +475,16 @@ namespace gltf_loader
                 return false;
             }
 
+            if (accessorData.contains("extensions"))
+            {
+                accessor.extensions = accessorData["extensions"];
+            }
+
+            if (accessorData.contains("extras"))
+            {
+                accessor.extras = accessorData["extras"];
+            }
+
             accessors[i] = accessor;
         }
 
@@ -591,6 +604,7 @@ namespace gltf_loader
                 keyFrame.has_scale = true;
             }
         }
+
         // Add handling for other target paths as needed
     }
 
@@ -638,6 +652,16 @@ namespace gltf_loader
                 sampler.interpolation = samplerJson["interpolation"];
 
                 animation.samplers.push_back(sampler);
+            }
+
+            if (animationJson.contains("extensions"))
+            {
+                animation.extensions = animationJson["extensions"];
+            }
+
+            if (animationJson.contains("extras"))
+            {
+                animation.extras = animationJson["extras"];
             }
 
             animations.push_back(animation);
@@ -979,7 +1003,7 @@ namespace gltf_loader
                     {
                         uint16_t uint16Value = *reinterpret_cast<const uint16_t *>(&buffer[srcOffset]);
                         value = static_cast<float>(uint16Value) / 65535.0f;
-                        //value = static_cast<float>(uint16Value);
+                        // value = static_cast<float>(uint16Value);
                     }
                     else
                     {
@@ -1108,6 +1132,16 @@ namespace gltf_loader
                 mesh.name = meshJson["name"].get<std::string>();
             }
 
+            if (meshJson.contains("extensions"))
+            {
+                mesh.extensions = meshJson["extensions"];
+            }
+
+            if (meshJson.contains("extras"))
+            {
+                mesh.extras = meshJson["extras"];
+            }
+
             for (const auto &primitive : meshJson["primitives"])
             {
 
@@ -1140,15 +1174,16 @@ namespace gltf_loader
 
                     for (size_t i = 0; i < colorData.size(); i += 4)
                     {
-                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2],colorData[i + 3]);
+                        sm.colors.emplace_back(colorData[i], colorData[i + 1], colorData[i + 2], colorData[i + 3]);
                     }
-                    
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size() / 3; i++)
                     {
-                        sm.colors.emplace_back(1,1,1,1);
+                        sm.colors.emplace_back(1, 1, 1, 1);
                     }
                 }
 
@@ -1161,12 +1196,14 @@ namespace gltf_loader
                     {
                         sm.normals.emplace_back(normalData[i], normalData[i + 1], normalData[i + 2]);
                     }
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        sm.normals.emplace_back(0,0,0);
+                        sm.normals.emplace_back(0, 0, 0);
                     }
                 }
 
@@ -1179,12 +1216,14 @@ namespace gltf_loader
                     {
                         sm.texcoords.emplace_back(texcoordData[i], texcoordData[i + 1]);
                     }
-                }else{
+                }
+                else
+                {
                     size_t positionAccessorIndex = attributes["POSITION"].get<size_t>();
                     std::vector<float> positionData = getAttributeData(positionAccessorIndex);
                     for (size_t i = 0; i < positionData.size(); i += 3)
                     {
-                        sm.texcoords.emplace_back(0,0);
+                        sm.texcoords.emplace_back(0, 0);
                     }
                 }
 
@@ -1197,7 +1236,6 @@ namespace gltf_loader
                     // Obtenha os dados dos acessores de BoneIDs e Weights
                     sm.BoneIDs = getBoneIDsData(jointAccessorIndex);
                     sm.Weights = getWeightsData(weightAccessorIndex);
-                    
                 }
 
                 if (primitive.contains("indices"))
@@ -1230,7 +1268,7 @@ namespace gltf_loader
                         std::vector<uint16_t> indices;
                         const uint16_t *data = reinterpret_cast<const uint16_t *>(indexBufferData.data());
                         size_t dataSize = indexBufferData.size() / sizeof(uint16_t);
-                        //size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
+                        // size_t dataSize = indexAccessor.count * sizeof(uint16_t) * 2;
                         indices.assign(data, data + dataSize);
 
                         // indices.resize(dataSize);
@@ -1293,10 +1331,14 @@ namespace gltf_loader
         return true;
     }
 
-    bool GLTFLoader::assigneSkinsToMeshes(){
-        for(Node n : nodes){
-            if(n.have_skin){
-                for(size_t st : n.meshIndices){
+    bool GLTFLoader::assigneSkinsToMeshes()
+    {
+        for (Node n : nodes)
+        {
+            if (n.have_skin)
+            {
+                for (size_t st : n.meshIndices)
+                {
                     meshes[st].have_skin = n.have_skin;
                     meshes[st].skin = n.skin;
                 }
@@ -1307,28 +1349,28 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        //print({"loadBuffers"});
+        // print({"loadBuffers"});
         loadBuffers();
-        //print({"loadBufferViews"});
+        // print({"loadBufferViews"});
         loadBufferViews();
-        //print({"loadAccessors"});
+        // print({"loadAccessors"});
         loadAccessors();
-        //print({"loadTextures"});
+        // print({"loadTextures"});
         loadTextures();
-        //print({"loadMeshes"});
+        // print({"loadMeshes"});
         loadMeshes();
-        //print({"loadScenes"});
+        // print({"loadScenes"});
         loadScenes();
-        //print({"loadNodes"});
+        // print({"loadNodes"});
         loadNodes();
-        //print({"loadAnimations"});
+        // print({"loadAnimations"});
         loadAnimations();
-        //print({"loadMaterials"});
+        // print({"loadMaterials"});
         loadMaterials();
-        //print({"loadSkins"});
+        // print({"loadSkins"});
         loadSkins();
         assigneSkinsToMeshes();
-        //print({"load end"});
+        // print({"load end"});
 
         return true;
     }
