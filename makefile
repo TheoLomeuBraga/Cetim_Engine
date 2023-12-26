@@ -36,7 +36,7 @@ LIBS_LUA_COMPILER_WINDOWS =   -llua
 LIBS_LUA_COMPILER_LINUX =  -L./libs/linux  -llua
 
 PRECOMMAND_WINDOWS := 
-PRECOMMAND_LINUX := flatpak-spawn --host
+PRECOMMAND_LINUX := #flatpak-spawn --host
 
 windows: 
 	rm -f $(TARGET_LUA_COMPILER_WINDOWS) $(TARGET_ENGINE_WINDOWS) $(TARGET_FONT_READER_WINDOWS) ./build/font_reader_gtk.glade ./build/theme.css
