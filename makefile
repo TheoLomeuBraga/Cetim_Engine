@@ -24,10 +24,10 @@ SRC_COMPILER_LUA = ./src/Lua_Compiler/lua_compiler.cpp
 
 INCLUDE_DIRS := -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 
-LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_DEBIAN := -L./libs/linux  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_ARCH :=  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
-LIBS_ENGINE_POP := -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+LIBS_ENGINE_WINDOWS := -llua -lglfw3  -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -draco
+LIBS_ENGINE_DEBIAN := -L./libs/linux  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -draco
+LIBS_ENGINE_ARCH :=  -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -draco
+LIBS_ENGINE_POP := -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -draco
 
 LIBS_FONT_READER_WINDOWS := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
 LIBS_FONT_READER_LINUX := -lfreetype `pkg-config --cflags --libs gtk+-3.0`
@@ -43,8 +43,8 @@ windows:
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
-	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
-	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_WINDOWS) $(LIBS_LUA_COMPILER_WINDOWS) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_WINDOWS)
+	#$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
+	#$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_WINDOWS) $(LIBS_LUA_COMPILER_WINDOWS) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_WINDOWS)
 	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_WINDOWS) $(DEFINITIONS_WINDOWS) $(LIBS_ENGINE_WINDOWS) -o $(TARGET_ENGINE_WINDOWS)
 	
 
@@ -53,8 +53,8 @@ windows_debug:
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
-	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS_DEBUG) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
-	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_WINDOWS_DEBUG) $(LIBS_LUA_COMPILER_WINDOWS) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_WINDOWS)
+	#$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_WINDOWS_DEBUG) $(DEFINITIONS_WINDOWS) $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_WINDOWS)
+	#$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_WINDOWS_DEBUG) $(LIBS_LUA_COMPILER_WINDOWS) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_WINDOWS)
 	$(PRECOMMAND_WINDOWS) $(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_WINDOWS_DEBUG) $(DEFINITIONS_WINDOWS) $(LIBS_ENGINE_WINDOWS) -o $(TARGET_ENGINE_WINDOWS)
  
 arch:
@@ -62,8 +62,8 @@ arch:
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
 	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_ENGINE) $(INCLUTDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_ENGINE_ARCH) -o $(TARGET_ENGINE_LINUX)
 
 debian:
@@ -71,8 +71,8 @@ debian:
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
 	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_ENGINE_DEBIAN) -o $(TARGET_ENGINE_LINUX)
 
 pop:
@@ -80,8 +80,8 @@ pop:
 	cp ./src/font_reader_gtk/font_reader_gtk.glade ./build/font_reader_gtk.glade
 	cp ./src/font_reader_gtk/theme.css ./build/theme.css
 
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
-	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_READER) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_FONT_READER_LINUX) -o $(TARGET_FONT_READER_LINUX)
+	#$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_COMPILER_LUA) $(FLAGS_LINUX) $(LIBS_LUA_COMPILER_LINUX) $(INCLUDE_DIRS) -o $(TARGET_LUA_COMPILER_LINUX)
 	$(PRECOMMAND_LINUX) $(COMPILER) $(SRC_ENGINE) $(INCLUDE_DIRS) $(FLAGS_LINUX) $(DEFINITIONS_LINUX)  $(LIBS_ENGINE_POP) -o $(TARGET_ENGINE_LINUX)
 
 clean:
