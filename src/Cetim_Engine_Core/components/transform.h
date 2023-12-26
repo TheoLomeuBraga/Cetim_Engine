@@ -183,7 +183,12 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 	// Calculate the distances from the given point to each of the points in the input vector
 	for (int i = 0; i < objs.size(); i++)
 	{
-		tf_distance[i] = vec3_distance(point, vec3(objs[i]->pegar_componente<transform_>()->matrizTransform[3]));
+		if(objs[i]->pegar_componente<transform_>() == NULL){
+			tf_distance[i] = 0;
+		}else{
+			tf_distance[i] = vec3_distance(point, vec3(objs[i]->pegar_componente<transform_>()->matrizTransform[3]));
+		}
+		
 	}
 
 	// Create an index vector and sort it based on the distances
@@ -202,6 +207,13 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 	}
 
 	// Return the sorted vector of vec3 points
+	return ret;
+}
+
+std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance_far(glm::vec3 point, std::vector<shared_ptr<objeto_jogo>> objs)
+{
+	std::vector<shared_ptr<objeto_jogo>> ret = tf_ordenate_by_distance(point,objs);
+	std::reverse(ret.begin(), ret.end());
 	return ret;
 }
 
