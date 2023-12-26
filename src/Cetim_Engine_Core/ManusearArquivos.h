@@ -245,9 +245,6 @@ namespace ManuseioDados
 					}
 					cp.second.bitmap = bm;
 
-					print({charCode, cp.second.width * cp.second.height});
-
-
 					chars.insert(cp);
 
 					charCode = FT_Get_Next_Char(face, charCode, &glyphIndex);
