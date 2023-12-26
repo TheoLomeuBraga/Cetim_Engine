@@ -174,14 +174,6 @@ namespace ManuseioDados
 		return s2;
 	}
 
-	template <typename X>
-	const char *Carregar(X nome)
-	{
-		string s2 = Carregar_string(nome);
-
-		return s2.c_str();
-	}
-
 	unsigned char font_quality = 40;
 
 	mapeamento_assets<fonte> mapeamento_fontes;
