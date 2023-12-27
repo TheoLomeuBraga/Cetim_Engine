@@ -181,9 +181,12 @@ namespace ManuseioDados
 
 	shared_ptr<fonte> carregar_fonte(string lugar)
 	{
+		
+		std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
+
 		ifstream file(lugar);
 
-		std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
+		
 		if (file)
 		{
 			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
@@ -323,6 +326,9 @@ namespace ManuseioDados
 
 	shared_ptr<imagem> carregar_Imagem(string local)
 	{
+
+		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+
 		bool jaCarregada = false;
 
 		int X = 1;
@@ -331,7 +337,7 @@ namespace ManuseioDados
 
 		unsigned char *data;
 
-		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+		
 
 		if (Existe(local))
 		{
@@ -467,9 +473,12 @@ namespace ManuseioDados
 	std::mutex mapeamento_tilesets_mtx;
 	shared_ptr<tile_set> carregar_tile_set(string local)
 	{
-		string pasta_imagems = pegar_pasta_arquivo(local);
 
 		std::lock_guard<std::mutex> lock(mapeamento_tilesets_mtx);
+
+		string pasta_imagems = pegar_pasta_arquivo(local);
+
+		
 
 		if (Existe(local.c_str()))
 		{
@@ -682,6 +691,9 @@ namespace ManuseioDados
 	shared_ptr<cena_3D> importar_obj(string local)
 	{
 		// http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
+
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
+
 		string pasta = pegar_pasta_arquivo(local);
 		cena_3D ret;
 		ret.nome = local;
@@ -701,7 +713,7 @@ namespace ManuseioDados
 		bool s;
 		string usemtl;
 		vector<unsigned int> f;
-		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
+		
 		if (cenas_3D.pegar(local).get() == NULL)
 		{
 			while (getline(arquivo_obj, linha))
@@ -942,12 +954,14 @@ namespace ManuseioDados
 	{
 		// https://github.com/stefanha/map-files/blob/master/MAPFiles.pdf
 		// try this on gpt: make a c++ function that read an .map file (like the ones used on quake)
+
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		cena_3D ret;
 		ret.nome = local;
 
 		Full_Map_Info map_info = read_map_file(local);
 
-		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
+		
 		return cenas_3D.aplicar(local, ret);
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
@@ -1186,8 +1200,9 @@ namespace ManuseioDados
 	{
 
 		// skin_count = 0;
-		cena_3D ret;
 		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
+		cena_3D ret;
+		
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
 
