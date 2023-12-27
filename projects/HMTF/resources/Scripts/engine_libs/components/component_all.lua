@@ -11,4 +11,5 @@ require("components.render_tile_map")
 require("components.transform")
 require("components.render_poly_mesh")
 require("components.ui_component")
+require("components.light")
 

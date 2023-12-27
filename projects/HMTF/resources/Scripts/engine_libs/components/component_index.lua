@@ -15,6 +15,7 @@ components = {
     render_poly_mesh = "render_poly_mesh",
     ui_component = "ui_component",
     ui = "ui_component",
+    light = "light",
 }
 
 transform = "transform"
@@ -32,3 +33,5 @@ lua_scripts = "lua_scripts"
 render_poly_mesh = "render_poly_mesh"
 ui_component = "ui_component"
 ui = "ui_component"
+light = "light"
+

@@ -2030,6 +2030,27 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int get_set_light(lua_State *L){
+		if (lua_tonumber(L, 1) == get_lua)
+		{
+			Table ret;
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
+			shared_ptr<fonte_luz> ui = obj->pegar_componente<fonte_luz>();
+
+			lua_pushtable(L, ret);
+			return 1;
+		}
+		else
+		{
+
+			Table t = lua_totable(L, 2);
+			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
+			shared_ptr<fonte_luz> ui = obj->pegar_componente<fonte_luz>();
+
+			return 0;
+		}
+	}
+
 	int raycast_2D(lua_State *L)
 	{
 		Table ret;

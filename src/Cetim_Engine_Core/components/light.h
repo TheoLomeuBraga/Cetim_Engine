@@ -9,18 +9,16 @@ using namespace std;
 enum tipo_luz {
 	ponto = 0,
 	holofote = 1,
-	direcional = 2,//tipo um sol
+	direcional = 2,
 	global = 3
 };
 
 class fonte_luz : public componente {
 public:
 
-	char tipo_luz;
-
-	vec3 direcao = vec3(0,0,-1);
+	unsigned char tipo_luz;
 	vec3 cor;
-	float angulo;
+	float angulo_alcance;
 	float alcance;
 
 	bool ligado = true;

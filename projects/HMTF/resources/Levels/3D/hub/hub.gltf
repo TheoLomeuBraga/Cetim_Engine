@@ -3,6 +3,52 @@
 		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
+	"extensionsUsed":[
+		"KHR_lights_punctual"
+	],
+	"extensionsRequired":[
+		"KHR_lights_punctual"
+	],
+	"extensions":{
+		"KHR_lights_punctual":{
+			"lights":[
+				{
+					"color":[
+						1,
+						1,
+						1
+					],
+					"intensity":683,
+					"type":"directional",
+					"name":"Sun"
+				},
+				{
+					"color":[
+						1,
+						1,
+						1
+					],
+					"intensity":543.5141306588226,
+					"type":"point",
+					"name":"Point"
+				},
+				{
+					"color":[
+						1,
+						1,
+						1
+					],
+					"intensity":543.5141306588226,
+					"spot":{
+						"innerConeAngle":0.3337942263919169,
+						"outerConeAngle":0.39269909262657166
+					},
+					"type":"spot",
+					"name":"Spot"
+				}
+			]
+		}
+	},
 	"scene":0,
 	"scenes":[
 		{
@@ -114,12 +160,15 @@
 				103,
 				104,
 				105,
-				115,
-				125,
+				106,
+				116,
 				126,
 				127,
 				128,
-				130
+				129,
+				131,
+				132,
+				133
 			]
 		}
 	],
@@ -163,6 +212,25 @@
 			"translation":[
 				0,
 				35,
+				0
+			]
+		},
+		{
+			"extensions":{
+				"KHR_lights_punctual":{
+					"light":0
+				}
+			},
+			"name":"Sun",
+			"rotation":[
+				-0.24340854585170746,
+				-0.46883538365364075,
+				-0.16733503341674805,
+				0.8324329853057861
+			],
+			"translation":[
+				0,
+				84,
 				0
 			]
 		},
@@ -1746,8 +1814,8 @@
 		},
 		{
 			"children":[
-				106,
-				107
+				107,
+				108
 			],
 			"name":"Bone.002",
 			"translation":[
@@ -1767,8 +1835,8 @@
 		},
 		{
 			"children":[
-				108,
-				109
+				109,
+				110
 			],
 			"name":"Bone.001",
 			"translation":[
@@ -1788,8 +1856,8 @@
 		},
 		{
 			"children":[
-				110,
-				111
+				111,
+				112
 			],
 			"name":"Bone"
 		},
@@ -1808,9 +1876,9 @@
 		},
 		{
 			"children":[
-				114,
-				112,
-				113
+				115,
+				113,
+				114
 			],
 			"name":"Armature",
 			"translation":[
@@ -1839,8 +1907,8 @@
 		},
 		{
 			"children":[
-				116,
-				117
+				117,
+				118
 			],
 			"name":"Bone.002",
 			"translation":[
@@ -1860,8 +1928,8 @@
 		},
 		{
 			"children":[
-				118,
-				119
+				119,
+				120
 			],
 			"name":"Bone.001",
 			"translation":[
@@ -1881,8 +1949,8 @@
 		},
 		{
 			"children":[
-				120,
-				121
+				121,
+				122
 			],
 			"name":"Bone"
 		},
@@ -1901,9 +1969,9 @@
 		},
 		{
 			"children":[
-				124,
-				122,
-				123
+				125,
+				123,
+				124
 			],
 			"name":"Armature.001",
 			"translation":[
@@ -1967,7 +2035,7 @@
 		},
 		{
 			"children":[
-				129
+				130
 			],
 			"extras":{
 				"type":"rb"
@@ -1979,6 +2047,44 @@
 				40,
 				-165
 			]
+		},
+		{
+			"extensions":{
+				"KHR_lights_punctual":{
+					"light":1
+				}
+			},
+			"name":"Point",
+			"rotation":[
+				-0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				60,
+				84,
+				0
+			]
+		},
+		{
+			"extensions":{
+				"KHR_lights_punctual":{
+					"light":2
+				}
+			},
+			"name":"Spot",
+			"rotation":[
+				-0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				0,
+				84,
+				-31
+			]
 		}
 	],
 	"animations":[
@@ -1987,7 +2093,7 @@
 				{
 					"sampler":0,
 					"target":{
-						"node":86,
+						"node":87,
 						"path":"translation"
 					}
 				}
@@ -2006,84 +2112,84 @@
 				{
 					"sampler":0,
 					"target":{
-						"node":112,
+						"node":113,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":1,
 					"target":{
-						"node":112,
+						"node":113,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":2,
 					"target":{
-						"node":112,
+						"node":113,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":3,
 					"target":{
-						"node":110,
+						"node":111,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":4,
 					"target":{
-						"node":110,
+						"node":111,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":5,
 					"target":{
-						"node":110,
+						"node":111,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":6,
 					"target":{
-						"node":108,
+						"node":109,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":7,
 					"target":{
-						"node":108,
+						"node":109,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":8,
 					"target":{
-						"node":108,
+						"node":109,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":9,
 					"target":{
-						"node":113,
+						"node":114,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":10,
 					"target":{
-						"node":113,
+						"node":114,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":11,
 					"target":{
-						"node":113,
+						"node":114,
 						"path":"scale"
 					}
 				}
@@ -2157,84 +2263,84 @@
 				{
 					"sampler":0,
 					"target":{
-						"node":122,
+						"node":123,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":1,
 					"target":{
-						"node":122,
+						"node":123,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":2,
 					"target":{
-						"node":122,
+						"node":123,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":3,
 					"target":{
-						"node":120,
+						"node":121,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":4,
 					"target":{
-						"node":120,
+						"node":121,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":5,
 					"target":{
-						"node":120,
+						"node":121,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":6,
 					"target":{
-						"node":118,
+						"node":119,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":7,
 					"target":{
-						"node":118,
+						"node":119,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":8,
 					"target":{
-						"node":118,
+						"node":119,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":9,
 					"target":{
-						"node":123,
+						"node":124,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":10,
 					"target":{
-						"node":123,
+						"node":124,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":11,
 					"target":{
-						"node":123,
+						"node":124,
 						"path":"scale"
 					}
 				}
@@ -3573,20 +3679,20 @@
 		{
 			"inverseBindMatrices":162,
 			"joints":[
-				112,
-				110,
-				108,
-				113
+				113,
+				111,
+				109,
+				114
 			],
 			"name":"Armature"
 		},
 		{
 			"inverseBindMatrices":187,
 			"joints":[
-				122,
-				120,
-				118,
-				123
+				123,
+				121,
+				119,
+				124
 			],
 			"name":"Armature.001"
 		}

@@ -63,7 +63,6 @@ namespace gltf_loader
         std::vector<std::vector<size_t>> BoneIDs;
         std::vector<std::vector<float>> Weights;
         size_t material = 0;
-        
     };
 
     struct Mesh
@@ -80,6 +79,28 @@ namespace gltf_loader
         std::string name;
         std::vector<size_t> jointIndices;
         std::vector<glm::mat4> inverseBindMatrices;
+    };
+
+    // Enumeração para os tipos de luz
+    enum class LightType
+    {
+        Directional,
+        Point,
+        Spot,
+        // Adicione outros tipos de luz, se necessário
+    };
+
+    // Struct para representar uma luz em um arquivo glTF
+    struct Light
+    {
+        std::string name;    // Nome da luz
+        LightType type;      // Tipo da luz (direcional, ponto, spot, etc.)
+        float intensity;     // Intensidade da luz
+        glm::vec3 color;     // Cor da luz
+        glm::vec3 position;  // Posição da luz (apenas para luzes do tipo ponto e spot)
+        glm::vec3 direction; // Direção da luz (apenas para luzes do tipo direcional e spot)
+        float range;         // Alcance da luz (apenas para luzes do tipo ponto e spot)
+        float spotAngle;     // Ângulo do spot (apenas para luzes do tipo spot)
     };
 
     struct Node
@@ -171,12 +192,14 @@ namespace gltf_loader
         std::vector<Texture> textures;
         std::vector<Skin> skins;
         std::vector<Material> materials;
+        std::vector<Light> Lights;
 
         bool loadBuffers();
         bool loadBufferViews();
         bool loadAccessors();
         bool loadScenes();
         bool loadNodes();
+        bool loadLights();
         glm::vec2 getAnimationTimeDuration(Animation &channel);
         void getAnimationKeyFrame(Animation animation, const AnimationChannel &channel, float time, AnimationKeyFrame &keyFrame);
         bool loadAnimations();
@@ -349,6 +372,33 @@ namespace gltf_loader
         }
 
         return true;
+    }
+
+    glm::vec3 jsonToVec3(const nlohmann::json &json)
+    {
+        if (json.is_array() && json.size() >= 3)
+        {
+            return glm::vec3(json[0].get<float>(), json[1].get<float>(), json[2].get<float>());
+        }
+        else
+        {
+            return glm::vec3(0.0f);
+        }
+    }
+
+    bool GLTFLoader::loadLights()
+    {
+        if (!gltf.contains("extensions"))
+        {
+            if (!gltf["extensions"].contains("KHR_lights_punctual"))
+            {
+                return true;
+            }
+        }
+
+        const nlohmann::json &lightsArray = gltf["extensions"]["KHR_lights_punctual"];
+
+        return true; // Indica que a carga das luzes foi bem-sucedida
     }
 
     bool GLTFLoader::loadNodes()
@@ -1361,6 +1411,8 @@ namespace gltf_loader
         loadMeshes();
         // print({"loadScenes"});
         loadScenes();
+        // print({"loadLights"});
+        loadLights();
         // print({"loadNodes"});
         loadNodes();
         // print({"loadAnimations"});

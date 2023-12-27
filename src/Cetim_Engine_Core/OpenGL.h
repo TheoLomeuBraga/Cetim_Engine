@@ -724,6 +724,9 @@ public:
 	{
 
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
+		if(light_size){
+			print({"lights on sceane: ",light_size});
+		}
 		glUniform1i(glGetUniformLocation(shader_s, "light_size"), light_size);
 
 		for (size_t i = 0; i < light_size; i++)
