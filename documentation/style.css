@@ -15,6 +15,11 @@ body{
 
 .scrollable-div-container {
     float: left;
+    text-align: left;
+
+    
+    
+    
 }
 
 .scrollable-div {
@@ -30,7 +35,7 @@ body{
     background-color: #01003a;
     color: white;
     
-    text-align: left;
+    
     
 }
 
