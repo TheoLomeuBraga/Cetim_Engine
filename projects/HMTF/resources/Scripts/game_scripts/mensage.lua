@@ -21,8 +21,6 @@ dialog_box_father = nil
 dialog_box = nil
 
 function interact(args)
-    
-    
 
     mensage_list_index = 1
     mensage_list = {}
@@ -31,13 +29,9 @@ function interact(args)
     global_data.interacting = 1
     
     if mensage_index ~= nil then
-        print("A")
-        local mensage_indexs = splitString(mensage_index, ":")
-        print("B")
+        local mensage_indexs = splitString(mensage_index, ";")
         local localization_data = serializer.load_table_json(global_data.localization_file)
-        print("C")
         mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]], ";")
-        print("D")
     end
 
     
@@ -63,12 +57,15 @@ function interact(args)
     
 end
 
+
 function stop_interact()
     global_data.pause = 0
     global_data.interacting = 0
     first_frame = false
 
     remove_object(dialog_box_father)
+    dialog_box_father = nil
+    dialog_box = nil
 end
 
 function next_interaction()
@@ -81,8 +78,9 @@ function next_interaction()
         if mensage_list_index > tablelength(mensage_list) then
             stop_interact()
         else
+            
+            --[[
             remove_object(dialog_box_father)
-
 
             local adv_ui = advanced_ui_style()
             adv_ui.text_color = { r = 1, g = 1, b = 1, a = 1 }
@@ -98,6 +96,23 @@ function next_interaction()
             dialog_box.components.ui_component.text_location_x = render_text_location.right
             dialog_box.components.ui_component.text_location_y = render_text_location.top
             dialog_box.components.ui_component:set()
+            ]]
+
+            local adv_ui = advanced_ui_style()
+            adv_ui.text_color = { r = 1, g = 1, b = 1, a = 1 }
+            adv_ui.background_color = { r = 0, g = 0, b = 0, a = 1 }
+            adv_ui.border_color = { r = 0, g = 0, b = 0, a = 1 }
+            adv_ui.border_size = 0.1
+            adv_ui.background_image = "resources/Textures/null.png"
+            adv_ui.border_image = "resources/Textures/null.png"
+            adv_ui.text_size = 0.05
+            
+            
+            dialog_box.components.ui_component.text = mensage_list[mensage_list_index]
+            dialog_box.components.ui_component.text_location_x = render_text_location.right
+            dialog_box.components.ui_component.text_location_y = render_text_location.top
+            dialog_box.components.ui_component:set()
+
         end
     end
 end
