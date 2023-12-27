@@ -22,18 +22,25 @@ dialog_box = nil
 
 function interact(args)
     
+    
 
     mensage_list_index = 1
+    mensage_list = {}
 
     global_data.pause = 1
     global_data.interacting = 1
     
     if mensage_index ~= nil then
+        print("A")
         local mensage_indexs = splitString(mensage_index, ":")
+        print("B")
         local localization_data = serializer.load_table_json(global_data.localization_file)
-        mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]], "\n")
+        print("C")
+        mensage_list = splitString(localization_data[mensage_indexs[1]][mensage_indexs[2]], ";")
+        print("D")
     end
 
+    
 
     local adv_ui = advanced_ui_style()
     adv_ui.text_color = { r = 1, g = 1, b = 1, a = 1 }
@@ -44,12 +51,16 @@ function interact(args)
     adv_ui.border_image = "resources/Textures/null.png"
     adv_ui.text_size = 0.05
 
+    
+
     dialog_box_father = create_object(global_data.layers.hud)
     dialog_box = create_ui_element(dialog_box_father, ui_types.common, { x = 0.5, y = 0.2 }, { x = 0.9, y = 0.5 },
         mensage_list[mensage_list_index], nil, adv_ui)
     dialog_box.components.ui_component.text_location_x = render_text_location.right
     dialog_box.components.ui_component.text_location_y = render_text_location.top
     dialog_box.components.ui_component:set()
+
+    
 end
 
 function stop_interact()
