@@ -1200,7 +1200,7 @@ namespace ManuseioDados
 	{
 
 		// skin_count = 0;
-		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
+		
 		cena_3D ret;
 		
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
@@ -1352,7 +1352,7 @@ namespace ManuseioDados
 
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
 	{
-
+		std::lock_guard<std::mutex> lock(cenas_3D_mtx);
 		if (ManuseioDados::Existe(local))
 		{
 			shared_ptr<cena_3D> ret = funcoes_abrir_modelos_3D[pegar_estencao_arquivo(local)](local);
