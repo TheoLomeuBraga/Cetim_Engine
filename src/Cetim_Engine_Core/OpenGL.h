@@ -381,6 +381,7 @@ public:
 				}
 			}
 		}
+		print({"oclusion_querie_in_view",oclusion_querie_in_view});
 	}
 
 	void limpar_oclusion_queries()

@@ -267,9 +267,11 @@ public:
 
 	void atualisar()
 	{
+		thread t1(esvasiar_lixeira);
+		thread t2(&cena_objetos::clean_lists,this);
 		
-		esvasiar_lixeira();
-		clean_lists();
+		t1.join();
+		t2.join();
 
 		adicionar_objeto_lista(objeto_cena);
 		ordenar_luzes();

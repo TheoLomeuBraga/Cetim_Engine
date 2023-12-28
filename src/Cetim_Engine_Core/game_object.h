@@ -180,14 +180,7 @@ public:
 	bool tem_componente()
 	{
 		shared_ptr<componente> c = pegar_componente<X>();
-		if (c == NULL)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return c != NULL;
 	}
 
 	void remover_componente(string s)
