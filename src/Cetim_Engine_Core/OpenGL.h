@@ -13,6 +13,7 @@
 #include "LoopPrincipal.h"
 
 #include <GL/glew.h>
+#include <future> 
 
 #include "game_object.h"
 #include "camera.h"
@@ -290,6 +291,8 @@ public:
 		glDisable(GL_CULL_FACE);
 		unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 		glUseProgram(shader_s);
+		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
 		if (!show_oclusion_querie)
 		{
@@ -305,20 +308,21 @@ public:
 			if (camada == rm->camada)
 			{
 
-				if (tf != NULL && rm != NULL && rm->usar_oclusao)
+				if (tf != NULL && rm != NULL && !tf->UI && rm->usar_oclusao && !tf->UI)
 				{
 
+					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+					
 					glBeginQuery(GL_SAMPLES_PASSED, p.second);
 
 					// ajustar
 					glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+					
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
-					glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-					glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
-					for (char i = 0; i < rm->malhas.size(); i++)
+					for (unsigned char i = 0; i < rm->malhas.size(); i++)
 					{
+
 						shared_ptr<malha> m = rm->malhas[i];
 
 						if (rm->mats[i].cor.w < 1)
@@ -374,14 +378,14 @@ public:
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
 			if (rm->usar_oclusao)
 			{
-				rm->ligado = oclusion_queries_resultados[p.first] > 0;
-				if (oclusion_queries_resultados[p.first] > 0)
+				rm->ligado = oclusion_queries_resultados[p.first];
+				if (oclusion_queries_resultados[p.first])
 				{
 					oclusion_querie_in_view++;
 				}
 			}
 		}
-		print({"oclusion_querie_in_view",oclusion_querie_in_view});
+		// print({"oclusion_querie_in_view",oclusion_querie_in_view});
 	}
 
 	void limpar_oclusion_queries()
@@ -725,8 +729,9 @@ public:
 	{
 
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
-		if(light_size){
-			print({"lights on sceane: ",light_size});
+		if (light_size)
+		{
+			print({"lights on sceane: ", light_size});
 		}
 		glUniform1i(glGetUniformLocation(shader_s, "light_size"), light_size);
 
@@ -857,7 +862,7 @@ public:
 
 				if (is_skin)
 				{
-					criar_oclusion_querie(obj);
+					// criar_oclusion_querie(obj);
 
 					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
 					{
@@ -868,6 +873,10 @@ public:
 							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
 						}
 					}
+				}
+				else
+				{
+					criar_oclusion_querie(obj);
 				}
 
 				if (RM->ligado || is_skin)
@@ -907,7 +916,10 @@ public:
 							apply_material(shader_s, mat);
 							apply_light(shader_s);
 
-							RM->usar_oclusao = false;
+							if (is_skin)
+							{
+								RM->usar_oclusao = false;
+							}
 
 							if (ma->pele)
 							{
@@ -976,7 +988,7 @@ public:
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
 
-				#define texto rt->texto
+#define texto rt->texto
 
 				unsigned int count_linhas = 0;
 				for (int i = 0; i < texto.size(); i++)
@@ -991,7 +1003,6 @@ public:
 
 				if (font != NULL)
 				{
-
 
 					vec2 tamanho_texto = vec2(0, 0);
 					vector<vec2> tamanho_linhas = {};
@@ -1502,7 +1513,7 @@ public:
 		if (cam->pegar_componente<transform_>() != NULL)
 		{
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
-			//nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
+			// nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
 		}
 
 		return {nontransparent, transparent, ui};
@@ -1766,9 +1777,10 @@ public:
 			{
 				if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
 				{
-					pegar_oclusion_queries();
-					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera], a);
 					limpar_oclusion_queries();
+
+					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera], a);
+					pegar_oclusion_queries();
 
 					reindenizar_camada_objetos(cena_objetos_selecionados->objetos_camadas_render[a], cena_objetos_selecionados->cameras[relevancia_camera]);
 				}
