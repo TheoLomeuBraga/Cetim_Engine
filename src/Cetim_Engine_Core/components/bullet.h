@@ -327,25 +327,6 @@ public:
 
             quaternion = tf->quater;
 
-            /*
-            if (esse_objeto->pai != NULL && esse_objeto->pai->pegar_componente<transform_>() != NULL && dinamica != dinamico)
-            {
-                tf->paiTF = esse_objeto->pai->pegar_componente<transform_>().get();
-
-                tf->pos = tf->pegar_pos_global();
-                tf->quater = tf->pegar_qua_global();
-                quaternion = tf->quater;
-                
-                //tf->esca = tf->pegar_scale_global();
-                //print({"tf->esca",tf->esca.x,tf->esca.y,tf->esca.z});
-                tf->usar_pai = false;
-            }
-            */
-            
-            
-
-            
-
             transform.setOrigin(glmToBt(tf->pos));
             transform.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
         }

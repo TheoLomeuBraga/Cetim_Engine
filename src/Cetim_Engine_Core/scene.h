@@ -97,6 +97,8 @@ public:
 				///*
 				// render shader
 				shared_ptr<render_sprite> RS = obj->pegar_componente<render_sprite>();
+				shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 				if ((RS != NULL && RS->ligado))
 				{
 					if (objetos_camadas_render_id.size() < (RS->camada + 1))
@@ -112,8 +114,8 @@ public:
 					objetos_camadas_render[RS->camada].push_back(obj);
 				}
 
-				shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
-				if ((PMESH != NULL && PMESH->ligado))
+
+				else if ((PMESH != NULL && PMESH->ligado))
 				{
 					if (objetos_camadas_render_id.size() < (PMESH->camada + 1))
 					{
@@ -128,8 +130,8 @@ public:
 					objetos_camadas_render[PMESH->camada].push_back(obj);
 				}
 
-				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-				if (tf != NULL && obj->get_components_count() > 1)
+				
+				else if (tf != NULL && obj->get_components_count() > 1)
 				{
 
 					// camera
@@ -142,6 +144,10 @@ public:
 
 					// objetos_camadas_render_id
 					shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
+					shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
+					shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
+					shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
+					shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
 					if ((rs != NULL && rs->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (rs->camada + 1))
@@ -156,9 +162,8 @@ public:
 						}
 						objetos_camadas_render[rs->camada].push_back(obj);
 					}
-
-					shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
-					if ((RT != NULL && RT->ligado))
+					
+					else if ((RT != NULL && RT->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RT->camada + 1))
 						{
@@ -172,8 +177,8 @@ public:
 						}
 						objetos_camadas_render[RT->camada].push_back(obj);
 					}
-					shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
-					if ((RTM != NULL && RTM->ligado))
+					
+					else if ((RTM != NULL && RTM->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RTM->camada + 1))
 						{
@@ -188,8 +193,8 @@ public:
 						objetos_camadas_render[RTM->camada].push_back(obj);
 					}
 
-					shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-					if ((RM != NULL && RM->ligado))
+					
+					else if ((RM != NULL && RM->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RM->camada + 1))
 						{
@@ -204,8 +209,8 @@ public:
 						objetos_camadas_render[RM->camada].push_back(obj);
 					}
 					//*/
-					shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
-					if ((FL != NULL && FL->ligado))
+					
+					else if ((FL != NULL && FL->ligado))
 					{
 						fontes_luzes_id.push_back(obj->ID);
 					}
@@ -267,11 +272,16 @@ public:
 
 	void atualisar()
 	{
+		/*
 		thread t1(esvasiar_lixeira);
 		thread t2(&cena_objetos::clean_lists,this);
 		
 		t1.join();
 		t2.join();
+		*/
+
+		esvasiar_lixeira();
+		clean_lists();
 
 		adicionar_objeto_lista(objeto_cena);
 		ordenar_luzes();

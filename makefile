@@ -1,9 +1,9 @@
 #COMPILER := g++
 COMPILER := clang++ -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions 
 
-FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -s -O2 -ffast-math 
-FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -s -O2 -ffast-math
-FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -ffast-math # -O2 -flto -s    # -march=native #-pg -g
+FLAGS_WINDOWS := -std=c++17 -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -s -O2 -ffast-math -march=x86-64
+FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -s -O2 -ffast-math -march=x86-64
+FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ # -O2 -ffast-math -march=x86-64  
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0
 DEFINITIONS_LINUX := -DLINUX -DUNIX 

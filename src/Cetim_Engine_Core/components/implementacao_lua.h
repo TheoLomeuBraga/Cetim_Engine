@@ -2841,23 +2841,7 @@ public:
 			iniciar();
 		}
 	}
-	void colidir(colis_info col)
-	{
-		/*
-		for (pair<string, lua_State *> p : estados_lua)
-		{
-			lua_State *L = p.second;
-
-			if (col.obj != NULL)
-			{
-
-				lua_getglobal(L, "COLLIDE");
-				lua_pushtable(L, colis_info_table(col));
-				lua_call(L, 1, 0);
-			}
-		}
-		*/
-	}
+	
 	void finalisar()
 	{
 		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());
