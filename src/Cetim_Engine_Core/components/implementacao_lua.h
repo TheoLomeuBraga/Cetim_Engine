@@ -34,6 +34,8 @@ using namespace Tempo;
 
 #include "benchmark.h"
 
+#include "args.h"
+
 #ifdef USE_LUA_JIT
 extern "C"
 {
@@ -2581,9 +2583,9 @@ void load_base_lua_state(lua_State *L, string path)
 	luaL_openlibs(L);
 
 	// configurar diretorio
-	string lua_path = pegar_local_aplicacao() + "/resources/Scripts/?.lua;" + pegar_local_aplicacao() + "/resources/Scripts/engine_libs/?.lua";
+	string lua_path = argumentos[1] + "/resources/Scripts/?.lua;" + argumentos[1] + "/resources/Scripts/engine_libs/?.lua";
 
-	string link_libs_path = pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.dll;") + pegar_local_aplicacao() + string("/resources/Scripts/link_libs/?.so");
+	string link_libs_path = argumentos[1] + string("/resources/Scripts/link_libs/?.dll;") + argumentos[1] + string("/resources/Scripts/link_libs/?.so");
 
 	lua_getglobal(L, "package");
 	lua_pushstring(L, lua_path.c_str());

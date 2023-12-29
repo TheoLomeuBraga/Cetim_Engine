@@ -66,7 +66,6 @@ void ShutdownImGui() {
 #include "bullet.h"
 #include "input.h"
 #include "read_map_file.h"
-#include "init_lib_functions.h"
 #include "render_mesh.h"
 #include "ui_element.h"
 #include <bitset>
@@ -156,8 +155,6 @@ int main(int argc, char **argv)
     {
         setar_diretorio_aplicacao("/home/theo/Cpp/TMP_TECH_DEMO_2D");
     }
-    
-    escrever(pegar_local_aplicacao());
 
     comecar();
 

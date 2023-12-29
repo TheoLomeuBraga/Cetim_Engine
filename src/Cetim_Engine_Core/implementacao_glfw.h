@@ -7,6 +7,8 @@
 #include <chrono>
 #include <thread>
 
+#include "args.h"
+
 #include "benchmark.h"
 
 GLFWwindow *janela;
@@ -626,12 +628,12 @@ void IniciarJanela()
 	if (janelaInteira)
 	{
 		// janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, configuracoes::janelaConfig.nome, glfwGetPrimaryMonitor(), NULL);
-		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(pegar_local_aplicacao()).c_str(), glfwGetPrimaryMonitor(), NULL);
+		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(argumentos[1]).c_str(), glfwGetPrimaryMonitor(), NULL);
 	}
 	else
 	{
 		// janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, configuracoes::janelaConfig.nome, NULL, NULL);
-		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(pegar_local_aplicacao()).c_str(), NULL, NULL);
+		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(argumentos[1]).c_str(), NULL, NULL);
 	}
 
 	if (janela == NULL)

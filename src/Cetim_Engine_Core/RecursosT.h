@@ -1169,10 +1169,7 @@ vector<pair<X, Y>> map_vetor(map<X, Y> m)
 	return ret;
 }
 
-string pegar_local_aplicacao()
-{
-	return std::filesystem::current_path().string();
-}
+
 
 void setar_diretorio_aplicacao(string local)
 {

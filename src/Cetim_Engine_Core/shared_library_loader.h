@@ -2,7 +2,7 @@
 
 typedef void* (*Shared_Library_Loader_Function)(void*);
 
-#if defined(WINDOWS)
+#if defined(_WIN64)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 class Shared_Library_Loader
@@ -30,7 +30,7 @@ public:
 };
 #endif
 
-#if defined(UNIX)
+#if defined(__linux__)
 #include <dlfcn.h>
 class Shared_Library_Loader
 {
