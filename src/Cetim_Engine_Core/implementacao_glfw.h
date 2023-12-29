@@ -259,7 +259,7 @@ namespace controle
 		return count;
 	}
 
-#ifdef LINUX
+#ifdef __linux__
 	map<std::string, std::string> ajust_keys_map = {
 		pair<std::string, std::string>("0", "a"),
 		pair<std::string, std::string>("1", "b"),
@@ -285,7 +285,33 @@ namespace controle
 	};
 #endif
 
-#ifdef WINDOWS
+#ifdef _WIN32
+	map<std::string, std::string> ajust_keys_map = {
+		pair<std::string, std::string>("0", "a"),
+		pair<std::string, std::string>("1", "b"),
+		pair<std::string, std::string>("2", "x"),
+		pair<std::string, std::string>("3", "y"),
+		pair<std::string, std::string>("4", "lb"),
+		pair<std::string, std::string>("5", "rb"),
+		pair<std::string, std::string>("6", "back"),
+		pair<std::string, std::string>("7", "start"),
+		pair<std::string, std::string>("8", "la"),
+		pair<std::string, std::string>("9", "ra"),
+		pair<std::string, std::string>("10", "up"),
+		pair<std::string, std::string>("11", "right"),
+		pair<std::string, std::string>("12", "down"),
+		pair<std::string, std::string>("13", "left"),
+
+		pair<std::string, std::string>("axis_0", "lx"),
+		pair<std::string, std::string>("axis_1", "ly"),
+		pair<std::string, std::string>("axis_2", "rx"),
+		pair<std::string, std::string>("axis_3", "ry"),
+		pair<std::string, std::string>("axis_4", "lt"),
+		pair<std::string, std::string>("axis_5", "rt"),
+	};
+#endif
+
+#ifdef _WIN64
 	map<std::string, std::string> ajust_keys_map = {
 		pair<std::string, std::string>("0", "a"),
 		pair<std::string, std::string>("1", "b"),
@@ -366,7 +392,7 @@ namespace controle
 			for (int i = 0; i < axisCount; ++i)
 			{
 
-#ifdef LINUX
+#ifdef __linux__
 				if (i == 2 || i == 5)
 				{
 					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
@@ -377,7 +403,18 @@ namespace controle
 				}
 #endif
 
-#ifdef WINDOWS
+#ifdef _WIN32
+				if (i == 4 || i == 5)
+				{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+				}
+				else
+				{
+					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+				}
+#endif
+
+#ifdef _WIN64
 				if (i == 4 || i == 5)
 				{
 					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;

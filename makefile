@@ -6,7 +6,7 @@ FLAGS_WINDOWS_DEBUG := -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -s -O2 -ffast-math
 FLAGS_LINUX := -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g # -O2 -ffast-math -march=x86-64  
 
 DEFINITIONS_WINDOWS := -DWINDOWS -D_HAS_STD_BYTE=0
-DEFINITIONS_LINUX := -DLINUX -DUNIX 
+DEFINITIONS_LINUX := 
 
 TARGET_ENGINE_WINDOWS := ./build/cetim_engine.exe
 TARGET_ENGINE_LINUX := ./build/cetim_engine
