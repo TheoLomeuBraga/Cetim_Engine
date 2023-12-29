@@ -36,6 +36,8 @@ using namespace Tempo;
 
 #include "args.h"
 
+#include "config_folder_path.h"
+
 #ifdef USE_LUA_JIT
 extern "C"
 {
@@ -619,6 +621,11 @@ namespace funcoes_ponte
 	*/
 
 	// screen
+
+	int get_config_folder_path(lua_State *L){
+		lua_pushstring(L,config_folder_path().c_str());
+		return 1;
+	}
 
 	int get_set_window(lua_State *L)
 	{
@@ -2605,6 +2612,8 @@ void load_base_lua_state(lua_State *L, string path)
 	}
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
+
+	lua_register(L, "get_config_folder_path", funcoes_ponte::get_config_folder_path);
 
 	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
