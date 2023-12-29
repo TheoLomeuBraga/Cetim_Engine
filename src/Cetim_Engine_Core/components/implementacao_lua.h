@@ -38,6 +38,15 @@ using namespace Tempo;
 
 #include "config_folder_path.h"
 
+#ifdef _WIN32
+#include <direct.h>
+#define mkdir(path, mode) _mkdir(path)
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 #ifdef USE_LUA_JIT
 extern "C"
 {
@@ -622,9 +631,40 @@ namespace funcoes_ponte
 
 	// screen
 
-	int get_config_folder_path(lua_State *L){
-		lua_pushstring(L,config_folder_path().c_str());
+	int get_config_folder_path(lua_State *L)
+	{
+		lua_pushstring(L, config_folder_path().c_str());
 		return 1;
+	}
+
+
+
+	// Função em C para criar um diretório
+	int create_directory(lua_State *L)
+	{
+		const char *diretorio = luaL_checkstring(L, 1);
+
+#ifdef _WIN32
+		if (_mkdir(diretorio) == 0)
+		{
+			lua_pushboolean(L, 1);
+		}
+		else
+		{
+			lua_pushboolean(L, 0);
+		}
+#else
+		if (mkdir(diretorio, S_IRWXU | S_IRWXG | S_IRWXO) == 0)
+		{
+			lua_pushboolean(L, 1);
+		}
+		else
+		{
+			lua_pushboolean(L, 0);
+		}
+#endif
+
+		return 1; // Número de valores de retorno
 	}
 
 	int get_set_window(lua_State *L)
@@ -2039,7 +2079,8 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int get_set_light(lua_State *L){
+	int get_set_light(lua_State *L)
+	{
 		if (lua_tonumber(L, 1) == get_lua)
 		{
 			Table ret;
@@ -2341,7 +2382,8 @@ namespace funcoes_ponte
 			lua_pushtable(lua_global_data, lua_totable(L, 2));
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
-		else if (lua_type_id == LUA_TNIL){
+		else if (lua_type_id == LUA_TNIL)
+		{
 			lua_pushnil(lua_global_data);
 			lua_setglobal(lua_global_data, var_name.c_str());
 		}
@@ -2433,6 +2475,10 @@ namespace funcoes_ponte
 	}
 
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
+		pair<string, map<string, lua_function>>("file_system", {
+																   pair<string, lua_function>("get_config_folder_path", funcoes_ponte::get_config_folder_path),
+																   pair<string, lua_function>("create_directory", funcoes_ponte::create_directory),
+															   }),
 		pair<string, map<string, lua_function>>("game_object", {
 																   pair<string, lua_function>("create_object", funcoes_ponte::create_object),
 																   pair<string, lua_function>("get_object_with_name", funcoes_ponte::get_object_with_name),
@@ -2612,8 +2658,7 @@ void load_base_lua_state(lua_State *L, string path)
 	}
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
-
-	lua_register(L, "get_config_folder_path", funcoes_ponte::get_config_folder_path);
+	
 
 	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
@@ -2852,7 +2897,7 @@ public:
 			iniciar();
 		}
 	}
-	
+
 	void finalisar()
 	{
 		vector<pair<string, lua_State *>> pairs(estados_lua.begin(), estados_lua.end());

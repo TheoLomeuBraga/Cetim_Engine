@@ -10,8 +10,10 @@ require("short_cuts.create_sound")
 require("objects.window")
 local serializer = require("libs.serialize")
 require("math")
+register_function_set("file_system")
 
-
+local config_path = get_config_folder_path() .. "/hmtf"
+local config_file_path = config_path .. "/configs_save.lua"
 
 local arow_style = deepcopy(empty_style)
 arow_style.text_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -19,7 +21,7 @@ arow_style.text_size = 0.1
 
 in_main_menu = 0
 
-local ui_selection_max_min = {1,1}
+local ui_selection_max_min = { 1, 1 }
 
 menu_types = {
     title = "title",
@@ -50,23 +52,9 @@ function save_configs()
         full_screen = window.full_screen
     }
 
-    serializer.save_table("config/configs_save.lua", configs)
-end
 
-function load_configs()
-    local configs = serializer.load_table("config/configs_save.lua")
-    if configs ~= nil then
-        serializer.save_table("config/configs_save.lua", configs)
-        get_set_global_volume(configs.volume)
-        global_data.mouse_sensitivity = configs.mouse_sensitivity
-        window.full_screen = configs.full_screen
-        window:set()
-    else
-        get_set_global_volume(100)
-        global_data.mouse_sensitivity = 6
-        window.full_screen = false
-        window:set()
-    end
+    create_directory(config_path)
+    serializer.save_table(config_file_path, configs)
 end
 
 --button functions
@@ -75,7 +63,8 @@ local going_to_main_menu = false
 function go_to_main_menu(state, id)
     if state == "click" then
         remove_object(this_object_ptr)
-        game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane({ "main_menu" })
+        game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane({
+            "main_menu" })
         going_to_main_menu = true
     end
 end
@@ -96,7 +85,7 @@ function go_to_start_menu(state, id)
     if state == "click" then
         select_menu(menu_types.start)
         save_configs()
-        ui_selection_max_min = {2,4}
+        ui_selection_max_min = { 2, 4 }
         global_data.ui_selection_id = 2
     end
 end
@@ -109,7 +98,7 @@ end
 function go_to_title_menu(state, id)
     if state == "click" then
         select_menu(menu_types.title)
-        ui_selection_max_min = {1,1}
+        ui_selection_max_min = { 1, 1 }
         global_data.ui_selection_id = 1
     end
 end
@@ -117,7 +106,7 @@ end
 function go_to_config_menu(state, id)
     if state == "click" then
         select_menu(menu_types.config)
-        ui_selection_max_min = {5,8}
+        ui_selection_max_min = { 5, 8 }
         global_data.ui_selection_id = 5
     end
 end
@@ -125,7 +114,7 @@ end
 function go_to_play_menu(state, id)
     if state == "click" then
         select_menu(menu_types.play)
-        ui_selection_max_min = {9,11}
+        ui_selection_max_min = { 9, 11 }
         global_data.ui_selection_id = 9
     end
 end
@@ -140,11 +129,11 @@ end
 
 function toogle_full_screen(state, id)
     if state == "click" then
-        window:get()
         window.full_screen = not window.full_screen
         window.resolution.x = 256
         window.resolution.y = 224
         window:set()
+        save_configs()
     end
 end
 
@@ -153,7 +142,7 @@ function sensitivity_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
-        
+
         pos.x = pos.x + global_data.inputs.mouse_view_x
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
 
@@ -166,7 +155,7 @@ function sensitivity_slider(state, id)
     elseif state == "hover" then
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
-        
+
         time:get()
         pos.x = pos.x + (-global_data.inputs.left * time.delta * 0.5)
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
@@ -183,7 +172,6 @@ end
 volume_display = {}
 function volume_slider(state, id)
     if state == "hold" then
-
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + global_data.inputs.mouse_view_x
@@ -196,9 +184,7 @@ function volume_slider(state, id)
 
         volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
-
     elseif state == "hover" then
-
         local drag_obj = game_object(id)
         local pos = drag_obj.components.ui_component.position
         pos.x = pos.x + (-global_data.inputs.left * time.delta * 0.5)
@@ -211,7 +197,6 @@ function volume_slider(state, id)
 
         volume_display.components.ui_component:set()
         drag_obj.components.ui_component:set()
-
     end
 end
 
@@ -231,7 +216,7 @@ function start_title_menu()
         { x = 0.2, y = 0.2 }, "start", nil, start_style)
 
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = 0.5, y = 0.5 },
-        { x = 0.25, y = 0.2 }, "start", "go_to_start_menu", start_style, arow_style,1)
+        { x = 0.25, y = 0.2 }, "start", "go_to_start_menu", start_style, arow_style, 1)
 end
 
 function start_start_menu()
@@ -242,29 +227,28 @@ function start_start_menu()
     if in_main_menu > 0 then
         button.text_color = { r = 1, g = 1, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
-            { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style,2)
+            { x = 0.5, y = 0.15 }, "play", "go_to_play_menu", button, arow_style, 2)
 
         button.text_color = { r = 0, g = 1, b = 1, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
-            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style,3)
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style, 3)
 
         button.text_color = { r = 1, g = 0, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-            { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style,4)
+            { x = 0.5, y = 0.15 }, "exit", "quit_game", button, arow_style, 4)
     else
-        
         button.text_color = { r = 0, g = 1, b = 1, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.8 },
-            { x = 0.5, y = 0.15 }, "resume", "resume_game", button, arow_style,2)
+            { x = 0.5, y = 0.15 }, "resume", "resume_game", button, arow_style, 2)
 
-        
+
         button.text_color = { r = 1, g = 1, b = 0, a = 1 }
         create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.5 },
-            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style,3)
+            { x = 0.5, y = 0.15 }, "config", "go_to_config_menu", button, arow_style, 3)
 
-            button.text_color = { r = 1, g = 0, b = 0, a = 1 }
-            create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
-                { x = 0.5, y = 0.15 }, "main menu", "go_to_main_menu", button, arow_style,4)
+        button.text_color = { r = 1, g = 0, b = 0, a = 1 }
+        create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -0.5, y = 0.2 },
+            { x = 0.5, y = 0.15 }, "main menu", "go_to_main_menu", button, arow_style, 4)
     end
 end
 
@@ -281,7 +265,7 @@ function start_config_menu()
     exit_hover_style = deepcopy(exit_style)
     exit_hover_style.background_color = { r = 1, g = 0.5, b = 0.5, a = 1 }
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.8, y = 0.85 }, { x = 0.1, y = 0.1 }, "<",
-        "go_to_start_menu", { exit_style, exit_hover_style },5)
+        "go_to_start_menu", { exit_style, exit_hover_style }, 5)
 
     title_style.text_color = { r = 1, g = 1, b = 1, a = 1 }
 
@@ -292,15 +276,21 @@ function start_config_menu()
 
     --add sensitivity control
 
-    local configs = serializer.load_table("config/configs_save.lua")
+    local configs = serializer.load_table(config_file_path)
+    if configs == nil then
+        save_configs()
+        configs = serializer.load_table(config_file_path)
+    end
 
+    window.full_screen = configs.full_screen
+    window:set()
 
     sensitivity_display = create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.6 },
         { x = 0.5, y = 0.17 }, "sensitivity: " .. configs.mouse_sensitivity, nil, title_style)
 
     local sensitivity_slider_pos = ((configs.mouse_sensitivity / 30) * 0.6) + 0.2
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = sensitivity_slider_pos - 2, y = 0.55 },
-        { x = 0.2, y = 0.15 }, "^", "sensitivity_slider", { title_style, arow_style, arow_style },6)
+        { x = 0.2, y = 0.15 }, "^", "sensitivity_slider", { title_style, arow_style, arow_style }, 6)
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -314,7 +304,7 @@ function start_config_menu()
     local volume_slider_pos = ((configs.volume / 100) * 0.6) + 0.2
     --local volume_slider_pos = 0.5
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = volume_slider_pos - 2, y = 0.25 },
-        { x = 0.2, y = 0.15 }, "^", "volume_slider", { title_style, arow_style, arow_style },7)
+        { x = 0.2, y = 0.15 }, "^", "volume_slider", { title_style, arow_style, arow_style }, 7)
 
     local slider_bar = deepcopy(title_style)
     slider_bar.background_color = { r = 1, g = 1, b = 0, a = 1 }
@@ -325,7 +315,7 @@ function start_config_menu()
     local button = deepcopy(title_style)
     button.text_size = 0.06
     create_ui_element(menu_objects.base.object_ptr, ui_types.common, { x = -1.5, y = 0.1 },
-        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", { title_style, arow_style, arow_style },8)
+        { x = 0.5, y = 0.17 }, "toogle full screen", "toogle_full_screen", { title_style, arow_style, arow_style }, 8)
 end
 
 function start_play_menu()
@@ -335,15 +325,15 @@ function start_play_menu()
 
     button.text_color = { r = 0.2, g = 1, b = 0.2, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.8 },
-        { x = 0.5, y = 0.15 }, "new game", "new_game", button, arow_style,9)
+        { x = 0.5, y = 0.15 }, "new game", "new_game", button, arow_style, 9)
 
     button.text_color = { r = 0, g = 1, b = 1, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.5 },
-        { x = 0.5, y = 0.15 }, "load game", "go_to_load_menu", button, arow_style,10)
+        { x = 0.5, y = 0.15 }, "load game", "go_to_load_menu", button, arow_style, 10)
 
     button.text_color = { r = 1, g = 0, b = 0, a = 1 }
     create_ui_element_with_arows(menu_objects.base.object_ptr, ui_types.common, { x = -2.5, y = 0.2 },
-        { x = 0.5, y = 0.15 }, "back", "go_to_start_menu", button, arow_style,11)
+        { x = 0.5, y = 0.15 }, "back", "go_to_start_menu", button, arow_style, 11)
 end
 
 function start_all_menus()
@@ -381,7 +371,7 @@ function start_all_menus()
 
     if in_main_menu < 1 then
         select_menu(menu_types.start)
-        ui_selection_max_min = {2,4}
+        ui_selection_max_min = { 2, 4 }
         global_data.ui_selection_id = 2
     end
 end
@@ -395,7 +385,7 @@ function START()
     this_object = game_object(this_object_ptr)
 
     start_all_menus()
-    
+
     global_data.ui_selection_id = 1
 end
 
@@ -403,7 +393,7 @@ function UPDATE()
     if global_data.inputs.menu > 0 and global_data.inputs_last_frame.menu < 1 and in_main_menu < 1 then
         remove_object(this_object_ptr)
     end
-    
+
     if global_data.inputs.foward == 1 and global_data.inputs_last_frame.foward ~= 1 then
         global_data.ui_selection_id = global_data.ui_selection_id - 1
     end
@@ -426,7 +416,6 @@ function END()
     end
     save_configs()
     global_data.open_pause_menu_ptr = nil
-    
 end
 
 function COLLIDE(collision_info)
