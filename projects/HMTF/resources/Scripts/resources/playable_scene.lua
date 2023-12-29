@@ -5,6 +5,7 @@ require("objects.global_data")
 require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_render_shader")
+require("resources.enemy_api")
 
 menus = {
     open_pause_menu = function()
@@ -351,8 +352,10 @@ cenary_builders = {
         elseif part_data.variables.type == "enemy" then
 
             if part_data.variables.enemy_type == nil or part_data.variables.enemy_type == "test_enemy" then
-                
+                summon_enemy(deepcopy(part_data.position),part_data.rotation.y,"test_enemy")
             end
+
+            change_ret()
 
         elseif part_data.variables.type == nil then
             add_mesh(nil)
