@@ -348,8 +348,15 @@ cenary_builders = {
 
             add_mesh(nil)
             add_physics(true, true)
+        elseif part_data.variables.type == "enemy" then
+
+            if part_data.variables.enemy_type == nil or part_data.variables.enemy_type == "test_enemy" then
+                
+            end
+
         elseif part_data.variables.type == nil then
             add_mesh(nil)
+        
         end
         
         if yield == true then
