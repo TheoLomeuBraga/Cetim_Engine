@@ -14,7 +14,7 @@
 #pragma comment(user, "Compiled on " __DATE__ " at " __TIME__)
 #pragma comment(lib, "XInput.lib")
 
-using namespace std;
+using String = std::string;
 
 class Controller {
 private:

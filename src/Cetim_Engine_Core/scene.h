@@ -3,7 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <thread>
-using namespace std;
+using String = std::string;
 
 #include "RecursosT.h"
 #include "light.h"

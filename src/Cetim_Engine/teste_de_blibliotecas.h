@@ -6,7 +6,7 @@
 
 
 #include <iostream>
-using namespace std;
+using String = std::string;
 
 
 #include <stdio.h>

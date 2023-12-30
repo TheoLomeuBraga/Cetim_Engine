@@ -6,7 +6,7 @@
 #include <functional>
 #include <thread>
 
-// using namespace std;
+// using String = std::string;
 
 // #include "imgui.cpp"
 // #include "imgui_draw.cpp"

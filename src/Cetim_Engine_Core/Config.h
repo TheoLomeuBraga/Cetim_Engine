@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-using namespace std;
+using String = std::string;
 #include "RecursosT.h"
 #include <GLFW/glfw3.h>
 

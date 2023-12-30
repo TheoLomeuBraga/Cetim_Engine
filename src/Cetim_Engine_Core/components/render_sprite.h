@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <functional>
-using namespace std;
+using string = std::string;
 
 #include "RecursosT.h"
 #include "game_object.h"

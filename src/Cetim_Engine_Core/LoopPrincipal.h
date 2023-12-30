@@ -4,7 +4,7 @@
 #include<algorithm>
 #include <functional>
 #include <thread>
-using namespace std;
+using String = std::string;
 
 //imgui
 /*

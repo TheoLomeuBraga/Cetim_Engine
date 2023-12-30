@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-using namespace std;
+using String = std::string;
 #include  <fstream>
 #include <sstream>
 //#include <filesystem>

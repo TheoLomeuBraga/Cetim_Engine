@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <cmath>
-using namespace std;
+using String = std::string;
 #include "RecursosT.h"
 
 #include "transform.h"

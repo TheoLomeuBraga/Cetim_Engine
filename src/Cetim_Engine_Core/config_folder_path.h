@@ -4,8 +4,9 @@
 #include <string>
 
 #ifdef _WIN64
+#define WIN32_LEAN_AND_MEAN
     #include <windows.h>
-    #include <Shlobj.h>
+
 #else
     #include <unistd.h>
     #include <sys/types.h>
@@ -16,10 +17,9 @@ std::string config_folder_path() {
     std::string diretorio;
 
     #ifdef _WIN64
-        PWSTR path;
-        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path))) {
-            diretorio = std::wstring(path);
-            CoTaskMemFree(path);
+       const char *appData = getenv("APPDATA");
+        if (appData != nullptr) {
+            diretorio = appData;
         } else {
             std::cerr << "Erro ao obter o diretório Roaming no Windows." << std::endl;
         }

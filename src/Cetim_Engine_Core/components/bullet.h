@@ -710,7 +710,7 @@ void iniciar_iniciar_global_bullet()
 {
 
     thread t(iniciar_global_bullet);
-    bullet_threads.push_back(move(t));
+    bullet_threads.push_back(std::move(t));
 }
 
 void terminar_iniciar_global_bullet()
@@ -779,7 +779,7 @@ void iniciar_atualisar_global_bullet()
 {
 
     thread t(atualisar_global_bullet);
-    bullet_threads.push_back(move(t));
+    bullet_threads.push_back(std::move(t));
 }
 
 void terminar_atualisar_global_bullet()

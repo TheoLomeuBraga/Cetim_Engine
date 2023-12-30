@@ -1,7 +1,7 @@
 #pragma once
 #include <thread>
 #include <GLFW/glfw3.h>
-using namespace std;
+using String = std::string;
 
 #include "Config.h"
 #include "Tempo.h"

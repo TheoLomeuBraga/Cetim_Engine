@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-using namespace std;
+using string = std::string;
 #include <fstream>
 #include <sstream>
 #include <thread>
