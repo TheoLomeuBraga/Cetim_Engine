@@ -653,7 +653,8 @@ namespace funcoes_ponte
 		{
 			lua_pushboolean(L, 0);
 		}
-#else
+#endif
+#ifdef __linux__
 		if (mkdir(diretorio, S_IRWXU | S_IRWXG | S_IRWXO) == 0)
 		{
 			lua_pushboolean(L, 1);
