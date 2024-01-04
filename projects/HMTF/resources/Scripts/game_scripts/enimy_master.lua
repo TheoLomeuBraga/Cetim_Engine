@@ -18,7 +18,7 @@ function UPDATE()
         test_enemy = function (enemy)
             
         end,
-    }
+    }e
     for index, value in ipairs(enemys) do
         update_entity_map[value.type](value)
         print(value.type)
