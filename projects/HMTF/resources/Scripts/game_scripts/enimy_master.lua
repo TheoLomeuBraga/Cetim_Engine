@@ -16,11 +16,12 @@ end
 function UPDATE()
     local update_entity_map = {
         test_enemy = function (enemy)
-            print("AAAAA")
+            
         end,
     }
     for index, value in ipairs(enemys) do
         update_entity_map[value.type](value)
+        print(value.type)
     end
 end
 
@@ -45,7 +46,7 @@ function summon_enemy(args)
 
     local actions_per_type = {
         test_enemy = function ()
-            print("AAAAA")
+            local model_path = "resources/3D Models/test_enimy.gltf"
         end,
     }
 
@@ -57,6 +58,8 @@ function summon_enemy(args)
         animation = "",
         animation_time = 0,
     }
+
+    table.insert(enemys,enemy)
 
     return {}
 end
