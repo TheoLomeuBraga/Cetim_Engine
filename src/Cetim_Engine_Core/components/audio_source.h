@@ -152,9 +152,9 @@ public:
 			vec3 pos_lisener = listener_transform->pegar_pos_global();
 			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
 			vec3 pos_audio = tf->pegar_pos_global();
-			float distance = glm::distance(pos_lisener, pos_audio);
+			float distance = glm::distance(pos_lisener, pos_audio) / 2;
 
-			
+			print({distance,info.atenuation + info.min_distance});
 			if (distance > info.min_distance && distance <  info.atenuation + info.min_distance)
 			{
 				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
