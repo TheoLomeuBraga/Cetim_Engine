@@ -149,11 +149,32 @@ public:
 
 		if (listener_transform != NULL && tf != NULL)
 		{
+			vec3 pos_lisener = listener_transform->pegar_pos_global();
+			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
+			vec3 pos_audio = tf->pegar_pos_global();
+			float distance = glm::distance(pos_lisener, pos_audio);
+
 			
+			if (distance > info.min_distance && distance <  info.atenuation + info.min_distance)
+			{
+				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
+				
+			}
+			else if (distance < info.min_distance)
+			{
+				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
+				
+			}
+			else
+			{
+				Mix_Volume(channel, 0);
+				
+			}
 		}
 		else
 		{
-			
+			Mix_SetPanning(channel, 255, 255);
+			Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
 		}
 	}
 
