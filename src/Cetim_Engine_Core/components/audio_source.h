@@ -23,6 +23,7 @@ void start_sdl_audio()
 
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
 		Mix_AllocateChannels(2);
+		start_sdl_audio_on = true;
 	}
 }
 
@@ -154,7 +155,7 @@ public:
 			vec3 pos_audio = tf->pegar_pos_global();
 			float distance = glm::distance(pos_lisener, pos_audio) / 2;
 
-			print({distance,info.atenuation + info.min_distance});
+			
 			if (distance > info.min_distance && distance <  info.atenuation + info.min_distance)
 			{
 				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
