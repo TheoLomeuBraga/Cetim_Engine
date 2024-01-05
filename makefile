@@ -12,7 +12,7 @@ SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./incl
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)
 	ifeq ($(OPTIMIZATION),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -s -g
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -O1
 	endif
 	ifeq ($(OPTIMIZATION),1)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
@@ -27,7 +27,7 @@ ifeq ($(OS),Windows_NT)
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
 	ifeq ($(OPTIMIZATION),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -s -g
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -O1
 	endif
 	ifeq ($(OPTIMIZATION),1)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
