@@ -27,6 +27,11 @@ require("objects.post_processing")
 
 local serializer = require("libs.serialize")
 
+register_function_set("file_system")
+
+local config_path = get_config_folder_path() .. "/hmtf"
+local config_file_path = config_path .. "/configs_save.lua"
+
 local this_object = {}
 
 
@@ -187,9 +192,9 @@ function set_render_layers()
 end
 
 function load_configs()
-    configs = serializer.load_table("config/configs_save.lua")
+    configs = serializer.load_table(config_file_path)
     if configs ~= nil then
-        serializer.save_table("config/configs_save.lua",configs)
+        serializer.save_table(config_file_path,configs)
         get_set_global_volume(configs.volume)
         global_data.mouse_sensitivity=configs.mouse_sensitivity
         window.full_screen = configs.full_screen
