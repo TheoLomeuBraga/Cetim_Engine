@@ -25,6 +25,21 @@ ifeq ($(OS),Windows_NT)
 	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
 endif
+ifeq ($(findstring MINGW,$(OS)),MINGW)
+	ifeq ($(OPTIMIZATION),0)
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -s -g
+	endif
+	ifeq ($(OPTIMIZATION),1)
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
+	endif
+	ifeq ($(OPTIMIZATION),2)
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math 
+	endif
+	TARGET_ENGINE = ./build/cetim_engine.exe
+	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
+	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPTIMIZATION),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g
