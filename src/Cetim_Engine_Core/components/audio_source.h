@@ -90,6 +90,17 @@ void get_set_global_volume_sfml(float vol)
 	global_volume_sfml = vol;
 }
 
+void calcula_panning(float angle_listener_deg, float angle_audio_deg, Uint8 &left, Uint8 &right)
+{
+	// Lógica para calcular o panning com base nos ângulos
+	// Aqui você pode ajustar de acordo com sua lógica específica
+
+	// Exemplo simples: Panning linear entre 0 (esquerda) e 255 (direita)
+	float percentagem_pan = (angle_audio_deg - angle_listener_deg + 180.0) / 360.0;
+	left = static_cast<Uint8>((1.0 - percentagem_pan) * 255);
+	right = static_cast<Uint8>(percentagem_pan * 255);
+}
+
 class sdl_audio : public componente
 {
 	shared_ptr<sdl_sound_manager> sound_buffer = NULL;
@@ -151,19 +162,43 @@ public:
 		if (listener_transform != NULL && tf != NULL)
 		{
 			vec3 pos_lisener = listener_transform->pegar_pos_global();
-			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
+			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
 			vec3 pos_audio = tf->pegar_pos_global();
 			float distance = glm::distance(pos_lisener, pos_audio) / 2;
+
+			auto SetPanning = [&]()
+			{
+				vec2 listenerDirection_2d = glm::normalize(vec2(listenerDirection.x, listenerDirection.z));
+				glm::vec2 audioDirNormalized = glm::normalize(vec2(pos_audio.x, pos_audio.z) - vec2(pos_lisener.x, pos_lisener.z));
+				if (listenerDirection_2d == audioDirNormalized)
+				{
+					Mix_SetPanning(channel, 255, 255);
+				}
+				else
+				{
+					float angle_listener = atan2(listenerDirection_2d.y, listenerDirection_2d.x);
+					float angle_audio = atan2(audioDirNormalized.y - listenerDirection_2d.y, audioDirNormalized.x - listenerDirection_2d.x);
+					float angle_listener_deg = angle_listener * (180.0 / M_PI);
+					float angle_audio_deg = angle_audio * (180.0 / M_PI);
+					Uint8 left, right;
+					calcula_panning(angle_listener_deg, angle_audio_deg, left, right);
+					Mix_SetPanning(channel, left, right);
+				}
+			};
 
 			if (distance > info.min_distance && distance < info.atenuation + info.min_distance)
 			{
 				float attenuationFactor = 1.0f - ((distance - info.min_distance) / info.atenuation);
 				attenuationFactor = std::max(0.0f, std::min(1.0f, attenuationFactor));
 				Mix_Volume(channel, static_cast<int>(attenuationFactor * (info.volume / 100) * MIX_MAX_VOLUME));
+
+				SetPanning();
 			}
 			else if (distance < info.min_distance)
 			{
 				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
+
+				SetPanning();
 			}
 			else
 			{
