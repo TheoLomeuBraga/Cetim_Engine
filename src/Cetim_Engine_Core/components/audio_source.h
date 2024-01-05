@@ -22,7 +22,7 @@ void start_sdl_audio()
 		SDL_Init(SDL_INIT_AUDIO);
 
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
-		Mix_AllocateChannels(2);
+		Mix_AllocateChannels(255);
 		start_sdl_audio_on = true;
 	}
 }
