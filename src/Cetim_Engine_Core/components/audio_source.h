@@ -102,7 +102,9 @@ public:
 
 	void aplicar_info()
 	{
-		Mix_HaltChannel(channel);
+
+		
+		
 		sound_buffer = carregar_audio_buffer(info.nome);
 
 		if (sound_buffer)

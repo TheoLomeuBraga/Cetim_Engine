@@ -42,7 +42,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPTIMIZATION),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -O0 -fsanitize=address
 	endif
 		ifeq ($(OPTIMIZATION),1)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2

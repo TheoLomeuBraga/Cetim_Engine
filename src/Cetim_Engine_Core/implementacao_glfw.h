@@ -414,8 +414,10 @@ void loopInput()
 	while (interromper_loop_input)
 	{
 	}
+	
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;
+	
 }
 
 void inicioInput()
@@ -572,21 +574,26 @@ bool iniciada_logica_scripts;
 
 void Reindenizar()
 {
-
+	//print({"AAAAA"});
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
-
+	//print({"BBBBB"});
 	cena_objetos_selecionados->atualisar();
+	//print({"CCCCC"});
 	cena_objetos_selecionados->atualisar_transforms();
+	//print({"DDDDD"});
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
+	//print({"EEEEE"});
 	reindenizar_cenario();
-
+	//print({"FFFFF"});
+	
 	for (function<void()> f : Depois_Render_Func)
 	{
 		f();
 	}
+	//print({"GGGGG"});
 }
 
 // Janela
@@ -692,6 +699,8 @@ Tempo::Timer sw;
 void loop_janela()
 {
 
+	
+
 	// Benchmark_Timer bt("window_loop");
 
 	// tempo
@@ -700,18 +709,23 @@ void loop_janela()
 	Tempo::tempUltFrameRender = Tempo::varTempRender;
 	Tempo::varTempRender = t;
 
+	
+
 	// sw = Tempo::Timer();
 
 	// float t = Tempo::tempo;
 	// Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
 	// Tempo::tempUltFrameRender = t;
-
+	
 	Tempo::FPS = 1 / Tempo::varTempRender;
 	Reindenizar();
 	glfwPollEvents();
+	
 
 	// Swap buffers
 	glfwSwapBuffers(janela);
+
+	
 }
 
 class gerenciador_janela_glfw : public gerenciador_janela
@@ -753,7 +767,6 @@ public:
 		iniciar();
 		do
 		{
-
 			fechar = glfwWindowShouldClose(janela) == 1;
 			loop_janela();
 		} while (fechar == false);
