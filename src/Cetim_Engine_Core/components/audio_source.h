@@ -170,11 +170,7 @@ public:
 			{
 				vec2 listenerDirection_2d = glm::normalize(vec2(listenerDirection.x, listenerDirection.z));
 				glm::vec2 audioDirNormalized = glm::normalize(vec2(pos_audio.x, pos_audio.z) - vec2(pos_lisener.x, pos_lisener.z));
-				if (listenerDirection_2d == audioDirNormalized)
-				{
-					Mix_SetPanning(channel, 255, 255);
-				}
-				else
+				if (glm::distance(listenerDirection_2d,audioDirNormalized) > 0.1)
 				{
 					float angle_listener = atan2(listenerDirection_2d.y, listenerDirection_2d.x);
 					float angle_audio = atan2(audioDirNormalized.y - listenerDirection_2d.y, audioDirNormalized.x - listenerDirection_2d.x);
@@ -183,6 +179,11 @@ public:
 					Uint8 left, right;
 					calcula_panning(angle_listener_deg, angle_audio_deg, left, right);
 					Mix_SetPanning(channel, left, right);
+				}
+				else
+				{
+					
+					Mix_SetPanning(channel, 255, 255);
 				}
 			};
 
