@@ -30,7 +30,7 @@ public:
 };
 #endif
 
-#if defined(__linux__)
+#if defined(__unix__)
 #include <dlfcn.h>
 class Shared_Library_Loader
 {

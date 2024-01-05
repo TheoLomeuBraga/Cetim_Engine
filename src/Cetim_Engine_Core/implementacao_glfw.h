@@ -259,7 +259,7 @@ namespace controle
 		return count;
 	}
 
-#ifdef __linux__
+#ifdef __unix__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
 		std::pair<std::string, std::string>("1", "b"),

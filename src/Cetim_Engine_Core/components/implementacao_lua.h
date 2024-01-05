@@ -8,7 +8,7 @@
 using namespace Tempo;
 #include "scene.h"
 #include "box_2d.h"
-#include "sfml_audio.h"
+#include "audio_source.h"
 
 #include "render_mesh.h"
 #include "projetil.h"
@@ -654,7 +654,7 @@ namespace funcoes_ponte
 			lua_pushboolean(L, 0);
 		}
 #endif
-#ifdef __linux__
+#ifdef __unix__
 		if (mkdir(diretorio, S_IRWXU | S_IRWXG | S_IRWXO) == 0)
 		{
 			lua_pushboolean(L, 1);

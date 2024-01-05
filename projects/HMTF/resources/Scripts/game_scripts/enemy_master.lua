@@ -18,7 +18,7 @@ function UPDATE()
         test_enemy = function (enemy)
             
         end,
-    }e
+    }
     for index, value in ipairs(enemys) do
         update_entity_map[value.type](value)
         print(value.type)
@@ -46,7 +46,7 @@ function summon_enemy(args)
 
     local actions_per_type = {
         test_enemy = function ()
-            local model_path = "resources/3D Models/test_enimy.gltf"
+            local model_path = "resources/3D Models/test_enemy.gltf"
         end,
     }
 

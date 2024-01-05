@@ -42,7 +42,7 @@ using namespace glm;
 // APIs
 #include "OpenGL.h"
 #include "implementacao_glfw.h"
-#include "sfml_audio.h"
+#include "audio_source.h"
 #include "game_object.h"
 
 #include "camera.h"

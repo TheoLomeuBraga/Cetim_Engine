@@ -240,7 +240,7 @@ function START()
     this_object = game_object(this_object_ptr)
     this_object.components.lua_scripts:add_script("game_scripts/input_geter")
     this_object.components.lua_scripts:add_script("game_scripts/bullet_master")
-    this_object.components.lua_scripts:add_script("game_scripts/enimy_master")
+    this_object.components.lua_scripts:add_script("game_scripts/enemy_master")
     
     
     

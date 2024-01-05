@@ -14,6 +14,6 @@ function summon_enemy(pos,rot_y,type)
     end
     
     local args = {pos=pos,rot_y=rot_y,type=type}
-    core_obj.components.lua_scripts.scripts["game_scripts/enimy_master"].functions.summon_enemy(args) 
+    core_obj.components.lua_scripts.scripts["game_scripts/enemy_master"].functions.summon_enemy(args) 
 
 end
