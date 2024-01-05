@@ -23,7 +23,7 @@ ifeq ($(OS),Windows_NT)
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL2 -lSDL2_mixer
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
 	ifeq ($(OPTIMIZATION),0)
@@ -38,7 +38,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+	LIBS_ENGINE = -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL2 -lSDL2_mixer
 endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPTIMIZATION),0)
@@ -53,7 +53,7 @@ ifeq ($(OS),Linux)
 		TARGET_ENGINE = ./build/cetim_engine
 		SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 		INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-		LIBS_ENGINE = -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath 
+		LIBS_ENGINE = -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -lSDL2 -lSDL2_mixer
 endif
 
 all: 
