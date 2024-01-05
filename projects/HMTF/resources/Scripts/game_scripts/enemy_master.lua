@@ -21,7 +21,7 @@ function UPDATE()
     }
     for index, value in ipairs(enemys) do
         update_entity_map[value.type](value)
-        print(value.type)
+        --print(value.type)
     end
 end
 
