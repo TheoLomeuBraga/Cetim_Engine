@@ -103,8 +103,6 @@ public:
 	void aplicar_info()
 	{
 
-		
-		
 		sound_buffer = carregar_audio_buffer(info.nome);
 
 		if (sound_buffer)
@@ -157,21 +155,19 @@ public:
 			vec3 pos_audio = tf->pegar_pos_global();
 			float distance = glm::distance(pos_lisener, pos_audio) / 2;
 
-			
-			if (distance > info.min_distance && distance <  info.atenuation + info.min_distance)
+			if (distance > info.min_distance && distance < info.atenuation + info.min_distance)
 			{
-				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
-				
+				float attenuationFactor = 1.0f - ((distance - info.min_distance) / info.atenuation);
+				attenuationFactor = std::max(0.0f, std::min(1.0f, attenuationFactor));
+				Mix_Volume(channel, static_cast<int>(attenuationFactor * (info.volume / 100) * MIX_MAX_VOLUME));
 			}
 			else if (distance < info.min_distance)
 			{
 				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
-				
 			}
 			else
 			{
 				Mix_Volume(channel, 0);
-				
 			}
 		}
 		else
