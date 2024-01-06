@@ -174,8 +174,8 @@ public:
 				{
 					float angle_listener = atan2(listenerDirection_2d.y, listenerDirection_2d.x);
 					float angle_audio = atan2(audioDirNormalized.y - listenerDirection_2d.y, audioDirNormalized.x - listenerDirection_2d.x);
-					float angle_listener_deg = angle_listener * (180.0 / M_PI);
-					float angle_audio_deg = angle_audio * (180.0 / M_PI);
+					float angle_listener_deg = angle_listener * (180.0 / 3.14159265358979323846);
+					float angle_audio_deg = angle_audio * (180.0 / 3.14159265358979323846);
 					Uint8 left, right;
 					calcula_panning(angle_listener_deg, angle_audio_deg, left, right);
 					Mix_SetPanning(channel, left, right);
