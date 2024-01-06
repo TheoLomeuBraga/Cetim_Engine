@@ -872,7 +872,7 @@ namespace funcoes_ponte
 	// memory
 	int clear_memory(lua_State *L)
 	{
-		buffers_som_sdl.limpar_lixo();
+		buffers_som.limpar_lixo();
 		ManuseioDados::mapeamento_fontes.limpar_lixo();
 		ManuseioDados::mapeamento_imagems.limpar_lixo();
 		ManuseioDados::mapeamento_tilesets.limpar_lixo();
@@ -943,8 +943,8 @@ namespace funcoes_ponte
 		}
 		else if (asset_type == 6)
 		{
-			ret = buffers_som_sdl.pegar(file_path) != NULL;
-			if (!ret && load && sdl_audio_loading_requests_files.find(file_path) == sdl_audio_loading_requests_files.end())
+			ret = buffers_som.pegar(file_path) != NULL;
+			if (!ret && load && audio_source_loading_requests_files.find(file_path) == audio_source_loading_requests_files.end())
 			{
 				thread loader(carregar_audio_buffer, file_path);
 				loader.detach();
@@ -1749,7 +1749,7 @@ namespace funcoes_ponte
 		{
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-			shared_ptr<sdl_audio> au = obj->pegar_componente<sdl_audio>();
+			shared_ptr<audio_source> au = obj->pegar_componente<audio_source>();
 			ret.setString("path", au->info.nome);
 			ret.setFloat("pause", au->info.pausa);
 			ret.setFloat("loop", au->info.loop);
@@ -1765,7 +1765,7 @@ namespace funcoes_ponte
 		{
 			Table t = lua_totable(L, 2);
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-			shared_ptr<sdl_audio> au = obj->pegar_componente<sdl_audio>();
+			shared_ptr<audio_source> au = obj->pegar_componente<audio_source>();
 
 			au->info.nome = t.getString("path");
 			au->info.pausa = t.getFloat("pause");
@@ -3075,7 +3075,7 @@ map<string, void (*)(objeto_jogo *, bool)> add_remove_component_by_string = {
 	pair<string, void (*)(objeto_jogo *, bool)>("character_physics_3D", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<bullet_charter>(bullet_charter());}else{obj->remover_componente<bullet_charter>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("audio_source", [](objeto_jogo *obj, bool add)
-												{if(add){obj->adicionar_componente<sdl_audio>(sdl_audio());}else{obj->remover_componente<sdl_audio>();} }),
+												{if(add){obj->adicionar_componente<audio_source>(audio_source());}else{obj->remover_componente<audio_source>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("lua_scripts", [](objeto_jogo *obj, bool add)
 												{if(add){obj->adicionar_componente<componente_lua>(componente_lua());}else{obj->remover_componente<componente_lua>();} }),
 	pair<string, void (*)(objeto_jogo *, bool)>("render_tile_map", [](objeto_jogo *obj, bool add)
@@ -3161,7 +3161,7 @@ map<string, bool (*)(objeto_jogo *)> have_component_by_string = {
 	pair<string, bool (*)(objeto_jogo *)>("character_physics_3D", [](objeto_jogo *obj)
 										  { return obj->tem_componente<bullet_charter>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("audio_source", [](objeto_jogo *obj)
-										  { return obj->tem_componente<sdl_audio>(); }),
+										  { return obj->tem_componente<audio_source>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("lua_scripts", [](objeto_jogo *obj)
 										  { return obj->tem_componente<componente_lua>(); }),
 	pair<string, bool (*)(objeto_jogo *)>("render_tile_map", [](objeto_jogo *obj)

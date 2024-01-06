@@ -2,8 +2,7 @@
 #pragma once
 #include <iostream>
 #include <memory>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+
 
 #include "Config.h"
 #include "RecursosT.h"
@@ -14,16 +13,22 @@
 #include <thread>
 #include <mutex>
 
-bool start_sdl_audio_on = false;
-void start_sdl_audio()
+std::set<std::string> audio_source_loading_requests_files = {};
+
+#ifdef USE_SDL
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+bool start_audio_source_on = false;
+void start_audio_source()
 {
-	if (!start_sdl_audio_on)
+	if (!start_audio_source_on)
 	{
 		SDL_Init(SDL_INIT_AUDIO);
 
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
 		Mix_AllocateChannels(256);
-		start_sdl_audio_on = true;
+		start_audio_source_on = true;
 	}
 }
 
@@ -35,7 +40,7 @@ public:
 	std::string path;
 	sdl_sound_manager(std::string path)
 	{
-		start_sdl_audio();
+		start_audio_source();
 		this->path = path;
 	}
 
@@ -57,21 +62,21 @@ public:
 	}
 };
 
-mapeamento_assets<sdl_sound_manager> buffers_som_sdl;
+mapeamento_assets<sdl_sound_manager> buffers_som;
 
-std::set<std::string> sdl_audio_loading_requests_files = {};
+
 std::mutex buffers_som_sdl_mtx;
 
 shared_ptr<sdl_sound_manager> carregar_audio_buffer(string local)
 {
 	std::lock_guard<std::mutex> lock(buffers_som_sdl_mtx);
-	sdl_audio_loading_requests_files.insert(local);
+	audio_source_loading_requests_files.insert(local);
 	if (buffers_som_sdl.pegar(local) == NULL)
 	{
 		buffers_som_sdl.aplicar(local, sdl_sound_manager(local));
 	}
 	buffers_som_sdl.pegar(local)->get();
-	sdl_audio_loading_requests_files.erase(local);
+	audio_source_loading_requests_files.erase(local);
 	return buffers_som_sdl.pegar(local);
 }
 
@@ -101,7 +106,7 @@ void calcula_panning(float angle_listener_deg, float angle_audio_deg, Uint8 &lef
 	right = static_cast<Uint8>(percentagem_pan * 255);
 }
 
-class sdl_audio : public componente
+class audio_source : public componente
 {
 	shared_ptr<sdl_sound_manager> sound_buffer = NULL;
 	int channel;
@@ -165,7 +170,7 @@ public:
 		if (listener_transform != NULL && tf != NULL)
 		{
 			vec3 pos_lisener = listener_transform->pegar_pos_global();
-			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
+			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
 			vec3 pos_audio = tf->pegar_pos_global();
 			float distance = glm::distance(pos_lisener, pos_audio) / 2;
 
@@ -187,12 +192,12 @@ public:
 					calcula_panning(angle_listener_deg, angle_audio_deg, targetLeft, targetRight);
 
 					// Ajuste gradual dos valores de panning
-					const float smoothingFactor = 0.1; // Ajuste conforme necessário
+					const float smoothingFactor = 0.2; // Ajuste conforme necessário
 
 					Uint8 smoothedLeft = static_cast<Uint8>(previousLeft + smoothingFactor * (targetLeft - previousLeft));
 					Uint8 smoothedRight = static_cast<Uint8>(previousRight + smoothingFactor * (targetRight - previousRight));
 
-					Mix_SetPanning(channel, smoothedLeft, smoothedRight);
+					Mix_SetPanning(channel, std::min( smoothedRight + (smoothedLeft/4),255), std::min( smoothedLeft + (smoothedRight/4),255) );
 
 					// Atualize os valores anteriores
 					previousLeft = smoothedLeft;
@@ -234,8 +239,8 @@ public:
 		}
 	}
 
-	sdl_audio() {}
-	sdl_audio(audio_info info)
+	audio_source() {}
+	audio_source(audio_info info)
 	{
 		this->info = info;
 	}
@@ -246,38 +251,28 @@ public:
 	}
 };
 
-/*
-#pragma once
-#include <iostream>
-#include <memory>
+#else
+
 #include <SFML/Audio.hpp>
-#include "Config.h"
-#include "RecursosT.h"
-#include "scene.h"
-#include "game_object.h"
-#include "transform.h"
-#include <filesystem>
-#include <thread>
-#include <mutex>
 
 
 
-mapeamento_assets<sf::SoundBuffer> buffers_som_sdl;
+mapeamento_assets<sf::SoundBuffer> buffers_som;
 
-std::set<std::string> sdl_audio_loading_requests_files = {};
-std::mutex buffers_som_sdl_mtx;
+std::set<std::string> sfml_audio_loading_requests_files = {};
+std::mutex buffers_som_mtx;
 
 shared_ptr<sf::SoundBuffer> carregar_audio_buffer(string local)
 {
-	std::lock_guard<std::mutex> lock(buffers_som_sdl_mtx);
-	sdl_audio_loading_requests_files.insert(local);
-	if (buffers_som_sdl.pegar(local) == NULL)
+	std::lock_guard<std::mutex> lock(buffers_som_mtx);
+	sfml_audio_loading_requests_files.insert(local);
+	if (buffers_som.pegar(local) == NULL)
 	{
-		buffers_som_sdl.aplicar(local, sf::SoundBuffer());
-		buffers_som_sdl.pegar(local)->loadFromFile(local.c_str());
+		buffers_som.aplicar(local, sf::SoundBuffer());
+		buffers_som.pegar(local)->loadFromFile(local.c_str());
 	}
-	sdl_audio_loading_requests_files.erase(local);
-	return buffers_som_sdl.pegar(local);
+	sfml_audio_loading_requests_files.erase(local);
+	return buffers_som.pegar(local);
 }
 
 void carregar_audio_buffer_thread(string local, shared_ptr<sf::SoundBuffer> *ret)
@@ -294,10 +289,10 @@ void get_set_global_volume_sfml(float vol){
 	global_volume_sfml = vol;
 }
 
-class sdl_audio : public componente
+class audio_source : public componente
 {
 public:
-	// https://www.sfml-dev.org/tutorials/2.5/audio-spatialization.php
+	
 
 	audio_info info;
 	shared_ptr<sf::Sound> som;
@@ -380,8 +375,8 @@ public:
 		}
 	}
 
-	sdl_audio(){}
-	sdl_audio(audio_info info)
+	audio_source(){}
+	audio_source(audio_info info)
 	{
 		this->info = info;
 	}
@@ -391,4 +386,7 @@ public:
 		som->pause();
 	}
 };
-*/
+#endif
+
+
+
