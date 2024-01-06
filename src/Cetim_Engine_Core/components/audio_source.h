@@ -106,6 +106,9 @@ class sdl_audio : public componente
 	shared_ptr<sdl_sound_manager> sound_buffer = NULL;
 	int channel;
 
+	Uint8 previousLeft = 255;
+	Uint8 previousRight = 255;
+
 public:
 	audio_info info;
 
@@ -166,24 +169,42 @@ public:
 			vec3 pos_audio = tf->pegar_pos_global();
 			float distance = glm::distance(pos_lisener, pos_audio) / 2;
 
+			// Defina variáveis globais ou membros da classe para armazenar o estado anterior de panning
+
 			auto SetPanning = [&]()
 			{
 				vec2 listenerDirection_2d = glm::normalize(vec2(listenerDirection.x, listenerDirection.z));
 				glm::vec2 audioDirNormalized = glm::normalize(vec2(pos_audio.x, pos_audio.z) - vec2(pos_lisener.x, pos_lisener.z));
-				if (glm::distance(listenerDirection_2d,audioDirNormalized) > 0.1)
+
+				if (glm::distance(listenerDirection_2d, audioDirNormalized) > 0.1)
 				{
 					float angle_listener = atan2(listenerDirection_2d.y, listenerDirection_2d.x);
 					float angle_audio = atan2(audioDirNormalized.y - listenerDirection_2d.y, audioDirNormalized.x - listenerDirection_2d.x);
 					float angle_listener_deg = angle_listener * (180.0 / 3.14159265358979323846);
 					float angle_audio_deg = angle_audio * (180.0 / 3.14159265358979323846);
-					Uint8 left, right;
-					calcula_panning(angle_listener_deg, angle_audio_deg, left, right);
-					Mix_SetPanning(channel, left, right);
+
+					Uint8 targetLeft, targetRight;
+					calcula_panning(angle_listener_deg, angle_audio_deg, targetLeft, targetRight);
+
+					// Ajuste gradual dos valores de panning
+					const float smoothingFactor = 0.1; // Ajuste conforme necessário
+
+					Uint8 smoothedLeft = static_cast<Uint8>(previousLeft + smoothingFactor * (targetLeft - previousLeft));
+					Uint8 smoothedRight = static_cast<Uint8>(previousRight + smoothingFactor * (targetRight - previousRight));
+
+					Mix_SetPanning(channel, smoothedLeft, smoothedRight);
+
+					// Atualize os valores anteriores
+					previousLeft = smoothedLeft;
+					previousRight = smoothedRight;
 				}
 				else
 				{
-					
 					Mix_SetPanning(channel, 255, 255);
+
+					// Redefina os valores anteriores quando não há mudança significativa
+					previousLeft = 255;
+					previousRight = 255;
 				}
 			};
 
