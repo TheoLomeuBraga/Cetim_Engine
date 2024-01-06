@@ -54,7 +54,7 @@ ifeq ($(OS),Linux)
 		TARGET_ENGINE = ./build/cetim_engine
 		SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 		INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-		LIBS_ENGINE = -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath -lSDL2 -lSDL2_mixer
+		LIBS_ENGINE = -L./libs/linux -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath `sdl2-config --cflags --libs` -lSDL2_mixer
 endif
 
 all: 
