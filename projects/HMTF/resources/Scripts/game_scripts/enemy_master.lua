@@ -50,6 +50,7 @@ function summon_enemy(args)
     local enemy = {
         type = type,
         obj = obj,
+        collision_obj = nil,
         rig_obj = nil,
         animation = "",
         animation_time = 0,
