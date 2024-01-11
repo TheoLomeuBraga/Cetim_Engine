@@ -27,7 +27,7 @@ namespace mouse
 	};
 
 	double offsetx = 0;
-	double offsety = 0;
+	double offsety = 0;input
 	static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 	{
 		ScrollData *scrollData = (ScrollData *)glfwGetWindowUserPointer(window);
@@ -259,6 +259,8 @@ namespace controle
 		return count;
 	}
 
+	
+
 #ifdef __unix__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
@@ -380,17 +382,6 @@ namespace controle
 #endif
 
 #ifdef _WIN32
-				if (i == 4 || i == 5)
-				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-				}
-				else
-				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
-				}
-#endif
-
-#ifdef _WIN64
 				if (i == 4 || i == 5)
 				{
 					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
