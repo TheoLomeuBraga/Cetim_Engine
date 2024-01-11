@@ -322,6 +322,9 @@ namespace controle
 			int buttonCount;
 			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
 
+			int axisCount;
+			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
+
 			if (prevJoystickButtonsState.empty())
 			{
 				prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
@@ -349,9 +352,7 @@ namespace controle
 				prevJoystickButtonsState[i] = buttons[i];
 			}
 
-			int axisCount;
-
-			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
+			
 
 			for (int i = 0; i < axisCount; ++i)
 			{
