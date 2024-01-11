@@ -101,8 +101,9 @@ class joystick
 {
 public:
 	joystick() {}
-	unordered_map<string, int> botoes;
-	unordered_map<string, float> eixos;
+	//unordered_map<string, int> botoes;
+	//unordered_map<string, float> eixos;
+	unordered_map<string, float> inputs;
 };
 
 class progresso_carregamento

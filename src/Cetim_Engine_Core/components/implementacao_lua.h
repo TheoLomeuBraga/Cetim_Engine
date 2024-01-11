@@ -1026,13 +1026,9 @@ namespace funcoes_ponte
 
 				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
 
-				if (j.botoes.find(key) != j.botoes.end())
+				if (j.inputs.find(key) != j.inputs.end())
 				{
-					ret = j.botoes[key];
-				}
-				else if (j.eixos.find(key) != j.eixos.end())
-				{
-					ret = j.eixos[key];
+					ret = j.inputs[key];
 				}
 			}
 		}

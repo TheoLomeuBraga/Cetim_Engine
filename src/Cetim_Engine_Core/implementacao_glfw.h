@@ -27,7 +27,7 @@ namespace mouse
 	};
 
 	double offsetx = 0;
-	double offsety = 0;input
+	double offsety = 0;
 	static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 	{
 		ScrollData *scrollData = (ScrollData *)glfwGetWindowUserPointer(window);
@@ -259,8 +259,6 @@ namespace controle
 		return count;
 	}
 
-	
-
 #ifdef __unix__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
@@ -313,13 +311,11 @@ namespace controle
 	};
 #endif
 
+	static std::vector<float> prevJoystickButtonsState;
 
-
-	static std::vector<int> prevJoystickButtonsState;
-
-	std::unordered_map<std::string, int> generateJoystickKeyMap(int joystick)
+	unordered_map<string, float> generateJoystickKeyMap(int joystick)
 	{
-		std::unordered_map<std::string, int> joystickKeyMap;
+		std::unordered_map<std::string, float> joystickKeyMap;
 
 		if (glfwJoystickPresent(joystick))
 		{
@@ -352,17 +348,7 @@ namespace controle
 
 				prevJoystickButtonsState[i] = buttons[i];
 			}
-		}
 
-		return joystickKeyMap;
-	}
-
-	std::unordered_map<std::string, float> generateJoystickAxes(int joystick)
-	{
-		std::unordered_map<std::string, float> joystickAxes;
-
-		if (glfwJoystickPresent(joystick))
-		{
 			int axisCount;
 
 			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
@@ -373,29 +359,30 @@ namespace controle
 #ifdef __linux__
 				if (i == 2 || i == 5)
 				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
 				}
 				else
 				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
 				}
 #endif
 
 #ifdef _WIN32
 				if (i == 4 || i == 5)
 				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
 				}
 				else
 				{
-					joystickAxes[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
 				}
 #endif
 			}
 		}
 
-		return joystickAxes;
+		return joystickKeyMap;
 	}
+
 
 }
 
@@ -405,10 +392,9 @@ void loopInput()
 	while (interromper_loop_input)
 	{
 	}
-	
+
 	Tempo::varInputTemp = Tempo::tempo - Tempo::tempUltFrame;
 	Tempo::tempUltFrame = Tempo::tempo;
-	
 }
 
 void inicioInput()
@@ -475,13 +461,12 @@ public:
 			ji.resize(joysticks_count);
 			for (int i = 0; i < joysticks_input.size(); i++)
 			{
-				ji[i].botoes = controle::generateJoystickKeyMap(i);
-				ji[i].eixos = controle::generateJoystickAxes(i);
+				ji[i].inputs = controle::generateJoystickKeyMap(i);
 			}
 		}
-		
+
 		joysticks_input = ji;
-		
+
 		return joysticks_input;
 	}
 
@@ -565,26 +550,26 @@ bool iniciada_logica_scripts;
 
 void Reindenizar()
 {
-	//print({"AAAAA"});
+	// print({"AAAAA"});
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
-	//print({"BBBBB"});
+	// print({"BBBBB"});
 	cena_objetos_selecionados->atualisar();
-	//print({"CCCCC"});
+	// print({"CCCCC"});
 	cena_objetos_selecionados->atualisar_transforms();
-	//print({"DDDDD"});
+	// print({"DDDDD"});
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	//print({"EEEEE"});
+	// print({"EEEEE"});
 	reindenizar_cenario();
-	//print({"FFFFF"});
-	
+	// print({"FFFFF"});
+
 	for (function<void()> f : Depois_Render_Func)
 	{
 		f();
 	}
-	//print({"GGGGG"});
+	// print({"GGGGG"});
 }
 
 // Janela
@@ -690,8 +675,6 @@ Tempo::Timer sw;
 void loop_janela()
 {
 
-	
-
 	// Benchmark_Timer bt("window_loop");
 
 	// tempo
@@ -700,23 +683,18 @@ void loop_janela()
 	Tempo::tempUltFrameRender = Tempo::varTempRender;
 	Tempo::varTempRender = t;
 
-	
-
 	// sw = Tempo::Timer();
 
 	// float t = Tempo::tempo;
 	// Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
 	// Tempo::tempUltFrameRender = t;
-	
+
 	Tempo::FPS = 1 / Tempo::varTempRender;
 	Reindenizar();
 	glfwPollEvents();
-	
 
 	// Swap buffers
 	glfwSwapBuffers(janela);
-
-	
 }
 
 class gerenciador_janela_glfw : public gerenciador_janela
