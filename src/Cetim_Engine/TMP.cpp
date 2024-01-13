@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     for (string s : argumentos)
     {
         cout << "	";
-        print({"    ",s});
+        print("    ",s);
     }
     escrever("}");
 

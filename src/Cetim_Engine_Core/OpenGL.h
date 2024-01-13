@@ -385,7 +385,6 @@ public:
 				}
 			}
 		}
-		// print({"oclusion_querie_in_view",oclusion_querie_in_view});
 	}
 
 	void limpar_oclusion_queries()
@@ -731,7 +730,7 @@ public:
 		size_t light_size = cena_objetos_selecionados->fontes_luzes_id.size();
 		if (light_size)
 		{
-			print({"lights on sceane: ", light_size});
+			print("lights on sceane: ", light_size);
 		}
 		glUniform1i(glGetUniformLocation(shader_s, "light_size"), light_size);
 
@@ -823,7 +822,6 @@ public:
 
 			for (pair<string, float> p : mat.inputs)
 			{
-				// print({"p.first",p.first,p.second});
 				glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
 			}
 
@@ -1713,7 +1711,6 @@ public:
 		// cor
 		// vec4 cor = pos_processamento_info.cor;
 		// glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
-		// print({"color",cor.x, cor.y, cor.z, cor.w});
 
 		// uv
 		// vec4 uv = pos_processamento_info.uv_pos_sca;
@@ -1796,7 +1793,7 @@ public:
 
 	~OpenGL_API()
 	{
-		print({"OpenGL deleted"});
+		print("OpenGL deleted");
 	}
 };
 

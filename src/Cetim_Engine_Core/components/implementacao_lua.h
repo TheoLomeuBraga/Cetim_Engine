@@ -97,7 +97,7 @@ std::string floatToString(float value)
 lua_State *lua_global_data;
 void start_lua_global_data()
 {
-	print({"iniciando lua global data"});
+	print("iniciando lua global data");
 	lua_global_data = luaL_newstate();
 	lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
 }
@@ -968,7 +968,7 @@ namespace funcoes_ponte
 
 	int memory_usage_info(lua_State *L)
 	{
-		print({"KBs usage", lua_gc(L, LUA_GCCOUNTB, 0)});
+		print("KBs usage", lua_gc(L, LUA_GCCOUNTB, 0));
 		// put the code here
 		return 0;
 	}
@@ -1830,7 +1830,7 @@ namespace funcoes_ponte
 			Table ret;
 			lua_pushtable(L, material_table(api_grafica->pos_processamento_info));
 			vec4 cor = api_grafica->pos_processamento_info.cor;
-			print({"color", cor.x, cor.y, cor.z, cor.w});
+			print("color", cor.x, cor.y, cor.z, cor.w);
 			return 1;
 		}
 		else
@@ -1839,7 +1839,7 @@ namespace funcoes_ponte
 			api_grafica->pos_processamento_info = table_material(t);
 			// cor
 			vec4 cor = api_grafica->pos_processamento_info.cor;
-			print({"color", cor.x, cor.y, cor.z, cor.w});
+			print("color", cor.x, cor.y, cor.z, cor.w);
 			return 0;
 		}
 	}
@@ -2817,7 +2817,7 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
-			// print({p.first,"start"});
+			
 
 			// pair<string, lua_State *> p = pairs[i];
 
@@ -2832,7 +2832,7 @@ public:
 				lua_call(p.second, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
 			}
-			// print({p.first,"end"});
+			
 		}
 	}
 	void atualisar()
@@ -3317,7 +3317,7 @@ int get_lua_var(lua_State *L)
 
 	lua_State *clL = cl->estados_lua[script_name];
 
-	// print({"AAAAA", lua_gc(clL, LUA_GCCOUNT, 0), lua_gc(clL, LUA_GCCOUNTB, 0)});
+	
 
 	lua_getglobal(clL, var_name.c_str());
 	int lua_type_id = lua_type(clL, -1);
@@ -3325,30 +3325,24 @@ int get_lua_var(lua_State *L)
 	if (lua_type_id == LUA_TNUMBER)
 	{
 		lua_pushnumber(L, cl->pegar_numero(script_name, var_name));
-		// print({"CCCCC","NUMBER"});
 	}
 	else if (lua_type_id == LUA_TSTRING)
 	{
 		lua_pushstring(L, cl->pegar_string(script_name, var_name).c_str());
-		// print({"CCCCC","STRING"});
 	}
 	else if (lua_type_id == LUA_TBOOLEAN)
 	{
 		lua_pushboolean(L, cl->pegar_boleana(script_name, var_name));
-		// print({"CCCCC","BOOLEAN"});
 	}
 	else if (lua_type_id == LUA_TTABLE)
 	{
 		lua_pushtable(L, cl->pegar_tabela(script_name, var_name));
-		// print({"CCCCC","TABLE"});
 	}
 	else if (lua_type_id == LUA_TNIL)
 	{
 		lua_pushnil(L);
 	}
 	return 1;
-
-	// print({"DDDDD",lua_gc(cl->estados_lua[script_name],LUA_GCCOUNT,0)});
 }
 
 int set_lua_var(lua_State *L)

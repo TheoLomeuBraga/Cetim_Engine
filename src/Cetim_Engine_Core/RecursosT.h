@@ -21,6 +21,7 @@
 #include <glm/gtx/transform.hpp>
 #include <any>
 #include <unordered_set>
+#include <variant>
 
 #include "table.h"
 
@@ -43,34 +44,25 @@ vec3 gravidade = vec3(0, -9.8f, 0);
 
 struct printable_any
 {
-	template <class T>
-	printable_any(T &&t) : m_val(std::forward<T>(t))
-	{
-		m_print_fn = [](std::ostream &os, const std::any &val)
-		{
-			os << std::any_cast<std::decay_t<T>>(val);
-		};
-	}
+    std::variant<std::string, int, double> m_val;
 
-private:
-	using print_fn_t = void (*)(std::ostream &, const std::any &);
-	std::any m_val;
-	print_fn_t m_print_fn;
+    template <class... Args>
+    printable_any(Args &&... args) : m_val(std::forward<Args>(args)...)
+    {
+    }
 
-	friend std::ostream &operator<<(std::ostream &os, const printable_any &val)
-	{
-		val.m_print_fn(os, val.m_val);
-		return os;
-	}
+    friend std::ostream &operator<<(std::ostream &os, const printable_any &val)
+    {
+        std::visit([&os](const auto &value) { os << value; }, val.m_val);
+        return os;
+    }
 };
 
-void print(const std::vector<printable_any> &data)
+template <typename... Args>
+void print(const Args &... args)
 {
-	for (auto &v : data)
-	{
-		std::cout << v << "	";
-	}
-	std::cout << '\n';
+    ((std::cout << args << " "), ...);
+    std::cout << '\n';
 }
 
 class asset

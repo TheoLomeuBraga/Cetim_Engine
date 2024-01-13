@@ -41,7 +41,7 @@ enum ui_type
 
 void function_reference_example(string state, string id)
 {
-    // print({id,state});
+    
 }
 
 class ui_componente : public componente

@@ -741,8 +741,6 @@ namespace gltf_loader
                 }
                 animations[a].keyFrames.push_back(key_frames);
             }
-
-            // print({animations[a].name, animations[a].start_time, animations[a].duration, animations[a].keyFrames.size()});
         }
 
         return true;
@@ -1348,7 +1346,6 @@ namespace gltf_loader
                     }
 
                     // corect mesh
-                    // print({"mesh.indices.size() / 3",mesh.indices.size() / 3,mesh.indices.size() % 3});
                     vector<unsigned int> new_indice;
                     for (int i = 0; i < sm.indices.size() / 3; i += 3)
                     {
@@ -1399,30 +1396,30 @@ namespace gltf_loader
 
     bool GLTFLoader::load()
     {
-        // print({"loadBuffers"});
+
         loadBuffers();
-        // print({"loadBufferViews"});
+
         loadBufferViews();
-        // print({"loadAccessors"});
+
         loadAccessors();
-        // print({"loadTextures"});
+
         loadTextures();
-        // print({"loadMeshes"});
+
         loadMeshes();
-        // print({"loadScenes"});
+
         loadScenes();
-        // print({"loadLights"});
+
         loadLights();
-        // print({"loadNodes"});
+
         loadNodes();
-        // print({"loadAnimations"});
+
         loadAnimations();
-        // print({"loadMaterials"});
+
         loadMaterials();
-        // print({"loadSkins"});
+
         loadSkins();
         assigneSkinsToMeshes();
-        // print({"load end"});
+
 
         return true;
     }

@@ -319,6 +319,9 @@ namespace controle
 
 		if (glfwJoystickPresent(joystick))
 		{
+
+			//print(glfwGetJoystickName(joystick));
+
 			int buttonCount;
 			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
 
@@ -551,26 +554,20 @@ bool iniciada_logica_scripts;
 
 void Reindenizar()
 {
-	// print({"AAAAA"});
+	
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
-	// print({"BBBBB"});
 	cena_objetos_selecionados->atualisar();
-	// print({"CCCCC"});
 	cena_objetos_selecionados->atualisar_transforms();
-	// print({"DDDDD"});
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	// print({"EEEEE"});
 	reindenizar_cenario();
-	// print({"FFFFF"});
 
 	for (function<void()> f : Depois_Render_Func)
 	{
 		f();
 	}
-	// print({"GGGGG"});
 }
 
 // Janela

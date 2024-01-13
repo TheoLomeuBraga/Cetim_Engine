@@ -300,7 +300,7 @@ public:
             }
             else
             {
-                print({"fail load collision mesh"});
+                print("fail load collision mesh");
 
                 mesh_shape_address = get_mesh_shape_address("box:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
                 if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())

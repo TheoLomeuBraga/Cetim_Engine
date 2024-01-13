@@ -296,7 +296,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar fonte em", lugar});
+			print("nao foi possivel carregar fonte em", lugar);
 			shared_ptr<fonte> ret;
 			return ret;
 		}
@@ -355,7 +355,7 @@ namespace ManuseioDados
 
 					if (!imagemSVG)
 					{
-						print({"Error loading SVG ", local});
+						print("Error loading SVG ", local);
 					}
 
 					NSVGrasterizer *rast = nsvgCreateRasterizer();
@@ -415,7 +415,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar imagem", local});
+			print("nao foi possivel carregar imagem", local);
 			shared_ptr<imagem> ret;
 			return ret;
 		}
@@ -562,7 +562,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"nao foi possivel carregar tile_set em", local});
+			print("nao foi possivel carregar tile_set em", local);
 			shared_ptr<tile_set> ret;
 			return ret;
 		}
@@ -914,11 +914,11 @@ namespace ManuseioDados
 			std::vector<uint8_t> bson_data = json::to_bson(data);
 			file.write((const char *)&bson_data[0], bson_data.size());
 			file.close();
-			print({"Data saved to ", filename});
+			print("Data saved to ", filename);
 		}
 		else
 		{
-			print({"Error: could not save data to ", filename});
+			print("Error: could not save data to ", filename);
 		}
 	}
 
@@ -992,7 +992,7 @@ namespace ManuseioDados
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
 
-			// print({"add_skin_count",add_skin_count});
+			
 
 			malha ma;
 			if (a > 0)
@@ -1064,7 +1064,7 @@ namespace ManuseioDados
 				if (m.sub_meshes[a].skin)
 				{
 					ma.pele = true;
-					// print({"ma.pele", ma.pele});
+					
 				}
 
 				/*
@@ -1278,8 +1278,6 @@ namespace ManuseioDados
 			{
 				animacao ani;
 
-				// print({"ani.nome: ",a.name});
-
 				ani.nome = a.name;
 				ani.duration = a.duration;
 				ani.start_time = a.start_time;
@@ -1307,8 +1305,6 @@ namespace ManuseioDados
 					}
 					ani.keyFrames.push_back(okfs);
 				}
-
-				// print({"animation 2 :",ani.nome,"key frames:",animations[a].keyFrames.size()});
 
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
@@ -1360,7 +1356,7 @@ namespace ManuseioDados
 		}
 		else
 		{
-			print({"erro local ", local, " nao existe"});
+			print("erro local ", local, " nao existe");
 		}
 		return NULL;
 	}

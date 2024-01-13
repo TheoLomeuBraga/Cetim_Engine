@@ -84,7 +84,7 @@ function START()
     this_physics_3d.friction = 0
     this_physics_3d.gravity_scale = 0
     this_physics_3d.triger = false
-    this_physics_3d.collision_shape = collision_shapes.capsule
+    this_physics_3d.collision_shape = collision_shapes.cylinder
     this_physics_3d.scale = Vec3:new(1, 2, 1)
     this_physics_3d:set()
 

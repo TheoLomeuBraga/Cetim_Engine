@@ -148,7 +148,7 @@ void iniciarTeste3()
 
 	// iniciar libs
 
-	print({"GPU:",api_grafica->modelo_gpu});
+	print("GPU:",api_grafica->modelo_gpu);
 
 	core = novo_objeto_jogo();
 	core->adicionar_componente<componente_lua>(componente_lua());

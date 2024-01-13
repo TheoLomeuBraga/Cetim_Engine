@@ -30,7 +30,7 @@ vector<b2Vec2> converter_b2D(vector<vec2> vs)
 	for (int i = 0; i < vs.size(); i++)
 	{
 		ret.push_back(converter_b2D(vs[i]));
-		// print({"b2Vec2",vs[i].x,vs[i].y});
+
 	}
 
 	return ret;
@@ -44,7 +44,7 @@ vector<b2Vec2> converter_b2D(vector<vec2> vs, vec2 escala)
 	{
 		b2Vec2 b2v = b2Vec2(vs[i].x * escala.x, vs[i].y * escala.y);
 		ret.push_back(b2v);
-		// print({"b2Vec2",ret[i].x,ret[i].y});
+
 	}
 
 	return ret;
