@@ -47,7 +47,8 @@ function summon_enemy(args)
     local enemy = {
         type = type,
         obj = obj,
-        rig_ptr = nil,
+        rig_obj = nil,
+        parts_ptr_list = nil,
         animation = "",
         animation_time = 0,
     }
@@ -71,9 +72,15 @@ function summon_enemy(args)
             local enemy_data = get_scene_3D(model_path)
             local enemy_structures = cenary_builders.entity(enemy.obj.object_ptr, 2, enemy_data, "resources/Shaders/mesh",
                 true, false)
-            enemy_structures.components.transform.position.y = -1
-            enemy_structures.components.transform:set()
-            enemy.rig_ptr = enemy_structures.parts_list
+            
+            print("A")
+            enemy.rig_obj = enemy_structures.obj
+            print("B")
+            enemy.rig_obj.components.transform.position.y = -1.5
+            print("C")
+            enemy.rig_obj.components.transform:set()
+            print("D")
+            enemy.parts_ptr_list = enemy_structures.parts_ptr_list
         end,
     }
 

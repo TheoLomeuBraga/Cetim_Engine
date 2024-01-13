@@ -83,8 +83,11 @@ namespace ManuseioDados
 		return false;
 	}
 
+	std::mutex loading_request_mtx;
+
 	void add_loading_request(std::string file)
 	{
+		std::lock_guard<std::mutex> lock(loading_request_mtx);
 		loading_requests_no += 1;
 		loading_requests_files.insert(file);
 	}
