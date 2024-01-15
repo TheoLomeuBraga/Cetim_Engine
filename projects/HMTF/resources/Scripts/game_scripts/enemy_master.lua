@@ -10,7 +10,7 @@ require("resources.playable_scene")
 
 
 
-enemys = {}
+enemys_list = {}
 
 function START()
 end
@@ -21,7 +21,7 @@ function UPDATE()
 
         end,
     }
-    for index, value in ipairs(enemys) do
+    for index, value in ipairs(enemys_list) do
         update_entity_map[value.type](value)
         --print(value.type)
     end
@@ -84,11 +84,19 @@ function summon_enemy(args)
 
 
 
-    table.insert(enemys, enemy)
+    table.insert(enemys_list, enemy)
 
     return {}
 end
 
+function remove_enemy(adres)
+    
+    table.remove(enemys_list, adres)
+end
+
 function clear(args)
+    while #enemys_list > 0 do
+        remove_enemy(1)
+    end
     return {}
 end
