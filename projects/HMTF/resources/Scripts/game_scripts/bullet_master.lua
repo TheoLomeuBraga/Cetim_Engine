@@ -47,6 +47,7 @@ function add_bullet(data)
 end
 
 function remove_bullet(adres)
+    remove_object(bullets_list[adres].object.object_ptr)
     table.remove(bullets_list, adres)
 end
 
@@ -89,7 +90,7 @@ function UPDATE()
         bullet.components.transform:change_position(next_pos.x, next_pos.y, next_pos.z)
 
         if bullets_list[key].timer <= 0 then
-            remove_object(bullets_list[key].object.object_ptr)
+            
             remove_bullet(key)
         end
         
@@ -152,5 +153,12 @@ function summon_bullet(args)
         end
     end
 
+    return {}
+end
+
+function clear(args)
+    while #bullets_list > 0 do
+        remove_bullet(1)
+    end
     return {}
 end

@@ -112,6 +112,8 @@ function unload_sceane_step()
 end
 
 function load_sceane(cenary_name)
+    this_object.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clear({})
+    this_object.components.lua_scripts.scripts["game_scripts/enemy_master"].functions.clear({})
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)

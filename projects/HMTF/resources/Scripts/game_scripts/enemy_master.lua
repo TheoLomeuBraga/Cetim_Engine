@@ -73,13 +73,9 @@ function summon_enemy(args)
             local enemy_structures = cenary_builders.entity(enemy.obj.object_ptr, 2, enemy_data, "resources/Shaders/mesh",
                 true, false)
             
-            print("A")
             enemy.rig_obj = enemy_structures.obj
-            print("B")
             enemy.rig_obj.components.transform.position.y = -1.5
-            print("C")
             enemy.rig_obj.components.transform:set()
-            print("D")
             enemy.parts_ptr_list = enemy_structures.parts_ptr_list
         end,
     }
@@ -90,5 +86,9 @@ function summon_enemy(args)
 
     table.insert(enemys, enemy)
 
+    return {}
+end
+
+function clear(args)
     return {}
 end
