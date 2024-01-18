@@ -64,7 +64,7 @@ function summon_enemy(args)
             enemy_physics_3D.rotate_x = false
             enemy_physics_3D.rotate_y = false
             enemy_physics_3D.rotate_z = false
-            enemy_physics_3D.friction = 100
+            enemy_physics_3D.friction = 0
             enemy_physics_3D.gravity_scale = 1
             enemy_physics_3D.triger = false
             enemy_physics_3D:set()
