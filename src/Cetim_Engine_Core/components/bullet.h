@@ -77,7 +77,7 @@ map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
 dtNavMesh* navMesh = NULL;
 
-rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaMeshes, const std::vector<glm::mat4>& listTransforms, const float cs = 0.1, const float ch = 0.1) {
+rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& listaMeshes, const std::vector<glm::mat4>& listTransforms, const float cs = 0.1, const float ch = 0.1) {
     rcContext ctx;
 
     // Configurar o tamanho do grid e a resolução das células
@@ -114,35 +114,26 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaM
         // Converter vértices para o formato esperado por rcRasterizeTriangles
         std::vector<float> flatVertices;
         flatVertices.reserve(vertices.size() * 3);
-        for (vec3 v : vertices) {
+        for (const auto& v : vertices) {
             flatVertices.push_back(v.x);
             flatVertices.push_back(v.y);
             flatVertices.push_back(v.z);
         }
 
-        // Adicionar spans ao heightfield com base nas informações da malha
-        for (vec3 v : vertices) {
-            // Converter as coordenadas do mundo para as coordenadas do heightfield
-            const int hx = static_cast<int>((v.x - minBounds[0]) / config.cs);
-            const int hy = static_cast<int>((v.y - minBounds[1]) / config.ch);
-            const int hz = static_cast<int>((v.z - minBounds[2]) / config.cs);
+        // Converter triângulos para o formato esperado por rcRasterizeTriangles
+        std::vector<int> indices(mesh.indice.begin(), mesh.indice.end());
 
-            // Adicionar span ao heightfield
-            const unsigned short spanMin = static_cast<unsigned short>(hz);
-            const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
-            const unsigned char areaID = 1;  // Ajuste conforme necessário
-            const int flagMergeThreshold = 0;  // Ajuste conforme necessário
-            rcAddSpan(&ctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
+        // Rasterize triângulos para o heightfield
+        if (!rcRasterizeTriangles(&ctx, flatVertices.data(), flatVertices.size(), indices.data(), nullptr, mesh.indice.size() / 3, *solid, 0)) {
+            // Lidar com erro no rasterização
+            rcFreeHeightField(solid);  // Liberação de memória em caso de erro
+            return nullptr;
         }
-
-        // Finalizar o preenchimento do heightfield
-        const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
-        const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
-        rcRasterizeTriangles(&ctx, flatVertices.data(),flatVertices.size(), vertices.size() / 3,triAreaIDs, *solid, flagMergeThresholdRasterize);
     }
 
     return solid;
 }
+
 
 
 dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize = 0.3f, float cellHeight = 0.2f, float agentHeight= 2.0f, float agentMaxClimb = 0.5f,float walkableSlopeAngle = 45.0f)
