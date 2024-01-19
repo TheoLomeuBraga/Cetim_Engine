@@ -136,6 +136,139 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& lista
 }
 
 
+rcHeightfield* criarHeightfield(const malha& mesh, const float cs, const float ch) {
+    rcContext ctx;
+
+    rcHeightfield* solid = rcAllocHeightfield();
+
+    // Configurar o tamanho do grid e a resolução das células
+    const float minBounds[3] = {-100.0f, -100.0f, -100.0f};  // Ajuste conforme necessário
+    const float maxBounds[3] = {100.0f, 100.0f, 100.0f};      // Ajuste conforme necessário
+    rcConfig config;
+    rcCalcGridSize(minBounds, maxBounds, cs, &config.width, &config.height);
+    config.cs = cs;
+    config.ch = ch;
+    config.walkableSlopeAngle = 45.0f;
+
+    // Configurar o heightfield
+    if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
+        // Lidar com erro na criação do heightfield
+        return nullptr;
+    }
+
+    // Converter vértices para o formato esperado por rcRasterizeTriangles
+    std::vector<float> flatVertices;
+    flatVertices.reserve(mesh.vertices.size() * 3);
+    for (const vertice_struct& v : mesh.vertices) {
+        flatVertices.push_back(v.posicao[0]);
+        flatVertices.push_back(v.posicao[1]);
+        flatVertices.push_back(v.posicao[2]);
+    }
+
+    // Adicionar spans ao heightfield com base nas informações da malha
+    for (const vertice_struct& v : mesh.vertices) {
+        // Converter as coordenadas do mundo para as coordenadas do heightfield
+        const int hx = static_cast<int>((v.posicao[0] - minBounds[0]) / config.cs);
+        const int hy = static_cast<int>((v.posicao[1] - minBounds[1]) / config.ch);
+        const int hz = static_cast<int>((v.posicao[2] - minBounds[2]) / config.cs);
+
+        // Adicionar span ao heightfield
+        const unsigned short spanMin = static_cast<unsigned short>(hz);
+        const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
+        const unsigned char areaID = 1;  // Ajuste conforme necessário
+        const int flagMergeThreshold = 0;  // Ajuste conforme necessário
+        rcAddSpan(&ctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
+    }
+
+    // Finalizar o preenchimento do heightfield
+    const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
+    const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
+    rcRasterizeTriangles(&ctx, flatVertices.data(), triAreaIDs, mesh.vertices.size(), *solid, flagMergeThresholdRasterize);
+
+    return solid;
+}
+
+dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize, float cellHeight, float agentHeight, float agentMaxClimb,
+                        float walkableSlopeAngle)
+{
+    rcContext ctx;
+
+    // Configuration parameters
+    rcConfig cfg;
+    rcCalcGridSize(hf.bmin, cfg.bmax, cellSize, &cfg.width, &cfg.height);
+    cfg.cs = cellSize;
+    cfg.ch = cellHeight;
+    cfg.walkableSlopeAngle = walkableSlopeAngle;
+    cfg.walkableHeight = static_cast<int>(ceilf(agentHeight / cfg.ch));
+    cfg.walkableClimb = static_cast<int>(floorf(agentMaxClimb / cfg.ch));
+
+    // Step 3: Rasterize the rcHeightfield
+    if (!rcCreateHeightfield(&ctx, hf, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
+        return nullptr;
+
+    // Optional: Filter the heightfield
+    rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, hf);
+    rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, hf);
+    rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, hf);
+
+    // Step 4: Build the rcCompactHeightfield
+    rcCompactHeightfield chf;
+    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, hf, chf))
+        return nullptr;
+
+    // Step 5: Build the rcContourSet
+    rcContourSet cset;
+    if (!rcBuildContours(&ctx, chf, cfg.maxSimplificationError, cfg.maxEdgeLen, cset))
+        return nullptr;
+
+    // Step 6: Build the rcPolyMesh
+    rcPolyMesh pmesh;
+    if (!rcBuildPolyMesh(&ctx, cset, cfg.maxVertsPerPoly, pmesh))
+        return nullptr;
+
+    // Step 7: Build the rcPolyMeshDetail
+    rcPolyMeshDetail dmesh;
+    if (!rcBuildPolyMeshDetail(&ctx, pmesh, chf, cfg.detailSampleDist, cfg.detailSampleMaxError, dmesh))
+        return nullptr;
+
+    // Step 8: Create a dtNavMesh
+    dtNavMeshCreateParams params;
+    memset(&params, 0, sizeof(params));
+    params.verts = pmesh.verts;
+    params.vertCount = pmesh.nverts;
+    params.polys = pmesh.polys;
+    params.polyAreas = pmesh.areas;
+    params.polyFlags = pmesh.flags;
+    params.polyCount = pmesh.npolys;
+    params.nvp = pmesh.nvp;
+    params.detailMeshes = dmesh.meshes;
+    params.detailVerts = dmesh.verts;
+    params.detailVertsCount = dmesh.nverts;
+    params.detailTris = dmesh.tris;
+    params.detailTriCount = dmesh.ntris;
+
+    unsigned char* navData = nullptr;
+    int navDataSize = 0;
+
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+        return nullptr;
+
+    dtNavMesh* navMesh = dtAllocNavMesh();
+
+    if (!navMesh || !dtStatusSucceed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
+    {
+        dtFree(navData);
+        dtFreeNavMesh(navMesh);
+        return nullptr;
+    }
+
+    dtFree(navData);
+
+    return navMesh;
+}
+
+
+
 
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
