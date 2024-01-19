@@ -74,13 +74,11 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
-rcHeightfield* heightFild = NULL;
+
 dtNavMesh* navMesh = NULL;
 
 rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
     rcContext ctx;
-
-    if(heightFild){rcFreeHeightField(heightFild);}
 
     rcHeightfield* solid = rcAllocHeightfield();
 
@@ -150,7 +148,7 @@ dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize = 0.3f, float cellHeig
 {
     rcContext ctx;
 
-    if(navMesh){dtFreeNavMesh(navMesh);}
+    if(navMesh){dtFreeNavMesh(navMesh);navMesh=NULL;}
     
 
     // Configuration parameters
@@ -314,13 +312,7 @@ std::vector<vec3> findPath(dtNavMesh* navMesh, const float* cylinder_scale, cons
 
 
 
-void generate_nav_mesh(){
-    std::vector<std::shared_ptr<malha>> listaMeshes;
-    std::vector<glm::mat4> listTransforms;
-    for(pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj){
-        
-    }
-}
+
 
 
 
@@ -833,6 +825,28 @@ public:
     {
     }
 };
+
+void generate_nav_mesh(){
+    std::vector<std::shared_ptr<malha>> listaMeshes;
+    std::vector<glm::mat4> listTransforms;
+    for(pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj){
+
+        shared_ptr<transform_> tf = p.second->pegar_componente<transform_>();
+        shared_ptr<bullet> bu = p.second->pegar_componente<bullet>();
+
+        if(tf && bu && !bu->gatilho && bu->dinamica == estatico && bu->collision_mesh){
+
+            listaMeshes.push_back(bu->collision_mesh);
+            listTransforms.push_back(tf->pegar_matriz());
+
+        }
+    }
+    rcHeightfield* hf = criarHeightfield(listaMeshes, listTransforms);
+    navMesh = buildNavMesh(*hf);
+
+    rcFreeHeightField(hf);
+    
+}
 
 class CustomContactResultCallback : public btCollisionWorld::ContactResultCallback
 {
