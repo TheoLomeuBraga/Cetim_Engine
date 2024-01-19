@@ -77,7 +77,7 @@ map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 rcHeightfield* heightFild = NULL;
 dtNavMesh* navMesh = NULL;
 
-rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
+rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
     rcContext ctx;
 
     if(heightFild){rcFreeHeightField(heightFild);}
@@ -267,7 +267,11 @@ dtPolyRef findPath(dtNavMesh* navMesh,const float* cylinder_scale , const float*
 }
 
 void generate_nav_mesh(){
-    
+    std::vector<std::shared_ptr<malha>> listaMeshes;
+    std::vector<glm::mat4> listTransforms;
+    for(pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj){
+        
+    }
 }
 
 
