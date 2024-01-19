@@ -12,9 +12,12 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
-#include "recastnavegation/Recast.h"
-#include <recastnavegation/DetourNavMesh.h>
-#include <recastnavegation/DetourNavMeshBuilder.h>
+
+#include "Recast.h"
+#include "DetourNavMesh.h"
+#include "DetourNavMeshQuery.h"
+#include "DetourNavMeshBuilder.h"
+
 
 btDiscreteDynamicsWorld *dynamicsWorld;
 
@@ -65,12 +68,19 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
     }
 }
 
-rcContext rcctx;
+
+
+
+map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
+map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
+
 rcHeightfield* heightFild = NULL;
 dtNavMesh* navMesh = NULL;
 
 rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
-    rcContext rcctx;
+    rcContext ctx;
+
+    if(heightFild){rcFreeHeightField(heightFild);}
 
     rcHeightfield* solid = rcAllocHeightfield();
 
@@ -84,7 +94,7 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& lista
     config.walkableSlopeAngle = 45.0f;
 
     // Configurar o heightfield
-    if (!rcCreateHeightfield(&rcctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
+    if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
         // Lidar com erro na criação do heightfield
         return nullptr;
     }
@@ -122,76 +132,26 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& lista
             const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
             const unsigned char areaID = 1;  // Ajuste conforme necessário
             const int flagMergeThreshold = 0;  // Ajuste conforme necessário
-            rcAddSpan(&rcctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
+            rcAddSpan(&ctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
         }
 
         // Finalizar o preenchimento do heightfield
         const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
         const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
-        //rcRasterizeTriangles(&rcctx, flatVertices.data(), flatVertices.size() / 3, triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
-        rcRasterizeTriangles(&rcctx, flatVertices.data(), triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
+        //rcRasterizeTriangles(&ctx, flatVertices.data(), flatVertices.size() / 3, triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
+        rcRasterizeTriangles(&ctx, flatVertices.data(), triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
     }
 
     return solid;
 }
 
 
-rcHeightfield* criarHeightfield(const malha& mesh, const float cs, const float ch) {
-    rcContext ctx;
-
-    rcHeightfield* solid = rcAllocHeightfield();
-
-    // Configurar o tamanho do grid e a resolução das células
-    const float minBounds[3] = {-100.0f, -100.0f, -100.0f};  // Ajuste conforme necessário
-    const float maxBounds[3] = {100.0f, 100.0f, 100.0f};      // Ajuste conforme necessário
-    rcConfig config;
-    rcCalcGridSize(minBounds, maxBounds, cs, &config.width, &config.height);
-    config.cs = cs;
-    config.ch = ch;
-    config.walkableSlopeAngle = 45.0f;
-
-    // Configurar o heightfield
-    if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
-        // Lidar com erro na criação do heightfield
-        return nullptr;
-    }
-
-    // Converter vértices para o formato esperado por rcRasterizeTriangles
-    std::vector<float> flatVertices;
-    flatVertices.reserve(mesh.vertices.size() * 3);
-    for (const vertice_struct& v : mesh.vertices) {
-        flatVertices.push_back(v.posicao[0]);
-        flatVertices.push_back(v.posicao[1]);
-        flatVertices.push_back(v.posicao[2]);
-    }
-
-    // Adicionar spans ao heightfield com base nas informações da malha
-    for (const vertice_struct& v : mesh.vertices) {
-        // Converter as coordenadas do mundo para as coordenadas do heightfield
-        const int hx = static_cast<int>((v.posicao[0] - minBounds[0]) / config.cs);
-        const int hy = static_cast<int>((v.posicao[1] - minBounds[1]) / config.ch);
-        const int hz = static_cast<int>((v.posicao[2] - minBounds[2]) / config.cs);
-
-        // Adicionar span ao heightfield
-        const unsigned short spanMin = static_cast<unsigned short>(hz);
-        const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
-        const unsigned char areaID = 1;  // Ajuste conforme necessário
-        const int flagMergeThreshold = 0;  // Ajuste conforme necessário
-        rcAddSpan(&ctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
-    }
-
-    // Finalizar o preenchimento do heightfield
-    const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
-    const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
-    rcRasterizeTriangles(&ctx, flatVertices.data(), triAreaIDs, mesh.vertices.size(), *solid, flagMergeThresholdRasterize);
-
-    return solid;
-}
-
-dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize, float cellHeight, float agentHeight, float agentMaxClimb,
-                        float walkableSlopeAngle)
+dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize = 0.3f, float cellHeight = 0.2f, float agentHeight= 2.0f, float agentMaxClimb = 0.5f,float walkableSlopeAngle = 45.0f)
 {
     rcContext ctx;
+
+    if(navMesh){dtFreeNavMesh(navMesh);}
+    
 
     // Configuration parameters
     rcConfig cfg;
@@ -268,12 +228,50 @@ dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize, float cellHeight, flo
 }
 
 
+dtPolyRef findPath(dtNavMesh* navMesh,const float* cylinder_scale , const float* startPos, const float* endPos)
+{
+    dtNavMeshQuery navQuery;
+    navQuery.init(navMesh, 2048);
+
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xFFFF); // Incluir todos os tipos de polígonos
+    filter.setExcludeFlags(0);      // Não excluir nenhum tipo de polígono
+
+    dtPolyRef startRef, endRef;
+    float startPt[3], endPt[3];
+
+    // Encontrar o polígono mais próximo aos pontos de início e fim
+    navQuery.findNearestPoly(startPos, cylinder_scale, &filter, &startRef, startPt);
+    navQuery.findNearestPoly(endPos, cylinder_scale, &filter, &endRef, endPt);
+
+    if (!startRef || !endRef)
+    {
+        // Pode acontecer se os pontos estiverem fora da Navigation Mesh ou em uma área não navegável
+        return 0;
+    }
+
+    dtPolyRef path[1000];
+    int pathCount;
+
+    // Encontrar o caminho entre os polígonos de início e fim
+    navQuery.findPath(startRef, endRef, startPt, endPt, &filter, path, &pathCount, 1000);
+
+    if (pathCount > 0)
+    {
+        // Um caminho foi encontrado. "path" contém os identificadores dos polígonos do caminho.
+        // Você pode usar esses identificadores para navegar pelo caminho ou renderizá-lo, por exemplo.
+        return path[0]; // Retorna o primeiro polígono do caminho
+    }
+
+    return 0; // Não foi possível encontrar um caminho
+}
+
+void generate_nav_mesh(){
+    
+}
 
 
 
-map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
-
-map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
 glm::vec3 btToGlm(const btVector3 &v)
 {

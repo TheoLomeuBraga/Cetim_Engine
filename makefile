@@ -24,7 +24,7 @@ ifeq ($(OS),Windows_NT)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system 
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
@@ -39,7 +39,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system 
 endif
 ifeq ($(OS),Linux)
@@ -54,7 +54,7 @@ ifeq ($(OS),Linux)
 	endif
 		TARGET_ENGINE = ./build/cetim_engine
 		SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-		INCLUDE_DIRS = -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+		INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 		LIBS_ENGINE = -L./libs/linux -lRecast -lDetour -lDetourCrowd -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath `sdl2-config --cflags --libs` -lSDL2_mixer
 endif
 
