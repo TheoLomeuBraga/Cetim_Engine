@@ -228,43 +228,91 @@ dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize = 0.3f, float cellHeig
 }
 
 
-dtPolyRef findPath(dtNavMesh* navMesh,const float* cylinder_scale , const float* startPos, const float* endPos)
-{
-    dtNavMeshQuery navQuery;
-    navQuery.init(navMesh, 2048);
-
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xFFFF); // Incluir todos os tipos de polígonos
-    filter.setExcludeFlags(0);      // Não excluir nenhum tipo de polígono
-
-    dtPolyRef startRef, endRef;
-    float startPt[3], endPt[3];
-
-    // Encontrar o polígono mais próximo aos pontos de início e fim
-    navQuery.findNearestPoly(startPos, cylinder_scale, &filter, &startRef, startPt);
-    navQuery.findNearestPoly(endPos, cylinder_scale, &filter, &endRef, endPt);
-
-    if (!startRef || !endRef)
-    {
-        // Pode acontecer se os pontos estiverem fora da Navigation Mesh ou em uma área não navegável
-        return 0;
+// Função para obter o centro do polígono a partir de um dtNavMesh
+void getPolyCenter(dtNavMesh* navMesh, dtPolyRef ref, float* center) {
+    if (!navMesh) {
+        std::cerr << "Erro: Navmesh não inicializado." << std::endl;
+        return;
     }
 
-    dtPolyRef path[1000];
+    const dtMeshTile* tile;
+    const dtPoly* poly;
+    navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
+
+    // Calcule o centro do polígono
+    for (int j = 0; j < poly->vertCount; ++j) {
+        const float* v = &tile->verts[poly->verts[j] * 3];
+        center[0] += v[0];
+        center[1] += v[1];
+        center[2] += v[2];
+    }
+
+    const float invCount = 1.0f / poly->vertCount;
+    center[0] *= invCount;
+    center[1] *= invCount;
+    center[2] *= invCount;
+}
+
+// Função para encontrar um caminho no navmesh e retornar um novo dtNavMesh
+std::vector<vec3> findPath(dtNavMesh* navMesh, const float* cylinder_scale, const float* startPos, const float* endPos) {
+    std::vector<vec3> pathPositions;
+
+    // Verifique se o navmesh é válido
+    if (!navMesh) {
+        std::cerr << "Erro: Navmesh não inicializado." << std::endl;
+        return pathPositions;
+    }
+
+    // Inicialize a configuração do navmesh e crie uma instância de dtNavMeshQuery
+    rcConfig cfg;
+    dtNavMeshQuery* navMeshQuery = new dtNavMeshQuery;
+
+    // Configure o navmesh query
+    if (dtStatusFailed(navMeshQuery->init(navMesh, 2048))) {
+        std::cerr << "Erro: Falha ao inicializar a consulta do navmesh." << std::endl;
+        delete navMeshQuery;
+        return pathPositions;
+    }
+
+    // Encontre os polígonos mais próximos para os pontos inicial e final
+    dtQueryFilter filter;
+    dtPolyRef startRef, endRef;
+    navMeshQuery->findNearestPoly(startPos, cylinder_scale, &filter, &startRef, NULL);
+    navMeshQuery->findNearestPoly(endPos, cylinder_scale, &filter, &endRef, NULL);
+
+    if (!startRef || !endRef) {
+        std::cerr << "Erro: Não foi possível encontrar polígonos válidos para os pontos fornecidos." << std::endl;
+        delete navMeshQuery;
+        return pathPositions;
+    }
+
+    // Configure os pontos de início e fim da consulta
+    dtPolyRef path[1000];  // Supondo que 1000 polígonos são suficientes para o caminho
     int pathCount;
 
-    // Encontrar o caminho entre os polígonos de início e fim
-    navQuery.findPath(startRef, endRef, startPt, endPt, &filter, path, &pathCount, 1000);
-
-    if (pathCount > 0)
-    {
-        // Um caminho foi encontrado. "path" contém os identificadores dos polígonos do caminho.
-        // Você pode usar esses identificadores para navegar pelo caminho ou renderizá-lo, por exemplo.
-        return path[0]; // Retorna o primeiro polígono do caminho
+    if (dtStatusFailed(navMeshQuery->findPath(startRef, endRef, startPos, endPos, &filter, path, &pathCount, 1000))) {
+        std::cerr << "Erro: Falha ao encontrar o caminho no navmesh." << std::endl;
+        delete navMeshQuery;
+        return pathPositions;
     }
 
-    return 0; // Não foi possível encontrar um caminho
+    // Obtenha as posições principais do percurso
+    for (int i = 0; i < pathCount; ++i) {
+        float polyCenter[3] = { 0.0f, 0.0f, 0.0f };
+
+        // Obtenha o centro do polígono
+        getPolyCenter(navMesh, path[i], polyCenter);
+
+        pathPositions.push_back(vec3(polyCenter[0], polyCenter[1], polyCenter[2]));
+    }
+
+    // Libere recursos
+    delete navMeshQuery;
+
+    return pathPositions;
 }
+
+
 
 void generate_nav_mesh(){
     std::vector<std::shared_ptr<malha>> listaMeshes;
