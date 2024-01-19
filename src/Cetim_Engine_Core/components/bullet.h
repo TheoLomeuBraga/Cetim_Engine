@@ -77,10 +77,8 @@ map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
 dtNavMesh* navMesh = NULL;
 
-rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
+rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaMeshes, const std::vector<glm::mat4>& listTransforms, const float cs = 0.1, const float ch = 0.1) {
     rcContext ctx;
-
-    rcHeightfield* solid = rcAllocHeightfield();
 
     // Configurar o tamanho do grid e a resolução das células
     const float minBounds[3] = {-100.0f, -100.0f, -100.0f};  // Ajuste conforme necessário
@@ -91,9 +89,13 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaM
     config.ch = ch;
     config.walkableSlopeAngle = 45.0f;
 
+    // Alocar o objeto rcHeightfield
+    rcHeightfield* solid = rcAllocHeightfield();
+    
     // Configurar o heightfield
     if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
         // Lidar com erro na criação do heightfield
+        rcFreeHeightField(solid);  // Liberação de memória em caso de erro
         return nullptr;
     }
 
@@ -136,8 +138,7 @@ rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>> listaM
         // Finalizar o preenchimento do heightfield
         const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
         const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
-        //rcRasterizeTriangles(&ctx, flatVertices.data(), flatVertices.size() / 3, triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
-        rcRasterizeTriangles(&ctx, flatVertices.data(), triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
+        rcRasterizeTriangles(&ctx, flatVertices.data(),flatVertices.size(), vertices.size() / 3,triAreaIDs, *solid, flagMergeThresholdRasterize);
     }
 
     return solid;
@@ -826,7 +827,7 @@ public:
     }
 };
 
-void generate_nav_mesh(){
+void bake_navmesh_3D(){
     std::vector<std::shared_ptr<malha>> listaMeshes;
     std::vector<glm::mat4> listTransforms;
     for(pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj){
