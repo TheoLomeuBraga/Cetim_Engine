@@ -12,6 +12,10 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
+#include "recastnavegation/Recast.h"
+#include <recastnavegation/DetourNavMesh.h>
+#include <recastnavegation/DetourNavMeshBuilder.h>
+
 btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
@@ -59,14 +63,9 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
     }
 }
 
-/*
-struct Bullet_Mesh
-{
-    std::vector<btVector3> vertices = {};
-    std::vector<int> indices = {};
-};
-map<shared_ptr<objeto_jogo>, Bullet_Mesh> Bullet_Meshes;
-*/
+
+
+
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 
