@@ -18,6 +18,8 @@
 
 btDiscreteDynamicsWorld *dynamicsWorld;
 
+
+
 int global_bullet_iniciado = 0;
 
 vector<thread> bullet_threads;
@@ -63,15 +65,18 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
     }
 }
 
-// Função para criar um heightfield a partir de uma malha
-rcHeightfield* criarHeightfield(const std::vector<vertice_struct>& vertices, const float cs, const float ch) {
-    rcContext ctx;
+rcContext rcctx;
+rcHeightfield* heightFild = NULL;
+dtNavMesh* navMesh = NULL;
+
+rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& listaMeshes, const std::vector<glm::mat4>& listTransforms,const float cs = 0.1, const float ch = 0.1) {
+    rcContext rcctx;
 
     rcHeightfield* solid = rcAllocHeightfield();
 
     // Configurar o tamanho do grid e a resolução das células
-    const float minBounds[3] = {-50.0f, -10.0f, -50.0f};  // Ajuste conforme necessário
-    const float maxBounds[3] = {50.0f, 10.0f, 50.0f};      // Ajuste conforme necessário
+    const float minBounds[3] = {-100.0f, -100.0f, -100.0f};  // Ajuste conforme necessário
+    const float maxBounds[3] = {100.0f, 100.0f, 100.0f};      // Ajuste conforme necessário
     rcConfig config;
     rcCalcGridSize(minBounds, maxBounds, cs, &config.width, &config.height);
     config.cs = cs;
@@ -79,44 +84,56 @@ rcHeightfield* criarHeightfield(const std::vector<vertice_struct>& vertices, con
     config.walkableSlopeAngle = 45.0f;
 
     // Configurar o heightfield
-    if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
+    if (!rcCreateHeightfield(&rcctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
         // Lidar com erro na criação do heightfield
         return nullptr;
     }
 
-    // Converter vértices para o formato esperado por rcRasterizeTriangles
-    std::vector<float> flatVertices;
-    flatVertices.reserve(vertices.size() * 3);
-    for (const vertice_struct& v : vertices) {
-        flatVertices.push_back(v.posicao[0]);
-        flatVertices.push_back(v.posicao[1]);
-        flatVertices.push_back(v.posicao[2]);
+    for (size_t i = 0; i < listaMeshes.size(); ++i) {
+        const malha& mesh = *listaMeshes[i];
+        const glm::mat4& transform = listTransforms[i];
+
+        std::vector<vec3> vertices;
+        for (unsigned int j : mesh.indice) {
+            // Aplicar transformação aos vértices
+            glm::vec4 vertexPos(mesh.vertices[j].posicao[0], mesh.vertices[j].posicao[1], mesh.vertices[j].posicao[2], 1.0f);
+            vertexPos = transform * vertexPos;
+            vertices.push_back(vertexPos);
+        }
+
+        // Converter vértices para o formato esperado por rcRasterizeTriangles
+        std::vector<float> flatVertices;
+        flatVertices.reserve(vertices.size() * 3);
+        for (vec3 v : vertices) {
+            flatVertices.push_back(v.x);
+            flatVertices.push_back(v.y);
+            flatVertices.push_back(v.z);
+        }
+
+        // Adicionar spans ao heightfield com base nas informações da malha
+        for (vec3 v : vertices) {
+            // Converter as coordenadas do mundo para as coordenadas do heightfield
+            const int hx = static_cast<int>((v.x - minBounds[0]) / config.cs);
+            const int hy = static_cast<int>((v.y - minBounds[1]) / config.ch);
+            const int hz = static_cast<int>((v.z - minBounds[2]) / config.cs);
+
+            // Adicionar span ao heightfield
+            const unsigned short spanMin = static_cast<unsigned short>(hz);
+            const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
+            const unsigned char areaID = 1;  // Ajuste conforme necessário
+            const int flagMergeThreshold = 0;  // Ajuste conforme necessário
+            rcAddSpan(&rcctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
+        }
+
+        // Finalizar o preenchimento do heightfield
+        const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
+        const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
+        //rcRasterizeTriangles(&rcctx, flatVertices.data(), flatVertices.size() / 3, triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
+        rcRasterizeTriangles(&rcctx, flatVertices.data(), triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
     }
-
-    // Adicionar spans ao heightfield com base nas informações da malha
-    for (const vertice_struct& v : vertices) {
-        // Converter as coordenadas do mundo para as coordenadas do heightfield
-        const int hx = static_cast<int>((v.posicao[0] - minBounds[0]) / config.cs);
-        const int hy = static_cast<int>((v.posicao[1] - minBounds[1]) / config.ch);
-        const int hz = static_cast<int>((v.posicao[2] - minBounds[2]) / config.cs);
-
-        // Adicionar span ao heightfield
-        const unsigned short spanMin = static_cast<unsigned short>(hz);
-        const unsigned short spanMax = static_cast<unsigned short>(hz + 1);
-        const unsigned char areaID = 1;  // Ajuste conforme necessário
-        const int flagMergeThreshold = 0;  // Ajuste conforme necessário
-        rcAddSpan(&ctx, *solid, hx, hy, spanMin, spanMax, areaID, flagMergeThreshold);
-    }
-
-    // Finalizar o preenchimento do heightfield
-    const unsigned char* triAreaIDs = nullptr;  // Ajuste conforme necessário
-    const int flagMergeThresholdRasterize = 0;  // Ajuste conforme necessário
-    rcRasterizeTriangles(&ctx, flatVertices.data(), triAreaIDs, vertices.size(), *solid, flagMergeThresholdRasterize);
 
     return solid;
 }
-
-
 
 
 
