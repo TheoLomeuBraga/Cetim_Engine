@@ -92,11 +92,25 @@ dtNavMesh* gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas ,std::v
     //bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
     //bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
 
+    rcContext ctx;
+    rcPolyMesh *allMeshes = rcAllocPolyMesh();
+
     
-    rcPolyMesh allMeshes;
+    vector<rcPolyMesh*> allMeshesListPtr;
+
     for(unsigned int i = 0 ; i < minhasMalhas.size();i++){
-        rcPolyMesh aMeshes;
+        rcPolyMesh *aMeshes = rcAllocPolyMesh();
+
+        
+        allMeshesListPtr.push_back(aMeshes);
     }
+    rcMergePolyMeshes(&ctx, allMeshesListPtr.data(), allMeshesListPtr.size(), *allMeshes);
+
+    //free
+    for(rcPolyMesh *m : allMeshesListPtr){
+        rcFreePolyMesh(m);
+    }
+    rcFreePolyMesh(allMeshes);
 
     return nullptr;
 }
