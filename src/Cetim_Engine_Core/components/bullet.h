@@ -84,10 +84,13 @@ dtNavMesh* navMesh = NULL;
 
 
 
-rcPolyMesh* gerarNavMesh(const std::shared_ptr<malha>& minhaMalha, const glm::mat4& transform)
+
+
+dtNavMesh* gerarNavMesh(std::vector<std::shared_ptr<malha>> minhaMalha ,std::vector<glm::mat4> transform)
 {
     //bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
     //bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
+    return nullptr;
 }
 
 
@@ -619,7 +622,9 @@ void bake_navmesh_3D(){
 
         }
     }
-    gerarNavMesh(listaMeshes, listTransforms);
+
+    if(navMesh){dtFreeNavMesh(navMesh);}
+    navMesh = gerarNavMesh(listaMeshes, listTransforms);
     
     
 }
