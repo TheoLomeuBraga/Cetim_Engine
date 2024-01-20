@@ -86,10 +86,18 @@ dtNavMesh* navMesh = NULL;
 
 
 
-dtNavMesh* gerarNavMesh(std::vector<std::shared_ptr<malha>> minhaMalha ,std::vector<glm::mat4> transform)
+dtNavMesh* gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas ,std::vector<glm::mat4> transforms)
 {
+    //https://recastnav.com/structrcPolyMesh.html
     //bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
     //bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
+
+    
+    rcPolyMesh allMeshes;
+    for(unsigned int i = 0 ; i < minhasMalhas.size();i++){
+        rcPolyMesh aMeshes;
+    }
+
     return nullptr;
 }
 
