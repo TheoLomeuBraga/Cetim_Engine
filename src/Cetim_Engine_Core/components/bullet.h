@@ -6,6 +6,7 @@
 #include "game_object.h"
 #include <thread>
 #include <memory>
+#include <tuple>
 
 #include <btBulletDynamicsCommon.h>
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp"
@@ -14,9 +15,11 @@
 
 
 #include "Recast.h"
+
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
 #include "DetourNavMeshBuilder.h"
+#include "DetourTileCache.h"
 
 
 btDiscreteDynamicsWorld *dynamicsWorld;
@@ -77,232 +80,15 @@ map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
 dtNavMesh* navMesh = NULL;
 
-rcHeightfield* criarHeightfield(const std::vector<std::shared_ptr<malha>>& listaMeshes, const std::vector<glm::mat4>& listTransforms, const float cs = 0.1, const float ch = 0.1) {
-    rcContext ctx;
-
-    // Configurar o tamanho do grid e a resolução das células
-    const float minBounds[3] = {-100.0f, -100.0f, -100.0f};  // Ajuste conforme necessário
-    const float maxBounds[3] = {100.0f, 100.0f, 100.0f};      // Ajuste conforme necessário
-    rcConfig config;
-    rcCalcGridSize(minBounds, maxBounds, cs, &config.width, &config.height);
-    config.cs = cs;
-    config.ch = ch;
-    config.walkableSlopeAngle = 45.0f;
-
-    // Alocar o objeto rcHeightfield
-    rcHeightfield* solid = rcAllocHeightfield();
-    
-    // Configurar o heightfield
-    if (!rcCreateHeightfield(&ctx, *solid, config.width, config.height, minBounds, maxBounds, config.cs, config.ch)) {
-        // Lidar com erro na criação do heightfield
-        rcFreeHeightField(solid);  // Liberação de memória em caso de erro
-        return nullptr;
-    }
-
-    for (size_t i = 0; i < listaMeshes.size(); ++i) {
-        const malha& mesh = *listaMeshes[i];
-        const glm::mat4& transform = listTransforms[i];
-
-        std::vector<vec3> vertices;
-        for (unsigned int j : mesh.indice) {
-            // Aplicar transformação aos vértices
-            glm::vec4 vertexPos(mesh.vertices[j].posicao[0], mesh.vertices[j].posicao[1], mesh.vertices[j].posicao[2], 1.0f);
-            vertexPos = transform * vertexPos;
-            vertices.push_back(vertexPos);
-        }
-
-        // Converter vértices para o formato esperado por rcRasterizeTriangles
-        std::vector<float> flatVertices;
-        flatVertices.reserve(vertices.size() * 3);
-        for (const auto& v : vertices) {
-            flatVertices.push_back(v.x);
-            flatVertices.push_back(v.y);
-            flatVertices.push_back(v.z);
-        }
-
-        // Converter triângulos para o formato esperado por rcRasterizeTriangles
-        std::vector<int> indices(mesh.indice.begin(), mesh.indice.end());
-
-        // Rasterize triângulos para o heightfield
-        if (!rcRasterizeTriangles(&ctx, flatVertices.data(), flatVertices.size(), indices.data(), nullptr, mesh.indice.size() / 3, *solid, 0)) {
-            // Lidar com erro no rasterização
-            rcFreeHeightField(solid);  // Liberação de memória em caso de erro
-            return nullptr;
-        }
-    }
-
-    return solid;
-}
 
 
 
-dtNavMesh* buildNavMesh(rcHeightfield& hf, float cellSize = 0.3f, float cellHeight = 0.2f, float agentHeight= 2.0f, float agentMaxClimb = 0.5f,float walkableSlopeAngle = 45.0f)
+
+rcPolyMesh* gerarNavMesh(const std::shared_ptr<malha>& minhaMalha, const glm::mat4& transform)
 {
-    rcContext ctx;
-
-    if(navMesh){dtFreeNavMesh(navMesh);navMesh=NULL;}
-    
-
-    // Configuration parameters
-    rcConfig cfg;
-    rcCalcGridSize(hf.bmin, cfg.bmax, cellSize, &cfg.width, &cfg.height);
-    cfg.cs = cellSize;
-    cfg.ch = cellHeight;
-    cfg.walkableSlopeAngle = walkableSlopeAngle;
-    cfg.walkableHeight = static_cast<int>(ceilf(agentHeight / cfg.ch));
-    cfg.walkableClimb = static_cast<int>(floorf(agentMaxClimb / cfg.ch));
-
-    // Step 3: Rasterize the rcHeightfield
-    if (!rcCreateHeightfield(&ctx, hf, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
-        return nullptr;
-
-    // Optional: Filter the heightfield
-    rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, hf);
-    rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, hf);
-    rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, hf);
-
-    // Step 4: Build the rcCompactHeightfield
-    rcCompactHeightfield chf;
-    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, hf, chf))
-        return nullptr;
-
-    // Step 5: Build the rcContourSet
-    rcContourSet cset;
-    if (!rcBuildContours(&ctx, chf, cfg.maxSimplificationError, cfg.maxEdgeLen, cset))
-        return nullptr;
-
-    // Step 6: Build the rcPolyMesh
-    rcPolyMesh pmesh;
-    if (!rcBuildPolyMesh(&ctx, cset, cfg.maxVertsPerPoly, pmesh))
-        return nullptr;
-
-    // Step 7: Build the rcPolyMeshDetail
-    rcPolyMeshDetail dmesh;
-    if (!rcBuildPolyMeshDetail(&ctx, pmesh, chf, cfg.detailSampleDist, cfg.detailSampleMaxError, dmesh))
-        return nullptr;
-
-    // Step 8: Create a dtNavMesh
-    dtNavMeshCreateParams params;
-    memset(&params, 0, sizeof(params));
-    params.verts = pmesh.verts;
-    params.vertCount = pmesh.nverts;
-    params.polys = pmesh.polys;
-    params.polyAreas = pmesh.areas;
-    params.polyFlags = pmesh.flags;
-    params.polyCount = pmesh.npolys;
-    params.nvp = pmesh.nvp;
-    params.detailMeshes = dmesh.meshes;
-    params.detailVerts = dmesh.verts;
-    params.detailVertsCount = dmesh.nverts;
-    params.detailTris = dmesh.tris;
-    params.detailTriCount = dmesh.ntris;
-
-    unsigned char* navData = nullptr;
-    int navDataSize = 0;
-
-    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-        return nullptr;
-
-    dtNavMesh* navMesh = dtAllocNavMesh();
-
-    if (!navMesh || !dtStatusSucceed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-    {
-        dtFree(navData);
-        dtFreeNavMesh(navMesh);
-        return nullptr;
-    }
-
-    dtFree(navData);
-
-    return navMesh;
+    //bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
+    //bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
 }
-
-
-// Função para obter o centro do polígono a partir de um dtNavMesh
-void getPolyCenter(dtNavMesh* navMesh, dtPolyRef ref, float* center) {
-    if (!navMesh) {
-        std::cerr << "Erro: Navmesh não inicializado." << std::endl;
-        return;
-    }
-
-    const dtMeshTile* tile;
-    const dtPoly* poly;
-    navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
-
-    // Calcule o centro do polígono
-    for (int j = 0; j < poly->vertCount; ++j) {
-        const float* v = &tile->verts[poly->verts[j] * 3];
-        center[0] += v[0];
-        center[1] += v[1];
-        center[2] += v[2];
-    }
-
-    const float invCount = 1.0f / poly->vertCount;
-    center[0] *= invCount;
-    center[1] *= invCount;
-    center[2] *= invCount;
-}
-
-// Função para encontrar um caminho no navmesh e retornar um novo dtNavMesh
-std::vector<vec3> findPath(dtNavMesh* navMesh, const float* cylinder_scale, const float* startPos, const float* endPos) {
-    std::vector<vec3> pathPositions;
-
-    // Verifique se o navmesh é válido
-    if (!navMesh) {
-        std::cerr << "Erro: Navmesh não inicializado." << std::endl;
-        return pathPositions;
-    }
-
-    // Inicialize a configuração do navmesh e crie uma instância de dtNavMeshQuery
-    rcConfig cfg;
-    dtNavMeshQuery* navMeshQuery = new dtNavMeshQuery;
-
-    // Configure o navmesh query
-    if (dtStatusFailed(navMeshQuery->init(navMesh, 2048))) {
-        std::cerr << "Erro: Falha ao inicializar a consulta do navmesh." << std::endl;
-        delete navMeshQuery;
-        return pathPositions;
-    }
-
-    // Encontre os polígonos mais próximos para os pontos inicial e final
-    dtQueryFilter filter;
-    dtPolyRef startRef, endRef;
-    navMeshQuery->findNearestPoly(startPos, cylinder_scale, &filter, &startRef, NULL);
-    navMeshQuery->findNearestPoly(endPos, cylinder_scale, &filter, &endRef, NULL);
-
-    if (!startRef || !endRef) {
-        std::cerr << "Erro: Não foi possível encontrar polígonos válidos para os pontos fornecidos." << std::endl;
-        delete navMeshQuery;
-        return pathPositions;
-    }
-
-    // Configure os pontos de início e fim da consulta
-    dtPolyRef path[1000];  // Supondo que 1000 polígonos são suficientes para o caminho
-    int pathCount;
-
-    if (dtStatusFailed(navMeshQuery->findPath(startRef, endRef, startPos, endPos, &filter, path, &pathCount, 1000))) {
-        std::cerr << "Erro: Falha ao encontrar o caminho no navmesh." << std::endl;
-        delete navMeshQuery;
-        return pathPositions;
-    }
-
-    // Obtenha as posições principais do percurso
-    for (int i = 0; i < pathCount; ++i) {
-        float polyCenter[3] = { 0.0f, 0.0f, 0.0f };
-
-        // Obtenha o centro do polígono
-        getPolyCenter(navMesh, path[i], polyCenter);
-
-        pathPositions.push_back(vec3(polyCenter[0], polyCenter[1], polyCenter[2]));
-    }
-
-    // Libere recursos
-    delete navMeshQuery;
-
-    return pathPositions;
-}
-
-
 
 
 
@@ -833,10 +619,8 @@ void bake_navmesh_3D(){
 
         }
     }
-    rcHeightfield* hf = criarHeightfield(listaMeshes, listTransforms);
-    navMesh = buildNavMesh(*hf);
-
-    rcFreeHeightField(hf);
+    gerarNavMesh(listaMeshes, listTransforms);
+    
     
 }
 

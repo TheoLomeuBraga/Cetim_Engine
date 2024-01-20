@@ -590,18 +590,8 @@ public:
 		this->vertices = vertices;
 	}
 
-	// testar pode nao funcionar
 	void comprimir()
 	{
-		// comprimir shape keys
-		/*
-		for (pair<string, vector<vertice>> p : shape_keys)
-		{
-			shape_keys.insert(pair<string, vector<vertice>>(p.first, remover_elementos_duplicados<vertice>(p.second)));
-		}
-		*/
-
-		// comprimir malha e gerar index
 		vector<vertice> novos_vertices = remover_elementos_duplicados<vertice>(vertices);
 		vector<unsigned int> novo_indice;
 
@@ -628,10 +618,6 @@ public:
 		for (vertice v : vertices)
 		{
 			centro += vec3(v.posicao[0], v.posicao[1], v.posicao[2]);
-
-			// tamanho_maximo.x = std::max(tamanho_maximo.x,std::abs(v.posicao[0]));
-			// tamanho_maximo.y = std::max(tamanho_maximo.y,std::abs(v.posicao[1]));
-			// tamanho_maximo.z = std::max(tamanho_maximo.z,std::abs(v.posicao[2]));
 		}
 		centro /= vertices.size();
 		for (vertice v : vertices)
