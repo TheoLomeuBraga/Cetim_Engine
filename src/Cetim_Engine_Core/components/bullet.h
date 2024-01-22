@@ -225,8 +225,9 @@ dtNavMesh *rcPolyMesh_to_navMesh(
     params.polyFlags = tempPolyFlags;
 
     // Calcular bmin e bmax
-    float* tempVerts = new float[mesh->nverts * 3]; // Cada vértice tem 3 coordenadas
-    for (int i = 0; i < mesh->nverts * 3; ++i) {
+    float *tempVerts = new float[mesh->nverts * 3]; // Cada vértice tem 3 coordenadas
+    for (int i = 0; i < mesh->nverts * 3; ++i)
+    {
         tempVerts[i] = (float)mesh->verts[i]; // Convertendo para float
     }
 
@@ -238,18 +239,144 @@ dtNavMesh *rcPolyMesh_to_navMesh(
 
     if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
     {
+        print("Falha na criação dos dados da navMesh");
         return nullptr; // Falha na criação dos dados da navMesh
     }
 
     dtNavMesh *navMesh = new dtNavMesh();
     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
     {
+        print("Falha na inicialização da navMesh");
         delete[] navData; // Limpar memória alocada
         delete navMesh;
         return nullptr; // Falha na inicialização da navMesh
     }
 
     return navMesh;
+}
+
+int getVertexCount(const dtNavMesh* navMesh) {
+    if (!navMesh) return 0;
+
+    int vertexCount = 0;
+
+    for (int i = 0; i < navMesh->getMaxTiles(); ++i) {
+        const dtMeshTile* tile = navMesh->getTile(i);
+        if (!tile || !tile->header) continue;
+
+        vertexCount += tile->header->vertCount;
+    }
+
+    return vertexCount;
+}
+
+void reportDtStatusError(dtStatus status) {
+    if (dtStatusFailed(status)) {
+        if (dtStatusDetail(status, DT_WRONG_MAGIC)) {
+            std::cout << "Erro: Dados de entrada não são reconhecidos." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_WRONG_VERSION)) {
+            std::cout << "Erro: Versão de dados de entrada é incorreta." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_OUT_OF_MEMORY)) {
+            std::cout << "Erro: Operação ficou sem memória." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_INVALID_PARAM)) {
+            std::cout << "Erro: Parâmetro de entrada inválido." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_BUFFER_TOO_SMALL)) {
+            std::cout << "Erro: Buffer é muito pequeno para armazenar todos os resultados." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_OUT_OF_NODES)) {
+            std::cout << "Erro: A consulta esgotou os nós durante a busca." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_PARTIAL_RESULT)) {
+            std::cout << "Aviso: Resultado parcial, o destino final não foi alcançado." << std::endl;
+        }
+        if (dtStatusDetail(status, DT_ALREADY_OCCUPIED)) {
+            std::cout << "Erro: Um tile já foi atribuído para a coordenada x, y fornecida." << std::endl;
+        }
+    } else if (dtStatusSucceed(status)) {
+        std::cout << "Operação realizada com sucesso." << std::endl;
+    } else if (dtStatusInProgress(status)) {
+        std::cout << "Operação em progresso." << std::endl;
+    }
+}
+
+std::vector<glm::vec3> get_navmesh_path(
+    glm::vec3 start,
+    glm::vec3 end,
+    dtNavMesh *nMesh = navMesh,
+    float characterHeight = 2,
+    float characterRadius = 1,
+    bool canJump = false)
+{
+
+    std::vector<glm::vec3> path;
+
+    if (!nMesh)
+    {
+        return path; // Retorna um vetor vazio se a malha de navegação não for fornecida
+    }
+
+    dtNavMeshQuery query;
+    query.init(nMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
+
+    // Converter glm::vec3 para o formato do Detour
+    float startPos[3] = {start.x, start.y, start.z};
+    float endPos[3] = {end.x, end.y, end.z};
+
+    // Configurações de filtro baseadas nas habilidades do personagem
+    print("AAAAA");
+    dtQueryFilter filter = dtQueryFilter();;
+    //const unsigned short CUSTOM_WALKABLE_FLAG = canJump ? 0x01 : 0x00; // Exemplo de flag personalizada
+    //filter.setIncludeFlags(CUSTOM_WALKABLE_FLAG);
+    //filter.setAreaCost(RC_WALKABLE_AREA, 1.0f); // Usando RC_WALKABLE_AREA se disponível
+    filter.setExcludeFlags(0);
+    filter.setIncludeFlags(0xFFFF); // Inclui todas as áreas
+
+    float tolerance[3] = {50.0f, 50.0f, 50.0f};
+
+    print("BBBBB");
+
+    // Encontrar os polígonos mais próximos de start e end
+    dtPolyRef startRef, endRef;
+    reportDtStatusError(query.findNearestPoly(startPos, tolerance, &filter, &startRef, 0));
+    reportDtStatusError(query.findNearestPoly(endPos, tolerance, &filter, &endRef, 0));
+
+    print("CCCCC",startRef, endRef);
+
+    // Calcular o caminho
+    dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
+    int nPathPolys;
+    reportDtStatusError(query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256));
+
+    print("DDDDD", startRef, endRef, nPathPolys);
+
+    // Obter pontos do caminho
+    if (nPathPolys > 0)
+    {
+        // Array para armazenar o caminho simplificado
+        float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
+        unsigned char straightPathFlags[256];
+        dtPolyRef straightPathPolys[256];
+        int nStraightPath;
+        const int maxStraightPath = 256;
+
+        query.findStraightPath(startPos, endPos, pathPolys, nPathPolys,
+                               straightPath, straightPathFlags, straightPathPolys,
+                               &nStraightPath, maxStraightPath, 0);
+
+        // Preencher o vetor de glm::vec3 com os pontos do caminho
+        for (int i = 0; i < nStraightPath; ++i)
+        {
+            glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+            print("ponto", point.x, point.y, point.z);
+            path.push_back(point);
+        }
+    }
+
+    return path;
 }
 
 dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::vector<glm::mat4> transforms)
@@ -295,6 +422,8 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     nav_mesh_brute_data = mergePolyMeshes(allMeshesListPtr);
 
     navMesh = rcPolyMesh_to_navMesh(nav_mesh_brute_data);
+
+    get_navmesh_path(vec3(-21,40, 138 ), vec3(93,40, 108));
 
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)

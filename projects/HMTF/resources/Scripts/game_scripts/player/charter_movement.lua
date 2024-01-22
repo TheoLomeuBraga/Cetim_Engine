@@ -340,6 +340,9 @@ function UPDATE()
         this_object.components.transform:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data.pause < 1
 
+        --this_object.components.transform:get()
+        --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
+
         this_physics_3d:get()
     end
 
