@@ -13,7 +13,6 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
-
 #include "Recast.h"
 
 #include "DetourNavMesh.h"
@@ -21,10 +20,7 @@
 #include "DetourNavMeshBuilder.h"
 #include "DetourTileCache.h"
 
-
 btDiscreteDynamicsWorld *dynamicsWorld;
-
-
 
 int global_bullet_iniciado = 0;
 
@@ -71,54 +67,249 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
     }
 }
 
-
-
-
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
+rcPolyMesh *nav_mesh_brute_data = nullptr;
 
-dtNavMesh* navMesh = NULL;
+dtNavMesh *navMesh = nullptr;
+int navDataSize = 0;
+unsigned char *navData = nullptr;
+unsigned char *tempPolyAreas = nullptr;
+unsigned short *tempPolyFlags = nullptr;
 
-
-
-
-
-
-
-dtNavMesh* gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas ,std::vector<glm::mat4> transforms)
+rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
 {
-    //https://recastnav.com/structrcPolyMesh.html
-    //bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
-    //bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
+    if (!minhaMalha)
+    {
+        return nullptr; // Certifique-se de que a malha não é nula
+    }
+
+    // Criação de um novo rcPolyMesh
+    rcPolyMesh *polyMesh = new rcPolyMesh();
+    if (!polyMesh)
+    {
+        return nullptr; // Falha na alocação de memória
+    }
+
+    // Precisamos de um vetor temporário para armazenar os vértices transformados
+    std::vector<float> transformedVertices;
+    for (const auto &vert : minhaMalha->vertices)
+    {
+        glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+        pos = transform * pos;
+
+        // Adicionando os vértices transformados
+        transformedVertices.push_back(pos.x);
+        transformedVertices.push_back(pos.y);
+        transformedVertices.push_back(pos.z);
+    }
+
+    // Alocar e copiar os vértices transformados para o polyMesh
+    polyMesh->verts = new unsigned short[transformedVertices.size()];
+    polyMesh->nverts = transformedVertices.size() / 3;
+    for (size_t i = 0; i < transformedVertices.size(); ++i)
+    {
+        polyMesh->verts[i] = static_cast<unsigned short>(transformedVertices[i]);
+    }
+
+    // Alocar e copiar os índices para o polyMesh
+    polyMesh->polys = new unsigned short[minhaMalha->indice.size()];
+    polyMesh->npolys = minhaMalha->indice.size() / 3;
+    for (size_t i = 0; i < minhaMalha->indice.size(); ++i)
+    {
+        polyMesh->polys[i] = minhaMalha->indice[i];
+    }
+
+    // Configurar outros campos necessários em polyMesh
+    // ...
+
+    return polyMesh;
+}
+
+rcPolyMesh *mergePolyMeshes(const std::vector<rcPolyMesh *> &allMeshesListPtr)
+{
+    int totalVerts = 0;
+    int totalPolys = 0;
+
+    // Calcular o tamanho total necessário
+    for (const auto &mesh : allMeshesListPtr)
+    {
+        totalVerts += mesh->nverts;
+        totalPolys += mesh->npolys;
+    }
+
+    // Alocar o novo rcPolyMesh
+    rcPolyMesh *unitedMesh = new rcPolyMesh();
+    unitedMesh->verts = new unsigned short[totalVerts * 3]; // Cada vértice tem 3 coordenadas
+    unitedMesh->polys = new unsigned short[totalPolys * 3]; // Cada polígono é definido por 3 índices
+
+    // Copiar e ajustar os dados
+    int vertOffset = 0;
+    int polyOffset = 0;
+    for (const auto &mesh : allMeshesListPtr)
+    {
+        memcpy(unitedMesh->verts + vertOffset, mesh->verts, mesh->nverts * 3 * sizeof(unsigned short));
+
+        // Ajustar e copiar índices de polígonos
+        for (int i = 0; i < mesh->npolys * 3; ++i)
+        {
+            if (mesh->polys[i] == RC_MESH_NULL_IDX)
+            {
+                unitedMesh->polys[polyOffset + i] = RC_MESH_NULL_IDX;
+            }
+            else
+            {
+                unitedMesh->polys[polyOffset + i] = mesh->polys[i] + vertOffset;
+            }
+        }
+
+        vertOffset += mesh->nverts * 3;
+        polyOffset += mesh->npolys * 3;
+    }
+
+    unitedMesh->nverts = totalVerts;
+    unitedMesh->npolys = totalPolys;
+
+    // Configurar outros campos necessários em unitedMesh
+    // ...
+
+    return unitedMesh;
+}
+
+const unsigned char CUSTOM_WALKABLE_AREA = 0xff;  // Exemplo de valor para área transitável
+const unsigned short CUSTOM_WALKABLE_FLAG = 0x01; // Exemplo de flag para área transitável
+
+dtNavMesh *rcPolyMesh_to_navMesh(
+    rcPolyMesh *mesh,
+    float walkableHeight = 2.0f,
+    float walkableRadius = 0.6f,
+    float walkableClimb = 0.9f,
+    float tileSize = 32.0f)
+{
+
+    if (mesh == nullptr || mesh->verts == nullptr || mesh->npolys == 0 || mesh->nverts == 0 || mesh->polys == nullptr)
+    {
+        print("error in mesh");
+        return nullptr;
+    }
+
+    // Configuração dos parâmetros de criação
+    dtNavMeshCreateParams params;
+    memset(&params, 0, sizeof(params));
+    params.verts = mesh->verts;
+    params.vertCount = mesh->nverts;
+    params.polys = mesh->polys;
+    params.polyCount = mesh->npolys;
+    params.nvp = 3; // Número de vértices por polígono - usualmente 3 para malhas triangulares
+    params.walkableHeight = walkableHeight;
+    params.walkableRadius = walkableRadius;
+    params.walkableClimb = walkableClimb;
+    params.tileX = 0;
+    params.tileY = 0;
+    params.tileLayer = 0;
+    params.cs = tileSize;
+    params.ch = tileSize;
+    params.buildBvTree = false; // Construir árvore de volume delimitador para otimização
+
+    unsigned char *tempPolyAreas = new unsigned char[mesh->npolys];
+    unsigned short *tempPolyFlags = new unsigned short[mesh->npolys];
+    for (int i = 0; i < mesh->npolys; ++i)
+    {
+        tempPolyAreas[i] = CUSTOM_WALKABLE_AREA; // Valor personalizado
+        tempPolyFlags[i] = CUSTOM_WALKABLE_FLAG; // Valor personalizado
+    }
+
+    // Copiar os ponteiros dos arrays para a estrutura params
+    params.polyAreas = tempPolyAreas;
+    params.polyFlags = tempPolyFlags;
+
+    // Calcular bmin e bmax
+    float* tempVerts = new float[mesh->nverts * 3]; // Cada vértice tem 3 coordenadas
+    for (int i = 0; i < mesh->nverts * 3; ++i) {
+        tempVerts[i] = (float)mesh->verts[i]; // Convertendo para float
+    }
+
+    // Usar tempVerts para calcular os limites
+    rcCalcBounds(tempVerts, mesh->nverts, params.bmin, params.bmax);
+
+    // Lembre-se de liberar tempVerts após o uso
+    delete[] tempVerts;
+
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+    {
+        return nullptr; // Falha na criação dos dados da navMesh
+    }
+
+    dtNavMesh *navMesh = new dtNavMesh();
+    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
+    {
+        delete[] navData; // Limpar memória alocada
+        delete navMesh;
+        return nullptr; // Falha na inicialização da navMesh
+    }
+
+    return navMesh;
+}
+
+dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::vector<glm::mat4> transforms)
+{
+    // https://recastnav.com/structrcPolyMesh.html
+    // bool 	rcBuildPolyMesh (rcContext *ctx, const rcContourSet &cset, const int nvp, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#ga8688f9cb5dab904bbbe43c362a69e769
+    // bool 	rcMergePolyMeshes (rcContext *ctx, rcPolyMesh **meshes, const int nmeshes, rcPolyMesh &mesh) https://recastnav.com/group__recast.html#gaa28c3eb627ca7d96015c7978ff0eb8f7
 
     rcContext ctx;
-    rcPolyMesh *allMeshes = rcAllocPolyMesh();
 
-    
-    vector<rcPolyMesh*> allMeshesListPtr;
-
-    for(unsigned int i = 0 ; i < minhasMalhas.size();i++){
-        rcPolyMesh *aMeshes = rcAllocPolyMesh();
-
-        
-        allMeshesListPtr.push_back(aMeshes);
+    vector<rcPolyMesh *> allMeshesListPtr;
+    for (unsigned int i = 0; i < minhasMalhas.size(); i++)
+    {
+        allMeshesListPtr.push_back(converter_rcPolyMesh(minhasMalhas[i], transforms[i]));
     }
-    rcMergePolyMeshes(&ctx, allMeshesListPtr.data(), allMeshesListPtr.size(), *allMeshes);
 
-    //free
-    for(rcPolyMesh *m : allMeshesListPtr){
-        rcFreePolyMesh(m);
+    if (navMesh)
+    {
+        delete navMesh;
     }
-    rcFreePolyMesh(allMeshes);
+    if (navData)
+    {
+        delete[] navData;
+    }
+    if (tempPolyAreas)
+    {
+        delete[] tempPolyAreas;
+    }
+    if (tempPolyFlags)
+    {
+        delete[] tempPolyFlags;
+    }
+    if (nav_mesh_brute_data)
+    {
+        delete[] nav_mesh_brute_data->verts;
+        nav_mesh_brute_data->verts = nullptr;
+        delete[] nav_mesh_brute_data->polys;
+        nav_mesh_brute_data->polys = nullptr;
+        delete nav_mesh_brute_data;
+        nav_mesh_brute_data = nullptr;
+    }
+
+    nav_mesh_brute_data = mergePolyMeshes(allMeshesListPtr);
+
+    navMesh = rcPolyMesh_to_navMesh(nav_mesh_brute_data);
+
+    // free
+    for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)
+    {
+        rcPolyMesh *m = allMeshesListPtr[i];
+        delete[] m->verts;
+        m->verts = nullptr;
+        delete[] m->polys;
+        m->polys = nullptr;
+        delete m;
+        m = nullptr;
+    }
 
     return nullptr;
 }
-
-
-
-
-
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -629,26 +820,29 @@ public:
     }
 };
 
-void bake_navmesh_3D(){
+void bake_navmesh_3D()
+{
     std::vector<std::shared_ptr<malha>> listaMeshes;
     std::vector<glm::mat4> listTransforms;
-    for(pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj){
+    for (pair<btCollisionObject *, shared_ptr<objeto_jogo>> p : collisionObject_obj)
+    {
 
         shared_ptr<transform_> tf = p.second->pegar_componente<transform_>();
         shared_ptr<bullet> bu = p.second->pegar_componente<bullet>();
 
-        if(tf && bu && !bu->gatilho && bu->dinamica == estatico && bu->collision_mesh){
+        if (tf && bu && !bu->gatilho && bu->dinamica == estatico && bu->collision_mesh)
+        {
 
             listaMeshes.push_back(bu->collision_mesh);
             listTransforms.push_back(tf->pegar_matriz());
-
         }
     }
 
-    if(navMesh){dtFreeNavMesh(navMesh);}
+    if (navMesh)
+    {
+        dtFreeNavMesh(navMesh);
+    }
     navMesh = gerarNavMesh(listaMeshes, listTransforms);
-    
-    
 }
 
 class CustomContactResultCallback : public btCollisionWorld::ContactResultCallback
