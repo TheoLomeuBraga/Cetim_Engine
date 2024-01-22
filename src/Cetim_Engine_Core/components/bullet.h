@@ -177,31 +177,28 @@ rcPolyMesh *mergePolyMeshes(const std::vector<rcPolyMesh *> &allMeshesListPtr)
     return unitedMesh;
 }
 
-const unsigned char CUSTOM_WALKABLE_AREA = 0xff;  // Exemplo de valor para área transitável
-const unsigned short CUSTOM_WALKABLE_FLAG = 0x01; // Exemplo de flag para área transitável
 
-dtNavMesh *rcPolyMesh_to_navMesh(
-    rcPolyMesh *mesh,
+
+
+dtNavMesh* rcPolyMesh_to_navMesh(
+    rcPolyMesh* mesh,
     float walkableHeight = 2.0f,
     float walkableRadius = 0.6f,
     float walkableClimb = 0.9f,
     float tileSize = 32.0f)
 {
-
-    if (mesh == nullptr || mesh->verts == nullptr || mesh->npolys == 0 || mesh->nverts == 0 || mesh->polys == nullptr)
-    {
+    if (mesh == nullptr || mesh->verts == nullptr || mesh->npolys == 0 || mesh->nverts == 0 || mesh->polys == nullptr) {
         print("error in mesh");
         return nullptr;
     }
 
-    // Configuração dos parâmetros de criação
     dtNavMeshCreateParams params;
     memset(&params, 0, sizeof(params));
     params.verts = mesh->verts;
     params.vertCount = mesh->nverts;
     params.polys = mesh->polys;
     params.polyCount = mesh->npolys;
-    params.nvp = 3; // Número de vértices por polígono - usualmente 3 para malhas triangulares
+    params.nvp = 3;
     params.walkableHeight = walkableHeight;
     params.walkableRadius = walkableRadius;
     params.walkableClimb = walkableClimb;
@@ -210,50 +207,54 @@ dtNavMesh *rcPolyMesh_to_navMesh(
     params.tileLayer = 0;
     params.cs = tileSize;
     params.ch = tileSize;
-    params.buildBvTree = false; // Construir árvore de volume delimitador para otimização
+    params.buildBvTree = false;
 
-    unsigned char *tempPolyAreas = new unsigned char[mesh->npolys];
-    unsigned short *tempPolyFlags = new unsigned short[mesh->npolys];
-    for (int i = 0; i < mesh->npolys; ++i)
-    {
-        tempPolyAreas[i] = CUSTOM_WALKABLE_AREA; // Valor personalizado
-        tempPolyFlags[i] = CUSTOM_WALKABLE_FLAG; // Valor personalizado
+    // Ajuste para as áreas e flags
+    const unsigned char WALKABLE_AREA = 63; // Valor padrão para área andável em Recast
+    const unsigned short WALKABLE_FLAG = 0x01; // Flag padrão para área andável
+
+    unsigned char* tempPolyAreas = new unsigned char[mesh->npolys];
+    unsigned short* tempPolyFlags = new unsigned short[mesh->npolys];
+    for (int i = 0; i < mesh->npolys; ++i) {
+        tempPolyAreas[i] = WALKABLE_AREA;
+        tempPolyFlags[i] = WALKABLE_FLAG;
     }
-
-    // Copiar os ponteiros dos arrays para a estrutura params
     params.polyAreas = tempPolyAreas;
     params.polyFlags = tempPolyFlags;
 
-    // Calcular bmin e bmax
-    float *tempVerts = new float[mesh->nverts * 3]; // Cada vértice tem 3 coordenadas
-    for (int i = 0; i < mesh->nverts * 3; ++i)
-    {
-        tempVerts[i] = (float)mesh->verts[i]; // Convertendo para float
+    // Calculando os limites (bmin e bmax)
+    float* tempVerts = new float[mesh->nverts * 3];
+    for (int i = 0; i < mesh->nverts * 3; ++i) {
+        tempVerts[i] = (float)mesh->verts[i];
     }
-
-    // Usar tempVerts para calcular os limites
     rcCalcBounds(tempVerts, mesh->nverts, params.bmin, params.bmax);
-
-    // Lembre-se de liberar tempVerts após o uso
     delete[] tempVerts;
 
-    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-    {
+    unsigned char* navData;
+    int navDataSize;
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
         print("Falha na criação dos dados da navMesh");
-        return nullptr; // Falha na criação dos dados da navMesh
+        delete[] tempPolyAreas;
+        delete[] tempPolyFlags;
+        return nullptr;
     }
 
-    dtNavMesh *navMesh = new dtNavMesh();
-    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-    {
+    dtNavMesh* navMesh = new dtNavMesh();
+    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA))) {
         print("Falha na inicialização da navMesh");
-        delete[] navData; // Limpar memória alocada
+        delete[] navData;
+        delete[] tempPolyAreas;
+        delete[] tempPolyFlags;
         delete navMesh;
-        return nullptr; // Falha na inicialização da navMesh
+        return nullptr;
     }
+
+    delete[] tempPolyAreas;
+    delete[] tempPolyFlags;
 
     return navMesh;
 }
+
 
 int getVertexCount(const dtNavMesh* navMesh) {
     if (!navMesh) return 0;
@@ -306,16 +307,14 @@ void reportDtStatusError(dtStatus status) {
 std::vector<glm::vec3> get_navmesh_path(
     glm::vec3 start,
     glm::vec3 end,
-    dtNavMesh *nMesh = navMesh,
+    dtNavMesh* nMesh = navMesh,
     float characterHeight = 2,
     float characterRadius = 1,
     bool canJump = false)
 {
-
     std::vector<glm::vec3> path;
 
-    if (!nMesh)
-    {
+    if (!nMesh) {
         return path; // Retorna um vetor vazio se a malha de navegação não for fornecida
     }
 
@@ -327,59 +326,73 @@ std::vector<glm::vec3> get_navmesh_path(
     float endPos[3] = {end.x, end.y, end.z};
 
     // Configurações de filtro baseadas nas habilidades do personagem
-    print("AAAAA");
-    dtQueryFilter filter = dtQueryFilter();
-    //const unsigned short CUSTOM_WALKABLE_FLAG = canJump ? 0x01 : 0x00; // Exemplo de flag personalizada
-    //filter.setIncludeFlags(CUSTOM_WALKABLE_FLAG);
-    //filter.setAreaCost(RC_WALKABLE_AREA, 1.0f); // Usando RC_WALKABLE_AREA se disponível
-    
-    filter.setExcludeFlags(0);
-    filter.setAreaCost(RC_WALKABLE_AREA, 1.0f);
-    filter.setIncludeFlags(CUSTOM_WALKABLE_FLAG); 
+    dtQueryFilter filter;
+    unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
+    filter.setIncludeFlags(0x01);
+    filter.setExcludeFlags(0); // Sem flags de exclusão
+    filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-    float tolerance[3] = {50.0f, 50.0f, 50.0f};
-
-    print("BBBBB");
+    float tolerance[3] = {5.0f, 5.0f, 5.0f}; // Tolerância para encontrar o polígono mais próximo
 
     // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
-    reportDtStatusError(query.findNearestPoly(startPos, tolerance, &filter, &startRef, 0));
-    reportDtStatusError(query.findNearestPoly(endPos, tolerance, &filter, &endRef, 0));
+    dtStatus status;
 
-    print("CCCCC",startRef, endRef);
+    status = query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
+    if (dtStatusFailed(status)) {
+        print("Falha ao encontrar polígono próximo ao ponto de início");
+        return path;
+    }
+
+    status = query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
+    if (dtStatusFailed(status)) {
+        print("Falha ao encontrar polígono próximo ao ponto final");
+        return path;
+    }
+
+    if (startRef == 0 || endRef == 0) {
+        print("Não foram encontrados polígonos de referência válidos");
+        return path;
+    }
 
     // Calcular o caminho
     dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
     int nPathPolys;
-    reportDtStatusError(query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256));
+    status = query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
 
-    print("DDDDD", startRef, endRef, nPathPolys);
+    if (dtStatusFailed(status) || nPathPolys == 0) {
+        print("Falha ao calcular o caminho");
+        return path;
+    }
 
     // Obter pontos do caminho
-    if (nPathPolys > 0)
-    {
-        // Array para armazenar o caminho simplificado
-        float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
-        unsigned char straightPathFlags[256];
-        dtPolyRef straightPathPolys[256];
-        int nStraightPath;
-        const int maxStraightPath = 256;
+    float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
+    unsigned char straightPathFlags[256];
+    dtPolyRef straightPathPolys[256];
+    int nStraightPath;
 
-        query.findStraightPath(startPos, endPos, pathPolys, nPathPolys,
-                               straightPath, straightPathFlags, straightPathPolys,
-                               &nStraightPath, maxStraightPath, 0);
+    status = query.findStraightPath(startPos, endPos, pathPolys, nPathPolys,
+                                    straightPath, straightPathFlags, straightPathPolys,
+                                    &nStraightPath, 256, 0);
 
-        // Preencher o vetor de glm::vec3 com os pontos do caminho
-        for (int i = 0; i < nStraightPath; ++i)
-        {
-            glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
-            print("ponto", point.x, point.y, point.z);
-            path.push_back(point);
-        }
+    if (dtStatusFailed(status)) {
+        print("Falha ao calcular o caminho simplificado");
+        return path;
+    }
+
+    // Preencher o vetor de glm::vec3 com os pontos do caminho
+    for (int i = 0; i < nStraightPath; ++i) {
+        glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+        path.push_back(point);
     }
 
     return path;
 }
+
+
+
+
+
 
 dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::vector<glm::mat4> transforms)
 {
