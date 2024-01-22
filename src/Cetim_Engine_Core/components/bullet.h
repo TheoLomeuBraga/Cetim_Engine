@@ -328,12 +328,14 @@ std::vector<glm::vec3> get_navmesh_path(
 
     // Configurações de filtro baseadas nas habilidades do personagem
     print("AAAAA");
-    dtQueryFilter filter = dtQueryFilter();;
+    dtQueryFilter filter = dtQueryFilter();
     //const unsigned short CUSTOM_WALKABLE_FLAG = canJump ? 0x01 : 0x00; // Exemplo de flag personalizada
     //filter.setIncludeFlags(CUSTOM_WALKABLE_FLAG);
     //filter.setAreaCost(RC_WALKABLE_AREA, 1.0f); // Usando RC_WALKABLE_AREA se disponível
+    
     filter.setExcludeFlags(0);
-    filter.setIncludeFlags(0xFFFF); // Inclui todas as áreas
+    filter.setAreaCost(RC_WALKABLE_AREA, 1.0f);
+    filter.setIncludeFlags(CUSTOM_WALKABLE_FLAG); 
 
     float tolerance[3] = {50.0f, 50.0f, 50.0f};
 
