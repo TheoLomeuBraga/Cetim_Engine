@@ -99,6 +99,8 @@ rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 tr
         glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
         pos = transform * pos;
 
+        
+
         // Adicionando os vértices transformados
         transformedVertices.push_back(pos.x);
         transformedVertices.push_back(pos.y);
@@ -209,15 +211,13 @@ dtNavMesh* rcPolyMesh_to_navMesh(
     params.ch = tileSize;
     params.buildBvTree = false;
 
-    // Ajuste para as áreas e flags
-    const unsigned char WALKABLE_AREA = 63; // Valor padrão para área andável em Recast
-    const unsigned short WALKABLE_FLAG = 0x01; // Flag padrão para área andável
+    
 
     unsigned char* tempPolyAreas = new unsigned char[mesh->npolys];
     unsigned short* tempPolyFlags = new unsigned short[mesh->npolys];
     for (int i = 0; i < mesh->npolys; ++i) {
-        tempPolyAreas[i] = WALKABLE_AREA;
-        tempPolyFlags[i] = WALKABLE_FLAG;
+        tempPolyAreas[i] = 63;
+        tempPolyFlags[i] = 0x01;
     }
     params.polyAreas = tempPolyAreas;
     params.polyFlags = tempPolyFlags;
@@ -339,19 +339,13 @@ std::vector<glm::vec3> get_navmesh_path(
     dtStatus status;
 
     status = query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
-    if (dtStatusFailed(status)) {
-        print("Falha ao encontrar polígono próximo ao ponto de início");
-        return path;
-    }
+    reportDtStatusError(status);
 
     status = query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
-    if (dtStatusFailed(status)) {
-        print("Falha ao encontrar polígono próximo ao ponto final");
-        return path;
-    }
+    reportDtStatusError(status);
 
     if (startRef == 0 || endRef == 0) {
-        print("Não foram encontrados polígonos de referência válidos");
+        print("Não foram encontrados polígonos de referência válidos",startRef,endRef);
         return path;
     }
 
@@ -359,6 +353,7 @@ std::vector<glm::vec3> get_navmesh_path(
     dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
     int nPathPolys;
     status = query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
+    reportDtStatusError(status);
 
     if (dtStatusFailed(status) || nPathPolys == 0) {
         print("Falha ao calcular o caminho");
@@ -384,10 +379,12 @@ std::vector<glm::vec3> get_navmesh_path(
     for (int i = 0; i < nStraightPath; ++i) {
         glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         path.push_back(point);
+        print("point",point.x,point.y,point.z);
     }
 
     return path;
 }
+
 
 
 
@@ -438,7 +435,10 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     navMesh = rcPolyMesh_to_navMesh(nav_mesh_brute_data);
 
-    get_navmesh_path(vec3(-21,40, 138 ), vec3(93,40, 108));
+    
+    get_navmesh_path(vec3(-21,40.5, -138 ), vec3(137,40.5, -75));
+    
+    
 
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)
