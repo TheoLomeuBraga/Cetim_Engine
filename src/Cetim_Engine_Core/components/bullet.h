@@ -70,7 +70,7 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
-rcPolyMesh *nav_mesh_brute_data = nullptr;
+rcPolyMeshDetail *nav_mesh_brute_data = nullptr;
 
 dtNavMesh *navMesh = nullptr;
 int navDataSize = 0;
@@ -94,7 +94,7 @@ float unsignedShortToFloat(unsigned short valor, float minVal = -1000, float max
     return minVal + normalizado * (maxVal - minVal);
 }
 
-rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
+rcPolyMeshDetail *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
 {
     if (!minhaMalha)
     {
@@ -102,7 +102,7 @@ rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 tr
     }
 
     // Criação de um novo rcPolyMesh
-    rcPolyMesh *polyMesh = new rcPolyMesh();
+    rcPolyMeshDetail *polyMesh = new rcPolyMesh();
     if (!polyMesh)
     {
         return nullptr; // Falha na alocação de memória
@@ -114,8 +114,6 @@ rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 tr
     {
         glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
         pos = transform * pos;
-
-        
 
         // Adicionando os vértices transformados
         transformedVertices.push_back(pos.x);
@@ -146,7 +144,7 @@ rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 tr
     return polyMesh;
 }
 
-rcPolyMesh *mergePolyMeshes(const std::vector<rcPolyMesh *> &allMeshesListPtr)
+rcPolyMeshDetail *mergePolyMeshes(const std::vector<rcPolyMeshDetail *> &allMeshesListPtr)
 {
     int totalVerts = 0;
     int totalPolys = 0;
@@ -159,7 +157,7 @@ rcPolyMesh *mergePolyMeshes(const std::vector<rcPolyMesh *> &allMeshesListPtr)
     }
 
     // Alocar o novo rcPolyMesh
-    rcPolyMesh *unitedMesh = new rcPolyMesh();
+    rcPolyMeshDetail *unitedMesh = new rcPolyMeshDetail();
     unitedMesh->verts = new unsigned short[totalVerts * 3]; // Cada vértice tem 3 coordenadas
     unitedMesh->polys = new unsigned short[totalPolys * 3]; // Cada polígono é definido por 3 índices
 
@@ -200,7 +198,7 @@ rcPolyMesh *mergePolyMeshes(const std::vector<rcPolyMesh *> &allMeshesListPtr)
 
 
 dtNavMesh* rcPolyMesh_to_navMesh(
-    rcPolyMesh* mesh,
+    rcPolyMeshDetail* mesh,
     float walkableHeight = 2.0f,
     float walkableRadius = 0.6f,
     float walkableClimb = 0.9f,
@@ -420,9 +418,9 @@ void printNavMeshVertices(const dtNavMesh* navMesh) {
         for (int vi = 0; vi < tile->header->vertCount; ++vi) {
             float* v = &tile->verts[vi * 3];
             // Revertendo a escala e a translação
-            float x = unsignedShortToFloat(v[0]);
-            float y = unsignedShortToFloat(v[1]);
-            float z = unsignedShortToFloat(v[2]);
+            float x = (v[0]);
+            float y = (v[1]);
+            float z = (v[2]);
             std::cout << "Vertex " << vi << " in Tile " << i << ": (" << x << ", " << y << ", " << z << ")" << std::endl;
         }
     }
@@ -439,7 +437,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     rcContext ctx;
 
-    vector<rcPolyMesh *> allMeshesListPtr;
+    vector<rcPolyMeshDetail *> allMeshesListPtr;
     for (unsigned int i = 0; i < minhasMalhas.size(); i++)
     {
         allMeshesListPtr.push_back(converter_rcPolyMesh(minhasMalhas[i], transforms[i]));
@@ -484,7 +482,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)
     {
-        rcPolyMesh *m = allMeshesListPtr[i];
+        rcPolyMeshDetail *m = allMeshesListPtr[i];
         delete[] m->verts;
         m->verts = nullptr;
         delete[] m->polys;
