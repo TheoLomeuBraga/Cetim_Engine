@@ -79,7 +79,7 @@ unsigned short *tempPolyFlags = nullptr;
 float bmax[3],bmin[3];
 const float tileSize = 32.0f;
 
-/**/
+/*
 unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
     // Normalizando para o intervalo [0, 1]
     float normalizado = (valor - minVal) / (maxVal - minVal);
@@ -95,13 +95,14 @@ float unsignedShortToFloat(unsigned short valor, float minVal = -1000, float max
     // Convertendo para o intervalo original de float
     return minVal + normalizado * (maxVal - minVal);
 }
+*/
 
 /*
 const unsigned short* iv = &params->verts[i*3];
-		float* v = &navVerts[i*3];
-		v[0] = params->bmin[0] + iv[0] * params->cs;
-		v[1] = params->bmin[1] + iv[1] * params->ch;
-		v[2] = params->bmin[2] + iv[2] * params->cs;
+float* v = &navVerts[i*3];
+v[0] = params->bmin[0] + iv[0] * params->cs;
+v[1] = params->bmin[1] + iv[1] * params->ch;
+v[2] = params->bmin[2] + iv[2] * params->cs;
 */
 
 
@@ -224,7 +225,8 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
         // Copiar vértices
         for (int i = 0; i < detailMesh->nverts * 3; ++i) {
             if(vec_number > 2) { vec_number = 0; }
-            combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i], bmin[vec_number], bmax[vec_number]);
+            //combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i], bmin[vec_number], bmax[vec_number]);
+            combinedPolyMesh->verts[vertOffset + i] = static_cast<unsigned short>(std::round((detailMesh->verts[i] - bmin[vec_number]) / tileSize));
             vec_number++;
         }
 
