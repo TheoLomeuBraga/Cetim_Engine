@@ -76,6 +76,8 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
+float bmax[3],bmin[3];
+
 /**/
 unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
     // Normalizando para o intervalo [0, 1]
@@ -166,7 +168,7 @@ void clearRcPolyMeshDetail(rcPolyMeshDetail* meshDetail) {
     }
 }
 
-rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>& detailMeshes,float tileSize = 32.0f) {
+rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
     if (detailMeshes.empty()) {
         return nullptr;
     }
@@ -194,6 +196,7 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
     combinedPolyMesh->npolys = totalTris;
     combinedPolyMesh->nvp = 3; // Número de vértices por polígono
 
+    unsigned int vec_number = 0;
     // Preencher os dados do combinedPolyMesh
     int vertOffset = 0;
     int polyOffset = 0;
@@ -204,8 +207,10 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
 
         // Copiar vértices
         for (int i = 0; i < detailMesh->nverts * 3; ++i) {
-            //print("AAAAA",detailMesh->verts[i],floatToUnsignedShort(detailMesh->verts[i]));
-            combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i]);
+            
+            if(vec_number > 2) {vec_number = 0;}
+            combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i],bmin[vec_number],bmax[vec_number]);
+            vec_number++;
         }
 
         // Copiar e ajustar índices de triângulos para polígonos
@@ -226,6 +231,30 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
     return combinedPolyMesh;
 }
 
+void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
+    if (detailMeshes.empty()) {
+        return;
+    }
+
+    // Inicializa bmin e bmax com valores extremos
+    for (int i = 0; i < 3; ++i) {
+        bmin[i] = std::numeric_limits<float>::max();
+        bmax[i] = std::numeric_limits<float>::lowest();
+    }
+
+    // Percorre todos os meshDetails e seus vértices
+    for (const auto& detailMesh : detailMeshes) {
+        if (!detailMesh) continue;
+
+        for (int i = 0; i < detailMesh->nverts; ++i) {
+            const float* v = &detailMesh->verts[i * 3];
+            for (int j = 0; j < 3; ++j) {
+                bmin[j] = std::min(bmin[j], v[j]);
+                bmax[j] = std::max(bmax[j], v[j]);
+            }
+        }
+    }
+}
 
 void freeRcPolyMesh(rcPolyMesh* mesh) {
     if (mesh) {
@@ -260,7 +289,19 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     }
 
     // Combinação fictícia de rcPolyMeshDetail em rcPolyMesh
-    rcPolyMesh* combinedPolyMesh = convertPolyMeshDetailToPolyMesh(meshDetails,tileSize);
+    bmin[0] = 0;
+    bmin[1] = 0;
+    bmin[2] = 0;
+    bmax[0] = 0;
+    bmax[1] = 0;
+    bmax[2] = 0;
+
+    calculateBoundingBoxForMeshDetails(meshDetails);
+
+    print("bmin",bmin[0],bmin[1],bmin[2]);
+    print("bmax",bmax[0],bmax[1],bmax[2]);
+
+    rcPolyMesh* combinedPolyMesh = convertPolyMeshDetailToPolyMesh(meshDetails);
     if (!combinedPolyMesh) {
         return nullptr;
     }
@@ -290,6 +331,15 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     params.cs = tileSize;
     params.ch = tileSize;
     params.buildBvTree = true;
+
+    
+
+    params.bmin[0] = bmin[0];
+    params.bmin[1] = bmin[1];
+    params.bmin[2] = bmin[2];
+    params.bmax[0] = bmax[0];
+    params.bmax[1] = bmax[1];
+    params.bmax[2] = bmax[2];
 
     // Definir áreas caminháveis
     unsigned char *polyAreas = new unsigned char[combinedPolyMesh->npolys];
