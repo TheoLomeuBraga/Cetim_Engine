@@ -74,8 +74,11 @@ namespace ManuseioDados
 
 	std::set<std::string> loading_requests_files = {};
 
+	std::mutex loading_request_mtx;
+
 	bool has_loading_request(std::string file)
 	{
+		std::lock_guard<std::mutex> lock(loading_request_mtx);
 		if (loading_requests_files.find(file) != loading_requests_files.end())
 		{
 			return true;
@@ -83,7 +86,7 @@ namespace ManuseioDados
 		return false;
 	}
 
-	std::mutex loading_request_mtx;
+	
 
 	void add_loading_request(std::string file)
 	{
@@ -94,6 +97,7 @@ namespace ManuseioDados
 
 	void remove_loading_request(std::string file)
 	{
+		std::lock_guard<std::mutex> lock(loading_request_mtx);
 		loading_requests_files.erase(file);
 		loading_requests_no -= 1;
 	}

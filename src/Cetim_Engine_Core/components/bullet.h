@@ -78,6 +78,22 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
+unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
+    // Normalizando para o intervalo [0, 1]
+    float normalizado = (valor - minVal) / (maxVal - minVal);
+
+    // Convertendo para o intervalo de unsigned short
+    return static_cast<unsigned short>(normalizado * 65535.0f);
+}
+
+float unsignedShortToFloat(unsigned short valor, float minVal = -1000, float maxVal = 1000) {
+    // Normalizando para o intervalo [0, 1]
+    float normalizado = static_cast<float>(valor) / 65535.0f;
+
+    // Convertendo para o intervalo original de float
+    return minVal + normalizado * (maxVal - minVal);
+}
+
 rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
 {
     if (!minhaMalha)
@@ -112,7 +128,8 @@ rcPolyMesh *converter_rcPolyMesh(std::shared_ptr<malha> minhaMalha, glm::mat4 tr
     polyMesh->nverts = transformedVertices.size() / 3;
     for (size_t i = 0; i < transformedVertices.size(); ++i)
     {
-        polyMesh->verts[i] = static_cast<unsigned short>(transformedVertices[i]);
+        polyMesh->verts[i] = floatToUnsignedShort(transformedVertices[i]);
+        //print("AAAAA",transformedVertices[i],unsignedShortToFloat(floatToUnsignedShort(transformedVertices[i])));
     }
 
     // Alocar e copiar os índices para o polyMesh
@@ -225,9 +242,11 @@ dtNavMesh* rcPolyMesh_to_navMesh(
     // Calculando os limites (bmin e bmax)
     float* tempVerts = new float[mesh->nverts * 3];
     for (int i = 0; i < mesh->nverts * 3; ++i) {
-        tempVerts[i] = (float)mesh->verts[i];
+        tempVerts[i] = unsignedShortToFloat(mesh->verts[i]);
     }
     rcCalcBounds(tempVerts, mesh->nverts, params.bmin, params.bmax);
+    //print("params.bmin",params.bmin[0],params.bmin[1],params.bmin[2]);
+    //print("params.bmax",params.bmax[0],params.bmax[1],params.bmax[2]);
     delete[] tempVerts;
 
     unsigned char* navData;
@@ -386,7 +405,28 @@ std::vector<glm::vec3> get_navmesh_path(
 }
 
 
+void printNavMeshVertices(const dtNavMesh* navMesh) {
+    if (!navMesh) {
+        std::cout << "NavMesh is null" << std::endl;
+        return;
+    }
 
+    
+
+    for (int i = 0; i < navMesh->getMaxTiles(); ++i) {
+        const dtMeshTile* tile = navMesh->getTile(i);
+        if (!tile || !tile->header) continue;
+
+        for (int vi = 0; vi < tile->header->vertCount; ++vi) {
+            float* v = &tile->verts[vi * 3];
+            // Revertendo a escala e a translação
+            float x = unsignedShortToFloat(v[0]);
+            float y = unsignedShortToFloat(v[1]);
+            float z = unsignedShortToFloat(v[2]);
+            std::cout << "Vertex " << vi << " in Tile " << i << ": (" << x << ", " << y << ", " << z << ")" << std::endl;
+        }
+    }
+}
 
 
 
@@ -435,6 +475,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     navMesh = rcPolyMesh_to_navMesh(nav_mesh_brute_data);
 
+    printNavMeshVertices(navMesh);
     
     get_navmesh_path(vec3(-21,40.5, -138 ), vec3(137,40.5, -75));
     
