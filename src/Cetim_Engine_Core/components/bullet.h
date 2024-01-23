@@ -77,7 +77,7 @@ unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
 float bmax[3],bmin[3];
-const float tileSize = 32.0f;
+const float tileSize = 10.0f;
 
 /*
 unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
@@ -494,7 +494,7 @@ std::vector<glm::vec3> get_navmesh_path(
     filter.setExcludeFlags(0);    // Sem flags de exclusão
     filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-    float tolerance[3] = {50.0f, 50.0f, 50.0f}; // Tolerância para encontrar o polígono mais próximo
+    float tolerance[3] = {5.0f, 5.0f, 5.0f}; // Tolerância para encontrar o polígono mais próximo
 
     // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
@@ -606,9 +606,10 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     navMesh = rcPolyMeshDetails_to_navMesh(allMeshesListPtr);
 
-    printNavMeshVertices(navMesh);
+    //printNavMeshVertices(navMesh);
 
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(137, 40.5, -75));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(137, 40.5, -75));
+    get_navmesh_path(vec3(-16.0258, 61, -304.622), vec3(-48.0258, 29, -176.622));
 
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)
