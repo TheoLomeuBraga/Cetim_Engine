@@ -356,7 +356,7 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
 
-    print("AAAAA");
+    //print("AAAAA");
 
     // Criar dados de navegação
     if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
@@ -368,7 +368,7 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
         return nullptr;
     }
 
-    print("BBBBB");
+    //print("BBBBB");
 
     // Inicializar dtNavMesh com os dados de navegação
     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA))) {
@@ -381,7 +381,8 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
         print("fail to start nav mesh");
         return nullptr;
     }
-    print("CCCCC");
+
+    //print("CCCCC");
 
     // Limpeza final
     if(combinedPolyMesh){
@@ -389,7 +390,7 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
         combinedPolyMesh = nullptr;
     }
     
-    print("DDDDD");
+    //print("DDDDD");
 
     return navMesh;
 }
@@ -510,6 +511,8 @@ std::vector<glm::vec3> get_navmesh_path(
     {
         print("Não foram encontrados polígonos de referência válidos", startRef, endRef);
         return path;
+    }else{
+        print("Foram encontrados polígonos de referência válidos", startRef, endRef);
     }
 
     // Calcular o caminho
@@ -539,6 +542,8 @@ std::vector<glm::vec3> get_navmesh_path(
         print("Falha ao calcular o caminho simplificado");
         return path;
     }
+
+    print("nStraightPath",nStraightPath);
 
     // Preencher o vetor de glm::vec3 com os pontos do caminho
     for (int i = 0; i < nStraightPath; ++i)
@@ -608,7 +613,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     //printNavMeshVertices(navMesh);
 
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(137, 40.5, -138));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
     //get_navmesh_path(vec3(-16.0258, 61, -304.622), vec3(-48.0258, 29, -176.622));
 
     // free
