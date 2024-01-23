@@ -77,6 +77,7 @@ unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
 float bmax[3],bmin[3];
+const float tileSize = 32.0f;
 
 /**/
 unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
@@ -94,6 +95,14 @@ float unsignedShortToFloat(unsigned short valor, float minVal = -1000, float max
     // Convertendo para o intervalo original de float
     return minVal + normalizado * (maxVal - minVal);
 }
+
+/*
+const unsigned short* iv = &params->verts[i*3];
+		float* v = &navVerts[i*3];
+		v[0] = params->bmin[0] + iv[0] * params->cs;
+		v[1] = params->bmin[1] + iv[1] * params->ch;
+		v[2] = params->bmin[2] + iv[2] * params->cs;
+*/
 
 
 rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
@@ -168,10 +177,13 @@ void clearRcPolyMeshDetail(rcPolyMeshDetail* meshDetail) {
     }
 }
 
+
 rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
     if (detailMeshes.empty()) {
         return nullptr;
     }
+
+    
 
     // Calcular o tamanho total dos vértices e triângulos
     int totalVerts = 0;
@@ -191,25 +203,28 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
 
     // Alocar memória para os vértices e polígonos
     combinedPolyMesh->verts = new unsigned short[totalVerts * 3];
-    combinedPolyMesh->polys = new unsigned short[totalTris * 2 * 3]; // 2 vértices por polígono, com até 3 polígonos por borda
+    combinedPolyMesh->polys = new unsigned short[totalTris * 2 * 3];
     combinedPolyMesh->nverts = totalVerts;
     combinedPolyMesh->npolys = totalTris;
-    combinedPolyMesh->nvp = 3; // Número de vértices por polígono
+    combinedPolyMesh->cs = tileSize;
+    combinedPolyMesh->ch = tileSize;
+    combinedPolyMesh->nvp = 3;
 
-    unsigned int vec_number = 0;
+    // Copiar bmin e bmax para combinedPolyMesh
+    memcpy(combinedPolyMesh->bmin, bmin, sizeof(bmin));
+    memcpy(combinedPolyMesh->bmax, bmax, sizeof(bmax));
+
     // Preencher os dados do combinedPolyMesh
     int vertOffset = 0;
     int polyOffset = 0;
+    unsigned int vec_number = 0;
     for (const auto& detailMesh : detailMeshes) {
-        if (!detailMesh) {
-            continue;
-        }
+        if (!detailMesh) continue;
 
         // Copiar vértices
         for (int i = 0; i < detailMesh->nverts * 3; ++i) {
-            
-            if(vec_number > 2) {vec_number = 0;}
-            combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i],bmin[vec_number],bmax[vec_number]);
+            if(vec_number > 2) { vec_number = 0; }
+            combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i], bmin[vec_number], bmax[vec_number]);
             vec_number++;
         }
 
@@ -217,7 +232,7 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
         for (int i = 0; i < detailMesh->ntris; ++i) {
             for (int j = 0; j < 3; ++j) {
                 combinedPolyMesh->polys[polyOffset * 6 + j] = detailMesh->tris[i * 4 + j] + vertOffset / 3;
-                combinedPolyMesh->polys[polyOffset * 6 + j + 3] = RC_MESH_NULL_IDX; // Valor padrão para bordas
+                combinedPolyMesh->polys[polyOffset * 6 + j + 3] = RC_MESH_NULL_IDX;
             }
             polyOffset++;
         }
@@ -225,7 +240,7 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
         vertOffset += detailMesh->nverts * 3;
     }
 
-    // Definir outros campos necessários em combinedPolyMesh
+    // Configurar outros campos necessários em combinedPolyMesh
     // ...
 
     return combinedPolyMesh;
@@ -281,20 +296,14 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     const std::vector<rcPolyMeshDetail*>& meshDetails,
     float walkableHeight = 2.0f,
     float walkableRadius = 0.6f,
-    float walkableClimb = 0.9f,
-    float tileSize = 32.0f)
+    float walkableClimb = 0.9f
+    )
 {
     if (meshDetails.empty()) {
         return nullptr; // Nenhum mesh para processar
     }
 
     // Combinação fictícia de rcPolyMeshDetail em rcPolyMesh
-    bmin[0] = 0;
-    bmin[1] = 0;
-    bmin[2] = 0;
-    bmax[0] = 0;
-    bmax[1] = 0;
-    bmax[2] = 0;
 
     calculateBoundingBoxForMeshDetails(meshDetails);
 
@@ -330,16 +339,10 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     params.tileLayer = 0;
     params.cs = tileSize;
     params.ch = tileSize;
-    params.buildBvTree = true;
+    params.buildBvTree = false;
 
-    
-
-    params.bmin[0] = bmin[0];
-    params.bmin[1] = bmin[1];
-    params.bmin[2] = bmin[2];
-    params.bmax[0] = bmax[0];
-    params.bmax[1] = bmax[1];
-    params.bmax[2] = bmax[2];
+    memcpy(params.bmin, bmin, sizeof(bmin));
+    memcpy(params.bmax, bmax, sizeof(bmax));
 
     // Definir áreas caminháveis
     unsigned char *polyAreas = new unsigned char[combinedPolyMesh->npolys];
@@ -546,28 +549,22 @@ std::vector<glm::vec3> get_navmesh_path(
     return path;
 }
 
-void printNavMeshVertices(const dtNavMesh *navMesh)
-{
-    if (!navMesh)
-    {
+void printNavMeshVertices(const dtNavMesh* navMesh) {
+    if (!navMesh) {
         std::cout << "NavMesh is null" << std::endl;
         return;
     }
 
-    for (int i = 0; i < navMesh->getMaxTiles(); ++i)
-    {
-        const dtMeshTile *tile = navMesh->getTile(i);
-        if (!tile || !tile->header)
+    for (int i = 0; i < navMesh->getMaxTiles(); ++i) {
+        const dtMeshTile* tile = navMesh->getTile(i);
+        if (!tile || !tile->header) {
             continue;
+        }
 
-        for (int vi = 0; vi < tile->header->vertCount; ++vi)
-        {
-            float *v = &tile->verts[vi * 3];
-            // Revertendo a escala e a translação
-            float x = ((v[0]));
-            float y = ((v[1]));
-            float z = ((v[2]));
-            std::cout << "Vertex " << vi << " in Tile " << i << ": (" << x << ", " << y << ", " << z << ")" << std::endl;
+        std::cout << "Tile " << i << std::endl;
+        for (int vi = 0; vi < tile->header->vertCount; ++vi) {
+            const float* v = &tile->verts[vi * 3];
+            std::cout << "Vertex " << vi << ": (" << v[0] << ", " << v[1] << ", " << v[2] << ")" << std::endl;
         }
     }
 }
