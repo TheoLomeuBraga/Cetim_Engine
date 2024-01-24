@@ -7,6 +7,7 @@
 #include <thread>
 #include <memory>
 #include <tuple>
+#include "render_mesh.h"
 
 #include <btBulletDynamicsCommon.h>
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp"
@@ -79,31 +80,7 @@ unsigned short *tempPolyFlags = nullptr;
 float bmax[3],bmin[3];
 const float tileSize = 10.0f;
 
-/*
-unsigned short floatToUnsignedShort(float valor, float minVal = -1000, float maxVal = 1000) {
-    // Normalizando para o intervalo [0, 1]
-    float normalizado = (valor - minVal) / (maxVal - minVal);
 
-    // Convertendo para o intervalo de unsigned short
-    return static_cast<unsigned short>(normalizado * 65535.0f);
-}
-
-float unsignedShortToFloat(unsigned short valor, float minVal = -1000, float maxVal = 1000) {
-    // Normalizando para o intervalo [0, 1]
-    float normalizado = static_cast<float>(valor) / 65535.0f;
-
-    // Convertendo para o intervalo original de float
-    return minVal + normalizado * (maxVal - minVal);
-}
-*/
-
-/*
-const unsigned short* iv = &params->verts[i*3];
-float* v = &navVerts[i*3];
-v[0] = params->bmin[0] + iv[0] * params->cs;
-v[1] = params->bmin[1] + iv[1] * params->ch;
-v[2] = params->bmin[2] + iv[2] * params->cs;
-*/
 
 
 rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
@@ -135,9 +112,14 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
     // Preparando os dados de vértices e polígonos para o rcPolyMesh
     intermediatePolyMesh->verts = new float[transformedVertices.size()];
     intermediatePolyMesh->nverts = transformedVertices.size() / 3;
+
+    unsigned int vert_no = 0;
     for (size_t i = 0; i < transformedVertices.size(); ++i)
     {
+        if(vert_no > 2){vert_no = 0;}
         intermediatePolyMesh->verts[i] = transformedVertices[i]; // Adapte conforme necessário
+        print("A",vert_no,transformedVertices[i]);
+        vert_no++;
     }
 
     intermediatePolyMesh->tris = new unsigned char[minhaMalha->indice.size() * 4]; // 4 índices por triângulo
@@ -225,8 +207,9 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
         // Copiar vértices
         for (int i = 0; i < detailMesh->nverts * 3; ++i) {
             if(vec_number > 2) { vec_number = 0; }
-            //combinedPolyMesh->verts[vertOffset + i] = floatToUnsignedShort(detailMesh->verts[i], bmin[vec_number], bmax[vec_number]);
             combinedPolyMesh->verts[vertOffset + i] = static_cast<unsigned short>(std::round((detailMesh->verts[i] - bmin[vec_number]) / tileSize));
+            //print("A:",vec_number,detailMesh->verts[i]);
+            //print("i:",i);
             vec_number++;
         }
 
@@ -620,7 +603,7 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
         return nullptr;
     }
 
-    auto convertedMesh = std::make_shared<malha>();
+    std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
 
     for (int i = 0; i < nMesh->getMaxTiles(); ++i) {
         const dtMeshTile* tile = nMesh->getTile(i);
@@ -646,15 +629,39 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
         }
     }
 
+    /*
+    print("convertedMesh->indice.size() / 3",convertedMesh->indice.size() / 3);
+    for(unsigned int a = 0 ; a < convertedMesh->indice.size() / 3; a+=3){
+        
+        print("{");
+        for(unsigned int b = 0 ; b < 3; b++){
+            vertice_struct vertex = convertedMesh->vertices[convertedMesh->indice[a + b]];
+            print(" ",vertex.posicao[0],vertex.posicao[1],vertex.posicao[2]);
+        }
+        print("}");
+    }
+    */
+
     nav_mesh_mesh = convertedMesh;
 
     return convertedMesh;
 }
 
 
-
+shared_ptr<objeto_jogo> display_nav_mesh = NULL;
 void draw_navmesh(){
-    convert_nav_mesh_to_mesh();
+    display_nav_mesh = novo_objeto_jogo();
+    display_nav_mesh->adicionar_componente<transform_>();
+    display_nav_mesh->adicionar_componente<render_malha>();
+    shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
+    rm->camada = 4;
+    
+    Material mat;
+    mat.shad = "resources/Shaders/mesh";
+    mat.cor = vec4(0.5, 0.5, 1, 1);
+    rm->malhas = {convert_nav_mesh_to_mesh()};
+    rm->mats = {mat};
+    cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
 }
 
 
