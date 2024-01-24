@@ -274,6 +274,7 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
     return combinedPolyMesh;
 }
 
+
 void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
     if (detailMeshes.empty()) {
         return;
@@ -647,7 +648,7 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
         return nullptr;
     }
 
-    auto convertedMesh = std::make_shared<malha>();
+    std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
 
     for (int i = 0; i < nMesh->getMaxTiles(); ++i) {
         const dtMeshTile* tile = nMesh->getTile(i);
