@@ -466,6 +466,37 @@ void reportDtStatusError(dtStatus status)
     }
 }
 
+float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh* navMesh) {
+    if (!navMesh) {
+        return -1.0f; // Retorna -1 para indicar erro
+    }
+
+    dtNavMeshQuery query;
+    query.init(navMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
+
+    // Converter glm::vec3 para o formato do Detour
+    float pos[3] = { point.x, point.y, point.z };
+
+    // Configurações de filtro
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xFFFF); // Incluir todos os polígonos
+    filter.setExcludeFlags(0);
+
+    // Encontrar o polígono mais próximo
+    dtPolyRef nearestPoly;
+    float nearestPt[3];
+    dtStatus status = query.findNearestPoly(pos, pos, &filter, &nearestPoly, nearestPt);
+
+    if (dtStatusFailed(status) || nearestPoly == 0) {
+        return -1.0f; // Retorna -1 se não encontrar um polígono
+    }
+
+    // Calcular a distância entre o ponto e o ponto mais próximo no polígono
+    float dist = rcVdist(pos, nearestPt);
+
+    return dist;
+}
+
 std::vector<glm::vec3> get_navmesh_path(
     glm::vec3 start,
     glm::vec3 end,
@@ -495,14 +526,18 @@ std::vector<glm::vec3> get_navmesh_path(
     filter.setExcludeFlags(0);    // Sem flags de exclusão
     filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-    float tolerance[3] = {50.0f, 50.0f, 50.0f}; // Tolerância para encontrar o polígono mais próximo
+    float tolerance[3] = {10.0f, 10.0f, 10.0f}; // Tolerância para encontrar o polígono mais próximo
 
     // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
     dtStatus status;
 
+    print("start distance polygon: ",calculateDistanceToNearestTriangle(start,nMesh));
+
     status = query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
     reportDtStatusError(status);
+
+    print("endPos distance polygon: ",calculateDistanceToNearestTriangle(end,nMesh));
 
     status = query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
     reportDtStatusError(status);
@@ -544,6 +579,7 @@ std::vector<glm::vec3> get_navmesh_path(
     }
 
     print("nStraightPath",nStraightPath);
+    print("nPathPolys",nPathPolys);
 
     // Preencher o vetor de glm::vec3 com os pontos do caminho
     for (int i = 0; i < nStraightPath; ++i)
@@ -574,6 +610,51 @@ void printNavMeshVertices(const dtNavMesh* navMesh) {
             std::cout << "Vertex " << vi << ": (" << v[0] << ", " << v[1] << ", " << v[2] << ")" << std::endl;
         }
     }
+}
+
+
+std::shared_ptr<malha> nav_mesh_mesh = NULL;
+
+std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh) {
+    if (!nMesh) {
+        return nullptr;
+    }
+
+    auto convertedMesh = std::make_shared<malha>();
+
+    for (int i = 0; i < nMesh->getMaxTiles(); ++i) {
+        const dtMeshTile* tile = nMesh->getTile(i);
+        if (!tile || !tile->header) {
+            continue;
+        }
+
+        for (int vi = 0; vi < tile->header->vertCount; ++vi) {
+            const float* v = &tile->verts[vi * 3];
+            vertice_struct vertex;
+            vertex.posicao[0] = v[0];
+            vertex.posicao[1] = v[1];
+            vertex.posicao[2] = v[2];
+            convertedMesh->vertices.push_back(vertex);
+        }
+
+        for (int pi = 0; pi < tile->header->polyCount; ++pi) {
+            const dtPoly* poly = &tile->polys[pi];
+
+            for (int pj = 0; pj < poly->vertCount; ++pj) {
+                convertedMesh->indice.push_back(poly->verts[pj]);
+            }
+        }
+    }
+
+    nav_mesh_mesh = convertedMesh;
+
+    return convertedMesh;
+}
+
+
+
+void draw_navmesh(){
+    convert_nav_mesh_to_mesh();
 }
 
 
@@ -613,8 +694,11 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     //printNavMeshVertices(navMesh);
 
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
-    //get_navmesh_path(vec3(-16.0258, 61, -304.622), vec3(-48.0258, 29, -176.622));
+    draw_navmesh();
+
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
+    
 
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)

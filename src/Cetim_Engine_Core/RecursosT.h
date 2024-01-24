@@ -882,7 +882,7 @@ void remover_textura(imagem *img)
 	if (api_grafica != NULL)
 	{
 		api_grafica->remover_textura(img);
-		cout << "textura: " << img << " foi removida\n";
+		//cout << "textura: " << img << " foi removida\n";
 	}
 }
 void remover_malha(malha *ma)
@@ -890,7 +890,7 @@ void remover_malha(malha *ma)
 	if (api_grafica != NULL)
 	{
 		api_grafica->remover_malha(ma);
-		cout << "malha: " << ma->nome << " foi removida\n";
+		//cout << "malha: " << ma->nome << " foi removida\n";
 	}
 }
 void remover_fonte(fonte *f)
@@ -898,7 +898,7 @@ void remover_fonte(fonte *f)
 	if (api_grafica != NULL)
 	{
 		api_grafica->remover_fonte(f);
-		cout << "fonte: " << f << " foi removida\n";
+		//cout << "fonte: " << f << " foi removida\n";
 	}
 }
 
@@ -1003,7 +1003,7 @@ public:
 			}
 			else
 			{
-				cout << p.second.get() << " foi deletado\n";
+				//cout << p.second.get() << " foi deletado\n";
 			}
 		}
 		mapa.swap(mapa2);
