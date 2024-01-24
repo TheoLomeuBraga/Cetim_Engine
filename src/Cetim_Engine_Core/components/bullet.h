@@ -647,7 +647,7 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
         return nullptr;
     }
 
-    std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
+    auto convertedMesh = std::make_shared<malha>();
 
     for (int i = 0; i < nMesh->getMaxTiles(); ++i) {
         const dtMeshTile* tile = nMesh->getTile(i);
@@ -677,6 +677,8 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
 
     return convertedMesh;
 }
+
+
 
 
 shared_ptr<objeto_jogo> display_nav_mesh = NULL;
