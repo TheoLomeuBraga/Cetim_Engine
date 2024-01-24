@@ -203,7 +203,7 @@ void clearRcPolyMeshDetail(rcPolyMeshDetail* meshDetail) {
     }
 }
 
-
+//corrigir
 rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
     if (detailMeshes.empty()) {
         return nullptr;
