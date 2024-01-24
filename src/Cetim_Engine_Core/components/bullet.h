@@ -78,12 +78,9 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
-float bmax[3],bmin[3];
+float bmax[3], bmin[3];
 const float tileSize = 10.0f;
 
-
-
-/*
 rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
 {
     if (!minhaMalha)
@@ -91,85 +88,35 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
         return nullptr; // Certifique-se de que a malha não é nula
     }
 
-    // Primeiro, crie um rcPolyMesh a partir dos dados da malha
     rcPolyMeshDetail *intermediatePolyMesh = new rcPolyMeshDetail();
     if (!intermediatePolyMesh)
     {
         return nullptr; // Falha na alocação de memória
     }
 
-    print("nome malha: ",minhaMalha->arquivo_origem,minhaMalha->arquivo_origem,minhaMalha->nome);
-    // Transformação e preenchimento dos dados do rcPolyMesh
     std::vector<float> transformedVertices;
-    for (unsigned int i = 0 ; i < minhaMalha->vertices.size() ; i++)
+    for (const auto &vert : minhaMalha->vertices)
     {
-        const auto vert = minhaMalha->vertices[i];
         glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
-        print("vert.posicao",vert.posicao[0], vert.posicao[1], vert.posicao[2]);
         pos = transform * pos;
-
         transformedVertices.push_back(pos.x);
         transformedVertices.push_back(pos.y);
         transformedVertices.push_back(pos.z);
     }
 
-    // Preparando os dados de vértices e polígonos para o rcPolyMesh
     intermediatePolyMesh->verts = new float[transformedVertices.size()];
     intermediatePolyMesh->nverts = transformedVertices.size() / 3;
-
-    unsigned int vert_no = 0;
     for (size_t i = 0; i < transformedVertices.size(); ++i)
     {
-        if(vert_no > 2){vert_no = 0;}
-        intermediatePolyMesh->verts[i] = transformedVertices[i]; // Adapte conforme necessário
-        //print("A",vert_no,transformedVertices[i]);
-        vert_no++;
-    }
-
-    intermediatePolyMesh->tris = new unsigned char[minhaMalha->indice.size() * 4]; // 4 índices por triângulo
-    intermediatePolyMesh->ntris = minhaMalha->indice.size() / 3;
-    for (size_t i = 0; i < minhaMalha->indice.size(); ++i)
-    {
-        intermediatePolyMesh->tris[i * 4] = minhaMalha->indice[i];     // Índice do vértice
-        intermediatePolyMesh->tris[i * 4 + 1] = minhaMalha->indice[i]; // Índice do vértice
-        intermediatePolyMesh->tris[i * 4 + 2] = minhaMalha->indice[i]; // Índice do vértice
-        intermediatePolyMesh->tris[i * 4 + 3] = 0;                     // O quarto índice é usado para flags de borda, geralmente 0
-    }
-    return intermediatePolyMesh;
-}
-
-*/
-
-rcPolyMeshDetail* converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform) {
-    if (!minhaMalha) {
-        return nullptr; // Certifique-se de que a malha não é nula
-    }
-
-    rcPolyMeshDetail* intermediatePolyMesh = new rcPolyMeshDetail();
-    if (!intermediatePolyMesh) {
-        return nullptr; // Falha na alocação de memória
-    }
-
-    std::vector<float> transformedVertices;
-    for (const auto& vert : minhaMalha->vertices) {
-        glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
-        pos = transform * pos;
-        transformedVertices.push_back(pos.x);
-        transformedVertices.push_back(pos.y);
-        transformedVertices.push_back(pos.z);
-    }
-
-    intermediatePolyMesh->verts = new float[transformedVertices.size()];
-    intermediatePolyMesh->nverts = transformedVertices.size() / 3;
-    for (size_t i = 0; i < transformedVertices.size(); ++i) {
         intermediatePolyMesh->verts[i] = transformedVertices[i];
     }
 
-    // Como os detalhes do polígono são especificados para triângulos, 
+    // Como os detalhes do polígono são especificados para triângulos,
     // você precisará converter a lista de índices para um formato adequado
     intermediatePolyMesh->tris = new unsigned char[minhaMalha->indice.size() * 4]; // 4 índices por triângulo
     intermediatePolyMesh->ntris = minhaMalha->indice.size() / 3;
-    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
+    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3)
+    {
         intermediatePolyMesh->tris[i * 4] = minhaMalha->indice[i];
         intermediatePolyMesh->tris[i * 4 + 1] = minhaMalha->indice[i + 1];
         intermediatePolyMesh->tris[i * 4 + 2] = minhaMalha->indice[i + 2];
@@ -179,21 +126,23 @@ rcPolyMeshDetail* converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
     return intermediatePolyMesh;
 }
 
-
-
-
-void clearRcPolyMeshDetail(rcPolyMeshDetail* meshDetail) {
-    if (meshDetail) {
+void clearRcPolyMeshDetail(rcPolyMeshDetail *meshDetail)
+{
+    if (meshDetail)
+    {
         // Libera os recursos alocados pelo rcPolyMeshDetail
-        if (meshDetail->verts) {
+        if (meshDetail->verts)
+        {
             delete[] meshDetail->verts;
             meshDetail->verts = nullptr;
         }
-        if (meshDetail->tris) {
+        if (meshDetail->tris)
+        {
             delete[] meshDetail->tris;
             meshDetail->tris = nullptr;
         }
-        if (meshDetail->meshes) {
+        if (meshDetail->meshes)
+        {
             delete[] meshDetail->meshes;
             meshDetail->meshes = nullptr;
         }
@@ -203,65 +152,73 @@ void clearRcPolyMeshDetail(rcPolyMeshDetail* meshDetail) {
     }
 }
 
-//corrigir
-rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
-    if (detailMeshes.empty()) {
+/**/
+rcPolyMesh *combinedPolyMesh = NULL;
+rcPolyMesh *convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail *> &detailMeshes)
+{
+    
+    if (detailMeshes.empty())
+    {
         return nullptr;
     }
 
-    
-
-    // Calcular o tamanho total dos vértices e triângulos
     int totalVerts = 0;
     int totalTris = 0;
-    for (const auto& detailMesh : detailMeshes) {
-        if (detailMesh) {
+    for (const auto &detailMesh : detailMeshes)
+    {
+        if (detailMesh)
+        {
             totalVerts += detailMesh->nverts;
             totalTris += detailMesh->ntris;
         }
     }
 
-    // Criar um novo rcPolyMesh
-    rcPolyMesh* combinedPolyMesh = new rcPolyMesh();
-    if (!combinedPolyMesh) {
+    combinedPolyMesh = new rcPolyMesh();
+    if (!combinedPolyMesh)
+    {
         return nullptr;
     }
 
-    // Alocar memória para os vértices e polígonos
     combinedPolyMesh->verts = new unsigned short[totalVerts * 3];
     combinedPolyMesh->polys = new unsigned short[totalTris * 2 * 3];
     combinedPolyMesh->nverts = totalVerts;
     combinedPolyMesh->npolys = totalTris;
+    combinedPolyMesh->nvp = 3;
     combinedPolyMesh->cs = tileSize;
     combinedPolyMesh->ch = tileSize;
-    combinedPolyMesh->nvp = 3;
+    
 
-    // Copiar bmin e bmax para combinedPolyMesh
     memcpy(combinedPolyMesh->bmin, bmin, sizeof(bmin));
     memcpy(combinedPolyMesh->bmax, bmax, sizeof(bmax));
 
-    // Preencher os dados do combinedPolyMesh
     int vertOffset = 0;
     int polyOffset = 0;
-    unsigned int vec_number = 0;
-    for (const auto& detailMesh : detailMeshes) {
-        if (!detailMesh) continue;
+    for (const auto &detailMesh : detailMeshes)
+    {
+        if (!detailMesh)
+            continue;
 
-        // Copiar vértices
-        for (int i = 0; i < detailMesh->nverts * 3; ++i) {
-            if(vec_number > 2) { vec_number = 0; }
-            combinedPolyMesh->verts[vertOffset + i] = static_cast<unsigned short>(std::round((detailMesh->verts[i] - bmin[vec_number]) / tileSize));
-            //print("A:",vec_number,detailMesh->verts[i]);
-            //print("i:",i);
-            vec_number++;
+        for (int i = 0; i < detailMesh->nverts * 3; ++i)
+        {
+            combinedPolyMesh->verts[vertOffset + i] = static_cast<unsigned short>(std::round((detailMesh->verts[i] - bmin[i % 3]) / tileSize));
         }
 
-        // Copiar e ajustar índices de triângulos para polígonos
-        for (int i = 0; i < detailMesh->ntris; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                combinedPolyMesh->polys[polyOffset * 6 + j] = detailMesh->tris[i * 4 + j] + vertOffset / 3;
-                combinedPolyMesh->polys[polyOffset * 6 + j + 3] = RC_MESH_NULL_IDX;
+        for (int i = 0; i < detailMesh->ntris; ++i)
+        {
+            const unsigned char *tri = &detailMesh->tris[i * 4];
+            unsigned short *poly = &combinedPolyMesh->polys[polyOffset * 6];
+
+            for (int j = 0; j < 3; ++j)
+            {
+                poly[j] = tri[j] + vertOffset / 3;
             }
+
+            // Marcar as bordas do polígono como RC_MESH_NULL_IDX
+            for (int j = 3; j < 6; ++j)
+            {
+                poly[j] = RC_MESH_NULL_IDX;
+            }
+
             polyOffset++;
         }
 
@@ -275,24 +232,92 @@ rcPolyMesh* convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail*>
 }
 
 
-void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail*>& detailMeshes) {
-    if (detailMeshes.empty()) {
+rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes) {
+    if (Meshes.empty()) {
+        return nullptr;
+    }
+
+    // Calcula o tamanho total necessário para vértices e polígonos
+    int totalVerts = 0;
+    int totalPolys = 0;
+    for (const auto &mesh : Meshes) {
+        if (mesh) {
+            totalVerts += mesh->nverts;
+            totalPolys += mesh->npolys;
+        }
+    }
+
+    // Cria um novo rcPolyMesh
+    rcPolyMesh* mergedMesh = new rcPolyMesh();
+    if (!mergedMesh) {
+        return nullptr;
+    }
+
+    // Aloca memória para os vértices e polígonos
+    mergedMesh->verts = new unsigned short[totalVerts * 3];
+    mergedMesh->polys = new unsigned short[totalPolys * 2 * 3]; // 2 vértices por polígono
+    mergedMesh->nverts = totalVerts;
+    mergedMesh->npolys = totalPolys;
+    mergedMesh->nvp = 3; // Número de vértices por polígono
+    mergedMesh->cs = tileSize;
+    mergedMesh->ch = tileSize;
+
+    memcpy(mergedMesh->bmin, bmin, sizeof(bmin));
+    memcpy(mergedMesh->bmax, bmax, sizeof(bmax));
+
+    int vertOffset = 0;
+    int polyOffset = 0;
+    for (const auto &mesh : Meshes) {
+        if (!mesh) continue;
+
+        // Copia vértices
+        memcpy(mergedMesh->verts + vertOffset * 3, mesh->verts, mesh->nverts * 3 * sizeof(unsigned short));
+
+        // Copia e ajusta os índices dos polígonos
+        for (int i = 0; i < mesh->npolys * 2 * mesh->nvp; ++i) {
+            if (mesh->polys[i] == RC_MESH_NULL_IDX) {
+                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = RC_MESH_NULL_IDX;
+            } else {
+                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = mesh->polys[i] + vertOffset;
+            }
+        }
+
+        vertOffset += mesh->nverts;
+        polyOffset += mesh->npolys * 2 * mesh->nvp;
+    }
+
+    // Configurações finais para mergedMesh
+    // Você pode precisar configurar campos adicionais como 'bmin' e 'bmax', dependendo da sua implementação
+
+    return mergedMesh;
+}
+
+
+void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail *> &detailMeshes)
+{
+    if (detailMeshes.empty())
+    {
         return;
     }
 
     // Inicializa bmin e bmax com valores extremos
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
+    {
         bmin[i] = std::numeric_limits<float>::max();
         bmax[i] = std::numeric_limits<float>::lowest();
     }
 
     // Percorre todos os meshDetails e seus vértices
-    for (const auto& detailMesh : detailMeshes) {
-        if (!detailMesh) continue;
+    for (const auto &detailMesh : detailMeshes)
+    {
+        if (!detailMesh)
+            continue;
 
-        for (int i = 0; i < detailMesh->nverts; ++i) {
-            const float* v = &detailMesh->verts[i * 3];
-            for (int j = 0; j < 3; ++j) {
+        for (int i = 0; i < detailMesh->nverts; ++i)
+        {
+            const float *v = &detailMesh->verts[i * 3];
+            for (int j = 0; j < 3; ++j)
+            {
                 bmin[j] = std::min(bmin[j], v[j]);
                 bmax[j] = std::max(bmax[j], v[j]);
             }
@@ -300,14 +325,18 @@ void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail*>& de
     }
 }
 
-void freeRcPolyMesh(rcPolyMesh* mesh) {
-    if (mesh) {
+void freeRcPolyMesh(rcPolyMesh *mesh)
+{
+    if (mesh)
+    {
         // Libera os arrays de vértices e polígonos, se eles foram alocados
-        if (mesh->verts) {
+        if (mesh->verts)
+        {
             delete[] mesh->verts;
             mesh->verts = nullptr;
         }
-        if (mesh->polys) {
+        if (mesh->polys)
+        {
             delete[] mesh->polys;
             mesh->polys = nullptr;
         }
@@ -321,14 +350,14 @@ void freeRcPolyMesh(rcPolyMesh* mesh) {
     }
 }
 
-dtNavMesh* rcPolyMeshDetails_to_navMesh(
-    const std::vector<rcPolyMeshDetail*>& meshDetails,
+dtNavMesh *rcPolyMeshDetails_to_navMesh(
+    const std::vector<rcPolyMeshDetail *> &meshDetails,
     float walkableHeight = 2.0f,
-    float walkableRadius = 0.6f,
-    float walkableClimb = 0.9f
-    )
+    float walkableRadius = 1.0f,
+    float walkableClimb = 10.0f)
 {
-    if (meshDetails.empty()) {
+    if (meshDetails.empty())
+    {
         return nullptr; // Nenhum mesh para processar
     }
 
@@ -336,17 +365,25 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
 
     calculateBoundingBoxForMeshDetails(meshDetails);
 
-    print("bmin",bmin[0],bmin[1],bmin[2]);
-    print("bmax",bmax[0],bmax[1],bmax[2]);
+    print("bmin", bmin[0], bmin[1], bmin[2]);
+    print("bmax", bmax[0], bmax[1], bmax[2]);
 
-    rcPolyMesh* combinedPolyMesh = convertPolyMeshDetailToPolyMesh(meshDetails);
-    if (!combinedPolyMesh) {
+    if (combinedPolyMesh)
+    {
+        freeRcPolyMesh(combinedPolyMesh);
+        combinedPolyMesh = nullptr;
+    }
+
+    combinedPolyMesh = convertPolyMeshDetailToPolyMesh(meshDetails);
+    if (!combinedPolyMesh)
+    {
         return nullptr;
     }
 
     // Configuração do dtNavMesh
-    dtNavMesh* navMesh = new dtNavMesh();
-    if (!navMesh) {
+    dtNavMesh *navMesh = new dtNavMesh();
+    if (!navMesh)
+    {
         // Lembre-se de limpar combinedPolyMesh
         return nullptr;
     }
@@ -376,17 +413,19 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
     // Definir áreas caminháveis
     unsigned char *polyAreas = new unsigned char[combinedPolyMesh->npolys];
     unsigned short *polyFlags = new unsigned short[combinedPolyMesh->npolys];
-    for (int i = 0; i < combinedPolyMesh->npolys; ++i) {
-        polyAreas[i] = 63; // Define todas as áreas como caminháveis
+    for (int i = 0; i < combinedPolyMesh->npolys; ++i)
+    {
+        polyAreas[i] = 63;   // Define todas as áreas como caminháveis
         polyFlags[i] = 0x01; // Você pode personalizar os flags conforme necessário
     }
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
 
-    //print("AAAAA");
+    // print("AAAAA");
 
     // Criar dados de navegação
-    if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+    {
         delete navMesh;
         navMesh = nullptr;
         delete combinedPolyMesh;
@@ -395,10 +434,11 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
         return nullptr;
     }
 
-    //print("BBBBB");
+    // print("BBBBB");
 
     // Inicializar dtNavMesh com os dados de navegação
-    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA))) {
+    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
+    {
         free(navData);
         navDataSize = 0;
         navData = nullptr;
@@ -410,23 +450,12 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
         return nullptr;
     }
 
-    //print("CCCCC");
+    // print("CCCCC");
 
-    // Limpeza final
-    if(combinedPolyMesh){
-        freeRcPolyMesh(combinedPolyMesh);
-        combinedPolyMesh = nullptr;
-    }
-    
-    //print("DDDDD");
+    // print("DDDDD");
 
     return navMesh;
 }
-
-
-
-
-
 
 int getVertexCount(const dtNavMesh *navMesh)
 {
@@ -494,8 +523,10 @@ void reportDtStatusError(dtStatus status)
     }
 }
 
-float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh* navMesh) {
-    if (!navMesh) {
+float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh *navMesh)
+{
+    if (!navMesh)
+    {
         return -1.0f; // Retorna -1 para indicar erro
     }
 
@@ -503,7 +534,7 @@ float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh* navMesh) {
     query.init(navMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
 
     // Converter glm::vec3 para o formato do Detour
-    float pos[3] = { point.x, point.y, point.z };
+    float pos[3] = {point.x, point.y, point.z};
 
     // Configurações de filtro
     dtQueryFilter filter;
@@ -515,7 +546,8 @@ float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh* navMesh) {
     float nearestPt[3];
     dtStatus status = query.findNearestPoly(pos, pos, &filter, &nearestPoly, nearestPt);
 
-    if (dtStatusFailed(status) || nearestPoly == 0) {
+    if (dtStatusFailed(status) || nearestPoly == 0)
+    {
         return -1.0f; // Retorna -1 se não encontrar um polígono
     }
 
@@ -560,12 +592,12 @@ std::vector<glm::vec3> get_navmesh_path(
     dtPolyRef startRef, endRef;
     dtStatus status;
 
-    print("start distance polygon: ",calculateDistanceToNearestTriangle(start,nMesh));
+    print("start distance polygon: ", calculateDistanceToNearestTriangle(start, nMesh));
 
     status = query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
     reportDtStatusError(status);
 
-    print("endPos distance polygon: ",calculateDistanceToNearestTriangle(end,nMesh));
+    print("endPos distance polygon: ", calculateDistanceToNearestTriangle(end, nMesh));
 
     status = query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
     reportDtStatusError(status);
@@ -574,7 +606,9 @@ std::vector<glm::vec3> get_navmesh_path(
     {
         print("Não foram encontrados polígonos de referência válidos", startRef, endRef);
         return path;
-    }else{
+    }
+    else
+    {
         print("Foram encontrados polígonos de referência válidos", startRef, endRef);
     }
 
@@ -606,8 +640,8 @@ std::vector<glm::vec3> get_navmesh_path(
         return path;
     }
 
-    //print("nStraightPath",nStraightPath);
-    //print("nPathPolys",nPathPolys);
+    // print("nStraightPath",nStraightPath);
+    // print("nPathPolys",nPathPolys);
 
     // Preencher o vetor de glm::vec3 com os pontos do caminho
     for (int i = 0; i < nStraightPath; ++i)
@@ -620,44 +654,53 @@ std::vector<glm::vec3> get_navmesh_path(
     return path;
 }
 
-void printNavMeshVertices(const dtNavMesh* navMesh) {
-    if (!navMesh) {
+void printNavMeshVertices(const dtNavMesh *navMesh)
+{
+    if (!navMesh)
+    {
         std::cout << "NavMesh is null" << std::endl;
         return;
     }
 
-    for (int i = 0; i < navMesh->getMaxTiles(); ++i) {
-        const dtMeshTile* tile = navMesh->getTile(i);
-        if (!tile || !tile->header) {
+    for (int i = 0; i < navMesh->getMaxTiles(); ++i)
+    {
+        const dtMeshTile *tile = navMesh->getTile(i);
+        if (!tile || !tile->header)
+        {
             continue;
         }
 
         std::cout << "Tile " << i << std::endl;
-        for (int vi = 0; vi < tile->header->vertCount; ++vi) {
-            const float* v = &tile->verts[vi * 3];
+        for (int vi = 0; vi < tile->header->vertCount; ++vi)
+        {
+            const float *v = &tile->verts[vi * 3];
             std::cout << "Vertex " << vi << ": (" << v[0] << ", " << v[1] << ", " << v[2] << ")" << std::endl;
         }
     }
 }
 
-
 std::shared_ptr<malha> nav_mesh_mesh = NULL;
 
-std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh) {
-    if (!nMesh) {
+std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh *nMesh = navMesh)
+{
+    if (!nMesh)
+    {
         return nullptr;
     }
 
     std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
 
-    for (int i = 0; i < nMesh->getMaxTiles(); ++i) {
-        const dtMeshTile* tile = nMesh->getTile(i);
-        if (!tile || !tile->header) {
+    for (int i = 0; i < nMesh->getMaxTiles(); ++i)
+    {
+        const dtMeshTile *tile = nMesh->getTile(i);
+        if (!tile || !tile->header)
+        {
             continue;
         }
 
-        for (int vi = 0; vi < tile->header->vertCount; ++vi) {
-            const float* v = &tile->verts[vi * 3];
+        for (int vi = 0; vi < tile->header->vertCount; ++vi)
+        {
+            const float *v = &tile->verts[vi * 3];
             vertice_struct vertex;
             vertex.posicao[0] = v[0];
             vertex.posicao[1] = v[1];
@@ -665,10 +708,12 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
             convertedMesh->vertices.push_back(vertex);
         }
 
-        for (int pi = 0; pi < tile->header->polyCount; ++pi) {
-            const dtPoly* poly = &tile->polys[pi];
+        for (int pi = 0; pi < tile->header->polyCount; ++pi)
+        {
+            const dtPoly *poly = &tile->polys[pi];
 
-            for (int pj = 0; pj < poly->vertCount; ++pj) {
+            for (int pj = 0; pj < poly->vertCount; ++pj)
+            {
                 convertedMesh->indice.push_back(poly->verts[pj]);
             }
         }
@@ -679,28 +724,65 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
     return convertedMesh;
 }
 
+std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = combinedPolyMesh){
+    if (!polyMesh) {
+        return nullptr;
+    }
 
+    auto convertedMesh = std::make_shared<malha>();
 
+    // Convertendo vértices
+    for (int i = 0; i < polyMesh->nverts; ++i) {
+        const unsigned short* v = &polyMesh->verts[i * 3];
+        // Convertendo as coordenadas do vértice para o seu sistema de coordenadas
+        float x = v[0] * polyMesh->cs + polyMesh->bmin[0];
+        float y = v[1] * polyMesh->ch + polyMesh->bmin[1];
+        float z = v[2] * polyMesh->cs + polyMesh->bmin[2];
+
+        vertice vert;
+        vert.posicao[0] = x;
+        vert.posicao[1] = y;
+        vert.posicao[2] = z;
+
+        //print("AAAAA",polyMesh->cs,polyMesh->ch,v[0],v[1],v[2]);
+        //print("vert.posicao",x,y,z);
+
+        convertedMesh->vertices.push_back(vert);
+    }
+
+    // Convertendo índices dos polígonos
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        const unsigned short* p = &polyMesh->polys[i * 2 * polyMesh->nvp];
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            if (p[j] == RC_MESH_NULL_IDX) {
+                break;
+            }
+            convertedMesh->indice.push_back(p[j]);
+        }
+    }
+
+    return convertedMesh;
+}
 
 shared_ptr<objeto_jogo> display_nav_mesh = NULL;
-void draw_navmesh(){
+void draw_navmesh()
+{
     display_nav_mesh = novo_objeto_jogo();
     display_nav_mesh->adicionar_componente<transform_>();
     display_nav_mesh->adicionar_componente<render_malha>();
     shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
     rm->usar_oclusao = false;
     rm->camada = 4;
-    
+
     Material mat;
     mat.shad = "resources/Shaders/mesh";
     mat.cor = vec4(0.1, 0.1, 1, 0.5);
     mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
-    rm->malhas = {convert_nav_mesh_to_mesh()};
+    // rm->malhas = {convert_nav_mesh_to_mesh()};
+    rm->malhas = {convert_polyMesh_to_mesh()};
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
 }
-
-
 
 dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::vector<glm::mat4> transforms)
 {
@@ -716,45 +798,44 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         allMeshesListPtr.push_back(converter_rcPolyMeshDetail(minhasMalhas[i], transforms[i]));
     }
 
-    //print("A");
+    // print("A");
     if (navMesh)
     {
         delete navMesh;
         navMesh = NULL;
     }
-    //print("B",navDataSize);
+    // print("B",navDataSize);
     if (navData)
     {
         free(navData);
         navDataSize = 0;
         navData = nullptr;
     }
-    //print("C");
+    // print("C");
     if (tempPolyAreas)
     {
         delete[] tempPolyAreas;
         tempPolyAreas = nullptr;
     }
-    //print("D");
+    // print("D");
     if (tempPolyFlags)
     {
         delete[] tempPolyFlags;
         tempPolyFlags = nullptr;
     }
-    //print("E");
+    // print("E");
 
     navMesh = rcPolyMeshDetails_to_navMesh(allMeshesListPtr);
 
-    //printNavMeshVertices(navMesh);
+    // printNavMeshVertices(navMesh);
 
     draw_navmesh();
 
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
+    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
+    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
+    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
-    //14.0177 35.0109 -92.7638
-    
+    // 14.0177 35.0109 -92.7638
 
     // free
     for (unsigned int i = 0; i < allMeshesListPtr.size(); i++)
