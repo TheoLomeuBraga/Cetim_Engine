@@ -533,7 +533,7 @@ struct vertice_struct
 	float posicao[3] = {0, 0, 0};
 	float uv[2] = {0, 0};
 	float normal[3] = {0, 0, 0};
-	float cor[3] = {0, 0, 0};
+	float cor[3] = {1, 1, 1};
 	int id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 	float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 

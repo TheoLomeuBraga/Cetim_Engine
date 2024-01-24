@@ -398,7 +398,8 @@ dtNavMesh* rcPolyMeshDetails_to_navMesh(
 
     // Inicializar dtNavMesh com os dados de navegação
     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA))) {
-        delete[] navData;
+        free(navData);
+        navDataSize = 0;
         navData = nullptr;
         delete navMesh;
         navMesh = nullptr;
@@ -672,19 +673,6 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh* nMesh = navMesh
         }
     }
 
-    /*
-    print("convertedMesh->indice.size() / 3",convertedMesh->indice.size() / 3);
-    for(unsigned int a = 0 ; a < convertedMesh->indice.size() / 3; a+=3){
-        
-        print("{");
-        for(unsigned int b = 0 ; b < 3; b++){
-            vertice_struct vertex = convertedMesh->vertices[convertedMesh->indice[a + b]];
-            print(" ",vertex.posicao[0],vertex.posicao[1],vertex.posicao[2]);
-        }
-        print("}");
-    }
-    */
-
     nav_mesh_mesh = convertedMesh;
 
     return convertedMesh;
@@ -725,32 +713,44 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         allMeshesListPtr.push_back(converter_rcPolyMeshDetail(minhasMalhas[i], transforms[i]));
     }
 
+    //print("A");
     if (navMesh)
     {
         delete navMesh;
+        navMesh = NULL;
     }
+    //print("B",navDataSize);
     if (navData)
     {
-        delete[] navData;
+        free(navData);
+        navDataSize = 0;
+        navData = nullptr;
     }
+    //print("C");
     if (tempPolyAreas)
     {
         delete[] tempPolyAreas;
+        tempPolyAreas = nullptr;
     }
+    //print("D");
     if (tempPolyFlags)
     {
         delete[] tempPolyFlags;
+        tempPolyFlags = nullptr;
     }
+    //print("E");
 
     navMesh = rcPolyMeshDetails_to_navMesh(allMeshesListPtr);
 
     //printNavMeshVertices(navMesh);
 
-    //draw_navmesh();
+    draw_navmesh();
 
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
+    //14.0177 35.0109 -92.7638
     
 
     // free
