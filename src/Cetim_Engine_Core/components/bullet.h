@@ -690,7 +690,7 @@ void draw_navmesh(){
     
     Material mat;
     mat.shad = "resources/Shaders/mesh";
-    mat.cor = vec4(0.1, 0.1, 1, 0.9);
+    mat.cor = vec4(0.1, 0.1, 1, 0.5);
     mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
     rm->malhas = {convert_nav_mesh_to_mesh()};
     rm->mats = {mat};
