@@ -8,6 +8,7 @@
 #include <memory>
 #include <tuple>
 #include "render_mesh.h"
+#include "ManusearArquivos.h"
 
 #include <btBulletDynamicsCommon.h>
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp"
@@ -82,7 +83,7 @@ const float tileSize = 10.0f;
 
 
 
-
+/*
 rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
 {
     if (!minhaMalha)
@@ -97,11 +98,14 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
         return nullptr; // Falha na alocação de memória
     }
 
+    print("nome malha: ",minhaMalha->arquivo_origem,minhaMalha->arquivo_origem,minhaMalha->nome);
     // Transformação e preenchimento dos dados do rcPolyMesh
     std::vector<float> transformedVertices;
-    for (const auto &vert : minhaMalha->vertices)
+    for (unsigned int i = 0 ; i < minhaMalha->vertices.size() ; i++)
     {
+        const auto vert = minhaMalha->vertices[i];
         glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+        print("vert.posicao",vert.posicao[0], vert.posicao[1], vert.posicao[2]);
         pos = transform * pos;
 
         transformedVertices.push_back(pos.x);
@@ -118,7 +122,7 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
     {
         if(vert_no > 2){vert_no = 0;}
         intermediatePolyMesh->verts[i] = transformedVertices[i]; // Adapte conforme necessário
-        print("A",vert_no,transformedVertices[i]);
+        //print("A",vert_no,transformedVertices[i]);
         vert_no++;
     }
 
@@ -134,7 +138,46 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
     return intermediatePolyMesh;
 }
 
+*/
 
+rcPolyMeshDetail* converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform) {
+    if (!minhaMalha) {
+        return nullptr; // Certifique-se de que a malha não é nula
+    }
+
+    rcPolyMeshDetail* intermediatePolyMesh = new rcPolyMeshDetail();
+    if (!intermediatePolyMesh) {
+        return nullptr; // Falha na alocação de memória
+    }
+
+    std::vector<float> transformedVertices;
+    for (const auto& vert : minhaMalha->vertices) {
+        glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+        pos = transform * pos;
+        transformedVertices.push_back(pos.x);
+        transformedVertices.push_back(pos.y);
+        transformedVertices.push_back(pos.z);
+    }
+
+    intermediatePolyMesh->verts = new float[transformedVertices.size()];
+    intermediatePolyMesh->nverts = transformedVertices.size() / 3;
+    for (size_t i = 0; i < transformedVertices.size(); ++i) {
+        intermediatePolyMesh->verts[i] = transformedVertices[i];
+    }
+
+    // Como os detalhes do polígono são especificados para triângulos, 
+    // você precisará converter a lista de índices para um formato adequado
+    intermediatePolyMesh->tris = new unsigned char[minhaMalha->indice.size() * 4]; // 4 índices por triângulo
+    intermediatePolyMesh->ntris = minhaMalha->indice.size() / 3;
+    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
+        intermediatePolyMesh->tris[i * 4] = minhaMalha->indice[i];
+        intermediatePolyMesh->tris[i * 4 + 1] = minhaMalha->indice[i + 1];
+        intermediatePolyMesh->tris[i * 4 + 2] = minhaMalha->indice[i + 2];
+        intermediatePolyMesh->tris[i * 4 + 3] = 0; // Flag de borda
+    }
+
+    return intermediatePolyMesh;
+}
 
 
 
@@ -561,8 +604,8 @@ std::vector<glm::vec3> get_navmesh_path(
         return path;
     }
 
-    print("nStraightPath",nStraightPath);
-    print("nPathPolys",nPathPolys);
+    //print("nStraightPath",nStraightPath);
+    //print("nPathPolys",nPathPolys);
 
     // Preencher o vetor de glm::vec3 com os pontos do caminho
     for (int i = 0; i < nStraightPath; ++i)
@@ -654,11 +697,13 @@ void draw_navmesh(){
     display_nav_mesh->adicionar_componente<transform_>();
     display_nav_mesh->adicionar_componente<render_malha>();
     shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
+    rm->usar_oclusao = false;
     rm->camada = 4;
     
     Material mat;
     mat.shad = "resources/Shaders/mesh";
-    mat.cor = vec4(0.5, 0.5, 1, 1);
+    mat.cor = vec4(0.1, 0.1, 1, 0.9);
+    mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
     rm->malhas = {convert_nav_mesh_to_mesh()};
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
@@ -701,10 +746,11 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     //printNavMeshVertices(navMesh);
 
-    draw_navmesh();
+    //draw_navmesh();
 
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
     
 
     // free
