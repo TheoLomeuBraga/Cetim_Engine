@@ -79,6 +79,18 @@ unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
 float bmax[3], bmin[3];
+void reset_bmin_bmax(){
+    const float lowest = std::numeric_limits<float>::lowest();
+    const float max = std::numeric_limits<float>::max();
+    
+    bmax[0] = lowest;
+    bmax[1] = lowest;
+    bmax[2] = lowest;
+    
+    bmin[0] = max;
+    bmin[1] = max;
+    bmin[2] = max;
+}
 const float tileSize = 10.0f;
 
 rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, glm::mat4 transform)
@@ -125,6 +137,131 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
 
     return intermediatePolyMesh;
 }
+
+rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes) {
+    if (Meshes.empty()) {
+        return nullptr;
+    }
+
+    // Calcula o tamanho total necessário para vértices e polígonos
+    int totalVerts = 0;
+    int totalPolys = 0;
+    for (const auto &mesh : Meshes) {
+        if (mesh) {
+            totalVerts += mesh->nverts;
+            totalPolys += mesh->npolys;
+        }
+    }
+
+    // Cria um novo rcPolyMesh
+    rcPolyMesh* mergedMesh = new rcPolyMesh();
+    if (!mergedMesh) {
+        return nullptr;
+    }
+
+    // Aloca memória para os vértices e polígonos
+    mergedMesh->verts = new unsigned short[totalVerts * 3];
+    mergedMesh->polys = new unsigned short[totalPolys * 2 * 3]; // 2 vértices por polígono
+    mergedMesh->nverts = totalVerts;
+    mergedMesh->npolys = totalPolys;
+    mergedMesh->nvp = 3; // Número de vértices por polígono
+    mergedMesh->cs = tileSize;
+    mergedMesh->ch = tileSize;
+
+    memcpy(mergedMesh->bmin, bmin, sizeof(bmin));
+    memcpy(mergedMesh->bmax, bmax, sizeof(bmax));
+
+    int vertOffset = 0;
+    int polyOffset = 0;
+    for (const auto &mesh : Meshes) {
+        if (!mesh) continue;
+
+        // Copia vértices
+        memcpy(mergedMesh->verts + vertOffset * 3, mesh->verts, mesh->nverts * 3 * sizeof(unsigned short));
+
+        // Copia e ajusta os índices dos polígonos
+        for (int i = 0; i < mesh->npolys * 2 * mesh->nvp; ++i) {
+            if (mesh->polys[i] == RC_MESH_NULL_IDX) {
+                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = RC_MESH_NULL_IDX;
+            } else {
+                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = mesh->polys[i] + vertOffset;
+            }
+        }
+
+        vertOffset += mesh->nverts;
+        polyOffset += mesh->npolys * 2 * mesh->nvp;
+    }
+
+    // Configurações finais para mergedMesh
+    // Você pode precisar configurar campos adicionais como 'bmin' e 'bmax', dependendo da sua implementação
+
+    return mergedMesh;
+}
+
+rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minhasMalhas, const std::vector<glm::mat4>& transformacoes) {
+    
+    reset_bmin_bmax();
+
+    std::vector<rcPolyMesh*> polyMeshes;
+
+    for (size_t i = 0; i < minhasMalhas.size(); ++i) {
+        const auto& malha = minhasMalhas[i];
+        const glm::mat4& transform = transformacoes[i];
+
+        std::vector<float> transformedVertices;
+        for (const auto &vert : malha->vertices) {
+            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+            pos = transform * pos;
+
+            // Atualizar bmin e bmax
+            for (int j = 0; j < 3; ++j) {
+                bmin[j] = std::min(bmin[j], pos[j]);
+                bmax[j] = std::max(bmax[j], pos[j]);
+            }
+
+            transformedVertices.push_back(pos.x);
+            transformedVertices.push_back(pos.y);
+            transformedVertices.push_back(pos.z);
+        }
+
+        // Convertendo para rcPolyMesh
+        rcPolyMesh* polyMesh = new rcPolyMesh();
+        if (!polyMesh) {
+            // Lógica de erro (limpeza se necessário)
+            continue;
+        }
+
+        polyMesh->verts = new unsigned short[transformedVertices.size()];
+        polyMesh->nverts = transformedVertices.size() / 3;
+        for (size_t j = 0; j < transformedVertices.size(); ++j) {
+            // A conversão real depende da escala e precisão desejadas
+            polyMesh->verts[j] = static_cast<unsigned short>(transformedVertices[j]);
+        }
+
+        polyMesh->polys = new unsigned short[malha->indice.size()];
+        polyMesh->npolys = malha->indice.size() / 3;
+        for (size_t j = 0; j < malha->indice.size(); ++j) {
+            polyMesh->polys[j] = malha->indice[j];
+        }
+
+        // Configurar outros campos necessários em polyMesh
+        // ...
+
+        polyMeshes.push_back(polyMesh);
+    }
+
+    // Mesclando todos os rcPolyMeshes em um único
+    rcPolyMesh* mergedPolyMesh = merge_rcPolyMesh(polyMeshes);
+
+    // Limpeza
+    for (auto& mesh : polyMeshes) {
+        delete mesh; // Assumindo uma função para limpar corretamente um rcPolyMesh
+    }
+
+    return mergedPolyMesh;
+}
+
+
 
 void clearRcPolyMeshDetail(rcPolyMeshDetail *meshDetail)
 {
@@ -232,65 +369,6 @@ rcPolyMesh *convertPolyMeshDetailToPolyMesh(const std::vector<rcPolyMeshDetail *
 }
 
 
-rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes) {
-    if (Meshes.empty()) {
-        return nullptr;
-    }
-
-    // Calcula o tamanho total necessário para vértices e polígonos
-    int totalVerts = 0;
-    int totalPolys = 0;
-    for (const auto &mesh : Meshes) {
-        if (mesh) {
-            totalVerts += mesh->nverts;
-            totalPolys += mesh->npolys;
-        }
-    }
-
-    // Cria um novo rcPolyMesh
-    rcPolyMesh* mergedMesh = new rcPolyMesh();
-    if (!mergedMesh) {
-        return nullptr;
-    }
-
-    // Aloca memória para os vértices e polígonos
-    mergedMesh->verts = new unsigned short[totalVerts * 3];
-    mergedMesh->polys = new unsigned short[totalPolys * 2 * 3]; // 2 vértices por polígono
-    mergedMesh->nverts = totalVerts;
-    mergedMesh->npolys = totalPolys;
-    mergedMesh->nvp = 3; // Número de vértices por polígono
-    mergedMesh->cs = tileSize;
-    mergedMesh->ch = tileSize;
-
-    memcpy(mergedMesh->bmin, bmin, sizeof(bmin));
-    memcpy(mergedMesh->bmax, bmax, sizeof(bmax));
-
-    int vertOffset = 0;
-    int polyOffset = 0;
-    for (const auto &mesh : Meshes) {
-        if (!mesh) continue;
-
-        // Copia vértices
-        memcpy(mergedMesh->verts + vertOffset * 3, mesh->verts, mesh->nverts * 3 * sizeof(unsigned short));
-
-        // Copia e ajusta os índices dos polígonos
-        for (int i = 0; i < mesh->npolys * 2 * mesh->nvp; ++i) {
-            if (mesh->polys[i] == RC_MESH_NULL_IDX) {
-                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = RC_MESH_NULL_IDX;
-            } else {
-                mergedMesh->polys[polyOffset * 2 * mesh->nvp + i] = mesh->polys[i] + vertOffset;
-            }
-        }
-
-        vertOffset += mesh->nverts;
-        polyOffset += mesh->npolys * 2 * mesh->nvp;
-    }
-
-    // Configurações finais para mergedMesh
-    // Você pode precisar configurar campos adicionais como 'bmin' e 'bmax', dependendo da sua implementação
-
-    return mergedMesh;
-}
 
 
 void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail *> &detailMeshes)
