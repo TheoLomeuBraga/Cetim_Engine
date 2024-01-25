@@ -138,6 +138,28 @@ rcPolyMeshDetail *converter_rcPolyMeshDetail(std::shared_ptr<malha> minhaMalha, 
     return intermediatePolyMesh;
 }
 
+
+void freeRcPolyMesh(rcPolyMesh* mesh) {
+    if (!mesh) return; // Se o ponteiro é nulo, não há nada a liberar.
+
+    // Liberando vértices
+    if (mesh->verts) {
+        delete[] mesh->verts;
+        mesh->verts = nullptr;
+    }
+
+    // Liberando polígonos
+    if (mesh->polys) {
+        delete[] mesh->polys;
+        mesh->polys = nullptr;
+    }
+
+    // Adicione aqui a liberação de quaisquer outros recursos alocados dentro de rcPolyMesh.
+
+    // Por fim, libere o próprio rcPolyMesh
+    delete mesh;
+}
+
 rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes) {
     if (Meshes.empty()) {
         return nullptr;
@@ -255,8 +277,8 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
     rcPolyMesh* mergedPolyMesh = merge_rcPolyMesh(polyMeshes);
 
     // Limpeza
-    for (auto& mesh : polyMeshes) {
-        delete mesh; // Assumindo uma função para limpar corretamente um rcPolyMesh
+    for (rcPolyMesh* mesh : polyMeshes) {
+        freeRcPolyMesh(mesh);
     }
 
     return mergedPolyMesh;
@@ -401,31 +423,6 @@ void calculateBoundingBoxForMeshDetails(const std::vector<rcPolyMeshDetail *> &d
                 bmax[j] = std::max(bmax[j], v[j]);
             }
         }
-    }
-}
-
-void freeRcPolyMesh(rcPolyMesh *mesh)
-{
-    if (mesh)
-    {
-        // Libera os arrays de vértices e polígonos, se eles foram alocados
-        if (mesh->verts)
-        {
-            delete[] mesh->verts;
-            mesh->verts = nullptr;
-        }
-        if (mesh->polys)
-        {
-            delete[] mesh->polys;
-            mesh->polys = nullptr;
-        }
-
-        // Libera outros arrays, se eles existirem e foram alocados
-        // Exemplo: se sua estrutura rcPolyMesh também inclui arrays como 'areas' ou 'flags',
-        // você deve liberá-los aqui da mesma maneira.
-
-        // Finalmente, libera o próprio objeto rcPolyMesh
-        delete mesh;
     }
 }
 
