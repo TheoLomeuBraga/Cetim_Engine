@@ -235,7 +235,8 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
         polyMesh->nverts = transformedVertices.size() / 3;
         for (size_t j = 0; j < transformedVertices.size(); ++j) {
             // A conversão real depende da escala e precisão desejadas
-            polyMesh->verts[j] = static_cast<unsigned short>(transformedVertices[j]);
+            //polyMesh->verts[j] = static_cast<unsigned short>(transformedVertices[j]);
+            polyMesh->verts[j] = static_cast<unsigned short>(std::round((transformedVertices[j] - bmin[j % 3]) / tileSize));
         }
 
         polyMesh->polys = new unsigned short[malha->indice.size()];
