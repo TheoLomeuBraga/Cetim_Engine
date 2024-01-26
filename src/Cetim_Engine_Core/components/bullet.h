@@ -194,9 +194,12 @@ rcPolyMesh* merge_rcPolyMesh(const std::vector<rcPolyMesh*>& Meshes) {
 
 
 rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minhasMalhas, const std::vector<glm::mat4>& transformacoes) {
+    
     reset_bmin_bmax();
 
     std::vector<rcPolyMesh*> polyMeshes;
+
+    unsigned int mesh_size = 0;
 
     for (size_t i = 0; i < minhasMalhas.size(); ++i) {
         const auto& malha = minhasMalhas[i];
@@ -232,15 +235,21 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
         // Preenchendo os índices dos polígonos
         polyMesh->polys = new unsigned short[malha->indice.size() * 2];
         polyMesh->npolys = malha->indice.size() / 3;
+        
+        mesh_size += malha->indice.size();
+        
         for (size_t j = 0; j < malha->indice.size(); j += 3) {
             for (size_t k = 0; k < 3; ++k) {
                 polyMesh->polys[j * 2 + k] = malha->indice[j + k];
                 polyMesh->polys[j * 2 + k + 3] = RC_MESH_NULL_IDX; // Bordas dos polígonos
             }
         }
+        
 
         polyMeshes.push_back(polyMesh);
     }
+
+    print("mesh size",mesh_size);
 
     rcPolyMesh* mergedPolyMesh = merge_rcPolyMesh(polyMeshes);
 
@@ -590,7 +599,10 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         }
     }
 
+    print("mesh size",convertedMesh->indice.size());
+
     // Opcional: Imprimir informações para depuração
+    /*
     for (unsigned int i : convertedMesh->indice) {
         if (i < convertedMesh->vertices.size()) {
             vertice vert = convertedMesh->vertices[i];
@@ -599,6 +611,7 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
             std::cout << "Index out of bounds: " << i << std::endl;
         }
     }
+    */
 
     return convertedMesh;
 }
