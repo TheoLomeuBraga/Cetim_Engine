@@ -128,6 +128,26 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
     delete mesh;
 }
 
+int countValidIndices(const rcPolyMesh *polyMesh) {
+    if (!polyMesh) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        const unsigned short* p = &polyMesh->polys[i * 2 * polyMesh->nvp];
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            if (p[j] != RC_MESH_NULL_IDX) {
+                count++;
+            } else {
+                // Chegamos ao final dos índices válidos para este polígono
+                break;
+            }
+        }
+    }
+    return count;
+}
+
 rcPolyMesh* merge_rcPolyMesh(const std::vector<rcPolyMesh*>& Meshes) {
     if (Meshes.empty()) {
         return nullptr;
@@ -188,6 +208,8 @@ rcPolyMesh* merge_rcPolyMesh(const std::vector<rcPolyMesh*>& Meshes) {
         polyOffset += mesh->npolys;
     }
 
+    
+
     return mergedMesh;
 }
 
@@ -199,9 +221,10 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
 
     std::vector<rcPolyMesh*> polyMeshes;
 
-    unsigned int mesh_size = 0;
+    //unsigned int mesh_size = 0;
 
     for (size_t i = 0; i < minhasMalhas.size(); ++i) {
+        
         const auto& malha = minhasMalhas[i];
         const glm::mat4& transform = transformacoes[i];
 
@@ -236,7 +259,7 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
         polyMesh->polys = new unsigned short[malha->indice.size() * 2];
         polyMesh->npolys = malha->indice.size() / 3;
         
-        mesh_size += malha->indice.size();
+        //mesh_size += malha->indice.size();
         
         for (size_t j = 0; j < malha->indice.size(); j += 3) {
             for (size_t k = 0; k < 3; ++k) {
@@ -245,13 +268,20 @@ rcPolyMesh* converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>>& minh
             }
         }
         
+        //print("individual mesh",countValidIndices(polyMesh));
+
+        
 
         polyMeshes.push_back(polyMesh);
     }
 
-    print("mesh size",mesh_size);
+    
+
+    //print("mesh size",mesh_size);
 
     rcPolyMesh* mergedPolyMesh = merge_rcPolyMesh(polyMeshes);
+
+    //print("combined mesh",countValidIndices(mergedPolyMesh));
 
     for (rcPolyMesh* mesh : polyMeshes) {
         freeRcPolyMesh(mesh);
@@ -570,6 +600,8 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         return nullptr;
     }
 
+    
+
     auto convertedMesh = std::make_shared<malha>();
 
     // Convertendo vértices
@@ -599,7 +631,9 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         }
     }
 
-    print("mesh size",convertedMesh->indice.size());
+    print("combined mesh",countValidIndices(polyMesh));
+
+    print("combined mesh converted",convertedMesh->indice.size());
 
     // Opcional: Imprimir informações para depuração
     /*
