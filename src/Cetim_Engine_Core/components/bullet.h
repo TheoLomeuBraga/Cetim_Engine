@@ -101,6 +101,32 @@ void updateBminBmax(const glm::vec4 &pos)
     }
 }
 
+void setBminBmax(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes){
+    reset_bmin_bmax();
+    std::vector<rcPolyMesh *> polyMeshes;
+
+    // unsigned int mesh_size = 0;
+
+    for (size_t i = 0; i < minhasMalhas.size(); ++i)
+    {
+
+        
+
+        const auto &malha = minhasMalhas[i];
+        const glm::mat4 &transform = transformacoes[i];
+
+        
+
+        
+        for (const auto &vert : malha->vertices)
+        {
+            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+            pos = transform * pos;
+            updateBminBmax(pos);
+        }
+    }
+}
+
 const float tileSize = 10.0f;
 
 void freeRcPolyMesh(rcPolyMesh *mesh)
@@ -235,7 +261,7 @@ rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes)
 rcPolyMesh *converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
 
-    reset_bmin_bmax();
+    setBminBmax(minhasMalhas, transformacoes);
 
     std::vector<rcPolyMesh *> polyMeshes;
 
@@ -256,8 +282,6 @@ rcPolyMesh *converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>> &minh
         {
             glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
             pos = transform * pos;
-
-            updateBminBmax(pos);
 
             transformedVertices.push_back(pos.x);
             transformedVertices.push_back(pos.y);
