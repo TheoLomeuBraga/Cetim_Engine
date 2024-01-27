@@ -600,8 +600,6 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         return nullptr;
     }
 
-    
-
     auto convertedMesh = std::make_shared<malha>();
 
     // Convertendo vértices
@@ -621,35 +619,22 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
 
     // Convertendo índices dos polígonos
     for (int i = 0; i < polyMesh->npolys; ++i) {
-        const unsigned short *p = &polyMesh->polys[i * polyMesh->nvp * 2];
+        const unsigned short *p = &polyMesh->polys[i * 2 * polyMesh->nvp];
         for (int j = 0; j < polyMesh->nvp; ++j) {
             unsigned short vertexIndex = p[j];
-            if (vertexIndex == RC_MESH_NULL_IDX || vertexIndex >= convertedMesh->vertices.size()) {
-                break; // Encerra o loop se encontrar um índice nulo ou inválido
+            if (vertexIndex == RC_MESH_NULL_IDX) {
+                break; // Encerra o loop se encontrar um índice nulo
             }
+            // Adicionar cada índice de vértice válido ao índice da malha
             convertedMesh->indice.push_back(vertexIndex);
         }
     }
 
-    print("combined mesh",countValidIndices(polyMesh));
-
-    print("combined mesh converted",convertedMesh->indice.size());
-
-    // Opcional: Imprimir informações para depuração
-    /*
-    for (unsigned int i : convertedMesh->indice) {
-        if (i < convertedMesh->vertices.size()) {
-            vertice vert = convertedMesh->vertices[i];
-            std::cout << "Index: " << i << ", Vertex Pos: (" << vert.posicao[0] << ", " << vert.posicao[1] << ", " << vert.posicao[2] << ")" << std::endl;
-        } else {
-            std::cout << "Index out of bounds: " << i << std::endl;
-        }
-    }
-    */
+    //print("combined mesh", countValidIndices(polyMesh));
+    //print("combined mesh converted", convertedMesh->indice.size());
 
     return convertedMesh;
 }
-
 
 
 
