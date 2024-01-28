@@ -297,36 +297,24 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     float walkableRadius = 1.0f,
     float walkableClimb = 10.0f)
 {
-
-    if (combinedPolyMesh)
-    {
-        freeRcPolyMesh(combinedPolyMesh);
-        combinedPolyMesh = nullptr;
-    }
-
-    combinedPolyMesh = meshDetails;
-    if (!combinedPolyMesh)
-    {
+    if (!meshDetails) {
         return nullptr;
     }
 
     // Configuração do dtNavMesh
     dtNavMesh *navMesh = new dtNavMesh();
-    if (!navMesh)
-    {
-        // Lembre-se de limpar combinedPolyMesh
+    if (!navMesh) {
         return nullptr;
     }
 
     // Definir os parâmetros para criação do dtNavMesh
     dtNavMeshCreateParams params;
     memset(&params, 0, sizeof(params));
-    // Preencher params com informações do combinedPolyMesh e outros parâmetros necessários
-    params.verts = combinedPolyMesh->verts;
-    params.vertCount = combinedPolyMesh->nverts;
-    params.polys = combinedPolyMesh->polys;
-    params.polyCount = combinedPolyMesh->npolys;
-    params.nvp = combinedPolyMesh->nvp;
+    params.verts = meshDetails->verts;
+    params.vertCount = meshDetails->nverts;
+    params.polys = meshDetails->polys;
+    params.polyCount = meshDetails->npolys;
+    params.nvp = meshDetails->nvp;
     params.walkableHeight = walkableHeight;
     params.walkableRadius = walkableRadius;
     params.walkableClimb = walkableClimb;
@@ -335,46 +323,42 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.tileLayer = 0;
     params.cs = tileSize;
     params.ch = tileSize;
-    params.buildBvTree = false;
+    params.buildBvTree = true;
 
     memcpy(params.bmin, bmin, sizeof(bmin));
     memcpy(params.bmax, bmax, sizeof(bmax));
 
     // Definir áreas caminháveis
-    unsigned char *polyAreas = new unsigned char[combinedPolyMesh->npolys];
-    unsigned short *polyFlags = new unsigned short[combinedPolyMesh->npolys];
-    for (int i = 0; i < combinedPolyMesh->npolys; ++i)
-    {
-        polyAreas[i] = 63;   // Define todas as áreas como caminháveis
+    unsigned char *polyAreas = new unsigned char[meshDetails->npolys];
+    unsigned short *polyFlags = new unsigned short[meshDetails->npolys];
+    for (int i = 0; i < meshDetails->npolys; ++i) {
+        polyAreas[i] = RC_WALKABLE_AREA; // Define todas as áreas como caminháveis
         polyFlags[i] = 0x01; // Você pode personalizar os flags conforme necessário
     }
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
 
     // Criar dados de navegação
-    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-    {
+    unsigned char *navData;
+    int navDataSize;
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
         delete navMesh;
-        navMesh = nullptr;
-        delete combinedPolyMesh;
-        freeRcPolyMesh(combinedPolyMesh);
-        combinedPolyMesh = nullptr;
+        delete[] polyAreas;
+        delete[] polyFlags;
         return nullptr;
     }
 
     // Inicializar dtNavMesh com os dados de navegação
-    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-    {
-        free(navData);
-        navDataSize = 0;
-        navData = nullptr;
+    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA))) {
+        delete[] navData;
         delete navMesh;
-        navMesh = nullptr;
-        freeRcPolyMesh(combinedPolyMesh);
-        combinedPolyMesh = nullptr;
-        print("fail to start nav mesh");
+        delete[] polyAreas;
+        delete[] polyFlags;
         return nullptr;
     }
+
+    delete[] polyAreas;
+    delete[] polyFlags;
 
     return navMesh;
 }
@@ -489,55 +473,52 @@ std::vector<glm::vec3> get_navmesh_path(
 {
     std::vector<glm::vec3> path;
 
-    if (!nMesh)
-    {
-        return path; // Retorna um vetor vazio se a malha de navegação não for fornecida.
+    if (!nMesh) {
+        return path;
     }
 
     dtNavMeshQuery query;
-    query.init(nMesh, 2048); // Inicializa a consulta com um tamanho de conjunto de nós.
+    query.init(nMesh, 2048);
 
-    // Converter glm::vec3 para o formato do Detour
     float startPos[3] = {start.x, start.y, start.z};
     float endPos[3] = {end.x, end.y, end.z};
 
-    // Configurações de filtro baseadas nas habilidades do personagem
     dtQueryFilter filter;
-    filter.setIncludeFlags(canJump ? 0x08 : 0x01); // Exemplo de configuração de flag.
-    filter.setExcludeFlags(0);                     // Sem flags de exclusão
-    filter.setAreaCost(63, 1.0f);                  // Custo padrão para áreas caminháveis
+    unsigned short includeFlags = canJump ? 0x08 : 0x01;
+    filter.setIncludeFlags(includeFlags);
+    filter.setExcludeFlags(0);
+    filter.setAreaCost(63, 1.0f);
 
-    float tolerance[3] = {5.0f, 5.0f, 5.0f};
+    float tolerance[3] = {characterRadius, characterHeight, characterRadius};
 
-    // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
     query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
     query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
 
-    // Calcular o caminho
-    dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
+    if (startRef == 0 || endRef == 0) {
+        return path;
+    }
+
+    dtPolyRef pathPolys[256];
     int nPathPolys;
     query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
 
-    // Obter pontos do caminho
-    if (nPathPolys > 0)
-    {
-        float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
-        int nStraightPath;
+    if (nPathPolys == 0) {
+        return path;
+    }
 
-        query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, nullptr, nullptr, &nStraightPath, 256, 0);
-
-        // Preencher o vetor de glm::vec3 com os pontos do caminho
-        for (int i = 0; i < nStraightPath; ++i)
-        {
-            glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
-            path.push_back(point);
-            print("point",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
-        }
+    for (int i = 0; i < nPathPolys; ++i) {
+        float nearestPt[3];
+        query.closestPointOnPoly(pathPolys[i], endPos, nearestPt, nullptr); // Encontra o ponto mais próximo no polígono
+        path.emplace_back(nearestPt[0], nearestPt[1], nearestPt[2]);
+        print("point",nearestPt[0], nearestPt[1], nearestPt[2]);
     }
 
     return path;
 }
+
+
+
 
 std::shared_ptr<malha> nav_mesh_mesh = NULL;
 
