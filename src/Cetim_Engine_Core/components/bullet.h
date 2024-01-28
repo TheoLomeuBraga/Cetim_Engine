@@ -78,6 +78,7 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
+const float tileSize = 10.0f;
 float bmax[3], bmin[3];
 void reset_bmin_bmax()
 {
@@ -127,7 +128,7 @@ void setBminBmax(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const 
     }
 }
 
-const float tileSize = 10.0f;
+
 
 void freeRcPolyMesh(rcPolyMesh *mesh)
 {
@@ -181,7 +182,7 @@ int countValidIndices(const rcPolyMesh *polyMesh)
     return count;
 }
 
-// corrigir
+
 rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes)
 {
     if (Meshes.empty())
@@ -257,7 +258,7 @@ rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes)
     return mergedMesh;
 }
 
-// corrigir
+
 rcPolyMesh *converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
 
@@ -338,6 +339,111 @@ rcPolyMesh *converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>> &minh
 
     return mergedPolyMesh;
 }
+
+std::shared_ptr<malha> meshes_fused = NULL;
+
+std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes) {
+    reset_bmin_bmax();
+
+    if (minhasMalhas.size() != transformacoes.size()) {
+        // O número de malhas e transformações deve ser o mesmo
+        return nullptr;
+    }
+
+    auto malhaFusionada = std::make_shared<malha>();
+
+    int vertOffset = 0;
+    for (size_t i = 0; i < minhasMalhas.size(); ++i) {
+        const auto& malha = minhasMalhas[i];
+        const glm::mat4& transform = transformacoes[i];
+
+        // Transformar e adicionar vértices
+        for (const auto& vert : malha->vertices) {
+            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
+            pos = transform * pos;
+
+            updateBminBmax(pos);
+
+            vertice vertTransformado = vert;
+            vertTransformado.posicao[0] = pos.x;
+            vertTransformado.posicao[1] = pos.y;
+            vertTransformado.posicao[2] = pos.z;
+
+            malhaFusionada->vertices.push_back(vertTransformado);
+        }
+
+        // Adicionar índices dos polígonos com o deslocamento correto
+        for (const auto& indice : malha->indice) {
+            malhaFusionada->indice.push_back(indice + vertOffset);
+        }
+
+        vertOffset += malha->vertices.size();
+    }
+
+    meshes_fused = malhaFusionada;
+
+    return malhaFusionada;
+}
+
+rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
+    if (!minhaMalha) {
+        return nullptr;
+    }
+
+    rcPolyMesh* polyMesh = new rcPolyMesh();
+    if (!polyMesh) {
+        return nullptr; // Falha na alocação
+    }
+
+    
+
+    // Preencher os dados de vértices e atualizar bmin e bmax
+    polyMesh->verts = new unsigned short[minhaMalha->vertices.size() * 3];
+    polyMesh->nverts = minhaMalha->vertices.size();
+    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
+        const vertice& vert = minhaMalha->vertices[i];
+
+        // Conversão para unsigned short com normalização
+        //cout << "vert: ";
+        for (int j = 0; j < 3; ++j) {
+            polyMesh->verts[i * 3 + j] =  static_cast<unsigned short>(std::round((vert.posicao[j] - bmin[j % 3]) / tileSize));
+            //cout << vert.posicao[j] << ", ";
+        }
+        //cout << endl;
+    }
+
+    memcpy(polyMesh->bmin, bmin, sizeof(bmin));
+    memcpy(polyMesh->bmax, bmax, sizeof(bmax));
+    polyMesh->cs = tileSize;
+    polyMesh->ch = tileSize;
+
+    
+
+    // Preencher os índices dos polígonos
+    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2]; // Multiplica por 2 para incluir espaço para flags
+    polyMesh->npolys = minhaMalha->indice.size() / 3;
+    polyMesh->nvp = 3; // Número de vértices por polígono
+    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
+
+        //cout << "triangle: ";
+        for (int j = 0; j < 3; ++j) {
+            polyMesh->polys[i * 2 + j] = minhaMalha->indice[i + j];
+            //cout << minhaMalha->indice[i + j] << ", ";
+        }
+        //cout << endl;
+
+        // Definindo a flag de borda para os polígonos
+        polyMesh->polys[i * 2 + 3] = RC_MESH_NULL_IDX; // Exemplo de flag de borda
+    }
+
+    // Configurar outros campos necessários
+    // ...
+
+    return polyMesh;
+}
+
+
+
 
 rcPolyMesh *combinedPolyMesh = NULL;
 
@@ -648,37 +754,41 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
     }
 
     auto convertedMesh = std::make_shared<malha>();
-
+    
     // Convertendo vértices
     for (int i = 0; i < polyMesh->nverts; ++i) {
-        const unsigned short *v = &polyMesh->verts[i * 3];
-        float x = v[0] * polyMesh->cs + polyMesh->bmin[0];
-        float y = v[1] * polyMesh->ch + polyMesh->bmin[1];
-        float z = v[2] * polyMesh->cs + polyMesh->bmin[2];
-
+        const unsigned short* v = &polyMesh->verts[i * 3];
         vertice vert;
-        vert.posicao[0] = x;
-        vert.posicao[1] = y;
-        vert.posicao[2] = z;
+
+        // Convertendo as coordenadas do vértice para o seu sistema de coordenadas
+        vert.posicao[0] = polyMesh->bmin[0] + v[0] * polyMesh->cs;
+        vert.posicao[1] = polyMesh->bmin[1] + v[1] * polyMesh->ch;
+        vert.posicao[2] = polyMesh->bmin[2] + v[2] * polyMesh->cs;
+
+        print("V",v[0],v[1],v[2]);
+        print("vert.posicao",v[0],v[1],v[2]);
+
+        // Preencher outros atributos do vértice, se necessário
+        // ...
 
         convertedMesh->vertices.push_back(vert);
     }
 
     // Convertendo índices dos polígonos
     for (int i = 0; i < polyMesh->npolys; ++i) {
-        const unsigned short *p = &polyMesh->polys[i * 2 * polyMesh->nvp];
         for (int j = 0; j < polyMesh->nvp; ++j) {
-            unsigned short vertexIndex = p[j];
-            if (vertexIndex == RC_MESH_NULL_IDX) {
-                break; // Encerra o loop se encontrar um índice nulo
+            unsigned short vertexIndex = polyMesh->polys[i * polyMesh->nvp * 2 + j];
+
+            // Verificar se o índice é válido (não é uma borda ou índice nulo)
+            if (vertexIndex == RC_MESH_NULL_IDX || vertexIndex >= polyMesh->nverts) {
+                break;
             }
-            if (vertexIndex < convertedMesh->vertices.size()) {
-                convertedMesh->indice.push_back(vertexIndex);
-            }
+
+            convertedMesh->indice.push_back(vertexIndex);
         }
     }
-
     // Impressão para depuração
+    
     /*
     print("Indice Size", convertedMesh->indice.size());
     for (unsigned int i : convertedMesh->indice) {
@@ -687,9 +797,19 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         print("Posição do Vértice", vert.posicao[0], vert.posicao[1], vert.posicao[2]);
     }
     */
+    
 
     return convertedMesh;
 }
+
+/*
+    print("Indice Size", convertedMesh->indice.size());
+    for (unsigned int i : convertedMesh->indice) {
+        print("Índice", i);
+        vertice vert = convertedMesh->vertices[i];
+        print("Posição do Vértice", vert.posicao[0], vert.posicao[1], vert.posicao[2]);
+    }
+*/
 
 
 void nMesh(const dtNavMesh *nMesh = navMesh)
@@ -732,7 +852,11 @@ void draw_navmesh()
     mat.cor = vec4(0.1, 0.1, 1, 0.5);
     mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
     // rm->malhas = {convert_nav_mesh_to_mesh()};
-    rm->malhas = {convert_polyMesh_to_mesh()};
+    //rm->malhas = {convert_polyMesh_to_mesh()};
+
+    //rm->malhas = {meshes_fused};
+    rm->malhas = {convert_polyMesh_to_mesh(convertToRcPolyMesh(meshes_fused))};
+    
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
 }
@@ -772,6 +896,8 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     rcPolyMesh *allMeshesListPtr = converter_rcPolyMesh(minhasMalhas, transforms);
 
+    meshes_fused = fuse_meshes(minhasMalhas, transforms);
+
     // print("A");
     if (navMesh)
     {
@@ -798,6 +924,8 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         tempPolyFlags = nullptr;
     }
     // print("E");
+
+    
 
     navMesh = rcPolyMeshDetails_to_navMesh(allMeshesListPtr);
 
