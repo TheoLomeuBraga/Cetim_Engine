@@ -155,33 +155,6 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
     delete mesh;
 }
 
-int countValidIndices(const rcPolyMesh *polyMesh)
-{
-    if (!polyMesh)
-    {
-        return 0;
-    }
-
-    int count = 0;
-    for (int i = 0; i < polyMesh->npolys; ++i)
-    {
-        const unsigned short *p = &polyMesh->polys[i * 2 * polyMesh->nvp];
-        for (int j = 0; j < polyMesh->nvp; ++j)
-        {
-            if (p[j] != RC_MESH_NULL_IDX)
-            {
-                count++;
-            }
-            else
-            {
-                // Chegamos ao final dos índices válidos para este polígono
-                break;
-            }
-        }
-    }
-    return count;
-}
-
 
 
 std::shared_ptr<malha> meshes_fused = NULL;
@@ -463,6 +436,36 @@ float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh *navMesh)
     return dist;
 }
 
+
+
+void print_cube_in_space(vec3 pos){
+
+    //ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]
+    
+
+    shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
+    display_nav_mesh->adicionar_componente<transform_>();
+    display_nav_mesh->pegar_componente<transform_>()->pos = pos;
+
+    display_nav_mesh->adicionar_componente<render_malha>();
+    shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
+    rm->usar_oclusao = false;
+    rm->camada = 4;
+
+    Material mat;
+    mat.shad = "resources/Shaders/mesh";
+    mat.cor = vec4(1, 0.0, 0.0, 1);
+    mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+    
+    rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
+    
+    
+    
+    rm->mats = {mat};
+    cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+
+}
+
 std::vector<glm::vec3> get_navmesh_path(
     glm::vec3 start,
     glm::vec3 end,
@@ -474,20 +477,20 @@ std::vector<glm::vec3> get_navmesh_path(
     std::vector<glm::vec3> path;
 
     if (!nMesh) {
-        return path;
+        return path; // Retorna um vetor vazio se a malha de navegação não for fornecida
     }
 
     dtNavMeshQuery query;
-    query.init(nMesh, 2048);
+    query.init(nMesh, 2048); // Inicializa a consulta com o máximo de nós permitidos
 
     float startPos[3] = {start.x, start.y, start.z};
     float endPos[3] = {end.x, end.y, end.z};
 
     dtQueryFilter filter;
-    unsigned short includeFlags = canJump ? 0x08 : 0x01;
+    unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
     filter.setIncludeFlags(includeFlags);
-    filter.setExcludeFlags(0);
-    filter.setAreaCost(63, 1.0f);
+    filter.setExcludeFlags(0); // Sem flags de exclusão
+    filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
     float tolerance[3] = {characterRadius, characterHeight, characterRadius};
 
@@ -496,7 +499,7 @@ std::vector<glm::vec3> get_navmesh_path(
     query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
 
     if (startRef == 0 || endRef == 0) {
-        return path;
+        return path; // Se não encontrar polígonos próximos, retorna o vetor vazio
     }
 
     dtPolyRef pathPolys[256];
@@ -504,15 +507,23 @@ std::vector<glm::vec3> get_navmesh_path(
     query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
 
     if (nPathPolys == 0) {
-        return path;
+        return path; // Se não encontrar um caminho, retorna o vetor vazio
     }
 
-    for (int i = 0; i < nPathPolys; ++i) {
-        float nearestPt[3];
-        query.closestPointOnPoly(pathPolys[i], endPos, nearestPt, nullptr); // Encontra o ponto mais próximo no polígono
-        path.emplace_back(nearestPt[0], nearestPt[1], nearestPt[2]);
-        print("point",nearestPt[0], nearestPt[1], nearestPt[2]);
+    // Obter pontos do caminho
+    float straightPath[256 * 3];
+    int nStraightPath;
+    query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, nullptr, nullptr, &nStraightPath, 256, 0);
+
+    for (int i = 0; i < nStraightPath; ++i) {
+        glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+        path.push_back(point);
+
+        print("straightPath",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+        print_cube_in_space(point);
     }
+
+    
 
     return path;
 }
@@ -669,13 +680,7 @@ void draw_navmesh()
     mat.shad = "resources/Shaders/mesh";
     mat.cor = vec4(0.1, 0.1, 1, 0.5);
     mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
-    // rm->malhas = {convert_nav_mesh_to_mesh()};
-    //rm->malhas = {convert_polyMesh_to_mesh()};
-
-    //rm->malhas = {meshes_fused};
-    //rm->malhas = {convert_polyMesh_to_mesh(convertToRcPolyMesh(meshes_fused))};
-
-    /**/
+    
     rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
     
     
@@ -743,7 +748,9 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     
     meshes_fused = fuse_meshes(minhasMalhas, transforms);
-    navMesh = rcPolyMeshDetails_to_navMesh(convertToRcPolyMesh(meshes_fused));
+    rcPolyMesh *rcmesh = convertToRcPolyMesh(meshes_fused);
+    navMesh = rcPolyMeshDetails_to_navMesh(rcmesh);
+    freeRcPolyMesh(rcmesh);
     
 
     draw_navmesh();
@@ -754,7 +761,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(92.0, 40.5, -105.0));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     
 
     return navMesh;
