@@ -183,162 +183,6 @@ int countValidIndices(const rcPolyMesh *polyMesh)
 }
 
 
-rcPolyMesh *merge_rcPolyMesh(const std::vector<rcPolyMesh *> &Meshes)
-{
-    if (Meshes.empty())
-    {
-        return nullptr;
-    }
-
-    int totalVerts = 0;
-    int totalPolys = 0;
-    const int nvp = 3; // Número de vértices por polígono, assumido constante
-
-    for (const auto &mesh : Meshes)
-    {
-        if (mesh)
-        {
-            totalVerts += mesh->nverts;
-            totalPolys += mesh->npolys;
-        }
-    }
-
-    rcPolyMesh *mergedMesh = new rcPolyMesh();
-    if (!mergedMesh)
-    {
-        return nullptr;
-    }
-
-    mergedMesh->verts = new unsigned short[totalVerts * 3];
-    mergedMesh->polys = new unsigned short[totalPolys * nvp * 2]; // 2 vértices por polígono
-    mergedMesh->nverts = totalVerts;
-    mergedMesh->npolys = totalPolys;
-    mergedMesh->nvp = nvp;
-    mergedMesh->cs = tileSize;
-    mergedMesh->ch = tileSize;
-
-    memcpy(mergedMesh->bmin, bmin, sizeof(bmin));
-    memcpy(mergedMesh->bmax, bmax, sizeof(bmax));
-
-    int vertOffset = 0;
-    int polyOffset = 0;
-    for (const auto &mesh : Meshes)
-    {
-        if (!mesh)
-            continue;
-
-        memcpy(mergedMesh->verts + vertOffset * 3, mesh->verts, mesh->nverts * 3 * sizeof(unsigned short));
-
-        for (int i = 0; i < mesh->npolys; ++i)
-        {
-            for (int j = 0; j < nvp; ++j)
-            {
-                int polyIndex = i * nvp * 2 + j;
-                int mergedPolyIndex = polyOffset * nvp * 2 + j;
-
-                // Atualiza índices dos vértices nos polígonos
-                if (mesh->polys[polyIndex] == RC_MESH_NULL_IDX)
-                {
-                    mergedMesh->polys[mergedPolyIndex] = RC_MESH_NULL_IDX;
-                }
-                else
-                {
-                    mergedMesh->polys[mergedPolyIndex] = mesh->polys[polyIndex] + vertOffset;
-                }
-
-                // Copia as flags de borda para os polígonos
-                mergedMesh->polys[mergedPolyIndex + nvp] = mesh->polys[polyIndex + nvp];
-            }
-        }
-
-        vertOffset += mesh->nverts;
-        polyOffset += mesh->npolys;
-    }
-
-    return mergedMesh;
-}
-
-
-rcPolyMesh *converter_rcPolyMesh(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
-{
-
-    setBminBmax(minhasMalhas, transformacoes);
-
-    std::vector<rcPolyMesh *> polyMeshes;
-
-    // unsigned int mesh_size = 0;
-
-    for (size_t i = 0; i < minhasMalhas.size(); ++i)
-    {
-
-        
-
-        const auto &malha = minhasMalhas[i];
-        const glm::mat4 &transform = transformacoes[i];
-
-        
-
-        std::vector<float> transformedVertices;
-        for (const auto &vert : malha->vertices)
-        {
-            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
-            pos = transform * pos;
-
-            transformedVertices.push_back(pos.x);
-            transformedVertices.push_back(pos.y);
-            transformedVertices.push_back(pos.z);
-        }
-
-        rcPolyMesh *polyMesh = new rcPolyMesh();
-        if (!polyMesh)
-            continue;
-
-        memcpy(polyMesh->bmin, bmin, sizeof(bmin));
-        memcpy(polyMesh->bmax, bmax, sizeof(bmax));
-        polyMesh->cs = tileSize;
-        polyMesh->ch = tileSize;
-        polyMesh->nvp = 3;
-
-        polyMesh->verts = new unsigned short[transformedVertices.size()];
-        polyMesh->nverts = transformedVertices.size() / 3;
-        for (size_t j = 0; j < transformedVertices.size(); ++j)
-        {
-            polyMesh->verts[j] = static_cast<unsigned short>(std::round((transformedVertices[j] - bmin[j % 3]) / tileSize));
-        }
-
-        // Preenchendo os índices dos polígonos
-        polyMesh->polys = new unsigned short[malha->indice.size() * 2];
-        polyMesh->npolys = malha->indice.size() / 3;
-
-        // mesh_size += malha->indice.size();
-
-        for (size_t j = 0; j < malha->indice.size(); j += 3)
-        {
-            for (size_t k = 0; k < 3; ++k)
-            {
-                polyMesh->polys[j * 2 + k] = malha->indice[j + k];
-                polyMesh->polys[j * 2 + k + 3] = RC_MESH_NULL_IDX; // Bordas dos polígonos
-            }
-        }
-
-        // print("individual mesh",countValidIndices(polyMesh));
-
-        polyMeshes.push_back(polyMesh);
-    }
-
-    // print("mesh size",mesh_size);
-
-    rcPolyMesh *mergedPolyMesh = merge_rcPolyMesh(polyMeshes);
-
-    // print("combined mesh",countValidIndices(mergedPolyMesh));
-
-    for (rcPolyMesh *mesh : polyMeshes)
-    {
-        freeRcPolyMesh(mesh);
-    }
-
-    return mergedPolyMesh;
-}
 
 std::shared_ptr<malha> meshes_fused = NULL;
 
@@ -453,11 +297,6 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     float walkableRadius = 1.0f,
     float walkableClimb = 10.0f)
 {
-
-    // Combinação fictícia de rcPolyMeshDetail em rcPolyMesh
-
-    // print("bmin", bmin[0], bmin[1], bmin[2]);
-    // print("bmax", bmax[0], bmax[1], bmax[2]);
 
     if (combinedPolyMesh)
     {
@@ -672,11 +511,8 @@ std::vector<glm::vec3> get_navmesh_path(
 
     // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
-    print("AAAAA");
     query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
-    print("BBBBB");
     query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
-    print("CCCCC");
 
     // Calcular o caminho
     dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
@@ -696,6 +532,7 @@ std::vector<glm::vec3> get_navmesh_path(
         {
             glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
             path.push_back(point);
+            print("point",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         }
     }
 
@@ -765,8 +602,8 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         vert.posicao[1] = polyMesh->bmin[1] + v[1] * polyMesh->ch;
         vert.posicao[2] = polyMesh->bmin[2] + v[2] * polyMesh->cs;
 
-        print("V",v[0],v[1],v[2]);
-        print("vert.posicao",v[0],v[1],v[2]);
+        //print("V",v[0],v[1],v[2]);
+        //print("vert.posicao",v[0],v[1],v[2]);
 
         // Preencher outros atributos do vértice, se necessário
         // ...
@@ -855,7 +692,12 @@ void draw_navmesh()
     //rm->malhas = {convert_polyMesh_to_mesh()};
 
     //rm->malhas = {meshes_fused};
-    rm->malhas = {convert_polyMesh_to_mesh(convertToRcPolyMesh(meshes_fused))};
+    //rm->malhas = {convert_polyMesh_to_mesh(convertToRcPolyMesh(meshes_fused))};
+
+    /**/
+    rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
+    
+    
     
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
@@ -894,53 +736,45 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     rcContext ctx;
 
-    rcPolyMesh *allMeshesListPtr = converter_rcPolyMesh(minhasMalhas, transforms);
+    
 
-    meshes_fused = fuse_meshes(minhasMalhas, transforms);
-
-    // print("A");
     if (navMesh)
     {
         delete navMesh;
         navMesh = NULL;
     }
-    // print("B",navDataSize);
     if (navData)
     {
         free(navData);
         navDataSize = 0;
         navData = nullptr;
     }
-    // print("C");
     if (tempPolyAreas)
     {
         delete[] tempPolyAreas;
         tempPolyAreas = nullptr;
     }
-    // print("D");
     if (tempPolyFlags)
     {
         delete[] tempPolyFlags;
         tempPolyFlags = nullptr;
     }
-    // print("E");
 
     
-
-    navMesh = rcPolyMeshDetails_to_navMesh(allMeshesListPtr);
+    meshes_fused = fuse_meshes(minhasMalhas, transforms);
+    navMesh = rcPolyMeshDetails_to_navMesh(convertToRcPolyMesh(meshes_fused));
+    
 
     draw_navmesh();
 
     // printNavMeshVertices();
 
-    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
-    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
-    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
-    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
-    // 14.0177 35.0109 -92.7638
-
-    // free
-    freeRcPolyMesh(allMeshesListPtr);
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
+    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(92.0, 40.5, -105.0));
+    
 
     return navMesh;
 }
