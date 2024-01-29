@@ -437,6 +437,7 @@ float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh *navMesh)
 }
 
 
+float color_intensity = 0.0;
 
 void print_cube_in_space(vec3 pos){
 
@@ -454,7 +455,9 @@ void print_cube_in_space(vec3 pos){
 
     Material mat;
     mat.shad = "resources/Shaders/mesh";
-    mat.cor = vec4(1, 0.0, 0.0, 1);
+    mat.cor = vec4(color_intensity, 0.0, 0.5, 1);
+    color_intensity+=0.5;
+    if(color_intensity > 1){color_intensity = 0;}
     mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
     
     rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
@@ -489,6 +492,7 @@ std::vector<glm::vec3> get_navmesh_path(
     dtQueryFilter filter;
     unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
     filter.setIncludeFlags(includeFlags);
+    filter.setIncludeFlags(0x01);
     filter.setExcludeFlags(0); // Sem flags de exclusão
     filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
@@ -727,7 +731,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     freeRcPolyMesh(rcmesh);
     
 
-    draw_navmesh();
+    //draw_navmesh();
 
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
