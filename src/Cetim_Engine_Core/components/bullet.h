@@ -212,21 +212,14 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
         return nullptr; // Falha na alocação
     }
 
-    
-
     // Preencher os dados de vértices e atualizar bmin e bmax
     polyMesh->verts = new unsigned short[minhaMalha->vertices.size() * 3];
     polyMesh->nverts = minhaMalha->vertices.size();
     for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
         const vertice& vert = minhaMalha->vertices[i];
-
-        // Conversão para unsigned short com normalização
-        //cout << "vert: ";
         for (int j = 0; j < 3; ++j) {
             polyMesh->verts[i * 3 + j] =  static_cast<unsigned short>(std::round((vert.posicao[j] - bmin[j % 3]) / tileSize));
-            //cout << vert.posicao[j] << ", ";
         }
-        //cout << endl;
     }
 
     memcpy(polyMesh->bmin, bmin, sizeof(bmin));
@@ -234,23 +227,18 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
     polyMesh->cs = tileSize;
     polyMesh->ch = tileSize;
 
-    
-
     // Preencher os índices dos polígonos
-    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2]; // Multiplica por 2 para incluir espaço para flags
+    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2];
     polyMesh->npolys = minhaMalha->indice.size() / 3;
     polyMesh->nvp = 3; // Número de vértices por polígono
     for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
-
-        //cout << "triangle: ";
         for (int j = 0; j < 3; ++j) {
             polyMesh->polys[i * 2 + j] = minhaMalha->indice[i + j];
-            //cout << minhaMalha->indice[i + j] << ", ";
         }
-        //cout << endl;
-
-        // Definindo a flag de borda para os polígonos
-        polyMesh->polys[i * 2 + 3] = RC_MESH_NULL_IDX; // Exemplo de flag de borda
+        // Marcando todas as bordas como navegáveis
+        for (int j = 0; j < 3; ++j) {
+            polyMesh->polys[i * 2 + 3 + j] = RC_WALKABLE_AREA;
+        }
     }
 
     // Configurar outros campos necessários
@@ -266,9 +254,9 @@ rcPolyMesh *combinedPolyMesh = NULL;
 
 dtNavMesh *rcPolyMeshDetails_to_navMesh(
     rcPolyMesh *meshDetails,
-    float walkableHeight = 2.0f,
+    float walkableHeight = 1.0f,
     float walkableRadius = 1.0f,
-    float walkableClimb = 10.0f)
+    float walkableClimb = 0.0f)
 {
     if (!meshDetails) {
         return nullptr;
@@ -312,8 +300,6 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.polyFlags = polyFlags;
 
     // Criar dados de navegação
-    unsigned char *navData;
-    int navDataSize;
     if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
         delete navMesh;
         delete[] polyAreas;
@@ -402,39 +388,6 @@ void reportDtStatusError(dtStatus status)
     }
 }
 
-float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh *navMesh)
-{
-    if (!navMesh)
-    {
-        return -1.0f; // Retorna -1 para indicar erro
-    }
-
-    dtNavMeshQuery query;
-    query.init(navMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
-
-    // Converter glm::vec3 para o formato do Detour
-    float pos[3] = {point.x, point.y, point.z};
-
-    // Configurações de filtro
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xffff); // Incluir todos os polígonos
-    filter.setExcludeFlags(0);
-
-    // Encontrar o polígono mais próximo
-    dtPolyRef nearestPoly;
-    float nearestPt[3];
-    dtStatus status = query.findNearestPoly(pos, pos, &filter, &nearestPoly, nearestPt);
-
-    if (dtStatusFailed(status) || nearestPoly == 0)
-    {
-        return -1.0f; // Retorna -1 se não encontrar um polígono
-    }
-
-    // Calcular a distância entre o ponto e o ponto mais próximo no polígono
-    float dist = rcVdist(pos, nearestPt);
-
-    return dist;
-}
 
 
 float color_intensity = 0.0;
@@ -467,6 +420,30 @@ void print_cube_in_space(vec3 pos){
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
 
+    print("cube pos:",pos.x,pos.y,pos.z);
+
+}
+
+void calcPolyCenter(const dtNavMesh* navMesh, dtPolyRef ref, float* center) {
+    // Obtenha o polígono e os índices dos vértices do polígono
+    const dtMeshTile* tile;
+    const dtPoly* poly;
+    navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
+
+    // Calcule o ponto médio dos vértices do polígono
+    center[0] = 0.0f;
+    center[1] = 0.0f;
+    center[2] = 0.0f;
+    const int nv = poly->vertCount;
+    for (int i = 0; i < nv; ++i) {
+        const float* v = &tile->verts[poly->verts[i] * 3];
+        center[0] += v[0];
+        center[1] += v[1];
+        center[2] += v[2];
+    }
+    center[0] /= nv;
+    center[1] /= nv;
+    center[2] /= nv;
 }
 
 std::vector<glm::vec3> get_navmesh_path(
@@ -484,53 +461,55 @@ std::vector<glm::vec3> get_navmesh_path(
     }
 
     dtNavMeshQuery query;
-    query.init(nMesh, 2048); // Inicializa a consulta com o máximo de nós permitidos
+    query.init(nMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
 
+    // Converter glm::vec3 para o formato do Detour
     float startPos[3] = {start.x, start.y, start.z};
     float endPos[3] = {end.x, end.y, end.z};
 
+    // Configurações de filtro baseadas nas habilidades do personagem
     dtQueryFilter filter;
     unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
     filter.setIncludeFlags(includeFlags);
-    filter.setIncludeFlags(0x01);
     filter.setExcludeFlags(0); // Sem flags de exclusão
     filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-    float tolerance[3] = {characterRadius, characterHeight, characterRadius};
+    float tolerance[3] = {characterRadius, characterHeight, characterRadius}; // Tolerância para encontrar o polígono mais próximo
 
+    // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
     query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
     query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
 
     if (startRef == 0 || endRef == 0) {
-        return path; // Se não encontrar polígonos próximos, retorna o vetor vazio
+        return path; // Não foram encontrados polígonos de referência válidos
     }
 
-    dtPolyRef pathPolys[256];
+    // Calcular o caminho
+    dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
     int nPathPolys;
     query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
 
     if (nPathPolys == 0) {
-        return path; // Se não encontrar um caminho, retorna o vetor vazio
+        return path; // Caminho não encontrado
     }
 
-    path.push_back(start);
-    print_cube_in_space(start);
+    // Obter pontos do caminho
+    float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
+    unsigned char straightPathFlags[256];
+    dtPolyRef straightPathPolys[256];
+    int nStraightPath;
+    query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, straightPathFlags, straightPathPolys, &nStraightPath, 256, 0);
 
-    // Agora, percorreremos os pathPolys para obter os pontos no caminho
-    for (int i = 0; i < nPathPolys; ++i) {
-        float nearestPoint[3];
-        query.closestPointOnPoly(pathPolys[i], endPos, nearestPoint, nullptr); // Encontrar o ponto mais próximo no polígono
-        glm::vec3 point(nearestPoint[0], nearestPoint[1], nearestPoint[2]);
+    for (int i = 0; i < nStraightPath; ++i) {
+        glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         path.push_back(point);
         print_cube_in_space(point);
     }
 
-    path.push_back(end);
-    print_cube_in_space(end);
-
     return path;
 }
+
 
 //print_cube_in_space(point);
 
@@ -737,6 +716,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
+    
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     
 
