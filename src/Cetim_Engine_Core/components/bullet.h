@@ -519,7 +519,7 @@ std::vector<glm::vec3> get_navmesh_path(
         glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         path.push_back(point);
 
-        print("straightPath",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+        //print("straightPath",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         print_cube_in_space(point);
     }
 
@@ -754,8 +754,6 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     
 
     draw_navmesh();
-
-    // printNavMeshVertices();
 
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
