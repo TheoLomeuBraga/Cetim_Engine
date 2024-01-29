@@ -510,20 +510,20 @@ std::vector<glm::vec3> get_navmesh_path(
         return path; // Se não encontrar um caminho, retorna o vetor vazio
     }
 
-    // Obter pontos do caminho
-    float straightPath[256 * 3];
-    int nStraightPath;
-    query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, nullptr, nullptr, &nStraightPath, 256, 0);
+    path.push_back(start);
+    print_cube_in_space(start);
 
-    for (int i = 0; i < nStraightPath; ++i) {
-        glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+    // Agora, percorreremos os pathPolys para obter os pontos no caminho
+    for (int i = 0; i < nPathPolys; ++i) {
+        float nearestPoint[3];
+        query.closestPointOnPoly(pathPolys[i], endPos, nearestPoint, nullptr); // Encontrar o ponto mais próximo no polígono
+        glm::vec3 point(nearestPoint[0], nearestPoint[1], nearestPoint[2]);
         path.push_back(point);
-
-        //print("straightPath",straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
         print_cube_in_space(point);
     }
 
-    
+    path.push_back(end);
+    print_cube_in_space(end);
 
     return path;
 }
