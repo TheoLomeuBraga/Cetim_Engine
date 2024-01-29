@@ -417,7 +417,7 @@ float calculateDistanceToNearestTriangle(glm::vec3 point, dtNavMesh *navMesh)
 
     // Configurações de filtro
     dtQueryFilter filter;
-    filter.setIncludeFlags(0xFFFF); // Incluir todos os polígonos
+    filter.setIncludeFlags(0xffff); // Incluir todos os polígonos
     filter.setExcludeFlags(0);
 
     // Encontrar o polígono mais próximo
@@ -528,7 +528,7 @@ std::vector<glm::vec3> get_navmesh_path(
     return path;
 }
 
-
+//print_cube_in_space(point);
 
 
 std::shared_ptr<malha> nav_mesh_mesh = NULL;
@@ -639,32 +639,6 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         print("Posição do Vértice", vert.posicao[0], vert.posicao[1], vert.posicao[2]);
     }
 */
-
-
-void nMesh(const dtNavMesh *nMesh = navMesh)
-{
-    if (!nMesh)
-    {
-        std::cout << "NavMesh is null" << std::endl;
-        return;
-    }
-
-    for (int i = 0; i < nMesh->getMaxTiles(); ++i)
-    {
-        const dtMeshTile *tile = nMesh->getTile(i);
-        if (!tile || !tile->header)
-        {
-            continue;
-        }
-
-        std::cout << "Tile " << i << std::endl;
-        for (int vi = 0; vi < tile->header->vertCount; ++vi)
-        {
-            const float *v = &tile->verts[vi * 3];
-            std::cout << "Vertex " << vi << ": (" << v[0] << ", " << v[1] << ", " << v[2] << ")" << std::endl;
-        }
-    }
-}
 
 shared_ptr<objeto_jogo> display_nav_mesh = NULL;
 void draw_navmesh()
