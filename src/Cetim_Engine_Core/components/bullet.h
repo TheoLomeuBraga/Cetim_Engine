@@ -206,7 +206,87 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
 }
 
 
+rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
+    if (!minhaMalha) {
+        return nullptr;
+    }
 
+    rcPolyMesh* polyMesh = new rcPolyMesh();
+    if (!polyMesh) {
+        return nullptr; // Falha na alocação
+    }
+
+    std::unordered_map<std::string, unsigned int> uniqueVertexMap;
+    std::vector<float> transformedVertices;
+
+    // Mapear cada posição única de vértice para um índice
+    for (const auto& vert : minhaMalha->vertices) {
+        std::string posKey = std::to_string(vert.posicao[0]) + "_" +
+                             std::to_string(vert.posicao[1]) + "_" +
+                             std::to_string(vert.posicao[2]);
+
+        if (uniqueVertexMap.find(posKey) == uniqueVertexMap.end()) {
+            uniqueVertexMap[posKey] = transformedVertices.size() / 3;
+            for (int j = 0; j < 3; ++j) {
+                transformedVertices.push_back(vert.posicao[j]);
+            }
+        }
+    }
+
+    // Preencher os dados de vértices
+    polyMesh->verts = new unsigned short[transformedVertices.size()];
+    polyMesh->nverts = transformedVertices.size() / 3;
+    for (size_t i = 0; i < transformedVertices.size(); ++i) {
+        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - bmin[i % 3]) / tileSize));
+    }
+
+    memcpy(polyMesh->bmin, bmin, sizeof(bmin));
+    memcpy(polyMesh->bmax, bmax, sizeof(bmax));
+    polyMesh->cs = tileSize;
+    polyMesh->ch = tileSize;
+
+    // Preencher os índices dos polígonos e identificar bordas compartilhadas
+    std::vector<std::pair<unsigned short, unsigned short>> sharedEdges;
+    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2];
+    polyMesh->npolys = minhaMalha->indice.size() / 3;
+    polyMesh->nvp = 3; // Número de vértices por polígono
+
+    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
+        for (int j = 0; j < 3; ++j) {
+            vertice& vert = minhaMalha->vertices[minhaMalha->indice[i + j]];
+            std::string posKey = std::to_string(vert.posicao[0]) + "_" +
+                                 std::to_string(vert.posicao[1]) + "_" +
+                                 std::to_string(vert.posicao[2]);
+            polyMesh->polys[i * 2 + j] = uniqueVertexMap[posKey];
+
+            // Adicionando bordas ao vetor sharedEdges
+            unsigned short v0 = polyMesh->polys[i * 2 + j];
+            unsigned short v1 = polyMesh->polys[i * 2 + ((j + 1) % 3)];
+            if (v0 > v1) std::swap(v0, v1);
+            sharedEdges.push_back({v0, v1});
+        }
+        // Marcando todas as bordas como navegáveis
+        for (int j = 0; j < 3; ++j) {
+            polyMesh->polys[i * 2 + 3 + j] = RC_MESH_NULL_IDX;
+        }
+    }
+
+    // Remover duplicatas e identificar bordas compartilhadas
+    std::sort(sharedEdges.begin(), sharedEdges.end());
+    auto last = std::unique(sharedEdges.begin(), sharedEdges.end());
+    sharedEdges.erase(last, sharedEdges.end());
+
+    // Aqui você pode processar as sharedEdges para definir as conexões em polyMesh
+    // ...
+
+    return polyMesh;
+}
+
+
+
+
+
+/*
 rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
     if (!minhaMalha) {
         return nullptr;
@@ -269,7 +349,7 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
 
     return polyMesh;
 }
-
+*/
 
 
 
@@ -509,6 +589,8 @@ std::vector<glm::vec3> get_navmesh_path(
 
     // Encontrar os polígonos mais próximos de start e end
     dtPolyRef startRef, endRef;
+    //reportDtStatusError(query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr));
+    //reportDtStatusError(query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr));
     query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
     query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
 
