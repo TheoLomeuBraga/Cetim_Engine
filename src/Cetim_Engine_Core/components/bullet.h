@@ -7,6 +7,9 @@
 #include <thread>
 #include <memory>
 #include <tuple>
+#include <unordered_map>
+#include <cmath>
+
 #include "render_mesh.h"
 #include "ManusearArquivos.h"
 
@@ -202,6 +205,8 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
     return malhaFusionada;
 }
 
+
+
 rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
     if (!minhaMalha) {
         return nullptr;
@@ -212,14 +217,28 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
         return nullptr; // Falha na alocação
     }
 
-    // Preencher os dados de vértices e atualizar bmin e bmax
-    polyMesh->verts = new unsigned short[minhaMalha->vertices.size() * 3];
-    polyMesh->nverts = minhaMalha->vertices.size();
-    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
-        const vertice& vert = minhaMalha->vertices[i];
-        for (int j = 0; j < 3; ++j) {
-            polyMesh->verts[i * 3 + j] =  static_cast<unsigned short>(std::round((vert.posicao[j] - bmin[j % 3]) / tileSize));
+    std::unordered_map<std::string, unsigned int> uniqueVertexMap;
+    std::vector<float> transformedVertices;
+
+    // Mapear cada posição única de vértice para um índice
+    for (const auto& vert : minhaMalha->vertices) {
+        std::string posKey = std::to_string(vert.posicao[0]) + "_" +
+                             std::to_string(vert.posicao[1]) + "_" +
+                             std::to_string(vert.posicao[2]);
+
+        if (uniqueVertexMap.find(posKey) == uniqueVertexMap.end()) {
+            uniqueVertexMap[posKey] = transformedVertices.size() / 3;
+            for (int j = 0; j < 3; ++j) {
+                transformedVertices.push_back(vert.posicao[j]);
+            }
         }
+    }
+
+    // Preencher os dados de vértices
+    polyMesh->verts = new unsigned short[transformedVertices.size()];
+    polyMesh->nverts = transformedVertices.size() / 3;
+    for (size_t i = 0; i < transformedVertices.size(); ++i) {
+        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - bmin[i % 3]) / tileSize));
     }
 
     memcpy(polyMesh->bmin, bmin, sizeof(bmin));
@@ -233,11 +252,15 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
     polyMesh->nvp = 3; // Número de vértices por polígono
     for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
         for (int j = 0; j < 3; ++j) {
-            polyMesh->polys[i * 2 + j] = minhaMalha->indice[i + j];
+            vertice& vert = minhaMalha->vertices[minhaMalha->indice[i + j]];
+            std::string posKey = std::to_string(vert.posicao[0]) + "_" +
+                                 std::to_string(vert.posicao[1]) + "_" +
+                                 std::to_string(vert.posicao[2]);
+            polyMesh->polys[i * 2 + j] = uniqueVertexMap[posKey];
         }
         // Marcando todas as bordas como navegáveis
         for (int j = 0; j < 3; ++j) {
-            polyMesh->polys[i * 2 + 3 + j] = RC_WALKABLE_AREA;
+            polyMesh->polys[i * 2 + 3 + j] = RC_MESH_NULL_IDX;
         }
     }
 
@@ -246,6 +269,7 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
 
     return polyMesh;
 }
+
 
 
 
@@ -286,20 +310,25 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.ch = tileSize;
     params.buildBvTree = true;
 
-    memcpy(params.bmin, bmin, sizeof(bmin));
-    memcpy(params.bmax, bmax, sizeof(bmax));
+    memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
+    memcpy(params.bmax, meshDetails->bmax, sizeof(params.bmax));
 
-    // Definir áreas caminháveis
+    // Definir áreas caminháveis e flags de borda
     unsigned char *polyAreas = new unsigned char[meshDetails->npolys];
-    unsigned short *polyFlags = new unsigned short[meshDetails->npolys];
+    unsigned short *polyFlags = new unsigned short[meshDetails->npolys * 2]; // *2 para incluir flags de borda
     for (int i = 0; i < meshDetails->npolys; ++i) {
         polyAreas[i] = RC_WALKABLE_AREA; // Define todas as áreas como caminháveis
-        polyFlags[i] = 0x01; // Você pode personalizar os flags conforme necessário
+        // Configura os flags para cada polígono e suas bordas
+        for (int j = 0; j < 2; ++j) {
+            polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
+        }
     }
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
 
     // Criar dados de navegação
+    unsigned char *navData;
+    int navDataSize;
     if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
         delete navMesh;
         delete[] polyAreas;
@@ -321,6 +350,8 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
 
     return navMesh;
 }
+
+
 
 int getVertexCount(const dtNavMesh *navMesh)
 {
@@ -577,9 +608,6 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         vert.posicao[1] = polyMesh->bmin[1] + v[1] * polyMesh->ch;
         vert.posicao[2] = polyMesh->bmin[2] + v[2] * polyMesh->cs;
 
-        //print("V",v[0],v[1],v[2]);
-        //print("vert.posicao",v[0],v[1],v[2]);
-
         // Preencher outros atributos do vértice, se necessário
         // ...
 
@@ -599,29 +627,10 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
             convertedMesh->indice.push_back(vertexIndex);
         }
     }
-    // Impressão para depuração
-    
-    /*
-    print("Indice Size", convertedMesh->indice.size());
-    for (unsigned int i : convertedMesh->indice) {
-        print("Índice", i);
-        vertice vert = convertedMesh->vertices[i];
-        print("Posição do Vértice", vert.posicao[0], vert.posicao[1], vert.posicao[2]);
-    }
-    */
     
 
     return convertedMesh;
 }
-
-/*
-    print("Indice Size", convertedMesh->indice.size());
-    for (unsigned int i : convertedMesh->indice) {
-        print("Índice", i);
-        vertice vert = convertedMesh->vertices[i];
-        print("Posição do Vértice", vert.posicao[0], vert.posicao[1], vert.posicao[2]);
-    }
-*/
 
 shared_ptr<objeto_jogo> display_nav_mesh = NULL;
 void draw_navmesh()
@@ -711,13 +720,10 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     
 
     //draw_navmesh();
-
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(104.0, 40.5, -282.0));
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(160.0, 40.5, -160.0));
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(82.0, 40.5, -226.0));
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(88.0, 40.5, -70.0));
     
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
+
+    
     
 
     return navMesh;
