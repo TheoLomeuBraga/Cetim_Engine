@@ -259,6 +259,8 @@ void ProcessSharedEdges(std::vector<std::pair<unsigned short, unsigned short>>& 
             // Lista dos índices dos polígonos que compartilham esta borda
             const std::vector<int>& polys = edgeToPolyMap[edge];
 
+            
+
             if (polys.size() > 1) {
                 // Aqui você pode conectar os polígonos que compartilham a borda
                 // Supondo que você queira conectar os dois primeiros polígonos que compartilham a borda
@@ -267,8 +269,9 @@ void ProcessSharedEdges(std::vector<std::pair<unsigned short, unsigned short>>& 
 
                 // Conectar polyIndex1 a polyIndex2 e vice-versa
                 // Supondo que o índice do polígono conectado seja armazenado no primeiro slot de 'flags' do polígono
-                polyMesh->polys[polyIndex1 * polyMesh->nvp * 2 + polyMesh->nvp] = polyIndex2;
-                polyMesh->polys[polyIndex2 * polyMesh->nvp * 2 + polyMesh->nvp] = polyIndex1;
+                polyMesh->polys[polyIndex1 * polyMesh->nvp * 2 + polyMesh->nvp] = static_cast<unsigned short>(polyIndex2);
+                polyMesh->polys[polyIndex2 * polyMesh->nvp * 2 + polyMesh->nvp] = static_cast<unsigned short>(polyIndex1);
+                
             }
         }
     }
@@ -318,7 +321,7 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
     if (!polyMesh) return nullptr;
 
     // Mapear cada posição única de vértice para um índice
-    auto uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
+    std::unordered_map<std::string, unsigned int> uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
 
     // Preencher os dados de vértices
     FillVertices(polyMesh, uniqueVertexMap, minhaMalha->vertices);
@@ -346,7 +349,7 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     rcPolyMesh *meshDetails,
     float walkableHeight = 1.0f,
     float walkableRadius = 1.0f,
-    float walkableClimb = 0.0f)
+    float walkableClimb = 1.0f)
 {
     if (!meshDetails) {
         return nullptr;
@@ -383,7 +386,7 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     unsigned char *polyAreas = new unsigned char[meshDetails->npolys];
     unsigned short *polyFlags = new unsigned short[meshDetails->npolys * 2]; // *2 para incluir flags de borda
     for (int i = 0; i < meshDetails->npolys; ++i) {
-        polyAreas[i] = RC_WALKABLE_AREA; // Define todas as áreas como caminháveis
+        polyAreas[i] = 63; // Define todas as áreas como caminháveis
         // Configura os flags para cada polígono e suas bordas
         for (int j = 0; j < 2; ++j) {
             polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
@@ -391,6 +394,8 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     }
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
+
+    
 
     // Criar dados de navegação
     unsigned char *navData;
@@ -416,84 +421,6 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
 
     return navMesh;
 }
-
-/*
-rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
-    if (!minhaMalha) {
-        return nullptr;
-    }
-
-    rcPolyMesh* polyMesh = new rcPolyMesh();
-    if (!polyMesh) {
-        return nullptr; // Falha na alocação
-    }
-
-    std::unordered_map<std::string, unsigned int> uniqueVertexMap;
-    std::vector<float> transformedVertices;
-
-    // Mapear cada posição única de vértice para um índice
-    for (const auto& vert : minhaMalha->vertices) {
-        std::string posKey = std::to_string(vert.posicao[0]) + "_" +
-                             std::to_string(vert.posicao[1]) + "_" +
-                             std::to_string(vert.posicao[2]);
-
-        if (uniqueVertexMap.find(posKey) == uniqueVertexMap.end()) {
-            uniqueVertexMap[posKey] = transformedVertices.size() / 3;
-            for (int j = 0; j < 3; ++j) {
-                transformedVertices.push_back(vert.posicao[j]);
-            }
-        }
-    }
-
-    // Preencher os dados de vértices
-    polyMesh->verts = new unsigned short[transformedVertices.size()];
-    polyMesh->nverts = transformedVertices.size() / 3;
-    for (size_t i = 0; i < transformedVertices.size(); ++i) {
-        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - bmin[i % 3]) / tileSize));
-    }
-
-    memcpy(polyMesh->bmin, bmin, sizeof(bmin));
-    memcpy(polyMesh->bmax, bmax, sizeof(bmax));
-    polyMesh->cs = tileSize;
-    polyMesh->ch = tileSize;
-
-    // Preencher os índices dos polígonos e identificar bordas compartilhadas
-    std::vector<std::pair<unsigned short, unsigned short>> sharedEdges;
-    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2];
-    polyMesh->npolys = minhaMalha->indice.size() / 3;
-    polyMesh->nvp = 3; // Número de vértices por polígono
-
-    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
-        for (int j = 0; j < 3; ++j) {
-            vertice& vert = minhaMalha->vertices[minhaMalha->indice[i + j]];
-            std::string posKey = std::to_string(vert.posicao[0]) + "_" +
-                                 std::to_string(vert.posicao[1]) + "_" +
-                                 std::to_string(vert.posicao[2]);
-            polyMesh->polys[i * 2 + j] = uniqueVertexMap[posKey];
-
-            // Adicionando bordas ao vetor sharedEdges
-            unsigned short v0 = polyMesh->polys[i * 2 + j];
-            unsigned short v1 = polyMesh->polys[i * 2 + ((j + 1) % 3)];
-            if (v0 > v1) std::swap(v0, v1);
-            sharedEdges.push_back({v0, v1});
-        }
-        // Marcando todas as bordas como navegáveis
-        for (int j = 0; j < 3; ++j) {
-            polyMesh->polys[i * 2 + 3 + j] = RC_MESH_NULL_IDX;
-        }
-    }
-
-    // Remover duplicatas e identificar bordas compartilhadas
-    std::sort(sharedEdges.begin(), sharedEdges.end());
-    auto last = std::unique(sharedEdges.begin(), sharedEdges.end());
-    sharedEdges.erase(last, sharedEdges.end());
-
-    // Aqui você pode processar as sharedEdges para definir as conexões em polyMesh
-    // ...
-
-    return polyMesh;
-}
-*/
 
 
 
@@ -623,7 +550,7 @@ std::vector<glm::vec3> get_navmesh_path(
     // Configurações de filtro baseadas nas habilidades do personagem
     dtQueryFilter filter;
     unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
-    filter.setIncludeFlags(includeFlags);
+    filter.setIncludeFlags(0x01);
     filter.setExcludeFlags(0); // Sem flags de exclusão
     filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
@@ -655,6 +582,8 @@ std::vector<glm::vec3> get_navmesh_path(
     dtPolyRef straightPathPolys[256];
     int nStraightPath;
     query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, straightPathFlags, straightPathPolys, &nStraightPath, 256, 0);
+
+    //print("AAAAA",startRef,endRef,nPathPolys,pathPolys[0]);
 
     for (int i = 0; i < nStraightPath; ++i) {
         glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
