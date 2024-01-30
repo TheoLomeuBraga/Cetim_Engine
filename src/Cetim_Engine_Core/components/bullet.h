@@ -285,75 +285,6 @@ rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
 
 
 
-
-/*
-rcPolyMesh* convertToRcPolyMesh(const std::shared_ptr<malha>& minhaMalha) {
-    if (!minhaMalha) {
-        return nullptr;
-    }
-
-    rcPolyMesh* polyMesh = new rcPolyMesh();
-    if (!polyMesh) {
-        return nullptr; // Falha na alocação
-    }
-
-    std::unordered_map<std::string, unsigned int> uniqueVertexMap;
-    std::vector<float> transformedVertices;
-
-    // Mapear cada posição única de vértice para um índice
-    for (const auto& vert : minhaMalha->vertices) {
-        std::string posKey = std::to_string(vert.posicao[0]) + "_" +
-                             std::to_string(vert.posicao[1]) + "_" +
-                             std::to_string(vert.posicao[2]);
-
-        if (uniqueVertexMap.find(posKey) == uniqueVertexMap.end()) {
-            uniqueVertexMap[posKey] = transformedVertices.size() / 3;
-            for (int j = 0; j < 3; ++j) {
-                transformedVertices.push_back(vert.posicao[j]);
-            }
-        }
-    }
-
-    // Preencher os dados de vértices
-    polyMesh->verts = new unsigned short[transformedVertices.size()];
-    polyMesh->nverts = transformedVertices.size() / 3;
-    for (size_t i = 0; i < transformedVertices.size(); ++i) {
-        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - bmin[i % 3]) / tileSize));
-    }
-
-    memcpy(polyMesh->bmin, bmin, sizeof(bmin));
-    memcpy(polyMesh->bmax, bmax, sizeof(bmax));
-    polyMesh->cs = tileSize;
-    polyMesh->ch = tileSize;
-
-    // Preencher os índices dos polígonos
-    polyMesh->polys = new unsigned short[minhaMalha->indice.size() * 2];
-    polyMesh->npolys = minhaMalha->indice.size() / 3;
-    polyMesh->nvp = 3; // Número de vértices por polígono
-    for (size_t i = 0; i < minhaMalha->indice.size(); i += 3) {
-        for (int j = 0; j < 3; ++j) {
-            vertice& vert = minhaMalha->vertices[minhaMalha->indice[i + j]];
-            std::string posKey = std::to_string(vert.posicao[0]) + "_" +
-                                 std::to_string(vert.posicao[1]) + "_" +
-                                 std::to_string(vert.posicao[2]);
-            polyMesh->polys[i * 2 + j] = uniqueVertexMap[posKey];
-        }
-        // Marcando todas as bordas como navegáveis
-        for (int j = 0; j < 3; ++j) {
-            polyMesh->polys[i * 2 + 3 + j] = RC_MESH_NULL_IDX;
-        }
-    }
-
-    // Configurar outros campos necessários
-    // ...
-
-    return polyMesh;
-}
-*/
-
-
-
-
 rcPolyMesh *combinedPolyMesh = NULL;
 
 dtNavMesh *rcPolyMeshDetails_to_navMesh(
@@ -386,8 +317,8 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.tileX = 0;
     params.tileY = 0;
     params.tileLayer = 0;
-    params.cs = tileSize;
-    params.ch = tileSize;
+    params.cs = meshDetails->cs;
+    params.ch = meshDetails->ch;
     params.buildBvTree = true;
 
     memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
