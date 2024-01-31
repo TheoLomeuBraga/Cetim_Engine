@@ -517,14 +517,6 @@ void reportDtStatusError(dtStatus status)
             std::cout << "Erro: Um tile já foi atribuído para a coordenada x, y fornecida." << std::endl;
         }
     }
-    else if (dtStatusSucceed(status))
-    {
-        std::cout << "Operação realizada com sucesso." << std::endl;
-    }
-    else if (dtStatusInProgress(status))
-    {
-        std::cout << "Operação em progresso." << std::endl;
-    }
 }
 
 float color_intensity = 0.0;
