@@ -83,6 +83,28 @@ unsigned short *tempPolyFlags = nullptr;
 
 const float tileSize = 10.0f;
 float bmax[3], bmin[3];
+
+void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3]) {
+    if (minhaMalha->vertices.empty() || minhaMalha.indice.empty()) {
+        return;
+    }
+
+    // Inicializando bmin e bmax com valores extremos
+    bmin[0] = bmin[1] = bmin[2] = std::numeric_limits<float>::max();
+    bmax[0] = bmax[1] = bmax[2] = std::numeric_limits<float>::lowest();
+
+    std::unordered_set<unsigned int> uniqueIndices(minhaMalha->indice.begin(), minhaMalha->indice.end());
+
+    // Percorrendo apenas os índices únicos
+    for (const auto& index : uniqueIndices) {
+        const vertice& v = minhaMalha->vertices[index];
+        for (int i = 0; i < 3; ++i) {
+            bmin[i] = std::min(bmin[i], v.posicao[i]);
+            bmax[i] = std::max(bmax[i], v.posicao[i]);
+        }
+    }
+}
+
 void reset_bmin_bmax()
 {
     const float lowest = std::numeric_limits<float>::lowest();
@@ -800,7 +822,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     navMesh = rcPolyMeshDetails_to_navMesh(rcmesh);
     freeRcPolyMesh(rcmesh);
 
-    //draw_navmesh();
+    draw_navmesh();
 
     //get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
