@@ -82,10 +82,9 @@ unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
 const float tileSize = 10.0f;
-float bmax[3], bmin[3];
 
 void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3]) {
-    if (minhaMalha->vertices.empty() || minhaMalha.indice.empty()) {
+    if (minhaMalha->vertices.empty() || minhaMalha->indice.empty()) {
         return;
     }
 
@@ -105,49 +104,7 @@ void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3]) {
     }
 }
 
-void reset_bmin_bmax()
-{
-    const float lowest = std::numeric_limits<float>::lowest();
-    const float max = std::numeric_limits<float>::max();
 
-    bmax[0] = lowest;
-    bmax[1] = lowest;
-    bmax[2] = lowest;
-
-    bmin[0] = max;
-    bmin[1] = max;
-    bmin[2] = max;
-}
-void updateBminBmax(const glm::vec4 &pos)
-{
-    for (int i = 0; i < 3; ++i)
-    {
-        bmin[i] = std::min(bmin[i], pos[i]);
-        bmax[i] = std::max(bmax[i], pos[i]);
-    }
-}
-
-void setBminBmax(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
-{
-    reset_bmin_bmax();
-    std::vector<rcPolyMesh *> polyMeshes;
-
-    // unsigned int mesh_size = 0;
-
-    for (size_t i = 0; i < minhasMalhas.size(); ++i)
-    {
-
-        const auto &malha = minhasMalhas[i];
-        const glm::mat4 &transform = transformacoes[i];
-
-        for (const auto &vert : malha->vertices)
-        {
-            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
-            pos = transform * pos;
-            updateBminBmax(pos);
-        }
-    }
-}
 
 void freeRcPolyMesh(rcPolyMesh *mesh)
 {
@@ -178,7 +135,6 @@ std::shared_ptr<malha> meshes_fused = NULL;
 
 std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
-    reset_bmin_bmax();
 
     if (minhasMalhas.size() != transformacoes.size())
     {
@@ -199,8 +155,6 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
         {
             glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
             pos = transform * pos;
-
-            updateBminBmax(pos);
 
             vertice vertTransformado = vert;
             vertTransformado.posicao[0] = pos.x;
@@ -265,7 +219,7 @@ void FillVertices(rcPolyMesh *polyMesh, const std::unordered_map<std::string, un
     polyMesh->nverts = transformedVertices.size() / 3;
     for (size_t i = 0; i < transformedVertices.size(); ++i)
     {
-        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - bmin[i % 3]) / tileSize));
+        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - polyMesh->bmin[i % 3]) / tileSize));
     }
 }
 
@@ -385,17 +339,18 @@ rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
     // Mapear cada posição única de vértice para um índice
     std::unordered_map<std::string, unsigned int> uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
 
+    // Configurar os campos restantes do polyMesh
+    calcBminBmax(minhaMalha,polyMesh->bmin,polyMesh->bmax);
+    polyMesh->cs = tileSize;
+    polyMesh->ch = tileSize;
+
     // Preencher os dados de vértices
     FillVertices(polyMesh, uniqueVertexMap, minhaMalha->vertices);
 
     // Preencher os índices dos polígonos e processar as bordas compartilhadas
     FillPolygonsAndSharedEdges(polyMesh, uniqueVertexMap, minhaMalha->indice, minhaMalha->vertices);
 
-    // Configurar os campos restantes do polyMesh
-    memcpy(polyMesh->bmin, bmin, sizeof(bmin));
-    memcpy(polyMesh->bmax, bmax, sizeof(bmax));
-    polyMesh->cs = tileSize;
-    polyMesh->ch = tileSize;
+    
 
     return polyMesh;
 }
