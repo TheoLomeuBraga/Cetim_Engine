@@ -33,12 +33,9 @@ local assets_needed = {
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_2.wav"),
     new_asset_list_element(asset_types.audio,"resources/Audio/sounds/shot_3.wav"),
 
-    --new_asset_list_element(asset_types.script,"game_scripts/player/charter_arcenal"),
     new_asset_list_element(asset_types.script,"game_scripts/player/charter_data"),
     new_asset_list_element(asset_types.script,"game_scripts/player/charter_interaction"),
     new_asset_list_element(asset_types.script,"game_scripts/player/charter_movement"),
-
-    
 
     new_asset_list_element(asset_types.script,"game_scripts/mensage"),
     new_asset_list_element(asset_types.script,"game_scripts/door_triger"),

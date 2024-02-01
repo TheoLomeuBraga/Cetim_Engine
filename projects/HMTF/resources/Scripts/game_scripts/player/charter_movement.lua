@@ -27,7 +27,7 @@ check_top = {}
 check_down = {}
 
 direction_reference = {}
-movement_inpulse = {x=0,y=0,z=0}
+movement_inpulse = { x = 0, y = 0, z = 0 }
 
 local core_obj = {}
 
@@ -72,7 +72,7 @@ function START()
         true, collision_shapes.cylinder, nil, true)
 
 
-    
+
     this_object = game_object(this_object_ptr)
     this_object.components.transform:change_rotation(0, 0, 0)
 
@@ -181,7 +181,6 @@ end
 
 
 function UPDATE()
-    
     if game_state == game_states.play then
         time:get()
         gravity:get()
@@ -192,14 +191,13 @@ function UPDATE()
         inputs_last_frame = global_data.inputs_last_frame
 
         if inputs.menu > 0 and not (inputs_last_frame.menu > 0) then
-            
             if global_data.pause_menu_obj_ptr == nil then
                 menus.open_pause_menu()
             end
         end
 
         enable_cursor(global_data.pause > 0)
-        
+
         this_physics_3d:get()
 
         local get_valid_touches_top = function(objs_touching)
@@ -214,7 +212,7 @@ function UPDATE()
             return valid_touches
         end
 
-        
+
 
         local get_valid_touches_down = function(objs_touching)
             local valid_touches = 0
@@ -233,7 +231,7 @@ function UPDATE()
 
         --hit top
         check_top.components.transform:change_position(pos.x, pos.y + 1.75, pos.z)
-        
+
         hit_top = get_valid_touches_top(check_top.components[components.physics_3D]:get_objects_coliding()) > 0
 
         --hit down
@@ -241,14 +239,14 @@ function UPDATE()
         check_down.components[components.physics_3D]:get()
         hit_down = get_valid_touches_down(check_down.components[components.physics_3D]:get_objects_coliding()) > 1
 
-        
+
 
         if global_data.pause < 1 and global_data.interacting == 0 then
-
             --move camera
             window:get()
             camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
-            camera_rotation.y = math.max(math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20),90), -90)
+            camera_rotation.y = math.max(
+            math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20), 90), -90)
 
             camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity / 2.5
             camera_rotation.y = math.max(
@@ -259,7 +257,7 @@ function UPDATE()
                 this_object_physics_3D_seted = not this_object_physics_3D_seted
             end
 
-            
+
 
             --get floor info
             local hit = false
@@ -272,7 +270,8 @@ function UPDATE()
             end
 
             --get movement direction
-            local input_dir = direction_reference.components.transform:get_local_direction(inputs.foward, 0,-inputs.left)
+            local input_dir = direction_reference.components.transform:get_local_direction(inputs.foward, 0, -inputs
+            .left)
             local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
@@ -297,41 +296,49 @@ function UPDATE()
             if hit_top and inpulse_y > 0 then
                 inpulse_y = 0
             end
-            
 
-            local impulse = {x=0,y=0,z=0}
-            
+
+            local impulse = { x = 0, y = 0, z = 0 }
+
             --move
             if hit_down and not (inpulse_y > 0) then
-                impulse = { x = (move_dir.x * (speed + speed_boost)) + platform_movement.x,
+                impulse = {
+                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x,
                     y = (move_dir.y * (speed + speed_boost)) + platform_movement.y,
-                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z }
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z
+                }
             else
-                impulse = { x = (move_dir.x * (speed + speed_boost_air)),
+                impulse = {
+                    x = (move_dir.x * (speed + speed_boost_air)),
                     y = (move_dir.y * (speed + speed_boost_air)) + inpulse_y,
-                    z = (move_dir.z * (speed + speed_boost_air)) }
+                    z = (move_dir.z * (speed + speed_boost_air))
+                }
             end
 
-            if inputs.action_2 > 0 then
+
+            if inputs.action_2 > 0 and time.scale ~= 0 then
                 local turbo_time_speed = 10
-                this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed, impulse.z * turbo_time_speed)
+                this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed,
+                    impulse.z * turbo_time_speed)
                 time:set_speed(1 / turbo_time_speed)
-            else 
+            else
                 time:set_speed(1)
                 time:get()
                 this_physics_3d:set_linear_velocity(impulse.x, impulse.y, impulse.z)
             end
-            
 
-            
-            
+
+
+
+
+
             movement_inpulse = deepcopy(impulse)
 
-            
-            if not hit_down then
-                inpulse_y = inpulse_y + (time.delta * gravity.force.y * 2)
-            end
 
+            if not hit_down then
+                inpulse_y = inpulse_y + (time.delta * time.scale * gravity.force.y * 2)
+                print(time.scale)
+            end
         else
             this_physics_3d:set_linear_velocity(0, 0, 0)
         end
@@ -340,16 +347,16 @@ function UPDATE()
         this_object.components.transform:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data.pause < 1
 
-        
+
         --this_object.components.transform:get()
         --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
 
         this_physics_3d:get()
     end
 
-    
 
-    
+
+
     --memory_usage_info()
 end
 

@@ -149,7 +149,7 @@ cenary_builders = {
         ret.components.transform:set()
 
         
-
+        
         local add_physics = function(rb, is_triger)
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
                 if rb then

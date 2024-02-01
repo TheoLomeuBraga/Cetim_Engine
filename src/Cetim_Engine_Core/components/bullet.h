@@ -81,10 +81,12 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
-const float tileSize = 10.0f;
+const float tileSize = 50.0f;
 
-void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3]) {
-    if (minhaMalha->vertices.empty() || minhaMalha->indice.empty()) {
+void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3])
+{
+    if (minhaMalha->vertices.empty() || minhaMalha->indice.empty())
+    {
         return;
     }
 
@@ -95,16 +97,16 @@ void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3]) {
     std::unordered_set<unsigned int> uniqueIndices(minhaMalha->indice.begin(), minhaMalha->indice.end());
 
     // Percorrendo apenas os índices únicos
-    for (const auto& index : uniqueIndices) {
-        const vertice& v = minhaMalha->vertices[index];
-        for (int i = 0; i < 3; ++i) {
+    for (const auto &index : uniqueIndices)
+    {
+        const vertice &v = minhaMalha->vertices[index];
+        for (int i = 0; i < 3; ++i)
+        {
             bmin[i] = std::min(bmin[i], v.posicao[i]);
             bmax[i] = std::max(bmax[i], v.posicao[i]);
         }
     }
 }
-
-
 
 void freeRcPolyMesh(rcPolyMesh *mesh)
 {
@@ -276,10 +278,11 @@ int GetAdjacentPolygonIndex(const std::pair<unsigned short, unsigned short> &edg
     return -1; // Retorna -1 se não houver polígono adjacente ou se a borda não for compartilhada
 }
 
-void FillPolygonsAndSharedEdges(rcPolyMesh* polyMesh,
-                                const std::unordered_map<std::string, unsigned int>& uniqueVertexMap,
-                                const std::vector<unsigned int>& indices,
-                                const std::vector<vertice>& vertices) {
+void FillPolygonsAndSharedEdges(rcPolyMesh *polyMesh,
+                                const std::unordered_map<std::string, unsigned int> &uniqueVertexMap,
+                                const std::vector<unsigned int> &indices,
+                                const std::vector<vertice> &vertices)
+{
     std::vector<std::pair<unsigned short, unsigned short>> sharedEdges;
     std::map<std::pair<unsigned short, unsigned short>, std::vector<int>> edgeToPolyMap;
 
@@ -288,8 +291,10 @@ void FillPolygonsAndSharedEdges(rcPolyMesh* polyMesh,
     polyMesh->nvp = 3; // Número de vértices por polígono
 
     // Preencher os índices dos polígonos e mapear as bordas compartilhadas
-    for (size_t i = 0; i < indices.size(); i += 3) {
-        for (int j = 0; j < 3; ++j) {
+    for (size_t i = 0; i < indices.size(); i += 3)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
             std::string posKey = GenerateVertexKey(vertices[indices[i + j]]);
             unsigned short vertexIndex = uniqueVertexMap.at(posKey);
             polyMesh->polys[i * 2 + j] = vertexIndex;
@@ -307,25 +312,28 @@ void FillPolygonsAndSharedEdges(rcPolyMesh* polyMesh,
     ProcessSharedEdges(sharedEdges, edgeToPolyMap, polyMesh);
 
     // Definir as conexões de borda
-    for (size_t i = 0; i < indices.size(); i += 3) {
+    for (size_t i = 0; i < indices.size(); i += 3)
+    {
         int polyIndex = i / 3;
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 3; ++j)
+        {
             unsigned short v0 = polyMesh->polys[polyIndex * 6 + j];
             unsigned short v1 = polyMesh->polys[polyIndex * 6 + ((j + 1) % 3)];
             auto edge = std::make_pair(std::min(v0, v1), std::max(v0, v1));
 
             int adjacentPolyIndex = GetAdjacentPolygonIndex(edge, polyIndex, edgeToPolyMap);
 
-            if (adjacentPolyIndex != -1) {
+            if (adjacentPolyIndex != -1)
+            {
                 polyMesh->polys[polyIndex * 6 + 3 + j] = adjacentPolyIndex;
-            } else {
+            }
+            else
+            {
                 polyMesh->polys[polyIndex * 6 + 3 + j] = RC_MESH_NULL_IDX;
             }
         }
     }
 }
-
-
 
 rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
 {
@@ -340,7 +348,7 @@ rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
     std::unordered_map<std::string, unsigned int> uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
 
     // Configurar os campos restantes do polyMesh
-    calcBminBmax(minhaMalha,polyMesh->bmin,polyMesh->bmax);
+    calcBminBmax(minhaMalha, polyMesh->bmin, polyMesh->bmax);
     polyMesh->cs = tileSize;
     polyMesh->ch = tileSize;
 
@@ -350,10 +358,37 @@ rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
     // Preencher os índices dos polígonos e processar as bordas compartilhadas
     FillPolygonsAndSharedEdges(polyMesh, uniqueVertexMap, minhaMalha->indice, minhaMalha->vertices);
 
-    
-
     return polyMesh;
 }
+
+void printDtStatus(dtStatus status) {
+    if (dtStatusSucceed(status)) {
+        std::cout << "Success" << std::endl;
+    } else {
+        if (dtStatusDetail(status, DT_WRONG_MAGIC)) {
+            std::cout << "Failure: Wrong magic" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_WRONG_VERSION)) {
+            std::cout << "Failure: Wrong version" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_OUT_OF_MEMORY)) {
+            std::cout << "Failure: Out of memory" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_INVALID_PARAM)) {
+            std::cout << "Failure: Invalid parameter" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_BUFFER_TOO_SMALL)) {
+            std::cout << "Failure: Buffer too small" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_OUT_OF_NODES)) {
+            std::cout << "Failure: Out of nodes" << std::endl;
+        }
+        if (dtStatusDetail(status, DT_PARTIAL_RESULT)) {
+            std::cout << "Partial result" << std::endl;
+        }
+    }
+}
+
 
 rcPolyMesh *combinedPolyMesh = NULL;
 
@@ -391,7 +426,9 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.tileLayer = 0;
     params.cs = meshDetails->cs;
     params.ch = meshDetails->ch;
-    params.buildBvTree = true;
+    params.buildBvTree = false;
+    //params.maxTiles = 256 * 256 * 256;
+    //params.maxPolys = 2048;
 
     memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
     memcpy(params.bmax, meshDetails->bmax, sizeof(params.bmax));
@@ -411,6 +448,8 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     params.polyAreas = polyAreas;
     params.polyFlags = polyFlags;
 
+
+
     // Criar dados de navegação
     unsigned char *navData;
     int navDataSize;
@@ -423,6 +462,7 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     }
 
     // Inicializar dtNavMesh com os dados de navegação
+    
     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
     {
         delete[] navData;
@@ -431,6 +471,21 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
         delete[] polyFlags;
         return nullptr;
     }
+    
+
+   /*
+    dtTileRef tileRef;
+    dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
+    if (dtStatusFailed(status))
+    {
+        printDtStatus(status);
+        delete[] navData;
+        delete navMesh;
+        delete[] polyAreas;
+        delete[] polyFlags;
+        return nullptr;
+    }
+    */
 
     delete[] polyAreas;
     delete[] polyFlags;
@@ -779,7 +834,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     draw_navmesh();
 
-    //get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
+    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
 
     return navMesh;
