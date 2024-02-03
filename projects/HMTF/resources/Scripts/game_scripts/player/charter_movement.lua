@@ -316,7 +316,7 @@ function UPDATE()
             end
 
 
-            if inputs.action_2 > 0 and time.scale ~= 0 then
+            if inputs.action_2 > 0 and time.scale > 0 then
                 local turbo_time_speed = 10
                 this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed,
                     impulse.z * turbo_time_speed)

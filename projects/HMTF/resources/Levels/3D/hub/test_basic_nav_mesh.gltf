@@ -48,7 +48,8 @@
 				1,
 				2,
 				3,
-				4
+				4,
+				5
 			]
 		}
 	],
@@ -61,7 +62,7 @@
 			"translation":[
 				-21.582447052001953,
 				53,
-				-138.20333862304688
+				-133.20333862304688
 			]
 		},
 		{
@@ -125,6 +126,18 @@
 				40,
 				-130.20333862304688
 			]
+		},
+		{
+			"extras":{
+				"type":"sb"
+			},
+			"mesh":2,
+			"name":"Cube.002",
+			"translation":[
+				-21.582447052001953,
+				42,
+				-138.20333862304688
+			]
 		}
 	],
 	"meshes":[
@@ -151,6 +164,19 @@
 						"TEXCOORD_0":6
 					},
 					"indices":7
+				}
+			]
+		},
+		{
+			"name":"Cube",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":8,
+						"NORMAL":9,
+						"TEXCOORD_0":10
+					},
+					"indices":3
 				}
 			]
 		}
@@ -195,14 +221,14 @@
 			"componentType":5126,
 			"count":104,
 			"max":[
-				12.800000190734863,
+				17.920000076293945,
 				25.345312118530273,
-				1
+				5.461538314819336
 			],
 			"min":[
-				-12.800000190734863,
-				-1.3453117609024048,
-				-20
+				-17.920000076293945,
+				-1.3453121185302734,
+				-23.938461303710938
 			],
 			"type":"VEC3"
 		},
@@ -223,6 +249,34 @@
 			"componentType":5123,
 			"count":228,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				1.5135326385498047,
+				24,
+				1.5135326385498047
+			],
+			"min":[
+				-1.5135326385498047,
+				-5,
+				-1.5135326385498047
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC2"
 		}
 	],
 	"bufferViews":[
@@ -273,11 +327,29 @@
 			"byteLength":456,
 			"byteOffset":4168,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":4624,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":4912,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":192,
+			"byteOffset":5200,
+			"target":34962
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":4624,
+			"byteLength":5392,
 			"uri":"test_basic_nav_mesh.bin"
 		}
 	]

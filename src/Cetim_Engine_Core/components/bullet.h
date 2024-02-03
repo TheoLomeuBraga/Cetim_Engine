@@ -395,7 +395,7 @@ rcPolyMesh *combinedPolyMesh = NULL;
 dtNavMesh *rcPolyMeshDetails_to_navMesh(
     rcPolyMesh *meshDetails,
     float walkableHeight = 1.0f,
-    float walkableRadius = 1.0f,
+    float walkableRadius = 0.1f,
     float walkableClimb = 1.0f)
 {
     if (!meshDetails)
