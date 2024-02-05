@@ -337,7 +337,6 @@ function UPDATE()
 
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * time.scale * gravity.force.y * 2)
-                print(time.scale)
             end
         else
             this_physics_3d:set_linear_velocity(0, 0, 0)
