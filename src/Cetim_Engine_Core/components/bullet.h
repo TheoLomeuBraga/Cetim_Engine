@@ -181,8 +181,6 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
 
     meshes_fused = malhaFusionada;
 
-    meshes_fused_chuncks = divide_mesh(malhaFusionada, tileSize, tileSize, tileSize);
-
     return malhaFusionada;
 }
 
@@ -541,6 +539,8 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     for (int x = 0; x < meshDetails.size(); ++x) {
         for (int y = 0; y < meshDetails[x].size(); ++y) {
             for (int z = 0; z < meshDetails[x][y].size(); ++z) {
+
+                print("tile",x,y,z);
                 rcPolyMesh* mesh = meshDetails[x][y][z];
                 if (!mesh) {
                     continue;
@@ -935,7 +935,9 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     */
 
     meshes_fused_chuncks = divide_mesh(fuse_meshes(minhasMalhas, transforms),tileSize,tileSize,tileSize);
+    print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
     rcmeshes_chuncks = convertToRcPolyMesh(meshes_fused_chuncks);
+    print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes_chuncks);
 
     for (int x = 0; x < rcmeshes_chuncks.size(); ++x) {
