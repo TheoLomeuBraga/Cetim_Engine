@@ -134,7 +134,10 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
 }
 
 std::shared_ptr<malha> meshes_fused = NULL;
-vector<vector<vector<shared_ptr<malha>>>> meshes_fused_divided = {};
+
+
+vector<vector<vector<shared_ptr<malha>>>> meshes_fused_chuncks;
+vector<vector<vector<rcPolyMesh*>>> rcmeshes_chuncks;
 
 std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
@@ -178,7 +181,7 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
 
     meshes_fused = malhaFusionada;
 
-    meshes_fused_divided = divide_mesh(malhaFusionada, tileSize, tileSize, tileSize);
+    meshes_fused_chuncks = divide_mesh(malhaFusionada, tileSize, tileSize, tileSize);
 
     return malhaFusionada;
 }
