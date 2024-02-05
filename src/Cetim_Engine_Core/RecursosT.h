@@ -663,6 +663,96 @@ public:
 	}
 };
 
+
+struct CutInfo {
+    bool cut; // Indica se o corte ocorreu
+    std::shared_ptr<vertice> new_vertex; // Novo vértice criado no corte
+};
+
+CutInfo create_vertex_at_boundary(const vertice& v1, const vertice& v2, float boundary, int axis) {
+    CutInfo info;
+    info.cut = false;
+
+    if ((v1.posicao[axis] < boundary && v2.posicao[axis] > boundary) || (v1.posicao[axis] > boundary && v2.posicao[axis] < boundary)) {
+        float alpha = (boundary - v1.posicao[axis]) / (v2.posicao[axis] - v1.posicao[axis]);
+        info.new_vertex = std::make_shared<vertice>();
+        
+        for (int i = 0; i < 3; ++i) {
+            info.new_vertex->posicao[i] = v1.posicao[i] + alpha * (v2.posicao[i] - v1.posicao[i]);
+        }
+
+        info.cut = true;
+    }
+
+    return info;
+}
+
+bool is_within_chunck(const vertice& v, float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+    return (v.posicao[0] >= minX && v.posicao[0] <= maxX &&
+            v.posicao[1] >= minY && v.posicao[1] <= maxY &&
+            v.posicao[2] >= minZ && v.posicao[2] <= maxZ);
+}
+
+
+vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> m, float chunck_size_x, float chunck_size_y, float chunck_size_z) {
+    vector<vector<vector<shared_ptr<malha>>>> chuncks;
+
+    // Certificar-se de que os tamanhos dos chuncks são maiores que zero
+    chunck_size_x = std::max(chunck_size_x, 1.0f);
+    chunck_size_y = std::max(chunck_size_y, 1.0f);
+    chunck_size_z = std::max(chunck_size_z, 1.0f);
+
+    // Calcular o número de chuncks em cada dimensão
+    unsigned int numChuncksX = std::ceil(m->tamanho_maximo.x / chunck_size_x);
+    unsigned int numChuncksY = std::ceil(m->tamanho_maximo.y / chunck_size_y);
+    unsigned int numChuncksZ = std::ceil(m->tamanho_maximo.z / chunck_size_z);
+
+    chuncks.resize(numChuncksX, vector<vector<shared_ptr<malha>>>(numChuncksY, vector<shared_ptr<malha>>(numChuncksZ)));
+
+    // Dividir a malha em chuncks
+    for (unsigned int x = 0; x < numChuncksX; ++x) {
+        for (unsigned int y = 0; y < numChuncksY; ++y) {
+            for (unsigned int z = 0; z < numChuncksZ; ++z) {
+                auto new_malha = std::make_shared<malha>();
+
+                float minX = x * chunck_size_x;
+                float maxX = (x + 1) * chunck_size_x;
+                float minY = y * chunck_size_y;
+                float maxY = (y + 1) * chunck_size_y;
+                float minZ = z * chunck_size_z;
+                float maxZ = (z + 1) * chunck_size_z;
+
+                // Processar cada triângulo da malha original
+                for (unsigned int i = 0; i < m->indice.size(); i += 3) {
+                    vertice v1 = m->vertices[m->indice[i]];
+                    vertice v2 = m->vertices[m->indice[i + 1]];
+                    vertice v3 = m->vertices[m->indice[i + 2]];
+
+                    if (is_within_chunck(v1, minX, maxX, minY, maxY, minZ, maxZ) ||
+                        is_within_chunck(v2, minX, maxX, minY, maxY, minZ, maxZ) ||
+                        is_within_chunck(v3, minX, maxX, minY, maxY, minZ, maxZ)) {
+                        // O triângulo intersecta o chunck
+                        new_malha->vertices.push_back(v1);
+                        new_malha->vertices.push_back(v2);
+                        new_malha->vertices.push_back(v3);
+                        new_malha->indice.push_back(new_malha->vertices.size() - 3);
+                        new_malha->indice.push_back(new_malha->vertices.size() - 2);
+                        new_malha->indice.push_back(new_malha->vertices.size() - 1);
+                    }
+                }
+
+                chuncks[x][y][z] = new_malha;
+            }
+        }
+    }
+
+    return chuncks;
+}
+
+
+
+
+
 struct objeto_3D_struct
 {
 	string nome;

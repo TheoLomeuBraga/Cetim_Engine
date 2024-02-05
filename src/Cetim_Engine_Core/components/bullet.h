@@ -81,7 +81,7 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
-const float tileSize = 50.0f;
+const float tileSize = 10.0f;
 
 void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3])
 {
@@ -134,6 +134,7 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
 }
 
 std::shared_ptr<malha> meshes_fused = NULL;
+vector<vector<vector<shared_ptr<malha>>>> meshes_fused_divided = {};
 
 std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
@@ -176,6 +177,8 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
     }
 
     meshes_fused = malhaFusionada;
+
+    meshes_fused_divided = divide_mesh(malhaFusionada, tileSize, tileSize, tileSize);
 
     return malhaFusionada;
 }
@@ -394,9 +397,9 @@ rcPolyMesh *combinedPolyMesh = NULL;
 
 dtNavMesh *rcPolyMeshDetails_to_navMesh(
     rcPolyMesh *meshDetails,
-    float walkableHeight = 1.0f,
+    float walkableHeight = 0.1f,
     float walkableRadius = 0.1f,
-    float walkableClimb = 1.0f)
+    float walkableClimb = 0.1f)
 {
     if (!meshDetails)
     {
