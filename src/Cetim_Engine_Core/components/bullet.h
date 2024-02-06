@@ -535,12 +535,15 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
         return nullptr;
     }
 
+    print("tile size",meshDetails.size(),meshDetails[0].size(),meshDetails[0][0].size());
+
     // Iterar sobre a estrutura 3D de rcPolyMesh*
     for (int x = 0; x < meshDetails.size(); ++x) {
         for (int y = 0; y < meshDetails[x].size(); ++y) {
             for (int z = 0; z < meshDetails[x][y].size(); ++z) {
 
                 print("tile",x,y,z);
+
                 rcPolyMesh* mesh = meshDetails[x][y][z];
                 if (!mesh) {
                     continue;
@@ -935,15 +938,16 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     */
 
     meshes_fused_chuncks = divide_mesh(fuse_meshes(minhasMalhas, transforms),tileSize,tileSize,tileSize);
-    print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
+    //print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
     rcmeshes_chuncks = convertToRcPolyMesh(meshes_fused_chuncks);
-    print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
+    //print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes_chuncks);
 
     for (int x = 0; x < rcmeshes_chuncks.size(); ++x) {
         for (int y = 0; y < rcmeshes_chuncks[0].size(); ++y) {
             for (int z = 0; z < rcmeshes_chuncks[0][0].size(); ++z) {
                 if (rcmeshes_chuncks[x][y][z]) {
+                    //std::cout << rcmeshes_chuncks[x][y][z] << std::endl;
                     freeRcPolyMesh(rcmeshes_chuncks[x][y][z]);
                 }
             }
