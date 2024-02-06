@@ -702,10 +702,15 @@ vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> m, float
     chunck_size_y = std::max(chunck_size_y, 1.0f);
     chunck_size_z = std::max(chunck_size_z, 1.0f);
 
+	
+
     // Calcular o número de chuncks em cada dimensão
+	//m->pegar_tamanho_maximo();
     unsigned int numChuncksX = std::ceil(m->tamanho_maximo.x / chunck_size_x);
     unsigned int numChuncksY = std::ceil(m->tamanho_maximo.y / chunck_size_y);
     unsigned int numChuncksZ = std::ceil(m->tamanho_maximo.z / chunck_size_z);
+
+	print("divide_mesh size",numChuncksX,numChuncksY,numChuncksZ);
 
     chuncks.resize(numChuncksX, vector<vector<shared_ptr<malha>>>(numChuncksY, vector<shared_ptr<malha>>(numChuncksZ)));
 
@@ -740,8 +745,9 @@ vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> m, float
                         new_malha->indice.push_back(new_malha->vertices.size() - 1);
                     }
                 }
-
+				print("1 divide_mesh",x,y,z);
                 chuncks[x][y][z] = new_malha;
+				print("2 divide_mesh",x,y,z);
             }
         }
     }
