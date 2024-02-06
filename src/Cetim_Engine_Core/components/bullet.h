@@ -951,7 +951,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
     rcmeshes_chuncks = {};
 
-    draw_navmesh();
+    //draw_navmesh();
 
     // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
