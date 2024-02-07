@@ -829,8 +829,6 @@ std::vector<glm::vec3> get_navmesh_path(
     int nStraightPath;
     query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, straightPathFlags, straightPathPolys, &nStraightPath, 256, 0);
 
-    // print("AAAAA",startRef,endRef,nPathPolys,pathPolys[0]);
-
     for (int i = 0; i < nStraightPath; ++i)
     {
         glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
@@ -853,7 +851,6 @@ std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh *nMesh = navMesh
     }
 
     std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
-    print("AAAAA", nMesh->getMaxTiles());
     for (int i = 0; i < nMesh->getMaxTiles(); ++i)
     {
         const dtMeshTile *tile = nMesh->getTile(i);
@@ -1042,7 +1039,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
     rcmeshes_chuncks = {};
 
-    // draw_navmesh();
+    draw_navmesh();
 
     // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
