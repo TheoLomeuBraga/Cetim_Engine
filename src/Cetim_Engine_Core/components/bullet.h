@@ -589,12 +589,9 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
             for (int z = 0; z < meshDetails[x][y].size(); ++z)
             {
 
-                print("tile", x, y, z);
-
                 rcPolyMesh *mesh = meshDetails[x][y][z];
                 if (!mesh)
                 {
-                    print("no mesh");
                     continue;
                 }
 
@@ -606,7 +603,8 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                 createParams.polys = mesh->polys;
                 createParams.polyCount = mesh->npolys;
                 createParams.nvp = mesh->nvp;
-                // std::cout << createParams.verts << " " << createParams.vertCount << " " << createParams.polys << " " << createParams.polyCount << " " << mesh->nvp << std::endl;
+                std::cout << "createParams data: " << createParams.vertCount << " " << createParams.verts << " " << createParams.polyCount << " " << createParams.polys << " "
+                          << " " << mesh->nvp << std::endl;
                 createParams.walkableHeight = walkableHeight;
                 createParams.walkableRadius = walkableRadius;
                 createParams.walkableClimb = walkableClimb;
@@ -636,9 +634,9 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                 // Configurar áreas e flags
                 // ... (Similar ao código já fornecido)
 
-                
-
                 // Criar dados de navegação para o tile
+                print("tile no", x, y, z);
+
                 unsigned char *navData;
                 int navDataSize;
                 if (!dtCreateNavMeshData(&createParams, &navData, &navDataSize))
@@ -650,14 +648,17 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
 
                 if (x == 0 && y == 0 && z == 0)
                 {
+                    print("start first tile");
                     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
                     {
                         delete[] navData;
                         continue; // Pode escolher retornar nullptr ou continuar com os próximos tiles
                     }
+                    print("end first tile");
                 }
                 else
                 {
+                    print("start add tile");
                     dtTileRef tileRef;
                     dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
                     if (dtStatusFailed(status))
@@ -667,6 +668,7 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                         delete[] navData;
                         continue; // Pode escolher retornar nullptr ou continuar com os próximos tiles
                     }
+                    print("start add tile");
                 }
 
                 // Adicionar tile ao navMesh
@@ -1039,7 +1041,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
     rcmeshes_chuncks = {};
 
-    draw_navmesh();
+    // draw_navmesh();
 
     // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
