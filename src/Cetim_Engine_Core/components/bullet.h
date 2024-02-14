@@ -384,7 +384,7 @@ vector<vector<vector<rcPolyMesh *>>> convertToRcPolyMesh(vector<vector<vector<st
         {
             for (int z = 0; z < sizeZ; ++z)
             {
-                if (minhasMalhas[x][y][z])
+                if (minhasMalhas[x][y][z] && minhasMalhas[x][y][z]->indice.size()>2)
                 {
                     polyMeshes[x][y][z] = convertToRcPolyMesh(minhasMalhas[x][y][z]);
                 }
@@ -436,6 +436,7 @@ void printDtStatus(dtStatus status)
 
 rcPolyMesh *combinedPolyMesh = NULL;
 
+/*
 dtNavMesh *rcPolyMeshDetails_to_navMesh(
     rcPolyMesh *meshDetails,
     float walkableHeight = 0.1f,
@@ -512,7 +513,7 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
         return nullptr;
     }
 
-    /*
+    
      dtTileRef tileRef;
      dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
      if (dtStatusFailed(status))
@@ -524,13 +525,14 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
          delete[] polyFlags;
          return nullptr;
      }
-     */
+     
 
     delete[] polyAreas;
     delete[] polyFlags;
 
     return navMesh;
 }
+*/
 
 void locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
 {
@@ -592,7 +594,10 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
             for (int z = 0; z < meshDetails[x][y].size(); ++z)
             {
 
+                
+
                 rcPolyMesh *mesh = meshDetails[x][y][z];
+                //print("tile no", x, y, z,"is valid:",mesh!=NULL);
                 if (!mesh)
                 {
                     continue;
@@ -638,7 +643,7 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                 // ... (Similar ao código já fornecido)
 
                 // Criar dados de navegação para o tile
-                print("tile no", x, y, z);
+                
 
                 unsigned char *navData;
                 int navDataSize;
@@ -1014,9 +1019,9 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
 
     meshes_fused_chuncks = divide_mesh(fuse_meshes(minhasMalhas, transforms), tileSize, tileSize, tileSize);
-    // print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
+    //print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
     rcmeshes_chuncks = convertToRcPolyMesh(meshes_fused_chuncks);
-    // print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
+    //print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes_chuncks);
 
     for (int x = 0; x < rcmeshes_chuncks.size(); ++x)
@@ -1035,7 +1040,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
     rcmeshes_chuncks = {};
 
-    // draw_navmesh();
+    draw_navmesh();
 
     // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));

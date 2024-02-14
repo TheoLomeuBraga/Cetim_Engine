@@ -891,8 +891,24 @@ void rebuildIndices(vector<vector<vector<shared_ptr<malha>>>> &chunks)
 					chunk->indice[i] = indexMapping[oldIndex];
 				}
 
+				// print("indice size:",chunk->indice.size());
+
 				// Ensure indices form valid triangles
 				// This might involve additional logic to adjust indices
+			}
+		}
+	}
+}
+
+void print_chuncks(vector<vector<vector<shared_ptr<malha>>>> chuncks)
+{
+	for (size_t x = 0; x < chuncks.size(); x++)
+	{
+		for (size_t y = 0; y < chuncks[x].size(); y++)
+		{
+			for (size_t z = 0; z < chuncks[x][y].size(); z++)
+			{
+				print("chuncks infos:",chuncks[x][y][z]->indice.size(),chuncks[x][y][z]->vertices.size());
 			}
 		}
 	}
@@ -914,6 +930,8 @@ vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> m, float
 
 	// Step 5: Rebuild Indices
 	rebuildIndices(chunks);
+
+	print_chuncks(chunks);
 
 	// Step 6: Return Chunks
 	return chunks;
