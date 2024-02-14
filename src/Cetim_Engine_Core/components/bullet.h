@@ -343,6 +343,9 @@ rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
     if (!minhaMalha)
         return nullptr;
 
+    if(!minhaMalha->is_not_empty())
+        return nullptr;
+
     rcPolyMesh *polyMesh = new rcPolyMesh();
     if (!polyMesh)
         return nullptr;
@@ -1009,15 +1012,6 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         delete[] tempPolyFlags;
         tempPolyFlags = nullptr;
     }
-
-    /*
-
-    meshes_fused = fuse_meshes(minhasMalhas, transforms);
-    rcPolyMesh *rcmesh = convertToRcPolyMesh(meshes_fused);
-    navMesh = rcPolyMeshDetails_to_navMesh(rcmesh);
-    freeRcPolyMesh(rcmesh);
-
-    */
 
     meshes_fused_chuncks = divide_mesh(fuse_meshes(minhasMalhas, transforms), tileSize, tileSize, tileSize);
     // print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());

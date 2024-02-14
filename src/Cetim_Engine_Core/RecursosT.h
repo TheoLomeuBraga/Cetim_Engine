@@ -613,31 +613,35 @@ public:
 		vertices = novos_vertices;
 	}
 
-	void limpar_malha() {
-        std::map<vertice, unsigned int> uniqueVertices;
-        std::vector<vertice> newVertices;
-        std::vector<unsigned int> newIndices;
+	void limpar_malha()
+	{
+		std::map<vertice, unsigned int> uniqueVertices;
+		std::vector<vertice> newVertices;
+		std::vector<unsigned int> newIndices;
 
-        // Passo 1: Identificar vértices únicos e seus índices
-        for (auto& v : vertices) {
-            if (uniqueVertices.find(v) == uniqueVertices.end()) {
-                uniqueVertices[v] = newVertices.size();
-                newVertices.push_back(v);
-            }
-        }
+		// Passo 1: Identificar vértices únicos e seus índices
+		for (auto &v : vertices)
+		{
+			if (uniqueVertices.find(v) == uniqueVertices.end())
+			{
+				uniqueVertices[v] = newVertices.size();
+				newVertices.push_back(v);
+			}
+		}
 
-        // Passo 2: Atualizar índices para refletir vértices únicos
-        for (auto& idx : indice) {
-            vertice& v = vertices[idx];
-            newIndices.push_back(uniqueVertices[v]);
-        }
+		// Passo 2: Atualizar índices para refletir vértices únicos
+		for (auto &idx : indice)
+		{
+			vertice &v = vertices[idx];
+			newIndices.push_back(uniqueVertices[v]);
+		}
 
-        // Passo 3: Substituir vértices e índices antigos pelos novos
-        vertices = newVertices;
-        indice = newIndices;
-    }
+		// Passo 3: Substituir vértices e índices antigos pelos novos
+		vertices = newVertices;
+		indice = newIndices;
+	}
 
-	void pegar_tamanho_maximo()
+	glm::vec3 pegar_tamanho_maximo()
 	{
 		tamanho_maximo = vec3(0, 0, 0);
 		centro = vec3(0, 0, 0);
@@ -654,6 +658,7 @@ public:
 			tamanho_maximo.y = std::max(tamanho_maximo.y, std::abs(pos_relation_center.y));
 			tamanho_maximo.z = std::max(tamanho_maximo.z, std::abs(pos_relation_center.z));
 		}
+		return tamanho_maximo;
 	}
 
 	malha operator+(const malha &other) const
@@ -683,207 +688,236 @@ public:
 		return *this;
 	}
 
+	bool is_not_empty()
+	{
+		return indice.size() > 2;
+	}
+
 	~malha()
 	{
 		remover_malha(this);
 	}
 };
 
-bool checkIntersectionAndCut( vertice v1,  vertice v2,  vertice v3, float planeHeight) {
-    // Checa se os vértices estão em lados opostos do plano
-    bool v1Above = v1.posicao[1] > planeHeight;
-    bool v2Above = v2.posicao[1] > planeHeight;
-    bool v3Above = v3.posicao[1] > planeHeight;
+struct Bounds
+{
+	glm::vec3 min; // Minimum coordinates (x, y, z)
+	glm::vec3 max; // Maximum coordinates (x, y, z)
 
-    return (v1Above != v2Above) || (v2Above != v3Above) || (v1Above != v3Above);
+	Bounds(glm::vec3 min, glm::vec3 max) : min(min), max(max) {}
+
+	// Check if a point is inside the bounds
+	bool contains(const glm::vec3 &point) const
+	{
+		return (point.x >= min.x && point.x <= max.x) &&
+			   (point.y >= min.y && point.y <= max.y) &&
+			   (point.z >= min.z && point.z <= max.z);
+	}
+};
+
+// Helper functions
+vector<Bounds> calculateChunkBounds(shared_ptr<malha> m, float chunk_size_x, float chunk_size_y, float chunk_size_z)
+{
+	vector<Bounds> chunkBounds;
+	// Assuming we have a way to calculate the total size of the mesh
+	glm::vec3 meshSize = m->pegar_tamanho_maximo();
+
+	// Calculate the number of chunks in each dimension
+	int numChunksX = ceil(meshSize.x / chunk_size_x);
+	int numChunksY = ceil(meshSize.y / chunk_size_y);
+	int numChunksZ = ceil(meshSize.z / chunk_size_z);
+
+	// Create Bounds for each chunk
+	for (int x = 0; x < numChunksX; ++x)
+	{
+		for (int y = 0; y < numChunksY; ++y)
+		{
+			for (int z = 0; z < numChunksZ; ++z)
+			{
+				glm::vec3 min(x * chunk_size_x, y * chunk_size_y, z * chunk_size_z);
+				glm::vec3 max(min.x + chunk_size_x, min.y + chunk_size_y, min.z + chunk_size_z);
+				chunkBounds.push_back(Bounds(min, max));
+			}
+		}
+	}
+	return chunkBounds;
 }
 
-bool checkIntersectionAndCut( glm::vec3 v1,  glm::vec3 v2,  glm::vec3 v3,  glm::vec3 chunkOrigin, float chunkSizeX, float chunkSizeY, float chunkSizeZ) {
-    // Implementação simplificada para verificar a interseção
-    // Aqui você pode adicionar lógica para verificar se algum dos vértices do triângulo
-    // está dentro dos limites do chunk.
-    // Este é um exemplo muito básico e pode precisar de uma lógica mais complexa
-    // dependendo dos requisitos específicos.
-    return ((v1.x >= chunkOrigin.x && v1.x <= chunkOrigin.x + chunkSizeX) ||
-            (v2.x >= chunkOrigin.x && v2.x <= chunkOrigin.x + chunkSizeX) ||
-            (v3.x >= chunkOrigin.x && v3.x <= chunkOrigin.x + chunkSizeX)) &&
-           ((v1.y >= chunkOrigin.y && v1.y <= chunkOrigin.y + chunkSizeY) ||
-            (v2.y >= chunkOrigin.y && v2.y <= chunkOrigin.y + chunkSizeY) ||
-            (v3.y >= chunkOrigin.y && v3.y <= chunkOrigin.y + chunkSizeY)) &&
-           ((v1.z >= chunkOrigin.z && v1.z <= chunkOrigin.z + chunkSizeZ) ||
-            (v2.z >= chunkOrigin.z && v2.z <= chunkOrigin.z + chunkSizeZ) ||
-            (v3.z >= chunkOrigin.z && v3.z <= chunkOrigin.z + chunkSizeZ));
+map<vertice, vector<int>> classifyVertices(const vector<vertice> &vertices, const vector<Bounds> &chunkBounds)
+{
+	map<vertice, vector<int>> vertexClassification;
+	for (const auto &v : vertices)
+	{
+		glm::vec3 vertexPos(v.posicao[0], v.posicao[1], v.posicao[2]);
+		for (int i = 0; i < chunkBounds.size(); ++i)
+		{
+			if (chunkBounds[i].contains(vertexPos))
+			{
+				vertexClassification[v].push_back(i);
+			}
+		}
+	}
+	return vertexClassification;
 }
 
-bool is_within_chunk( glm::vec3 pos,  glm::vec3 chunkOrigin, float chunkSizeX, float chunkSizeY, float chunkSizeZ) {
-    return pos.x >= chunkOrigin.x && pos.x < chunkOrigin.x + chunkSizeX &&
-           pos.y >= chunkOrigin.y && pos.y < chunkOrigin.y + chunkSizeY &&
-           pos.z >= chunkOrigin.z && pos.z < chunkOrigin.z + chunkSizeZ;
+vector<vector<vector<shared_ptr<malha>>>> createChunks(shared_ptr<malha> m, const map<vertice, vector<int>> &vertexClassification, const vector<Bounds> &chunkBounds, float chunk_size_x, float chunk_size_y, float chunk_size_z)
+{
+	// Calculate the number of chunks in each dimension
+	glm::vec3 meshSize = m->pegar_tamanho_maximo();
+	int xSize = ceil(meshSize.x / chunk_size_x);
+	int ySize = ceil(meshSize.y / chunk_size_y);
+	int zSize = ceil(meshSize.z / chunk_size_z);
+
+	vector<vector<vector<shared_ptr<malha>>>> chunks(xSize, vector<vector<shared_ptr<malha>>>(ySize, vector<shared_ptr<malha>>(zSize)));
+
+	// Initialize each chunk as a new malha object
+	for (int x = 0; x < xSize; ++x)
+	{
+		for (int y = 0; y < ySize; ++y)
+		{
+			for (int z = 0; z < zSize; ++z)
+			{
+				chunks[x][y][z] = std::make_shared<malha>();
+			}
+		}
+	}
+
+	// Create a map from vertice to int for ID mapping
+	std::map<vertice, int> verticeToID;
+	for (int i = 0; i < m->vertices.size(); ++i)
+	{
+		verticeToID[m->vertices[i]] = i;
+	}
+
+	// Mapping from global vertex to local chunk vertex index
+	std::map<int, std::map<int, int>> globalToLocalIndex;
+
+	// Iterate over each vertex in the original mesh and classify into chunks
+	for (const auto &vc : vertexClassification)
+	{
+		const vertice &v = vc.first;
+		const vector<int> &containingChunks = vc.second;
+
+		int verticeID = verticeToID[v]; // Get the integer ID for v
+
+		for (int chunkIndex : containingChunks)
+		{
+			int x = chunkIndex % xSize;
+			int y = (chunkIndex / xSize) % ySize;
+			int z = chunkIndex / (xSize * ySize);
+
+			int localIndex = chunks[x][y][z]->vertices.size();
+			chunks[x][y][z]->vertices.push_back(v);
+			globalToLocalIndex[chunkIndex][verticeID] = localIndex;
+		}
+	}
+
+	// Copy and adjust indices to each chunk
+	for (int i = 0; i < m->indice.size(); i += 3)
+	{
+		int idx1 = m->indice[i];
+		int idx2 = m->indice[i + 1];
+		int idx3 = m->indice[i + 2];
+
+		for (int chunkIndex = 0; chunkIndex < chunkBounds.size(); ++chunkIndex)
+		{
+			int x = chunkIndex % xSize;
+			int y = (chunkIndex / xSize) % ySize;
+			int z = chunkIndex / (xSize * ySize);
+
+			auto it1 = vertexClassification.find(m->vertices[idx1]);
+			auto it2 = vertexClassification.find(m->vertices[idx2]);
+			auto it3 = vertexClassification.find(m->vertices[idx3]);
+
+			if ((it1 != vertexClassification.end() && std::find(it1->second.begin(), it1->second.end(), chunkIndex) != it1->second.end()) ||
+				(it2 != vertexClassification.end() && std::find(it2->second.begin(), it2->second.end(), chunkIndex) != it2->second.end()) ||
+				(it3 != vertexClassification.end() && std::find(it3->second.begin(), it3->second.end(), chunkIndex) != it3->second.end()))
+			{
+
+				int localIdx1 = globalToLocalIndex[chunkIndex][idx1];
+				int localIdx2 = globalToLocalIndex[chunkIndex][idx2];
+				int localIdx3 = globalToLocalIndex[chunkIndex][idx3];
+
+				chunks[x][y][z]->indice.push_back(localIdx1);
+				chunks[x][y][z]->indice.push_back(localIdx2);
+				chunks[x][y][z]->indice.push_back(localIdx3);
+			}
+		}
+	}
+
+	return chunks;
 }
 
-glm::vec3 float_array_to_vec3(float *f){
-	return glm::vec3(f[0],f[1],f[2]);
-} 
+void handleBorderVertices(vector<vector<vector<shared_ptr<malha>>>> &chunks, const map<vertice, vector<int>> &vertexClassification, const vector<Bounds> &chunkBounds)
+{
+	// Iterate over each vertex and check if it belongs to multiple chunks (border vertex)
+	for (const auto &vc : vertexClassification)
+	{
+		const vertice &v = vc.first;
+		const vector<int> &containingChunks = vc.second;
 
-vertice vec3_to_vertex(glm::vec3 p){
-	vertice v;
-	v.posicao[0] = p.x;
-	v.posicao[1] = p.y;
-	v.posicao[2] = p.z;
-	return v;
-} 
-
-void addTriangleToMesh( vertice& v1,  vertice& v2,  vertice& v3, shared_ptr<malha>& newMesh) {
-    // Simplesmente adiciona os vértices e índices do triângulo original à nova malha
-    newMesh->vertices.push_back(v1);
-    newMesh->vertices.push_back(v2);
-    newMesh->vertices.push_back(v3);
-
-    size_t index = newMesh->vertices.size() - 3;
-    newMesh->indice.push_back(index);
-    newMesh->indice.push_back(index + 1);
-    newMesh->indice.push_back(index + 2);
+		if (containingChunks.size() > 1)
+		{
+			// Vertex is a border vertex; duplicate it for each chunk
+			for (int chunkIndex : containingChunks)
+			{
+				// Correctly access the chunk using its 3D indices
+				int x, y, z; // Determine the correct x, y, z indices
+				chunks[x][y][z]->vertices.push_back(v);
+			}
+		}
+	}
 }
 
-// Função auxiliar para calcular a interseção de uma aresta do triângulo com um plano do chunk
-bool calculateIntersection(vertice v1, vertice v2, 
-                           glm::vec3 planeNormal, glm::vec3 planePoint, 
-                           vertice& intersection) {
-    glm::vec3 p1 = glm::vec3(v1.posicao[0], v1.posicao[1], v1.posicao[2]);
-    glm::vec3 p2 = glm::vec3(v2.posicao[0], v2.posicao[1], v2.posicao[2]);
+void rebuildIndices(vector<vector<vector<shared_ptr<malha>>>> &chunks)
+{
+	// Iterate over each chunk
+	for (auto &chunkRow : chunks)
+	{
+		for (auto &chunkColumn : chunkRow)
+		{
+			for (auto &chunk : chunkColumn)
+			{
+				std::map<unsigned int, unsigned int> indexMapping;
 
-    glm::vec3 edge = p2 - p1;
-    glm::vec3 toPlane = planePoint - p1;
-    float dot = glm::dot(edge, planeNormal);
+				// Build a mapping from old indices to new indices
+				for (unsigned int i = 0; i < chunk->indice.size(); ++i)
+				{
+					unsigned int oldIndex = chunk->indice[i];
+					if (indexMapping.find(oldIndex) == indexMapping.end())
+					{
+						indexMapping[oldIndex] = indexMapping.size();
+					}
+					chunk->indice[i] = indexMapping[oldIndex];
+				}
 
-    if (fabs(dot) > 1e-6) {  // Evitar divisão por zero
-        float t = glm::dot(toPlane, planeNormal) / dot;
-        if (t >= 0.0f && t <= 1.0f) {
-            glm::vec3 intersectionPoint = p1 + t * edge;
-            intersection.posicao[0] = intersectionPoint.x;
-            intersection.posicao[1] = intersectionPoint.y;
-            intersection.posicao[2] = intersectionPoint.z;
-            return true;
-        }
-    }
-    return false;
+				// Ensure indices form valid triangles
+				// This might involve additional logic to adjust indices
+			}
+		}
+	}
 }
 
+vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> m, float chunk_size_x, float chunk_size_y, float chunk_size_z)
+{
+	// Step 1: Calculate Chunk Bounds
+	auto chunkBounds = calculateChunkBounds(m, chunk_size_x, chunk_size_y, chunk_size_z);
 
-void cutTriangle( vertice v1, vertice v2,  vertice v3, shared_ptr<malha>& newMesh,
-                  glm::vec3 chunkOrigin, float chunkSizeX, float chunkSizeY, float chunkSizeZ) {
-    glm::vec3 chunkMax = chunkOrigin + glm::vec3(chunkSizeX, chunkSizeY, chunkSizeZ);
-    vector<vertice> vertices = {v1, v2, v3};
-    vector<vertice> newVertices;
+	// Step 2: Classify Vertices
+	auto vertexClassification = classifyVertices(m->vertices, chunkBounds);
 
-    // Verifica se os vértices estão dentro do chunk
-    for (vertice& vertex : vertices) {
-        if (is_within_chunk(float_array_to_vec3(&vertex.posicao[0]), chunkOrigin, chunkSizeX, chunkSizeY, chunkSizeZ)) {
-            newVertices.push_back(vertex);
-        }
-    }
+	// Step 3: Divide Mesh into Chunks
+	auto chunks = createChunks(m, vertexClassification, chunkBounds, chunk_size_x, chunk_size_y, chunk_size_z);
 
-    // Verifica interseções com as faces do chunk
-    vector<vertice> intersectionPoints;
-    for (size_t i = 0; i < vertices.size(); ++i) {
-        size_t next = (i + 1) % vertices.size();
-        vertice intersection;
+	// Step 4: Handle Border Vertices
+	handleBorderVertices(chunks, vertexClassification, chunkBounds);
 
-        if (calculateIntersection(vertices[i], vertices[next], glm::vec3(1, 0, 0), glm::vec3(chunkMax.x, 0, 0), intersection)) { // Plano X máximo
-            intersectionPoints.push_back(intersection);
-        }
-        if (calculateIntersection(vertices[i], vertices[next], glm::vec3(0, 1, 0), glm::vec3(0, chunkMax.y, 0), intersection)) { // Plano Y máximo
-            intersectionPoints.push_back(intersection);
-        }
-        if (calculateIntersection(vertices[i], vertices[next], glm::vec3(0, 0, 1), glm::vec3(0, 0, chunkMax.z), intersection)) { // Plano Z máximo
-            intersectionPoints.push_back(intersection);
-        }
-    }
+	// Step 5: Rebuild Indices
+	rebuildIndices(chunks);
 
-    // Adiciona os pontos de interseção aos novos vértices
-    newVertices.insert(newVertices.end(), intersectionPoints.begin(), intersectionPoints.end());
-
-    // Aqui você geraria novos triângulos com base nos novos vértices. Isso pode incluir
-    // a reorganização dos vértices e a verificação de que os triângulos são válidos.
-
-    // Por simplicidade, vamos adicionar apenas os vértices diretamente à malha sem criar novos triângulos.
-    for ( vertice& vertex : newVertices) {
-        newMesh->vertices.push_back(vertex);
-    }
-
-	print("newMesh data",newMesh->vertices.size(),newMesh->indice.size());
+	// Step 6: Return Chunks
+	return chunks;
 }
-
-
-glm::vec3 calculateMeshMax(shared_ptr<malha> m) {
-    float maxX = std::numeric_limits<float>::lowest();
-    float maxY = std::numeric_limits<float>::lowest();
-    float maxZ = std::numeric_limits<float>::lowest();
-
-    for (vertice& vert : m->vertices) {
-        maxX = std::max(maxX, vert.posicao[0]);
-        maxY = std::max(maxY, vert.posicao[1]);
-        maxZ = std::max(maxZ, vert.posicao[2]);
-    }
-
-    return glm::vec3(maxX, maxY, maxZ);
-}
-
-//print("newChunk data",newChunk->vertices.size(),newChunk->indice.size());
-
-void processCuts(shared_ptr<malha> originalMesh, float chunck_size_x, float chunck_size_y, float chunck_size_z, vector<vector<vector<shared_ptr<malha>>>>& dividedMeshes) {
-    glm::vec3 maxDimensions = calculateMeshMax(originalMesh);
-    glm::vec3 chunck_origin = {0.0f, 0.0f, 0.0f};
-
-    // Iterar sobre os chunks
-    for (float x = 0; x < maxDimensions.x; x += chunck_size_x) {
-        vector<vector<shared_ptr<malha>>> chunkRow;
-        for (float y = 0; y < maxDimensions.y; y += chunck_size_y) {
-            vector<shared_ptr<malha>> chunkColumn;
-            for (float z = 0; z < maxDimensions.z; z += chunck_size_z) {
-                shared_ptr<malha> newChunk = make_shared<malha>();
-
-                // Processar cada triângulo da malha original
-                for (size_t i = 0; i < originalMesh->indice.size(); i += 3) {
-                    // Determinar os vértices do triângulo
-                    glm::vec3 v1 = float_array_to_vec3(&originalMesh->vertices[originalMesh->indice[i]].posicao[0]);
-                    glm::vec3 v2 = float_array_to_vec3(&originalMesh->vertices[originalMesh->indice[i + 1]].posicao[0]);
-                    glm::vec3 v3 = float_array_to_vec3(&originalMesh->vertices[originalMesh->indice[i + 2]].posicao[0]);
-
-                    // Verificar se o triângulo intersecta o chunk atual
-					print("checkIntersectionAndCut",checkIntersectionAndCut(v1, v2, v3, chunck_origin, chunck_size_x, chunck_size_y, chunck_size_z));
-                    if (checkIntersectionAndCut(v1, v2, v3, chunck_origin, chunck_size_x, chunck_size_y, chunck_size_z)) {
-                        // Cortar e adicionar o triângulo ao chunk atual
-                        cutTriangle(vec3_to_vertex(v1), vec3_to_vertex(v2), vec3_to_vertex(v3), newChunk, chunck_origin, chunck_size_x, chunck_size_y, chunck_size_z);
-                    }
-                }
-
-				print("newChunk data",newChunk->vertices.size(),newChunk->indice.size());
-
-                chunkColumn.push_back(newChunk);
-                chunck_origin.z += chunck_size_z;
-            }
-            chunkRow.push_back(chunkColumn);
-            chunck_origin.y += chunck_size_y;
-        }
-        dividedMeshes.push_back(chunkRow);
-        chunck_origin.x += chunck_size_x;
-    }
-}
-
-
-
-
-
-vector<vector<vector<shared_ptr<malha>>>> divide_mesh(const shared_ptr<malha>& m, float chunck_size_x, float chunck_size_y, float chunck_size_z) {
-    vector<vector<vector<shared_ptr<malha>>>> dividedMeshes;
-
-    // Chamar processCuts para dividir a malha em chunks
-    processCuts(m, chunck_size_x, chunck_size_y, chunck_size_z, dividedMeshes);
-
-    return dividedMeshes;
-}
-
 
 /*
 vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> malha_bruta, float chunck_size_x, float chunck_size_y, float chunck_size_z)
@@ -951,7 +985,7 @@ vector<vector<vector<shared_ptr<malha>>>> divide_mesh(shared_ptr<malha> malha_br
 						print("add item to new_malha");
 					}
 				}
-				
+
 				//print("new_malha->vertices.size()", new_malha->vertices.size());
 				//print("new_malha->indice.size()", new_malha->indice.size());
 				chuncks[x][y][z] = new_malha;
