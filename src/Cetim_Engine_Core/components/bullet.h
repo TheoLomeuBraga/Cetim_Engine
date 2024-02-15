@@ -599,13 +599,13 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                 params.polyCount = meshDetails->npolys;
                 params.nvp = meshDetails->nvp;
 
-                params.bmin[0] = meshDetails->bmin[0] + (x * tileSize);
-                params.bmin[1] = meshDetails->bmin[1] + (y * tileSize);
-                params.bmin[2] = meshDetails->bmin[2] + (z * tileSize);
+                params.bmin[0] = (meshDetails->bmin[0] + (x * tileSize));
+                params.bmin[1] = (meshDetails->bmin[1] + (y * tileSize));
+                params.bmin[2] = (meshDetails->bmin[2] + (z * tileSize));
 
-                params.bmax[0] = (x == numTilesX - 1) ? meshDetails->bmax[0] : params.bmin[0] + tileSize;
-                params.bmax[1] = (y == numTilesY - 1) ? meshDetails->bmax[1] : params.bmin[1] + tileSize;
-                params.bmax[2] = (z == numTilesZ - 1) ? meshDetails->bmax[2] : params.bmin[2] + tileSize;
+                params.bmax[0] = ((x == numTilesX - 1) ? meshDetails->bmax[0] : params.bmin[0] + tileSize);
+                params.bmax[1] = ((y == numTilesY - 1) ? meshDetails->bmax[1] : params.bmin[1] + tileSize);
+                params.bmax[2] = ((z == numTilesZ - 1) ? meshDetails->bmax[2] : params.bmin[2] + tileSize);
 
                 params.walkableHeight = walkableHeight;
                 params.walkableRadius = walkableRadius;
