@@ -599,9 +599,9 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                 params.polyCount = meshDetails->npolys;
                 params.nvp = meshDetails->nvp;
 
-                params.bmin[0] = meshDetails->bmin[0] + x * tileSize;
-                params.bmin[1] = meshDetails->bmin[1] + y * tileSize;
-                params.bmin[2] = meshDetails->bmin[2] + z * tileSize;
+                params.bmin[0] = meshDetails->bmin[0] + (x * tileSize);
+                params.bmin[1] = meshDetails->bmin[1] + (y * tileSize);
+                params.bmin[2] = meshDetails->bmin[2] + (z * tileSize);
 
                 params.bmax[0] = (x == numTilesX - 1) ? meshDetails->bmax[0] : params.bmin[0] + tileSize;
                 params.bmax[1] = (y == numTilesY - 1) ? meshDetails->bmax[1] : params.bmin[1] + tileSize;
@@ -639,27 +639,10 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
                     continue;
                 }
 
-                if (x == 0 && y == 0 && z == 0 || true)
+                if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
                 {
-                    print("init AAAAA");
-                    if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-                    {
-                        delete[] navData;
-                        continue;
-                    }
-                    print("init BBBBB");
-                }
-                else
-                {
-                    print("addTile AAAAA");
-                    dtTileRef tileRef;
-                    if (dtStatusFailed(navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef)))
-                    {
-                        std::cerr << "Failed to add tile to nav mesh. Tile [" << x << "," << y << "," << z << "]" << std::endl;
-                        delete[] navData;
-                        continue;
-                    }
-                    print("addTile BBBBB");
+                    delete[] navData;
+                    continue;
                 }
             }
         }
