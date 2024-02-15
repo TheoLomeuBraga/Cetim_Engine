@@ -134,9 +134,7 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
 }
 
 std::shared_ptr<malha> meshes_fused = NULL;
-
-vector<vector<vector<shared_ptr<malha>>>> meshes_fused_chuncks;
-vector<vector<vector<rcPolyMesh *>>> rcmeshes_chuncks;
+rcPolyMesh *rcmeshes;
 
 std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
@@ -338,12 +336,12 @@ void FillPolygonsAndSharedEdges(rcPolyMesh *polyMesh,
     }
 }
 
-rcPolyMesh *convertToRcPolyMesh(const std::shared_ptr<malha> &minhaMalha)
+rcPolyMesh *convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
 {
     if (!minhaMalha)
         return nullptr;
 
-    if(!minhaMalha->is_not_empty())
+    if (!minhaMalha->is_not_empty())
         return nullptr;
 
     rcPolyMesh *polyMesh = new rcPolyMesh();
@@ -384,7 +382,7 @@ vector<vector<vector<rcPolyMesh *>>> convertToRcPolyMesh(vector<vector<vector<st
         {
             for (int z = 0; z < sizeZ; ++z)
             {
-                if (minhasMalhas[x][y][z] && minhasMalhas[x][y][z]->indice.size()>2)
+                if (minhasMalhas[x][y][z] && minhasMalhas[x][y][z]->indice.size() > 2)
                 {
                     polyMeshes[x][y][z] = convertToRcPolyMesh(minhasMalhas[x][y][z]);
                 }
@@ -436,8 +434,43 @@ void printDtStatus(dtStatus status)
 
 rcPolyMesh *combinedPolyMesh = NULL;
 
-/*
-dtNavMesh *rcPolyMeshDetails_to_navMesh(
+void locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
+{
+    if (params->nvp > DT_VERTS_PER_POLYGON)
+    {
+        print("params->nvp > DT_VERTS_PER_POLYGON");
+        return;
+    }
+    if (params->vertCount >= 0xffff)
+    {
+        print("params->vertCount >= 0xffff");
+        return;
+    }
+    if (!params->vertCount || !params->verts)
+    {
+        print("!params->vertCount || !params->verts");
+        return;
+    }
+    if (!params->polyCount || !params->polys)
+    {
+        print("!params->polyCount || !params->polys");
+        return;
+    }
+    unsigned char *offMeshConClass = 0;
+    if (params->offMeshConCount > 0)
+    {
+        offMeshConClass = (unsigned char *)dtAlloc(sizeof(unsigned char) * params->offMeshConCount * 2, DT_ALLOC_TEMP);
+        if (!offMeshConClass)
+        {
+            print("params->offMeshConCount > 0");
+            return;
+        }
+    }
+    print("no error");
+}
+
+
+dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     rcPolyMesh *meshDetails,
     float walkableHeight = 0.1f,
     float walkableRadius = 0.1f,
@@ -514,17 +547,17 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
     }
 
     
-     dtTileRef tileRef;
-     dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
-     if (dtStatusFailed(status))
-     {
-         printDtStatus(status);
-         delete[] navData;
-         delete navMesh;
-         delete[] polyAreas;
-         delete[] polyFlags;
-         return nullptr;
-     }
+    //dtTileRef tileRef;
+    //dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
+    //if (dtStatusFailed(status))
+    //{
+    //    printDtStatus(status);
+    //    delete[] navData;
+    //    delete navMesh;
+    //    delete[] polyAreas;
+    //    delete[] polyFlags;
+    //    return nullptr;
+    //}
      
 
     delete[] polyAreas;
@@ -532,160 +565,104 @@ dtNavMesh *rcPolyMeshDetails_to_navMesh(
 
     return navMesh;
 }
-*/
 
-void locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
-{
-    if (params->nvp > DT_VERTS_PER_POLYGON)
-    {
-        print("params->nvp > DT_VERTS_PER_POLYGON");
-        return;
-    }
-    if (params->vertCount >= 0xffff)
-    {
-        print("params->vertCount >= 0xffff");
-        return;
-    }
-    if (!params->vertCount || !params->verts)
-    {
-        print("!params->vertCount || !params->verts");
-        return;
-    }
-    if (!params->polyCount || !params->polys)
-    {
-        print("!params->polyCount || !params->polys");
-        return;
-    }
-    unsigned char *offMeshConClass = 0;
-    if (params->offMeshConCount > 0)
-    {
-        offMeshConClass = (unsigned char *)dtAlloc(sizeof(unsigned char) * params->offMeshConCount * 2, DT_ALLOC_TEMP);
-        if (!offMeshConClass)
-        {
-            print("params->offMeshConCount > 0");
-            return;
-        }
-    }
-    print("no error");
-}
-
+/*
 dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
-    vector<vector<vector<rcPolyMesh *>>> meshDetails,
+    rcPolyMesh *meshDetails,
     float walkableHeight = 0.1f,
     float walkableRadius = 0.1f,
-    float walkableClimb = 0.1f)
+    float walkableClimb = 0.1f,
+    int numTilesX = 10, // Número de tiles ao longo do eixo X
+    int numTilesY = 10, // Número de tiles ao longo do eixo Y
+    int numTilesZ = 10) // Número de tiles ao longo do eixo Z
 {
-    // Criar e inicializar dtNavMesh
-    dtNavMesh *navMesh = new dtNavMesh();
-    dtNavMeshParams params = {/* Inserir aqui os valores padrão para o navMesh, ou deixar em branco */};
-    if (dtStatusFailed(navMesh->init(&params)))
+    if (!meshDetails)
     {
-        delete navMesh;
         return nullptr;
     }
 
-    print("tile size", meshDetails.size(), meshDetails[0].size(), meshDetails[0][0].size());
+    dtNavMesh *navMesh = new dtNavMesh();
 
-    // Iterar sobre a estrutura 3D de rcPolyMesh*
-    for (int x = 0; x < meshDetails.size(); ++x)
+    // Tamanhos dos tiles no espaço do mundo
+    // float tileSizeX = (meshDetails->bmax[0] - meshDetails->bmin[0]) / numTilesX;
+    // float tileSizeY = (meshDetails->bmax[1] - meshDetails->bmin[1]) / numTilesY;
+    // float tileSizeZ = (meshDetails->bmax[2] - meshDetails->bmin[2]) / numTilesZ;
+
+    for (int x = 0; x < numTilesX; ++x)
     {
-        for (int y = 0; y < meshDetails[x].size(); ++y)
+        for (int y = 0; y < numTilesY; ++y)
         {
-            for (int z = 0; z < meshDetails[x][y].size(); ++z)
+            for (int z = 0; z < numTilesZ; ++z)
             {
+                dtNavMeshCreateParams params;
+                memset(&params, 0, sizeof(params));
+                params.verts = meshDetails->verts;
+                params.vertCount = meshDetails->nverts;
+                params.polys = meshDetails->polys;
+                params.polyCount = meshDetails->npolys;
+                params.nvp = meshDetails->nvp;
+
+                // Ajustar bmin e bmax para o tile atual
+                params.bmin[0] = meshDetails->bmin[0] + x * tileSize;
+                params.bmin[1] = meshDetails->bmin[1] + y * tileSize;
+                params.bmin[2] = meshDetails->bmin[2] + z * tileSize;
+
+                params.bmax[0] = params.bmin[0] + tileSize;
+                params.bmax[1] = params.bmin[1] + tileSize;
+                params.bmax[2] = params.bmin[2] + tileSize;
+
+                params.walkableHeight = walkableHeight;
+                params.walkableRadius = walkableRadius;
+                params.walkableClimb = walkableClimb;
+                params.tileX = x;
+                params.tileY = z; // Supondo que Y é a altura
+                params.tileLayer = y;
+                params.cs = meshDetails->cs;
+                params.ch = meshDetails->ch;
+                params.buildBvTree = false;
 
                 
 
-                rcPolyMesh *mesh = meshDetails[x][y][z];
-                //print("tile no", x, y, z,"is valid:",mesh!=NULL);
-                if (!mesh)
+                print("AAAAA");
+
+                // unsigned char* navData;
+                // int navDataSize;
+                if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
                 {
+                    std::cerr << "Failed to create nav mesh data for chunk [" << x << "," << y << "," << z << "]" << std::endl;
                     continue;
                 }
 
-                // Definir parâmetros para a criação de dados de navegação
-                dtNavMeshCreateParams createParams;
-                memset(&createParams, 0, sizeof(createParams));
-                createParams.verts = mesh->verts;
-                createParams.vertCount = mesh->nverts;
-                createParams.polys = mesh->polys;
-                createParams.polyCount = mesh->npolys;
-                createParams.nvp = mesh->nvp;
-                std::cout << "createParams data: " << createParams.vertCount << " " << createParams.verts << " " << createParams.polyCount << " " << createParams.polys << " "
-                          << " " << mesh->nvp << std::endl;
-                createParams.walkableHeight = walkableHeight;
-                createParams.walkableRadius = walkableRadius;
-                createParams.walkableClimb = walkableClimb;
-                createParams.tileX = x;
-                createParams.tileY = z; // Supondo que Y é a altura
-                createParams.tileLayer = y;
-                createParams.cs = mesh->cs;
-                createParams.ch = mesh->ch;
-                createParams.buildBvTree = false;
-                memcpy(createParams.bmin, mesh->bmin, sizeof(createParams.bmin));
-                memcpy(createParams.bmax, mesh->bmax, sizeof(createParams.bmax));
+                print("BBBBB");
 
-                unsigned char *polyAreas = new unsigned char[mesh->npolys];
-                unsigned short *polyFlags = new unsigned short[mesh->npolys * 2]; // *2 para incluir flags de borda
-                for (int i = 0; i < mesh->npolys; ++i)
-                {
-                    polyAreas[i] = 63; // Define todas as áreas como caminháveis
-                    // Configura os flags para cada polígono e suas bordas
-                    for (int j = 0; j < 2; ++j)
-                    {
-                        polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
-                    }
-                }
-                createParams.polyAreas = polyAreas;
-                createParams.polyFlags = polyFlags;
-
-                // Configurar áreas e flags
-                // ... (Similar ao código já fornecido)
-
-                // Criar dados de navegação para o tile
-                
-
-                unsigned char *navData;
-                int navDataSize;
-                if (!dtCreateNavMeshData(&createParams, &navData, &navDataSize))
-                {
-                    print("fail to create tile");
-                    delete navMesh;
-                    return nullptr;
-                }
-
+                // Primeiro tile usa init, os demais addTile
                 if (x == 0 && y == 0 && z == 0)
                 {
-                    print("start first tile");
                     if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
                     {
                         delete[] navData;
-                        continue; // Pode escolher retornar nullptr ou continuar com os próximos tiles
+                        continue;
                     }
-                    print("end first tile");
                 }
                 else
                 {
-                    print("start add tile");
                     dtTileRef tileRef;
-                    dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
-                    if (dtStatusFailed(status))
+                    if (dtStatusFailed(navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef)))
                     {
-                        print("fail to add tile. Status: " + std::to_string(status));
-
+                        std::cerr << "Failed to add tile to nav mesh. Chunk [" << x << "," << y << "," << z << "]" << std::endl;
                         delete[] navData;
-                        continue; // Pode escolher retornar nullptr ou continuar com os próximos tiles
+                        continue;
                     }
-                    print("start add tile");
                 }
 
-                // Adicionar tile ao navMesh
+                print("CCCCC");
             }
         }
     }
 
     return navMesh;
 }
+*/
 
 int getVertexCount(const dtNavMesh *navMesh)
 {
@@ -1018,12 +995,11 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         tempPolyFlags = nullptr;
     }
 
-    meshes_fused_chuncks = divide_mesh(fuse_meshes(minhasMalhas, transforms), tileSize, tileSize, tileSize);
-    //print("meshes_fused_chuncks.size()",meshes_fused_chuncks.size());
-    rcmeshes_chuncks = convertToRcPolyMesh(meshes_fused_chuncks);
-    //print("rcmeshes_chuncks.size()",rcmeshes_chuncks.size());
-    navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes_chuncks);
+    meshes_fused = fuse_meshes(minhasMalhas, transforms);
+    rcmeshes = convertToRcPolyMesh(meshes_fused);
+    navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
 
+    /*
     for (int x = 0; x < rcmeshes_chuncks.size(); ++x)
     {
         for (int y = 0; y < rcmeshes_chuncks[0].size(); ++y)
@@ -1039,6 +1015,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
         }
     }
     rcmeshes_chuncks = {};
+    */
 
     draw_navmesh();
 
