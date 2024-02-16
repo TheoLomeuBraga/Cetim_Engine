@@ -81,7 +81,7 @@ unsigned char *navData = nullptr;
 unsigned char *tempPolyAreas = nullptr;
 unsigned short *tempPolyFlags = nullptr;
 
-const float tileSize = 10.0f;
+const float rcMeshQuality = 1.0f;
 
 void calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3])
 {
@@ -181,6 +181,7 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
     return malhaFusionada;
 }
 
+/*
 std::string GenerateVertexKey(vertice vert)
 {
     return std::to_string(vert.posicao[0]) + "_" +
@@ -222,7 +223,7 @@ void FillVertices(rcPolyMesh *polyMesh, const std::unordered_map<std::string, un
     polyMesh->nverts = transformedVertices.size() / 3;
     for (size_t i = 0; i < transformedVertices.size(); ++i)
     {
-        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - polyMesh->bmin[i % 3]) / tileSize));
+        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - polyMesh->bmin[i % 3]) / rcMeshQuality));
     }
 }
 
@@ -309,6 +310,7 @@ void FillPolygonsAndSharedEdges(rcPolyMesh *polyMesh,
         }
     }
 
+    
     // Processar as sharedEdges para definir as conexões
     ProcessSharedEdges(sharedEdges, edgeToPolyMap, polyMesh);
 
@@ -334,27 +336,28 @@ void FillPolygonsAndSharedEdges(rcPolyMesh *polyMesh,
             }
         }
     }
+
+    
 }
 
-rcPolyMesh *convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
-{
-    if (!minhaMalha)
+rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
+    if (!minhaMalha) {
         return nullptr;
+    }
 
-    if (!minhaMalha->is_not_empty())
-        return nullptr;
+    minhaMalha->limpar_malha(); // Remove vértices duplicados e ajusta índices
 
-    rcPolyMesh *polyMesh = new rcPolyMesh();
-    if (!polyMesh)
+    rcPolyMesh* polyMesh = new rcPolyMesh();
+    if (!polyMesh) {
         return nullptr;
+    }
+
+    calcBminBmax(minhaMalha, polyMesh->bmin, polyMesh->bmax);
+    polyMesh->cs = rcMeshQuality;
+    polyMesh->ch = rcMeshQuality;
 
     // Mapear cada posição única de vértice para um índice
     std::unordered_map<std::string, unsigned int> uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
-
-    // Configurar os campos restantes do polyMesh
-    calcBminBmax(minhaMalha, polyMesh->bmin, polyMesh->bmax);
-    polyMesh->cs = tileSize;
-    polyMesh->ch = tileSize;
 
     // Preencher os dados de vértices
     FillVertices(polyMesh, uniqueVertexMap, minhaMalha->vertices);
@@ -364,6 +367,75 @@ rcPolyMesh *convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
 
     return polyMesh;
 }
+*/
+
+void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMalha) {
+
+    // Preencher vértices
+    polyMesh->nverts = minhaMalha->vertices.size();
+    polyMesh->verts = new unsigned short[polyMesh->nverts * 3];
+
+    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
+        const vertice& vert = minhaMalha->vertices[i];
+        for (int j = 0; j < 3; ++j) {
+            polyMesh->verts[i * 3 + j] = static_cast<unsigned short>(std::round((vert.posicao[j] - polyMesh->bmin[j]) / rcMeshQuality));
+        }
+    }
+
+    // Preencher índices dos polígonos
+    polyMesh->npolys = minhaMalha->indice.size() / polyMesh->nvp;
+    polyMesh->polys = new unsigned short[polyMesh->npolys * 2 * polyMesh->nvp];
+
+    for (size_t i = 0; i < polyMesh->npolys; ++i) {
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            if (j < 3) {
+                // índices de vértices do polígono
+                polyMesh->polys[i * 2 * polyMesh->nvp + j] = minhaMalha->indice[i * 3 + j];
+            } else {
+                // Resto preenchido com RC_MESH_NULL_IDX
+                polyMesh->polys[i * 2 * polyMesh->nvp + j] = RC_MESH_NULL_IDX;
+            }
+
+            // índices de borda
+            polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
+        }
+    }
+
+    // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
+}
+
+rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
+    if (!minhaMalha) {
+        return nullptr;
+    }
+
+    // Limpar malha para remover vértices duplicados e ajustar índices
+    minhaMalha->limpar_malha();
+
+    //print("minhaMalha info",minhaMalha->vertices.size(),minhaMalha->indice.size());
+
+    rcPolyMesh* polyMesh = new rcPolyMesh();
+    if (!polyMesh) {
+        return nullptr;
+    }
+
+    // Calcular bmin e bmax da malha
+    calcBminBmax(minhaMalha, polyMesh->bmin, polyMesh->bmax);
+
+    // Definir cell size e height
+    polyMesh->cs = rcMeshQuality;
+    polyMesh->ch = rcMeshQuality;
+
+    //difine polygon size
+    polyMesh->nvp = 3;
+
+    // Preencher os dados de vértices e índices
+    fillVerticesAndIndices(polyMesh, minhaMalha);
+
+    return polyMesh;
+}
+
+
 
 vector<vector<vector<rcPolyMesh *>>> convertToRcPolyMesh(vector<vector<vector<std::shared_ptr<malha>>>> &minhasMalhas)
 {
@@ -469,7 +541,7 @@ void locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
     print("no error");
 }
 
-/*
+
 dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     rcPolyMesh *meshDetails,
     float walkableHeight = 0.1f,
@@ -504,7 +576,7 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     params.tileLayer = 0;
     params.cs = meshDetails->cs;
     params.ch = meshDetails->ch;
-    params.buildBvTree = false;
+    params.buildBvTree = true;
 
     memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
     memcpy(params.bmax, meshDetails->bmax, sizeof(params.bmax));
@@ -547,109 +619,15 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     }
 
 
-    //dtTileRef tileRef;
-    //dtStatus status = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
-    //if (dtStatusFailed(status))
-    //{
-    //    printDtStatus(status);
-    //    delete[] navData;
-    //    delete navMesh;
-    //    delete[] polyAreas;
-    //    delete[] polyFlags;
-    //    return nullptr;
-    //}
-
-
     delete[] polyAreas;
     delete[] polyFlags;
 
     return navMesh;
 }
-*/
 
-/**/
-dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
-    rcPolyMesh *meshDetails,
-    float walkableHeight = 0.1f,
-    float walkableRadius = 0.1f,
-    float walkableClimb = 0.1f)
-{
-    if (!meshDetails)
-    {
-        return nullptr;
-    }
 
-    dtNavMesh *navMesh = new dtNavMesh();
 
-    int numTilesX = (int)ceil((meshDetails->bmax[0] - meshDetails->bmin[0]) / tileSize);
-    int numTilesY = (int)ceil((meshDetails->bmax[1] - meshDetails->bmin[1]) / tileSize);
-    int numTilesZ = (int)ceil((meshDetails->bmax[2] - meshDetails->bmin[2]) / tileSize);
 
-    for (int x = 0; x < numTilesX; ++x)
-    {
-        for (int y = 0; y < numTilesY; ++y)
-        {
-            for (int z = 0; z < numTilesZ; ++z)
-            {
-                dtNavMeshCreateParams params;
-                memset(&params, 0, sizeof(params));
-                params.verts = meshDetails->verts;
-                params.vertCount = meshDetails->nverts;
-                params.polys = meshDetails->polys;
-                params.polyCount = meshDetails->npolys;
-                params.nvp = meshDetails->nvp;
-
-                params.bmin[0] = (meshDetails->bmin[0] + (x * tileSize));
-                params.bmin[1] = (meshDetails->bmin[1] + (y * tileSize));
-                params.bmin[2] = (meshDetails->bmin[2] + (z * tileSize));
-
-                params.bmax[0] = ((x == numTilesX - 1) ? meshDetails->bmax[0] : params.bmin[0] + tileSize);
-                params.bmax[1] = ((y == numTilesY - 1) ? meshDetails->bmax[1] : params.bmin[1] + tileSize);
-                params.bmax[2] = ((z == numTilesZ - 1) ? meshDetails->bmax[2] : params.bmin[2] + tileSize);
-
-                params.walkableHeight = walkableHeight;
-                params.walkableRadius = walkableRadius;
-                params.walkableClimb = walkableClimb;
-                params.tileX = x;
-                params.tileY = z;
-                params.tileLayer = y;
-                params.cs = meshDetails->cs;
-                params.ch = meshDetails->ch;
-                params.buildBvTree = false;
-
-                unsigned char *polyAreas = new unsigned char[meshDetails->npolys];
-                unsigned short *polyFlags = new unsigned short[meshDetails->npolys * 2]; // *2 para incluir flags de borda
-                for (int i = 0; i < meshDetails->npolys; ++i)
-                {
-                    polyAreas[i] = 63; // Define todas as áreas como caminháveis
-                    // Configura os flags para cada polígono e suas bordas
-                    for (int j = 0; j < 2; ++j)
-                    {
-                        polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
-                    }
-                }
-                params.polyAreas = polyAreas;
-                params.polyFlags = polyFlags;
-
-                unsigned char *navData;
-                int navDataSize;
-                if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-                {
-                    std::cerr << "Failed to create nav mesh data for tile [" << x << "," << y << "," << z << "]" << std::endl;
-                    continue;
-                }
-
-                if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-                {
-                    delete[] navData;
-                    continue;
-                }
-            }
-        }
-    }
-
-    return navMesh;
-}
 
 int getVertexCount(const dtNavMesh *navMesh)
 {
@@ -755,6 +733,7 @@ std::vector<glm::vec3> get_navmesh_path(
 
     if (!nMesh)
     {
+        print("no path found no navmesh");
         return path; // Retorna um vetor vazio se a malha de navegação não for fornecida
     }
 
@@ -783,6 +762,7 @@ std::vector<glm::vec3> get_navmesh_path(
 
     if (startRef == 0 || endRef == 0)
     {
+        print("no path found no start or end point was found",startRef,endRef);
         return path; // Não foram encontrados polígonos de referência válidos
     }
 
@@ -793,6 +773,7 @@ std::vector<glm::vec3> get_navmesh_path(
 
     if (nPathPolys == 0)
     {
+        print("no path found couldnt construct path");
         return path; // Caminho não encontrado
     }
 
