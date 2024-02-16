@@ -135,6 +135,7 @@ void freeRcPolyMesh(rcPolyMesh *mesh)
 
 std::shared_ptr<malha> meshes_fused = NULL;
 rcPolyMesh *rcmeshes;
+//rcPolyMeshDetail *rcmeshes;
 
 std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
 {
@@ -181,193 +182,7 @@ std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &mi
     return malhaFusionada;
 }
 
-/*
-std::string GenerateVertexKey(vertice vert)
-{
-    return std::to_string(vert.posicao[0]) + "_" +
-           std::to_string(vert.posicao[1]) + "_" +
-           std::to_string(vert.posicao[2]);
-}
 
-std::unordered_map<std::string, unsigned int> MapUniqueVertices(const std::vector<vertice> &vertices)
-{
-    std::unordered_map<std::string, unsigned int> uniqueVertexMap;
-    for (const auto &vert : vertices)
-    {
-        std::string posKey = GenerateVertexKey(vert);
-        if (uniqueVertexMap.find(posKey) == uniqueVertexMap.end())
-        {
-            uniqueVertexMap[posKey] = uniqueVertexMap.size();
-        }
-    }
-    return uniqueVertexMap;
-}
-
-void FillVertices(rcPolyMesh *polyMesh, const std::unordered_map<std::string, unsigned int> &uniqueVertexMap,
-                  const std::vector<vertice> &vertices)
-{
-    std::vector<float> transformedVertices(uniqueVertexMap.size() * 3, 0.0f);
-    for (const auto &vert : vertices)
-    {
-        std::string posKey = std::to_string(vert.posicao[0]) + "_" +
-                             std::to_string(vert.posicao[1]) + "_" +
-                             std::to_string(vert.posicao[2]);
-        unsigned int index = uniqueVertexMap.at(posKey);
-        for (int j = 0; j < 3; ++j)
-        {
-            transformedVertices[index * 3 + j] = vert.posicao[j];
-        }
-    }
-
-    polyMesh->verts = new unsigned short[transformedVertices.size()];
-    polyMesh->nverts = transformedVertices.size() / 3;
-    for (size_t i = 0; i < transformedVertices.size(); ++i)
-    {
-        polyMesh->verts[i] = static_cast<unsigned short>(std::round((transformedVertices[i] - polyMesh->bmin[i % 3]) / rcMeshQuality));
-    }
-}
-
-void ProcessSharedEdges(std::vector<std::pair<unsigned short, unsigned short>> &sharedEdges,
-                        std::map<std::pair<unsigned short, unsigned short>, std::vector<int>> &edgeToPolyMap,
-                        rcPolyMesh *polyMesh)
-{
-    // Remover duplicatas de bordas compartilhadas
-    std::sort(sharedEdges.begin(), sharedEdges.end());
-    auto last = std::unique(sharedEdges.begin(), sharedEdges.end());
-    sharedEdges.erase(last, sharedEdges.end());
-
-    // Processar as bordas compartilhadas para mapear cada borda aos polígonos que compartilham
-    for (const auto &edge : sharedEdges)
-    {
-        // Identificar quais polígonos compartilham esta borda
-        if (edgeToPolyMap.find(edge) != edgeToPolyMap.end())
-        {
-            // Lista dos índices dos polígonos que compartilham esta borda
-            const std::vector<int> &polys = edgeToPolyMap[edge];
-
-            if (polys.size() > 1)
-            {
-                // Aqui você pode conectar os polígonos que compartilham a borda
-                // Supondo que você queira conectar os dois primeiros polígonos que compartilham a borda
-                int polyIndex1 = polys[0];
-                int polyIndex2 = polys[1];
-
-                // Conectar polyIndex1 a polyIndex2 e vice-versa
-                // Supondo que o índice do polígono conectado seja armazenado no primeiro slot de 'flags' do polígono
-                polyMesh->polys[polyIndex1 * polyMesh->nvp * 2 + polyMesh->nvp] = static_cast<unsigned short>(polyIndex2);
-                polyMesh->polys[polyIndex2 * polyMesh->nvp * 2 + polyMesh->nvp] = static_cast<unsigned short>(polyIndex1);
-            }
-        }
-    }
-}
-
-int GetAdjacentPolygonIndex(const std::pair<unsigned short, unsigned short> &edge,
-                            int currentPolygonIndex,
-                            const std::map<std::pair<unsigned short, unsigned short>, std::vector<int>> &edgeToPolyMap)
-{
-    auto it = edgeToPolyMap.find(edge);
-    if (it != edgeToPolyMap.end())
-    {
-        const auto &adjacentPolys = it->second;
-        for (int polyIndex : adjacentPolys)
-        {
-            if (polyIndex != currentPolygonIndex)
-            {
-                return polyIndex;
-            }
-        }
-    }
-    return -1; // Retorna -1 se não houver polígono adjacente ou se a borda não for compartilhada
-}
-
-void FillPolygonsAndSharedEdges(rcPolyMesh *polyMesh,
-                                const std::unordered_map<std::string, unsigned int> &uniqueVertexMap,
-                                const std::vector<unsigned int> &indices,
-                                const std::vector<vertice> &vertices)
-{
-    std::vector<std::pair<unsigned short, unsigned short>> sharedEdges;
-    std::map<std::pair<unsigned short, unsigned short>, std::vector<int>> edgeToPolyMap;
-
-    polyMesh->polys = new unsigned short[indices.size() * 2]; // *2 para bordas
-    polyMesh->npolys = indices.size() / 3;
-    polyMesh->nvp = 3; // Número de vértices por polígono
-
-    // Preencher os índices dos polígonos e mapear as bordas compartilhadas
-    for (size_t i = 0; i < indices.size(); i += 3)
-    {
-        for (int j = 0; j < 3; ++j)
-        {
-            std::string posKey = GenerateVertexKey(vertices[indices[i + j]]);
-            unsigned short vertexIndex = uniqueVertexMap.at(posKey);
-            polyMesh->polys[i * 2 + j] = vertexIndex;
-
-            // Adicionar bordas ao vetor sharedEdges e mapear para polígonos
-            unsigned short v0 = vertexIndex;
-            unsigned short v1 = polyMesh->polys[i * 2 + ((j + 1) % 3)];
-            auto edge = std::make_pair(std::min(v0, v1), std::max(v0, v1));
-            sharedEdges.push_back(edge);
-            edgeToPolyMap[edge].push_back(i / 3);
-        }
-    }
-
-    
-    // Processar as sharedEdges para definir as conexões
-    ProcessSharedEdges(sharedEdges, edgeToPolyMap, polyMesh);
-
-    // Definir as conexões de borda
-    for (size_t i = 0; i < indices.size(); i += 3)
-    {
-        int polyIndex = i / 3;
-        for (int j = 0; j < 3; ++j)
-        {
-            unsigned short v0 = polyMesh->polys[polyIndex * 6 + j];
-            unsigned short v1 = polyMesh->polys[polyIndex * 6 + ((j + 1) % 3)];
-            auto edge = std::make_pair(std::min(v0, v1), std::max(v0, v1));
-
-            int adjacentPolyIndex = GetAdjacentPolygonIndex(edge, polyIndex, edgeToPolyMap);
-
-            if (adjacentPolyIndex != -1)
-            {
-                polyMesh->polys[polyIndex * 6 + 3 + j] = adjacentPolyIndex;
-            }
-            else
-            {
-                polyMesh->polys[polyIndex * 6 + 3 + j] = RC_MESH_NULL_IDX;
-            }
-        }
-    }
-
-    
-}
-
-rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
-    if (!minhaMalha) {
-        return nullptr;
-    }
-
-    minhaMalha->limpar_malha(); // Remove vértices duplicados e ajusta índices
-
-    rcPolyMesh* polyMesh = new rcPolyMesh();
-    if (!polyMesh) {
-        return nullptr;
-    }
-
-    calcBminBmax(minhaMalha, polyMesh->bmin, polyMesh->bmax);
-    polyMesh->cs = rcMeshQuality;
-    polyMesh->ch = rcMeshQuality;
-
-    // Mapear cada posição única de vértice para um índice
-    std::unordered_map<std::string, unsigned int> uniqueVertexMap = MapUniqueVertices(minhaMalha->vertices);
-
-    // Preencher os dados de vértices
-    FillVertices(polyMesh, uniqueVertexMap, minhaMalha->vertices);
-
-    // Preencher os índices dos polígonos e processar as bordas compartilhadas
-    FillPolygonsAndSharedEdges(polyMesh, uniqueVertexMap, minhaMalha->indice, minhaMalha->vertices);
-
-    return polyMesh;
-}
-*/
 
 void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMalha) {
 
@@ -404,6 +219,46 @@ void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMa
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
+
+void fillBorderIndexes(rcPolyMesh* polyMesh) {
+    // Mapa para identificar bordas compartilhadas
+    std::map<std::pair<unsigned short, unsigned short>, int> edgeToPolyMap;
+
+    // Identificar bordas compartilhadas e mapeá-las para polígonos
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            unsigned short v0 = polyMesh->polys[i * 2 * polyMesh->nvp + j];
+            if (v0 == RC_MESH_NULL_IDX) break; // Fim dos índices de vértices deste polígono
+
+            unsigned short v1 = polyMesh->polys[i * 2 * polyMesh->nvp + (j + 1) % polyMesh->nvp];
+            if (v1 == RC_MESH_NULL_IDX) v1 = polyMesh->polys[i * 2 * polyMesh->nvp]; // Loop back se necessário
+
+            if (v0 > v1) std::swap(v0, v1); // Ordem crescente para consistência
+            auto edge = std::make_pair(v0, v1);
+
+            if (edgeToPolyMap.find(edge) == edgeToPolyMap.end()) {
+                // Primeira ocorrência da borda, mapeie para este polígono
+                edgeToPolyMap[edge] = i;
+            } else {
+                // Borda compartilhada encontrada
+                int adjacentPolyIndex = edgeToPolyMap[edge];
+                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = adjacentPolyIndex;
+                polyMesh->polys[adjacentPolyIndex * 2 * polyMesh->nvp + polyMesh->nvp + j] = i;
+            }
+        }
+    }
+
+    // Definir RC_MESH_NULL_IDX para bordas não compartilhadas
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            if (polyMesh->polys[i * 2 * polyMesh->nvp + j] == RC_MESH_NULL_IDX || polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] != RC_MESH_NULL_IDX) {
+                continue; // Pular se já definido ou se não houver mais vértices
+            }
+            polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
+        }
+    }
+}
+
 rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
     if (!minhaMalha) {
         return nullptr;
@@ -431,38 +286,56 @@ rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
 
     // Preencher os dados de vértices e índices
     fillVerticesAndIndices(polyMesh, minhaMalha);
+    fillBorderIndexes(polyMesh);
 
     return polyMesh;
 }
 
 
+void fillVerticesAndIndicesDetail(rcPolyMeshDetail* polyMeshDetail, std::shared_ptr<malha> minhaMalha) {
+    if (!minhaMalha || !polyMeshDetail) {
+        return; // Verifique a validade dos parâmetros
+    }
 
-vector<vector<vector<rcPolyMesh *>>> convertToRcPolyMesh(vector<vector<vector<std::shared_ptr<malha>>>> &minhasMalhas)
-{
-    // Determinando o tamanho da estrutura 3D
-    int sizeX = minhasMalhas.size();
-    int sizeY = sizeX > 0 ? minhasMalhas[0].size() : 0;
-    int sizeZ = sizeY > 0 ? minhasMalhas[0][0].size() : 0;
+    // Preencher vértices detalhados
+    polyMeshDetail->nverts = minhaMalha->vertices.size();
+    polyMeshDetail->verts = new float[polyMeshDetail->nverts * 3]; // Cada vértice tem 3 coordenadas
 
-    // Criando a estrutura 3D para rcPolyMesh*
-    vector<vector<vector<rcPolyMesh *>>> polyMeshes(sizeX, vector<vector<rcPolyMesh *>>(sizeY, vector<rcPolyMesh *>(sizeZ, nullptr)));
-
-    // Processando cada malha e convertendo para rcPolyMesh*
-    for (int x = 0; x < sizeX; ++x)
-    {
-        for (int y = 0; y < sizeY; ++y)
-        {
-            for (int z = 0; z < sizeZ; ++z)
-            {
-                if (minhasMalhas[x][y][z] && minhasMalhas[x][y][z]->indice.size() > 2)
-                {
-                    polyMeshes[x][y][z] = convertToRcPolyMesh(minhasMalhas[x][y][z]);
-                }
-            }
+    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
+        const vertice& vert = minhaMalha->vertices[i];
+        for (int j = 0; j < 3; ++j) {
+            polyMeshDetail->verts[i * 3 + j] = vert.posicao[j];
         }
     }
 
-    return polyMeshes;
+    // Preencher triângulos detalhados
+    polyMeshDetail->ntris = minhaMalha->indice.size() / 3;
+    polyMeshDetail->tris = new unsigned char[polyMeshDetail->ntris * 4]; // Cada triângulo tem 3 vértices + 1 flag de área
+
+    for (size_t i = 0; i < polyMeshDetail->ntris; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            polyMeshDetail->tris[i * 4 + j] = static_cast<unsigned char>(minhaMalha->indice[i * 3 + j]);
+        }
+        polyMeshDetail->tris[i * 4 + 3] = RC_WALKABLE_AREA; // Definir flag de área para cada triângulo
+    }
+}
+
+
+rcPolyMeshDetail* convertToRcPolyMeshDetail(std::shared_ptr<malha> minhaMalha) {
+    if (!minhaMalha) {
+        return nullptr;
+    }
+
+    minhaMalha->limpar_malha();
+
+    rcPolyMeshDetail* polyMeshDetail = new rcPolyMeshDetail();
+    if (!polyMeshDetail) {
+        return nullptr;
+    }
+    
+    fillVerticesAndIndicesDetail(polyMeshDetail, minhaMalha);
+
+    return polyMeshDetail;
 }
 
 void printDtStatus(dtStatus status)
@@ -563,23 +436,28 @@ dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     // Definir os parâmetros para criação do dtNavMesh
     dtNavMeshCreateParams params;
     memset(&params, 0, sizeof(params));
+
     params.verts = meshDetails->verts;
     params.vertCount = meshDetails->nverts;
     params.polys = meshDetails->polys;
     params.polyCount = meshDetails->npolys;
     params.nvp = meshDetails->nvp;
+    params.cs = meshDetails->cs;
+    params.ch = meshDetails->ch;
+    memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
+    memcpy(params.bmax, meshDetails->bmax, sizeof(params.bmax));
+    
+   
     params.walkableHeight = walkableHeight;
     params.walkableRadius = walkableRadius;
     params.walkableClimb = walkableClimb;
     params.tileX = 0;
     params.tileY = 0;
     params.tileLayer = 0;
-    params.cs = meshDetails->cs;
-    params.ch = meshDetails->ch;
+    
     params.buildBvTree = true;
 
-    memcpy(params.bmin, meshDetails->bmin, sizeof(params.bmin));
-    memcpy(params.bmax, meshDetails->bmax, sizeof(params.bmax));
+    
 
     // Definir áreas caminháveis e flags de borda
     unsigned char *polyAreas = new unsigned char[meshDetails->npolys];
@@ -965,6 +843,7 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     meshes_fused = fuse_meshes(minhasMalhas, transforms);
     rcmeshes = convertToRcPolyMesh(meshes_fused);
+    //rcmeshes = convertToRcPolyMeshDetail(meshes_fused);
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
 
     /*
