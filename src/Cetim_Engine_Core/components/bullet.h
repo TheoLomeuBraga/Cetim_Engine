@@ -219,7 +219,7 @@ void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMa
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
-
+/*
 void fillBorderIndexes(rcPolyMesh* polyMesh) {
     // Mapa para rastrear as bordas compartilhadas
     std::map<std::pair<unsigned short, unsigned short>, int> edgeToPolyMap;
@@ -252,6 +252,56 @@ void fillBorderIndexes(rcPolyMesh* polyMesh) {
         }
     }
 }
+*/
+
+void fillBorderIndexes(rcPolyMesh* polyMesh) {
+    if (!polyMesh) return;
+
+    // Assuming `polyMesh->polys` is your array of polygons and `polyMesh->npolys` is the number of polygons.
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        unsigned short* poly = &polyMesh->polys[i * 2 * polyMesh->nvp];
+
+        // Iterate through edges of the polygon.
+        for (int j = 0; j < polyMesh->nvp; ++j) {
+            if (poly[j] == RC_MESH_NULL_IDX) break; // End of the polygon vertices.
+
+            int nj = (j + 1) % polyMesh->nvp;
+            if (poly[nj] == RC_MESH_NULL_IDX) nj = 0;
+
+            int edgeStart = poly[j];
+            int edgeEnd = poly[nj];
+
+            bool isBorder = true;
+            // Check if this edge is shared with any other polygon.
+            for (int k = 0; k < polyMesh->npolys; ++k) {
+                if (k == i) continue; // Skip the same polygon.
+
+                unsigned short* otherPoly = &polyMesh->polys[k * 2 * polyMesh->nvp];
+                for (int l = 0; l < polyMesh->nvp; ++l) {
+                    if (otherPoly[l] == RC_MESH_NULL_IDX) break;
+
+                    int nl = (l + 1) % polyMesh->nvp;
+                    if (otherPoly[nl] == RC_MESH_NULL_IDX) nl = 0;
+
+                    if ((otherPoly[l] == edgeStart && otherPoly[nl] == edgeEnd) ||
+                        (otherPoly[l] == edgeEnd && otherPoly[nl] == edgeStart)) {
+                        // Edge is shared, so not a border.
+                        isBorder = false;
+                        polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = k; // Update neighbor index.
+                        break;
+                    }
+                }
+                if (!isBorder) break;
+            }
+
+            if (isBorder) {
+                // Mark as a border edge.
+                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
+            }
+        }
+    }
+}
+
 
 
 rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
@@ -858,10 +908,9 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     rcmeshes_chuncks = {};
     */
 
-    draw_navmesh();
+    //draw_navmesh();
 
-    // get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
-    get_navmesh_path(vec3(-21, 40.5, -138), vec3(21.0, 40.5, -205.0));
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
 
     return navMesh;
 }
