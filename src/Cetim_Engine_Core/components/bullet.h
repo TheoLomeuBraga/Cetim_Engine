@@ -221,43 +221,38 @@ void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMa
 
 
 void fillBorderIndexes(rcPolyMesh* polyMesh) {
-    // Mapa para identificar bordas compartilhadas
+    // Mapa para rastrear as bordas compartilhadas
     std::map<std::pair<unsigned short, unsigned short>, int> edgeToPolyMap;
 
-    // Identificar bordas compartilhadas e mapeá-las para polígonos
+    // Preencher índices de borda
     for (int i = 0; i < polyMesh->npolys; ++i) {
-        for (int j = 0; j < polyMesh->nvp; ++j) {
+        for (int j = 0; j < 3; ++j) { // Considerando 3 vértices por polígono (triângulos)
             unsigned short v0 = polyMesh->polys[i * 2 * polyMesh->nvp + j];
-            if (v0 == RC_MESH_NULL_IDX) break; // Fim dos índices de vértices deste polígono
+            unsigned short v1 = polyMesh->polys[i * 2 * polyMesh->nvp + (j + 1) % 3];
+            if (v0 > v1) std::swap(v0, v1); // Garantir consistência na ordem dos vértices
 
-            unsigned short v1 = polyMesh->polys[i * 2 * polyMesh->nvp + (j + 1) % polyMesh->nvp];
-            if (v1 == RC_MESH_NULL_IDX) v1 = polyMesh->polys[i * 2 * polyMesh->nvp]; // Loop back se necessário
-
-            if (v0 > v1) std::swap(v0, v1); // Ordem crescente para consistência
             auto edge = std::make_pair(v0, v1);
-
             if (edgeToPolyMap.find(edge) == edgeToPolyMap.end()) {
-                // Primeira ocorrência da borda, mapeie para este polígono
+                // Primeira ocorrência da borda
                 edgeToPolyMap[edge] = i;
+                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
             } else {
                 // Borda compartilhada encontrada
-                int adjacentPolyIndex = edgeToPolyMap[edge];
-                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = adjacentPolyIndex;
-                polyMesh->polys[adjacentPolyIndex * 2 * polyMesh->nvp + polyMesh->nvp + j] = i;
+                int adjacentPoly = edgeToPolyMap[edge];
+                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = adjacentPoly;
+                polyMesh->polys[adjacentPoly * 2 * polyMesh->nvp + polyMesh->nvp + j] = i;
             }
         }
     }
 
-    // Definir RC_MESH_NULL_IDX para bordas não compartilhadas
+    // Preencher restante dos índices de borda não compartilhados com RC_MESH_NULL_IDX
     for (int i = 0; i < polyMesh->npolys; ++i) {
-        for (int j = 0; j < polyMesh->nvp; ++j) {
-            if (polyMesh->polys[i * 2 * polyMesh->nvp + j] == RC_MESH_NULL_IDX || polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] != RC_MESH_NULL_IDX) {
-                continue; // Pular se já definido ou se não houver mais vértices
-            }
+        for (int j = 3; j < polyMesh->nvp; ++j) {
             polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
         }
     }
 }
+
 
 rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
     if (!minhaMalha) {
@@ -843,7 +838,6 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     meshes_fused = fuse_meshes(minhasMalhas, transforms);
     rcmeshes = convertToRcPolyMesh(meshes_fused);
-    //rcmeshes = convertToRcPolyMeshDetail(meshes_fused);
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
 
     /*
