@@ -462,9 +462,9 @@ void locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
 
 dtNavMesh *rcPolyMesh_chuncks_to_navMesh(
     rcPolyMesh *meshDetails,
-    float walkableHeight = 0.1f,
-    float walkableRadius = 0.1f,
-    float walkableClimb = 0.1f)
+    float walkableHeight = 2.0f,
+    float walkableRadius = 1.0f,
+    float walkableClimb = 0.5f)
 {
     if (!meshDetails)
     {
@@ -623,6 +623,7 @@ void print_cube_in_space(vec3 pos)
 
     display_nav_mesh->adicionar_componente<render_malha>();
     shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
+
     rm->usar_oclusao = false;
     rm->camada = 4;
 
