@@ -219,41 +219,6 @@ void fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMa
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
-/*
-void fillBorderIndexes(rcPolyMesh* polyMesh) {
-    // Mapa para rastrear as bordas compartilhadas
-    std::map<std::pair<unsigned short, unsigned short>, int> edgeToPolyMap;
-
-    // Preencher índices de borda
-    for (int i = 0; i < polyMesh->npolys; ++i) {
-        for (int j = 0; j < 3; ++j) { // Considerando 3 vértices por polígono (triângulos)
-            unsigned short v0 = polyMesh->polys[i * 2 * polyMesh->nvp + j];
-            unsigned short v1 = polyMesh->polys[i * 2 * polyMesh->nvp + (j + 1) % 3];
-            if (v0 > v1) std::swap(v0, v1); // Garantir consistência na ordem dos vértices
-
-            auto edge = std::make_pair(v0, v1);
-            if (edgeToPolyMap.find(edge) == edgeToPolyMap.end()) {
-                // Primeira ocorrência da borda
-                edgeToPolyMap[edge] = i;
-                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
-            } else {
-                // Borda compartilhada encontrada
-                int adjacentPoly = edgeToPolyMap[edge];
-                polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = adjacentPoly;
-                polyMesh->polys[adjacentPoly * 2 * polyMesh->nvp + polyMesh->nvp + j] = i;
-            }
-        }
-    }
-
-    // Preencher restante dos índices de borda não compartilhados com RC_MESH_NULL_IDX
-    for (int i = 0; i < polyMesh->npolys; ++i) {
-        for (int j = 3; j < polyMesh->nvp; ++j) {
-            polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
-        }
-    }
-}
-*/
-
 void fillBorderIndexes(rcPolyMesh* polyMesh) {
     if (!polyMesh) return;
 
@@ -909,9 +874,14 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     rcmeshes_chuncks = {};
     */
 
-    //draw_navmesh();
+    draw_navmesh();
 
+    //laprint
     get_navmesh_path(vec3(-21, 40.5, -138), vec3(90.0, 40.5, -71.0));
+
+    //ramp
+    get_navmesh_path(vec3(-21, 40.5, -138), vec3(106.0, 64.5, -266.0));
+    get_navmesh_path(vec3(106.0, 64.5, -266.0), vec3(65.0, 68.5, -276.0));
 
     return navMesh;
 }
