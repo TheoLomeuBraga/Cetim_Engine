@@ -583,8 +583,8 @@ public:
 	malha() {}
 	bool pele = false;
 	string arquivo_origem, nome;
-	vector<unsigned int> indice = {};
-	vector<vertice> vertices = {};
+	vector<unsigned int> indice;
+	vector<vertice> vertices;
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{
@@ -698,6 +698,70 @@ public:
 		remover_malha(this);
 	}
 };
+
+
+std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform) {
+    if (!myMesh) {
+        // Error handling: Input mesh is null
+        return nullptr;
+    }
+
+    auto transformedMesh = std::make_shared<malha>(*myMesh); // Create a copy of the original mesh
+
+    for (auto& vertex : transformedMesh->vertices) {
+        // Apply transformation to the position
+        glm::vec4 pos(vertex.posicao[0], vertex.posicao[1], vertex.posicao[2], 1.0f);
+        pos = transform * pos;
+        for (int j = 0; j < 3; ++j) {
+            vertex.posicao[j] = pos[j];
+        }
+
+    }
+
+    return transformedMesh;
+}
+
+
+std::shared_ptr<malha> fuse_meshes(std::vector<std::shared_ptr<malha>> myMeshes, std::vector<glm::mat4> transforms) {
+
+	std::vector<unsigned int> indice = {};
+	std::vector<vertice> vertices = {};
+	
+	unsigned int indexOffset = 0;
+    
+	for(size_t a = 1; a < myMeshes.size() ; a++){
+	//for(size_t a = 0; a < 1 ; a++){
+
+		std::shared_ptr<malha> mesh = myMeshes[a];
+		glm::mat4 matrix = transforms[a];
+
+		for(size_t b = 0; b < mesh->vertices.size() ; b++ ){
+
+			vertice v = mesh->vertices[b];
+			vec3 vp = matrix * vec4(v.posicao[0],v.posicao[1],v.posicao[2],1.0f);
+			v.posicao[0] = vp.x;
+			v.posicao[1] = vp.y;
+			v.posicao[2] = vp.z;
+			
+
+			vertices.push_back(v);
+			
+		}
+		
+		for(size_t b = 0; b < mesh->indice.size();b++){
+			indice.push_back(mesh->indice[b] + indexOffset);
+		}
+
+		indexOffset+=mesh->vertices.size();
+	}
+
+    return make_shared<malha>(malha(indice,vertices));
+}
+
+
+
+
+
 
 
 

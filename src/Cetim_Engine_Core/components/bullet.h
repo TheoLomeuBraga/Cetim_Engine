@@ -137,50 +137,7 @@ std::shared_ptr<malha> meshes_fused = NULL;
 rcPolyMesh *rcmeshes;
 //rcPolyMeshDetail *rcmeshes;
 
-std::shared_ptr<malha> fuse_meshes(const std::vector<std::shared_ptr<malha>> &minhasMalhas, const std::vector<glm::mat4> &transformacoes)
-{
 
-    if (minhasMalhas.size() != transformacoes.size())
-    {
-        // O número de malhas e transformações deve ser o mesmo
-        return nullptr;
-    }
-
-    auto malhaFusionada = std::make_shared<malha>();
-
-    int vertOffset = 0;
-    for (size_t i = 0; i < minhasMalhas.size(); ++i)
-    {
-        const auto &malha = minhasMalhas[i];
-        const glm::mat4 &transform = transformacoes[i];
-
-        // Transformar e adicionar vértices
-        for (const auto &vert : malha->vertices)
-        {
-            glm::vec4 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2], 1.0f);
-            pos = transform * pos;
-
-            vertice vertTransformado = vert;
-            vertTransformado.posicao[0] = pos.x;
-            vertTransformado.posicao[1] = pos.y;
-            vertTransformado.posicao[2] = pos.z;
-
-            malhaFusionada->vertices.push_back(vertTransformado);
-        }
-
-        // Adicionar índices dos polígonos com o deslocamento correto
-        for (const auto &indice : malha->indice)
-        {
-            malhaFusionada->indice.push_back(indice + vertOffset);
-        }
-
-        vertOffset += malha->vertices.size();
-    }
-
-    meshes_fused = malhaFusionada;
-
-    return malhaFusionada;
-}
 
 
 
@@ -275,7 +232,7 @@ rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
     }
 
     // Limpar malha para remover vértices duplicados e ajustar índices
-    minhaMalha->limpar_malha();
+    //minhaMalha->limpar_malha();
 
     //print("minhaMalha info",minhaMalha->vertices.size(),minhaMalha->indice.size());
 
@@ -336,7 +293,7 @@ rcPolyMeshDetail* convertToRcPolyMeshDetail(std::shared_ptr<malha> minhaMalha) {
         return nullptr;
     }
 
-    minhaMalha->limpar_malha();
+    //minhaMalha->limpar_malha();
 
     rcPolyMeshDetail* polyMeshDetail = new rcPolyMeshDetail();
     if (!polyMeshDetail) {
@@ -737,7 +694,7 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         return nullptr;
     }
 
-    auto convertedMesh = std::make_shared<malha>();
+    malha convertedMesh;
 
     // Convertendo vértices
     for (int i = 0; i < polyMesh->nverts; ++i)
@@ -753,7 +710,7 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
         // Preencher outros atributos do vértice, se necessário
         // ...
 
-        convertedMesh->vertices.push_back(vert);
+        convertedMesh.vertices.push_back(vert);
     }
 
     // Convertendo índices dos polígonos
@@ -769,11 +726,11 @@ std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh = com
                 break;
             }
 
-            convertedMesh->indice.push_back(vertexIndex);
+            convertedMesh.indice.push_back(vertexIndex);
         }
     }
 
-    return convertedMesh;
+    return make_shared<malha>(convertedMesh);
 }
 
 shared_ptr<objeto_jogo> display_nav_mesh = NULL;
@@ -795,6 +752,27 @@ void draw_navmesh()
 
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+}
+
+shared_ptr<objeto_jogo> display_mesh = NULL;
+void draw_mesh(shared_ptr<malha> m)
+{
+    display_mesh = novo_objeto_jogo();
+    display_mesh->adicionar_componente<transform_>();
+    display_mesh->adicionar_componente<render_malha>();
+    shared_ptr<render_malha> rm = display_mesh->pegar_componente<render_malha>();
+    rm->usar_oclusao = false;
+    rm->camada = 4;
+
+    Material mat;
+    mat.shad = "resources/Shaders/mesh";
+    mat.cor = vec4(0.1, 0.1, 1, 0.5);
+    mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+
+    rm->malhas = {m};
+
+    rm->mats = {mat};
+    cena_objetos_selecionados->adicionar_objeto(display_mesh);
 }
 
 void printNavMeshVertices(const dtNavMesh *nMesh = navMesh)
@@ -853,26 +831,9 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
     }
 
     meshes_fused = fuse_meshes(minhasMalhas, transforms);
+    
     rcmeshes = convertToRcPolyMesh(meshes_fused);
     navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
-
-    /*
-    for (int x = 0; x < rcmeshes_chuncks.size(); ++x)
-    {
-        for (int y = 0; y < rcmeshes_chuncks[0].size(); ++y)
-        {
-            for (int z = 0; z < rcmeshes_chuncks[0][0].size(); ++z)
-            {
-                if (rcmeshes_chuncks[x][y][z])
-                {
-                    // std::cout << rcmeshes_chuncks[x][y][z] << std::endl;
-                    freeRcPolyMesh(rcmeshes_chuncks[x][y][z]);
-                }
-            }
-        }
-    }
-    rcmeshes_chuncks = {};
-    */
 
     draw_navmesh();
 
