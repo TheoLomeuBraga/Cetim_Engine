@@ -3,6 +3,7 @@
 #include "RecursosT.h"
 #include "game_object.h"
 #include "transform.h"
+#include "render_mesh.h"
 
 #include "Recast.h"
 #include "DetourNavMesh.h"
@@ -60,15 +61,18 @@ void navmesh_freeRcPolyMesh(rcPolyMesh *mesh)
     delete mesh;
 }
 
-void navmesh_fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha> minhaMalha) {
+void navmesh_fillVerticesAndIndices(rcPolyMesh *polyMesh, std::shared_ptr<malha> minhaMalha)
+{
 
     // Preencher vértices
     polyMesh->nverts = minhaMalha->vertices.size();
     polyMesh->verts = new unsigned short[polyMesh->nverts * 3];
 
-    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i) {
-        const vertice& vert = minhaMalha->vertices[i];
-        for (int j = 0; j < 3; ++j) {
+    for (size_t i = 0; i < minhaMalha->vertices.size(); ++i)
+    {
+        const vertice &vert = minhaMalha->vertices[i];
+        for (int j = 0; j < 3; ++j)
+        {
             polyMesh->verts[i * 3 + j] = static_cast<unsigned short>(std::round((vert.posicao[j] - polyMesh->bmin[j]) / rcMeshQuality));
         }
     }
@@ -77,12 +81,17 @@ void navmesh_fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha>
     polyMesh->npolys = minhaMalha->indice.size() / polyMesh->nvp;
     polyMesh->polys = new unsigned short[polyMesh->npolys * 2 * polyMesh->nvp];
 
-    for (size_t i = 0; i < polyMesh->npolys; ++i) {
-        for (int j = 0; j < polyMesh->nvp; ++j) {
-            if (j < 3) {
+    for (size_t i = 0; i < polyMesh->npolys; ++i)
+    {
+        for (int j = 0; j < polyMesh->nvp; ++j)
+        {
+            if (j < 3)
+            {
                 // índices de vértices do polígono
                 polyMesh->polys[i * 2 * polyMesh->nvp + j] = minhaMalha->indice[i * 3 + j];
-            } else {
+            }
+            else
+            {
                 // Resto preenchido com RC_MESH_NULL_IDX
                 polyMesh->polys[i * 2 * polyMesh->nvp + j] = RC_MESH_NULL_IDX;
             }
@@ -95,47 +104,61 @@ void navmesh_fillVerticesAndIndices(rcPolyMesh* polyMesh, std::shared_ptr<malha>
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
-void navmesh_fillBorderIndexes(rcPolyMesh* polyMesh) {
-    if (!polyMesh) return;
+void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh)
+{
+    if (!polyMesh)
+        return;
 
     // Assuming `polyMesh->polys` is your array of polygons and `polyMesh->npolys` is the number of polygons.
-    for (int i = 0; i < polyMesh->npolys; ++i) {
-        unsigned short* poly = &polyMesh->polys[i * 2 * polyMesh->nvp];
+    for (int i = 0; i < polyMesh->npolys; ++i)
+    {
+        unsigned short *poly = &polyMesh->polys[i * 2 * polyMesh->nvp];
 
         // Iterate through edges of the polygon.
-        for (int j = 0; j < polyMesh->nvp; ++j) {
-            if (poly[j] == RC_MESH_NULL_IDX) break; // End of the polygon vertices.
+        for (int j = 0; j < polyMesh->nvp; ++j)
+        {
+            if (poly[j] == RC_MESH_NULL_IDX)
+                break; // End of the polygon vertices.
 
             int nj = (j + 1) % polyMesh->nvp;
-            if (poly[nj] == RC_MESH_NULL_IDX) nj = 0;
+            if (poly[nj] == RC_MESH_NULL_IDX)
+                nj = 0;
 
             int edgeStart = poly[j];
             int edgeEnd = poly[nj];
 
             bool isBorder = true;
             // Check if this edge is shared with any other polygon.
-            for (int k = 0; k < polyMesh->npolys; ++k) {
-                if (k == i) continue; // Skip the same polygon.
+            for (int k = 0; k < polyMesh->npolys; ++k)
+            {
+                if (k == i)
+                    continue; // Skip the same polygon.
 
-                unsigned short* otherPoly = &polyMesh->polys[k * 2 * polyMesh->nvp];
-                for (int l = 0; l < polyMesh->nvp; ++l) {
-                    if (otherPoly[l] == RC_MESH_NULL_IDX) break;
+                unsigned short *otherPoly = &polyMesh->polys[k * 2 * polyMesh->nvp];
+                for (int l = 0; l < polyMesh->nvp; ++l)
+                {
+                    if (otherPoly[l] == RC_MESH_NULL_IDX)
+                        break;
 
                     int nl = (l + 1) % polyMesh->nvp;
-                    if (otherPoly[nl] == RC_MESH_NULL_IDX) nl = 0;
+                    if (otherPoly[nl] == RC_MESH_NULL_IDX)
+                        nl = 0;
 
                     if ((otherPoly[l] == edgeStart && otherPoly[nl] == edgeEnd) ||
-                        (otherPoly[l] == edgeEnd && otherPoly[nl] == edgeStart)) {
+                        (otherPoly[l] == edgeEnd && otherPoly[nl] == edgeStart))
+                    {
                         // Edge is shared, so not a border.
                         isBorder = false;
                         polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = k; // Update neighbor index.
                         break;
                     }
                 }
-                if (!isBorder) break;
+                if (!isBorder)
+                    break;
             }
 
-            if (isBorder) {
+            if (isBorder)
+            {
                 // Mark as a border edge.
                 polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = RC_MESH_NULL_IDX;
             }
@@ -143,15 +166,16 @@ void navmesh_fillBorderIndexes(rcPolyMesh* polyMesh) {
     }
 }
 
-
-
-rcPolyMesh* navmesh_convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
-    if (!minhaMalha) {
+rcPolyMesh *navmesh_convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
+{
+    if (!minhaMalha)
+    {
         return nullptr;
     }
 
-    rcPolyMesh* polyMesh = new rcPolyMesh();
-    if (!polyMesh) {
+    rcPolyMesh *polyMesh = new rcPolyMesh();
+    if (!polyMesh)
+    {
         return nullptr;
     }
 
@@ -162,7 +186,7 @@ rcPolyMesh* navmesh_convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
     polyMesh->cs = rcMeshQuality;
     polyMesh->ch = rcMeshQuality;
 
-    //difine polygon size
+    // difine polygon size
     polyMesh->nvp = 3;
 
     // Preencher os dados de vértices e índices
@@ -210,8 +234,6 @@ void navmesh_locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
 class navmesh : public componente
 {
 private:
-
-    
     rcPolyMesh *rcmeshe = NULL;
     dtNavMesh *navMesh = NULL;
     int navDataSize = 0;
@@ -221,18 +243,21 @@ private:
 
     shared_ptr<malha> internal_path_mesh = NULL;
 
-public:
+    shared_ptr<render_malha> rm = NULL;
 
+public:
     static float navmeshQuality;
-    static std::map<std::string,shared_ptr<objeto_jogo>> navmeshes;
+    static std::map<std::string, shared_ptr<objeto_jogo>> navmeshes;
 
     shared_ptr<malha> path_mesh = NULL;
 
-    navmesh(){}
+    navmesh() {}
 
-    void clear(){
+    void clear()
+    {
 
         navDataSize = 0;
+        internal_path_mesh = NULL;
 
         free(rcmeshe);
         rcmeshe = NULL;
@@ -244,42 +269,71 @@ public:
         tempPolyAreas = NULL;
         free(tempPolyFlags);
         tempPolyFlags = NULL;
-
-        internal_path_mesh = NULL;
-
     }
 
-    void apply(){
+    void show_this(bool on)
+    {
+
+        if (on)
+        {
+            esse_objeto->adicionar_componente<render_malha>();
+            rm = display_nav_mesh->pegar_componente<render_malha>();
+            rm->usar_oclusao = false;
+            rm->camada = 4;
+
+            Material mat;
+            mat.shad = "resources/Shaders/mesh";
+            mat.cor = vec4(0.1, 0.1, 1, 0.5);
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+
+            rm->malhas = {path_mesh};
+
+            rm->mats = {mat};
+            cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+
+        }else if(rm){
+            esse_objeto->remover_componente<render_malha>();
+        }
+    }
+
+    static void show(bool on)
+    {
+       for(pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes){
+            p.second->pegar_componente<navmesh>()->show_this(on);
+       }
+    }
+
+    void apply()
+    {
 
         clear();
-
     }
 
-    std::vector<glm::vec3> generate_path(glm::vec3 start , glm::vec3 end){
+    std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end)
+    {
         return {};
     }
-    
-    static std::vector<glm::vec3> generate_path(glm::vec3 start , glm::vec3 end,std::string tag){
-        if(navmeshes.find(tag) != navmeshes.end()){
-            return navmeshes[tag]->pegar_componente<navmesh>()->generate_path(start,end);
+
+    static std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end, std::string tag)
+    {
+        if (navmeshes.find(tag) != navmeshes.end())
+        {
+            return navmeshes[tag]->pegar_componente<navmesh>()->generate_path(start, end);
         }
         return {};
     }
 
-    ~navmesh(){clear();}
+    ~navmesh() { clear(); }
 };
 
 float navmesh::navmeshQuality = 1.0f;
-std::map<std::string,shared_ptr<objeto_jogo>> navmesh::navmeshes = {};
+std::map<std::string, shared_ptr<objeto_jogo>> navmesh::navmeshes = {};
 
-void remove_navmesh(std::string tag = ""){
-
+void remove_navmesh(std::string tag = "")
+{
 }
 
-shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position , glm::quat rotation , glm::vec3 scale ,std::string tag = ""){
+shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position, glm::quat rotation, glm::vec3 scale, std::string tag = "")
+{
     return NULL;
-}
-
-void make_navmesh_test(){
-    
 }
