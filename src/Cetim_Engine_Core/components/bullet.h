@@ -19,7 +19,6 @@
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
 #include "Recast.h"
-
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
 #include "DetourNavMeshBuilder.h"
@@ -542,6 +541,7 @@ void print_cube_in_space(vec3 pos)
     shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
     display_nav_mesh->adicionar_componente<transform_>();
     display_nav_mesh->pegar_componente<transform_>()->pos = pos;
+    display_nav_mesh->pegar_componente<transform_>()->esca = vec3(0.25,0.25,0.25);
 
     display_nav_mesh->adicionar_componente<render_malha>();
     shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
@@ -567,6 +567,7 @@ void print_cube_in_space(vec3 pos)
     print("cube pos:", pos.x, pos.y, pos.z);
 }
 
+/**/
 std::vector<glm::vec3> get_navmesh_path(
     glm::vec3 start,
     glm::vec3 end,
@@ -639,6 +640,7 @@ std::vector<glm::vec3> get_navmesh_path(
 
     return path;
 }
+
 
 // print_cube_in_space(point);
 

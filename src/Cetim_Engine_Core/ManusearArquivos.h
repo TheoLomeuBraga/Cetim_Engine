@@ -1084,6 +1084,8 @@ namespace ManuseioDados
 				ma.vertices.push_back(v);
 			}
 
+			ma.comprimir();
+
 			ret.push_back(ma);
 		}
 

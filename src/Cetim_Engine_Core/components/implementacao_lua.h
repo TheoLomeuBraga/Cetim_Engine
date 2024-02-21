@@ -18,6 +18,7 @@ using namespace Tempo;
 #include "ui_element.h"
 #include "light.h"
 #include "poly_mesh.h"
+#include "navmesh.h"
 
 #include "args.h"
 #include "game_object.h"

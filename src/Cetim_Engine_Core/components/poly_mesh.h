@@ -1,5 +1,11 @@
 #pragma once
 
+#include "Recast.h"
+#include "DetourNavMesh.h"
+#include "DetourNavMeshQuery.h"
+#include "DetourNavMeshBuilder.h"
+#include "DetourTileCache.h"
+
 #include <iostream>
 #include <functional>
 using String = std::string;

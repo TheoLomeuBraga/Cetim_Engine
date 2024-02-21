@@ -13,7 +13,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
@@ -539,6 +538,8 @@ struct vertice_struct
 	int id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 	float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 
+	vertice_struct() = default;
+
 	bool operator==(const vertice_struct &v) const
 	{
 		return posicao[0] == v.posicao[0] && posicao[1] == v.posicao[1] && posicao[2] == v.posicao[2] && uv[0] == v.uv[0] && uv[1] == v.uv[1] && normal[0] == v.normal[0] && normal[1] == v.normal[1] && normal[2] == v.normal[2] && cor[0] == v.cor[0] && cor[1] == v.cor[1] && cor[2] == v.cor[2];
@@ -549,6 +550,44 @@ struct vertice_struct
 	}
 };
 typedef struct vertice_struct vertice;
+
+struct VertexHasher
+{
+	std::size_t operator()(const vertice &v) const
+	{
+		std::size_t seed = 0;
+		for (int i = 0; i < 3; ++i)
+		{
+			seed ^= std::hash<float>{}(v.posicao[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+			seed ^= std::hash<float>{}(v.normal[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+			seed ^= std::hash<float>{}(v.cor[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
+		seed ^= std::hash<float>{}(v.uv[0]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		seed ^= std::hash<float>{}(v.uv[1]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+		{
+			seed ^= std::hash<int>{}(v.id_ossos[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+			seed ^= std::hash<float>{}(v.peso_ossos[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
+
+		return seed;
+	}
+};
+
+struct VertexHasherPosition
+{
+	std::size_t operator()(const vertice &v) const
+	{
+		std::size_t seed = 0;
+		for (int i = 0; i < 3; ++i)
+		{
+			seed ^= std::hash<float>{}(v.posicao[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
+
+		return seed;
+	}
+};
 
 void escrever_vertice(vertice v)
 {
@@ -586,31 +625,75 @@ public:
 	vector<unsigned int> indice;
 	vector<vertice> vertices;
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
-	malha(vector<unsigned int> indice, vector<vertice> vertices)
-	{
-		this->indice = indice;
-		this->vertices = vertices;
-	}
 
 	void comprimir()
 	{
-		vector<vertice> novos_vertices = remover_elementos_duplicados<vertice>(vertices);
-		vector<unsigned int> novo_indice;
+		// Mapeia cada vértice único para um novo índice
+		std::unordered_map<vertice, unsigned int, VertexHasher> uniqueVertexMap;
+		std::vector<vertice> newVertices;
+		std::vector<unsigned int> newIndices;
 
-		novo_indice.resize(indice.size());
+		newIndices.reserve(indice.size());
 
-		for (int a = 0; a < vertices.size(); a++)
+		// Processa cada índice na malha
+		for (size_t i = 0; i < indice.size(); ++i)
 		{
-			for (int b = 0; b < novos_vertices.size(); b++)
+			const vertice &v = vertices[indice[i]];
+
+			// Se o vértice não estiver no mapa, adicione-o
+			if (uniqueVertexMap.find(v) == uniqueVertexMap.end())
 			{
-				if (vertices[a] == novos_vertices[b])
-				{
-					novo_indice[a] = b;
-				}
+				uniqueVertexMap[v] = newVertices.size();
+				newVertices.push_back(v);
 			}
+
+			// Use o índice do vértice único
+			newIndices.push_back(uniqueVertexMap[v]);
 		}
-		indice = novo_indice;
-		vertices = novos_vertices;
+
+		// Atualiza a malha com os novos vértices e índices
+		vertices = std::move(newVertices);
+		indice = std::move(newIndices);
+	}
+
+	void comprimir_posicao()
+	{
+
+		print("mesh before compression", vertices.size(), indice.size());
+		// Mapeia cada vértice único para um novo índice
+		std::unordered_map<vertice, unsigned int, VertexHasherPosition> uniqueVertexMap;
+		std::vector<vertice> newVertices;
+		std::vector<unsigned int> newIndices;
+
+		newIndices.reserve(indice.size());
+
+		// Processa cada índice na malha
+		for (size_t i = 0; i < indice.size(); ++i)
+		{
+			const vertice &v = vertices[indice[i]];
+
+			// Se o vértice não estiver no mapa, adicione-o
+			if (uniqueVertexMap.find(v) == uniqueVertexMap.end())
+			{
+				uniqueVertexMap[v] = newVertices.size();
+				newVertices.push_back(v);
+			}
+
+			// Use o índice do vértice único
+			newIndices.push_back(uniqueVertexMap[v]);
+		}
+
+		// Atualiza a malha com os novos vértices e índices
+		vertices = std::move(newVertices);
+		indice = std::move(newIndices);
+
+		print("mesh after compression", vertices.size(), indice.size());
+	}
+
+	malha(vector<unsigned int> indice, vector<vertice> vertices)
+	{
+		this->indice = std::move(indice);
+		this->vertices = std::move(vertices);
 	}
 
 	void limpar_malha()
@@ -699,69 +782,70 @@ public:
 	}
 };
 
+std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform)
+{
+	if (!myMesh)
+	{
+		// Error handling: Input mesh is null
+		return nullptr;
+	}
 
-std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform) {
-    if (!myMesh) {
-        // Error handling: Input mesh is null
-        return nullptr;
-    }
+	auto transformedMesh = std::make_shared<malha>(*myMesh); // Create a copy of the original mesh
 
-    auto transformedMesh = std::make_shared<malha>(*myMesh); // Create a copy of the original mesh
+	for (auto &vertex : transformedMesh->vertices)
+	{
+		// Apply transformation to the position
+		glm::vec4 pos(vertex.posicao[0], vertex.posicao[1], vertex.posicao[2], 1.0f);
+		pos = transform * pos;
+		for (int j = 0; j < 3; ++j)
+		{
+			vertex.posicao[j] = pos[j];
+		}
+	}
 
-    for (auto& vertex : transformedMesh->vertices) {
-        // Apply transformation to the position
-        glm::vec4 pos(vertex.posicao[0], vertex.posicao[1], vertex.posicao[2], 1.0f);
-        pos = transform * pos;
-        for (int j = 0; j < 3; ++j) {
-            vertex.posicao[j] = pos[j];
-        }
+	transformedMesh->comprimir_posicao();
 
-    }
-
-    return transformedMesh;
+	return transformedMesh;
 }
 
-
-std::shared_ptr<malha> fuse_meshes(std::vector<std::shared_ptr<malha>> myMeshes, std::vector<glm::mat4> transforms) {
+std::shared_ptr<malha> fuse_meshes(std::vector<std::shared_ptr<malha>> myMeshes, std::vector<glm::mat4> transforms)
+{
 
 	std::vector<unsigned int> indice = {};
 	std::vector<vertice> vertices = {};
-	
+
 	unsigned int indexOffset = 0;
-    
-	for(size_t a = 1; a < myMeshes.size() ; a++){
-	//for(size_t a = 0; a < 1 ; a++){
+
+	for (size_t a = 1; a < myMeshes.size(); a++)
+	{
 
 		std::shared_ptr<malha> mesh = myMeshes[a];
 		glm::mat4 matrix = transforms[a];
 
-		for(size_t b = 0; b < mesh->vertices.size() ; b++ ){
+		for (size_t b = 0; b < mesh->vertices.size(); b++)
+		{
 
 			vertice v = mesh->vertices[b];
-			vec3 vp = matrix * vec4(v.posicao[0],v.posicao[1],v.posicao[2],1.0f);
+			vec3 vp = matrix * vec4(v.posicao[0], v.posicao[1], v.posicao[2], 1.0f);
 			v.posicao[0] = vp.x;
 			v.posicao[1] = vp.y;
 			v.posicao[2] = vp.z;
-			
 
 			vertices.push_back(v);
-			
 		}
-		
-		for(size_t b = 0; b < mesh->indice.size();b++){
+
+		for (size_t b = 0; b < mesh->indice.size(); b++)
+		{
 			indice.push_back(mesh->indice[b] + indexOffset);
 		}
 
-		indexOffset+=mesh->vertices.size();
+		indexOffset += mesh->vertices.size();
 	}
 
-    return make_shared<malha>(malha(indice,vertices));
+	malha ret = malha(indice, vertices);
+	ret.comprimir_posicao();
+	return make_shared<malha>(ret);
 }
-
-
-
-
-
 
 
 
