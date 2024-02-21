@@ -230,11 +230,6 @@ rcPolyMesh* convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha) {
         return nullptr;
     }
 
-    // Limpar malha para remover vértices duplicados e ajustar índices
-    //minhaMalha->limpar_malha();
-
-    //print("minhaMalha info",minhaMalha->vertices.size(),minhaMalha->indice.size());
-
     rcPolyMesh* polyMesh = new rcPolyMesh();
     if (!polyMesh) {
         return nullptr;
