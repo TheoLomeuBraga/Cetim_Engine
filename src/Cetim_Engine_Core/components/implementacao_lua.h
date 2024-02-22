@@ -2243,6 +2243,26 @@ namespace funcoes_ponte
 		}
 	}
 
+	int remove_navmesh(lua_State *L){
+		return 0;
+	}
+
+	int remove_all_navmesh(lua_State *L){
+		return 0;
+	}
+
+	int create_navmesh(lua_State *L){
+		return 0;
+	}
+
+	int generate_navmesh_path(lua_State *L){
+		return 0;
+	}
+
+	
+
+	
+
 	int get_objects_coliding(lua_State *L)
 	{
 
@@ -2564,10 +2584,22 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("raycast_3D", funcoes_ponte::raycast_3D),
 
 														   }),
-		pair<string, map<string, lua_function>>("audio", {
-															 pair<string, lua_function>("get_set_audio", funcoes_ponte::get_set_audio),
-															 pair<string, lua_function>("get_set_global_volume", funcoes_ponte::get_set_global_volume),
-															 pair<string, lua_function>("set_lisener_object", funcoes_ponte::set_lisener_object),
+		pair<string, map<string, lua_function>>("navmesh", {
+															 pair<string, lua_function>("remove_navmesh", remove_navmesh),
+															 pair<string, lua_function>("remove_all_navmesh", remove_all_navmesh),
+															 pair<string, lua_function>("create_navmesh", create_navmesh),
+															 pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
+															 }),
+		pair<string, map<string, lua_function>>("script", {
+															  pair<string, lua_function>("get_script_size", get_script_size),
+															  pair<string, lua_function>("set_script_var", set_script_var),
+															  pair<string, lua_function>("get_lua_component", get_lua_component),
+															  pair<string, lua_function>("have_script", have_script),
+															  pair<string, lua_function>("add_script_lua", add_script_lua),
+															  pair<string, lua_function>("remove_script", remove_script),
+															  pair<string, lua_function>("get_lua_var", get_lua_var),
+															  pair<string, lua_function>("set_lua_var", set_lua_var),
+															  pair<string, lua_function>("call_lua_function", call_lua_function),
 														 }),
 		pair<string, map<string, lua_function>>("script", {
 															  pair<string, lua_function>("get_script_size", get_script_size),

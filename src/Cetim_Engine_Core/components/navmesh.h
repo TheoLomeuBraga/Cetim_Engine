@@ -290,14 +290,13 @@ public:
             polyFlags = NULL;
         }
 
-        if(navmeshes.find(tag) == navmeshes.end()){
+        if (navmeshes.find(tag) == navmeshes.end())
+        {
             navmeshes.erase(tag);
         }
-        
-
     }
 
-    void show_this(bool on)
+    void show_this(bool on = true)
     {
 
         if (on)
@@ -323,7 +322,7 @@ public:
         }
     }
 
-    static void show(bool on)
+    static void show(bool on = true)
     {
         for (pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes)
         {
@@ -335,74 +334,139 @@ public:
     {
         clear();
 
-        glm::mat4 tfm = esse_objeto->pegar_componente<transform_>()->pegar_matriz();
-        internal_path_mesh = apply_transformation_to_mesh(path_mesh, tfm);
-        rcmeshes = navmesh_convertToRcPolyMesh(internal_path_mesh);
-
-        // navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
-
-        dtNavMeshCreateParams params;
-        memset(&params, 0, sizeof(params));
-        params.verts = rcmeshe->verts;
-        params.vertCount = rcmeshe->nverts;
-        params.polys = rcmeshe->polys;
-        params.polyCount = rcmeshe->npolys;
-        params.nvp = rcmeshe->nvp;
-        params.cs = rcmeshe->cs;
-        params.ch = rcmeshe->ch;
-        memcpy(params.bmin, rcmeshe->bmin, sizeof(params.bmin));
-        memcpy(params.bmax, rcmeshe->bmax, sizeof(params.bmax));
-        params.walkableHeight = 2.0f;
-        params.walkableRadius = 1.0f;
-        params.walkableClimb = 0.5f;
-        params.tileX = 0;
-        params.tileY = 0;
-        params.tileLayer = 0;
-        params.buildBvTree = true;
-
-        polyAreas = new unsigned char[rcmeshe->npolys];
-        polyFlags = new unsigned short[rcmeshe->npolys * 2]; // *2 para incluir flags de borda
-        for (int i = 0; i < rcmeshe->npolys; ++i)
+        if (esse_objeto->pegar_componente<transform_>())
         {
-            polyAreas[i] = 63; // Define todas as áreas como caminháveis
-            // Configura os flags para cada polígono e suas bordas
-            for (int j = 0; j < 2; ++j)
+
+            glm::mat4 tfm = esse_objeto->pegar_componente<transform_>()->pegar_matriz();
+            internal_path_mesh = apply_transformation_to_mesh(path_mesh, tfm);
+            rcmeshes = navmesh_convertToRcPolyMesh(internal_path_mesh);
+
+            // navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
+
+            dtNavMeshCreateParams params;
+            memset(&params, 0, sizeof(params));
+            params.verts = rcmeshe->verts;
+            params.vertCount = rcmeshe->nverts;
+            params.polys = rcmeshe->polys;
+            params.polyCount = rcmeshe->npolys;
+            params.nvp = rcmeshe->nvp;
+            params.cs = rcmeshe->cs;
+            params.ch = rcmeshe->ch;
+            memcpy(params.bmin, rcmeshe->bmin, sizeof(params.bmin));
+            memcpy(params.bmax, rcmeshe->bmax, sizeof(params.bmax));
+            params.walkableHeight = 2.0f;
+            params.walkableRadius = 1.0f;
+            params.walkableClimb = 0.5f;
+            params.tileX = 0;
+            params.tileY = 0;
+            params.tileLayer = 0;
+            params.buildBvTree = true;
+
+            polyAreas = new unsigned char[rcmeshe->npolys];
+            polyFlags = new unsigned short[rcmeshe->npolys * 2]; // *2 para incluir flags de borda
+            for (int i = 0; i < rcmeshe->npolys; ++i)
             {
-                polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
+                polyAreas[i] = 63; // Define todas as áreas como caminháveis
+                // Configura os flags para cada polígono e suas bordas
+                for (int j = 0; j < 2; ++j)
+                {
+                    polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
+                }
             }
+            params.polyAreas = polyAreas;
+            params.polyFlags = polyFlags;
+
+            unsigned char *navData;
+            int navDataSize;
+            if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+            {
+                clear();
+                return;
+            }
+
+            // Inicializar dtNavMesh com os dados de navegação
+
+            if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
+            {
+                clear();
+                return;
+            }
+
+            navmeshes.insert(pair<std::string, shared_ptr<objeto_jogo>>(tag, esse_objeto));
         }
-        params.polyAreas = polyAreas;
-        params.polyFlags = polyFlags;
-
-        unsigned char *navData;
-        int navDataSize;
-        if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-        {
-            clear();
-            return;
-        }
-
-        // Inicializar dtNavMesh com os dados de navegação
-
-        if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
-        {
-            clear();
-            return;
-        }
-
-        navmeshes.insert(pair<std::string, shared_ptr<objeto_jogo>>(tag, esse_objeto));
     }
 
-    std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end)
+    std::vector<glm::vec3> generate_this_path(glm::vec3 start, glm::vec3 end)
     {
-        return {};
+
+        std::vector<glm::vec3> path;
+
+        if (!navMesh)
+        {
+            print("no path found no navmesh");
+            return {}; // Retorna um vetor vazio se a malha de navegação não for fornecida
+        }
+
+        dtNavMeshQuery query;
+        query.init(navMesh, 2048); // 2048 é o tamanho máximo do conjunto de nós da consulta
+
+        // Converter glm::vec3 para o formato do Detour
+        float startPos[3] = {start.x, start.y, start.z};
+        float endPos[3] = {end.x, end.y, end.z};
+
+        // Configurações de filtro baseadas nas habilidades do personagem
+        dtQueryFilter filter;
+        // unsigned short includeFlags = canJump ? 0x08 : 0x01; // Flags de inclusão
+        filter.setIncludeFlags(0x01);
+        filter.setExcludeFlags(0);    // Sem flags de exclusão
+        filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
+
+        float tolerance[3] = {1, 2, 1}; // Tolerância para encontrar o polígono mais próximo
+
+        // Encontrar os polígonos mais próximos de start e end
+        dtPolyRef startRef, endRef;
+        query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
+        query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
+
+        if (startRef == 0 || endRef == 0)
+        {
+            print("no path found no start or end point was found", startRef, endRef);
+            return {}; // Não foram encontrados polígonos de referência válidos
+        }
+
+        // Calcular o caminho
+        dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
+        int nPathPolys;
+        query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
+
+        if (nPathPolys == 0)
+        {
+            print("no path found couldnt construct path");
+            return {}; // Caminho não encontrado
+        }
+
+        // Obter pontos do caminho
+        float straightPath[256 * 3]; // Supondo um máximo de 256 pontos
+        unsigned char straightPathFlags[256];
+        dtPolyRef straightPathPolys[256];
+        int nStraightPath;
+        query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, straightPathFlags, straightPathPolys, &nStraightPath, 256, 0);
+
+        for (int i = 0; i < nStraightPath; ++i)
+        {
+            glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+            path.push_back(point);
+            print_cube_in_space(point);
+        }
+
+        return path;
     }
 
     static std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end, std::string tag)
     {
         if (navmeshes.find(tag) != navmeshes.end())
         {
-            return navmeshes[tag]->pegar_componente<navmesh>()->generate_path(start, end);
+            return navmeshes[tag]->pegar_componente<navmesh>()->generate_this_path(start, end);
         }
         return {};
     }
@@ -411,22 +475,40 @@ public:
 
     static void remove_navmesh(std::string tag = "")
     {
-        if(navmeshes.find(tag)!=navmeshes.end()){
+        if (navmeshes.find(tag) != navmeshes.end())
+        {
             cena_objetos_selecionados->remover_objeto(navmeshes[tag]);
-            navmeshes.erase(tag);
+            // navmeshes.erase(tag);
         }
     }
 
     static void remove_all_navmesh(std::string tag = "")
     {
-        for(pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes){
+        for (pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes)
+        {
             remove_navmesh(p.first);
         }
     }
 
-    static shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position, glm::quat rotation, glm::vec3 scale,shared_ptr<malha> m, std::string tag = "")
+    static shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position, glm::quat rotation, glm::vec3 scale, shared_ptr<malha> mesh, std::string tag = "")
     {
-        return NULL;
+        shared_ptr<objeto_jogo> navmesh_obj = novo_objeto_jogo();
+        navmesh_obj->adicionar_componente<transform_>();
+        shared_ptr<transform_> tf = navmesh_obj->pegar_componente<transform_>();
+        tf->pos = position;
+        tf->quater = rotation;
+        tf->esca = scale;
+
+        navmesh_obj->adicionar_componente<navmesh>();
+        shared_ptr<navmesh> nm = navmesh_obj->pegar_componente<navmesh>();
+        nm->tag = tag;
+        nm->path_mesh = mesh;
+
+        nm->apply();
+        nm->show_this();
+
+        // navmeshes.insert(pair<std::string, shared_ptr<objeto_jogo>>(tag,navmesh_obj));
+        return navmesh_obj;
     }
 };
 
