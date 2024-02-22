@@ -12,4 +12,5 @@ require("components.transform")
 require("components.render_poly_mesh")
 require("components.ui_component")
 require("components.light")
+require("components.navmesh")
 

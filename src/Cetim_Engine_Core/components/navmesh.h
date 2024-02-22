@@ -238,14 +238,15 @@ private:
     dtNavMesh *navMesh = NULL;
     int navDataSize = 0;
     unsigned char *navData = NULL;
-    unsigned char *tempPolyAreas = NULL;
-    unsigned short *tempPolyFlags = NULL;
+    unsigned char *polyAreas = NULL;
+    unsigned short *polyFlags = NULL;
 
     shared_ptr<malha> internal_path_mesh = NULL;
 
     shared_ptr<render_malha> rm = NULL;
 
 public:
+    std::string tag = "";
     static float navmeshQuality;
     static std::map<std::string, shared_ptr<objeto_jogo>> navmeshes;
 
@@ -259,16 +260,41 @@ public:
         navDataSize = 0;
         internal_path_mesh = NULL;
 
-        free(rcmeshe);
-        rcmeshe = NULL;
-        free(navMesh);
-        navMesh = NULL;
-        free(navData);
-        navData = NULL;
-        free(tempPolyAreas);
-        tempPolyAreas = NULL;
-        free(tempPolyFlags);
-        tempPolyFlags = NULL;
+        if (rcmeshe)
+        {
+            free(rcmeshe);
+            rcmeshe = NULL;
+        }
+
+        if (navMesh)
+        {
+            free(navMesh);
+            navMesh = NULL;
+        }
+
+        if (navData)
+        {
+            free(navData);
+            navData = NULL;
+        }
+
+        if (polyAreas)
+        {
+            free(polyAreas);
+            polyAreas = NULL;
+        }
+
+        if (polyFlags)
+        {
+            free(polyFlags);
+            polyFlags = NULL;
+        }
+
+        if(navmeshes.find(tag) == navmeshes.end()){
+            navmeshes.erase(tag);
+        }
+        
+
     }
 
     void show_this(bool on)
@@ -277,7 +303,7 @@ public:
         if (on)
         {
             esse_objeto->adicionar_componente<render_malha>();
-            rm = display_nav_mesh->pegar_componente<render_malha>();
+            rm = esse_objeto->pegar_componente<render_malha>();
             rm->usar_oclusao = false;
             rm->camada = 4;
 
@@ -290,23 +316,81 @@ public:
 
             rm->mats = {mat};
             cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
-
-        }else if(rm){
+        }
+        else if (rm)
+        {
             esse_objeto->remover_componente<render_malha>();
         }
     }
 
     static void show(bool on)
     {
-       for(pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes){
+        for (pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes)
+        {
             p.second->pegar_componente<navmesh>()->show_this(on);
-       }
+        }
     }
 
     void apply()
     {
-
         clear();
+
+        glm::mat4 tfm = esse_objeto->pegar_componente<transform_>()->pegar_matriz();
+        internal_path_mesh = apply_transformation_to_mesh(path_mesh, tfm);
+        rcmeshes = navmesh_convertToRcPolyMesh(internal_path_mesh);
+
+        // navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
+
+        dtNavMeshCreateParams params;
+        memset(&params, 0, sizeof(params));
+        params.verts = rcmeshe->verts;
+        params.vertCount = rcmeshe->nverts;
+        params.polys = rcmeshe->polys;
+        params.polyCount = rcmeshe->npolys;
+        params.nvp = rcmeshe->nvp;
+        params.cs = rcmeshe->cs;
+        params.ch = rcmeshe->ch;
+        memcpy(params.bmin, rcmeshe->bmin, sizeof(params.bmin));
+        memcpy(params.bmax, rcmeshe->bmax, sizeof(params.bmax));
+        params.walkableHeight = 2.0f;
+        params.walkableRadius = 1.0f;
+        params.walkableClimb = 0.5f;
+        params.tileX = 0;
+        params.tileY = 0;
+        params.tileLayer = 0;
+        params.buildBvTree = true;
+
+        polyAreas = new unsigned char[rcmeshe->npolys];
+        polyFlags = new unsigned short[rcmeshe->npolys * 2]; // *2 para incluir flags de borda
+        for (int i = 0; i < rcmeshe->npolys; ++i)
+        {
+            polyAreas[i] = 63; // Define todas as áreas como caminháveis
+            // Configura os flags para cada polígono e suas bordas
+            for (int j = 0; j < 2; ++j)
+            {
+                polyFlags[i * 2 + j] = 0x01; // Flag indicando que as bordas são atravessáveis
+            }
+        }
+        params.polyAreas = polyAreas;
+        params.polyFlags = polyFlags;
+
+        unsigned char *navData;
+        int navDataSize;
+        if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+        {
+            clear();
+            return;
+        }
+
+        // Inicializar dtNavMesh com os dados de navegação
+
+        if (dtStatusFailed(navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA)))
+        {
+            clear();
+            return;
+        }
+
+        navmeshes.insert(pair<std::string, shared_ptr<objeto_jogo>>(tag, esse_objeto));
     }
 
     std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end)
@@ -324,16 +408,23 @@ public:
     }
 
     ~navmesh() { clear(); }
+
+    static void remove_navmesh(std::string tag = "")
+    {
+    }
+
+    static void remove_all_navmesh(std::string tag = "")
+    {
+        for(pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes){
+            remove_navmesh(p.first);
+        }
+    }
+
+    static shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position, glm::quat rotation, glm::vec3 scale,shared_ptr<malha> m, std::string tag = "")
+    {
+        return NULL;
+    }
 };
 
 float navmesh::navmeshQuality = 1.0f;
 std::map<std::string, shared_ptr<objeto_jogo>> navmesh::navmeshes = {};
-
-void remove_navmesh(std::string tag = "")
-{
-}
-
-shared_ptr<objeto_jogo> create_navmesh(glm::vec3 position, glm::quat rotation, glm::vec3 scale, std::string tag = "")
-{
-    return NULL;
-}

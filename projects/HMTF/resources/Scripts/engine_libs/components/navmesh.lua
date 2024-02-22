@@ -1,8 +1,7 @@
-register_function_set("physics")
+--register_function_set("navmesh")
 
 require("components.base_component")
 require("components.component_index")
-require("objects.collision_shapes")
 
 
 --boady_dynamics
