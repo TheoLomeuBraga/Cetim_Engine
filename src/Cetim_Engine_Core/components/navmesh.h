@@ -482,7 +482,7 @@ public:
         }
     }
 
-    static void remove_all_navmesh(std::string tag = "")
+    static void remove_all_navmesh()
     {
         for (pair<std::string, shared_ptr<objeto_jogo>> p : navmeshes)
         {
@@ -498,6 +498,7 @@ public:
         tf->pos = position;
         tf->quater = rotation;
         tf->esca = scale;
+        tf->pegar_matriz();
 
         navmesh_obj->adicionar_componente<navmesh>();
         shared_ptr<navmesh> nm = navmesh_obj->pegar_componente<navmesh>();
