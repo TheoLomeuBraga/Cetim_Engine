@@ -2147,10 +2147,7 @@ namespace funcoes_ponte
 		}
 	}
 
-	int bake_navmesh(lua_State *L){
-		bake_navmesh_3D();
-		return 0;
-	}
+	
 	
 	int get_set_physic_3D(lua_State *L)
 	{
@@ -2561,7 +2558,6 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("add_rotative_force", funcoes_ponte::add_rotative_force),
 															   pair<string, lua_function>("add_rotative_impulse", funcoes_ponte::add_rotative_impulse),
 															   pair<string, lua_function>("raycast_2D", funcoes_ponte::raycast_2D),
-															   pair<string, lua_function>("bake_navmesh", funcoes_ponte::bake_navmesh),
 															   pair<string, lua_function>("get_set_physic_3D", funcoes_ponte::get_set_physic_3D),
 															   pair<string, lua_function>("get_objects_coliding", funcoes_ponte::get_objects_coliding),
 															   pair<string, lua_function>("get_collision_infos", funcoes_ponte::get_collision_infos),

@@ -16,7 +16,6 @@ components = {
     ui_component = "ui_component",
     ui = "ui_component",
     light = "light",
-    navmesh = "navmesh",
 }
 
 transform = "transform"
@@ -35,5 +34,4 @@ render_poly_mesh = "render_poly_mesh"
 ui_component = "ui_component"
 ui = "ui_component"
 light = "light"
-navmesh = "navmesh"
 

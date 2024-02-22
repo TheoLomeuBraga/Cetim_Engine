@@ -91,8 +91,6 @@ function level:START()
     --print("FFFFF")
 
     coroutine.yield()
-
-    bake_navmesh()
     
 
     --print("GGGGG")
