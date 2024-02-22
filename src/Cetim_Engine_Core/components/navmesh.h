@@ -411,6 +411,10 @@ public:
 
     static void remove_navmesh(std::string tag = "")
     {
+        if(navmeshes.find(tag)!=navmeshes.end()){
+            cena_objetos_selecionados->remover_objeto(navmeshes[tag]);
+            navmeshes.erase(tag);
+        }
     }
 
     static void remove_all_navmesh(std::string tag = "")

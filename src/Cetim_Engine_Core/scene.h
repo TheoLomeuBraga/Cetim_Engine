@@ -66,6 +66,7 @@ public:
 
 	void remover_objeto(objeto_jogo *obj)
 	{
+		remover_objeto(obj->esse_objeto);
 	}
 
 	void remover_objetos(vector<shared_ptr<objeto_jogo>> objs)
