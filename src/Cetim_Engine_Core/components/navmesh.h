@@ -500,10 +500,12 @@ public:
         nm->tag = tag;
         nm->path_mesh = mesh;
 
+        cena_objetos_selecionados->adicionar_objeto(navmesh_obj);
+
         nm->apply();
         nm->show_this();
 
-        // navmeshes.insert(pair<std::string, shared_ptr<objeto_jogo>>(tag,navmesh_obj));
+        
         return navmesh_obj;
     }
 };
