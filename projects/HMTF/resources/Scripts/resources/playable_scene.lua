@@ -363,7 +363,8 @@ cenary_builders = {
         
         elseif part_data.variables.type == "navmesh" then
 
-            create_navmesh(part_data.position,part_data.rotation.y,part_data.scale,part_data.meshes[1],part_data.variables.tag)
+            create_navmesh(part_data.position,part_data.rotation,part_data.scale,part_data.meshes[1],part_data.variables.tag)
+            change_ret()
 
         elseif part_data.variables.type == nil then
             add_mesh(nil)

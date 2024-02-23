@@ -2103,7 +2103,8 @@
 		},
 		{
 			"extras":{
-				"type":"sb"
+				"type":"navmesh",
+				"tag":""
 			},
 			"mesh":58,
 			"name":"Plane.001",
