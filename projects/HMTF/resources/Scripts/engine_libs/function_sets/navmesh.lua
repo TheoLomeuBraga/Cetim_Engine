@@ -8,7 +8,7 @@ function remove_all_navmesh()
     c_remove_all_navmesh()
 end
 
-function remove_navmesh(position,rotation,scale,mesh,tag)
+function create_navmesh(position,rotation,scale,mesh,tag)
     c_create_navmesh(position,rotation,scale,mesh,tag)
 end
 

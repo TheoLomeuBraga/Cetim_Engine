@@ -7,6 +7,7 @@ require("objects.scene_3D")
 require("components.audio_source")
 require("components.ui_component")
 require("resources.playable_scene")
+require("function_sets.navmesh")
 
 local level = {
     cenary_obj = {},
@@ -52,7 +53,10 @@ end
 
 function level:START()
 
-    --print("AAAAA")
+    coroutine.yield()
+
+    remove_all_navmesh()
+
     coroutine.yield()
 
     local layers = global_data.layers

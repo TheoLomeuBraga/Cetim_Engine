@@ -6,6 +6,7 @@ require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_render_shader")
 require("resources.enemy_api")
+require("function_sets.navmesh")
 
 menus = {
     open_pause_menu = function()
@@ -316,6 +317,9 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
+        
+        
+
         elseif part_data.variables.type == "mensage" then
             
             ret.components.lua_scripts:add_script("game_scripts/mensage")
@@ -359,6 +363,10 @@ cenary_builders = {
 
         elseif part_data.variables.type == nil then
             add_mesh(nil)
+
+        elseif part_data.variables.type == "navmesh" then
+
+            create_navmesh(part_data.position,part_data.rotation.y,part_data.scale,part_data.meshes[1],part_data.variables.tag)
         
         end
         

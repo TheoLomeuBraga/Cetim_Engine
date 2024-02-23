@@ -298,6 +298,8 @@ public:
 
     void show_this(bool on = true)
     {
+        
+        esse_objeto->remover_componente<render_malha>();
 
         if (on)
         {
@@ -315,10 +317,6 @@ public:
 
             rm->mats = {mat};
             cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
-        }
-        else if (rm)
-        {
-            esse_objeto->remover_componente<render_malha>();
         }
     }
 
@@ -340,8 +338,6 @@ public:
             glm::mat4 tfm = esse_objeto->pegar_componente<transform_>()->pegar_matriz();
             internal_path_mesh = apply_transformation_to_mesh(path_mesh, tfm);
             rcmeshes = navmesh_convertToRcPolyMesh(internal_path_mesh);
-
-            // navMesh = rcPolyMesh_chuncks_to_navMesh(rcmeshes);
 
             dtNavMeshCreateParams params;
             memset(&params, 0, sizeof(params));
