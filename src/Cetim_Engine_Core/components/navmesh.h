@@ -231,6 +231,42 @@ void navmesh_locate_dtNavMeshCreateParams_error(dtNavMeshCreateParams *params)
     print("no error");
 }
 
+float navmesh_color_intensity = 0.0;
+
+void navmesh_print_cube_in_space(vec3 pos)
+{
+
+    // ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]
+
+    shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
+    display_nav_mesh->adicionar_componente<transform_>();
+    display_nav_mesh->pegar_componente<transform_>()->pos = pos;
+    display_nav_mesh->pegar_componente<transform_>()->esca = vec3(0.25,0.25,0.25);
+
+    display_nav_mesh->adicionar_componente<render_malha>();
+    shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
+
+    rm->usar_oclusao = false;
+    rm->camada = 4;
+
+    Material mat;
+    mat.shad = "resources/Shaders/mesh";
+    mat.cor = vec4(navmesh_color_intensity, 0.0, 0.5, 1);
+    navmesh_color_intensity += 0.5;
+    if (navmesh_color_intensity > 1)
+    {
+        navmesh_color_intensity = 0;
+    }
+    mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+
+    rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
+
+    rm->mats = {mat};
+    cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+
+    print("cube pos:", pos.x, pos.y, pos.z);
+}
+
 class navmesh : public componente
 {
 private:
@@ -451,7 +487,7 @@ public:
         {
             glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
             path.push_back(point);
-            print_cube_in_space(point);
+            navmesh_print_cube_in_space(point);
         }
 
         return path;
@@ -473,7 +509,7 @@ public:
         if (navmeshes.find(tag) != navmeshes.end())
         {
             cena_objetos_selecionados->remover_objeto(navmeshes[tag]);
-            // navmeshes.erase(tag);
+            //navmeshes.erase(tag);
         }
     }
 

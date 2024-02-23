@@ -98,6 +98,11 @@ function level:START()
     
 
     --print("GGGGG")
+
+    generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(90.0, 40.5, -71.0),"")
+
+    generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(106.0, 64.5, -266.0),"")
+    generate_navmesh_path(Vec3:new(106.0, 64.5, -266.0),Vec3:new(65.0, 68.5, -276.0),"")
     
     
 
