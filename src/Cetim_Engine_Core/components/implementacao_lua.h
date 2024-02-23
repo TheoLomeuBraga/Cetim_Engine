@@ -2270,6 +2270,11 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int show_navmesh(lua_State *L){
+		navmesh::show(lua_toboolean(L,1));
+		return 0;
+	}
+
 	
 
 	
@@ -2600,6 +2605,7 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("remove_all_navmesh", remove_all_navmesh),
 															 pair<string, lua_function>("create_navmesh", create_navmesh),
 															 pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
+															 pair<string, lua_function>("show_navmesh", show_navmesh),
 															 }),
 		pair<string, map<string, lua_function>>("audio", {
 															 pair<string, lua_function>("get_set_audio", get_set_audio),

@@ -1,5 +1,9 @@
 register_function_set("navmesh")
 
+function show_navmesh(on)
+    c_show_navmesh(on)
+end
+
 function remove_navmesh(tag)
     c_remove_navmesh(tag)
 end

@@ -106,8 +106,6 @@ function level:START()
     global_data.level_animation_data = {path="resources/Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
-    
-    
 
     time:set_speed(1)
     

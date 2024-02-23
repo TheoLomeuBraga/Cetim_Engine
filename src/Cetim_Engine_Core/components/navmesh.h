@@ -503,7 +503,7 @@ public:
         cena_objetos_selecionados->adicionar_objeto(navmesh_obj);
 
         nm->apply();
-        nm->show_this();
+        //nm->show_this();
 
         
         return navmesh_obj;
