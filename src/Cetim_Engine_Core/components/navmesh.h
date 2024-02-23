@@ -316,7 +316,7 @@ public:
             rm->malhas = {path_mesh};
 
             rm->mats = {mat};
-            cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+            //cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
         }
     }
 
@@ -339,9 +339,7 @@ public:
 
             glm::mat4 tfm = esse_objeto->pegar_componente<transform_>()->pegar_matriz();
             internal_path_mesh = apply_transformation_to_mesh(path_mesh, tfm);
-            print("AAAAA",internal_path_mesh.get());
             rcmeshe = navmesh_convertToRcPolyMesh(internal_path_mesh);
-            print("BBBBB",rcmeshe);
 
             dtNavMeshCreateParams params;
             memset(&params, 0, sizeof(params));
