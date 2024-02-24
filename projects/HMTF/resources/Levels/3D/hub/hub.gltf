@@ -2759,12 +2759,6 @@
 			},
 			"name":"navmesh",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.004385222680866718,
-					0.3996303677558899,
-					0.4998406171798706,
-					1
-				],
 				"metallicFactor":0,
 				"roughnessFactor":0.9
 			}

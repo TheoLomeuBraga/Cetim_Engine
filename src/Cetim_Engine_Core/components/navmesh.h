@@ -106,6 +106,47 @@ void navmesh_fillVerticesAndIndices(rcPolyMesh *polyMesh, std::shared_ptr<malha>
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
+std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh *nMesh)
+{
+    if (!nMesh)
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<malha> convertedMesh = std::make_shared<malha>();
+    for (int i = 0; i < nMesh->getMaxTiles(); ++i)
+    {
+        const dtMeshTile *tile = nMesh->getTile(i);
+        if (!tile || !tile->header)
+        {
+            continue;
+        }
+
+        for (int vi = 0; vi < tile->header->vertCount; ++vi)
+        {
+            const float *v = &tile->verts[vi * 3];
+            vertice_struct vertex;
+            vertex.posicao[0] = v[0];
+            vertex.posicao[1] = v[1];
+            vertex.posicao[2] = v[2];
+            convertedMesh->vertices.push_back(vertex);
+        }
+
+        for (int pi = 0; pi < tile->header->polyCount; ++pi)
+        {
+            const dtPoly *poly = &tile->polys[pi];
+
+            for (int pj = 0; pj < poly->vertCount; ++pj)
+            {
+                convertedMesh->indice.push_back(poly->verts[pj]);
+            }
+        }
+    }
+
+    return convertedMesh;
+}
+
+/*
 void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh)
 {
     if (!polyMesh)
@@ -168,6 +209,119 @@ void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh)
         }
     }
 }
+*/
+
+/*
+void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
+    if (polyMesh == nullptr) return;
+
+    const int nvp = polyMesh->nvp; // The maximum number of vertices per polygon
+
+    // Iterate over each polygon
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        unsigned short *p = &polyMesh->polys[i * 2 * nvp];
+
+        // Check each edge of the polygon
+        for (int j = 0; j < nvp; ++j) {
+            if (p[j] == RC_MESH_NULL_IDX) break; // End of this polygon's vertices
+
+            if (p[nvp + j] != RC_MESH_NULL_IDX) continue; // Skip if already has a neighbor
+
+            // Assume it's a border edge by default
+            bool isBorderEdge = true;
+
+            // Check if the edge is shared with another polygon
+            for (int k = 0; k < polyMesh->npolys; ++k) {
+                if (i == k) continue; // Don't check the same polygon
+
+                unsigned short *q = &polyMesh->polys[k * 2 * nvp];
+
+                for (int l = 0; l < nvp; ++l) {
+                    if (q[l] == RC_MESH_NULL_IDX) break; // End of the other polygon's vertices
+
+                    // Check if the current edge of polygon i is shared with polygon k
+                    if ((p[j] == q[l] && p[j == nvp - 1 ? 0 : j + 1] == q[l == 0 ? nvp - 1 : l - 1]) ||
+                        (p[j] == q[l == 0 ? nvp - 1 : l - 1] && p[j == nvp - 1 ? 0 : j + 1] == q[l])) {
+                        // Edge is shared with another polygon
+                        isBorderEdge = false;
+                        p[nvp + j] = k; // Update the neighbor index
+                        break;
+                    }
+                }
+
+                if (!isBorderEdge) break; // No need to check further if edge is already marked as shared
+            }
+
+            if (isBorderEdge) {
+                p[nvp + j] = RC_MESH_NULL_IDX; // Mark the edge as a border
+            }
+        }
+    }
+}
+*/
+
+
+
+
+
+
+#include <Recast.h>
+
+void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
+    if (polyMesh == nullptr) return;
+
+    const int nvp = polyMesh->nvp; // The maximum number of vertices per polygon
+
+    // Iterate over each polygon
+    for (int i = 0; i < polyMesh->npolys; ++i) {
+        unsigned short *p = &polyMesh->polys[i * 2 * nvp];
+
+        // Check each edge of the polygon
+        for (int j = 0; j < nvp; ++j) {
+            if (p[j] == RC_MESH_NULL_IDX) break; // End of this polygon's vertices
+
+            if (p[nvp + j] != RC_MESH_NULL_IDX) continue; // Skip if already has a neighbor
+
+            // Assume it's a border edge by default
+            bool isBorderEdge = true;
+
+            // Check if the edge is shared with another polygon
+            for (int k = 0; k < polyMesh->npolys; ++k) {
+                if (i == k) continue; // Don't check the same polygon
+
+                unsigned short *q = &polyMesh->polys[k * 2 * nvp];
+
+                for (int l = 0; l < nvp; ++l) {
+                    if (q[l] == RC_MESH_NULL_IDX) break; // End of the other polygon's vertices
+
+                    // Check if the current edge of polygon i is shared with polygon k
+                    if ((p[j] == q[l] && p[j == nvp - 1 ? 0 : j + 1] == q[l == 0 ? nvp - 1 : l - 1]) ||
+                        (p[j] == q[l == 0 ? nvp - 1 : l - 1] && p[j == nvp - 1 ? 0 : j + 1] == q[l])) {
+                        // Edge is shared with another polygon
+                        isBorderEdge = false;
+                        p[nvp + j] = k; // Update the neighbor index
+                        break;
+                    }
+                }
+
+                if (!isBorderEdge) break; // No need to check further if edge is already marked as shared
+            }
+
+            if (isBorderEdge) {
+                p[nvp + j] = RC_MESH_NULL_IDX; // Mark the edge as a border
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 
 rcPolyMesh *navmesh_convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
 {
@@ -282,6 +436,7 @@ private:
 
     shared_ptr<malha> internal_path_mesh = NULL;
 
+    shared_ptr<objeto_jogo> display = NULL;
     shared_ptr<render_malha> rm = NULL;
 
 public:
@@ -337,13 +492,24 @@ public:
 
     void show_this(bool on = true)
     {
-        
-        esse_objeto->remover_componente<render_malha>();
 
-        if (on)
+        if(display){
+            cena_objetos_selecionados->remover_objeto(display);
+        }
+        
+        
+        rm = NULL;
+        display = NULL;
+        
+        
+        if (on && navMesh)
         {
-            esse_objeto->adicionar_componente<render_malha>();
-            rm = esse_objeto->pegar_componente<render_malha>();
+
+            print("AAAAA");
+            display = novo_objeto_jogo();
+            display->adicionar_componente<transform_>();
+            display->adicionar_componente<render_malha>();
+            rm = display->pegar_componente<render_malha>();
             rm->usar_oclusao = false;
             rm->camada = 4;
 
@@ -352,10 +518,10 @@ public:
             mat.cor = vec4(0.1, 0.1, 1, 0.5);
             mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
-            rm->malhas = {path_mesh};
+            rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
 
             rm->mats = {mat};
-            //cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
+            cena_objetos_selecionados->adicionar_objeto(display);
         }
     }
 
