@@ -667,31 +667,39 @@ public:
 		indice = std::move(newIndices);
 	}
 
-	// VertexHasherPosition
+	// Custom comparison function for vertices based only on position.
+    static bool posComp(const vertice& v1, const vertice& v2) {
+        return std::tie(v1.posicao[0], v1.posicao[1], v1.posicao[2]) < std::tie(v2.posicao[0], v2.posicao[1], v2.posicao[2]);
+    }
 
 	void comprimir_posicao()
 	{
 
-		std::unordered_map<glm::vec3, unsigned int, VertexPositionHasher> uniqueVertexMap;
-		std::vector<vertice> newVertices;
-		std::vector<unsigned int> newIndices;
+		std::map<vertice, unsigned int, bool(*)(const vertice&, const vertice&)> uniqueVertices(posComp);
+        std::vector<vertice> compressedVertices;
+        std::vector<unsigned int> newIndices;
 
-		for (const auto &vert : vertices)
-		{
-			glm::vec3 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2]);
+        // Map to keep track of new indices.
+        std::map<unsigned int, unsigned int> indexMap;
 
-			if (uniqueVertexMap.find(pos) == uniqueVertexMap.end())
-			{
-				uniqueVertexMap[pos] = newVertices.size();
-				newVertices.push_back(vert);
-			}
+        // Identify unique vertices and update the map.
+        for (unsigned int i = 0; i < vertices.size(); ++i) {
+            auto result = uniqueVertices.insert(std::make_pair(vertices[i], compressedVertices.size()));
+            if (result.second) { // If insertion is successful (new vertex found).
+                compressedVertices.push_back(vertices[i]);
+            }
+            indexMap[i] = result.first->second;
+        }
 
-			newIndices.push_back(uniqueVertexMap[pos]);
-		}
+        // Rebuild the index array.
+        for (auto idx : indice) {
+            newIndices.push_back(indexMap[idx]);
+        }
 
-		vertices = newVertices;
-		indice = newIndices;
-	}
+        // Update the mesh data.
+        vertices = compressedVertices;
+        indice = newIndices;
+    }
 
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{

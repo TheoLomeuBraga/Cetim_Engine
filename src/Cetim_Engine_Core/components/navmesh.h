@@ -106,6 +106,52 @@ void navmesh_fillVerticesAndIndices(rcPolyMesh *polyMesh, std::shared_ptr<malha>
     // Aqui, você pode adicionar lógica adicional se necessário, como configuração de áreas navegáveis.
 }
 
+std::shared_ptr<malha> convert_polyMesh_to_mesh(const rcPolyMesh *polyMesh)
+{
+    if (!polyMesh)
+    {
+        return nullptr;
+    }
+
+    malha convertedMesh;
+
+    // Convertendo vértices
+    for (int i = 0; i < polyMesh->nverts; ++i)
+    {
+        const unsigned short *v = &polyMesh->verts[i * 3];
+        vertice vert;
+
+        // Convertendo as coordenadas do vértice para o seu sistema de coordenadas
+        vert.posicao[0] = polyMesh->bmin[0] + v[0] * polyMesh->cs;
+        vert.posicao[1] = polyMesh->bmin[1] + v[1] * polyMesh->ch;
+        vert.posicao[2] = polyMesh->bmin[2] + v[2] * polyMesh->cs;
+
+        // Preencher outros atributos do vértice, se necessário
+        // ...
+
+        convertedMesh.vertices.push_back(vert);
+    }
+
+    // Convertendo índices dos polígonos
+    for (int i = 0; i < polyMesh->npolys; ++i)
+    {
+        for (int j = 0; j < polyMesh->nvp; ++j)
+        {
+            unsigned short vertexIndex = polyMesh->polys[i * polyMesh->nvp * 2 + j];
+
+            // Verificar se o índice é válido (não é uma borda ou índice nulo)
+            if (vertexIndex == RC_MESH_NULL_IDX || vertexIndex >= polyMesh->nverts)
+            {
+                break;
+            }
+
+            convertedMesh.indice.push_back(vertexIndex);
+        }
+    }
+
+    return make_shared<malha>(convertedMesh);
+}
+
 std::shared_ptr<malha> convert_nav_mesh_to_mesh(const dtNavMesh *nMesh)
 {
     if (!nMesh)
@@ -505,7 +551,7 @@ public:
         if (on && navMesh)
         {
 
-            print("AAAAA");
+            
             display = novo_objeto_jogo();
             display->adicionar_componente<transform_>();
             display->adicionar_componente<render_malha>();
@@ -518,7 +564,8 @@ public:
             mat.cor = vec4(0.1, 0.1, 1, 0.5);
             mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
-            rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
+            //rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
+            rm->malhas = {convert_polyMesh_to_mesh(rcmeshe)};
 
             rm->mats = {mat};
             cena_objetos_selecionados->adicionar_objeto(display);

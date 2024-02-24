@@ -99,7 +99,7 @@ function level:START()
 
     --print("GGGGG")
 
-    show_navmesh(true)
+    --show_navmesh(true)
 
     generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(90.0, 40.5, -71.0),"")
 
