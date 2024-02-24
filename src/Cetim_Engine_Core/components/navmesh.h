@@ -11,6 +11,8 @@
 #include "DetourNavMeshBuilder.h"
 #include "DetourTileCache.h"
 
+unsigned int rcMeshQuality = 1;
+
 void navmesh_calcBminBmax(shared_ptr<malha> minhaMalha, float bmin[3], float bmax[3])
 {
     if (minhaMalha->vertices.empty() || minhaMalha->indice.empty())
@@ -150,6 +152,7 @@ void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh)
                         // Edge is shared, so not a border.
                         isBorder = false;
                         polyMesh->polys[i * 2 * polyMesh->nvp + polyMesh->nvp + j] = k; // Update neighbor index.
+                        print("not a border",i * 2 * polyMesh->nvp + polyMesh->nvp + j,k);
                         break;
                     }
                 }

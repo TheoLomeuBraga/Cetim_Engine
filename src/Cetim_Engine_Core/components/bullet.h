@@ -74,6 +74,8 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
 
+/*
+
 dtNavMesh *navMesh = nullptr;
 int navDataSize = 0;
 unsigned char *navData = nullptr;
@@ -562,7 +564,7 @@ void print_cube_in_space(vec3 pos)
     print("cube pos:", pos.x, pos.y, pos.z);
 }
 
-/**/
+
 std::vector<glm::vec3> get_navmesh_path(
     glm::vec3 start,
     glm::vec3 end,
@@ -843,6 +845,8 @@ dtNavMesh *gerarNavMesh(std::vector<std::shared_ptr<malha>> minhasMalhas, std::v
 
     return navMesh;
 }
+
+*/
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -1352,7 +1356,7 @@ public:
     {
     }
 };
-
+/*
 void bake_navmesh_3D()
 {
     std::vector<std::shared_ptr<malha>> listaMeshes;
@@ -1377,6 +1381,7 @@ void bake_navmesh_3D()
     }
     navMesh = gerarNavMesh(listaMeshes, listTransforms);
 }
+*/
 
 class CustomContactResultCallback : public btCollisionWorld::ContactResultCallback
 {

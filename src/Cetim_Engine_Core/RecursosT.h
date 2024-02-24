@@ -551,6 +551,17 @@ struct vertice_struct
 };
 typedef struct vertice_struct vertice;
 
+struct VertexPositionHasher
+{
+	std::size_t operator()(const glm::vec3 &v) const
+	{
+		std::size_t h1 = std::hash<float>{}(v.x);
+		std::size_t h2 = std::hash<float>{}(v.y);
+		std::size_t h3 = std::hash<float>{}(v.z);
+		return h1 ^ (h2 << 1) ^ (h3 << 2); // Combine os valores hash
+	}
+};
+
 struct VertexHasher
 {
 	std::size_t operator()(const vertice &v) const
@@ -656,38 +667,30 @@ public:
 		indice = std::move(newIndices);
 	}
 
+	// VertexHasherPosition
+
 	void comprimir_posicao()
 	{
 
-		print("mesh before compression", vertices.size(), indice.size());
-		// Mapeia cada vértice único para um novo índice
-		std::unordered_map<vertice, unsigned int, VertexHasherPosition> uniqueVertexMap;
+		std::unordered_map<glm::vec3, unsigned int, VertexPositionHasher> uniqueVertexMap;
 		std::vector<vertice> newVertices;
 		std::vector<unsigned int> newIndices;
 
-		newIndices.reserve(indice.size());
-
-		// Processa cada índice na malha
-		for (size_t i = 0; i < indice.size(); ++i)
+		for (const auto &vert : vertices)
 		{
-			const vertice &v = vertices[indice[i]];
+			glm::vec3 pos(vert.posicao[0], vert.posicao[1], vert.posicao[2]);
 
-			// Se o vértice não estiver no mapa, adicione-o
-			if (uniqueVertexMap.find(v) == uniqueVertexMap.end())
+			if (uniqueVertexMap.find(pos) == uniqueVertexMap.end())
 			{
-				uniqueVertexMap[v] = newVertices.size();
-				newVertices.push_back(v);
+				uniqueVertexMap[pos] = newVertices.size();
+				newVertices.push_back(vert);
 			}
 
-			// Use o índice do vértice único
-			newIndices.push_back(uniqueVertexMap[v]);
+			newIndices.push_back(uniqueVertexMap[pos]);
 		}
 
-		// Atualiza a malha com os novos vértices e índices
-		vertices = std::move(newVertices);
-		indice = std::move(newIndices);
-
-		print("mesh after compression", vertices.size(), indice.size());
+		vertices = newVertices;
+		indice = newIndices;
 	}
 
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
@@ -784,11 +787,6 @@ public:
 
 std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform)
 {
-	if (!myMesh)
-	{
-		// Error handling: Input mesh is null
-		return nullptr;
-	}
 
 	auto transformedMesh = std::make_shared<malha>(*myMesh); // Create a copy of the original mesh
 
@@ -846,8 +844,6 @@ std::shared_ptr<malha> fuse_meshes(std::vector<std::shared_ptr<malha>> myMeshes,
 	ret.comprimir_posicao();
 	return make_shared<malha>(ret);
 }
-
-
 
 struct objeto_3D_struct
 {
