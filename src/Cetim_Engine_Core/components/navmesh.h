@@ -306,13 +306,6 @@ void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
 }
 */
 
-
-
-
-
-
-#include <Recast.h>
-
 void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
     if (polyMesh == nullptr) return;
 

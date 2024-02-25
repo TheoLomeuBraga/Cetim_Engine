@@ -127,8 +127,6 @@ cenary_builders = {
         return ret
     end,
 
-    scene_poly_meshes = {},
-
     scene_part = function(father, layer, part_data, yield)
 
         
@@ -217,20 +215,7 @@ cenary_builders = {
             ret2.components.transform:set()
         end
 
-        if part_data.variables.type == "test_poly_mesh" then
-            ret.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-            ret.components[components.physics_3D].collision_shape = collision_shapes.box
-            ret.components[components.physics_3D].triger = false
-            ret.components[components.physics_3D].scale = { x = 0.5, y = 1, z = 1 }
-            ret.components[components.physics_3D].friction = 2
-            ret.components[components.physics_3D].rotate_x = false
-            ret.components[components.physics_3D].rotate_y = false
-            ret.components[components.physics_3D].rotate_z = false
-            ret.components[components.physics_3D]:set()
-
-            table.insert(cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].objects,
-                ret.object_ptr)
-        elseif part_data.variables.type == "sb" then
+        if part_data.variables.type == "sb" then
             add_physics(false, false)
             add_mesh(nil)
         elseif part_data.variables.type == "rb" then
@@ -395,13 +380,6 @@ cenary_builders = {
         mat.textures = { "resources/Textures/null.png" }
         mat.color = { r = 0.5, g = 0.5, b = 1, a = 1 }
 
-        cenary_builders.scene_poly_meshes = game_object(create_object(father))
-        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].layer = layer
-        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].meshes_cout = 1
-        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].meshes = deepcopy({
-            mesh_location:new("resources/Levels/3D/hub/hub.gltf", "Suzanne") })
-        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh].materials = { mat }
-
 
 
 
@@ -411,11 +389,7 @@ cenary_builders = {
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
         end
-
-
-
-        cenary_builders.scene_poly_meshes.components[components.render_poly_mesh]:set()
-        cenary_builders.scene_poly_meshes = {}
+        
 
         return ret
     end,

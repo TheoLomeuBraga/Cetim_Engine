@@ -1511,7 +1511,7 @@ public:
 		if (cam->pegar_componente<transform_>() != NULL)
 		{
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
-			// nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
+			nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
 		}
 
 		return {nontransparent, transparent, ui};
