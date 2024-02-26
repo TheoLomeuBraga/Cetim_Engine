@@ -798,6 +798,7 @@ void atualisar_global_bullet()
     if (Tempo::velocidadeTempo > 0)
     {
         dynamicsWorld->stepSimulation(bullet_passo_tempo, 4);
+        //dynamicsWorld->stepSimulation(bullet_passo_tempo);
     }
 }
 
