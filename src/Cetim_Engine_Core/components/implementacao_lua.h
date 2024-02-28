@@ -2267,7 +2267,7 @@ namespace funcoes_ponte
 			ret.push_back(vec3_table(path[i]));
 		}
 		lua_pushtable(L, vTable_table(ret));
-		return 0;
+		return 1;
 	}
 
 	int show_navmesh(lua_State *L){

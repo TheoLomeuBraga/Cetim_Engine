@@ -17,5 +17,5 @@ function create_navmesh(position,rotation,scale,mesh,tag)
 end
 
 function generate_navmesh_path(start,goal,tag)
-    c_generate_navmesh_path(start,goal,tag)
+    return c_generate_navmesh_path(start,goal,tag)
 end

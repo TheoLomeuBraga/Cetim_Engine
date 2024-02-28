@@ -101,10 +101,20 @@ function level:START()
 
     --show_navmesh(true)
 
-    generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(90.0, 40.5, -71.0),"")
+    --[[
+    local pv2 = function (vec)
+        print("{")
+        for index, value in pairs(vec) do
+            print("     x:",value.x,"y:",value.y,"z:",value.z)
+        end
+        print("}")
+    end
 
-    generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(106.0, 64.5, -266.0),"")
-    generate_navmesh_path(Vec3:new(106.0, 64.5, -266.0),Vec3:new(65.0, 68.5, -276.0),"")
+    pv2(generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(90.0, 40.5, -71.0),""))
+
+    pv2(generate_navmesh_path(Vec3:new(-21, 40.5, -138),Vec3:new(106.0, 64.5, -266.0),""))
+    pv2(generate_navmesh_path(Vec3:new(106.0, 64.5, -266.0),Vec3:new(65.0, 68.5, -276.0),""))
+    ]]
     
     
 

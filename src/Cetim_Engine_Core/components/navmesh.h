@@ -696,7 +696,7 @@ public:
         {
             glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
             path.push_back(point);
-            navmesh_print_cube_in_space(point);
+            //navmesh_print_cube_in_space(point);
         }
 
         return path;
