@@ -44,7 +44,7 @@ function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_
         use_rotation_y = false
     end
     if step == nil then
-        use_rotation_y = true
+        step = true
     end
     local ret = {
         position = {x=0,y=0,z=0},
