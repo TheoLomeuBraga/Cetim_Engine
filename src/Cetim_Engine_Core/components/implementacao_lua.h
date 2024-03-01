@@ -2435,7 +2435,7 @@ namespace funcoes_ponte
 
 	shared_ptr<objeto_jogo> display_lua_cubes = NULL;
 
-	float lua_cube_color_intensity = 0.0;
+	vec4 lua_cube_color = vec4(0,0,0,1);
 
 	int print_cube(lua_State *L)
 	{
@@ -2458,12 +2458,21 @@ namespace funcoes_ponte
 
 		Material mat;
 		mat.shad = "resources/Shaders/mesh";
-		mat.cor = vec4(lua_cube_color_intensity, 0.0, 0.5, 1);
-		lua_cube_color_intensity += 0.5;
-		if (lua_cube_color_intensity > 1)
-		{
-			lua_cube_color_intensity = 0;
+		
+		if(lua_cube_color.x < 1){
+			lua_cube_color.x += 0.5;
 		}
+		else if(lua_cube_color.y < 1){
+			lua_cube_color.y += 0.5;
+		}
+		else if(lua_cube_color.z < 1){
+			lua_cube_color.z += 0.5;
+		}
+		else{
+			lua_cube_color = vec4(0,0,0,1);
+		}
+		
+		mat.cor = lua_cube_color;
 		mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
 		rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
