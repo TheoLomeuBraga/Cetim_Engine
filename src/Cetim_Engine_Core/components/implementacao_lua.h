@@ -638,8 +638,6 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-
-
 	// Função em C para criar um diretório
 	int create_directory(lua_State *L)
 	{
@@ -2147,15 +2145,11 @@ namespace funcoes_ponte
 		}
 	}
 
-	
-	
 	int get_set_physic_3D(lua_State *L)
 	{
 
 		if (lua_tonumber(L, 1) == get_lua)
 		{
-
-			
 
 			Table ret;
 			objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
@@ -2243,41 +2237,43 @@ namespace funcoes_ponte
 		}
 	}
 
-	int remove_navmesh(lua_State *L){
-		navmesh::remove_navmesh(lua_tostring(L,1));
+	int remove_navmesh(lua_State *L)
+	{
+		navmesh::remove_navmesh(lua_tostring(L, 1));
 		return 0;
 	}
 
-	int remove_all_navmesh(lua_State *L){
+	int remove_all_navmesh(lua_State *L)
+	{
 		navmesh::remove_all_navmesh();
 		return 0;
 	}
 
-	int create_navmesh(lua_State *L){
-		Table mesh_info = lua_totable(L,4);
-		navmesh::create_navmesh(table_vec3(lua_totable(L,1)),  graus_quat(table_vec3(lua_totable(L,2))),  table_vec3(lua_totable(L,3)), ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name")), lua_tostring(L,5));
+	int create_navmesh(lua_State *L)
+	{
+		Table mesh_info = lua_totable(L, 4);
+		navmesh::create_navmesh(table_vec3(lua_totable(L, 1)), graus_quat(table_vec3(lua_totable(L, 2))), table_vec3(lua_totable(L, 3)), ManuseioDados::carregar_malha(mesh_info.getString("file"), mesh_info.getString("name")), lua_tostring(L, 5));
 		return 0;
 	}
 
-	int generate_navmesh_path(lua_State *L){
+	int generate_navmesh_path(lua_State *L)
+	{
 
 		vector<Table> ret;
-		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L,1)), table_vec3(lua_totable(L,2)), lua_tostring(L,3));
-		for(size_t i = 0 ; i < path.size() ; i++){
+		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3));
+		for (size_t i = 0; i < path.size(); i++)
+		{
 			ret.push_back(vec3_table(path[i]));
 		}
 		lua_pushtable(L, vTable_table(ret));
 		return 1;
 	}
 
-	int show_navmesh(lua_State *L){
-		navmesh::show(lua_toboolean(L,1));
+	int show_navmesh(lua_State *L)
+	{
+		navmesh::show(lua_toboolean(L, 1));
 		return 0;
 	}
-
-	
-
-	
 
 	int get_objects_coliding(lua_State *L)
 	{
@@ -2435,6 +2431,57 @@ namespace funcoes_ponte
 		lua_pushtable(L, scene_3D_table_with_cache(ManuseioDados::carregar_modelo_3D(path)));
 
 		return 1;
+	}
+
+	shared_ptr<objeto_jogo> display_lua_cubes = NULL;
+
+	float lua_cube_color_intensity = 0.0;
+
+	int print_cube(lua_State *L)
+	{
+		if (!display_lua_cubes)
+		{
+			display_lua_cubes = novo_objeto_jogo();
+		}
+
+		
+		shared_ptr<objeto_jogo> display_lua_cube = novo_objeto_jogo();
+		display_lua_cube->adicionar_componente<transform_>();
+		display_lua_cube->pegar_componente<transform_>()->pos = table_vec3(lua_totable(L,1));
+		display_lua_cube->pegar_componente<transform_>()->esca = vec3(1, 1, 1);
+
+		display_lua_cube->adicionar_componente<render_malha>();
+		shared_ptr<render_malha> rm = display_lua_cube->pegar_componente<render_malha>();
+
+		rm->usar_oclusao = false;
+		rm->camada = 4;
+
+		Material mat;
+		mat.shad = "resources/Shaders/mesh";
+		mat.cor = vec4(lua_cube_color_intensity, 0.0, 0.5, 1);
+		lua_cube_color_intensity += 0.5;
+		if (lua_cube_color_intensity > 1)
+		{
+			lua_cube_color_intensity = 0;
+		}
+		mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+
+		rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
+
+		rm->mats = {mat};
+		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes,display_lua_cube);
+
+		return 0;
+	}
+
+	int clean_cube(lua_State *L)
+	{
+		if (display_lua_cubes)
+		{
+			cena_objetos_selecionados->remover_objeto(display_lua_cubes);
+			display_lua_cubes = NULL;
+		}
+		return 0;
 	}
 
 	int set_keyframe(lua_State *L)
@@ -2601,17 +2648,17 @@ namespace funcoes_ponte
 
 														   }),
 		pair<string, map<string, lua_function>>("navmesh", {
-															 pair<string, lua_function>("remove_navmesh", remove_navmesh),
-															 pair<string, lua_function>("remove_all_navmesh", remove_all_navmesh),
-															 pair<string, lua_function>("create_navmesh", create_navmesh),
-															 pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
-															 pair<string, lua_function>("show_navmesh", show_navmesh),
-															 }),
+															   pair<string, lua_function>("remove_navmesh", remove_navmesh),
+															   pair<string, lua_function>("remove_all_navmesh", remove_all_navmesh),
+															   pair<string, lua_function>("create_navmesh", create_navmesh),
+															   pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
+															   pair<string, lua_function>("show_navmesh", show_navmesh),
+														   }),
 		pair<string, map<string, lua_function>>("audio", {
 															 pair<string, lua_function>("get_set_audio", get_set_audio),
 															 pair<string, lua_function>("get_set_global_volume", get_set_global_volume),
 															 pair<string, lua_function>("set_lisener_object", set_lisener_object),
-															 }),
+														 }),
 		pair<string, map<string, lua_function>>("script", {
 															  pair<string, lua_function>("get_script_size", get_script_size),
 															  pair<string, lua_function>("set_script_var", set_script_var),
@@ -2630,6 +2677,11 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("3D_sceane", {
 																 pair<string, lua_function>("get_scene_3D", get_scene_3D),
 															 }),
+		pair<string, map<string, lua_function>>("debug", {
+															 pair<string, lua_function>("print_cube", print_cube),
+															 pair<string, lua_function>("clean_cube", clean_cube),
+
+														 }),
 	};
 
 };
@@ -2700,7 +2752,6 @@ void load_base_lua_state(lua_State *L, string path)
 	}
 	lua_setglobal(L, "args");
 	lua_register(L, "register_function_set", register_function_set);
-	
 
 	// shared_ptr<string> compiledCode = carregar_script_lua(path);
 	cct.join();
@@ -2862,8 +2913,6 @@ public:
 		for (pair<string, lua_State *> p : pairs)
 		{
 
-			
-
 			// pair<string, lua_State *> p = pairs[i];
 
 			if (!scripts_lua_iniciados[p.first])
@@ -2877,7 +2926,6 @@ public:
 				lua_call(p.second, 0, 0);
 				scripts_lua_iniciados[p.first] = true;
 			}
-			
 		}
 	}
 	void atualisar()
@@ -3361,8 +3409,6 @@ int get_lua_var(lua_State *L)
 	string script_name = lua_tostring(L, 2), var_name = lua_tostring(L, 3);
 
 	lua_State *clL = cl->estados_lua[script_name];
-
-	
 
 	lua_getglobal(clL, var_name.c_str());
 	int lua_type_id = lua_type(clL, -1);

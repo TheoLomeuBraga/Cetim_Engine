@@ -20,6 +20,8 @@ function generate_navmesh_path(start,goal,tag)
     return c_generate_navmesh_path(start,goal,tag)
 end
 
+register_function_set("debug")
+
 walk_data_meta_table = {
     __call = function(self)
         return {
@@ -44,13 +46,14 @@ function walk_along_the_path(speed,path,data,use_direction,use_rotation_y,step)
     if step == nil then
         use_rotation_y = true
     end
-
     local ret = {
         position = {x=0,y=0,z=0},
         direction = {x=0,y=0,z=0},
         rotation_y = 0,
     }
-    
 
+    
+    
+    c_print_cube(ret.position)
     return ret
 end
