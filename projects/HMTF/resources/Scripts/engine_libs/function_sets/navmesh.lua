@@ -48,7 +48,7 @@ function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_
     end
     local ret = {
         position = {x=0,y=0,z=0},
-        direction = {x=0,y=0,z=0},
+        directional_movement = {x=0,y=0,z=0},
         rotation_y = 0,
     }
 
