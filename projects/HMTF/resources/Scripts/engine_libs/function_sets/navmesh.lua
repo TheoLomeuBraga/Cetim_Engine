@@ -36,7 +36,7 @@ walk_data = {}
 
 setmetatable(walk_data,walk_data_meta_table)
 
-function walk_along_the_path(_speed_or_walk_distance,path,data,use_direction,use_rotation_y,step)
+function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_rotation_y,step)
     if use_direction == nil then
         use_direction = false
     end
