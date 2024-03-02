@@ -52,7 +52,7 @@ function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_
         rotation_y = 0,
     }
 
-    
+    --resto do codigo
 
     c_print_cube(ret.position)
     return ret
