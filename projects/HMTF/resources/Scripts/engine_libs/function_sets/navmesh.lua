@@ -20,6 +20,10 @@ function generate_navmesh_path(start,goal,tag)
     return c_generate_navmesh_path(start,goal,tag)
 end
 
+function look_to(start,goal,rot_x,rot_y,rot_z)
+    return c_look_to(start,goal,rot_x,rot_y,rot_z)
+end
+
 register_function_set("debug")
 
 walk_data_meta_table = {

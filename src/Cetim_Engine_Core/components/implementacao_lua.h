@@ -2275,6 +2275,23 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int look_to(lua_State *L)
+	{
+		vec3 ret;
+
+		vec3 pos_a = table_vec3(lua_totable(L,1));
+		vec3 pos_b = table_vec3(lua_totable(L,2));
+
+		bool rot_x = lua_toboolean(L,3);
+		bool rot_y = lua_toboolean(L,4);
+		bool rot_z = lua_toboolean(L,5);
+
+		//other code
+
+		lua_pushtable(L, vec3_table(ret));
+		return 1;
+	}
+
 	int get_objects_coliding(lua_State *L)
 	{
 
@@ -2662,6 +2679,8 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("create_navmesh", create_navmesh),
 															   pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
 															   pair<string, lua_function>("show_navmesh", show_navmesh),
+																pair<string, lua_function>("look_to", look_to),
+															   
 														   }),
 		pair<string, map<string, lua_function>>("audio", {
 															 pair<string, lua_function>("get_set_audio", get_set_audio),
