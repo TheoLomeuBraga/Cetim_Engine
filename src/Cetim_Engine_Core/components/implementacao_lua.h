@@ -2279,15 +2279,30 @@ namespace funcoes_ponte
 	{
 		vec3 ret;
 
-		vec3 pos_a = table_vec3(lua_totable(L,1));
-		vec3 pos_b = table_vec3(lua_totable(L,2));
+		vec3 pos_a = table_vec3(lua_totable(L, 1));
+		vec3 pos_b = table_vec3(lua_totable(L, 2));
 
-		bool rot_x = lua_toboolean(L,3);
-		bool rot_y = lua_toboolean(L,4);
-		bool rot_z = lua_toboolean(L,5);
+		bool rot_x = lua_toboolean(L, 3);
+		bool rot_y = lua_toboolean(L, 4);
+		bool rot_z = lua_toboolean(L, 5);
 
-		//other code
-		
+		glm::vec3 direction = glm::normalize(pos_b - pos_a);
+
+		// Criar uma orientação 'olhando para' usando LookAt, e então obter os ângulos de Euler
+		glm::mat4 lookAtMatrix = glm::lookAt(pos_a, pos_b, glm::vec3(0, 0, -1));
+		glm::quat quaternionRotation = glm::quat_cast(lookAtMatrix);
+		glm::vec3 eulerAngles = glm::eulerAngles(quaternionRotation);
+
+		// Converter de radianos para graus
+		eulerAngles = glm::degrees(eulerAngles);
+
+		// Se não precisar de rotação em algum eixo, defina esse eixo para 0
+		if (!rot_x){eulerAngles.x = 0;}
+		if (!rot_y){eulerAngles.y = 0;}
+		if (!rot_z){eulerAngles.z = 0;}
+			
+
+		ret = eulerAngles;
 
 		lua_pushtable(L, vec3_table(ret));
 		return 1;
@@ -2453,7 +2468,7 @@ namespace funcoes_ponte
 
 	shared_ptr<objeto_jogo> display_lua_cubes = NULL;
 
-	vec4 lua_cube_color = vec4(0,0,0,1);
+	vec4 lua_cube_color = vec4(0, 0, 0, 1);
 
 	int print_cube(lua_State *L)
 	{
@@ -2462,10 +2477,9 @@ namespace funcoes_ponte
 			display_lua_cubes = novo_objeto_jogo();
 		}
 
-		
 		shared_ptr<objeto_jogo> display_lua_cube = novo_objeto_jogo();
 		display_lua_cube->adicionar_componente<transform_>();
-		display_lua_cube->pegar_componente<transform_>()->pos = table_vec3(lua_totable(L,1));
+		display_lua_cube->pegar_componente<transform_>()->pos = table_vec3(lua_totable(L, 1));
 		display_lua_cube->pegar_componente<transform_>()->esca = vec3(1, 1, 1);
 
 		display_lua_cube->adicionar_componente<render_malha>();
@@ -2476,27 +2490,31 @@ namespace funcoes_ponte
 
 		Material mat;
 		mat.shad = "resources/Shaders/mesh";
-		
-		if(lua_cube_color.x < 1){
+
+		if (lua_cube_color.x < 1)
+		{
 			lua_cube_color.x += 0.5;
 		}
-		else if(lua_cube_color.y < 1){
+		else if (lua_cube_color.y < 1)
+		{
 			lua_cube_color.y += 0.5;
 		}
-		else if(lua_cube_color.z < 1){
+		else if (lua_cube_color.z < 1)
+		{
 			lua_cube_color.z += 0.5;
 		}
-		else{
-			lua_cube_color = vec4(0,0,0,1);
+		else
+		{
+			lua_cube_color = vec4(0, 0, 0, 1);
 		}
-		
+
 		mat.cor = lua_cube_color;
 		mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
 		rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
 
 		rm->mats = {mat};
-		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes,display_lua_cube);
+		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes, display_lua_cube);
 
 		return 0;
 	}
@@ -2680,8 +2698,8 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("create_navmesh", create_navmesh),
 															   pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
 															   pair<string, lua_function>("show_navmesh", show_navmesh),
-																pair<string, lua_function>("look_to", look_to),
-															   
+															   pair<string, lua_function>("look_to", look_to),
+
 														   }),
 		pair<string, map<string, lua_function>>("audio", {
 															 pair<string, lua_function>("get_set_audio", get_set_audio),
