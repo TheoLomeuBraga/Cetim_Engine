@@ -2287,6 +2287,7 @@ namespace funcoes_ponte
 		bool rot_z = lua_toboolean(L,5);
 
 		//other code
+		
 
 		lua_pushtable(L, vec3_table(ret));
 		return 1;
