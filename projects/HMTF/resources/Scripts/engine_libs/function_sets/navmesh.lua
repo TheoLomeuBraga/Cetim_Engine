@@ -1,4 +1,5 @@
 register_function_set("navmesh")
+require("math")
 
 function show_navmesh(on)
     c_show_navmesh(on)
@@ -53,6 +54,14 @@ function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_
     local lerp = function(a, b, t)
         return {x=a.x + t * (b.x - a.x),y=a.y + t * (b.y - a.y),z=a.z + t * (b.z - a.z)}
     end
+
+    local distance = function(a, b)
+        local dx = b.x - a.x
+        local dy = b.y - a.y
+        local dz = b.z - a.z
+        return math.sqrt(dx * dx + dy * dy + dz * dz)
+    end
+    
 
     --resto do codigo
 
