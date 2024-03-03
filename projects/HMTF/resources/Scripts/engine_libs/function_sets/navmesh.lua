@@ -31,7 +31,6 @@ walk_data_meta_table = {
         return {
             path_segment = 0,
             follow_up_progression = 0,
-            position = {x=0,y=0,z=0},
         }
     end
 }
@@ -50,14 +49,18 @@ function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_
     if step == nil then
         step = true
     end
-    local ret = {
-        position = {x=0,y=0,z=0},
-        directional_movement = {x=0,y=0,z=0},
-        rotation_y = 0,
-    }
+
+    local lerp = function(a, b, t)
+        return {x=a.x + t * (b.x - a.x),y=a.y + t * (b.y - a.y),z=a.z + t * (b.z - a.z)}
+    end
 
     --resto do codigo
 
     c_print_cube(ret.position)
-    return ret
+
+    return {
+        position = {x=0,y=0,z=0},
+        directional_movement = {x=0,y=0,z=0},
+        rotation_y = 0,
+    }
 end
