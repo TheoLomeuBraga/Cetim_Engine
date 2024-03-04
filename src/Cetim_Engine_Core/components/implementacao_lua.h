@@ -2308,6 +2308,15 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int walk_along_the_path(lua_State *L){
+		Table ret;
+
+		
+
+		lua_pushtable(L, ret);
+		return 1;
+	}
+
 	int get_objects_coliding(lua_State *L)
 	{
 
@@ -2699,6 +2708,7 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
 															   pair<string, lua_function>("show_navmesh", show_navmesh),
 															   pair<string, lua_function>("look_to", look_to),
+															   pair<string, lua_function>("walk_along_the_path", walk_along_the_path),
 
 														   }),
 		pair<string, map<string, lua_function>>("audio", {

@@ -40,36 +40,6 @@ walk_data = {}
 
 setmetatable(walk_data,walk_data_meta_table)
 
-function walk_along_the_path(speed_or_walk_distance,path,data,use_direction,use_rotation_y,step)
-    if use_direction == nil then
-        use_direction = false
-    end
-    if use_rotation_y == nil then
-        use_rotation_y = false
-    end
-    if step == nil then
-        step = true
-    end
-
-    local lerp = function(a, b, t)
-        return {x=a.x + t * (b.x - a.x),y=a.y + t * (b.y - a.y),z=a.z + t * (b.z - a.z)}
-    end
-
-    local distance = function(a, b)
-        local dx = b.x - a.x
-        local dy = b.y - a.y
-        local dz = b.z - a.z
-        return math.sqrt(dx * dx + dy * dy + dz * dz)
-    end
-    
-
-    --resto do codigo
-
-    c_print_cube(ret.position)
-
-    return {
-        position = {x=0,y=0,z=0},
-        directional_movement = {x=0,y=0,z=0},
-        rotation_y = 0,
-    }
+function walk_along_the_path(speed_or_walk_distance,path,progression,use_rotation)
+    return c_walk_along_the_path(speed_or_walk_distance,path,progression,use_rotation)
 end
