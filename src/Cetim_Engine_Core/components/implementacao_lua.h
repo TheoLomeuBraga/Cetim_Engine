@@ -2297,10 +2297,18 @@ namespace funcoes_ponte
 		eulerAngles = glm::degrees(eulerAngles);
 
 		// Se não precisar de rotação em algum eixo, defina esse eixo para 0
-		if (!rot_x){eulerAngles.x = 0;}
-		if (!rot_y){eulerAngles.y = 0;}
-		if (!rot_z){eulerAngles.z = 0;}
-			
+		if (!rot_x)
+		{
+			eulerAngles.x = 0;
+		}
+		if (!rot_y)
+		{
+			eulerAngles.y = 0;
+		}
+		if (!rot_z)
+		{
+			eulerAngles.z = 0;
+		}
 
 		ret = eulerAngles;
 
@@ -2308,25 +2316,77 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int walk_along_the_path(lua_State *L){
+	int walk_along_the_path(lua_State *L)
+	{
 		Table ret;
 
-		vector<Table> path_tables =  table_vTable(lua_totable(L,1));
-		vector<vec2> path;
+		vector<Table> path_tables = table_vTable(lua_totable(L, 1));
+		vector<vec3> path;
 		for (Table t : path_tables)
 		{
-			path.push_back(table_vec2(t));
+			path.push_back(table_vec3(t));
 		}
-		float progression = lua_tonumber(L,2);
-		float speed_or_walk_distance = lua_tonumber(L,3);
+		float current_progression = lua_tonumber(L, 2);
+		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		vec3 target;
 		vec3 target_movement;
+		vec3 rotation;
 		float progression;
 
-		ret.setTable("target",vec3_table(target));
-		ret.setTable("target_movement",vec3_table(target_movement));
-		ret.setFloat("progression",progression);
+		int current_index = static_cast<int>(current_progression);
+		float lerp_factor = current_progression - current_index;
+
+		if (current_index < 0 || current_index >= path.size() - 1)
+		{
+			// Não há próximo ponto
+			return 0; // Retornar nil
+		}
+
+		// Interpolação linear para encontrar a posição atual e a próxima
+		vec3 current_position = path[current_index];
+		vec3 next_position = path[current_index + 1];
+		vec3 interpolated_position = current_position + lerp_factor * (next_position - current_position);
+
+		// Calcular a distância até o próximo ponto
+		float distance_to_next_point = glm::distance(current_position, next_position);
+
+		// Atualizar progression
+		progression = current_progression + speed_or_walk_distance / distance_to_next_point;
+		if (progression >= path.size() - 1)
+		{
+			// Chegou ao fim do caminho
+			return 0; // Retornar nil
+		}
+
+		// Calcular target e target_movement
+		target = interpolated_position;
+		target_movement = glm::normalize(next_position - current_position) * speed_or_walk_distance;
+
+		if (glm::length(target_movement) > 0)
+		{
+			// Normalizar target_movement para obter a direção do movimento
+			vec3 direction = glm::normalize(target_movement);
+
+			// Calcular o ângulo de rotação em torno do eixo Y
+			float rotationY = glm::degrees(glm::atan(direction.z, direction.x));
+
+			// Ajustar o ângulo se necessário (dependendo do sistema de coordenadas)
+			rotationY = rotationY < 0 ? 360 + rotationY : rotationY;
+
+			// Definir a rotação (assumindo que a rotação ao redor de X e Z é 0)
+			rotation = glm::vec3(0.0f, rotationY, 0.0f);
+		}
+		else
+		{
+			// Não há movimento, mantenha a rotação atual
+			rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+
+		ret.setTable("target", vec3_table(target));
+		ret.setTable("target_movement", vec3_table(target_movement));
+		ret.setTable("rotation", vec3_table(rotation));
+		ret.setFloat("progression", progression);
 
 		lua_pushtable(L, ret);
 		return 1;
