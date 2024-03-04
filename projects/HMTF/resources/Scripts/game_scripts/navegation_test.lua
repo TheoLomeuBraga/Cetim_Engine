@@ -1,3 +1,5 @@
+require("engine_libs.function_sets.navmesh")
+
 function START()
 end
 
