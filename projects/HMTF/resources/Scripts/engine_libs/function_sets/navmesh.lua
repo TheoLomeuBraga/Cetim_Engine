@@ -40,6 +40,6 @@ walk_data = {}
 
 setmetatable(walk_data,walk_data_meta_table)
 
-function walk_along_the_path(speed_or_walk_distance,path,progression,use_rotation)
-    return c_walk_along_the_path(speed_or_walk_distance,path,progression,use_rotation)
+function walk_along_the_path(speed_or_walk_distance,path,progression)
+    return c_walk_along_the_path(speed_or_walk_distance,path,progression)
 end
