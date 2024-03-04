@@ -2311,16 +2311,22 @@ namespace funcoes_ponte
 	int walk_along_the_path(lua_State *L){
 		Table ret;
 
-		//speed_or_walk_distance,path,progression
-
-		float speed_or_walk_distance = lua_tonumber(L,1);
-		vector<Table> path_tables =  table_vTable(lua_totable(L,2));
+		vector<Table> path_tables =  table_vTable(lua_totable(L,1));
 		vector<vec2> path;
 		for (Table t : path_tables)
 		{
 			path.push_back(table_vec2(t));
 		}
-		float progression = lua_tonumber(L,3);
+		float progression = lua_tonumber(L,2);
+		float speed_or_walk_distance = lua_tonumber(L,3);
+
+		vec3 target;
+		vec3 target_movement;
+		float progression;
+
+		ret.setTable("target",vec3_table(target));
+		ret.setTable("target_movement",vec3_table(target_movement));
+		ret.setFloat("progression",progression);
 
 		lua_pushtable(L, ret);
 		return 1;
