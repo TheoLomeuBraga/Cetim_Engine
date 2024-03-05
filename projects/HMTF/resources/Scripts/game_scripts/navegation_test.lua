@@ -19,7 +19,8 @@ local mat = nil
 function START()
     
 
-    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
+    --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
+    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=106.0, y=64.5, z=-266.0},"")
 
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
@@ -57,9 +58,12 @@ function UPDATE()
             
             local current_pos = deepcopy(walker_cube.components.transform.position)
             walker_cube.components.transform.position = {x=current_pos.x + walk_ret.position_movement.x, y=current_pos.y + walk_ret.position_movement.y, z=current_pos.z + walk_ret.position_movement.z}
-            walker_cube.components.transform.rotation = walk_ret.rotation
+            if walk_ret.rotation ~= nil then
+                walker_cube.components.transform.rotation = walk_ret.rotation
+                print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)
+            end
             walker_cube.components.transform:set()
-            print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)
+            
 
             last_progression_2 = walk_ret.progression
         end 

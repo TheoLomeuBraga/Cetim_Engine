@@ -2363,29 +2363,35 @@ namespace funcoes_ponte
 		target = interpolated_position;
 		target_movement = glm::normalize(next_position - current_position) * speed_or_walk_distance;
 
+		bool rotate = true;
+
 		if (glm::length(target_movement) > 0)
 		{
-			// Normalizar target_movement para obter a direção do movimento
-			vec3 direction = glm::normalize(target_movement);
+			// Supondo que target é a posição para a qual o objeto deve olhar e current_position é a posição atual do objeto
+			vec3 up_vector = vec3(0.0f, 1.0f, 0.0f); // Vetor 'up' padrão
 
-			// Calcular o ângulo de rotação em torno do eixo Y
-			float rotationY = glm::degrees(glm::atan(direction.z, direction.x));
+			// Gerar a matriz 'look at'
+			mat4 lookAt_matrix = glm::lookAt(current_position, target, up_vector);
 
-			// Ajustar o ângulo se necessário (dependendo do sistema de coordenadas)
-			rotationY = rotationY < 0 ? 360 + rotationY : rotationY;
+			// Agora você precisa extrair os ângulos de rotação (yaw, pitch, roll) da matriz lookAt_matrix
+			// Isso geralmente é feito através da conversão da matriz para um quaternion e depois para ângulos de Euler
+			quat rotation_quaternion = glm::quat_cast(lookAt_matrix);
+			vec3 eulerAngles = glm::eulerAngles(rotation_quaternion);
 
-			// Definir a rotação (assumindo que a rotação ao redor de X e Z é 0)
-			rotation = glm::vec3(0.0f, rotationY, 0.0f);
+			// Os ângulos de Euler estão em radianos, converta-os para graus se necessário
+			rotation = glm::vec3(-1,-1,-1) * glm::degrees(eulerAngles);
 		}
 		else
 		{
-			// Não há movimento, mantenha a rotação atual
-			rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+			rotate = false;
 		}
 
 		ret.setTable("position", vec3_table(target));
 		ret.setTable("position_movement", vec3_table(target_movement));
-		ret.setTable("rotation", vec3_table(rotation));
+		if (rotate)
+		{
+			ret.setTable("rotation", vec3_table(rotation));
+		}
 		ret.setFloat("progression", progression);
 
 		lua_pushtable(L, ret);
@@ -2604,7 +2610,6 @@ namespace funcoes_ponte
 		rm->mats = {mat};
 		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes, display_lua_cube);
 		*/
-
 
 		return 0;
 	}
