@@ -28,8 +28,12 @@ function START()
 end
 
 last_progression = 0
+
+last_progression_2 = 0
+
 function UPDATE()
     time:get()
+
     if last_progression ~= nil then
         local walk_ret = walk_along_the_path(path,last_progression,1)
         
@@ -41,6 +45,15 @@ function UPDATE()
         end 
     end
 
+    if last_progression_2 ~= nil then
+        local walk_ret = walk_along_the_path(path,last_progression_2,1)
+        
+        if walk_ret == nil then
+            last_progression_2 = nil
+        else
+            last_progression_2 = walk_ret.progression
+        end 
+    end
     
 end
 
