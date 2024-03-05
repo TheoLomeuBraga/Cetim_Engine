@@ -116,6 +116,7 @@ function level:START()
     pv2(generate_navmesh_path(Vec3:new(106.0, 64.5, -266.0),Vec3:new(65.0, 68.5, -276.0),""))
     ]]
     
+    game_object:new(cenary_builders.cenary).components.lua_scripts:add_script("game_scripts/navegation_test")
     
 
     camera = {}

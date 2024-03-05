@@ -1,14 +1,23 @@
+register_function_set("debug")
+
 require("engine_libs.function_sets.navmesh")
 require("engine_libs.short_cuts.create_mesh")
+require("components.component_all")
+
+
 
 this_object = nil
 
+path = {}
+
 function START()
-
-    this_object = game_object(this_object_ptr)
-
-    create_mesh(this_object_ptr,false,{x=0,y=0,z=0},{x=0,y=0,z=0},{x=1,y=1,z=1},2,nil,nil)
     
+
+    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
+    
+    for key, value in pairs(path) do
+        c_print_cube(value)
+    end
 end
 
 function UPDATE()

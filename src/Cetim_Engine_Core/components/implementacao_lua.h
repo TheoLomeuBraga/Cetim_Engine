@@ -2556,6 +2556,10 @@ namespace funcoes_ponte
 
 	int print_cube(lua_State *L)
 	{
+
+		navmesh_print_cube_in_space(table_vec3(lua_totable(L, 1)));
+
+		/*
 		if (!display_lua_cubes)
 		{
 			display_lua_cubes = novo_objeto_jogo();
@@ -2599,6 +2603,8 @@ namespace funcoes_ponte
 
 		rm->mats = {mat};
 		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes, display_lua_cube);
+		*/
+
 
 		return 0;
 	}

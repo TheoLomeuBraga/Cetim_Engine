@@ -3,6 +3,7 @@ register_function_set("game_object")
 require("components.extras")
 require("components.component_index")
 
+
 function create_object(obj)
     if obj == nil then
         return c_create_object()

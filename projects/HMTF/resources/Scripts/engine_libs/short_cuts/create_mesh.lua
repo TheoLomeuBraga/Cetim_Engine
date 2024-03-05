@@ -5,13 +5,6 @@ require("components.render_mesh")
 
 
 function create_mesh(father,is_ui,pos,rot,sca,layer,mats,meshes_locations)
-    if mats == nil then
-        mats = {matreial:new()}
-        mats[1].shader = "resources/Textures/white.png"
-    end
-    if meshes_locations == nil then
-        meshes_locations = mesh_location:new("resources/3D Models/oclusion_box.obj","Cube")
-    end
     ret = game_object(create_object(father))
     
     ret.components.transform.is_ui = is_ui
