@@ -2383,8 +2383,8 @@ namespace funcoes_ponte
 			rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
 
-		ret.setTable("target", vec3_table(target));
-		ret.setTable("target_movement", vec3_table(target_movement));
+		ret.setTable("position", vec3_table(target));
+		ret.setTable("position_movement", vec3_table(target_movement));
 		ret.setTable("rotation", vec3_table(rotation));
 		ret.setFloat("progression", progression);
 

@@ -14,12 +14,14 @@ path = {}
 
 walker_cube = {}
 
+local mat = nil
+
 function START()
     
 
     path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
 
-    local mat = matreial:new()
+    mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
     mat.textures = {"resources/Textures/white.png"}
     mat.color = {r=1,g=0,b=1,a=1}
@@ -40,17 +42,25 @@ function UPDATE()
         if walk_ret == nil then
             last_progression = nil
         else
-            c_print_cube(walk_ret.target)
+            mat.color = {r=0,g=1,b=0,a=1}
+            create_mesh(global_data.layers.cenary,false,walk_ret.position,{x=0, y=0, z=0},{x=0.2, y=0.2, z=0.2},2,{mat},{mesh_location:new("resources/3D Models/visual_debug_shapes.gltf","Cube")})
             last_progression = walk_ret.progression
         end 
     end
 
     if last_progression_2 ~= nil then
-        local walk_ret = walk_along_the_path(path,last_progression_2,1)
+        local walk_ret = walk_along_the_path(path,last_progression_2,time.delta * 5)
         
         if walk_ret == nil then
             last_progression_2 = nil
         else
+            
+            local current_pos = deepcopy(walker_cube.components.transform.position)
+            walker_cube.components.transform.position = {x=current_pos.x + walk_ret.position_movement.x, y=current_pos.y + walk_ret.position_movement.y, z=current_pos.z + walk_ret.position_movement.z}
+            walker_cube.components.transform.rotation = walk_ret.rotation
+            walker_cube.components.transform:set()
+            print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)
+
             last_progression_2 = walk_ret.progression
         end 
     end

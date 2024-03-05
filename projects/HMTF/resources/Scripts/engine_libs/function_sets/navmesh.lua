@@ -27,8 +27,8 @@ end
 
 --[[
 local walk_along_the_path_ret_example = {
-    target = {x=0,y=0,z=0},
-    target_movement = {x=0,y=0,z=0},
+    position = {x=0,y=0,z=0},
+    position_movement = {x=0,y=0,z=0},
     rotation = {x=0,y=0,z=0},
     progression = 0
 }
