@@ -25,6 +25,14 @@ function look_to(start,goal,rot_x,rot_y,rot_z)
     return c_look_to(start,goal,rot_x,rot_y,rot_z)
 end
 
+--[[
+local walk_along_the_path_ret_example = {
+    target = {x=0,y=0,z=0},
+    target_movement = {x=0,y=0,z=0},
+    rotation = {x=0,y=0,z=0},
+    progression = 0
+}
+]]
 function walk_along_the_path(path,progression,speed_or_walk_distance)
     return c_walk_along_the_path(path,progression,speed_or_walk_distance)
 end

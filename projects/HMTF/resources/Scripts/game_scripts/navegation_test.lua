@@ -3,6 +3,7 @@ register_function_set("debug")
 require("engine_libs.function_sets.navmesh")
 require("engine_libs.short_cuts.create_mesh")
 require("components.component_all")
+require("objects.global_data")
 require("objects.time")
 
 
@@ -11,16 +12,19 @@ this_object = nil
 
 path = {}
 
+walker_cube = {}
+
 function START()
     
 
     path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
+
+    local mat = matreial:new()
+    mat.shader = "resources/Shaders/mesh"
+    mat.textures = {"resources/Textures/white.png"}
+    mat.color = {r=1,g=0,b=1,a=1}
+    walker_cube = create_mesh(global_data.layers.cenary,false,path[1],{x=0, y=0, z=0},{x=1, y=1, z=1},2,{mat},{mesh_location:new("resources/3D Models/visual_debug_shapes.gltf","Cube")})
     
-    --[[
-    for key, value in pairs(path) do
-        c_print_cube(value)
-    end
-    ]]
 end
 
 last_progression = 0
@@ -36,6 +40,8 @@ function UPDATE()
             last_progression = walk_ret.progression
         end 
     end
+
+    
 end
 
 function COLLIDE(collision_info)
