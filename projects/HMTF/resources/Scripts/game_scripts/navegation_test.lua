@@ -34,6 +34,8 @@ last_progression = 0
 
 last_progression_2 = 0
 
+local color_no = 0
+
 function UPDATE()
     time:get()
 
@@ -43,8 +45,28 @@ function UPDATE()
         if walk_ret == nil then
             last_progression = nil
         else
-            mat.color = {r=0,g=1,b=0,a=1}
-            create_mesh(global_data.layers.cenary,false,walk_ret.position,{x=0, y=0, z=0},{x=0.2, y=0.2, z=0.2},2,{mat},{mesh_location:new("resources/3D Models/visual_debug_shapes.gltf","Cube")})
+            
+
+            if mat.color.r < 1 then
+                mat.color.r = mat.color.r + 0.5
+            elseif mat.color.g < 1 then
+                mat.color.r = 0
+                mat.color.g = mat.color.g + 0.5
+            elseif mat.color.b < 1 then
+                mat.color.g = 0
+                mat.color.b = mat.color.b + 0.5
+            else 
+                mat.color = {r=0,g=0,b=0,a=1}
+            end
+
+            if color_no >= 6 then
+                color_no = 0
+            end
+
+            if walk_ret.rotation == nil then
+                walk_ret.rotation = {x=0, y=0, z=0}
+            end
+            create_mesh(global_data.layers.cenary,false,walk_ret.position,walk_ret.rotation,{x=0.2, y=0.2, z=1},2,{mat},{mesh_location:new("resources/3D Models/visual_debug_shapes.gltf","Cube")})
             last_progression = walk_ret.progression
         end 
     end
@@ -60,11 +82,10 @@ function UPDATE()
             walker_cube.components.transform.position = {x=current_pos.x + walk_ret.position_movement.x, y=current_pos.y + walk_ret.position_movement.y, z=current_pos.z + walk_ret.position_movement.z}
             if walk_ret.rotation ~= nil then
                 walker_cube.components.transform.rotation = walk_ret.rotation
-                print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)
+                --print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)
             end
             walker_cube.components.transform:set()
             
-
             last_progression_2 = walk_ret.progression
         end 
     end
