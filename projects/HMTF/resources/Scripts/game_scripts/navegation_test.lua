@@ -20,7 +20,7 @@ function START()
     
 
     --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=90.0, y=40.5, z=-71.0},"")
-    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=106.0, y=64.5, z=-266.0},"")
+    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.91870880127, y=68.482322692871, z=-296.02520751953},"")
 
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"
@@ -72,7 +72,7 @@ function UPDATE()
     end
 
     if last_progression_2 ~= nil then
-        local walk_ret = walk_along_the_path(path,last_progression_2,time.delta * 5)
+        local walk_ret = walk_along_the_path(path,last_progression_2,time.scale * time.delta * 5)
         
         if walk_ret == nil then
             last_progression_2 = nil
