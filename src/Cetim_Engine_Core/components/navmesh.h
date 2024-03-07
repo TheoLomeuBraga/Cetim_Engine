@@ -599,7 +599,7 @@ public:
             memcpy(params.bmax, rcmeshe->bmax, sizeof(params.bmax));
             params.walkableHeight = 2.0f;
             params.walkableRadius = 1.0f;
-            params.walkableClimb = 0.5f;
+            params.walkableClimb = 0.0f;
             params.tileX = 0;
             params.tileY = 0;
             params.tileLayer = 0;
