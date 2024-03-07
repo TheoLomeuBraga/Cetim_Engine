@@ -306,36 +306,47 @@ void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
 }
 */
 
-void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
-    if (polyMesh == nullptr) return;
+void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh)
+{
+    if (polyMesh == nullptr)
+        return;
 
     const int nvp = polyMesh->nvp; // The maximum number of vertices per polygon
 
     // Iterate over each polygon
-    for (int i = 0; i < polyMesh->npolys; ++i) {
+    for (int i = 0; i < polyMesh->npolys; ++i)
+    {
         unsigned short *p = &polyMesh->polys[i * 2 * nvp];
 
         // Check each edge of the polygon
-        for (int j = 0; j < nvp; ++j) {
-            if (p[j] == RC_MESH_NULL_IDX) break; // End of this polygon's vertices
+        for (int j = 0; j < nvp; ++j)
+        {
+            if (p[j] == RC_MESH_NULL_IDX)
+                break; // End of this polygon's vertices
 
-            if (p[nvp + j] != RC_MESH_NULL_IDX) continue; // Skip if already has a neighbor
+            if (p[nvp + j] != RC_MESH_NULL_IDX)
+                continue; // Skip if already has a neighbor
 
             // Assume it's a border edge by default
             bool isBorderEdge = true;
 
             // Check if the edge is shared with another polygon
-            for (int k = 0; k < polyMesh->npolys; ++k) {
-                if (i == k) continue; // Don't check the same polygon
+            for (int k = 0; k < polyMesh->npolys; ++k)
+            {
+                if (i == k)
+                    continue; // Don't check the same polygon
 
                 unsigned short *q = &polyMesh->polys[k * 2 * nvp];
 
-                for (int l = 0; l < nvp; ++l) {
-                    if (q[l] == RC_MESH_NULL_IDX) break; // End of the other polygon's vertices
+                for (int l = 0; l < nvp; ++l)
+                {
+                    if (q[l] == RC_MESH_NULL_IDX)
+                        break; // End of the other polygon's vertices
 
                     // Check if the current edge of polygon i is shared with polygon k
                     if ((p[j] == q[l] && p[j == nvp - 1 ? 0 : j + 1] == q[l == 0 ? nvp - 1 : l - 1]) ||
-                        (p[j] == q[l == 0 ? nvp - 1 : l - 1] && p[j == nvp - 1 ? 0 : j + 1] == q[l])) {
+                        (p[j] == q[l == 0 ? nvp - 1 : l - 1] && p[j == nvp - 1 ? 0 : j + 1] == q[l]))
+                    {
                         // Edge is shared with another polygon
                         isBorderEdge = false;
                         p[nvp + j] = k; // Update the neighbor index
@@ -343,24 +354,17 @@ void navmesh_fillBorderIndexes(rcPolyMesh *polyMesh) {
                     }
                 }
 
-                if (!isBorderEdge) break; // No need to check further if edge is already marked as shared
+                if (!isBorderEdge)
+                    break; // No need to check further if edge is already marked as shared
             }
 
-            if (isBorderEdge) {
+            if (isBorderEdge)
+            {
                 p[nvp + j] = RC_MESH_NULL_IDX; // Mark the edge as a border
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
 rcPolyMesh *navmesh_convertToRcPolyMesh(std::shared_ptr<malha> minhaMalha)
 {
@@ -437,7 +441,7 @@ void navmesh_print_cube_in_space(vec3 pos)
     shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
     display_nav_mesh->adicionar_componente<transform_>();
     display_nav_mesh->pegar_componente<transform_>()->pos = pos;
-    display_nav_mesh->pegar_componente<transform_>()->esca = vec3(0.25,0.25,0.25);
+    display_nav_mesh->pegar_componente<transform_>()->esca = vec3(0.25, 0.25, 0.25);
 
     display_nav_mesh->adicionar_componente<render_malha>();
     shared_ptr<render_malha> rm = display_nav_mesh->pegar_componente<render_malha>();
@@ -532,19 +536,17 @@ public:
     void show_this(bool on = true)
     {
 
-        if(display){
+        if (display)
+        {
             cena_objetos_selecionados->remover_objeto(display);
         }
-        
-        
+
         rm = NULL;
         display = NULL;
-        
-        
+
         if (on && navMesh)
         {
 
-            
             display = novo_objeto_jogo();
             display->adicionar_componente<transform_>();
             display->adicionar_componente<render_malha>();
@@ -557,7 +559,7 @@ public:
             mat.cor = vec4(0.1, 0.1, 1, 0.5);
             mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
 
-            //rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
+            // rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
             rm->malhas = {convert_polyMesh_to_mesh(rcmeshe)};
 
             rm->mats = {mat};
@@ -663,10 +665,16 @@ public:
 
         float tolerance[3] = {1, 2, 1}; // Tolerância para encontrar o polígono mais próximo
 
+        float start_pos_ptr[3] = {0,0,0};
+        float end_pos_ptr[3] = {0,0,0};
+
         // Encontrar os polígonos mais próximos de start e end
         dtPolyRef startRef, endRef;
-        query.findNearestPoly(startPos, tolerance, &filter, &startRef, nullptr);
-        query.findNearestPoly(endPos, tolerance, &filter, &endRef, nullptr);
+        query.findNearestPoly(startPos, tolerance, &filter, &startRef, start_pos_ptr);
+        query.findNearestPoly(endPos, tolerance, &filter, &endRef, end_pos_ptr);
+
+        glm::vec3 start_pos = glm::vec3(start_pos_ptr[0],start_pos_ptr[1],start_pos_ptr[2]);
+        glm::vec3 end_pos = glm::vec3(end_pos_ptr[0],end_pos_ptr[1],end_pos_ptr[2]);
 
         if (startRef == 0 || endRef == 0)
         {
@@ -699,6 +707,18 @@ public:
             navmesh_print_cube_in_space(point);
         }
 
+        if (path.size() > 0)
+        {
+
+            if(start_pos.x+start_pos.y,start_pos.z!=0){
+                path[0] = start_pos;
+            }
+            if(end_pos.x+end_pos.y,end_pos.z!=0){
+                path[path.size() - 1] = end_pos;
+            }
+            
+        }
+
         return path;
     }
 
@@ -718,7 +738,7 @@ public:
         if (navmeshes.find(tag) != navmeshes.end())
         {
             cena_objetos_selecionados->remover_objeto(navmeshes[tag]);
-            //navmeshes.erase(tag);
+            // navmeshes.erase(tag);
         }
     }
 
@@ -748,9 +768,8 @@ public:
         cena_objetos_selecionados->adicionar_objeto(navmesh_obj);
 
         nm->apply();
-        //nm->show_this();
+        // nm->show_this();
 
-        
         return navmesh_obj;
     }
 };
