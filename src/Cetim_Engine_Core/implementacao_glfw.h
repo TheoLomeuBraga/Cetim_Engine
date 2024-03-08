@@ -399,7 +399,9 @@ namespace controle
 
 	unordered_map<string, float> generateJoystickKeyMap(int joystick)
 	{
-		print(glfwGetJoystickName(joystick));
+
+		std::string joystick_name = glfwGetJoystickName(joystick);
+		print(joystick_name);
 
 		/*
 		xbox 360 joystick names:
@@ -410,7 +412,15 @@ namespace controle
 			Sony Interactive Entertainment Wireless Controller Touchpad
 		*/
 
+		if(joystick_name == "Sony Interactive Entertainment Wireless Controller"){
+			
+		}else if(joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad"){
+
+		}
+
+		//defout
 		return controle_xbox_360::generateJoystickKeyMap(joystick);
+		
 	}
 
 }
