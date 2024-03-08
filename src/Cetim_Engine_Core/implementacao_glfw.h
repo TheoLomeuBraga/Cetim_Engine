@@ -237,28 +237,8 @@ namespace teclas
 
 }
 
-namespace controle
+namespace controle_xbox_360
 {
-
-	int countConnectedJoysticks()
-	{
-		int count = 0;
-
-		for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; ++i)
-		{
-			if (glfwJoystickPresent(i))
-			{
-				count++;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		return count;
-	}
-
 #ifdef __unix__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
@@ -320,7 +300,7 @@ namespace controle
 		if (glfwJoystickPresent(joystick))
 		{
 
-			//print(glfwGetJoystickName(joystick));
+			// print(glfwGetJoystickName(joystick));
 
 			int buttonCount;
 			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
@@ -335,58 +315,92 @@ namespace controle
 
 			for (int i = 0; i < buttonCount; ++i)
 			{
-				if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
+				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-				}
-				else if (buttons[i] == GLFW_PRESS)
-				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
-				}
-				else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
-				{
-					joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
-				}
-				else
-				{
-					joystickKeyMap[std::to_string(i)] = 0;
-				}
 
-				prevJoystickButtonsState[i] = buttons[i];
+					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsState[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
+					}
+					else
+					{
+						joystickKeyMap[std::to_string(i)] = 0;
+					}
+
+					prevJoystickButtonsState[i] = buttons[i];
+				}
 			}
-
-			
 
 			for (int i = 0; i < axisCount; ++i)
 			{
 
+				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
+				{
+
 #ifdef __linux__
-				if (i == 2 || i == 5)
-				{
-					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-				}
-				else
-				{
-					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
-				}
+					if (i == 2 || i == 5)
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
 #endif
 
 #ifdef _WIN32
-				if (i == 4 || i == 5)
-				{
-					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
-				}
-				else
-				{
-					joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
-				}
+					if (i == 4 || i == 5)
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
 #endif
+				}
 			}
 		}
 
 		return joystickKeyMap;
 	}
 
+};
+
+namespace controle
+{
+
+	int countConnectedJoysticks()
+	{
+		int count = 0;
+
+		for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; ++i)
+		{
+			if (glfwJoystickPresent(i))
+			{
+				count++;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		return count;
+	}
+
+	unordered_map<string, float> generateJoystickKeyMap(int joystick)
+	{
+		return controle_xbox_360::generateJoystickKeyMap(joystick);
+	}
 
 }
 
@@ -554,7 +568,7 @@ bool iniciada_logica_scripts;
 
 void Reindenizar()
 {
-	
+
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();

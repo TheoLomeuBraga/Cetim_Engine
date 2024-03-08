@@ -75,9 +75,9 @@ function UPDATE()
     inputs.action_1 = math.max(0,inputs.action_1)
     inputs.action_2 = math.max(0,inputs.action_2)
 
-    if inputs.foward < -1 then
+    if inputs.foward < -0.5 then
         inputs.foward = -1
-    elseif inputs.foward > 1 then
+    elseif inputs.foward > 0.1 then
         inputs.foward = 1
     end
     --inputs.foward = -inputs.foward
