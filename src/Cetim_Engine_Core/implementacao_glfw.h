@@ -529,7 +529,7 @@ namespace controle
 
 		if (joystick_name == "Xbox 360 Wireless Receiver"){
 			return controle_xbox_360::generateJoystickKeyMap(joystick);
-		}else if (joystick_name == "Sony Interactive Entertainment Wireless Controller")
+		}else if (joystick_name == "Sony Interactive Entertainment Wireless Controller" || joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
 		{
 			return controle_dualshock_4::generateJoystickKeyMap(joystick);
 		}
