@@ -396,9 +396,9 @@ namespace controle_dualshock_4
 
 		std::pair<std::string, std::string>("axis_0", "lx"),
 		std::pair<std::string, std::string>("axis_1", "ly"),
+		std::pair<std::string, std::string>("axis_2", "lt"),
 		std::pair<std::string, std::string>("axis_3", "rx"),
 		std::pair<std::string, std::string>("axis_4", "ry"),
-		std::pair<std::string, std::string>("axis_2", "lt"),
 		std::pair<std::string, std::string>("axis_5", "rt"),
 	};
 
@@ -415,9 +415,6 @@ namespace controle_dualshock_4
 			int buttonCount;
 			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
 
-			int axisCount;
-			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
-
 			if (prevJoystickButtonsState.empty())
 			{
 				prevJoystickButtonsState.resize(buttonCount, GLFW_RELEASE);
@@ -425,6 +422,9 @@ namespace controle_dualshock_4
 
 			for (int i = 0; i < buttonCount; ++i)
 			{
+
+				print("		key",i,"=",(unsigned int)buttons[i]);
+
 				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
 
@@ -447,13 +447,16 @@ namespace controle_dualshock_4
 
 					prevJoystickButtonsState[i] = buttons[i];
 				}
-				print("		key",i,"=",buttons[i]);
+				
 			}
+
+			int axisCount;
+			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
 
 			for (int i = 0; i < axisCount; ++i)
 			{
 
-				print("		axis",i,"=",axes[i]);
+				//print("		axis",i,"=",axes[i]);
 
 				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
 				{
@@ -529,9 +532,11 @@ namespace controle
 
 		if (joystick_name == "Xbox 360 Wireless Receiver"){
 			return controle_xbox_360::generateJoystickKeyMap(joystick);
-		}else if (joystick_name == "Sony Interactive Entertainment Wireless Controller" || joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
+		}else if (joystick_name == "Sony Interactive Entertainment Wireless Controller")
 		{
 			return controle_dualshock_4::generateJoystickKeyMap(joystick);
+		}else if(joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad"){
+
 		}
 
 		return {
