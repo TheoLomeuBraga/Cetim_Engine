@@ -19,7 +19,7 @@ function stopwatch:new()
     local obj = {
         creationTime = os.clock(),
     }
-    function obj:getTime()
+    function obj:get()
         return (os.clock() - self.creationTime)
     end
     return obj

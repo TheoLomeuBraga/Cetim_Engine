@@ -2316,12 +2316,13 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	
 	int walk_along_the_path(lua_State *L)
 	{
 		Table ret;
 
 		vector<Table> path_tables = table_vTable(lua_totable(L, 1));
-		vector<vec3> path;
+		vector<glm::vec3> path;
 		for (Table t : path_tables)
 		{
 			path.push_back(table_vec3(t));
@@ -2329,9 +2330,9 @@ namespace funcoes_ponte
 		float current_progression = lua_tonumber(L, 2);
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
-		vec3 target;
-		vec3 target_movement;
-		vec3 rotation;
+		glm::vec3 target;
+		glm::vec3 target_movement;
+		glm::vec3 rotation;
 		float progression;
 
 		int current_index = static_cast<int>(current_progression);
@@ -2344,9 +2345,9 @@ namespace funcoes_ponte
 		}
 
 		// Interpolação linear para encontrar a posição atual e a próxima
-		vec3 current_position = path[current_index];
-		vec3 next_position = path[current_index + 1];
-		vec3 interpolated_position = current_position + lerp_factor * (next_position - current_position);
+		glm::vec3 current_position = path[current_index];
+		glm::vec3 next_position = path[current_index + 1];
+		glm::vec3 interpolated_position = current_position + lerp_factor * (next_position - current_position);
 
 		// Calcular a distância até o próximo ponto
 		float distance_to_next_point = glm::distance(current_position, next_position);
@@ -2368,7 +2369,7 @@ namespace funcoes_ponte
 		if (glm::length(target_movement) > 0)
 		{
 			// Supondo que target é a posição para a qual o objeto deve olhar e current_position é a posição atual do objeto
-			vec3 up_vector = vec3(0.0f, 1.0f, 0.0f); // Vetor 'up' padrão
+			glm::vec3 up_vector = glm::vec3(0.0f, 1.0f, 0.0f); // Vetor 'up' padrão
 
 			// Gerar a matriz 'look at'
 			mat4 lookAt_matrix = glm::lookAt(current_position, target, up_vector);

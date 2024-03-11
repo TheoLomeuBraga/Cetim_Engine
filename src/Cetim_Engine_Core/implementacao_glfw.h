@@ -378,32 +378,6 @@ namespace controle_xbox_360
 namespace controle_dualshock_4
 {
 
-	/*
-	std::map<std::string, std::string> ajust_keys_map = {
-		std::pair<std::string, std::string>("0", "a"),
-		std::pair<std::string, std::string>("1", "b"),
-		std::pair<std::string, std::string>("2", "x"),
-		std::pair<std::string, std::string>("3", "y"),
-		std::pair<std::string, std::string>("4", "lb"),
-		std::pair<std::string, std::string>("5", "rb"),
-		std::pair<std::string, std::string>("6", "back"),
-		std::pair<std::string, std::string>("7", "start"),
-		std::pair<std::string, std::string>("9", "la"),
-		std::pair<std::string, std::string>("10", "ra"),
-		std::pair<std::string, std::string>("11", "left"),
-		std::pair<std::string, std::string>("12", "right"),
-		std::pair<std::string, std::string>("13", "up"),
-		std::pair<std::string, std::string>("14", "down"),
-
-		std::pair<std::string, std::string>("axis_0", "lx"),
-		std::pair<std::string, std::string>("axis_1", "ly"),
-		std::pair<std::string, std::string>("axis_2", "lt"),
-		std::pair<std::string, std::string>("axis_3", "rx"),
-		std::pair<std::string, std::string>("axis_4", "ry"),
-		std::pair<std::string, std::string>("axis_5", "rt"),
-	};
-	*/
-
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
 		std::pair<std::string, std::string>("1", "b"),
@@ -498,6 +472,78 @@ namespace controle_dualshock_4
 		return joystickKeyMap;
 	}
 
+	static std::vector<float> prevJoystickButtonsStateTouch;
+
+	unordered_map<string, float> generateJoystickKeyMapTouch(int joystick)
+	{
+		std::unordered_map<std::string, float> joystickKeyMap;
+
+		if (glfwJoystickPresent(joystick))
+		{
+			print("{");
+			int buttonCount;
+			const unsigned char *buttons = glfwGetJoystickButtons(joystick, &buttonCount);
+
+			if (prevJoystickButtonsStateTouch.empty())
+			{
+				prevJoystickButtonsStateTouch.resize(buttonCount, GLFW_RELEASE);
+			}
+
+			for (int i = 0; i < buttonCount; ++i)
+			{
+
+				print("		button:",(int)buttons[i]);
+
+				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
+				{
+
+					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsStateTouch[i] == GLFW_RELEASE)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 1;
+					}
+					else if (buttons[i] == GLFW_RELEASE && prevJoystickButtonsStateTouch[i] == GLFW_PRESS)
+					{
+						joystickKeyMap[ajust_keys_map[std::to_string(i)]] = 0;
+					}
+					else
+					{
+						joystickKeyMap[std::to_string(i)] = 0;
+					}
+
+					prevJoystickButtonsStateTouch[i] = buttons[i];
+				}
+			}
+
+			int axisCount;
+			const float *axes = glfwGetJoystickAxes(joystick, &axisCount);
+
+			for (int i = 0; i < axisCount; ++i)
+			{
+				print("		axi:",axes[i]);
+				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
+				{
+					if (i == 2 || i == 5)
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
+				}
+			}
+			print("{");
+
+		}
+
+		return joystickKeyMap;
+	}
+
+
 };
 
 namespace controle
@@ -552,12 +598,13 @@ namespace controle
 		{
 			return controle_xbox_360::generateJoystickKeyMap(joystick);
 		}
-		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller")
+		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller" || joystick_name == "Wireless Controller")
 		{
 			return controle_dualshock_4::generateJoystickKeyMap(joystick);
 		}
 		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
 		{
+			//controle_dualshock_4::generateJoystickKeyMapTouch(joystick);
 		}
 
 		return {

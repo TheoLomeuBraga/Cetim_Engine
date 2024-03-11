@@ -129,6 +129,7 @@ cenary_builders = {
 
     scene_part = function(father, layer, part_data, yield)
 
+        --local sp = stopwatch:new()
         
         local ret = {}
         ret = game_object(create_object(father))
@@ -364,6 +365,8 @@ cenary_builders = {
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
         end
+
+        --print("sp",sp:get())
 
         return ret
     end,

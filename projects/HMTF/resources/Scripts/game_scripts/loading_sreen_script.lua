@@ -22,7 +22,7 @@ function UPDATE()
     
     if obj_to_rotate ~= nil then
         obj_to_rotate.components.transform:get()
-        obj_to_rotate.components.transform.rotation.z = obj_to_rotate.components.transform.rotation.z + (speed * sw:getTime())
+        obj_to_rotate.components.transform.rotation.z = obj_to_rotate.components.transform.rotation.z + (speed * sw:get())
         obj_to_rotate.components.transform:set()
 
         sw = stopwatch:new()
