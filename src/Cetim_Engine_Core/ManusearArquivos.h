@@ -338,11 +338,15 @@ namespace ManuseioDados
 
 					nsvgRasterize(rast, imagemSVG, 0, 0, static_cast<float>(X) / static_cast<float>(imagemSVG->width), data, X, Y, X * canais);
 
+					
+
 					nsvgDeleteRasterizer(rast);
 					nsvgDelete(imagemSVG);
 
 					imagem image = imagem(X, Y, canais, data);
 					image.local = local;
+
+					delete[] data;
 
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);
@@ -361,7 +365,7 @@ namespace ManuseioDados
 					image.local = local;
 
 					stbi_image_free(data);
-					// delete[] data;
+					//delete[] data;
 					delete[] data2;
 
 					remove_loading_request(local);
@@ -373,7 +377,7 @@ namespace ManuseioDados
 					image.local = local;
 
 					stbi_image_free(data);
-					// delete[] data;
+					//delete[] data;
 
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);

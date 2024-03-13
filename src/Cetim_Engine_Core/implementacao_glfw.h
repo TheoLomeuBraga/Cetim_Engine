@@ -388,7 +388,7 @@ namespace controle_dualshock_4
 
 		std::pair<std::string, std::string>("8", "back"),
 		std::pair<std::string, std::string>("9", "start"),
-		//std::pair<std::string, std::string>("10", ""),
+		// std::pair<std::string, std::string>("10", ""),
 		std::pair<std::string, std::string>("11", "la"),
 		std::pair<std::string, std::string>("12", "ra"),
 		std::pair<std::string, std::string>("13", "up"),
@@ -466,7 +466,6 @@ namespace controle_dualshock_4
 					}
 				}
 			}
-
 		}
 
 		return joystickKeyMap;
@@ -492,7 +491,7 @@ namespace controle_dualshock_4
 			for (int i = 0; i < buttonCount; ++i)
 			{
 
-				print("		button:",(int)buttons[i]);
+				print("		button:", (int)buttons[i]);
 
 				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
@@ -523,7 +522,7 @@ namespace controle_dualshock_4
 
 			for (int i = 0; i < axisCount; ++i)
 			{
-				print("		axi:",axes[i]);
+				print("		axi:", axes[i]);
 				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
 				{
 					if (i == 2 || i == 5)
@@ -537,12 +536,10 @@ namespace controle_dualshock_4
 				}
 			}
 			print("{");
-
 		}
 
 		return joystickKeyMap;
 	}
-
 
 };
 
@@ -604,7 +601,7 @@ namespace controle
 		}
 		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
 		{
-			//controle_dualshock_4::generateJoystickKeyMapTouch(joystick);
+			// controle_dualshock_4::generateJoystickKeyMapTouch(joystick);
 		}
 
 		return {
@@ -893,9 +890,20 @@ void IniciarJanela()
 	}
 
 	glfwSetWindowSizeCallback(janela, MudarTamanhoJanela);
-	// icone   load_icon("ico.png");
 
-	mudar_logo_janela(ManuseioDados::carregar_Imagem("resources/ico.png"));
+	shared_ptr<imagem> logo = ManuseioDados::carregar_Imagem("resources/ico.png");
+	if (logo)
+	{
+		mudar_logo_janela(logo);
+	}
+	else
+	{
+		logo = ManuseioDados::carregar_Imagem("resources/ico.svg");
+		if (logo)
+		{
+			mudar_logo_janela(logo);
+		}
+	}
 
 	AntesReindenizar();
 
