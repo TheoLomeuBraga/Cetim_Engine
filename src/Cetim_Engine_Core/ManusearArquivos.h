@@ -309,7 +309,7 @@ namespace ManuseioDados
 		int Y = 1;
 		int canais = 4;
 
-		unsigned char *data;
+		unsigned char *data = NULL;
 
 		
 

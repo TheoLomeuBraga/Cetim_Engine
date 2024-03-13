@@ -293,8 +293,23 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
+
         elseif part_data.variables.type == "sound" then
             ret.components.audio_source.path = "resources/Audio/sounds/" ..
+                part_data.variables.sound_source .. ".wav"
+            ret.components.audio_source.loop = false
+            ret.components.audio_source.volume = 10
+            ret.components.audio_source.min_distance = 5
+            ret.components.audio_source.atenuation = 1
+            ret.components.audio_source:set()
+
+            add_mesh(nil)
+        
+        elseif part_data.variables.type == "background_music" then
+
+            ret = game_object(create_object(father))
+
+            ret.components.audio_source.path = "resources/Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = true
             ret.components.audio_source.volume = 10
@@ -303,8 +318,6 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
-        
-        
 
         elseif part_data.variables.type == "mensage" then
             

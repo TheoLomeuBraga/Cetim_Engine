@@ -3,7 +3,6 @@
 #include <iostream>
 #include <memory>
 
-
 #include "Config.h"
 #include "RecursosT.h"
 #include "scene.h"
@@ -63,7 +62,6 @@ public:
 };
 
 mapeamento_assets<sdl_sound_manager> buffers_som;
-
 
 std::mutex buffers_som_sdl_mtx;
 
@@ -197,7 +195,7 @@ public:
 					Uint8 smoothedLeft = static_cast<Uint8>(previousLeft + smoothingFactor * (targetLeft - previousLeft));
 					Uint8 smoothedRight = static_cast<Uint8>(previousRight + smoothingFactor * (targetRight - previousRight));
 
-					Mix_SetPanning(channel, std::min( smoothedRight + (smoothedLeft/4),255), std::min( smoothedLeft + (smoothedRight/4),255) );
+					Mix_SetPanning(channel, std::min(smoothedRight + (smoothedLeft / 4), 255), std::min(smoothedLeft + (smoothedRight / 4), 255));
 
 					// Atualize os valores anteriores
 					previousLeft = smoothedLeft;
@@ -255,8 +253,6 @@ public:
 
 #include <SFML/Audio.hpp>
 
-
-
 mapeamento_assets<sf::SoundBuffer> buffers_som;
 
 std::set<std::string> sfml_audio_loading_requests_files = {};
@@ -284,7 +280,8 @@ shared_ptr<transform_> listener_transform = NULL;
 
 float global_volume_sfml = 0;
 
-void get_set_global_volume_sfml(float vol){
+void get_set_global_volume_sfml(float vol)
+{
 	sf::Listener::setGlobalVolume(vol);
 	global_volume_sfml = vol;
 }
@@ -292,8 +289,6 @@ void get_set_global_volume_sfml(float vol){
 class audio_source : public componente
 {
 public:
-	
-
 	audio_info info;
 	shared_ptr<sf::Sound> som;
 	shared_ptr<sf::SoundBuffer> buffer;
@@ -350,32 +345,29 @@ public:
 
 		tf = esse_objeto->pegar_componente<transform_>();
 
-		if (listener_transform != NULL && tf != NULL)
-		{
+		vec3 lpos = listener_transform->pegar_pos_global();
+		vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
+		vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
 
-			vec3 lpos = listener_transform->pegar_pos_global();
-			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
-			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
-
-			sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
+		sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
 			sf::Listener::setUpVector(sf::Vector3f(lup.x, lup.y, lup.z));
 			sf::Listener::setDirection(sf::Vector3f(ldir.x, ldir.y, ldir.z));
 
-			vec3 gpos = tf->pegar_pos_global();
-			//som->setPosition(-gpos.x, gpos.y, -gpos.z);
-			som->setPosition(sf::Vector3f(gpos.x, gpos.y, gpos.z));
+		if (listener_transform != NULL && tf != NULL)
+		{
 
+			
+
+			vec3 gpos = tf->pegar_pos_global();
+			som->setPosition(sf::Vector3f(gpos.x, gpos.y, gpos.z));
 		}
 		else
 		{
-			sf::Listener::setPosition(sf::Vector3f(0,0,0));
-			sf::Listener::setUpVector(sf::Vector3f(0,1,0));
-			sf::Listener::setDirection(sf::Vector3f(0,0,1));
-			som->setPosition(sf::Vector3f(0,0,0));
+			som->setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
 		}
 	}
 
-	audio_source(){}
+	audio_source() {}
 	audio_source(audio_info info)
 	{
 		this->info = info;
@@ -387,6 +379,3 @@ public:
 	}
 };
 #endif
-
-
-
