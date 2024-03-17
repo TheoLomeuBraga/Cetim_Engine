@@ -25,15 +25,15 @@ function play_pick_up_sound(args)
 
     if args[1] == "key" then
 
-        au.path = "resources/Audio/sounds/jump.wav"
+        au.path = "resources/Audio/sounds/get_item.wav"
         
     elseif args[1] == "upgrade" then
 
-        au.path = "resources/Audio/sounds/jump.wav"
+        au.path = "resources/Audio/sounds/get_item.wav"
 
     elseif args[1] == "consumable" then
 
-        au.path = "resources/Audio/sounds/jump.wav"
+        au.path = "resources/Audio/sounds/get_item.wav"
 
     end
     au:set()
