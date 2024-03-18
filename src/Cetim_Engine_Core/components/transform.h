@@ -133,7 +133,7 @@ public:
 		pegar_matriz();
 	}
 
-	glm::vec3 billboarding_planar(glm::vec3 target)
+	glm::vec3 billboarding_spherical(glm::vec3 target)
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));
@@ -147,13 +147,13 @@ public:
 		// Constrói o vetor em graus
 		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
 
-		euler_angles.x = up.x;
+		euler_angles.z = up.z;
 		
 		quater = graus_quat(euler_angles);
 		return euler_angles;
 	}
 
-	glm::vec3 billboarding_spherical(glm::vec3 target)
+	glm::vec3 billboarding_planar(glm::vec3 target)
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));

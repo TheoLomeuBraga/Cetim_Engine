@@ -856,9 +856,9 @@ public:
 
 			if (tf->billboarding == 1)
 			{
-				tf->billboarding_spherical(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
-			}else if (tf->billboarding == 2){
 				tf->billboarding_planar(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
+			}else if (tf->billboarding == 2){
+				tf->billboarding_spherical(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
 			}
 
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
