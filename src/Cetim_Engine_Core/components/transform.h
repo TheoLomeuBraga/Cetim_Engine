@@ -13,17 +13,9 @@ class transform_ : public componente
 public:
 	glm::mat4 matrizTransform;
 	glm::mat4 offset_matrix = glm::mat4(1.0f);
+	unsigned char billboarding = 0;
 	bool UI = false;
 	transform_ *paiTF = NULL;
-
-	transform_()
-	{
-		matrizTransform = MatrizMundi;
-	}
-	~transform_()
-	{
-		matrizTransform = MatrizMundi;
-	}
 
 	int local_hierarquia;
 
@@ -33,6 +25,15 @@ public:
 	glm::vec3 pos = vec3(0, 0, 0), esca = vec3(1, 1, 1), rot = vec3(0, 0, 0);
 
 	quat quater = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+
+	transform_()
+	{
+		matrizTransform = MatrizMundi;
+	}
+	~transform_()
+	{
+		matrizTransform = MatrizMundi;
+	}
 
 	glm::mat4 pegar_matriz()
 	{
@@ -132,6 +133,46 @@ public:
 		pegar_matriz();
 	}
 
+	glm::vec3 billboarding_planar(glm::vec3 target)
+	{
+		glm::vec3 position = pegar_matriz()[3];
+		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));
+
+		glm::vec3 direction = glm::normalize(target - position);
+
+		// Calcula os ângulos de pitch e yaw
+		float pitch = glm::degrees(asin(-direction.y));
+		float yaw = glm::degrees(atan2(direction.x, direction.z));
+
+		// Constrói o vetor em graus
+		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
+
+		euler_angles.x = up.x;
+		
+		quater = graus_quat(euler_angles);
+		return euler_angles;
+	}
+
+	glm::vec3 billboarding_spherical(glm::vec3 target)
+	{
+		glm::vec3 position = pegar_matriz()[3];
+		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));
+
+		glm::vec3 direction = glm::normalize(target - position);
+
+		// Calcula os ângulos de pitch e yaw
+		float pitch = glm::degrees(asin(-direction.y));
+		float yaw = glm::degrees(atan2(direction.x, direction.z));
+
+		// Constrói o vetor em graus
+		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
+
+		
+		
+		quater = graus_quat(euler_angles);
+		return euler_angles;
+	}
+
 	void atualizar_tf()
 	{
 		matrizTransform = pegar_matriz();
@@ -183,10 +224,10 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 	// Calculate the distances from the given point to each of the points in the input vector
 	for (int i = 0; i < objs.size(); i++)
 	{
-		if(objs[i]->pegar_componente<transform_>() != NULL){
+		if (objs[i]->pegar_componente<transform_>() != NULL)
+		{
 			tf_distance[i] = vec3_distance(point, vec3(objs[i]->pegar_componente<transform_>()->matrizTransform[3]));
 		}
-		
 	}
 
 	// Create an index vector and sort it based on the distances
@@ -210,7 +251,7 @@ std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance(glm::vec3 point, st
 
 std::vector<shared_ptr<objeto_jogo>> tf_ordenate_by_distance_far(glm::vec3 point, std::vector<shared_ptr<objeto_jogo>> objs)
 {
-	std::vector<shared_ptr<objeto_jogo>> ret = tf_ordenate_by_distance(point,objs);
+	std::vector<shared_ptr<objeto_jogo>> ret = tf_ordenate_by_distance(point, objs);
 	std::reverse(ret.begin(), ret.end());
 	return ret;
 }

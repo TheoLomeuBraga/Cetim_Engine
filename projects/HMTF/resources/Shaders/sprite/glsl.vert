@@ -5,41 +5,6 @@
 layout(location = 0) out vec4 POS;
 layout(location = 1) out vec2 UV;
 
-
-
-
-
-
-
-
-
-
-
-//triangulo
-
-
-
-
-
-
-
-
-
-
-//Vertices
-
-
-
-
-
-
-
-
-
-
-
-
-
 vec3 quad_data[6] = vec3[6](
   vec3(-1,-1,0),
   vec3(1,-1,0),
@@ -51,15 +16,9 @@ vec3 quad_data[6] = vec3[6](
   );
 
 
-
-
 uniform bool ui;
 uniform mat4 projection,vision,transform;
 
-
-
-  
- 
  void main(){
   //tela
    
@@ -75,11 +34,6 @@ uniform mat4 projection,vision,transform;
    }else{
    gl_Position = (projection * vision * transform) * POS ; 
    }
-   
-
-
-
-
    
 }
 

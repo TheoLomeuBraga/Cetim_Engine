@@ -13,7 +13,7 @@
 #include "LoopPrincipal.h"
 
 #include <GL/glew.h>
-#include <future> 
+#include <future>
 
 #include "game_object.h"
 #include "camera.h"
@@ -21,6 +21,9 @@
 #include "poly_mesh.h"
 
 #include "benchmark.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct mesh_ogl_struct
 {
@@ -158,7 +161,7 @@ public:
 			}
 			else
 			{
-				escrever("erro ao carregar shader " + nome);
+				print("erro ao carregar shader de vertice " + nome);
 			}
 
 			if (ManuseioDados::Existe(arquivos[1]))
@@ -172,7 +175,7 @@ public:
 			}
 			else
 			{
-				escrever("erro ao carregar shader " + nome);
+				print("erro ao carregar shader de fragmento " + nome);
 			}
 			shaders.insert(pair<string, unsigned int>(shade, CompilarShader_ogl(p)));
 		}
@@ -312,12 +315,12 @@ public:
 				{
 
 					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
-					
+
 					glBeginQuery(GL_SAMPLES_PASSED, p.second);
 
 					// ajustar
 					glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-					
+
 					glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
 
 					for (unsigned char i = 0; i < rm->malhas.size(); i++)
@@ -743,7 +746,16 @@ public:
 	{
 		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
 
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
+		if (!tf->UI)
+		{
+			mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+			glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+		}
+		else
+		{
+			glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
+		}
+
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 	}
@@ -841,6 +853,13 @@ public:
 		{
 			shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 			shared_ptr<camera> ca = cam->pegar_componente<camera>();
+
+			if (tf->billboarding == 1)
+			{
+				tf->billboarding_spherical(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
+			}else if (tf->billboarding == 2){
+				tf->billboarding_planar(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
+			}
 
 			shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
 			if (RM != NULL && RM->malhas.size() > 0 && RM->mats.size() > 0)

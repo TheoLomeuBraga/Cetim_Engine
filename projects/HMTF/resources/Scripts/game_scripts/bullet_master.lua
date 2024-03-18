@@ -125,17 +125,35 @@ function summon_bullet(args)
         else
             local bullet = game_object(create_object(layers.cenary))
 
+            bullet.components.transform.is_ui = false
             bullet.components.transform.position = (args.pos)
-            bullet.components.transform.rotation = { x = 0, y = 0, z = 0 }
-            bullet.components.transform.scale = { x = 0.25, y = 0.25, z = 0.25 }
+            bullet.components.transform.rotation = { x = 0, y = 45, z = 0 }
+            --bullet.components.transform.scale = { x = 0.25, y = 0.25, z = 0.25 }
+            bullet.components.transform.scale = { x = 2, y = 2, z = 2 }
+            bullet.components.transform.billboarding = 1
             bullet.components.transform:set()
-
+            
+            --[[
             bullet.components.render_mesh.layer = 2
             bullet.components.render_mesh.meshes_cout = 1
             bullet.components.render_mesh.meshes = ({ args.mesh })
             mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
             bullet.components.render_mesh.materials = ({ mat })
             bullet.components.render_mesh:set()
+            ]]
+
+            
+            bullet.components.render_shader.layer = 4
+            bullet.components.render_shader.vertex_size = 6
+
+            local mat2 = deepcopy(mat)
+            mat2.shader = "resources/Shaders/shader_face_camera"
+            mat2.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
+            mat2.textures[1] = "resources/Textures/white.png"
+            bullet.components.render_shader.material = mat2
+            
+
+            bullet.components.render_shader:set()
             
             bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
             bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere

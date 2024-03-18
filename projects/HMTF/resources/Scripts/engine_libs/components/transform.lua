@@ -13,6 +13,7 @@ transform_component.is_ui = false
 transform_component.position = Vec3:new(0,0,0)
 transform_component.rotation = Vec3:new(0,0,0)
 transform_component.scale = Vec3:new(1,1,1)
+transform_component.billboarding = 0
 
 function transform_component:get_global_position()
     local ret = Vec3:new(0,0,0)
@@ -57,6 +58,7 @@ function transform_component:clean()
     self.position = Vec3:new(0,0,0)
     self.rotation = Vec3:new(0,0,0)
     self.scale = Vec3:new(1,1,1)
+    self.billboarding = 0
 end
 
 function transform_component:get()
@@ -65,6 +67,7 @@ function transform_component:get()
     self.position = deepcopyjson(t.position)
     self.rotation = deepcopyjson(t.rotation)
     self.scale = deepcopyjson(t.scale)
+    self.billboarding = t.billboarding
         
 end
 

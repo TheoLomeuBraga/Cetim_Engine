@@ -48,13 +48,6 @@ vec3 quad_data[6] = vec3[6](
   vec3(-1,1,0),
   vec3(-1,-1,0)
   );
-
-
-
-
-
-
-
   
  
  void main(){

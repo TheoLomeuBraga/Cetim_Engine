@@ -1156,6 +1156,8 @@ namespace funcoes_ponte
 			ret.setTable("position", vec3_table(tf->pos));
 			ret.setTable("rotation", vec3_table(tf->pegar_angulo_graus()));
 			ret.setTable("scale", vec3_table(tf->esca));
+			ret.setFloat("billboarding", tf->billboarding);
+			
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1170,6 +1172,7 @@ namespace funcoes_ponte
 				tf->pos = table_vec3(t.getTable("position"));
 				tf->mudar_angulo_graus(table_vec3(t.getTable("rotation")));
 				tf->esca = table_vec3(t.getTable("scale"));
+				tf->billboarding = t.getFloat("billboarding");
 				tf->pegar_matriz();
 			}
 
