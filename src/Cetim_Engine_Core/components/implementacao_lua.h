@@ -103,7 +103,8 @@ void start_lua_global_data()
 	
 	#ifdef USE_LUA_JIT
 		luaJIT_setmode(lua_global_data, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 10);
+		lua_gc(lua_global_data, LUA_GCSETPAUSE, 100);     
+		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 400);
 	#else
 		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
 	#endif
@@ -2893,7 +2894,8 @@ void load_base_lua_state(lua_State *L, string path)
 
 	#ifdef USE_LUA_JIT
 		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-		lua_gc(L, LUA_GCSETSTEPMUL, 10);
+		lua_gc(L, LUA_GCSETPAUSE, 100);     
+		lua_gc(L, LUA_GCSETSTEPMUL, 400);
 	#else
 		lua_gc(L, LUA_GCSETSTEPMUL, 1000);
 	#endif

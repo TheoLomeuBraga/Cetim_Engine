@@ -6,6 +6,8 @@ COMPILER := g++
 #FLAGS_LINUX :=  -Wl,-E -static-libgcc -static-libstdc++ # -O3 -ffast-math 
 
 OPTIMIZATION ?= 0
+
+#the luajit suport causes stacks overflows
 USE_LUAJIT ?= 0
 
 SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/backends/imgui_impl_glfw.cpp  
