@@ -6,7 +6,7 @@ COMPILER := g++
 #FLAGS_LINUX :=  -Wl,-E -static-libgcc -static-libstdc++ # -O3 -ffast-math 
 
 OPTIMIZATION ?= 0
-USE_SDL ?= 0
+USE_LUAJIT ?= 0
 
 SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/backends/imgui_impl_glfw.cpp  
 
@@ -25,7 +25,14 @@ ifeq ($(OS),Windows_NT)
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system 
+	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
+	ifeq ($(USE_LUAJIT),0)
+		LIBS_ENGINE += -llua
+	endif
+	ifeq ($(USE_LUAJIT),1)
+		LIBS_ENGINE += -DUSE_LUA_JIT -lluajit-5.1
+	endif
+	
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
 	ifeq ($(OPTIMIZATION),0)
@@ -40,7 +47,13 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
 	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -llua -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system 
+	LIBS_ENGINE = -L./libs/windows -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
+	ifeq ($(USE_LUAJIT),0)
+		LIBS_ENGINE += -llua
+	endif
+	ifeq ($(USE_LUAJIT),1)
+		LIBS_ENGINE += -DUSE_LUA_JIT -lluajit-5.1
+	endif
 endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPTIMIZATION),0)
@@ -52,10 +65,17 @@ ifeq ($(OS),Linux)
 	ifeq ($(OPTIMIZATION),2)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O3 -ffast-math 
 	endif
-		TARGET_ENGINE = ./build/cetim_engine
-		SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-		INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
-		LIBS_ENGINE = -L./libs/linux -lRecast -lDetour -lDetourCrowd -llua -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath `sdl2-config --cflags --libs` -lSDL2_mixer
+	TARGET_ENGINE = ./build/cetim_engine
+	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
+	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
+	LIBS_ENGINE = -L./libs/linux -lRecast -lDetour -lDetourCrowd -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath `sdl2-config --cflags --libs` -lSDL2_mixer 
+	ifeq ($(USE_LUAJIT),0)
+		LIBS_ENGINE += -llua
+	endif
+	ifeq ($(USE_LUAJIT),1)
+		LIBS_ENGINE += -lluajit -DUSE_LUA_JIT
+	endif
+		
 endif
 
 all: 

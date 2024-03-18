@@ -100,7 +100,13 @@ void start_lua_global_data()
 {
 	print("iniciando lua global data");
 	lua_global_data = luaL_newstate();
-	lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
+	
+	#ifdef USE_LUA_JIT
+		luaJIT_setmode(lua_global_data, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 10);
+	#else
+		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
+	#endif
 }
 
 void lua_pushtable(lua_State *L, Table t)
@@ -2885,7 +2891,12 @@ void load_base_lua_state(lua_State *L, string path)
 	lua_setfield(L, -2, "cpath");
 	lua_pop(L, 1);
 
-	lua_gc(L, LUA_GCSETSTEPMUL, 1000);
+	#ifdef USE_LUA_JIT
+		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+		lua_gc(L, LUA_GCSETSTEPMUL, 10);
+	#else
+		lua_gc(L, LUA_GCSETSTEPMUL, 1000);
+	#endif
 
 	lua_newtable(L);
 	for (int i = 0; i < argumentos.size(); i++)
