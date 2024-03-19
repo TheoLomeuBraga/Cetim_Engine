@@ -711,8 +711,10 @@ public:
     void finalisar() {}
 };
 
+Tempo::Timer bullet_physics_timer;
 void iniciar_global_bullet()
 {
+    bullet_physics_timer.clear();
     if (global_bullet_iniciado == 0)
     {
         cout << "iniciar global bullet\n";
@@ -787,6 +789,8 @@ void get_bu_collisions_no_per_object()
     }
 }
 
+
+
 void atualisar_global_bullet()
 {
 
@@ -794,12 +798,13 @@ void atualisar_global_bullet()
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
-    float bullet_passo_tempo = Tempo::varTempRender * Tempo::velocidadeTempo;
+    float bullet_passo_tempo = ((float)bullet_physics_timer.get()) * Tempo::velocidadeTempo;
     if (Tempo::velocidadeTempo > 0)
     {
         dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
-        //dynamicsWorld->stepSimulation(bullet_passo_tempo);
+        bullet_physics_timer.clear();
     }
+    
 }
 
 void iniciar_atualisar_global_bullet()

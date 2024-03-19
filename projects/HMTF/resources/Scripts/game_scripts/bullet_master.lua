@@ -132,28 +132,16 @@ function summon_bullet(args)
             bullet.components.transform.scale = { x = 0.5, y = 0.5, z = 0.5 }
             bullet.components.transform.billboarding = 2
             bullet.components.transform:set()
-            
-            --[[
-            bullet.components.render_mesh.layer = 2
-            bullet.components.render_mesh.meshes_cout = 1
-            bullet.components.render_mesh.meshes = ({ args.mesh })
-            mat.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
-            bullet.components.render_mesh.materials = ({ mat })
-            bullet.components.render_mesh:set()
-            ]]
 
             
             bullet.components.render_shader.layer = 2
             bullet.components.render_shader.vertex_size = 6
-
             local mat2 = deepcopy(mat)
             mat2.shader = "resources/Shaders/2D_bullet"
             --mat2.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
             mat2.color = { r = 1, g = 1, b = 1, a = 0.99 }
             mat2.textures[1] = "resources/Textures/energy_buble.svg"
             bullet.components.render_shader.material = mat2
-            
-
             bullet.components.render_shader:set()
             
             bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
