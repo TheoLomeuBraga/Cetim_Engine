@@ -5,6 +5,7 @@ COMPILER := g++
 #FLAGS_WINDOWS_DEBUG :=  -pipe -Wa,-mbig-obj -Wl,-E  -s -O3 -ffast-math 
 #FLAGS_LINUX :=  -Wl,-E -static-libgcc -static-libstdc++ # -O3 -ffast-math 
 
+#mingw32-make OPTIMIZATION=2
 OPTIMIZATION ?= 0
 
 #the luajit suport causes stacks overflows
