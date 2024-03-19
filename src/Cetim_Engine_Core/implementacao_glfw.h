@@ -879,6 +879,7 @@ void IniciarJanela()
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
+	glfwSwapInterval( 0 );
 
 	// glfwSwapInterval(1);
 
@@ -916,6 +917,8 @@ void IniciarJanela()
 	teclas::initializeTextInput(janela);
 
 	cout << "Inputs Online" << endl;
+
+	
 
 	if (glfwRawMouseMotionSupported())
 	{
