@@ -1,0 +1,5 @@
+#!/bin/sh
+wine cmd << EOF
+run.bat
+exit
+EOF
