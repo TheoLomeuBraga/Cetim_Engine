@@ -148,8 +148,9 @@ function summon_bullet(args)
 
             local mat2 = deepcopy(mat)
             mat2.shader = "resources/Shaders/2D_bullet"
-            mat2.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
-            mat2.textures[1] = "resources/Textures/white.png"
+            --mat2.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
+            mat2.color = { r = 1, g = 1, b = 1, a = 0.99 }
+            mat2.textures[1] = "resources/Textures/energy_buble.svg"
             bullet.components.render_shader.material = mat2
             
 

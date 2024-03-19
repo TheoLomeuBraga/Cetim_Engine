@@ -891,14 +891,14 @@ void IniciarJanela()
 
 	glfwSetWindowSizeCallback(janela, MudarTamanhoJanela);
 
-	shared_ptr<imagem> logo = ManuseioDados::carregar_Imagem("resources/ico.png");
+	shared_ptr<imagem> logo = ManuseioDados::carregar_Imagem("resources/icon.png");
 	if (logo)
 	{
 		mudar_logo_janela(logo);
 	}
 	else
 	{
-		logo = ManuseioDados::carregar_Imagem("resources/ico.svg");
+		logo = ManuseioDados::carregar_Imagem("resources/icon.svg");
 		if (logo)
 		{
 			mudar_logo_janela(logo);
