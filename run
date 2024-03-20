@@ -1,4 +1,4 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=$(pwd)/libs/linux
+export LD_LIBRARY_PATH=$(pwd)/libs/x86_64/linux
 export vblank_mode=0
 $(pwd)/build/cetim_engine $(pwd)/projects/HMTF
