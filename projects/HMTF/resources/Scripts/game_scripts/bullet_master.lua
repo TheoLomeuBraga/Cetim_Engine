@@ -128,7 +128,6 @@ function summon_bullet(args)
             bullet.components.transform.is_ui = false
             bullet.components.transform.position = (args.pos)
             bullet.components.transform.rotation = { x = 0, y = 45, z = 0 }
-            --bullet.components.transform.scale = { x = 0.25, y = 0.25, z = 0.25 }
             bullet.components.transform.scale = { x = 0.5, y = 0.5, z = 0.5 }
             bullet.components.transform.billboarding = 2
             bullet.components.transform:set()
@@ -138,7 +137,6 @@ function summon_bullet(args)
             bullet.components.render_shader.vertex_size = 6
             local mat2 = deepcopy(mat)
             mat2.shader = "resources/Shaders/2D_bullet"
-            --mat2.color = { r = args.color.r, g = args.color.g, b = args.color.b, a = 1 }
             mat2.color = { r = 1, g = 1, b = 1, a = 0.99 }
             mat2.textures[1] = "resources/Textures/energy_buble.svg"
             bullet.components.render_shader.material = mat2

@@ -879,7 +879,7 @@ void IniciarJanela()
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
-	glfwSwapInterval( 0 );
+	glfwSwapInterval( 1 );
 
 	// glfwSwapInterval(1);
 
