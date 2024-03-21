@@ -21,6 +21,7 @@
 #include <any>
 #include <unordered_set>
 #include <variant>
+#include <algorithm> // Para std::equal
 
 #include "table.h"
 
@@ -533,23 +534,36 @@ struct vertice_struct
 {
 	float posicao[3] = {0, 0, 0};
 	float uv[2] = {0, 0};
-	float normal[3] = {0, 0, 0};
+	float normal[3] = {0, 0, 1};
 	float cor[3] = {1, 1, 1};
+	float tangent[3] = {0, 0, 0};
+	float bitangents[3] = {0, 0, 0};
 	int id_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 	float peso_ossos[MAX_BONE_INFLUENCE] = base_bone_ids_and_weights;
 
 	vertice_struct() = default;
 
-	bool operator==(const vertice_struct &v) const
+	bool operator==(const vertice_struct &other) const
 	{
-		return posicao[0] == v.posicao[0] && posicao[1] == v.posicao[1] && posicao[2] == v.posicao[2] && uv[0] == v.uv[0] && uv[1] == v.uv[1] && normal[0] == v.normal[0] && normal[1] == v.normal[1] && normal[2] == v.normal[2] && cor[0] == v.cor[0] && cor[1] == v.cor[1] && cor[2] == v.cor[2];
+		const float epsilon = 0.001f;
+		auto floatEqual = [epsilon](float a, float b)
+		{ return std::abs(a - b) < epsilon; };
+		return std::equal(std::begin(posicao), std::end(posicao), std::begin(other.posicao), floatEqual) && std::equal(std::begin(uv), std::end(uv), std::begin(other.uv), floatEqual) && std::equal(std::begin(normal), std::end(normal), std::begin(other.normal), floatEqual) && std::equal(std::begin(cor), std::end(cor), std::begin(other.cor), floatEqual) && std::equal(std::begin(tangent), std::end(tangent), std::begin(other.tangent), floatEqual) && std::equal(std::begin(bitangents), std::end(bitangents), std::begin(other.bitangents), floatEqual) && std::equal(std::begin(id_ossos), std::end(id_ossos), std::begin(other.id_ossos)) && std::equal(std::begin(peso_ossos), std::end(peso_ossos), std::begin(other.peso_ossos), floatEqual);
 	}
-	bool operator<(const vertice_struct &v) const
+	bool operator<(const vertice_struct &other) const
 	{
-		return posicao[0] + posicao[1] + posicao[2] + uv[0] + uv[1] + normal[0] + normal[1] + normal[2] + cor[0] + cor[1] + cor[2] < v.posicao[0] + v.posicao[1] + v.posicao[2] + v.uv[0] + v.uv[1] + v.normal[0] + v.normal[1] + v.normal[2] + v.cor[0] + v.cor[1] + v.cor[2];
+		const float epsilon = 0.001f;
+		auto floatLess = [epsilon](float a, float b)
+		{ return (b - a) > epsilon; };
+		if (std::lexicographical_compare(std::begin(posicao), std::end(posicao), std::begin(other.posicao), std::end(other.posicao), floatLess))
+			return true;
+		// Continuar para outros membros...
+		return false;
 	}
 };
 typedef struct vertice_struct vertice;
+
+
 
 struct VertexPositionHasher
 {
@@ -668,38 +682,42 @@ public:
 	}
 
 	// Custom comparison function for vertices based only on position.
-    static bool posComp(const vertice& v1, const vertice& v2) {
-        return std::tie(v1.posicao[0], v1.posicao[1], v1.posicao[2]) < std::tie(v2.posicao[0], v2.posicao[1], v2.posicao[2]);
-    }
+	static bool posComp(const vertice &v1, const vertice &v2)
+	{
+		return std::tie(v1.posicao[0], v1.posicao[1], v1.posicao[2]) < std::tie(v2.posicao[0], v2.posicao[1], v2.posicao[2]);
+	}
 
 	void comprimir_posicao()
 	{
 
-		std::map<vertice, unsigned int, bool(*)(const vertice&, const vertice&)> uniqueVertices(posComp);
-        std::vector<vertice> compressedVertices;
-        std::vector<unsigned int> newIndices;
+		std::map<vertice, unsigned int, bool (*)(const vertice &, const vertice &)> uniqueVertices(posComp);
+		std::vector<vertice> compressedVertices;
+		std::vector<unsigned int> newIndices;
 
-        // Map to keep track of new indices.
-        std::map<unsigned int, unsigned int> indexMap;
+		// Map to keep track of new indices.
+		std::map<unsigned int, unsigned int> indexMap;
 
-        // Identify unique vertices and update the map.
-        for (unsigned int i = 0; i < vertices.size(); ++i) {
-            auto result = uniqueVertices.insert(std::make_pair(vertices[i], compressedVertices.size()));
-            if (result.second) { // If insertion is successful (new vertex found).
-                compressedVertices.push_back(vertices[i]);
-            }
-            indexMap[i] = result.first->second;
-        }
+		// Identify unique vertices and update the map.
+		for (unsigned int i = 0; i < vertices.size(); ++i)
+		{
+			auto result = uniqueVertices.insert(std::make_pair(vertices[i], compressedVertices.size()));
+			if (result.second)
+			{ // If insertion is successful (new vertex found).
+				compressedVertices.push_back(vertices[i]);
+			}
+			indexMap[i] = result.first->second;
+		}
 
-        // Rebuild the index array.
-        for (auto idx : indice) {
-            newIndices.push_back(indexMap[idx]);
-        }
+		// Rebuild the index array.
+		for (auto idx : indice)
+		{
+			newIndices.push_back(indexMap[idx]);
+		}
 
-        // Update the mesh data.
-        vertices = compressedVertices;
-        indice = newIndices;
-    }
+		// Update the mesh data.
+		vertices = compressedVertices;
+		indice = newIndices;
+	}
 
 	malha(vector<unsigned int> indice, vector<vertice> vertices)
 	{
@@ -792,6 +810,46 @@ public:
 		remover_malha(this);
 	}
 };
+
+void calculate_mesh_tangent(malha& mesh) {
+    for (size_t i = 0; i < mesh.indice.size(); i += 3) {
+        vertice& v0 = mesh.vertices[mesh.indice[i]];
+        vertice& v1 = mesh.vertices[mesh.indice[i + 1]];
+        vertice& v2 = mesh.vertices[mesh.indice[i + 2]];
+
+        glm::vec3 edge1 = glm::vec3(v1.posicao[0] - v0.posicao[0], v1.posicao[1] - v0.posicao[1], v1.posicao[2] - v0.posicao[2]);
+        glm::vec3 edge2 = glm::vec3(v2.posicao[0] - v0.posicao[0], v2.posicao[1] - v0.posicao[1], v2.posicao[2] - v0.posicao[2]);
+
+        glm::vec2 deltaUV1 = glm::vec2(v1.uv[0] - v0.uv[0], v1.uv[1] - v0.uv[1]);
+        glm::vec2 deltaUV2 = glm::vec2(v2.uv[0] - v0.uv[0], v2.uv[1] - v0.uv[1]);
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        glm::vec3 tangent;
+        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        tangent = glm::normalize(tangent);
+
+        glm::vec3 bitangent;
+        bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+        bitangent = glm::normalize(bitangent);
+
+        // Aqui você pode definir as tangentes e bitangentes para cada vértice do triângulo
+        // Este é um exemplo simplificado que atribui os mesmos valores para todos os vértices do triângulo
+        for (int j = 0; j < 3; j++) {
+            v0.tangent[j] = tangent[j];
+            v1.tangent[j] = tangent[j];
+            v2.tangent[j] = tangent[j];
+
+            v0.bitangents[j] = bitangent[j];
+            v1.bitangents[j] = bitangent[j];
+            v2.bitangents[j] = bitangent[j];
+        }
+    }
+}
 
 std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform)
 {

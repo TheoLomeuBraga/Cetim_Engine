@@ -81,6 +81,37 @@ public:
 
 	Material material_last_frame;
 
+	std::string processIncludes(const std::string &path, const std::string &directory = "resources/Shaders")
+	{
+		
+		std::ifstream file(path);
+		if (!file.is_open())
+		{
+			std::cerr << "Could not open shader file: " << path << std::endl;
+			return "";
+		}
+
+		std::string source;
+		std::string line;
+		std::regex includeRegex("#include \"([a-zA-Z0-9_./]+)\"");
+		std::smatch includeMatch;
+
+		while (getline(file, line))
+		{
+			if (std::regex_search(line, includeMatch, includeRegex))
+			{
+				std::string includePath = directory + "/" + includeMatch[1].str();
+				source += processIncludes(includePath, directory);
+			}
+			else
+			{
+				source += line + "\n";
+			}
+		}
+
+		return source;
+	}
+
 	unsigned int CompilarShader_ogl(vector<pair<string, unsigned int>> shader)
 	{
 
@@ -94,21 +125,7 @@ public:
 
 			// Read the Vertex Shader code from the file
 			const char *vertex_file_path = shader[i].first.c_str();
-			std::string VertexShaderCode;
-			std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-			if (VertexShaderStream.is_open())
-			{
-				std::stringstream sstr;
-				sstr << VertexShaderStream.rdbuf();
-				VertexShaderCode = sstr.str();
-				VertexShaderStream.close();
-			}
-			else
-			{
-				printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
-				getchar();
-				return 0;
-			}
+			std::string VertexShaderCode = processIncludes(vertex_file_path);
 
 			GLint Result = GL_FALSE;
 			int InfoLogLength;
@@ -657,17 +674,23 @@ public:
 			// uv
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, uv)));
 
-			// normal
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, normal)));
-
 			// cor
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, cor)));
 
 			// boneIds
-			glVertexAttribIPointer(4, 4, GL_INT, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
+			glVertexAttribIPointer(3, 4, GL_INT, sizeof(vertice), (void *)(offsetof(vertice, id_ossos)));
 
 			// weights
-			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, peso_ossos)));
+
+			// normal
+			glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, normal)));
+
+			// tangent
+			glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, tangent)));
+
+			// bitangents
+			glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, bitangents)));
 
 			glDrawElements(
 				tipo,					   // mode
@@ -860,7 +883,9 @@ public:
 			if (tf->billboarding == 1)
 			{
 				tf->billboarding_planar(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
-			}else if (tf->billboarding == 2){
+			}
+			else if (tf->billboarding == 2)
+			{
 				tf->billboarding_spherical(glm::vec3(cam->pegar_componente<transform_>()->pegar_matriz()[3]));
 			}
 
@@ -1569,6 +1594,8 @@ public:
 		/**/
 		if (update_res)
 		{
+
+			
 			// delete
 			glDeleteFramebuffers(1, &frame_buffer);
 			glDeleteRenderbuffers(1, &deeph_buffer);

@@ -275,14 +275,8 @@ public:
 
 	void atualisar()
 	{
-		/*
-		thread t1(esvasiar_lixeira);
-		thread t2(&cena_objetos::clean_lists,this);
 		
-		t1.join();
-		t2.join();
-		*/
-
+		//Benchmark_Timer a("atualisar");
 		esvasiar_lixeira();
 		clean_lists();
 

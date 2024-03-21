@@ -794,6 +794,9 @@ namespace ManuseioDados
 				m.second->arquivo_origem = local;
 				m.second->comprimir();
 				m.second->pegar_tamanho_maximo();
+				
+				calculate_mesh_tangent(*(m.second.get()));
+
 				ret.malhas.insert(m);
 				ret.objetos.minhas_malhas.push_back(m.second);
 			}

@@ -3,10 +3,12 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uv;
-layout(location = 2) in vec3 normal;
-layout(location = 3) in vec3 color;
-layout(location = 4) in ivec4 boneIds;
-layout(location = 5) in vec4 weights;
+layout(location = 2) in vec3 color;
+layout(location = 3) in ivec4 boneIds;
+layout(location = 4) in vec4 weights;
+layout(location = 5) in vec3 normal;
+layout(location = 6) in vec3 tangent;
+layout(location = 7) in vec3 bitangents;
 
 const int MAX_BONES = 256;
 const int MAX_BONE_INFLUENCE = 4;

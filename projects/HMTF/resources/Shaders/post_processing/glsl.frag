@@ -5,6 +5,8 @@ layout(location = 1) in vec2 uv;
 
 layout(location = 0) out vec4 ret;
 
+
+
 // material
 uniform sampler2D post_procesing_render_input[6];
 uniform sampler2D textures[6];
@@ -55,6 +57,17 @@ vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity,float palet_l
     return color;
 }
 
+vec4 reduce_color_bits(vec4 color, int bits) {
+    if (bits < 1 || bits > 7) {
+        return color; // Retorna a cor original se bits não está no intervalo [1, 7]
+    }
+
+    float maxValue = pow(2.0, float(bits)) - 1.0; // Calcula o valor máximo baseado no número de bits
+    vec4 scaledColor = color * maxValue; // Escala a cor para o intervalo do número de bits
+    vec4 reducedColor = floor(scaledColor + 0.5) / maxValue; // Reduz os bits e normaliza
+
+    return reducedColor;
+}
 
 void main() {
 
@@ -63,7 +76,7 @@ void main() {
     //adicionar Dithering
     
 
-    ret = color * applyPSXDithering(post_procesing_render_input[0], uv,0.2,4);
+    ret = color * reduce_color_bits(applyPSXDithering(post_procesing_render_input[0], uv,0.2,4),4);
 
     
 
