@@ -78,7 +78,7 @@ function UPDATE()
             last_progression = walk_ret.progression
         end 
     end
-
+    
     if last_progression_2 ~= nil then
         local walk_ret = walk_along_the_path(path,last_progression_2,time.scale * time.delta * 5)
         

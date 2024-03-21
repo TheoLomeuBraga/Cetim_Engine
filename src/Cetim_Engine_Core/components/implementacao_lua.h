@@ -1322,6 +1322,24 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int transform_look_at(lua_State *L){
+
+		int argumentos = lua_gettop(L);
+		objeto_jogo *obj = NULL;
+		if (argumentos > 0)
+		{
+			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		}
+		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+
+		vec3 look_axe = table_vec3(lua_totable(L,2));
+		vec3 target_position = table_vec3(lua_totable(L,3));
+
+		tf->olhar_para(look_axe,target_position);
+
+		return 0;
+	}
+
 	// sprite render
 
 	int get_set_sprite_render(lua_State *L)
@@ -2752,6 +2770,7 @@ namespace funcoes_ponte
 
 																 pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
 																 pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
+																 pair<string, lua_function>("transform_look_at", funcoes_ponte::transform_look_at),
 
 																 pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
 																 pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),

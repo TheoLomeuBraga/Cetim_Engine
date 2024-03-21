@@ -133,6 +133,14 @@ public:
 		pegar_matriz();
 	}
 
+	glm::vec3 olhar_para(glm::vec3 look_axe ,glm::vec3 target)
+	{
+		glm::mat4 lookAtMatrix = glm::lookAt(pegar_pos_global(), target, look_axe);
+		glm::quat quaternionRotation = glm::quat_cast(lookAtMatrix);
+		glm::vec3 eulerAngles = glm::eulerAngles(quaternionRotation);
+		return eulerAngles;
+	}
+
 	glm::vec3 billboarding_spherical(glm::vec3 target)
 	{
 		glm::vec3 position = pegar_matriz()[3];
