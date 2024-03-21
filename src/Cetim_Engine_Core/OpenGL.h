@@ -25,6 +25,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "benchmark.h"
+
 struct mesh_ogl_struct
 {
 	int tamanho_indice;
@@ -636,9 +638,10 @@ public:
 		}
 	}
 
+	malha *last_ma = NULL;
 	void selecionar_desenhar_malha(malha *ma, int tipo)
 	{
-		if (malhas.find(ma) != malhas.end())
+		if (last_ma != ma && malhas.find(ma) != malhas.end())
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma].vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, malhas[ma].malha_buffer);
@@ -1495,9 +1498,9 @@ public:
 	{
 		/**/
 		shared_ptr<transform_> TF = obj->pegar_componente<transform_>();
-		if (TF != NULL && TF->UI)
+		if (TF != NULL)
 		{
-			return true;
+			return TF->UI;
 		}
 
 		return false;
@@ -1534,8 +1537,6 @@ public:
 		}
 
 		return {nontransparent, transparent, ui};
-
-		// return {objs, {}};
 	}
 
 	void reindenizar_camada_objetos(vector<shared_ptr<objeto_jogo>> obj, shared_ptr<objeto_jogo> cam)
@@ -1577,7 +1578,6 @@ public:
 			}
 
 			// create
-
 			glGenFramebuffers(1, &frame_buffer);
 			glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
 			// deeph buffer
@@ -1793,8 +1793,8 @@ public:
 			{
 				if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
 				{
+					/**/
 					limpar_oclusion_queries();
-
 					rodar_oclusion_queries(cena_objetos_selecionados->cameras[relevancia_camera], a);
 					pegar_oclusion_queries();
 

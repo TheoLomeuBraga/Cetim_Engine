@@ -569,27 +569,9 @@ namespace controle
 	{
 
 		std::string joystick_name = glfwGetJoystickName(joystick);
-		print(joystick_name);
+		//print(joystick_name);
 
-		/*
-		xbox 360 joystick names:
-			Xbox 360 Wireless Receiver
 
-		ps4 joystick names:
-			Sony Interactive Entertainment Wireless Controller
-			Sony Interactive Entertainment Wireless Controller Touchpad
-		*/
-
-		/*
-		if (joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad" )
-		{
-			return controle_dualshock_4::generateJoystickKeyMap(joystick);
-		}
-		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller")
-		{
-			return controle_dualshock_4::generateJoystickKeyMap(joystick);
-		}
-		*/
 
 		if (joystick_name == "Xbox 360 Wireless Receiver")
 		{
@@ -805,19 +787,19 @@ void Reindenizar()
 		f();
 	}
 
-	Benchmark_Timer a("atualisar");
+	//Benchmark_Timer a("atualisar");
 	cena_objetos_selecionados->atualisar();
-	a.stop();
+	//a.stop();
 
-	Benchmark_Timer b("transforms");
+	//Benchmark_Timer b("transforms");
 	cena_objetos_selecionados->atualisar_transforms();
-	b.stop();
+	//b.stop();
 
-	Benchmark_Timer c("Logica_Scripst");
+	//Benchmark_Timer c("Logica_Scripst");
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	c.stop();
+	//c.stop();
 	
-	Benchmark_Timer d("cenario");
+	Benchmark_Timer d("render");
 	reindenizar_cenario();
 	d.stop();
 
