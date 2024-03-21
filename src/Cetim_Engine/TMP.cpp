@@ -116,8 +116,6 @@ void configuracaoInicial()
 void comecar()
 {
 
-    Benchmark_Timer bt("Engine");
-
     configuracaoInicial();
 
     thread temp(Tempo::IniciarTempo);

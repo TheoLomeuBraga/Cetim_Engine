@@ -804,10 +804,22 @@ void Reindenizar()
 	{
 		f();
 	}
+
+	Benchmark_Timer a("atualisar");
 	cena_objetos_selecionados->atualisar();
+	a.stop();
+
+	Benchmark_Timer b("transforms");
 	cena_objetos_selecionados->atualisar_transforms();
+	b.stop();
+
+	Benchmark_Timer c("Logica_Scripst");
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
+	c.stop();
+	
+	Benchmark_Timer d("cenario");
 	reindenizar_cenario();
+	d.stop();
 
 	for (function<void()> f : Depois_Render_Func)
 	{
