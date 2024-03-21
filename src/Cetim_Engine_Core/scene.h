@@ -16,6 +16,7 @@ using String = std::string;
 #include "transform.h"
 #include "poly_mesh.h"
 #include "game_object.h"
+#include "benchmark.h"
 
 vector<shared_ptr<objeto_jogo>> lixeira;
 void esvasiar_lixeira()
@@ -79,6 +80,7 @@ public:
 
 	void adicionar_objeto_lista(shared_ptr<objeto_jogo> obj)
 	{
+		
 		if (obj != NULL)
 		{
 			obj->remove_childrens_to_remove();

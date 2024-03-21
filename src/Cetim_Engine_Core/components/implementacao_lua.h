@@ -753,6 +753,8 @@ namespace funcoes_ponte
 	// object
 	int create_object(lua_State *L)
 	{
+
+
 		int argumentos = lua_gettop(L);
 		shared_ptr<objeto_jogo> obj = novo_objeto_jogo();
 		if (argumentos == 0)

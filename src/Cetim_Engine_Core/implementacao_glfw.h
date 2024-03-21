@@ -798,6 +798,8 @@ bool iniciada_logica_scripts;
 void Reindenizar()
 {
 
+	//Benchmark_Timer t("Reindenizar");
+
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
