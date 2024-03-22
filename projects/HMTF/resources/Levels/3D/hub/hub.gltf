@@ -1063,13 +1063,13 @@
 		},
 		{
 			"extras":{
-				"type":"enemy",
-				"enemy_type":"test_enemy"
+				"type":"entity",
+				"enemy_type":"test_entity"
 			},
 			"name":"Empty.002",
 			"translation":[
 				-19,
-				38,
+				39,
 				-196
 			]
 		},

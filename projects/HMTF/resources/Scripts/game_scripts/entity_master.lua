@@ -10,7 +10,7 @@ require("game_scripts.resources.playable_scene")
 
 
 
-enemys_list = {}
+entitys_list = {}
 
 
 player_position = { x = 0, y = 0, z = 0 }
@@ -19,7 +19,7 @@ function START()
 end
 
 local update_entity_map = {
-    test_enemy = function(enemy)
+    test_entity = function(entity)
 
     end,
 }
@@ -43,7 +43,7 @@ function UPDATE()
 
 
 
-    for index, value in ipairs(enemys_list) do
+    for index, value in ipairs(entitys_list) do
         update_entity_map[value.type](value)
         --print(value.type)
     end
@@ -56,33 +56,33 @@ function END()
 end
 
 local actions_per_type = {
-    test_enemy = function(enemy)
+    test_entity = function(entity)
         local model_path = "resources/3D Models/test_enimy.gltf"
 
-        local enemy_physics_3D = enemy.obj.components.physics_3D
-        enemy_physics_3D.boady_dynamic = boady_dynamics.kinematic
-        enemy_physics_3D.collision_shape = collision_shapes.capsule
-        enemy_physics_3D.scale = Vec3:new(1, 2, 1)
-        enemy_physics_3D.rotate_x = false
-        enemy_physics_3D.rotate_y = false
-        enemy_physics_3D.rotate_z = false
-        enemy_physics_3D.friction = 0
-        enemy_physics_3D.gravity_scale = 1
-        enemy_physics_3D.triger = false
-        enemy_physics_3D:set()
+        local entity_physics_3D = entity.obj.components.physics_3D
+        entity_physics_3D.boady_dynamic = boady_dynamics.kinematic
+        entity_physics_3D.collision_shape = collision_shapes.capsule
+        entity_physics_3D.scale = Vec3:new(1, 2, 1)
+        entity_physics_3D.rotate_x = false
+        entity_physics_3D.rotate_y = false
+        entity_physics_3D.rotate_z = false
+        entity_physics_3D.friction = 0
+        entity_physics_3D.gravity_scale = 1
+        entity_physics_3D.triger = false
+        entity_physics_3D:set()
 
-        local enemy_data = get_scene_3D(model_path)
-        local enemy_structures = cenary_builders.entity(enemy.obj.object_ptr, 2, enemy_data, "resources/Shaders/mesh",
+        local entity_data = get_scene_3D(model_path)
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "resources/Shaders/mesh",
             true, false)
 
-        enemy.rig_obj = enemy_structures.obj
-        enemy.rig_obj.components.transform.position.y = -1.5
-        enemy.rig_obj.components.transform:set()
-        enemy.parts_ptr_list = enemy_structures.parts_ptr_list
+        entity.rig_obj = entity_structures.obj
+        entity.rig_obj.components.transform.position.y = -1.5
+        entity.rig_obj.components.transform:set()
+        entity.parts_ptr_list = entity_structures.parts_ptr_list
     end,
 }
 
-function summon_enemy(args)
+function summon_entity(args)
     local pos = args.pos
     local rot_y = args.rot_y
     local type = args.type
@@ -93,7 +93,7 @@ function summon_enemy(args)
     obj.components.transform.rotation = { x = 0, y = rot_y, z = 0 }
     obj.components.transform:set()
 
-    local enemy = {
+    local entity = {
         type = type,
         obj = obj,
         rig_obj = nil,
@@ -104,23 +104,23 @@ function summon_enemy(args)
 
 
 
-    actions_per_type[type](enemy)
+    actions_per_type[type](entity)
 
 
 
-    table.insert(enemys_list, enemy)
+    table.insert(entitys_list, entity)
 
     return {}
 end
 
-function remove_enemy(adres)
-    remove_object(enemys_list[adres].obj.object_ptr)
-    table.remove(enemys_list, adres)
+function remove_entity(adres)
+    remove_object(entitys_list[adres].obj.object_ptr)
+    table.remove(entitys_list, adres)
 end
 
 function clear(args)
-    while #enemys_list > 0 do
-        remove_enemy(1)
+    while #entitys_list > 0 do
+        remove_entity(1)
     end
     return {}
 end

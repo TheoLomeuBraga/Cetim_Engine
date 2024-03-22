@@ -5,7 +5,7 @@ require("objects.global_data")
 require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_render_shader")
-require("game_scripts.resources.enemy_api")
+require("game_scripts.resources.entity_api")
 require("function_sets.navmesh")
 
 menus = {
@@ -352,10 +352,10 @@ cenary_builders = {
 
             add_mesh(nil)
             add_physics(true, true)
-        elseif part_data.variables.type == "enemy" then
+        elseif part_data.variables.type == "entity" then
 
-            if part_data.variables.enemy_type == nil or part_data.variables.enemy_type == "test_enemy" then
-                summon_enemy(deepcopy(part_data.position),part_data.rotation.y,"test_enemy")
+            if part_data.variables.entity_type == nil or part_data.variables.entity_type == "test_entity" then
+                summon_entity(deepcopy(part_data.position),part_data.rotation.y,"test_entity")
             end
 
             change_ret()

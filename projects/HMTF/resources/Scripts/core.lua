@@ -113,7 +113,7 @@ end
 
 function load_sceane(cenary_name)
     this_object.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clear({})
-    this_object.components.lua_scripts.scripts["game_scripts/enemy_master"].functions.clear({})
+    this_object.components.lua_scripts.scripts["game_scripts/entity_master"].functions.clear({})
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)
@@ -242,7 +242,7 @@ function START()
     this_object = game_object(this_object_ptr)
     this_object.components.lua_scripts:add_script("game_scripts/input_geter")
     this_object.components.lua_scripts:add_script("game_scripts/bullet_master")
-    this_object.components.lua_scripts:add_script("game_scripts/enemy_master")
+    this_object.components.lua_scripts:add_script("game_scripts/entity_master")
     
     
     
