@@ -16,7 +16,7 @@ require("objects.window")
 
 require("short_cuts.create_camera")
 require("short_cuts.create_collision")
-require("resources.playable_scene")
+require("game_scripts.resources.playable_scene")
 
 require("math")
 

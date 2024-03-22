@@ -10,9 +10,9 @@ require("objects.vectors")
 require("objects.input")
 require("objects.gravity")
 require("objects.scene_3D")
-require("resources.playable_scene")
+require("game_scripts.resources.playable_scene")
 require("short_cuts.create_collision")
-require("resources.bullet_api")
+require("game_scripts.resources.bullet_api")
 
 require("math")
 

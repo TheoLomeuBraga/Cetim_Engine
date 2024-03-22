@@ -6,7 +6,7 @@ require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_mesh")
 require("short_cuts.create_collision")
-require("resources.playable_scene")
+require("game_scripts.resources.playable_scene")
 
 
 

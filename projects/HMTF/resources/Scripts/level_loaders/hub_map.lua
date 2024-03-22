@@ -6,7 +6,7 @@ require("components.physics_3D")
 require("objects.scene_3D")
 require("components.audio_source")
 require("components.ui_component")
-require("resources.playable_scene")
+require("game_scripts.resources.playable_scene")
 require("function_sets.navmesh")
 
 local level = {

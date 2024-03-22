@@ -11,7 +11,7 @@ require("objects.input")
 require("objects.gravity")
 require("objects.scene_3D")
 require("objects.window")
-require("resources.playable_scene")
+require("game_scripts.resources.playable_scene")
 
 
 game_states = {

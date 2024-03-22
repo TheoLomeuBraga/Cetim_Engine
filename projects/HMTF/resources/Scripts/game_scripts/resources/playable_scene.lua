@@ -5,7 +5,7 @@ require("objects.global_data")
 require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_render_shader")
-require("resources.enemy_api")
+require("game_scripts.resources.enemy_api")
 require("function_sets.navmesh")
 
 menus = {
