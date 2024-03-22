@@ -165,7 +165,35 @@ public:
 	}
 
 	void add_variables_uniform_locations(unsigned int shade){
+
 		shader_uniform_location[shade]["shedow_mode"] = glGetUniformLocation(shade, "shedow_mode");
+		shader_uniform_location[shade]["skin_mode"] = glGetUniformLocation(shade, "skin_mode");
+
+		for(unsigned int i = 0 ; i < 12; i++){
+			string location = string("texturas[") + to_string(i) + string("]");
+			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
+		}
+
+		for(unsigned int i = 0 ; i < 6; i++){
+			string location = string("post_procesing_render_input[") + to_string(i) + string("]");
+			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
+		}
+
+		shader_uniform_location[shade]["color"] = glGetUniformLocation(shade, "color");
+		shader_uniform_location[shade]["uv_position_scale"] = glGetUniformLocation(shade, "uv_position_scale");
+		shader_uniform_location[shade]["time"] = glGetUniformLocation(shade, "time");
+		shader_uniform_location[shade]["metallic"] = glGetUniformLocation(shade, "metallic");
+		shader_uniform_location[shade]["softness"] = glGetUniformLocation(shade, "softness");
+
+		shader_uniform_location[shade]["ui"] = glGetUniformLocation(shade, "ui");
+		shader_uniform_location[shade]["projection"] = glGetUniformLocation(shade, "projection");
+		shader_uniform_location[shade]["vision"] = glGetUniformLocation(shade, "vision");
+		shader_uniform_location[shade]["transform"] = glGetUniformLocation(shade, "transform");
+
+		for(unsigned int i = 0 ; i < 4; i++){
+			string location = string("finalBonesMatrices[") + to_string(i) + string("]");
+			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
+		}
 	}
 
 	unsigned int pegar_shader(string shade)
@@ -277,10 +305,10 @@ public:
 		glUseProgram(shader_s);
 
 		// transform
-		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
+		glUniform1i(shader_uniform_location[shader_s]["ui"] , tf->UI);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &tf->matrizTransform[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -324,8 +352,8 @@ public:
 		glDisable(GL_CULL_FACE);
 		unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
 		glUseProgram(shader_s);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
 
 		if (!show_oclusion_querie)
 		{
@@ -349,9 +377,9 @@ public:
 					glBeginQuery(GL_SAMPLES_PASSED, p.second);
 
 					// ajustar
-					glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+					glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 
-					glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+					glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &ajust[0][0]);
 
 					for (unsigned char i = 0; i < rm->malhas.size(); i++)
 					{
@@ -781,20 +809,20 @@ public:
 
 	void apply_transform(unsigned int shader_s, shared_ptr<transform_> tf, shared_ptr<camera> ca)
 	{
-		glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+		glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 
 		if (!tf->UI)
 		{
 			mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
-			glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
+			glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &ajust[0][0]);
 		}
 		else
 		{
-			glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &tf->matrizTransform[0][0]);
+			glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &tf->matrizTransform[0][0]);
 		}
 
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-		glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
+		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 	}
 
 	void apply_material(unsigned int shader_s, Material mat)
@@ -803,10 +831,10 @@ public:
 		if (mat != material_last_frame)
 		{
 
-			glUniform1i(glGetUniformLocation(shader_s, "shedow_mode"), 0);
-			glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);
-			glUniform1f(glGetUniformLocation(shader_s, "softness"), mat.suave);
-			glUniform1f(glGetUniformLocation(shader_s, "metallic"), mat.metalico);
+			glUniform1i(shader_uniform_location[shader_s]["shedow_mode"] , 0);
+			glUniform1f(shader_uniform_location[shader_s]["time"] , Tempo::tempo);
+			glUniform1f(shader_uniform_location[shader_s]["softness"], mat.suave);
+			glUniform1f(shader_uniform_location[shader_s]["metallic"] , mat.metalico);
 
 			// texturas
 			for (int i = 0; i < NO_TEXTURAS; i++)
@@ -956,7 +984,7 @@ public:
 
 							// apply_transform(shader_s, tf, ca);
 							// ajustar
-							glUniform1i(glGetUniformLocation(shader_s, "ui"), tf->UI);
+							glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 
 							mat4 ajust = tf->pegar_matriz();
 							if (ma->pele)
@@ -965,9 +993,9 @@ public:
 							}
 							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
 
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &ajust[0][0]);
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+							glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &ajust[0][0]);
+							glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
+							glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 							apply_material(shader_s, mat);
 							apply_light(shader_s);
@@ -1152,7 +1180,7 @@ public:
 							}
 
 							// transform
-							glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &lugar_letra[0][0]);
+							glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &lugar_letra[0][0]);
 
 							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -1191,8 +1219,8 @@ public:
 
 				// transform
 
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-				glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+				glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
+				glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 				// textura
 				ogl_adicionar_textura(rtm->tiles->tiles_img.get());
@@ -1259,7 +1287,7 @@ public:
 														(float)(tile_selecionado.y) / quant_t.y,
 														(float)1 / quant_t.x,
 														(float)1 / quant_t.y);
-											glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &mat_tile[0][0]);
+											glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &mat_tile[0][0]);
 											glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 										}
 									}
@@ -1284,7 +1312,7 @@ public:
 													(float)(tile_selecionado.y) / quant_t.y,
 													(float)1 / quant_t.x,
 													(float)1 / quant_t.y);
-										glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &mat_tile[0][0]);
+										glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &mat_tile[0][0]);
 										glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 									}
 								}
@@ -1330,7 +1358,7 @@ public:
 												(float)(tile_selecionado.y) / quant_t.y,
 												(float)1 / quant_t.x,
 												(float)1 / quant_t.y);
-									glUniformMatrix4fv(glGetUniformLocation(shader_s, "transform"), 1, GL_FALSE, &mat_tile[0][0]);
+									glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &mat_tile[0][0]);
 									glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 								}
 							}
@@ -1425,8 +1453,8 @@ public:
 						unsigned int shader_s = pegar_shader(mat.shad);
 						glUseProgram(shader_s);
 
-						glUniformMatrix4fv(glGetUniformLocation(shader_s, "vision"), 1, GL_FALSE, &ca->matrizVisao[0][0]);
-						glUniformMatrix4fv(glGetUniformLocation(shader_s, "projection"), 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+						glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
+						glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"] , 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma.get()].vbo);
 						glBindBuffer(GL_ARRAY_BUFFER, malhas[ma.get()].malha_buffer);
@@ -1448,14 +1476,14 @@ public:
 						apply_material(shader_s, mat);
 						apply_light(shader_s);
 
-						unsigned int ui = glGetUniformLocation(shader_s, "ui"), transform = glGetUniformLocation(shader_s, "transform");
+						unsigned int  transform = shader_uniform_location[shader_s]["transform"] ;
 
 						for (shared_ptr<transform_> tf : PMESH->transforms)
 						{
 
 							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 
-							glUniform1i(ui, tf->UI);
+							glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 							glUniformMatrix4fv(transform, 1, GL_FALSE, &ajust[0][0]);
 
 							glDrawElements(
