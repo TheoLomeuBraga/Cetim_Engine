@@ -345,25 +345,23 @@ public:
 
 		tf = esse_objeto->pegar_componente<transform_>();
 
-		vec3 lpos = listener_transform->pegar_pos_global();
-		vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
-		vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
-
-		sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
-			sf::Listener::setUpVector(sf::Vector3f(lup.x, lup.y, lup.z));
-			sf::Listener::setDirection(sf::Vector3f(ldir.x, ldir.y, ldir.z));
-
-		if (listener_transform != NULL && tf != NULL)
+		if (som.get() && listener_transform != NULL && tf != NULL)
 		{
 
-			
+			vec3 lpos = listener_transform->pegar_pos_global();
+			vec3 lup = listener_transform->pegar_direcao_local(vec3(0, 1, 0));
+			vec3 ldir = listener_transform->pegar_direcao_local(vec3(0, 0, 1));
+
+			sf::Listener::setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
+			sf::Listener::setUpVector(sf::Vector3f(lup.x, lup.y, lup.z));
+			sf::Listener::setDirection(sf::Vector3f(ldir.x, ldir.y, ldir.z));
 
 			vec3 gpos = tf->pegar_pos_global();
 			som->setPosition(sf::Vector3f(gpos.x, gpos.y, gpos.z));
 		}
-		else
+		else if(som.get())
 		{
-			som->setPosition(sf::Vector3f(lpos.x, lpos.y, lpos.z));
+			som->setPosition(sf::Vector3f(0,0,0));
 		}
 	}
 

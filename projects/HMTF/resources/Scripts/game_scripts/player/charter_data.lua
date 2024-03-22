@@ -16,10 +16,12 @@ keys = {}
 
 consumables = {}
 
+au = {}
+
 function play_pick_up_sound(args)
     
-    this_object = game_object(this_object_ptr)
-    local au = audio_component(this_object_ptr)--this_object.components.audio_source
+    
+    --this_object.components.audio_source
     au:get()
     au.volume = 20
 
@@ -41,6 +43,11 @@ function play_pick_up_sound(args)
 end
 
 function START()
+    this_object = game_object(this_object_ptr)
+
+    speaker = game_object(create_object(this_object_ptr))
+
+    au = speaker.components.audio_source 
 end
 
 function UPDATE()
