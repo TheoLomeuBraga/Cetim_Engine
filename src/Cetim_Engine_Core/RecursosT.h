@@ -1116,6 +1116,7 @@ public:
 	virtual void remover_fonte(fonte *f) {}
 	virtual void remover_shader(shader *nome) {}
 	virtual void reindenizar_cenario() {}
+	virtual void carregar_shader(string shade){}
 };
 API_grafica_classe *api_grafica;
 
@@ -1169,6 +1170,13 @@ void reindenizar_cenario()
 	if (api_grafica != NULL)
 	{
 		api_grafica->reindenizar_cenario();
+	}
+}
+void carregar_shader(std::string shader)
+{
+	if (api_grafica != NULL)
+	{
+		api_grafica->carregar_shader(shader);
 	}
 }
 shared_ptr<imagem> captura_de_tela()

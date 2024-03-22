@@ -56,6 +56,7 @@ public:
 
 	map<imagem *, unsigned int> texturas;
 	map<string, unsigned int> shaders, compute_shaders;
+	map<unsigned int, map<string, unsigned int>> shader_uniform_location;
 	map<malha *, mesh_ogl> malhas;
 
 	// shader
@@ -163,6 +164,10 @@ public:
 		return ProgramID;
 	}
 
+	void add_variables_uniform_locations(unsigned int shade){
+		shader_uniform_location[shade]["shedow_mode"] = glGetUniformLocation(shade, "shedow_mode");
+	}
+
 	unsigned int pegar_shader(string shade)
 	{
 		if (shaders.find(shade) == shaders.end())
@@ -197,10 +202,16 @@ public:
 				print("erro ao carregar shader de fragmento " + nome);
 			}
 			shaders.insert(pair<string, unsigned int>(shade, CompilarShader_ogl(p)));
+
+			
+
 		}
 
+		add_variables_uniform_locations(shaders[shade]);
 		return shaders[shade];
 	}
+
+	void carregar_shader(string shade){pegar_shader( shade);}
 
 	void remover_shader(string shade)
 	{
@@ -1637,6 +1648,7 @@ public:
 			update_res = false;
 		}
 
+		/*
 		for (int i = 0; i < SAIDAS_SHADER; i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
@@ -1646,6 +1658,7 @@ public:
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res_interna.x, res_interna.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frame_buffers_texturas[i], 0);
 		}
+		*/
 		glViewport(0, 0, res_interna.x, res_interna.y);
 
 		vector<vector<shared_ptr<objeto_jogo>>> orderd_objects = separate_ordenate_objects(obj, cam);
@@ -1666,27 +1679,6 @@ public:
 					glDepthMask(GL_TRUE);
 				}
 			}
-		}
-	}
-
-	void desenhar_tela(Material mat)
-	{
-
-		glBindVertexArray(quad_array);
-
-		glUniform1i(tipo_vertice, 2);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
-
-	void limpar_bufers_render(bool cor, bool profundidade)
-	{
-		if (cor)
-		{
-			glClear(GL_COLOR_BUFFER_BIT);
-		}
-		if (profundidade)
-		{
-			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 	}
 
@@ -1743,26 +1735,8 @@ public:
 			}
 		}
 
-		// input
-		/*
-		for (int i = 0; i < NO_INPUTS; i++)
-		{
-			string nome_veriavel = string("inputs[") + to_string(i) + string("]");
-			glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), pos_processamento_info.inputs[i]);
-		}
-		*/
-
 		apply_material(pp_shader, pos_processamento_info);
 
-		// cor
-		// vec4 cor = pos_processamento_info.cor;
-		// glUniform4f(glGetUniformLocation(pp_shader, "color"), cor.x, cor.y, cor.z, cor.w);
-
-		// uv
-		// vec4 uv = pos_processamento_info.uv_pos_sca;
-		// glUniform4f(glGetUniformLocation(pp_shader, "uv_position_scale"), uv.x, uv.y, uv.z, uv.w);
-
-		// glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
