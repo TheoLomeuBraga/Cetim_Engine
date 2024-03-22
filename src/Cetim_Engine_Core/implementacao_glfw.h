@@ -799,9 +799,9 @@ void Reindenizar()
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
 	//c.stop();
 	
-	Benchmark_Timer d("render");
+	//Benchmark_Timer d("render");
 	reindenizar_cenario();
-	d.stop();
+	//d.stop();
 
 	for (function<void()> f : Depois_Render_Func)
 	{

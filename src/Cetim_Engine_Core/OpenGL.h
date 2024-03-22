@@ -84,7 +84,7 @@ public:
 
 	std::string processIncludes(const std::string &path, const std::string &directory = "resources/Shaders")
 	{
-		
+
 		std::ifstream file(path);
 		if (!file.is_open())
 		{
@@ -164,17 +164,20 @@ public:
 		return ProgramID;
 	}
 
-	void add_variables_uniform_locations(unsigned int shade){
+	void add_variables_uniform_locations(unsigned int shade)
+	{
 
 		shader_uniform_location[shade]["shedow_mode"] = glGetUniformLocation(shade, "shedow_mode");
 		shader_uniform_location[shade]["skin_mode"] = glGetUniformLocation(shade, "skin_mode");
 
-		for(unsigned int i = 0 ; i < 12; i++){
+		for (unsigned int i = 0; i < 12; i++)
+		{
 			string location = string("texturas[") + to_string(i) + string("]");
 			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
 		}
 
-		for(unsigned int i = 0 ; i < 6; i++){
+		for (unsigned int i = 0; i < 6; i++)
+		{
 			string location = string("post_procesing_render_input[") + to_string(i) + string("]");
 			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
 		}
@@ -190,7 +193,8 @@ public:
 		shader_uniform_location[shade]["vision"] = glGetUniformLocation(shade, "vision");
 		shader_uniform_location[shade]["transform"] = glGetUniformLocation(shade, "transform");
 
-		for(unsigned int i = 0 ; i < 4; i++){
+		for (unsigned int i = 0; i < 4; i++)
+		{
 			string location = string("finalBonesMatrices[") + to_string(i) + string("]");
 			shader_uniform_location[shade][location] = glGetUniformLocation(shade, location.c_str());
 		}
@@ -230,16 +234,14 @@ public:
 				print("erro ao carregar shader de fragmento " + nome);
 			}
 			shaders.insert(pair<string, unsigned int>(shade, CompilarShader_ogl(p)));
-
-			
-
 		}
 
 		add_variables_uniform_locations(shaders[shade]);
+
 		return shaders[shade];
 	}
 
-	void carregar_shader(string shade){pegar_shader( shade);}
+	void carregar_shader(string shade) { pegar_shader(shade); }
 
 	void remover_shader(string shade)
 	{
@@ -305,7 +307,7 @@ public:
 		glUseProgram(shader_s);
 
 		// transform
-		glUniform1i(shader_uniform_location[shader_s]["ui"] , tf->UI);
+		glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &tf->matrizTransform[0][0]);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
@@ -831,10 +833,10 @@ public:
 		if (mat != material_last_frame)
 		{
 
-			glUniform1i(shader_uniform_location[shader_s]["shedow_mode"] , 0);
-			glUniform1f(shader_uniform_location[shader_s]["time"] , Tempo::tempo);
+			glUniform1i(shader_uniform_location[shader_s]["shedow_mode"], 0);
+			glUniform1f(shader_uniform_location[shader_s]["time"], Tempo::tempo);
 			glUniform1f(shader_uniform_location[shader_s]["softness"], mat.suave);
-			glUniform1f(shader_uniform_location[shader_s]["metallic"] , mat.metalico);
+			glUniform1f(shader_uniform_location[shader_s]["metallic"], mat.metalico);
 
 			// texturas
 			for (int i = 0; i < NO_TEXTURAS; i++)
@@ -1454,7 +1456,7 @@ public:
 						glUseProgram(shader_s);
 
 						glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
-						glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"] , 1, GL_FALSE, &ca->matrizProjecao[0][0]);
+						glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &ca->matrizProjecao[0][0]);
 
 						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, malhas[ma.get()].vbo);
 						glBindBuffer(GL_ARRAY_BUFFER, malhas[ma.get()].malha_buffer);
@@ -1476,7 +1478,7 @@ public:
 						apply_material(shader_s, mat);
 						apply_light(shader_s);
 
-						unsigned int  transform = shader_uniform_location[shader_s]["transform"] ;
+						unsigned int transform = shader_uniform_location[shader_s]["transform"];
 
 						for (shared_ptr<transform_> tf : PMESH->transforms)
 						{
@@ -1634,7 +1636,6 @@ public:
 		if (update_res)
 		{
 
-			
 			// delete
 			glDeleteFramebuffers(1, &frame_buffer);
 			glDeleteRenderbuffers(1, &deeph_buffer);
