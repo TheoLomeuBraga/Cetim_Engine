@@ -104,7 +104,9 @@
 				65,
 				66,
 				67,
-				68
+				68,
+				69,
+				70
 			]
 		}
 	],
@@ -1082,6 +1084,40 @@
 				0,
 				35,
 				0
+			]
+		},
+		{
+			"extras":{
+				"type":"music",
+				"sound_source":"music_test_1"
+			},
+			"name":"Empty.003",
+			"scale":[
+				-10,
+				-10,
+				-10
+			],
+			"translation":[
+				4,
+				40,
+				-165
+			]
+		},
+		{
+			"extras":{
+				"type":"background_music",
+				"sound_source":"sinister_test_music"
+			},
+			"name":"Empty.004",
+			"scale":[
+				10,
+				10,
+				10
+			],
+			"translation":[
+				4,
+				85,
+				-165
 			]
 		}
 	],
