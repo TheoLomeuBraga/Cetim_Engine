@@ -28,14 +28,15 @@ function UPDATE()
 
     player_position = { x = 0, y = 0, z = 0 }
     
-    if global_data.player_object_ptr ~= global_data.player_object_ptr then
+    if global_data.player_object_ptr ~= nil then
         
         local player = game_object(global_data.player_object_ptr)
         
         if player ~= nil then
             
-            player.components.transform.position:get()
+            player.components.transform:get()
             player_position = player.components.transform.position
+            --print("player_position",player_position.x,player_position.y,player_position.z)
 
         end
         

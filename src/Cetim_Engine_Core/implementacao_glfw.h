@@ -565,6 +565,8 @@ namespace controle
 		return count;
 	}
 
+	unordered_map<string, float> last_inputs;
+
 	unordered_map<string, float> generateJoystickKeyMap(int joystick)
 	{
 
@@ -575,40 +577,18 @@ namespace controle
 
 		if (joystick_name == "Xbox 360 Wireless Receiver")
 		{
-			return controle_xbox_360::generateJoystickKeyMap(joystick);
+			last_inputs = controle_xbox_360::generateJoystickKeyMap(joystick);
 		}
 		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller" || joystick_name == "Wireless Controller")
 		{
-			return controle_dualshock_4::generateJoystickKeyMap(joystick);
+			last_inputs = controle_dualshock_4::generateJoystickKeyMap(joystick);
 		}
 		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
 		{
 			// controle_dualshock_4::generateJoystickKeyMapTouch(joystick);
 		}
 
-		return {
-			std::pair<string, float>("0", 0),
-			std::pair<string, float>("1", 0),
-			std::pair<string, float>("2", 0),
-			std::pair<string, float>("3", 0),
-			std::pair<string, float>("4", 0),
-			std::pair<string, float>("5", 0),
-			std::pair<string, float>("6", 0),
-			std::pair<string, float>("7", 0),
-			std::pair<string, float>("9", 0),
-			std::pair<string, float>("10", 0),
-			std::pair<string, float>("11", 0),
-			std::pair<string, float>("12", 0),
-			std::pair<string, float>("13", 0),
-			std::pair<string, float>("14", 0),
-
-			std::pair<string, float>("axis_0", 0),
-			std::pair<string, float>("axis_1", 0),
-			std::pair<string, float>("axis_3", 0),
-			std::pair<string, float>("axis_4", 0),
-			std::pair<string, float>("axis_2", 0),
-			std::pair<string, float>("axis_5", 0),
-		};
+		return last_inputs;
 
 		// defout
 	}

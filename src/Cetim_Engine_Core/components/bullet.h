@@ -799,6 +799,7 @@ void atualisar_global_bullet()
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
     float bullet_passo_tempo = ((float)bullet_physics_timer.get()) * Tempo::velocidadeTempo;
+    //print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
     if (Tempo::velocidadeTempo > 0)
     {
         dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
