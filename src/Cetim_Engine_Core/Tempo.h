@@ -9,13 +9,13 @@
 namespace Tempo
 {
 
+	/*
 	class Timer
 	{
 	private:
 		using clock = std::chrono::high_resolution_clock;
 
 		std::chrono::time_point<clock> start_time;
-		//std::chrono::duration<double> accumulated_time;
 
 	public:
 		Timer()
@@ -30,9 +30,31 @@ namespace Tempo
 
 		double get()
 		{
-			//auto current_time = clock::now();
-			//return (accumulated_time.count() + std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count());
 			return std::chrono::duration_cast<std::chrono::duration<double>>(clock::now() - start_time).count();
+		}
+	};
+	*/
+
+	class Timer
+	{
+	private:
+		using clock = std::chrono::steady_clock;
+
+		std::chrono::time_point<clock> start_time;
+
+	public:
+		Timer() : start_time(clock::now()) {}
+
+		void clear()
+		{
+			start_time = clock::now();
+		}
+
+		double get()
+		{
+			auto end_time = clock::now();
+			std::chrono::duration<float> elapsed_seconds = end_time - start_time;
+			return elapsed_seconds.count();
 		}
 	};
 
