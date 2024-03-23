@@ -806,10 +806,20 @@ void atualisar_global_bullet()
     past_time += bullet_timer.get();
     bullet_timer.clear();
 
+    unsigned char time_step_count = 0;
+    while(past_time > time_step){
+        
+        time_step_count++;
+        past_time -= time_step;
+    }
+    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * time_step_count, 4 * time_step_count );
+
+    /*
     while(past_time > time_step){
         dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo, 4);
         past_time -= time_step;
     }
+    */
 
     /*
     float bullet_passo_tempo = ((float)bullet_physics_timer.get()) * Tempo::velocidadeTempo;

@@ -5,8 +5,8 @@ COMPILER := g++
 #FLAGS_WINDOWS_DEBUG :=  -pipe -Wa,-mbig-obj -Wl,-E  -s -O3 -ffast-math 
 #FLAGS_LINUX :=  -Wl,-E -static-libgcc -static-libstdc++ # -O3 -ffast-math 
 
-#mingw32-make OPTIMIZATION=2
-OPTIMIZATION ?= 0
+#mingw32-make OPT=2
+OPT ?= 0
 
 #the luajit suport causes stacks overflows
 USE_LUAJIT ?= 0
@@ -16,13 +16,13 @@ SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./incl
 
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)
-	ifeq ($(OPTIMIZATION),0)
+	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -O1
 	endif
-	ifeq ($(OPTIMIZATION),1)
+	ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
 	endif
-	ifeq ($(OPTIMIZATION),2)
+	ifeq ($(OPT),2)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math 
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
@@ -38,13 +38,13 @@ ifeq ($(OS),Windows_NT)
 	
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
-	ifeq ($(OPTIMIZATION),0)
+	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -O1
 	endif
-	ifeq ($(OPTIMIZATION),1)
+	ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
 	endif
-	ifeq ($(OPTIMIZATION),2)
+	ifeq ($(OPT),2)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math 
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
@@ -59,13 +59,13 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	endif
 endif
 ifeq ($(OS),Linux)
-	ifeq ($(OPTIMIZATION),0)
+	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -O0 -fsanitize=address
 	endif
-		ifeq ($(OPTIMIZATION),1)
+		ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2
 	endif
-	ifeq ($(OPTIMIZATION),2)
+	ifeq ($(OPT),2)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O3 -ffast-math 
 	endif
 	TARGET_ENGINE = ./build/cetim_engine
