@@ -77,7 +77,7 @@ function START()
     this_object.components.transform:change_rotation(0, 0, 0)
 
     this_physics_3d = this_object.components[components.physics_3D]
-    this_physics_3d.boady_dynamic = boady_dynamics.kinematic
+    this_physics_3d.boady_dynamic = boady_dynamics.dynamic
     this_physics_3d.rotate_x = false
     this_physics_3d.rotate_y = false
     this_physics_3d.rotate_z = false
@@ -183,7 +183,6 @@ end
 function UPDATE()
     time:get()
     if game_state == game_states.play then
-        
         gravity:get()
 
         mouse_sensitivity = global_data.mouse_sensitivity
@@ -233,21 +232,19 @@ function UPDATE()
         --hit top
         check_top.components.transform:change_position(pos.x, pos.y + 1.75, pos.z)
 
-        hit_top = get_valid_touches_top(check_top.components[components.physics_3D]:get_objects_coliding()) > 0
+        hit_top = #check_top.components[components.physics_3D]:get_objects_coliding() > 1
 
         --hit down
         check_down.components.transform:change_position(pos.x, pos.y - 1.75, pos.z)
         check_down.components[components.physics_3D]:get()
-        hit_down = get_valid_touches_down(check_down.components[components.physics_3D]:get_objects_coliding()) > 1
-
-
+        hit_down = #check_down.components[components.physics_3D]:get_objects_coliding() > 1
 
         if global_data.pause < 1 and global_data.interacting == 0 then
             --move camera
             window:get()
             camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
             camera_rotation.y = math.max(
-            math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20), 90), -90)
+                math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20), 90), -90)
 
             camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity / 2.5
             camera_rotation.y = math.max(
@@ -272,7 +269,7 @@ function UPDATE()
 
             --get movement direction
             local input_dir = direction_reference.components.transform:get_local_direction(inputs.foward, 0, -inputs
-            .left)
+                .left)
             local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
@@ -299,6 +296,7 @@ function UPDATE()
             end
 
 
+
             local impulse = { x = 0, y = 0, z = 0 }
 
             --move
@@ -315,7 +313,7 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air))
                 }
             end
-            
+
             if inputs.action_2 > 0 then
                 local turbo_time_speed = 10 * time.scale
                 this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed,

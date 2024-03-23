@@ -18,8 +18,6 @@
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include <BulletCollision/Gimpact/btGImpactShape.h>
 
-
-
 btDiscreteDynamicsWorld *dynamicsWorld;
 
 int global_bullet_iniciado = 0;
@@ -69,8 +67,6 @@ shared_ptr<std::string> get_mesh_shape_address(std::string addres)
 
 map<btCollisionObject *, shared_ptr<objeto_jogo>> collisionObject_obj;
 map<objeto_jogo *, vector<objeto_jogo *>> bu_collisions_no_per_object;
-
-
 
 glm::vec3 btToGlm(const btVector3 &v)
 {
@@ -147,6 +143,8 @@ btTransform getObjectTransform(const btCollisionObject *object)
     return transform;
 }
 void iniciar_global_bullet();
+
+double last_time_step = 0;
 
 class bullet : public componente
 {
@@ -338,23 +336,28 @@ public:
             bt_obj->setCollisionShape(Shape);
             bt_obj->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
             bt_obj->setWorldTransform(transform);
-            // dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter);
             dynamicsWorld->addCollisionObject(bt_obj, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::KinematicFilter);
         }
         else
         {
             btDefaultMotionState *MotionState = new btDefaultMotionState(transform);
-            if (dinamica == dinamico || dinamica == cinematico)
+            if (dinamica == dinamico)
             {
+
                 btVector3 Inertia = btVector3(0, 0, 0);
-                Shape->calculateLocalInertia(densidade, Inertia);
-                btRigidBody::btRigidBodyConstructionInfo CI(densidade, MotionState, Shape, Inertia);
+
+                btRigidBody::btRigidBodyConstructionInfo CI(btScalar(densidade), MotionState, Shape, Inertia);
+                Shape->calculateLocalInertia(btScalar(densidade), Inertia);
+
+                
+
                 bt_obj_rb = new btRigidBody(CI);
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 bt_obj_rb->setRestitution(elasticidade);
                 bt_obj_rb->setGravity(btVector3(0, 0, 0));
                 bt_obj_rb->setFriction(atrito);
                 bt_obj_rb->setActivationState(DISABLE_DEACTIVATION);
+
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
                 bt_obj_rb->setGravity(btVector3(gravidade.x * gravity_force, gravidade.y * gravity_force, gravidade.z * gravity_force));
@@ -379,17 +382,15 @@ public:
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
 
-                //
+                
             }
             else if (dinamica == cinematico)
             {
-
+                
                 btVector3 Inertia = btVector3(0, 0, 0);
-                Shape->calculateLocalInertia(densidade, Inertia);
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, Inertia);
                 bt_obj_rb = new btRigidBody(CI);
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
-                bt_obj_rb->setRestitution(elasticidade);
                 bt_obj_rb->setGravity(btVector3(0, 0, 0));
                 bt_obj_rb->setFriction(atrito);
                 bt_obj_rb->setActivationState(DISABLE_DEACTIVATION);
@@ -407,7 +408,7 @@ public:
     {
         if (bt_obj_rb != NULL && dinamica == dinamico)
         {
-            bt_obj_rb->applyCentralForce(btVector3(gravidade.x * gravity_force * densidade, gravidade.y * gravity_force * densidade, gravidade.z * gravity_force * densidade));
+            bt_obj_rb->applyCentralForce(btVector3(gravidade.x * gravity_force * btScalar(densidade), gravidade.y * gravity_force * btScalar(densidade), gravidade.z * gravity_force * btScalar(densidade)));
         }
     }
 
@@ -807,12 +808,14 @@ void atualisar_global_bullet()
     bullet_timer.clear();
 
     unsigned char time_step_count = 0;
-    while(past_time > time_step){
-        
+    while (past_time > time_step)
+    {
+
         time_step_count++;
         past_time -= time_step;
     }
-    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * time_step_count, 4 * time_step_count );
+    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * time_step_count, 4 * time_step_count);
+    last_time_step = time_step * Tempo::velocidadeTempo * time_step_count;
 
     /*
     while(past_time > time_step){
@@ -829,7 +832,6 @@ void atualisar_global_bullet()
         bullet_physics_timer.clear();
     }
     */
-    
 }
 
 void iniciar_atualisar_global_bullet()

@@ -15,12 +15,27 @@ entitys_list = {}
 
 player_position = { x = 0, y = 0, z = 0 }
 
+function walk(obj,direction)
+    obj.components.transform:get()
+    local pos = deepcopy(obj.components.transform.position)
+    time:get()
+    pos.x = pos.x + (direction.x * time.delta)
+    pos.y = pos.y + (direction.y * time.delta)
+    pos.z = pos.z + (direction.z * time.delta)
+    obj.components.transform:change_position(pos.x,pos.y,pos.z)
+end
+
+function walk_to()
+    
+end
+
 function START()
 end
 
 local update_entity_map = {
     test_entity = function(entity)
         --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0},"")
+        --walk(entity.obj,{x=0,y=0,z=10})
     end,
 }
 
@@ -68,7 +83,8 @@ local actions_per_type = {
         entity_physics_3D.rotate_y = false
         entity_physics_3D.rotate_z = false
         entity_physics_3D.friction = 0
-        entity_physics_3D.gravity_scale = 1
+        entity_physics_3D.gravity_scale = 0
+        entity_physics_3D.density = 1
         entity_physics_3D.triger = false
         entity_physics_3D:set()
 
