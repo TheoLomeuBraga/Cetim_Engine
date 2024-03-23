@@ -87,7 +87,7 @@ function UPDATE()
         else
             
             local current_pos = deepcopy(walker_cube.components.transform.position)
-            walker_cube.components.transform.position = {x=current_pos.x + walk_ret.position_movement.x, y=current_pos.y + walk_ret.position_movement.y, z=current_pos.z + walk_ret.position_movement.z}
+            walker_cube.components.transform.position = walk_ret.position
             if walk_ret.rotation ~= nil then
                 walker_cube.components.transform.rotation = walk_ret.rotation
                 --print("rotation",walk_ret.rotation.x,walk_ret.rotation.y,walk_ret.rotation.z)

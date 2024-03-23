@@ -37,40 +37,8 @@ timer_to_new_path = 0
 pre_calculated_paths = {}
 
 function walk_to(obj, hight, speed, target)
-    print("A")
 
-    if pre_calculated_paths[obj.object_ptr] == nil then
-        obj.components.transform:get()
 
-        local pos = deepcopy(obj.components.transform.position)
-        pos.y = pos.y - (hight / 2)
-
-        --print("pos",pos.x,pos.y,pos.z)
-        --print("target",target.x,target.y,target.z)
-
-        pre_calculated_paths[obj.object_ptr] = {
-            path = generate_navmesh_path(pos, target),
-            progression = 0
-        }
-    end
-    local calculated_path = pre_calculated_paths[obj.object_ptr]
-
-    print("B")
-
-    local walk_along_the_path_ret = walk_along_the_path(calculated_path.path, calculated_path.progression, speed)
-
-    if walk_along_the_path_ret ~= nil then
-        print("C")
-
-        local pos = walk_along_the_path_ret.position
-        --print("pos",pos.x, pos.y + (hight / 2), pos.z)
-        obj.components.transform:change_position(pos.x, pos.y + (hight / 2), pos.z)
-
-        local rot = walk_along_the_path_ret.rotation
-        obj.components.transform:change_rotation(rot.x, rot.y, rot.z)
-
-        print("D")
-    end
     
 end
 
@@ -81,7 +49,7 @@ local update_entity_map = {
     test_entity = function(entity)
         --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0},"")
         --walk(entity.obj,{x=0,y=0,z=10})
-        walk_to(entity.obj, 2, 5, {x=67.0, y=80.5, z=-296.0})
+        walk_to(entity.obj, 2, 10, {x=67.0, y=80.5, z=-296.0})
     end,
 }
 
@@ -107,7 +75,7 @@ function UPDATE()
 
     timer_to_new_path = timer_to_new_path + 1
     if timer_to_new_path >= frames_to_new_path then
-        pre_calculated_paths = {}
+        --pre_calculated_paths = {}
     end
 end
 
