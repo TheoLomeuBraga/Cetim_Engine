@@ -106,5 +106,8 @@
         "*.inc": "cpp",
         "stdfloat": "cpp"
     },
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
+    ]
 }

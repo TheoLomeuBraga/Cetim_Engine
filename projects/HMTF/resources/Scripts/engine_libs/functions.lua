@@ -121,6 +121,12 @@ function deepcopyjson(orig)
     return copy
 end
 
+function lightprint(tab)
+    for key, value in pairs(tab) do
+        print(key)
+    end
+end
+
 function deepprint(tab)
     local orig_type = type(tab)
     if orig_type == 'table' then

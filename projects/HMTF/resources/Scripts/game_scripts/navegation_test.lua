@@ -21,7 +21,7 @@ function START()
 
     
     --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=68.5, z=-296.0},"")
-    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0},"")
+    path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0})
 
     mat = matreial:new()
     mat.shader = "resources/Shaders/mesh"

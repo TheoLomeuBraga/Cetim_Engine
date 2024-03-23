@@ -663,7 +663,7 @@ public:
         filter.setExcludeFlags(0);    // Sem flags de exclusão
         filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-        float tolerance[3] = {1, 2, 1}; // Tolerância para encontrar o polígono mais próximo
+        float tolerance[3] = {5, 5, 5}; // Tolerância para encontrar o polígono mais próximo
 
         float start_pos_ptr[3] = {0,0,0};
         float end_pos_ptr[3] = {0,0,0};

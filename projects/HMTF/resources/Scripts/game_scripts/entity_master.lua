@@ -15,17 +15,62 @@ entitys_list = {}
 
 player_position = { x = 0, y = 0, z = 0 }
 
-function walk(obj,direction)
+function walk(obj, direction)
     obj.components.transform:get()
     local pos = deepcopy(obj.components.transform.position)
     time:get()
     pos.x = pos.x + (direction.x * time.delta)
     pos.y = pos.y + (direction.y * time.delta)
     pos.z = pos.z + (direction.z * time.delta)
-    obj.components.transform:change_position(pos.x,pos.y,pos.z)
+    obj.components.transform:change_position(pos.x, pos.y, pos.z)
 end
 
-function walk_to()
+frames_to_new_path = 10
+timer_to_new_path = 0
+
+--[[
+    local pre_calculated_paths_ret = {
+        path = {},
+        progression = 0
+    }
+]]
+pre_calculated_paths = {}
+
+function walk_to(obj, hight, speed, target)
+    print("A")
+
+    if pre_calculated_paths[obj.object_ptr] == nil then
+        obj.components.transform:get()
+
+        local pos = deepcopy(obj.components.transform.position)
+        pos.y = pos.y - (hight / 2)
+
+        --print("pos",pos.x,pos.y,pos.z)
+        --print("target",target.x,target.y,target.z)
+
+        pre_calculated_paths[obj.object_ptr] = {
+            path = generate_navmesh_path(pos, target),
+            progression = 0
+        }
+    end
+    local calculated_path = pre_calculated_paths[obj.object_ptr]
+
+    print("B")
+
+    local walk_along_the_path_ret = walk_along_the_path(calculated_path.path, calculated_path.progression, speed)
+
+    if walk_along_the_path_ret ~= nil then
+        print("C")
+
+        local pos = walk_along_the_path_ret.position
+        --print("pos",pos.x, pos.y + (hight / 2), pos.z)
+        obj.components.transform:change_position(pos.x, pos.y + (hight / 2), pos.z)
+
+        local rot = walk_along_the_path_ret.rotation
+        obj.components.transform:change_rotation(rot.x, rot.y, rot.z)
+
+        print("D")
+    end
     
 end
 
@@ -36,25 +81,21 @@ local update_entity_map = {
     test_entity = function(entity)
         --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0},"")
         --walk(entity.obj,{x=0,y=0,z=10})
+        walk_to(entity.obj, 2, 5, {x=67.0, y=80.5, z=-296.0})
     end,
 }
 
 function UPDATE()
-
     player_position = { x = 0, y = 0, z = 0 }
-    
+
     if global_data.player_object_ptr ~= nil then
-        
         local player = game_object(global_data.player_object_ptr)
-        
+
         if player ~= nil then
-            
             player.components.transform:get()
             player_position = player.components.transform.position
             --print("player_position",player_position.x,player_position.y,player_position.z)
-
         end
-        
     end
 
 
@@ -62,6 +103,11 @@ function UPDATE()
     for index, value in ipairs(entitys_list) do
         update_entity_map[value.type](value)
         --print(value.type)
+    end
+
+    timer_to_new_path = timer_to_new_path + 1
+    if timer_to_new_path >= frames_to_new_path then
+        pre_calculated_paths = {}
     end
 end
 

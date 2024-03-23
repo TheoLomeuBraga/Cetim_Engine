@@ -15,11 +15,7 @@ transform_component.rotation = Vec3:new(0,0,0)
 transform_component.scale = Vec3:new(1,1,1)
 transform_component.billboarding = 0
 
-function transform_component:get_global_position()
-    local ret = Vec3:new(0,0,0)
-    ret.x, ret.y,ret.z = get_global_position(self.object_ptr)
-    return ret
-end
+
 function transform_component:get_global_rotation()
     local ret = Vec3:new(0,0,0)
     ret.x, ret.y,ret.z = get_global_rotation(self.object_ptr)

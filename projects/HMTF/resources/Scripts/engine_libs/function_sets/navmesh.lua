@@ -18,6 +18,9 @@ function create_navmesh(position,rotation,scale,mesh,tag)
 end
 
 function generate_navmesh_path(start,goal,tag)
+    if tag == nil then
+        return c_generate_navmesh_path(start,goal,"")
+    end
     return c_generate_navmesh_path(start,goal,tag)
 end
 

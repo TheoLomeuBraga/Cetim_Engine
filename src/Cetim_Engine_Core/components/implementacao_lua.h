@@ -2359,6 +2359,7 @@ namespace funcoes_ponte
 		{
 			path.push_back(table_vec3(t));
 		}
+		if(!path.size()){return 0;}
 		float current_progression = lua_tonumber(L, 2);
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
