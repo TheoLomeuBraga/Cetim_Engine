@@ -738,7 +738,7 @@ namespace funcoes_ponte
 
 		Table ret;
 		ret.setFloat("time", Tempo::tempo);
-		ret.setFloat("delta", Tempo::varTempRender);
+		ret.setFloat("delta", deltaTimer.get());
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);
 		return 1;
@@ -747,6 +747,7 @@ namespace funcoes_ponte
 	int set_time_scale(lua_State *L)
 	{
 		Tempo::velocidadeTempo = lua_tonumber(L, 1);
+		//print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
 		return 0;
 	}
 

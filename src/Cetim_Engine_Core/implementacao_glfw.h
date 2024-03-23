@@ -757,6 +757,9 @@ void AntesReindenizar()
 
 bool iniciada_logica_scripts;
 
+Tempo::Timer deltaTimer;
+float deltaTime = 0;
+
 void Reindenizar()
 {
 
@@ -777,6 +780,7 @@ void Reindenizar()
 
 	//Benchmark_Timer c("Logica_Scripst");
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
+	deltaTimer.clear();
 	//c.stop();
 	
 	//Benchmark_Timer d("render");
@@ -787,6 +791,7 @@ void Reindenizar()
 	{
 		f();
 	}
+	
 }
 
 // Janela
@@ -913,12 +918,6 @@ void loop_janela()
 	sw.clear();
 	Tempo::tempUltFrameRender = Tempo::varTempRender;
 	Tempo::varTempRender = t;
-
-	// sw = Tempo::Timer();
-
-	// float t = Tempo::tempo;
-	// Tempo::varTempRender = (t - Tempo::tempUltFrameRender) * Tempo::velocidadeTempo;
-	// Tempo::tempUltFrameRender = t;
 
 	Tempo::FPS = 1 / Tempo::varTempRender;
 	Reindenizar();

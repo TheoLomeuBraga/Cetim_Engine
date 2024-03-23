@@ -413,6 +413,7 @@ end
 function END()
     if not going_to_main_menu then
         time:set_speed(1)
+        
         global_data.pause = 0
     end
     save_configs()

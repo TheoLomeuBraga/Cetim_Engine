@@ -181,8 +181,9 @@ end
 
 
 function UPDATE()
+    time:get()
     if game_state == game_states.play then
-        time:get()
+        
         gravity:get()
 
         mouse_sensitivity = global_data.mouse_sensitivity
@@ -317,7 +318,7 @@ function UPDATE()
 
 
             if inputs.action_2 > 0 then
-                local turbo_time_speed = 1000 * time.scale
+                local turbo_time_speed = 10 * time.delta
                 this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed,
                     impulse.z * turbo_time_speed)
                 time:set_speed(1 / turbo_time_speed)
