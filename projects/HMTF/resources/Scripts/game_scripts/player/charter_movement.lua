@@ -316,9 +316,9 @@ function UPDATE()
                 }
             end
 
-
+            print("inputs.action_2",inputs.action_2,time.delta)
             if inputs.action_2 > 0 then
-                local turbo_time_speed = 10 * time.delta
+                local turbo_time_speed = 10 * time.scale
                 this_physics_3d:set_linear_velocity(impulse.x * turbo_time_speed, impulse.y * turbo_time_speed,
                     impulse.z * turbo_time_speed)
                 time:set_speed(1 / turbo_time_speed)

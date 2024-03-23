@@ -20,7 +20,7 @@ end
 
 local update_entity_map = {
     test_entity = function(entity)
-
+        --path = generate_navmesh_path({x=-21, y=40.5, z=-138},{x=67.0, y=80.5, z=-296.0},"")
     end,
 }
 
