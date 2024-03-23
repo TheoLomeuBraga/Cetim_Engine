@@ -802,7 +802,8 @@ void atualisar_global_bullet()
     //print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
     if (Tempo::velocidadeTempo > 0)
     {
-        dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
+        //dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
+        dynamicsWorld->stepSimulation(bullet_passo_tempo, 1);
         bullet_physics_timer.clear();
     }
     
