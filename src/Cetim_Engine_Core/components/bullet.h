@@ -807,7 +807,6 @@ void atualisar_global_bullet()
     bullet_timer.clear();
 
     while(past_time > time_step){
-        print("past_time",past_time);
         dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo, 4);
         past_time -= time_step;
     }
