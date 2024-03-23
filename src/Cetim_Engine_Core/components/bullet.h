@@ -789,7 +789,11 @@ void get_bu_collisions_no_per_object()
     }
 }
 
+Tempo::Timer bullet_timer;
 
+const double time_step = 1.0 / 120.0;
+
+double past_time = 0;
 
 void atualisar_global_bullet()
 {
@@ -798,14 +802,23 @@ void atualisar_global_bullet()
     get_3D_collisions();
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
+
+    past_time += bullet_timer.get();
+    bullet_timer.clear();
+
+    while(past_time > time_step){
+        dynamicsWorld->stepSimulation(time_step, 4);
+        past_time -= time_step;
+    }
+
+    /*
     float bullet_passo_tempo = ((float)bullet_physics_timer.get()) * Tempo::velocidadeTempo;
-    //print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
     if (Tempo::velocidadeTempo > 0)
     {
-        //dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
-        dynamicsWorld->stepSimulation(bullet_passo_tempo, 1);
+        dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
         bullet_physics_timer.clear();
     }
+    */
     
 }
 
