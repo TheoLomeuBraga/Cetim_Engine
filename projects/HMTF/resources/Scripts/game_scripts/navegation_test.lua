@@ -92,32 +92,15 @@ function UPDATE()
         print(last_progression_2)
     end
 
-    if last_progression_2 ~= nil then
-        local walk_ret = walk_along_the_path(path, last_progression_2, time.scale * time.delta * 5)
+    
 
-        if walk_ret == nil then
-            last_progression_2 = nil
-        else
-            local current_pos = deepcopy(walker_cube.components.transform.position)
-            walker_cube.components.transform.position = walk_ret.position
-            if walk_ret.rotation ~= nil then
-                walker_cube.components.transform.rotation = walk_ret.rotation
-            end
-            walker_cube.components.transform:set()
+    walk_to(walker_cube,path,last_progression_2, 1, 5)
 
-            
-            
-
-            last_progression_2 = walk_ret.progression
-        end
-    end
-
-    --update_progression()
+    
 
     if update_progression_time == 100 then
         update_progression()
         update_progression_time = 0
-        print("aaaaa")
     else
         update_progression_time = update_progression_time + 1
     end

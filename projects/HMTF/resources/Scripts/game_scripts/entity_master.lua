@@ -36,14 +36,7 @@ timer_to_new_path = 0
 ]]
 pre_calculated_paths = {}
 
-path = nil
-path_progresion = 0
 
-function walk_to(obj, hight, speed, target)
-
-    
-    
-end
 
 function START()
 end
@@ -63,7 +56,6 @@ function UPDATE()
         if player ~= nil then
             player.components.transform:get()
             player_position = player.components.transform.position
-            --print("player_position",player_position.x,player_position.y,player_position.z)
         end
     end
 
