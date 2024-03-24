@@ -30,6 +30,9 @@ function transform_component:get_local_direction(x,y,z)
     return get_local_direction_transform(self.object_ptr,x,y,z)
 end
 function transform_component:get_global_position(x,y,z)
+    if x == nil or y == nil or z == nil then
+        return get_global_position_transform(self.object_ptr,0,0,0)
+    end
     return get_global_position_transform(self.object_ptr,x,y,z)
 end 
 function transform_component:get_translation_position(x,y,z)

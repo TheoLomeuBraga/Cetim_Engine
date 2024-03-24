@@ -126,7 +126,7 @@ function summon_bullet(args)
             local bullet = game_object(create_object(layers.cenary))
 
             bullet.components.transform.is_ui = false
-            bullet.components.transform.position = (args.pos)
+            bullet.components.transform.position = args.pos
             bullet.components.transform.rotation = { x = 0, y = 45, z = 0 }
             bullet.components.transform.scale = { x = 0.5, y = 0.5, z = 0.5 }
             bullet.components.transform.billboarding = 2

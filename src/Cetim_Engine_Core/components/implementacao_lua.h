@@ -2360,7 +2360,7 @@ namespace funcoes_ponte
 			path.push_back(table_vec3(t));
 		}
 		if(!path.size()){return 0;}
-		float current_progression = lua_tonumber(L, 2);
+		float current_progression = std::max(0.001,lua_tonumber(L, 2));
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;
@@ -2421,7 +2421,7 @@ namespace funcoes_ponte
 		}
 
 		ret.setTable("position", vec3_table(target));
-		ret.setTable("position_movement", vec3_table(target_movement));
+		ret.setTable("direction_movement", vec3_table(target_movement));
 		if (rotate)
 		{
 			ret.setTable("rotation", vec3_table(rotation));

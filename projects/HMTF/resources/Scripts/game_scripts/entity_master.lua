@@ -36,9 +36,49 @@ timer_to_new_path = 0
 ]]
 pre_calculated_paths = {}
 
+path = nil
+path_progresion = 0
+
 function walk_to(obj, hight, speed, target)
 
+    local tf = obj.components.transform
 
+    obj:get()
+    local start_pos = tf.position
+
+    --print("start_pos",start_pos.x,start_pos.y,start_pos.z)
+
+    if path == nil or #path == 0 then
+        path = generate_navmesh_path(start_pos,target)
+    end
+    
+
+    time:get()
+    local walk_ret = walk_along_the_path(path,path_progresion,10)
+    
+    --deepprint(walk_ret)
+
+    if walk_ret then
+        tf:get()
+        --deepprint(tf.position)
+
+        path_progresion = walk_ret.progression
+        tf.position = walk_ret.position
+        --[[]]
+        tf.position.x = tf.position.x + walk_ret.direction_movement.x
+        tf.position.y = tf.position.y + walk_ret.direction_movement.y
+        tf.position.z = tf.position.z + walk_ret.direction_movement.z
+        
+        
+        --[[]]
+        if walk_ret.rotation ~= nil then
+            --tf.rotation.y = walk_ret.rotation.y
+            tf.rotation.y = 90
+            --print(walk_ret.rotation.y)
+        end
+        
+        tf:set()
+    end
     
 end
 
