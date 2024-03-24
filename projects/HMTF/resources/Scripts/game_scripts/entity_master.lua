@@ -24,16 +24,23 @@ timer_to_new_path = 0
         progression = 0
     }
 ]]
-pre_calculated_paths = {}
 
-
+time_to_clean_paths = 0
+function clean_pre_calculated_paths()
+    for index, value in ipairs(entitys_list) do
+        value.path = nil
+        value.progression = nil
+    end
+end
 
 function START()
 end
 
 local update_entity_map = {
     test_entity = function(entity)
-        if entity.path == nil then
+
+        
+        if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
 
             entity.obj.components.transform:get()
             local pos = entity.obj.components.transform.position
@@ -42,9 +49,7 @@ local update_entity_map = {
             entity.progression = {0.0}
         end
 
-        deepprint(entity.progression)
-
-        walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta)
+        walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta * time.scale)
     end,
 }
 
@@ -67,6 +72,13 @@ function UPDATE()
 
     for index, value in ipairs(entitys_list) do
         update_entity_map[value.type](value)
+    end
+
+    if time_to_clean_paths > 30 then
+        clean_pre_calculated_paths()
+        time_to_clean_paths = 0
+    else
+        time_to_clean_paths = time_to_clean_paths + 1
     end
 
     

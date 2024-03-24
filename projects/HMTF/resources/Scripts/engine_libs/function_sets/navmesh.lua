@@ -37,26 +37,41 @@ end
 require("components.extras")
 require("objects.game_object")
 require("components.transform")
-require("objects.time")
 require("components.component_all")
 
-function walk_to(obj,path,progression_ptr, hight, speed)
+function walk_to(obj,path,progression_ptr, hight, step_size,look_up)
+
+    if look_up == nil then
+        look_up = false
+    end
 
     if progression_ptr[1] ~= nil then
         
-        local walk_ret = walk_along_the_path(path, progression_ptr[1], time.scale * time.delta * speed)
+        local walk_ret = walk_along_the_path(path, progression_ptr[1],  step_size)
 
         if walk_ret == nil then
             progression_ptr[1] = nil
         else
-            local current_pos = deepcopy(obj.components.transform.position)
-            obj.components.transform.position = walk_ret.position
-            walk_ret.position.y = walk_ret.position.y + (hight / 2)
 
+            
+            local current_pos = walk_ret.position
+            current_pos.y = walk_ret.position.y + (hight / 2)
+            obj.components.transform:change_position(current_pos.x,current_pos.y,current_pos.z)
+
+            --rotation
+
+            local rot = {x=0,y=0,z=0}
             if walk_ret.rotation ~= nil then
-                obj.components.transform.rotation = walk_ret.rotation
+                if look_up then
+                    rot = walk_ret.rotation
+                else
+                    rot.y = walk_ret.rotation.y
+                end
+                
             end
-            obj.components.transform:set()
+
+            obj.components.transform:change_rotation(rot.x,rot.y,rot.z)
+            
 
             progression_ptr[1] = walk_ret.progression
         end

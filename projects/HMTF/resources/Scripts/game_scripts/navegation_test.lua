@@ -51,7 +51,7 @@ update_progression_time = 0
 local color_no = 0
 
 function UPDATE()
-    time:get()
+    
 
     if last_progression ~= nil then
         local walk_ret = walk_along_the_path(path, last_progression, 1)
@@ -87,8 +87,8 @@ function UPDATE()
     
 
     
-
-    walk_to(walker_cube,path,last_progression_2_ptr, 1, 5)
+    time:get()
+    walk_to(walker_cube,path,last_progression_2_ptr, 1,  5 * time.scale * time.delta,true)
 
     
 
