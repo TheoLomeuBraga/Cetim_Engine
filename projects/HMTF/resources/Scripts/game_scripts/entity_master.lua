@@ -7,7 +7,7 @@ require("short_cuts.create_sound")
 require("short_cuts.create_mesh")
 require("short_cuts.create_collision")
 require("game_scripts.resources.playable_scene")
-
+require("math")
 
 
 entitys_list = {}
@@ -25,6 +25,14 @@ timer_to_new_path = 0
     }
 ]]
 
+function distance(a, b)
+    local dx = b.x - a.x
+    local dy = b.y - a.y
+    local dz = b.z - a.z
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+end
+
+
 time_to_clean_paths = 0
 function clean_pre_calculated_paths()
     for index, value in ipairs(entitys_list) do
@@ -39,17 +47,23 @@ end
 local update_entity_map = {
     test_entity = function(entity)
 
+        local pos = entity.obj.components.transform:get_global_position()
         
         if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
 
-            entity.obj.components.transform:get()
-            local pos = entity.obj.components.transform.position
+            
+            
 
-            entity.path = generate_navmesh_path(pos,{ x = 67.0, y = 80.5, z = -296.0 })
+            --entity.path = generate_navmesh_path(pos,{ x = 67.0, y = 80.5, z = -296.0 })
+            entity.path = generate_navmesh_path(pos,player_position)
             entity.progression = {0.0}
         end
 
-        walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
+        if distance(pos,player_position) > 10 then
+            --walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
+            walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale)
+        end
+        
     end,
 }
 
