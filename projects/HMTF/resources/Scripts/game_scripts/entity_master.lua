@@ -60,8 +60,8 @@ local update_entity_map = {
         end
 
         if distance(pos,player_position) > 10 then
-            --walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
-            walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale)
+            walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
+            --walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale)
         end
         
     end,
