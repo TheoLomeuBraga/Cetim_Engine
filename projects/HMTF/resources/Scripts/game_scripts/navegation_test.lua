@@ -2,8 +2,7 @@ register_function_set("debug")
 
 require("engine_libs.function_sets.navmesh")
 require("engine_libs.short_cuts.create_mesh")
-require("components.component_all")
-require("objects.global_data")
+
 require("objects.time")
 
 
@@ -16,7 +15,7 @@ local mat = nil
 
 path = {}
 last_progression = 0
-last_progression_2 = 0
+last_progression_2_ptr = {0}
 
 function update_progression()
     walker_cube.components.transform:get()
@@ -24,10 +23,7 @@ function update_progression()
 
     path = generate_navmesh_path(pos, { x = 67.0, y = 80.5, z = -296.0 })
     
-    last_progression_2 = 0
-
-    print(pos.x, pos.y, pos.z)
-    print(path[1].x, path[1].y, path[1].z)
+    last_progression_2_ptr[1] = 0
 end
 
 function START()
@@ -88,13 +84,11 @@ function UPDATE()
         end
     end
 
-    if update_progression_time == 0 then
-        print(last_progression_2)
-    end
+    
 
     
 
-    walk_to(walker_cube,path,last_progression_2, 1, 5)
+    walk_to(walker_cube,path,last_progression_2_ptr, 1, 5)
 
     
 

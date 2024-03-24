@@ -15,16 +15,6 @@ entitys_list = {}
 
 player_position = { x = 0, y = 0, z = 0 }
 
-function walk(obj, direction)
-    obj.components.transform:get()
-    local pos = deepcopy(obj.components.transform.position)
-    time:get()
-    pos.x = pos.x + (direction.x * time.delta)
-    pos.y = pos.y + (direction.y * time.delta)
-    pos.z = pos.z + (direction.z * time.delta)
-    obj.components.transform:change_position(pos.x, pos.y, pos.z)
-end
-
 frames_to_new_path = 10
 timer_to_new_path = 0
 
@@ -43,11 +33,25 @@ end
 
 local update_entity_map = {
     test_entity = function(entity)
-        
+        if entity.path == nil then
+
+            entity.obj.components.transform:get()
+            local pos = entity.obj.components.transform.position
+
+            entity.path = generate_navmesh_path(pos,{ x = 67.0, y = 80.5, z = -296.0 })
+            entity.progression = {0.0}
+        end
+
+        deepprint(entity.progression)
+
+        walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta)
     end,
 }
 
 function UPDATE()
+
+    time:get()
+
     player_position = { x = 0, y = 0, z = 0 }
 
     if global_data.player_object_ptr ~= nil then
@@ -63,7 +67,6 @@ function UPDATE()
 
     for index, value in ipairs(entitys_list) do
         update_entity_map[value.type](value)
-        --print(value.type)
     end
 
     
@@ -110,7 +113,6 @@ function summon_entity(args)
 
     local obj = game_object(create_object(global_data.layers.main))
     obj.components.transform.position = deepcopy(pos)
-    --print("AAAAA",pos.x,pos.y,pos.z)
     obj.components.transform.rotation = { x = 0, y = rot_y, z = 0 }
     obj.components.transform:set()
 

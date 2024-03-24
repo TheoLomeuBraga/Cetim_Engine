@@ -40,14 +40,14 @@ require("components.transform")
 require("objects.time")
 require("components.component_all")
 
-function walk_to(obj,path,last_progression, hight, speed)
+function walk_to(obj,path,progression_ptr, hight, speed)
 
-    if last_progression ~= nil then
+    if progression_ptr[1] ~= nil then
         
-        local walk_ret = walk_along_the_path(path, last_progression_2, time.scale * time.delta * speed)
+        local walk_ret = walk_along_the_path(path, progression_ptr[1], time.scale * time.delta * speed)
 
         if walk_ret == nil then
-            last_progression_2 = nil
+            progression_ptr[1] = nil
         else
             local current_pos = deepcopy(obj.components.transform.position)
             obj.components.transform.position = walk_ret.position
@@ -58,7 +58,7 @@ function walk_to(obj,path,last_progression, hight, speed)
             end
             obj.components.transform:set()
 
-            last_progression_2 = walk_ret.progression
+            progression_ptr[1] = walk_ret.progression
         end
     end
     
