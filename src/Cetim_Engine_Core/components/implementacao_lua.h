@@ -100,14 +100,14 @@ void start_lua_global_data()
 {
 	print("iniciando lua global data");
 	lua_global_data = luaL_newstate();
-	
-	#ifdef USE_LUA_JIT
-		luaJIT_setmode(lua_global_data, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-		lua_gc(lua_global_data, LUA_GCSETPAUSE, 100);     
-		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 400);
-	#else
-		lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
-	#endif
+
+#ifdef USE_LUA_JIT
+	luaJIT_setmode(lua_global_data, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+	lua_gc(lua_global_data, LUA_GCSETPAUSE, 100);
+	lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 400);
+#else
+	lua_gc(lua_global_data, LUA_GCSETSTEPMUL, 1000);
+#endif
 }
 
 void lua_pushtable(lua_State *L, Table t)
@@ -739,7 +739,7 @@ namespace funcoes_ponte
 		Table ret;
 		ret.setFloat("time", Tempo::tempo);
 		ret.setFloat("delta", deltaTimer.get());
-		//ret.setFloat("delta", time_step);
+		// ret.setFloat("delta", time_step);
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);
 		return 1;
@@ -748,14 +748,13 @@ namespace funcoes_ponte
 	int set_time_scale(lua_State *L)
 	{
 		Tempo::velocidadeTempo = lua_tonumber(L, 1);
-		//print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
+		// print("Tempo::velocidadeTempo",Tempo::velocidadeTempo);
 		return 0;
 	}
 
 	// object
 	int create_object(lua_State *L)
 	{
-
 
 		int argumentos = lua_gettop(L);
 		shared_ptr<objeto_jogo> obj = novo_objeto_jogo();
@@ -1161,7 +1160,7 @@ namespace funcoes_ponte
 			ret.setTable("rotation", vec3_table(tf->pegar_angulo_graus()));
 			ret.setTable("scale", vec3_table(tf->esca));
 			ret.setFloat("billboarding", tf->billboarding);
-			
+
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1200,6 +1199,8 @@ namespace funcoes_ponte
 		}
 		return 0;
 	}
+
+	
 
 	int rotate_transform(lua_State *L)
 	{
@@ -1324,8 +1325,9 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int transform_look_at(lua_State *L){
-
+	int transform_look_at(lua_State *L)
+	{
+		
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -1334,10 +1336,18 @@ namespace funcoes_ponte
 		}
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 
-		vec3 look_axe = table_vec3(lua_totable(L,2));
-		vec3 target_position = table_vec3(lua_totable(L,3));
+		vec3 up_axe = table_vec3(lua_totable(L, 2));
+		vec3 target_position = table_vec3(lua_totable(L, 3));
+		bool look_up = lua_tonumber(L, 4);
 
-		tf->olhar_para(look_axe,target_position);
+		if(look_up){
+			vec3 rot = tf->billboarding_spherical(target_position);
+			change_rot(obj, rot);
+		}else{
+			vec3 rot = tf->billboarding_planar(target_position);
+			change_rot(obj, rot);
+		}
+		
 
 		return 0;
 	}
@@ -2301,6 +2311,19 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int generate_navmesh_short_path(lua_State *L)
+	{
+
+		vector<Table> ret;
+		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3),2);
+		for (size_t i = 0; i < path.size(); i++)
+		{
+			ret.push_back(vec3_table(path[i]));
+		}
+		lua_pushtable(L, vTable_table(ret));
+		return 1;
+	}
+
 	int show_navmesh(lua_State *L)
 	{
 		navmesh::show(lua_toboolean(L, 1));
@@ -2348,7 +2371,6 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	
 	int walk_along_the_path(lua_State *L)
 	{
 		Table ret;
@@ -2359,8 +2381,11 @@ namespace funcoes_ponte
 		{
 			path.push_back(table_vec3(t));
 		}
-		if(!path.size()){return 0;}
-		float current_progression = std::max(0.001,lua_tonumber(L, 2));
+		if (!path.size())
+		{
+			return 0;
+		}
+		float current_progression = std::max(0.001, lua_tonumber(L, 2));
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;
@@ -2401,19 +2426,23 @@ namespace funcoes_ponte
 
 		if (glm::length(target_movement) > 0)
 		{
-			// Supondo que target é a posição para a qual o objeto deve olhar e current_position é a posição atual do objeto
-			glm::vec3 up_vector = glm::vec3(0.0f, 1.0f, 0.0f); // Vetor 'up' padrão
 
-			// Gerar a matriz 'look at'
-			mat4 lookAt_matrix = glm::lookAt(current_position, target, up_vector);
+			glm::vec3 position = current_position;
+			glm::vec3 up = (vec3(0, 1, 0));
 
-			// Agora você precisa extrair os ângulos de rotação (yaw, pitch, roll) da matriz lookAt_matrix
-			// Isso geralmente é feito através da conversão da matriz para um quaternion e depois para ângulos de Euler
-			quat rotation_quaternion = glm::quat_cast(lookAt_matrix);
-			vec3 eulerAngles = glm::eulerAngles(rotation_quaternion);
+			glm::vec3 direction = glm::normalize(target - position);
+
+			// Calcula os ângulos de pitch e yaw
+			float pitch = glm::degrees(asin(-direction.y));
+			float yaw = glm::degrees(atan2(direction.x, direction.z));
+
+			// Constrói o vetor em graus
+			glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
+
+			euler_angles.z = up.z;
 
 			// Os ângulos de Euler estão em radianos, converta-os para graus se necessário
-			rotation = glm::vec3(-1,-1,-1) * glm::degrees(eulerAngles);
+			rotation = euler_angles;
 		}
 		else
 		{
@@ -2774,6 +2803,7 @@ namespace funcoes_ponte
 																 pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
 																 pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
 																 pair<string, lua_function>("transform_look_at", funcoes_ponte::transform_look_at),
+																 
 
 																 pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
 																 pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
@@ -2827,6 +2857,7 @@ namespace funcoes_ponte
 															   pair<string, lua_function>("remove_all_navmesh", remove_all_navmesh),
 															   pair<string, lua_function>("create_navmesh", create_navmesh),
 															   pair<string, lua_function>("generate_navmesh_path", generate_navmesh_path),
+															   pair<string, lua_function>("generate_navmesh_short_path", generate_navmesh_short_path),
 															   pair<string, lua_function>("show_navmesh", show_navmesh),
 															   pair<string, lua_function>("look_to", look_to),
 															   pair<string, lua_function>("walk_along_the_path", walk_along_the_path),
@@ -2919,13 +2950,13 @@ void load_base_lua_state(lua_State *L, string path)
 	lua_setfield(L, -2, "cpath");
 	lua_pop(L, 1);
 
-	#ifdef USE_LUA_JIT
-		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-		lua_gc(L, LUA_GCSETPAUSE, 100);     
-		lua_gc(L, LUA_GCSETSTEPMUL, 400);
-	#else
-		lua_gc(L, LUA_GCSETSTEPMUL, 1000);
-	#endif
+#ifdef USE_LUA_JIT
+	luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+	lua_gc(L, LUA_GCSETPAUSE, 100);
+	lua_gc(L, LUA_GCSETSTEPMUL, 400);
+#else
+	lua_gc(L, LUA_GCSETSTEPMUL, 1000);
+#endif
 
 	lua_newtable(L);
 	for (int i = 0; i < argumentos.size(); i++)

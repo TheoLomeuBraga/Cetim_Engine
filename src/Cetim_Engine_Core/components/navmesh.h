@@ -638,7 +638,7 @@ public:
         }
     }
 
-    std::vector<glm::vec3> generate_this_path(glm::vec3 start, glm::vec3 end)
+    std::vector<glm::vec3> generate_this_path(glm::vec3 start, glm::vec3 end,unsigned int pathPolysCount = 256)
     {
 
         std::vector<glm::vec3> path;
@@ -683,7 +683,7 @@ public:
         }
 
         // Calcular o caminho
-        dtPolyRef pathPolys[256]; // Tamanho máximo do caminho
+        dtPolyRef pathPolys[pathPolysCount]; // Tamanho máximo do caminho
         int nPathPolys;
         query.findPath(startRef, endRef, startPos, endPos, &filter, pathPolys, &nPathPolys, 256);
 
@@ -722,11 +722,11 @@ public:
         return path;
     }
 
-    static std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end, std::string tag)
+    static std::vector<glm::vec3> generate_path(glm::vec3 start, glm::vec3 end, std::string tag,unsigned int path_size = 256)
     {
         if (navmeshes.find(tag) != navmeshes.end())
         {
-            return navmeshes[tag]->pegar_componente<navmesh>()->generate_this_path(start, end);
+            return navmeshes[tag]->pegar_componente<navmesh>()->generate_this_path(start, end,path_size);
         }
         return {};
     }

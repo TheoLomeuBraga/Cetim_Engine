@@ -26,9 +26,14 @@ function generate_navmesh_path(start,goal,tag)
     return c_generate_navmesh_path(start,goal,tag)
 end
 
-function look_to(start,goal,rot_x,rot_y,rot_z)
-    return c_look_to(start,goal,rot_x,rot_y,rot_z)
+function  generate_navmesh_short_path(start,goal,tag)
+    if tag == nil then
+        return c_generate_navmesh_short_path(start,goal,"")
+    end
+    return c_generate_navmesh_short_path(start,goal,tag)
 end
+
+
 
 function walk_along_the_path(path,progression,speed_or_walk_distance)
     return c_walk_along_the_path(path,progression,speed_or_walk_distance)

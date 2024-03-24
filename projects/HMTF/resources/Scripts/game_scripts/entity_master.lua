@@ -55,14 +55,15 @@ local update_entity_map = {
             
 
             --entity.path = generate_navmesh_path(pos,{ x = 67.0, y = 80.5, z = -296.0 })
-            entity.path = generate_navmesh_path(pos,player_position)
+            entity.path = generate_navmesh_short_path(pos,player_position)
             entity.progression = {0.0}
         end
 
         if distance(pos,player_position) > 10 then
             walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
-            --walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale)
         end
+
+        entity.obj.components.transform:look_at(Vec3:new(0,1,0),player_position,false)
         
     end,
 }

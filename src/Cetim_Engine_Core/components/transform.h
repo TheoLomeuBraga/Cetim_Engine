@@ -133,18 +133,24 @@ public:
 		pegar_matriz();
 	}
 
-	glm::vec3 olhar_para(glm::vec3 look_axe ,glm::vec3 target)
+	glm::vec3 olhar_para(glm::vec3 look_axe ,glm::vec3 target,bool usar_eixo_y = false)
 	{
+		if(usar_eixo_y){
+			look_axe.y=0;
+			target.y=0;
+		}
 		glm::mat4 lookAtMatrix = glm::lookAt(pegar_pos_global(), target, look_axe);
 		glm::quat quaternionRotation = glm::quat_cast(lookAtMatrix);
 		glm::vec3 eulerAngles = glm::eulerAngles(quaternionRotation);
+		rot = glm::eulerAngles(quaternionRotation);
+		quater = quaternionRotation;
 		return eulerAngles;
 	}
 
-	glm::vec3 billboarding_spherical(glm::vec3 target)
+	glm::vec3 billboarding_spherical(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
-		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));
+		up = pegar_direcao_local(up);
 
 		glm::vec3 direction = glm::normalize(target - position);
 
@@ -161,10 +167,11 @@ public:
 		return euler_angles;
 	}
 
-	glm::vec3 billboarding_planar(glm::vec3 target)
+	glm::vec3 billboarding_planar(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
-		glm::vec3 up = pegar_direcao_local(vec3(0, 1, 0));
+		target.y = position.y;
+		up = pegar_direcao_local(up);
 
 		glm::vec3 direction = glm::normalize(target - position);
 
