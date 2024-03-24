@@ -49,7 +49,7 @@ local update_entity_map = {
             entity.progression = {0.0}
         end
 
-        walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta * time.scale)
+        walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
     end,
 }
 
