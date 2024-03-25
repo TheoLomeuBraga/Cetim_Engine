@@ -53,7 +53,7 @@ namespace Tempo
 		double get()
 		{
 			auto end_time = clock::now();
-			std::chrono::duration<float> elapsed_seconds = end_time - start_time;
+			std::chrono::duration<long double> elapsed_seconds = end_time - start_time;
 			return elapsed_seconds.count();
 		}
 	};

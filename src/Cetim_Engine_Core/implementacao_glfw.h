@@ -757,8 +757,11 @@ void AntesReindenizar()
 
 bool iniciada_logica_scripts;
 
+Tempo::Timer totalTimer;
 Tempo::Timer deltaTimer;
-float deltaTime = 0;
+
+long double lastTime = 0;
+long double deltaTime = 0;
 
 void Reindenizar()
 {
@@ -770,22 +773,23 @@ void Reindenizar()
 		f();
 	}
 
-	//Benchmark_Timer a("atualisar");
-	cena_objetos_selecionados->atualisar();
-	//a.stop();
-
-	//Benchmark_Timer b("transforms");
-	cena_objetos_selecionados->atualisar_transforms();
-	//b.stop();
-
-	//Benchmark_Timer c("Logica_Scripst");
-	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	deltaTimer.clear();
-	//c.stop();
 	
-	//Benchmark_Timer d("render");
+	
+	cena_objetos_selecionados->atualisar();
+	
+	
+	cena_objetos_selecionados->atualisar_transforms();
+	
+	
+	cena_objetos_selecionados->atualisar_Logica_Scripst();
+	deltaTime = totalTimer.get() - lastTime;
+	lastTime =+ totalTimer.get();
+	
+	deltaTimer.clear();
+	
+	
 	reindenizar_cenario();
-	//d.stop();
+	
 
 	for (function<void()> f : Depois_Render_Func)
 	{

@@ -470,6 +470,12 @@ public:
 
 unsigned int box_2d_physics_fps = 60;
 
+Tempo::Timer box_2d_physics_timer;
+
+
+
+double box_2d_past_time = 0;
+
 void atualisar_global_box2D()
 {
 
@@ -491,10 +497,24 @@ void atualisar_global_box2D()
 
 	mundo.SetGravity(converter_b2D(gravidade));
 
+
+	box_2d_past_time += box_2d_physics_timer.get();
+    box_2d_physics_timer.clear();
+
+    unsigned char box_2d_time_step_count = 0;
+    while (box_2d_past_time > time_step)
+    {
+
+        box_2d_time_step_count++;
+        box_2d_past_time -= time_step;
+    }
+	mundo.Step(time_step * Tempo::velocidadeTempo * box_2d_time_step_count, velocidade_interacoes, iteracao_posicao);
+    
+	/*
 	passo_tempo = (Tempo::tempo - ultimo_tempo) * Tempo::velocidadeTempo;
-	// mundo.Step(passo_tempo * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
 	mundo.Step(passo_tempo, velocidade_interacoes, iteracao_posicao);
 	ultimo_tempo = Tempo::tempo;
+	*/
 }
 
 thread box2D_thread;

@@ -144,7 +144,7 @@ btTransform getObjectTransform(const btCollisionObject *object)
 }
 void iniciar_global_bullet();
 
-double last_time_step = 0;
+double last_bullet_time_step = 0;
 
 class bullet : public componente
 {
@@ -792,9 +792,9 @@ void get_bu_collisions_no_per_object()
 
 Tempo::Timer bullet_timer;
 
-const double time_step = 1.0 / 120.0;
 
-double past_time = 0;
+
+double bullet_past_time = 0;
 
 void atualisar_global_bullet()
 {
@@ -804,23 +804,23 @@ void atualisar_global_bullet()
     clean_bu_collisions_no_per_object();
     get_bu_collisions_no_per_object();
 
-    past_time += bullet_timer.get();
+    bullet_past_time += bullet_timer.get();
     bullet_timer.clear();
 
-    unsigned char time_step_count = 0;
-    while (past_time > time_step)
+    unsigned char bullet_time_step_count = 0;
+    while (bullet_past_time > time_step)
     {
 
-        time_step_count++;
-        past_time -= time_step;
+        bullet_time_step_count++;
+        bullet_past_time -= time_step;
     }
-    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * time_step_count, 4 * time_step_count);
-    last_time_step = time_step * Tempo::velocidadeTempo * time_step_count;
+    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * bullet_time_step_count, 4 * bullet_time_step_count);
+    
 
     /*
-    while(past_time > time_step){
-        dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo, 4);
-        past_time -= time_step;
+    while(bullet_past_time > bullet_time_step){
+        dynamicsWorld->stepSimulation(bullet_time_step * Tempo::velocidadeTempo, 4);
+        bullet_past_time -= bullet_time_step;
     }
     */
 
