@@ -19,12 +19,16 @@ local menu = {
 
 
 function menu:START()
+    global_data.pause = 1
+    global_data.player_object_ptr = nil
+    
     local layers = global_data.layers
     menu.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     set_lisener_object(menu.camera_obj.object_ptr)
 
     menu.menu_obj = game_object(create_object(layers.hud))
     menu.menu_obj.components.transform:set()
+    
 
     menu.menu_obj.components.lua_scripts:add_script("game_scripts/menus")
     menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "in_main_menu", 1)

@@ -108,7 +108,7 @@ camera_rotation = { x = 180, y = 0 }
 
 this_object_physics_3D_seted = false
 
-force_y = 24
+force_y = 16
 
 inpulse_y = 0
 
@@ -182,6 +182,8 @@ end
 
 function UPDATE()
     time:get()
+
+    
     if game_state == game_states.play then
         gravity:get()
 

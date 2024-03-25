@@ -111,12 +111,23 @@ function unload_sceane_step()
     
 end
 
+load_sceane_request_name = nil
+
 function load_sceane(cenary_name)
+    
     this_object.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clear({})
     this_object.components.lua_scripts.scripts["game_scripts/entity_master"].functions.clear({})
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)
+    load_sceane_request_name = nil
+    
+end
+
+function load_sceane_request(cenary_name)
+    
+    load_sceane_request_name = cenary_name
+    
 end
 
 function keep_loading()
@@ -285,6 +296,10 @@ function UPDATE()
         load_sceane(sceane_name)
     end
     reload_last_frame = last_frame
+
+    if load_sceane_request_name ~= nil then
+        load_sceane(load_sceane_request_name)
+    end
 
     if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
         window:close()

@@ -35,6 +35,8 @@ function collision_layer_info:new()
     }
 end
 
+
+
 physics_3D_component = create_base_component(components.physics_3D)
 physics_3D_component.object_ptr = nil
 physics_3D_component.scale = { x = 1, y = 1, z = 1 }

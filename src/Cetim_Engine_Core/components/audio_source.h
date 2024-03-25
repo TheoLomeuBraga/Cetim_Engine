@@ -371,9 +371,14 @@ public:
 		this->info = info;
 	}
 
+	/*
 	void finalisar()
 	{
-		som->pause();
+		if(som.get()){
+			som->stop();
+		}
+		
 	}
+	*/
 };
 #endif

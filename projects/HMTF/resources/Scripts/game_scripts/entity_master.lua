@@ -26,9 +26,8 @@ function distance(a, b)
     local dx = b.x - a.x
     local dy = b.y - a.y
     local dz = b.z - a.z
-    return math.sqrt(dx*dx + dy*dy + dz*dz)
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
 end
-
 
 time_to_clean_paths = 0
 function clean_pre_calculated_paths()
@@ -43,58 +42,56 @@ end
 
 local update_entity_map = {
     test_entity = function(entity)
-
         local pos = entity.obj.components.transform:get_global_position()
-        
+
         if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
-            entity.path = generate_navmesh_short_path(pos,player_position)
-            entity.progression = {0.0}
+            entity.path = generate_navmesh_short_path(pos, player_position)
+            entity.progression = { 0.0 }
         end
 
-        if distance(pos,player_position) > 10 then
-            walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta * time.scale,true)
+        
+        if distance(pos, player_position) > 10 then
+            walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
         end
 
         --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
-        
     end,
 }
 
 function UPDATE()
+    if global_data.pause ~=nil and global_data.pause < 1 then
+        time:get()
 
-    time:get()
+        player_position = { x = 0, y = 0, z = 0 }
 
-    player_position = { x = 0, y = 0, z = 0 }
+        if global_data.player_object_ptr ~= nil then
+            local player = game_object(global_data.player_object_ptr)
 
-    if global_data.player_object_ptr ~= nil then
-        local player = game_object(global_data.player_object_ptr)
+            if player ~= nil then
+                player_position = player.components.transform:get_global_position()
+                local player_position_down = Vec3:new(player_position.x, player_position.y - 1000, player_position.z)
+                local hit, hit_info = raycast_3D(player_position, player_position_down)
 
-        if player ~= nil then
-            player_position = player.components.transform:get_global_position()
-            local player_position_down = Vec3:new(player_position.x,player_position.y-1000,player_position.z)
-            local hit,hit_info = raycast_3D(player_position, player_position_down)
-
-            if hit then
-                player_position = hit_info.position
+                if hit then
+                    player_position = hit_info.position
+                end
+                --print("A",ret.position.x,ret.position.y,ret.position.z)
             end
-            --print("A",ret.position.x,ret.position.y,ret.position.z)
+        end
+
+
+
+        for index, value in ipairs(entitys_list) do
+            update_entity_map[value.type](value)
+        end
+
+        if time_to_clean_paths > 0.25 then
+            clean_pre_calculated_paths()
+            time_to_clean_paths = 0
+        else
+            time_to_clean_paths = time_to_clean_paths + time.delta
         end
     end
-
-
-
-    for index, value in ipairs(entitys_list) do
-        update_entity_map[value.type](value)
-    end
-
-    if time_to_clean_paths > 0.25 then
-        clean_pre_calculated_paths()
-        time_to_clean_paths = 0
-    else
-        time_to_clean_paths = time_to_clean_paths + time.delta
-    end
-
-    
 end
 
 function COLLIDE(collision_info)
@@ -105,12 +102,13 @@ end
 
 local actions_per_type = {
     test_entity = function(entity)
-        local model_path = "resources/3D Models/test_enimy.gltf"
+        local model_path = "resources/3D Models/test_friend.gltf"
 
         local entity_physics_3D = entity.obj.components.physics_3D
         entity_physics_3D.boady_dynamic = boady_dynamics.kinematic
-        entity_physics_3D.collision_shape = collision_shapes.capsule
-        entity_physics_3D.scale = Vec3:new(1, 2, 1)
+        entity_physics_3D.collision_shape = collision_shapes.convex
+        entity_physics_3D.collision_mesh = mesh_location:new(model_path, "Cube.001")
+        entity_physics_3D.scale = Vec3:new(1, 1, 1)
         entity_physics_3D.rotate_x = false
         entity_physics_3D.rotate_y = false
         entity_physics_3D.rotate_z = false
@@ -135,6 +133,8 @@ function summon_entity(args)
     local pos = args.pos
     local rot_y = args.rot_y
     local type = args.type
+
+    print(type,pos.x,pos.y,pos.z)
 
     local obj = game_object(create_object(global_data.layers.main))
     obj.components.transform.position = deepcopy(pos)

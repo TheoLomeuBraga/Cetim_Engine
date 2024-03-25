@@ -63,7 +63,7 @@ local going_to_main_menu = false
 function go_to_main_menu(state, id)
     if state == "click" then
         remove_object(this_object_ptr)
-        game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane({
+        game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.load_sceane_request({
             "main_menu" })
         going_to_main_menu = true
     end
@@ -123,8 +123,8 @@ function new_game(state, id)
     if state == "click" then
         print("new_game")
         core_obj = game_object(global_data.core_object_ptr)
-        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane({ "hub_map" })
-        --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane({ "test_nav_mesh" })
+        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub_map" })
+        --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "test_nav_mesh" })
     end
 end
 
@@ -202,6 +202,7 @@ function volume_slider(state, id)
 end
 
 function start_title_menu()
+    
     --title
     local title_style = deepcopy(empty_style)
     title_style.text_color = { r = 0, g = 1, b = 0, a = 1 }

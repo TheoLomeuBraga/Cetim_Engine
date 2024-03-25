@@ -54,6 +54,10 @@ end
 
 function level:START()
 
+    global_data.pause = 1
+
+    global_data.player_object_ptr = nil
+
     coroutine.yield()
 
     remove_all_navmesh()
@@ -107,6 +111,8 @@ function level:START()
     loading_screen.close()
 
     time:set_speed(1)
+
+    global_data.pause = 0
     
 end
 
