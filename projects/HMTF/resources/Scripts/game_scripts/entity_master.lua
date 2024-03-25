@@ -55,7 +55,7 @@ local update_entity_map = {
         end
 
         if distance(pos,player_position) > 10 then
-            walk_to(entity.obj,entity.path,entity.progression, 3, 20 * time.delta * time.scale,true)
+            walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta * time.scale,true)
         end
 
         entity.obj.components.transform:look_at(Vec3:new(0,1,0),player_position,false)
@@ -73,8 +73,14 @@ function UPDATE()
         local player = game_object(global_data.player_object_ptr)
 
         if player ~= nil then
-            player.components.transform:get()
-            player_position = player.components.transform.position
+            player_position = player.components.transform:get_global_position()
+            local player_position_down = Vec3:new(player_position.x,player_position.y-1000,player_position.z)
+            local hit,hit_info = raycast_3D(player_position, player_position_down)
+
+            if hit then
+                player_position = hit_info.position
+            end
+            --print("A",ret.position.x,ret.position.y,ret.position.z)
         end
     end
 
