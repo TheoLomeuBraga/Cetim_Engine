@@ -15,9 +15,6 @@ entitys_list = {}
 
 player_position = { x = 0, y = 0, z = 0 }
 
-frames_to_new_path = 10
-timer_to_new_path = 0
-
 --[[
     local pre_calculated_paths_ret = {
         path = {},
@@ -58,7 +55,7 @@ local update_entity_map = {
             walk_to(entity.obj,entity.path,entity.progression, 3, 10 * time.delta * time.scale,true)
         end
 
-        entity.obj.components.transform:look_at(Vec3:new(0,1,0),player_position,false)
+        --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
         
     end,
 }
@@ -90,11 +87,11 @@ function UPDATE()
         update_entity_map[value.type](value)
     end
 
-    if time_to_clean_paths > 30 then
+    if time_to_clean_paths > 0.25 then
         clean_pre_calculated_paths()
         time_to_clean_paths = 0
     else
-        time_to_clean_paths = time_to_clean_paths + 1
+        time_to_clean_paths = time_to_clean_paths + time.delta
     end
 
     
