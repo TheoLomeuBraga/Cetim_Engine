@@ -30,7 +30,7 @@ ifeq ($(OS),Windows_NT)
 	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -L./libs/x86_64/windows -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
 	ifeq ($(USE_LUAJIT),0)
-		LIBS_ENGINE += -llua
+		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
 	ifeq ($(USE_LUAJIT),1)
 		LIBS_ENGINE += -DUSE_LUA_JIT -lluajit-5.1
@@ -52,7 +52,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -L./libs/x86_64/windows -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
 	ifeq ($(USE_LUAJIT),0)
-		LIBS_ENGINE += -llua
+		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
 	ifeq ($(USE_LUAJIT),1)
 		LIBS_ENGINE += -DUSE_LUA_JIT -lluajit-5.1
@@ -73,7 +73,7 @@ ifeq ($(OS),Linux)
 	INCLUDE_DIRS = -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 	LIBS_ENGINE = -L./libs/x86_64/linux -lRecast -lDetour -lDetourCrowd -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath `sdl2-config --cflags --libs` -lSDL2_mixer 
 	ifeq ($(USE_LUAJIT),0)
-		LIBS_ENGINE += -llua
+		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
 	ifeq ($(USE_LUAJIT),1)
 		LIBS_ENGINE += -lluajit -DUSE_LUA_JIT
