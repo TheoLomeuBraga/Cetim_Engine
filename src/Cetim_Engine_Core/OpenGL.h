@@ -82,7 +82,7 @@ public:
 
 	Material material_last_frame;
 
-	std::string processIncludes(const std::string &path, const std::string &directory = "resources/Shaders")
+	std::string processIncludes(const std::string &path, const std::string &directory = "Shaders")
 	{
 
 		std::ifstream file(path);
@@ -303,7 +303,7 @@ public:
 	void teste_desenhar_malha(shared_ptr<transform_> tf, shared_ptr<objeto_jogo> cam)
 	{
 
-		unsigned int shader_s = pegar_shader("resources/Shaders/teste_malha");
+		unsigned int shader_s = pegar_shader("Shaders/teste_malha");
 		glUseProgram(shader_s);
 
 		// transform
@@ -352,7 +352,7 @@ public:
 	{
 
 		glDisable(GL_CULL_FACE);
-		unsigned int shader_s = pegar_shader("resources/Shaders/oclusion_querie");
+		unsigned int shader_s = pegar_shader("Shaders/oclusion_querie");
 		glUseProgram(shader_s);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
@@ -492,7 +492,7 @@ public:
 		sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_frag, GL_FRAGMENT_SHADER));
 
-		oclusion_box = ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"];
+		oclusion_box = ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"];
 		adicionar_malha(oclusion_box.get());
 
 		glClearColor(0, 0, 0, 0);

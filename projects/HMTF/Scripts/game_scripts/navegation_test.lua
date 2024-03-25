@@ -31,18 +31,18 @@ function START()
     path = generate_navmesh_path({ x = -21, y = 40.5, z = -138 }, { x = 67.0, y = 80.5, z = -296.0 })
 
     mat = matreial:new()
-    mat.shader = "resources/Shaders/mesh"
-    mat.textures = { "resources/Textures/white.png" }
+    mat.shader = "Shaders/mesh"
+    mat.textures = { "Textures/white.png" }
     mat.color = { r = 1, g = 0, b = 1, a = 1 }
     walker_cube = create_mesh(this_object_ptr, false, path[1], { x = 0, y = 0, z = 0 }, { x = 1, y = 1, z = 1 }, 2, { mat },
-        { mesh_location:new("resources/3D Models/visual_debug_shapes.gltf", "Cube") })
+        { mesh_location:new("3D Models/visual_debug_shapes.gltf", "Cube") })
 
     for key, value in pairs(path) do
         local point = deepcopy(value)
         point.y = point.y + 2
         mat.color = { r = 0, g = 0, b = 1, a = 1 }
         create_mesh(this_object_ptr, false, point, { x = 0, y = 0, z = 0 }, { x = 0.25, y = 2, z = 0.25 }, 2, { mat },
-            { mesh_location:new("resources/3D Models/visual_debug_shapes.gltf", "Cube") })
+            { mesh_location:new("3D Models/visual_debug_shapes.gltf", "Cube") })
     end
 end
 
@@ -79,7 +79,7 @@ function UPDATE()
                 walk_ret.rotation = { x = 0, y = 0, z = 0 }
             end
             create_mesh(this_object_ptr, false, walk_ret.position, walk_ret.rotation, { x = 0.2, y = 0.2, z = 1 }, 2,
-                { mat }, { mesh_location:new("resources/3D Models/visual_debug_shapes.gltf", "Cube") })
+                { mat }, { mesh_location:new("3D Models/visual_debug_shapes.gltf", "Cube") })
             last_progression = walk_ret.progression
         end
     end

@@ -54,7 +54,7 @@ function set_load_image(args)
     end
 
     local mat = matreial:new()
-    mat.shader = "resources/Shaders/background"
+    mat.shader = "Shaders/background"
     if args.path ~= nil and args.path ~= "" then
         mat.textures[1] = args.path
         if args.color ~= nil then
@@ -224,7 +224,7 @@ function START()
 
     post_processing:get()
     post_processing.material = matreial:new()
-    post_processing.material.shader = "resources/Shaders/post_processing"
+    post_processing.material.shader = "Shaders/post_processing"
     post_processing:set()
     
     layers:create()
@@ -232,8 +232,8 @@ function START()
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
     local mat = matreial:new()
-    mat.shader = "resources/Shaders/background"
-    mat.textures[1] = "resources/Textures/white.png"
+    mat.shader = "Shaders/background"
+    mat.textures[1] = "Textures/white.png"
     mat.color.r = 0.2
     mat.color.g = 0.2
     mat.color.b = 0.2
@@ -260,7 +260,7 @@ function START()
     
     load_configs()
     load_sceane("main_menu")
-    global_data.localization_file = "resources/localization/AmericanEnglish.json"
+    global_data.localization_file = "localization/AmericanEnglish.json"
 
     
     

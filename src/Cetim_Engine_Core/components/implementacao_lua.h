@@ -266,7 +266,7 @@ std::string compileLuaFile(std::string path)
 
 	std::replace(path.begin(), path.end(), '.', '/');
 
-	string filename = string("resources/Scripts/") + path + string(".lua");
+	string filename = string("Scripts/") + path + string(".lua");
 
 	std::ifstream file(filename, std::ios::in | std::ios::binary);
 
@@ -2646,7 +2646,7 @@ namespace funcoes_ponte
 		rm->camada = 4;
 
 		Material mat;
-		mat.shad = "resources/Shaders/mesh";
+		mat.shad = "Shaders/mesh";
 
 		if (lua_cube_color.x < 1)
 		{
@@ -2666,9 +2666,9 @@ namespace funcoes_ponte
 		}
 
 		mat.cor = lua_cube_color;
-		mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+		mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 
-		rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
+		rm->malhas = {ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]};
 
 		rm->mats = {mat};
 		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes, display_lua_cube);
@@ -2939,9 +2939,9 @@ void load_base_lua_state(lua_State *L, string path)
 	luaL_openlibs(L);
 
 	// configurar diretorio
-	string lua_path = argumentos[1] + "/resources/Scripts/?.lua;" + argumentos[1] + "/resources/Scripts/engine_libs/?.lua";
+	string lua_path = argumentos[1] + "/Scripts/?.lua;" + argumentos[1] + "/Scripts/engine_libs/?.lua";
 
-	string link_libs_path = argumentos[1] + string("/resources/Scripts/link_libs/?.dll;") + argumentos[1] + string("/resources/Scripts/link_libs/?.so");
+	string link_libs_path = argumentos[1] + string("/Scripts/link_libs/?.dll;") + argumentos[1] + string("/Scripts/link_libs/?.so");
 
 	lua_getglobal(L, "package");
 	lua_pushstring(L, lua_path.c_str());

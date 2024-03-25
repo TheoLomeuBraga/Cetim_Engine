@@ -155,7 +155,7 @@ namespace ManuseioDados
 	{
 		string s, s2;
 		ifstream file(nome);
-		string possible_path = string("resources/Scripts/") + nome + string(".lua");
+		string possible_path = string("Scripts/") + nome + string(".lua");
 		ifstream file2(possible_path);
 		const char *cc;
 
@@ -1108,8 +1108,8 @@ namespace ManuseioDados
 			else
 			{
 				Material mat;
-				mat.shad = "resources/Shaders/mesh";
-				mat.texturas[0] = carregar_Imagem("resources/Textures/null.png");
+				mat.shad = "Shaders/mesh";
+				mat.texturas[0] = carregar_Imagem("Textures/null.png");
 				ret.meus_materiais.push_back(mat);
 			}
 
@@ -1134,8 +1134,8 @@ namespace ManuseioDados
 					else
 					{
 						Material mat;
-						mat.shad = "resources/Shaders/mesh";
-						mat.texturas[0] = carregar_Imagem("resources/Textures/null.png");
+						mat.shad = "Shaders/mesh";
+						mat.texturas[0] = carregar_Imagem("Textures/null.png");
 						ret.meus_materiais.push_back(mat);
 					}
 
@@ -1201,14 +1201,14 @@ namespace ManuseioDados
 				}
 				else
 				{
-					ret.texturas[gltf_loader.textures[i].uri] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+					ret.texturas[gltf_loader.textures[i].uri] = ManuseioDados::carregar_Imagem("Textures/white.png");
 				}
 			}
 
 			for (int i = 0; i < gltf_loader.materials.size(); i++)
 			{
 				Material mat;
-				mat.shad = "resources/Shaders/mesh";
+				mat.shad = "Shaders/mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 
 				if (gltf_loader.materials[i].textureIndex > -1)
@@ -1226,7 +1226,7 @@ namespace ManuseioDados
 				}
 				else
 				{
-					mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+					mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 				}
 
 				ret.materiais[gltf_loader.materials[i].name] = mat;

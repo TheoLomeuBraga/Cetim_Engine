@@ -34,8 +34,8 @@ function START()
 
     if mesh.file ~= "" then
         local mat = matreial:new()
-        mat.shader = "resources/Shaders/mesh"
-        mat.textures[1] = "resources/Textures/white.png"
+        mat.shader = "Shaders/mesh"
+        mat.textures[1] = "Textures/white.png"
         mat.color = { r = 1, g = 0, b = 0, a = 1 }
         this_object.components.render_mesh.layer = 2
         this_object.components.render_mesh.meshes_cout = 1

@@ -436,7 +436,7 @@ float navmesh_color_intensity = 0.0;
 void navmesh_print_cube_in_space(vec3 pos)
 {
 
-    // ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]
+    // ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]
 
     shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
     display_nav_mesh->adicionar_componente<transform_>();
@@ -450,16 +450,16 @@ void navmesh_print_cube_in_space(vec3 pos)
     rm->camada = 4;
 
     Material mat;
-    mat.shad = "resources/Shaders/mesh";
+    mat.shad = "Shaders/mesh";
     mat.cor = vec4(navmesh_color_intensity, 0.0, 0.5, 1);
     navmesh_color_intensity += 0.5;
     if (navmesh_color_intensity > 1)
     {
         navmesh_color_intensity = 0;
     }
-    mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+    mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 
-    rm->malhas = {ManuseioDados::importar_obj("resources/3D Models/oclusion_box.obj")->malhas["Cube"]};
+    rm->malhas = {ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]};
 
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);
@@ -555,9 +555,9 @@ public:
             rm->camada = 4;
 
             Material mat;
-            mat.shad = "resources/Shaders/mesh";
+            mat.shad = "Shaders/mesh";
             mat.cor = vec4(0.1, 0.1, 1, 0.5);
-            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/white.png");
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 
             // rm->malhas = {convert_nav_mesh_to_mesh(navMesh)};
             rm->malhas = {convert_polyMesh_to_mesh(rcmeshe)};

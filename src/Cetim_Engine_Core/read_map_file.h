@@ -221,7 +221,7 @@ namespace print_read_map_file {
 
 
 void test_read_map_file() {
-    std::string filename = "resources/Leveis 3D/mesh_test.map"; // Replace with your .map filename
+    std::string filename = "Leveis 3D/mesh_test.map"; // Replace with your .map filename
     Full_Map_Info map_info = read_map_file(filename);
     print_read_map_file::Print_Full_Map_Info(map_info);
 }

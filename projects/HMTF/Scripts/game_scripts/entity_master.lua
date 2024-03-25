@@ -103,7 +103,7 @@ end
 
 local actions_per_type = {
     test_entity = function(entity)
-        local model_path = "resources/3D Models/test_friend.gltf"
+        local model_path = "3D Models/test_friend.gltf"
 
         local entity_physics_3D = entity.obj.components.physics_3D
         entity_physics_3D.boady_dynamic = boady_dynamics.kinematic
@@ -120,7 +120,7 @@ local actions_per_type = {
         entity_physics_3D:set()
 
         local entity_data = get_scene_3D(model_path)
-        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "resources/Shaders/mesh",
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "Shaders/mesh",
             true, false)
 
         entity.rig_obj = entity_structures.obj

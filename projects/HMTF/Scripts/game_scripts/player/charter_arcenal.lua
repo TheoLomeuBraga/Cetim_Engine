@@ -39,12 +39,12 @@ local selected_wepom = {
 
     damage = 1,
     life_time = 0.5,
-    mesh = { file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
+    mesh = { file = "3D Models/bullets.gltf", name = "round_bullet" },
 }
 
 local wepom_list = {
     test_wepon = {
-        file = "resources/3D Models/arm_cannon.gltf",
+        file = "3D Models/arm_cannon.gltf",
         automatic = false,
         fire_rate = 0.1,
         projectile_speed = 50,
@@ -56,7 +56,7 @@ local wepom_list = {
         bullet_origens = { { x = -0.3, y = -0.3, z = 0 } },
         damage = 1,
         life_time = 0.5,
-        mesh = { file = "resources/3D Models/bullets.gltf", name = "round_bullet" },
+        mesh = { file = "3D Models/bullets.gltf", name = "round_bullet" },
     }
 }
 next_shoot_timer = 0
@@ -94,7 +94,7 @@ function select_wepon(wepon)
     local wepon_data = get_scene_3D(wepon.file)
     
     
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "resources/Shaders/mesh",true, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "Shaders/mesh",true, false)
 
     current_animation_state = {
         name = "pick_up",
@@ -113,7 +113,7 @@ function select_wepon(wepon)
         part_ptr_list = objects.parts_ptr_list,
         animations = wepon_data.animations,
 
-        shoot_sound = "resources/Audio/sounds/shot_3.wav",
+        shoot_sound = "Audio/sounds/shot_3.wav",
 
         automatic = wepon.automatic,
         fire_rate = wepon.fire_rate,

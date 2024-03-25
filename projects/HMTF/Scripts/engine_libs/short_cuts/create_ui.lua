@@ -19,7 +19,7 @@ function ui_style:new()
         color_hover = { r = 0, g = 0, b = 1, a = 1 },
         color_click = { r = 0, g = 0, b = 1, a = 1 },
 
-        text_font = "resources/Fonts/Glowworm Regular.ttf",
+        text_font = "Fonts/Glowworm Regular.ttf",
         text_color = { r = 0, g = 1, b = 0, a = 1 },
 
         border_size = 0.1,
@@ -48,7 +48,7 @@ local ui_object_example = {
 
     text = "hello world",
 
-    image = "resources/Textures/white.png",
+    image = "Textures/white.png",
 
     click_function = nil,
 
@@ -134,7 +134,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         self.style = deepcopy(style)
 
         local render_shader_mat = matreial:new()
-        render_shader_mat.shader = "resources/Shaders/button"
+        render_shader_mat.shader = "Shaders/button"
         render_shader_mat.color = deepcopy(self.style.color)
         render_shader_mat.inputs["border_color_x"] = self.style.border_color_r
         render_shader_mat.inputs["border_color_y"] = self.style.border_color_g
@@ -146,7 +146,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         --colors
 
         if image == nil or image == "" then
-            render_shader_mat.textures[1] = "resources/Textures/white.png"
+            render_shader_mat.textures[1] = "Textures/white.png"
         else
             render_shader_mat.textures[1] = image
         end
@@ -158,7 +158,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         
         if text ~= nil and text ~= "" then
             local render_text_mat = matreial:new()
-            render_text_mat.shader = "resources/Shaders/text"
+            render_text_mat.shader = "Shaders/text"
             render_text_mat.color = deepcopy(self.style.text_color)
 
             

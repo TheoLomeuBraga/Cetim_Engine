@@ -142,7 +142,7 @@ void iniciarTeste3()
 
 	// pos processamento
 
-	api_grafica->pos_processamento_info.shad = "resources/Shaders/post_processing";
+	api_grafica->pos_processamento_info.shad = "Shaders/post_processing";
 	api_grafica->pos_processamento_info.cor = vec4(1, 1, 1, 1);
 	api_grafica->pos_processamento_info.gama = 1;
 

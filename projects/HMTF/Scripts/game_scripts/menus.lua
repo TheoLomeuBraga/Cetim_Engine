@@ -346,7 +346,7 @@ function start_all_menus()
         local background_style = deepcopy(empty_style)
         background_style.background_color = { r = 0, g = 0.2, b = 0.2, a = 1 }
         background_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
-        background_style.background_image = "resources/Textures/null.png"
+        background_style.background_image = "Textures/null.png"
         create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil,
             background_style)
     else
@@ -354,7 +354,7 @@ function start_all_menus()
         local background_style = deepcopy(empty_style)
         background_style.background_color = { r = 0.25, g = 0.25, b = 0.25, a = 0.75 }
         background_style.text_color = { r = 0, g = 1, b = 0, a = 1 }
-        background_style.background_image = "resources/Textures/white.png"
+        background_style.background_image = "Textures/white.png"
         create_ui_element(this_object.object_ptr, ui_types.common, { x = 0.5, y = 0.5 }, { x = 1, y = 1 }, "", nil,
             background_style)
     end

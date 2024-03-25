@@ -786,9 +786,9 @@ namespace gltf_loader
                                 {
                                     texture.uri = baseDir + imageJson["name"].get<std::string>() + ".png";
                                 }
-                                else if (file_exist("resources/Textures/" + imageJson["name"].get<std::string>() + ".png"))
+                                else if (file_exist("Textures/" + imageJson["name"].get<std::string>() + ".png"))
                                 {
-                                    texture.uri = "resources/Textures/" + imageJson["name"].get<std::string>() + ".png";
+                                    texture.uri = "Textures/" + imageJson["name"].get<std::string>() + ".png";
                                 }
                             }
                         }

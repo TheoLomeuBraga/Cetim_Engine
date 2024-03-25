@@ -54,9 +54,9 @@ function advanced_ui_style:new()
         text_size = 0.1,
         uniform_space_between_characters = 0,
         space_betwen_lines = 2,
-        background_image = "resources/Textures/null.svg",
-        border_image = "resources/Textures/null.svg",
-        text_font = "resources/Fonts/Glowworm Regular.ttf",
+        background_image = "Textures/null.svg",
+        border_image = "Textures/null.svg",
+        text_font = "Fonts/Glowworm Regular.ttf",
     }
 end
 
@@ -72,8 +72,8 @@ empty_style.background_color = { r = 0, g = 0, b = 0, a = 0 }
 empty_style.border_color = { r = 0, g = 0, b = 0, a = 0 }
 empty_style.border_size = 0
 empty_style.text_size = 0
-empty_style.background_image = "resources/Textures/white.png"
-empty_style.border_image = "resources/Textures/white.png"
+empty_style.background_image = "Textures/white.png"
+empty_style.border_image = "Textures/white.png"
 
 ui_component = create_base_component(components.ui_component)
 ui_component.object_ptr = ""

@@ -20,7 +20,7 @@ function get_set_audio(get_set, obj)
 end
 
 audio_component = create_base_component(components.audio_source)
-audio_component.path = "resources/Audio/teste de audio.wav"
+audio_component.path = "Audio/teste de audio.wav"
 audio_component.pause = false
 audio_component.loop = false
 audio_component.time = 0.001
@@ -30,7 +30,7 @@ audio_component.min_distance = 1
 audio_component.atenuation = 10
 
 function audio_component:clean()
-    self.path = "resources/Audio/teste de audio.wav"
+    self.path = "Audio/teste de audio.wav"
     self.pause = false
     self.loop = false
     self.time = 0.001

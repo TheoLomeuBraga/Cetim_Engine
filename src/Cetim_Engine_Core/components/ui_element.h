@@ -99,8 +99,8 @@ public:
         // tf->UI = true;
 
         Material mat;
-        mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
-        mat.shad = "resources/Shaders/ui_componente";
+        mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
+        mat.shad = "Shaders/ui_componente";
 
         base_obj = novo_objeto_jogo();
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, base_obj);
@@ -124,7 +124,7 @@ public:
         cena_objetos_selecionados->adicionar_objeto(base_obj, background_obj);
 
         mat.cor = vec4(0, 0, 1, 1);
-        mat.shad = "resources/Shaders/text";
+        mat.shad = "Shaders/text";
         text_obj = novo_objeto_jogo();
         text_obj->adicionar_componente<transform_>(transform_());
         text_obj->pegar_componente<transform_>()->UI = true;
@@ -240,12 +240,12 @@ public:
         background_obj->pegar_componente<transform_>()->mudar_angulo_graus(vec3(0, 0, 0));
 
         Material mat;
-        mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
-        mat.shad = "resources/Shaders/text";
+        mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
+        mat.shad = "Shaders/text";
         mat.cor = current_style.text_color;
         text_obj->pegar_componente<render_texto>()->mat = mat;
 
-        mat.shad = "resources/Shaders/ui_componente";
+        mat.shad = "Shaders/ui_componente";
         mat.cor = current_style.background_color;
         if (current_style.background_image != NULL)
         {
@@ -253,7 +253,7 @@ public:
         }
         else
         {
-            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
         }
         background_obj->pegar_componente<render_shader>()->mat = mat;
 
@@ -264,7 +264,7 @@ public:
         }
         else
         {
-            mat.texturas[0] = ManuseioDados::carregar_Imagem("resources/Textures/null.svg");
+            mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
         }
         border_obj->pegar_componente<render_shader>()->mat = mat;
 
@@ -279,7 +279,7 @@ public:
         text_obj->pegar_componente<render_texto>()->espaco_entre_linhas = current_style.space_betwen_lines;
 
         text_obj->pegar_componente<render_texto>()->texto = text;
-        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
+        text_obj->pegar_componente<render_texto>()->font = ManuseioDados::carregar_fonte("Fonts/Glowworm Regular.ttf");
     }
 
     void finalisar()
@@ -320,7 +320,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic->render_layer = 4;
     uic->id = "test_button";
     ui_style style;
-    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
+    style.text_font = ManuseioDados::carregar_fonte("Fonts/Glowworm Regular.ttf");
     uic->normal_style = style;
     style.border_color = vec4(1, 0.5, 0.5, 1);
     uic->hover_style = style;
@@ -339,7 +339,7 @@ void test_ui(objeto_jogo *father, LuaFunctionWrapper lw)
     uic2->render_layer = 4;
     uic2->id = "test_button";
     style = ui_style();
-    style.text_font = ManuseioDados::carregar_fonte("resources/Fonts/Glowworm Regular.ttf");
+    style.text_font = ManuseioDados::carregar_fonte("Fonts/Glowworm Regular.ttf");
     uic2->normal_style = style;
     style.border_color = vec4(1, 0.5, 0.5, 1);
     uic2->hover_style = style;

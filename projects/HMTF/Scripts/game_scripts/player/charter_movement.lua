@@ -285,7 +285,7 @@ function UPDATE()
                 inpulse_y = force_y
                 base_directional_inpulse = deepcopy(input_dir)
 
-                this_object.components.audio_source.path = "resources/Audio/sounds/jump.wav"
+                this_object.components.audio_source.path = "Audio/sounds/jump.wav"
                 this_object.components.audio_source.volume = 20
                 this_object.components.audio_source:set()
             end

@@ -30,7 +30,7 @@ loading_screen = {
     open = function()
         loading_screen.obj = game_object(global_data.core_object_ptr)
         loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image",
-            { path = "resources/Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
+            { path = "Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
         loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 },
             90, 0.1, 1000)
         set_lisener_object(loading_screen.cam.object_ptr)
@@ -39,8 +39,8 @@ loading_screen = {
 
 
         local mat = matreial:new()
-        mat.shader = "resources/Shaders/sprite"
-        mat.textures = { "resources/Textures/spiral.svg" }
+        mat.shader = "Shaders/sprite"
+        mat.textures = { "Textures/spiral.svg" }
         loading_screen.spin_obj = create_render_shader(global_data.layers.hud, true, Vec3:new(0.8, -0.8, 0),
             Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
 
@@ -284,7 +284,7 @@ cenary_builders = {
             change_ret()
 
         elseif part_data.variables.type == "music" then
-            ret.components.audio_source.path = "resources/Audio/musics/" ..
+            ret.components.audio_source.path = "Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = true
             ret.components.audio_source.volume = 10
@@ -295,7 +295,7 @@ cenary_builders = {
             add_mesh(nil)
 
         elseif part_data.variables.type == "sound" then
-            ret.components.audio_source.path = "resources/Audio/sounds/" ..
+            ret.components.audio_source.path = "Audio/sounds/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = false
             ret.components.audio_source.volume = 10
@@ -309,7 +309,7 @@ cenary_builders = {
 
             ret = game_object(create_object(father))
 
-            ret.components.audio_source.path = "resources/Audio/musics/" ..
+            ret.components.audio_source.path = "Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
             ret.components.audio_source.loop = true
             ret.components.audio_source.volume = 10
@@ -392,8 +392,8 @@ cenary_builders = {
         }
 
         local mat = matreial:new()
-        mat.shader = "resources/Shaders/mesh"
-        mat.textures = { "resources/Textures/null.png" }
+        mat.shader = "Shaders/mesh"
+        mat.textures = { "Textures/null.png" }
         mat.color = { r = 0.5, g = 0.5, b = 1, a = 1 }
 
 

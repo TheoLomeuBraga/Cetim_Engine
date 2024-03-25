@@ -41,8 +41,8 @@ function interact(args)
     adv_ui.background_color = { r = 0, g = 0, b = 0, a = 1 }
     adv_ui.border_color = { r = 0, g = 0, b = 0, a = 1 }
     adv_ui.border_size = 0.1
-    adv_ui.background_image = "resources/Textures/null.png"
-    adv_ui.border_image = "resources/Textures/null.png"
+    adv_ui.background_image = "Textures/null.png"
+    adv_ui.border_image = "Textures/null.png"
     adv_ui.text_size = 0.05
 
     
@@ -87,8 +87,8 @@ function next_interaction()
             adv_ui.background_color = { r = 0, g = 0, b = 0, a = 1 }
             adv_ui.border_color = { r = 0, g = 0, b = 0, a = 1 }
             adv_ui.border_size = 0.1
-            adv_ui.background_image = "resources/Textures/null.png"
-            adv_ui.border_image = "resources/Textures/null.png"
+            adv_ui.background_image = "Textures/null.png"
+            adv_ui.border_image = "Textures/null.png"
             adv_ui.text_size = 0.05
 
             dialog_box_father = create_object(global_data.layers.hud)
@@ -103,8 +103,8 @@ function next_interaction()
             adv_ui.background_color = { r = 0, g = 0, b = 0, a = 1 }
             adv_ui.border_color = { r = 0, g = 0, b = 0, a = 1 }
             adv_ui.border_size = 0.1
-            adv_ui.background_image = "resources/Textures/null.png"
-            adv_ui.border_image = "resources/Textures/null.png"
+            adv_ui.background_image = "Textures/null.png"
+            adv_ui.border_image = "Textures/null.png"
             adv_ui.text_size = 0.05
             
             

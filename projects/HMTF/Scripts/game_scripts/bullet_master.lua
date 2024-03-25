@@ -55,8 +55,8 @@ function START()
     layers = global_data.layers
 
 
-    mat.shader = "resources/Shaders/mesh"
-    mat.textures[1] = "resources/Textures/white.png"
+    mat.shader = "Shaders/mesh"
+    mat.textures[1] = "Textures/white.png"
 end
 
 function UPDATE()
@@ -136,9 +136,9 @@ function summon_bullet(args)
             bullet.components.render_shader.layer = 2
             bullet.components.render_shader.vertex_size = 6
             local mat2 = deepcopy(mat)
-            mat2.shader = "resources/Shaders/2D_bullet"
+            mat2.shader = "Shaders/2D_bullet"
             mat2.color = { r = 1, g = 1, b = 1, a = 0.99 }
-            mat2.textures[1] = "resources/Textures/energy_buble.svg"
+            mat2.textures[1] = "Textures/energy_buble.svg"
             bullet.components.render_shader.material = mat2
             bullet.components.render_shader:set()
             
