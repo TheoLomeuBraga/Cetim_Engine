@@ -50,11 +50,6 @@ local update_entity_map = {
         local pos = entity.obj.components.transform:get_global_position()
         
         if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
-
-            
-            
-
-            --entity.path = generate_navmesh_path(pos,{ x = 67.0, y = 80.5, z = -296.0 })
             entity.path = generate_navmesh_short_path(pos,player_position)
             entity.progression = {0.0}
         end

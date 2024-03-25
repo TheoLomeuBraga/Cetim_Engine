@@ -13,7 +13,15 @@ boady_dynamics = {
 }
 
 --collision_shapes
-
+--[[
+    raycast_3D_ret = {
+        collision_object = "",
+        distance = 0,
+        position = {x=0,y=0,z=0},
+        speed = 0,
+        normal = {x=0,y=0,z=0}
+    }
+]]
 function raycast_3D(ray_start, ray_end)
     return c_raycast_3D(ray_start, ray_end)
 end
