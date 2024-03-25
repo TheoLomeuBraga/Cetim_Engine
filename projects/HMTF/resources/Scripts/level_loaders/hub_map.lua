@@ -144,6 +144,8 @@ function level:END()
     global_data.level_animation_data = {}
     clear_memory()
     coroutine.yield()
+    remove_all_navmesh()
+    coroutine.yield()
 end
 
 return level

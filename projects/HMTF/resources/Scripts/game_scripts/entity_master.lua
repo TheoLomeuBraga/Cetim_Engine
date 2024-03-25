@@ -40,6 +40,7 @@ end
 function START()
 end
 
+whait_time = 0
 local update_entity_map = {
     test_entity = function(entity)
         local pos = entity.obj.components.transform:get_global_position()
@@ -48,8 +49,8 @@ local update_entity_map = {
             entity.path = generate_navmesh_short_path(pos, player_position)
             entity.progression = { 0.0 }
         end
-
         
+
         if distance(pos, player_position) > 10 then
             walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
         end
@@ -134,8 +135,6 @@ function summon_entity(args)
     local rot_y = args.rot_y
     local type = args.type
 
-    print(type,pos.x,pos.y,pos.z)
-
     local obj = game_object(create_object(global_data.layers.main))
     obj.components.transform.position = deepcopy(pos)
     obj.components.transform.rotation = { x = 0, y = rot_y, z = 0 }
@@ -167,8 +166,9 @@ function remove_entity(adres)
 end
 
 function clear(args)
-    while #entitys_list > 0 do
-        remove_entity(1)
+    for index, value in pairs(entitys_list) do
+        remove_object(value.obj.object_ptr)
     end
+    entitys_list = {}
     return {}
 end

@@ -700,7 +700,8 @@ public:
         int nStraightPath;
         query.findStraightPath(startPos, endPos, pathPolys, nPathPolys, straightPath, straightPathFlags, straightPathPolys, &nStraightPath, 256, 0);
 
-        for (int i = 0; i < nStraightPath; ++i)
+        //avoid errors that give mor points than neded
+        for (int i = nStraightPath - pathPolysCount; i < pathPolysCount; ++i)
         {
             glm::vec3 point(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
             path.push_back(point);
