@@ -999,7 +999,7 @@
 		{
 			"extras":{
 				"type":"music",
-				"sound_source":"music_test_1"
+				"sound_source":"dramatic_entry"
 			},
 			"name":"Empty.001",
 			"scale":[
@@ -1089,7 +1089,7 @@
 		{
 			"extras":{
 				"type":"music",
-				"sound_source":"music_test_1"
+				"sound_source":"dramatic_entry"
 			},
 			"name":"Empty.003",
 			"scale":[
