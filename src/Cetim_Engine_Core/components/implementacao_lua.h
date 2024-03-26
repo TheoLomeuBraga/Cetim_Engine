@@ -740,7 +740,6 @@ namespace funcoes_ponte
 		Table ret;
 		ret.setFloat("time", Tempo::tempo);
 		//ret.setFloat("delta", deltaTimer.get());
-		print(deltaTime);
 		ret.setFloat("delta", deltaTime);
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);

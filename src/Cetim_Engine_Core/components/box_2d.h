@@ -502,13 +502,16 @@ void atualisar_global_box2D()
     box_2d_physics_timer.clear();
 
     unsigned char box_2d_time_step_count = 0;
-    while (box_2d_past_time > time_step)
+    while (box_2d_past_time > Tempo::time_step)
     {
 
         box_2d_time_step_count++;
-        box_2d_past_time -= time_step;
+        box_2d_past_time -= Tempo::time_step;
     }
-	mundo.Step(time_step * Tempo::velocidadeTempo * box_2d_time_step_count, velocidade_interacoes, iteracao_posicao);
+	if(box_2d_time_step_count){
+		mundo.Step(Tempo::time_step * Tempo::velocidadeTempo * box_2d_time_step_count, velocidade_interacoes, iteracao_posicao);
+	}
+	
     
 	/*
 	passo_tempo = (Tempo::tempo - ultimo_tempo) * Tempo::velocidadeTempo;

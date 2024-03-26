@@ -808,13 +808,16 @@ void atualisar_global_bullet()
     bullet_timer.clear();
 
     unsigned char bullet_time_step_count = 0;
-    while (bullet_past_time > time_step)
+    while (bullet_past_time > Tempo::time_step)
     {
 
         bullet_time_step_count++;
-        bullet_past_time -= time_step;
+        bullet_past_time -= Tempo::time_step;
     }
-    dynamicsWorld->stepSimulation(time_step * Tempo::velocidadeTempo * bullet_time_step_count, 4 * bullet_time_step_count);
+    if(bullet_time_step_count){
+        dynamicsWorld->stepSimulation(Tempo::time_step * Tempo::velocidadeTempo * bullet_time_step_count, 4 * bullet_time_step_count);
+    }
+    
     
 
     /*

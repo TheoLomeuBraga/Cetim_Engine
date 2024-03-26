@@ -42,7 +42,7 @@ using namespace std;
 vec3 gravidade = vec3(0, -9.8f, 0);
 // vec3 gravidade = vec3(0, 0, 0);
 
-const double time_step = 1.0 / 120.0;
+
 
 struct printable_any
 {

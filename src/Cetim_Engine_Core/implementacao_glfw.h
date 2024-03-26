@@ -571,9 +571,7 @@ namespace controle
 	{
 
 		std::string joystick_name = glfwGetJoystickName(joystick);
-		//print(joystick_name);
-
-
+		// print(joystick_name);
 
 		if (joystick_name == "Xbox 360 Wireless Receiver")
 		{
@@ -757,7 +755,7 @@ void AntesReindenizar()
 
 bool iniciada_logica_scripts;
 
-Tempo::Timer totalTimer;
+
 Tempo::Timer deltaTimer;
 
 long double lastTime = 0;
@@ -766,36 +764,33 @@ long double deltaTime = 0;
 void Reindenizar()
 {
 
-	//Benchmark_Timer t("Reindenizar");
+	// Benchmark_Timer t("Reindenizar");
 
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
 
-	
-	
 	cena_objetos_selecionados->atualisar();
-	
-	
+
 	cena_objetos_selecionados->atualisar_transforms();
-	
-	
+
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	deltaTime = totalTimer.get() - lastTime;
-	lastTime =+ totalTimer.get();
 	
+	
+	
+	Tempo::targetFPS(deltaTimer.get());
+
+	deltaTime = deltaTimer.get();
 	deltaTimer.clear();
 	
-	
+
 	reindenizar_cenario();
-	
 
 	for (function<void()> f : Depois_Render_Func)
 	{
 		f();
 	}
-	
 }
 
 // Janela
@@ -864,7 +859,7 @@ void IniciarJanela()
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
-	glfwSwapInterval( 1 );
+	glfwSwapInterval(1);
 
 	// glfwSwapInterval(1);
 
@@ -902,8 +897,6 @@ void IniciarJanela()
 	teclas::initializeTextInput(janela);
 
 	cout << "Inputs Online" << endl;
-
-	
 
 	if (glfwRawMouseMotionSupported())
 	{

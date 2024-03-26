@@ -9,6 +9,8 @@
 namespace Tempo
 {
 
+	const long double time_step = 1.0 / 120.0;
+
 	/*
 	class Timer
 	{
@@ -34,6 +36,22 @@ namespace Tempo
 		}
 	};
 	*/
+
+	void targetFPS(long double deltaTime)
+	{
+		
+		long double sleepTime = Tempo::time_step - deltaTime;
+
+		// Verifica se o tempo de espera é maior que zero para evitar dormir se já tiver passado o tempo alvo
+		if (sleepTime > 0)
+		{
+			std::chrono::milliseconds sleepDuration((unsigned int)(sleepTime * 1000));
+			std::this_thread::sleep_for(sleepDuration);
+		}else if(deltaTime == 0){
+			std::chrono::milliseconds sleepDuration((unsigned int)(Tempo::time_step * 1000));
+			std::this_thread::sleep_for(sleepDuration);
+		}
+	}
 
 	class Timer
 	{
