@@ -711,10 +711,10 @@ public:
         if (path.size() > 0)
         {
 
-            if(start_pos.x+start_pos.y,start_pos.z!=0){
+            if(start_pos.x!=0||start_pos.y!=0||start_pos.z!=0){
                 path[0] = start_pos;
             }
-            if(end_pos.x+end_pos.y,end_pos.z!=0){
+            if(end_pos.x!=0||end_pos.y!=0||end_pos.z!=0){
                 path[path.size() - 1] = end_pos;
             }
             

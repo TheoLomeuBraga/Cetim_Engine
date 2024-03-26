@@ -758,8 +758,8 @@ bool iniciada_logica_scripts;
 
 Tempo::Timer deltaTimer;
 
-long double lastTime = 0;
-long double deltaTime = 0;
+long double bruteTime = 0;
+
 
 void Reindenizar()
 {
@@ -771,13 +771,6 @@ void Reindenizar()
 		f();
 	}
 
-	cena_objetos_selecionados->atualisar();
-
-	cena_objetos_selecionados->atualisar_transforms();
-
-	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	
-	
 	/*
 	Tempo::targetFPS(deltaTimer.get());
 	deltaTime = deltaTimer.get();
@@ -785,8 +778,17 @@ void Reindenizar()
 	*/
 
 	while(deltaTimer.get() < Tempo::time_step){}
-	deltaTime = deltaTimer.get();
+	Tempo::deltaTime = deltaTimer.get();
 	deltaTimer.clear();
+
+	cena_objetos_selecionados->atualisar();
+
+	cena_objetos_selecionados->atualisar_transforms();
+
+	cena_objetos_selecionados->atualisar_Logica_Scripst();
+	
+	
+	
 	
 
 	reindenizar_cenario();

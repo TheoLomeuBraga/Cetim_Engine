@@ -10,7 +10,7 @@ namespace Tempo
 {
 
 	const long double time_step = 1.0 / 120.0;
-
+	long double deltaTime = 0;
 	/*
 	class Timer
 	{
