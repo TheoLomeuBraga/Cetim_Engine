@@ -3179,7 +3179,6 @@ public:
 
 				if (benchmark)
 				{
-
 					Benchmark_Timer bt(p.first);
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
