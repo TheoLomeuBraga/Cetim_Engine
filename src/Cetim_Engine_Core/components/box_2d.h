@@ -513,7 +513,7 @@ void atualisar_global_box2D()
 		mundo.Step(Tempo::time_step * Tempo::velocidadeTempo * box_2d_time_step_count, velocidade_interacoes, iteracao_posicao);
 	}
 	*/
-	mundo.Step(Tempo::time_step * Tempo::velocidadeTempo * box_2d_time_step_count, velocidade_interacoes, iteracao_posicao);
+	mundo.Step(Tempo::time_step * Tempo::velocidadeTempo, velocidade_interacoes, iteracao_posicao);
 	
     
 	/*

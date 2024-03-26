@@ -756,9 +756,7 @@ void AntesReindenizar()
 bool iniciada_logica_scripts;
 
 
-Tempo::Timer deltaTimer;
 
-long double bruteTime = 0;
 
 
 void Reindenizar()
@@ -766,20 +764,14 @@ void Reindenizar()
 
 	// Benchmark_Timer t("Reindenizar");
 
+	Tempo::run_time();
+
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
 
-	/*
-	Tempo::targetFPS(deltaTimer.get());
-	deltaTime = deltaTimer.get();
-	deltaTimer.clear();
-	*/
-
-	while(deltaTimer.get() < Tempo::time_step){}
-	Tempo::deltaTime = deltaTimer.get();
-	deltaTimer.clear();
+	
 
 	cena_objetos_selecionados->atualisar();
 

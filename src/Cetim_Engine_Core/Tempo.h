@@ -11,31 +11,7 @@ namespace Tempo
 
 	const long double time_step = 1.0 / 120.0;
 	long double deltaTime = 0;
-	/*
-	class Timer
-	{
-	private:
-		using clock = std::chrono::high_resolution_clock;
-
-		std::chrono::time_point<clock> start_time;
-
-	public:
-		Timer()
-		{
-			start_time = clock::now();
-		}
-
-		void clear()
-		{
-			start_time = clock::now();
-		}
-
-		double get()
-		{
-			return std::chrono::duration_cast<std::chrono::duration<double>>(clock::now() - start_time).count();
-		}
-	};
-	*/
+	
 
 	void targetFPS(long double deltaTime)
 	{
@@ -75,6 +51,17 @@ namespace Tempo
 			return elapsed_seconds.count();
 		}
 	};
+
+	Tempo::Timer deltaTimer;
+	long double bruteTime = 0;
+	
+	void run_time(){
+
+		while(deltaTimer.get() < Tempo::time_step){}
+		Tempo::deltaTime = deltaTimer.get();
+		deltaTimer.clear();
+		
+	}
 
 	double tempo;
 	double velocidadeTempo = 1;
