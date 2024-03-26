@@ -778,9 +778,13 @@ void Reindenizar()
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
 	
 	
-	
+	/*
 	Tempo::targetFPS(deltaTimer.get());
+	deltaTime = deltaTimer.get();
+	deltaTimer.clear();
+	*/
 
+	while(deltaTimer.get() < Tempo::time_step){}
 	deltaTime = deltaTimer.get();
 	deltaTimer.clear();
 	

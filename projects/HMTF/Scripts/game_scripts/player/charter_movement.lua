@@ -351,6 +351,7 @@ function UPDATE()
         --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
 
         this_physics_3d:get()
+        
     end
 
 
