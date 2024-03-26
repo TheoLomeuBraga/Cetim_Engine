@@ -756,15 +756,30 @@ void AntesReindenizar()
 bool iniciada_logica_scripts;
 
 
+Tempo::Timer deltaTimer;
 
-
+long double current_time=0,time_last_frame=0;
 
 void Reindenizar()
 {
 
 	// Benchmark_Timer t("Reindenizar");
 
-	Tempo::run_time();
+	/*
+	Tempo::targetFPS(deltaTimer.get());
+	deltaTime = deltaTimer.get();
+	deltaTimer.clear();
+	*/
+
+	while(deltaTimer.get() < Tempo::time_step){}
+	deltaTimer.clear();
+
+	current_time = Tempo::current_time();
+
+	Tempo::deltaTime = current_time - time_last_frame;
+
+	time_last_frame = current_time;
+	
 
 	for (function<void()> f : Antes_Render_Func)
 	{

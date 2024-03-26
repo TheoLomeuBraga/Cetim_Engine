@@ -738,7 +738,7 @@ namespace funcoes_ponte
 	{
 
 		Table ret;
-		ret.setFloat("time", Tempo::tempo);
+		ret.setFloat("time", Tempo::total_timer.get());
 		//ret.setFloat("delta", deltaTimer.get());
 		ret.setFloat("delta", Tempo::deltaTime);
 		ret.setFloat("scale", Tempo::velocidadeTempo);

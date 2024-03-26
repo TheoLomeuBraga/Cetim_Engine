@@ -11,23 +11,8 @@ namespace Tempo
 
 	const long double time_step = 1.0 / 120.0;
 	long double deltaTime = 0;
+
 	
-
-	void targetFPS(long double deltaTime)
-	{
-		
-		long double sleepTime = Tempo::time_step - deltaTime;
-
-		// Verifica se o tempo de espera é maior que zero para evitar dormir se já tiver passado o tempo alvo
-		if (sleepTime > 0)
-		{
-			std::chrono::milliseconds sleepDuration((unsigned int)(sleepTime * 1000));
-			std::this_thread::sleep_for(sleepDuration);
-		}else if(deltaTime == 0){
-			std::chrono::milliseconds sleepDuration((unsigned int)(Tempo::time_step * 1000));
-			std::this_thread::sleep_for(sleepDuration);
-		}
-	}
 
 	class Timer
 	{
@@ -52,16 +37,43 @@ namespace Tempo
 		}
 	};
 
+	Timer total_timer;
+
+	long double current_time()
+	{
+		return total_timer.get();
+	}
+
+	void targetFPS(long double deltaTime)
+	{
+
+		long double sleepTime = Tempo::time_step - deltaTime;
+
+		// Verifica se o tempo de espera é maior que zero para evitar dormir se já tiver passado o tempo alvo
+		if (sleepTime > 0)
+		{
+			std::chrono::milliseconds sleepDuration((unsigned int)(sleepTime * 1000));
+			std::this_thread::sleep_for(sleepDuration);
+		}
+		else if (deltaTime == 0)
+		{
+			std::chrono::milliseconds sleepDuration((unsigned int)(Tempo::time_step * 1000));
+			std::this_thread::sleep_for(sleepDuration);
+		}
+	}
+
+	/*
 	Tempo::Timer deltaTimer;
 	long double bruteTime = 0;
-	
 	void run_time(){
 
-		while(deltaTimer.get() < Tempo::time_step){}
+		//while(deltaTimer.get() < Tempo::time_step){}
+		targetFPS(deltaTimer.get());
 		Tempo::deltaTime = deltaTimer.get();
 		deltaTimer.clear();
-		
+
 	}
+	*/
 
 	double tempo;
 	double velocidadeTempo = 1;
