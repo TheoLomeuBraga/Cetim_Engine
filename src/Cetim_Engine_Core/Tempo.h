@@ -68,7 +68,7 @@ namespace Tempo
 			start_time = clock::now();
 		}
 
-		double get()
+		long double get()
 		{
 			auto end_time = clock::now();
 			std::chrono::duration<long double> elapsed_seconds = end_time - start_time;
