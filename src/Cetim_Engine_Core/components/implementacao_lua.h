@@ -2386,7 +2386,7 @@ namespace funcoes_ponte
 		{
 			return 0;
 		}
-		float current_progression = std::max(0.001, lua_tonumber(L, 2));
+		float current_progression = std::max(0.001f, lua_tonumber(L, 2));
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;

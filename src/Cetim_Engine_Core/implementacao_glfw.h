@@ -763,15 +763,8 @@ long double current_time=0,time_last_frame=0;
 void Reindenizar()
 {
 
-	// Benchmark_Timer t("Reindenizar");
-
-	/*
-	Tempo::targetFPS(deltaTimer.get());
-	deltaTime = deltaTimer.get();
-	deltaTimer.clear();
-	*/
-
-	while(deltaTimer.get() < Tempo::time_step){}
+	
+	//Tempo::targetFPS(deltaTimer.get());
 	deltaTimer.clear();
 
 	current_time = Tempo::current_time();
