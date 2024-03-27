@@ -123,7 +123,7 @@ function new_game(state, id)
     if state == "click" then
         print("new_game")
         core_obj = game_object(global_data.core_object_ptr)
-        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub_map" })
+        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub" })
         --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "test_nav_mesh" })
     end
 end

@@ -22,13 +22,13 @@ local assets_needed = {
     new_asset_list_element(asset_types.image,"Textures/loading.png"),
     new_asset_list_element(asset_types.image,"Textures/null.png"),
     new_asset_list_element(asset_types.image,"Textures/null.svg"),
-    new_asset_list_element(asset_types.image,"Levels/3D/hub/null.png"),
+    new_asset_list_element(asset_types.image,"Levels/hub/null.png"),
     new_asset_list_element(asset_types.image,"Textures/arm_cannon_texture.png"),
     new_asset_list_element(asset_types.image,"Textures/energy_buble.svg"),
     
     new_asset_list_element(asset_types.scene_3D,"3D Models/bullets.gltf"),
     new_asset_list_element(asset_types.scene_3D,"3D Models/arm_cannon.gltf"),
-    new_asset_list_element(asset_types.scene_3D,"Levels/3D/hub/hub.gltf"),
+    new_asset_list_element(asset_types.scene_3D,"Levels/hub/hub.gltf"),
 
     new_asset_list_element(asset_types.audio,"Audio/sounds/jump.wav"),
     new_asset_list_element(asset_types.audio,"Audio/sounds/shot_1.wav"),
@@ -84,7 +84,7 @@ function level:START()
     --print("CCCCC")
 
     coroutine.yield()
-    level.scene_3D_data = get_scene_3D("Levels/3D/hub/hub.gltf")
+    level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
 
     
 
@@ -106,7 +106,7 @@ function level:START()
 
     camera = {}
 
-    global_data.level_animation_data = {path="Levels/3D/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
+    global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
 
@@ -130,7 +130,7 @@ function level:UPDATE()
         end
         time:get()
         time_passed = time_passed - time.delta * time.scale * 0.1
-        set_keyframe("Levels/3D/hub/hub.gltf", scene_data.parts_ptr_list, true, "open_door_A",time_passed)
+        set_keyframe("Levels/hub/hub.gltf", scene_data.parts_ptr_list, true, "open_door_A",time_passed)
     end
     ]]
     

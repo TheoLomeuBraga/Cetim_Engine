@@ -92,7 +92,9 @@ function load_sceane_step()
         
         previous_cenary = cenary
 
-        cenary = require("level_loaders." .. name)
+        print("Levels." .. name .. ".loader")
+        cenary = require("Levels." .. name .. ".loader")
+        
         cenary:START()
         
     end
