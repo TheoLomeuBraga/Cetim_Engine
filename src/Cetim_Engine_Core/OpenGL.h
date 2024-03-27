@@ -1599,7 +1599,10 @@ public:
 		if (cam->pegar_componente<transform_>() != NULL)
 		{
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
+			std::reverse(transparent.begin(), transparent.end());
+
 			nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
+			//std::reverse(nontransparent.begin(), nontransparent.end());
 		}
 
 		return {nontransparent, transparent, ui};

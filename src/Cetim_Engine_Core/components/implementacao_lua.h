@@ -2386,7 +2386,13 @@ namespace funcoes_ponte
 		{
 			return 0;
 		}
-		float current_progression = std::max(0.001f, lua_tonumber(L, 2));
+
+#ifdef USE_LUA_JIT
+	float current_progression = std::max(0.001, lua_tonumber(L, 2));
+#else
+	float current_progression = std::max(0.001f, lua_tonumber(L, 2));
+#endif
+		
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;
@@ -2941,6 +2947,7 @@ void load_base_lua_state(lua_State *L, string path)
 
 	// configurar diretorio
 	string lua_path = argumentos[1] + "/Scripts/?.lua;" + argumentos[1] + "/Scripts/engine_libs/?.lua";
+	lua_path += string(";") + argumentos[1] + "/?.lua;" + argumentos[1] + "/engine_libs/?.lua";
 
 	string link_libs_path = argumentos[1] + string("/Scripts/link_libs/?.dll;") + argumentos[1] + string("/Scripts/link_libs/?.so");
 
