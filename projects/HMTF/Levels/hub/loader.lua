@@ -8,6 +8,8 @@ require("components.audio_source")
 require("components.ui_component")
 require("game_scripts.resources.playable_scene")
 require("function_sets.navmesh")
+require("game_scripts.resources.entity_api")
+require("game_scripts.resources.bullet_api")
 
 local level = {
     cenary_obj = {},
@@ -60,9 +62,15 @@ function level:START()
 
     coroutine.yield()
 
+    clean_entityes()
+
+    coroutine.yield()
+
     remove_all_navmesh()
 
     coroutine.yield()
+
+    clean_bullets()
 
     local layers = global_data.layers
     

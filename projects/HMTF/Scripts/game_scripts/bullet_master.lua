@@ -161,7 +161,7 @@ function summon_bullet(args)
     return {}
 end
 
-function clear(args)
+function clean(args)
     while #bullets_list > 0 do
         remove_bullet(1)
     end

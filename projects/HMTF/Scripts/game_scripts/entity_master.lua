@@ -165,7 +165,7 @@ function remove_entity(adres)
     table.remove(entitys_list, adres)
 end
 
-function clear(args)
+function clean(args)
     for index, value in pairs(entitys_list) do
         remove_object(value.obj.object_ptr)
     end

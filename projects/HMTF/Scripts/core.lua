@@ -25,6 +25,7 @@ require("objects.gravity")
 require("objects.render_layer")
 require("objects.post_processing")
 
+
 local serializer = require("libs.serialize")
 
 register_function_set("file_system")
@@ -117,8 +118,8 @@ load_sceane_request_name = nil
 
 function load_sceane(cenary_name)
     
-    this_object.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clear({})
-    this_object.components.lua_scripts.scripts["game_scripts/entity_master"].functions.clear({})
+    
+    
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)
