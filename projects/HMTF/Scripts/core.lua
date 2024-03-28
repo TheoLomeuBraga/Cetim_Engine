@@ -92,8 +92,7 @@ function load_sceane_step()
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
         
         previous_cenary = cenary
-
-        print("Levels." .. name .. ".loader")
+        
         cenary = require("Levels." .. name .. ".loader")
         
         cenary:START()

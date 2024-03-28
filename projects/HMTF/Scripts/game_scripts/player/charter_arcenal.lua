@@ -190,40 +190,9 @@ function shoot()
     camera.components.audio_source:set()
     --selected_wepom.bullet_origens
 
-    local bullet_start_points = {}
-    for i = 1, selected_wepom.projectile_count, 1 do
-        local a = i
-        if i > #selected_wepom.bullet_origens then
-            a = (i % #selected_wepom.bullet_origens) + 1
-        end
-        bullet_start_points[a] = camera.components.transform:get_global_position(
-            selected_wepom.bullet_origens[a].x, selected_wepom.bullet_origens[a].y, selected_wepom.bullet_origens[a].z)
-    end
+    
 
-    local ray_start = camera.components.transform:get_global_position(0, 0, 0)
-    local ray_end = camera.components.transform:get_global_position(0, 0, 1000)
-    local hit = false
-    local hit_info = {}
-    hit, hit_info = raycast_3D(ray_start, ray_end)
-    local target = deepcopy(ray_end)
-
-    local normalize = function(vec3)
-        local sun = math.abs(vec3.x) + math.abs(vec3.y) + math.abs(vec3.z)
-        return { x = vec3.x / sun, y = vec3.y / sun, z = vec3.z / sun }
-    end
-
-    for i = 1, selected_wepom.projectile_count, 1 do
-        local spred_direction = camera.components.transform:get_local_direction(0, 0, 1)
-
-        if selected_wepom.spred > 0 then
-            spred_direction = camera.components.transform:get_local_direction(
-                (math.random() - 0.5) * selected_wepom.spred, (math.random() - 0.5) * selected_wepom.spred, 0)
-        end
-
-        summon_bullet(bullet_start_points[bullet_start_pos_id], normalize(ray_end), selected_wepom.mesh,
-            { spred_direction }, selected_wepom.speed, selected_wepom.life_time, selected_wepom.damage, 1,
-            selected_wepom.hit_scan, { x = 0, y = 0, z = 0 }, true, true, selected_wepom.color, "")
-    end
+    
 end
 
 function UPDATE()
@@ -236,9 +205,7 @@ function UPDATE()
         
         get_charter_data()
 
-        for i = 1, 10, 1 do
-            c_get_lua_var(this_object.object_ptr,"game_scripts/player/charter_movement", "a",2)
-        end
+        
 
         inputs = global_data.inputs
         inputs_last_frame = global_data.inputs_last_frame
