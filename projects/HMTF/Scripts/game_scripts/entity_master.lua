@@ -120,7 +120,7 @@ local start_per_type = {
         entity_physics_3D:set()
 
         local entity_data = get_scene_3D(model_path)
-        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "Shaders/mesh",
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "mesh",
             true, false)
 
         entity.rig_obj = entity_structures.obj

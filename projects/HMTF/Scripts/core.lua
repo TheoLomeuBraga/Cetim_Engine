@@ -55,7 +55,7 @@ function set_load_image(args)
     end
 
     local mat = matreial:new()
-    mat.shader = "Shaders/background"
+    mat.shader = "background"
     if args.path ~= nil and args.path ~= "" then
         mat.textures[1] = args.path
         if args.color ~= nil then
@@ -92,7 +92,7 @@ function load_sceane_step()
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
         
         previous_cenary = cenary
-        
+
         cenary = require("Levels." .. name .. ".loader")
         
         cenary:START()
@@ -226,7 +226,7 @@ function START()
 
     post_processing:get()
     post_processing.material = matreial:new()
-    post_processing.material.shader = "Shaders/post_processing"
+    post_processing.material.shader = "post_processing"
     post_processing:set()
     
     layers:create()
@@ -234,7 +234,7 @@ function START()
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
     local mat = matreial:new()
-    mat.shader = "Shaders/background"
+    mat.shader = "background"
     mat.textures[1] = "Textures/white.png"
     mat.color.r = 0.2
     mat.color.g = 0.2

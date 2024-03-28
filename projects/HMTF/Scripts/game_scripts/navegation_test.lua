@@ -31,7 +31,7 @@ function START()
     path = generate_navmesh_path({ x = -21, y = 40.5, z = -138 }, { x = 67.0, y = 80.5, z = -296.0 })
 
     mat = matreial:new()
-    mat.shader = "Shaders/mesh"
+    mat.shader = "mesh"
     mat.textures = { "Textures/white.png" }
     mat.color = { r = 1, g = 0, b = 1, a = 1 }
     walker_cube = create_mesh(this_object_ptr, false, path[1], { x = 0, y = 0, z = 0 }, { x = 1, y = 1, z = 1 }, 2, { mat },

@@ -94,7 +94,7 @@ function select_wepon(wepon)
     local wepon_data = get_scene_3D(wepon.file)
     
     
-    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "Shaders/mesh",true, false)
+    local objects = cenary_builders.entity(camera.object_ptr, 4, wepon_data, "mesh",true, false)
 
     current_animation_state = {
         name = "pick_up",

@@ -2653,7 +2653,7 @@ namespace funcoes_ponte
 		rm->camada = 4;
 
 		Material mat;
-		mat.shad = "Shaders/mesh";
+		mat.shad = "mesh";
 
 		if (lua_cube_color.x < 1)
 		{

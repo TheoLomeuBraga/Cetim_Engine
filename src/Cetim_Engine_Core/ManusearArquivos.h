@@ -1108,7 +1108,7 @@ namespace ManuseioDados
 			else
 			{
 				Material mat;
-				mat.shad = "Shaders/mesh";
+				mat.shad = "mesh";
 				mat.texturas[0] = carregar_Imagem("Textures/null.png");
 				ret.meus_materiais.push_back(mat);
 			}
@@ -1134,7 +1134,7 @@ namespace ManuseioDados
 					else
 					{
 						Material mat;
-						mat.shad = "Shaders/mesh";
+						mat.shad = "mesh";
 						mat.texturas[0] = carregar_Imagem("Textures/null.png");
 						ret.meus_materiais.push_back(mat);
 					}
@@ -1208,7 +1208,7 @@ namespace ManuseioDados
 			for (int i = 0; i < gltf_loader.materials.size(); i++)
 			{
 				Material mat;
-				mat.shad = "Shaders/mesh";
+				mat.shad = "mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 
 				if (gltf_loader.materials[i].textureIndex > -1)

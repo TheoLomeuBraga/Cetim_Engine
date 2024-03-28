@@ -39,7 +39,7 @@ loading_screen = {
 
 
         local mat = matreial:new()
-        mat.shader = "Shaders/sprite"
+        mat.shader = "sprite"
         mat.textures = { "Textures/spiral.svg" }
         loading_screen.spin_obj = create_render_shader(global_data.layers.hud, true, Vec3:new(0.8, -0.8, 0),
             Vec3:new(0, 0, 0), Vec3:new(0.2, 0.2, 0.2), 5, mat)
@@ -392,7 +392,7 @@ cenary_builders = {
         }
 
         local mat = matreial:new()
-        mat.shader = "Shaders/mesh"
+        mat.shader = "mesh"
         mat.textures = { "Textures/null.png" }
         mat.color = { r = 0.5, g = 0.5, b = 1, a = 1 }
 
