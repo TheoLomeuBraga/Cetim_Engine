@@ -7,12 +7,12 @@ normal_direction = {
 }
 
 matreial = {}
-function matreial:new(shader)
-    if shader == nil then
-        shader = ""
+function matreial:new(shad)
+    if shad == nil then
+        shad = ""
     end
     return {
-        shader = shader,
+        shader = shad,
         normal_direction = normal_direction.front,
         color = {r = 1,g = 1,b = 1,a = 1},
         position_scale = {x = 0,y = 0,z = 1,w = 1},

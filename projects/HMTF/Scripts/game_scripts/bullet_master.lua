@@ -47,7 +47,10 @@ function START()
 
 end
 
-update_per_type = {}
+update_per_type = {
+    [bullet_types.ray] = function (bullet)
+    end
+}
 
 function UPDATE()
     time:get()
@@ -74,19 +77,31 @@ function remove_target_point(args)
     return {}
 end
 
-local mesh_mat = matreial:new("mesh")
-local sprite_mat = matreial:new("2D_bullet")
+local mesh_mat = matreial:new()
+mesh_mat.shader = "mesh"
+mesh_mat.textures[1] = "Textures/white.png"
+
+local sprite_mat = matreial:new()
+sprite_mat.shader = "sprite"
+sprite_mat.textures[1] = "Textures/white.png"
 
 start_per_type = {
     [bullet_types.ray] = function (bullet)
         print("ray")
+        
+        local bcomps = bullet.obj.components
 
-        bullet.obj.transform:change_position(bullet.start.x,bullet.start.y,bullet.start.z)
-        bullet.obj.transform:set()
-
-        bullet.obj.render_shader.material = sprite_mat
-        bullet.obj.render_shader.material.color = bullet.color
-        bullet.obj.render_shader:set()
+        local start = bullet.start
+        
+        bcomps.transform.billboarding = 2
+        bcomps.transform:set()
+        bcomps.transform:change_position(start.x,start.y,start.z)
+        
+        bcomps.render_shader.material = sprite_mat
+        bcomps.render_shader.material.color = bullet.color
+        bcomps.render_shader.material.color.a = bcomps.render_shader.material.color.a - 0.01
+        bcomps.render_shader.layer = 2
+        bcomps.render_shader:set()
         
     end
 }
