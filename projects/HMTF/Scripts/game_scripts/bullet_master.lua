@@ -74,7 +74,14 @@ function remove_target_point(args)
     return {}
 end
 
-start_per_type = {}
+local mesh_mat = matreial:new("Shaders/mesh")
+local sprite_mat = matreial:new("Shaders/2D_bullet")
+
+start_per_type = {
+    [bullet_types.ray] = function (bullet)
+        
+    end
+}
 
 function summon_bullet(args)
 
