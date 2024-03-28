@@ -188,9 +188,10 @@ function shoot()
     camera.components.audio_source.path = selected_wepom.shoot_sound
     camera.components.audio_source.volume = 20
     camera.components.audio_source:set()
-    --selected_wepom.bullet_origens
-
     
+    local pos = camera.components.transform:get_global_position(0,0,0)
+    local target = camera.components.transform:get_global_position(10,0,0)
+    summon_bullet(bullet_types.ray,"",pos,target,0,{r=1,g=0,b=0,a=1})
 
     
 end

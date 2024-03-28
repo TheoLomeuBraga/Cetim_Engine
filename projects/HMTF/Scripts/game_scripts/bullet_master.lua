@@ -79,17 +79,28 @@ local sprite_mat = matreial:new("2D_bullet")
 
 start_per_type = {
     [bullet_types.ray] = function (bullet)
+        print("ray")
+
+        bullet.obj.transform:change_position(bullet.start.x,bullet.start.y,bullet.start.z)
+        bullet.obj.transform:set()
+
+        bullet.obj.render_shader.material = sprite_mat
+        bullet.obj.render_shader.material.color = bullet.color
+        bullet.obj.render_shader:set()
         
     end
 }
 
 function summon_bullet(args)
 
+   
+
     local bullet_type = args[1]
     local group = args[2]
     local start = args[3]
     local target_direction = args[4]
     local speed = args[5]
+    local color = args[6]
     local obj = game_object(create_object(layers.main))
 
     local bullet_data = {
@@ -99,9 +110,12 @@ function summon_bullet(args)
         start = start,
         target_direction = target_direction,
         speed = speed,
+        color = color,
     }
 
-    table.insert(start_per_type,bullet_data)
+    start_per_type[bullet_data.type](bullet_data)
+
+    table.insert(bullet_list,bullet_data)
 
     return {}
 end
