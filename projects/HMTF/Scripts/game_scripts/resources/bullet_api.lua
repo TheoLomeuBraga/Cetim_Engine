@@ -30,13 +30,10 @@ end
 
 function clean_bullets()
     if global_data.core_object_ptr ~= nil then
-        print("A")
         if core_obj == nil then
             core_obj = game_object(global_data.core_object_ptr)
         end
-        print("B")
 
         core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clean({})
-        print("C")
     end
 end
