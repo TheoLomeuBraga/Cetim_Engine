@@ -1338,16 +1338,12 @@ namespace funcoes_ponte
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 
 		vec3 up_axe = table_vec3(lua_totable(L, 2));
-		vec3 target_position = table_vec3(lua_totable(L, 3));
-		bool look_up = lua_tonumber(L, 4);
+		vec3 look_axe = table_vec3(lua_totable(L, 3));
+		vec3 target = table_vec3(lua_totable(L, 4));
+		bool look_up = lua_toboolean(L, 5);
 
-		if(look_up){
-			vec3 rot = tf->billboarding_spherical(target_position);
-			change_rot(obj, rot);
-		}else{
-			vec3 rot = tf->billboarding_planar(target_position);
-			change_rot(obj, rot);
-		}
+		tf->olhar_para(up_axe,look_axe,target,look_up);
+		
 		
 
 		return 0;

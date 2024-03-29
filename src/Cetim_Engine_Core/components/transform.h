@@ -133,21 +133,7 @@ public:
 		pegar_matriz();
 	}
 
-	glm::vec3 olhar_para(glm::vec3 look_axe ,glm::vec3 target,bool usar_eixo_y = false)
-	{
-		if(usar_eixo_y){
-			look_axe.y=0;
-			target.y=0;
-		}
-		glm::mat4 lookAtMatrix = glm::lookAt(pegar_pos_global(), target, look_axe);
-		glm::quat quaternionRotation = glm::quat_cast(lookAtMatrix);
-		glm::vec3 eulerAngles = glm::eulerAngles(quaternionRotation);
-		rot = glm::eulerAngles(quaternionRotation);
-		quater = quaternionRotation;
-		return eulerAngles;
-	}
-
-	glm::vec3 billboarding_spherical(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
+	glm::vec3 billboarding_spherical(glm::vec3 target, glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		up = pegar_direcao_local(up);
@@ -162,12 +148,12 @@ public:
 		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
 
 		euler_angles.z = up.z;
-		
+
 		quater = graus_quat(euler_angles);
 		return euler_angles;
 	}
 
-	glm::vec3 billboarding_planar(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
+	glm::vec3 billboarding_planar(glm::vec3 target, glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		target.y = position.y;
@@ -182,10 +168,42 @@ public:
 		// Constrói o vetor em graus
 		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
 
-		
-		
 		quater = graus_quat(euler_angles);
 		return euler_angles;
+	}
+
+	glm::vec3 olhar_para(glm::vec3 up_axe, glm::vec3 look_axe, glm::vec3 target, bool usar_eixo_y = false)
+	{
+		glm::vec3 start = vec3(pegar_matriz()[3]);
+		if (!usar_eixo_y)
+		{
+			start.y = target.y;
+		}
+
+		glm::vec3 forward = glm::normalize(target - start);
+
+		// Calcula o vetor de rotação entre o eixo de visualização atual e o novo
+		glm::vec3 axis = glm::cross(look_axe, forward);
+
+		// Calcula o ângulo entre o eixo de visualização atual e o novo
+		float angle = acos(glm::dot(glm::normalize(look_axe), glm::normalize(forward)));
+
+		// Cria a matriz de rotação
+		glm::mat4 rotationMatrix = glm::toMat4(glm::angleAxis(angle, axis));
+
+		// Aplica a rotação ao eixo de "frente" para obter o novo vetor de direção
+		glm::vec4 new_forward = rotationMatrix * glm::vec4(look_axe, 0.0f);
+
+		glm::vec3 degres = glm::degrees(glm::vec3(new_forward));
+
+		print("degres",degres.x,degres.y,degres.z);
+
+		quater = graus_quat(degres);
+
+		print("quater");
+
+		// Retorna a direção olhando para o alvo com o novo eixo de "cima"
+		return degres;
 	}
 
 	void atualizar_tf()
