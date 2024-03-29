@@ -110,8 +110,8 @@ start_per_type = {
         local start = bullet.start
         bcomps.transform:change_position(start.x,start.y,start.z)
 
-        
-        bcomps.transform:look_at({x=0,y=1,z=0},{x=1,y=0,z=0},bullet.target,false)
+        print(bullet.target.y)
+        bcomps.transform:look_at(bullet.target,{x=0,y=1,z=0})
         
         bcomps.render_shader.material = sprite_mat
         bcomps.render_shader.material.color = bullet.color

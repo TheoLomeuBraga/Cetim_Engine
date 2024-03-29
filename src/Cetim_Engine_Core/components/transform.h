@@ -172,38 +172,44 @@ public:
 		return euler_angles;
 	}
 
-	glm::vec3 olhar_para(glm::vec3 up_axe, glm::vec3 look_axe, glm::vec3 target, bool usar_eixo_y = false)
+	glm::vec3 olhar_para(glm::vec3 target, glm::vec3 up)
 	{
-		glm::vec3 start = vec3(pegar_matriz()[3]);
-		if (!usar_eixo_y)
+
+		glm::vec3 position = pegar_matriz()[3];
+		target.y = position.y;
+
+		// Calcula a direção para o alvo
+		glm::vec3 direction = glm::normalize(target - position);
+
+		// Se a direção for vertical, não podemos calcular pitch e yaw diretamente
+		if (glm::length(glm::cross(up, direction)) < 0.001f)
 		{
-			start.y = target.y;
+			// Define a direção vertical com o oposto do up fornecido
+			glm::vec3 vertical_dir = glm::vec3(up.x, -up.y, up.z);
+			// Calcula o ângulo de pitch
+			float dot_product = glm::dot(glm::normalize(direction), glm::normalize(vertical_dir));
+			// Garante que o produto interno esteja dentro do intervalo [-1, 1]
+			dot_product = glm::clamp(dot_product, -1.0f, 1.0f);
+			// Calcula o ângulo de pitch
+			float pitch = glm::degrees(acos(dot_product));
+			// Verifica se o alvo está acima ou abaixo da posição atual
+			if (target.y > position.y)
+			{
+				pitch = -pitch;
+			}
+			// Retorna pitch e yaw com rotação apenas em torno do eixo y
+			return glm::vec3(pitch, 0.0f, 0.0f);
 		}
 
-		glm::vec3 forward = glm::normalize(target - start);
+		// Calcula os ângulos de pitch e yaw
+		float pitch = glm::degrees(asin(-direction.y));
+		float yaw = glm::degrees(atan2(direction.x, direction.z));
 
-		// Calcula o vetor de rotação entre o eixo de visualização atual e o novo
-		glm::vec3 axis = glm::cross(look_axe, forward);
+		vec3 rot = glm::vec3(pitch, yaw, 0.0f);
+		quater = graus_quat(rot);
 
-		// Calcula o ângulo entre o eixo de visualização atual e o novo
-		float angle = acos(glm::dot(glm::normalize(look_axe), glm::normalize(forward)));
-
-		// Cria a matriz de rotação
-		glm::mat4 rotationMatrix = glm::toMat4(glm::angleAxis(angle, axis));
-
-		// Aplica a rotação ao eixo de "frente" para obter o novo vetor de direção
-		glm::vec4 new_forward = rotationMatrix * glm::vec4(look_axe, 0.0f);
-
-		glm::vec3 degres = glm::degrees(glm::vec3(new_forward));
-
-		print("degres",degres.x,degres.y,degres.z);
-
-		quater = graus_quat(degres);
-
-		print("quater");
-
-		// Retorna a direção olhando para o alvo com o novo eixo de "cima"
-		return degres;
+		// Constrói o vetor de euler_angles
+		return rot;
 	}
 
 	void atualizar_tf()
