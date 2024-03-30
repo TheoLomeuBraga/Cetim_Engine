@@ -103,29 +103,50 @@ function distance(a, b)
     return math.sqrt(dx*dx + dy*dy + dz*dz)
 end
 
+function midpoint(a, b)
+    local mx = (a.x + b.x) / 2
+    local my = (a.y + b.y) / 2
+    local mz = (a.z + b.z) / 2
+    return {x = mx, y = my, z = mz}
+end
+
 
 start_per_type = {
     [bullet_types.ray] = function (bullet)
         print("ray")
         
         local bcomps = bullet.obj.components
-        
-        bcomps.transform.scale = Vec3:new(1,1,1)
-        bcomps.transform:set()
 
         local start = bullet.start
         local target = bullet.target
-        bcomps.transform:change_position(start.x,start.y,start.z)
-        bcomps.transform:look_at(bullet.target)
+        local dist = distance(start,target)
 
         
-        bcomps.render_shader.material = sprite_mat
-        bcomps.render_shader.material.color = bullet.color
-        bcomps.render_shader.material.color.a = bcomps.render_shader.material.color.a - 0.01
-        bcomps.render_shader.layer = 2
-        bcomps.render_shader:set()
+        local mp = midpoint(start, target)
+        bcomps.transform:change_position(mp.x,mp.y,mp.z)
 
-        --local sbcomps3 = game_object(create_object(bullet.obj.object_ptr)).components
+        bcomps.transform:look_at(bullet.target)
+        bcomps.transform:change_scale(0.5,0.5,dist)
+
+        print("start",start.x,start.y,start.z)
+        print("target",target.x,target.y,target.z)
+
+        local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
+        sb1.transform:change_rotation(90,0,0)
+        sb1.render_shader.material = sprite_mat
+        sb1.render_shader.material.color = bullet.color
+        sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
+        sb1.render_shader.layer = 2
+        sb1.render_shader:set()
+
+        local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
+        sb2.transform:change_rotation(0,90,0)
+        sb2.render_shader.material = sprite_mat
+        sb2.render_shader.material.color = bullet.color
+        sb2.render_shader.material.color.a = sb2.render_shader.material.color.a - 0.001
+        sb2.render_shader.layer = 2
+        sb2.render_shader:set()
+        
         
         
     end
