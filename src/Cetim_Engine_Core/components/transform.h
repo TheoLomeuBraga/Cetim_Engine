@@ -99,14 +99,14 @@ public:
 
 	vec3 pegar_direcao_local(vec3 dir)
 	{
-		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
+		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - pegar_pos_global();
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
 
 	vec3 pegar_direcao_global(vec3 dir)
 	{
-		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
+		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
@@ -176,7 +176,6 @@ public:
 	{
 
 		glm::vec3 position = pegar_matriz()[3];
-		target.y = position.y;
 
 		// Calcula a direção para o alvo
 		glm::vec3 direction = glm::normalize(target - position);

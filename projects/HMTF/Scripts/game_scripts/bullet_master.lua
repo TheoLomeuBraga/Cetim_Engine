@@ -102,24 +102,21 @@ start_per_type = {
         
         local bcomps = bullet.obj.components
         
-        
-        
         bcomps.transform.scale = Vec3:new(1,1,1)
         bcomps.transform:set()
 
         local start = bullet.start
         bcomps.transform:change_position(start.x,start.y,start.z)
 
-        print(bullet.target.y)
-        bcomps.transform:look_at(bullet.target,{x=0,y=1,z=0})
+        bcomps.transform:look_at(bullet.target)
         
+        --[[
         bcomps.render_shader.material = sprite_mat
         bcomps.render_shader.material.color = bullet.color
         bcomps.render_shader.material.color.a = bcomps.render_shader.material.color.a - 0.01
         bcomps.render_shader.layer = 2
         bcomps.render_shader:set()
-
-        --sub bullet
+        ]]
 
         --[[
         local sbcomps = game_object(create_object(bullet.obj.object_ptr)).components
