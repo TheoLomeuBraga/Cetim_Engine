@@ -880,7 +880,7 @@ namespace funcoes_ponte
 	}
 
 	// memory
-	int clear_memory(lua_State *L)
+	int clean_memory(lua_State *L)
 	{
 		buffers_som.limpar_lixo();
 		ManuseioDados::mapeamento_fontes.limpar_lixo();
@@ -2783,7 +2783,7 @@ namespace funcoes_ponte
 															pair<string, lua_function>("set_time_scale", funcoes_ponte::set_time_scale),
 														}),
 		pair<string, map<string, lua_function>>("memory", {
-															  pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
+															  pair<string, lua_function>("clean_memory", funcoes_ponte::clean_memory),
 															  pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
 															  pair<string, lua_function>("memory_usage_info", funcoes_ponte::memory_usage_info),
 															  pair<string, lua_function>("make_banchmark", make_banchmark),

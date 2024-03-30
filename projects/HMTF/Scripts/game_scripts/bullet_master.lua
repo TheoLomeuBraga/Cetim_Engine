@@ -96,6 +96,14 @@ local sprite_mat = matreial:new()
 sprite_mat.shader = "sprite"
 sprite_mat.textures[1] = "Textures/white.png"
 
+function distance(a, b)
+    local dx = b.x - a.x
+    local dy = b.y - a.y
+    local dz = b.z - a.z
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+end
+
+
 start_per_type = {
     [bullet_types.ray] = function (bullet)
         print("ray")
@@ -106,30 +114,19 @@ start_per_type = {
         bcomps.transform:set()
 
         local start = bullet.start
+        local target = bullet.target
         bcomps.transform:change_position(start.x,start.y,start.z)
-
         bcomps.transform:look_at(bullet.target)
+
         
-        --[[
         bcomps.render_shader.material = sprite_mat
         bcomps.render_shader.material.color = bullet.color
         bcomps.render_shader.material.color.a = bcomps.render_shader.material.color.a - 0.01
         bcomps.render_shader.layer = 2
         bcomps.render_shader:set()
-        ]]
 
-        --[[
-        local sbcomps = game_object(create_object(bullet.obj.object_ptr)).components
+        --local sbcomps3 = game_object(create_object(bullet.obj.object_ptr)).components
         
-        sbcomps.transform.rotation = Vec3:new(0,90,0)
-        sbcomps.transform:set()
-        
-        sbcomps.render_shader.material = sprite_mat
-        sbcomps.render_shader.material.color = bullet.color
-        sbcomps.render_shader.material.color.a = bcomps.render_shader.material.color.a - 0.01
-        sbcomps.render_shader.layer = 2
-        sbcomps.render_shader:set()
-        ]]
         
     end
 }

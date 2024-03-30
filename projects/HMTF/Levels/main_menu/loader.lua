@@ -43,7 +43,7 @@ end
 function menu:END()
     remove_object(menu.camera_obj.object_ptr)
     remove_object(menu.menu_obj.object_ptr)
-    clear_memory()
+    clean_memory()
 end
 
 return menu

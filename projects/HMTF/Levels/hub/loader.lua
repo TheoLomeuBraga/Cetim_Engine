@@ -150,7 +150,7 @@ function level:END()
     remove_object(cenary_builders.cenary)
     coroutine.yield()
     global_data.level_animation_data = {}
-    clear_memory()
+    clean_memory()
     coroutine.yield()
     remove_all_navmesh()
     coroutine.yield()

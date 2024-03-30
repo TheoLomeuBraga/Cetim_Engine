@@ -146,8 +146,8 @@ function deepprint(tab)
     end
 end
 
-function clear_memory()
-    c_clear_memory()
+function clean_memory()
+    c_clean_memory()
 end
 
 function tableprint(tab)
