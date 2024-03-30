@@ -57,8 +57,35 @@ end
     color
 ]]
 
+function distance(a, b)
+    local dx = b.x - a.x
+    local dy = b.y - a.y
+    local dz = b.z - a.z
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+end
+
+function midpoint(a, b)
+    local mx = (a.x + b.x) / 2
+    local my = (a.y + b.y) / 2
+    local mz = (a.z + b.z) / 2
+    return {x = mx, y = my, z = mz}
+end
+
 update_per_type = {
     [bullet_types.ray] = function (bullet)
+
+        local bcomps = bullet.obj.components
+
+        bullet.timer = bullet.timer - time.delta
+
+        if bullet.timer <= 0 then
+            bullet.dead = true
+            return
+        end
+
+        local dist = distance(bullet.start,bullet.target)
+
+        bcomps.transform:change_scale(0.25 * bullet.timer,0.25 * bullet.timer,dist)
         
     end
 }
@@ -66,8 +93,12 @@ update_per_type = {
 function UPDATE()
     time:get()
     
-    for index, value in ipairs(bullet_list) do
+    for index, value in pairs(bullet_list) do
         update_per_type[value.type](value)
+        if value.dead then
+            remove_object(value.obj.object_ptr)
+            table.remove(bullet_list,index)
+        end
     end
 
 end
@@ -96,24 +127,13 @@ local sprite_mat = matreial:new()
 sprite_mat.shader = "sprite"
 sprite_mat.textures[1] = "Textures/white.png"
 
-function distance(a, b)
-    local dx = b.x - a.x
-    local dy = b.y - a.y
-    local dz = b.z - a.z
-    return math.sqrt(dx*dx + dy*dy + dz*dz)
-end
 
-function midpoint(a, b)
-    local mx = (a.x + b.x) / 2
-    local my = (a.y + b.y) / 2
-    local mz = (a.z + b.z) / 2
-    return {x = mx, y = my, z = mz}
-end
 
 
 start_per_type = {
     [bullet_types.ray] = function (bullet)
-        print("ray")
+
+        bullet.timer = 1
         
         local bcomps = bullet.obj.components
 
@@ -126,10 +146,7 @@ start_per_type = {
         bcomps.transform:change_position(mp.x,mp.y,mp.z)
 
         bcomps.transform:look_at(bullet.target)
-        bcomps.transform:change_scale(0.5,0.5,dist)
-
-        print("start",start.x,start.y,start.z)
-        print("target",target.x,target.y,target.z)
+        bcomps.transform:change_scale(0.25,0.25,dist)
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
         sb1.transform:change_rotation(90,0,0)
