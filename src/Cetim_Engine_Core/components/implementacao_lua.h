@@ -3114,19 +3114,32 @@ public:
 
 	void continue_coroutine(string state_name, string function_name)
 	{
+		print("A");
 		lua_State *L = estados_lua[state_name];
-
-		if (estados_lua_co.find(state_name) == estados_lua_co.end())
+		lua_State *co = NULL;
+		if (estados_lua_co.find(state_name) != estados_lua_co.end())
 		{
-			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
+			// lua_getglobal(L, function_name.c_str());
+			// estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
+			co = estados_lua_co[state_name];
 		}
-		lua_State *co = estados_lua_co[state_name];
 
-		int status = lua_status(co);
+		print("B");
 
-		if (status == LUA_OK || status == LUA_YIELD)
+		
+
+		if (!co)
 		{
-			int res = lua_resume(co, L, 0, 0);
+			print("C1");
+
+			lua_getglobal(L, function_name.c_str());
+			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
+			co = estados_lua_co[state_name];
+
+			print("D1");
+
+			int res = lua_resume(co, L, 0,0);
+			print("E1");
 			if (res != LUA_OK && res != LUA_YIELD)
 			{
 				printf("Error: %s\n", lua_tostring(co, -1));
@@ -3134,6 +3147,7 @@ public:
 		}
 		else
 		{
+			print("C2");
 			// Se a coroutine terminou ou nunca foi iniciada, iniciamos ou reiniciamos a função 'UPDATE'
 			lua_getglobal(L, function_name.c_str());
 			if (lua_pcall(L, 0, 0, 0) != LUA_OK)
@@ -3141,6 +3155,8 @@ public:
 				printf("Error: %s\n", lua_tostring(L, -1));
 			}
 		}
+
+		print("END");
 	}
 
 	void iniciar()
@@ -3165,7 +3181,7 @@ public:
 
 				lua_getglobal(p.second, "START");
 				lua_call(p.second, 0, 0);
-				// continue_coroutine(p.first,"START")
+				//continue_coroutine(p.first, "START");
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
@@ -3209,12 +3225,14 @@ public:
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
+					//continue_coroutine(p.first, "UPDATE");
 				}
 				else
 				{
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
+					//continue_coroutine(p.first, "UPDATE");
 				}
 			}
 			else
