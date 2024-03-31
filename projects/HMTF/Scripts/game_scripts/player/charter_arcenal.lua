@@ -189,14 +189,9 @@ function shoot()
     camera.components.audio_source.volume = 20
     camera.components.audio_source:set()
     
-    local pos = camera.components.transform:get_global_position(0,0,0)
+    local pos = camera.components.transform:get_global_position(-0.3,-0.3,1)
     
     local target = camera.components.transform:get_global_position(0,0,10)
-    
-    
-    --print("xxxxx",pos.x,target.x)
-    print("yyyyy",pos.y,target.y)
-    --print("zzzzz",pos.z,target.z)
     
     summon_bullet(bullet_types.ray,"",pos,target,0,{r=1,g=0,b=0,a=1},10,1)
 
