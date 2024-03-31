@@ -174,18 +174,21 @@ function summon_bullet(args)
    
 
     local bullet_type = args[1]
-    local group = args[2]
-    local start = args[3]
-    local target_direction_position = args[4]
-    local speed = args[5]
-    local color = args[6]
-    local distance = args[7]
-    local damage = args[8]
+    local damage_type = args[2]
+    local group = args[3]
+    local start = args[4]
+    local target_direction_position = args[5]
+    local speed = args[6]
+    local color = args[7]
+    local distance = args[8]
+    local damage = args[9]
+    local obj = game_object(create_object(layers.main))
     local obj = game_object(create_object(layers.main))
 
     local bullet_data = {
         obj = obj,
         type = bullet_type,
+        damage_type = damage_type,
         group = group,
         start = start,
         target = target_direction_position,
