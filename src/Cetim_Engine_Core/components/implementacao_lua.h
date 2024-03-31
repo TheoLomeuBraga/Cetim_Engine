@@ -48,7 +48,6 @@ using namespace Tempo;
 #include <unistd.h>
 #endif
 
-
 #ifdef USE_LUA_JIT
 extern "C"
 {
@@ -739,7 +738,7 @@ namespace funcoes_ponte
 
 		Table ret;
 		ret.setFloat("time", Tempo::total_timer.get());
-		//ret.setFloat("delta", deltaTimer.get());
+		// ret.setFloat("delta", deltaTimer.get());
 		ret.setFloat("delta", Tempo::deltaTime);
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);
@@ -1201,8 +1200,6 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	
-
 	int rotate_transform(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1326,8 +1323,6 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	
-
 	int transform_look_to(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1338,7 +1333,7 @@ namespace funcoes_ponte
 		}
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 
-		tf->olhar_para(table_vec3(lua_totable(L,2)), table_vec3(lua_totable(L,3)));
+		tf->olhar_para(table_vec3(lua_totable(L, 2)), table_vec3(lua_totable(L, 3)));
 
 		return 0;
 	}
@@ -2306,7 +2301,7 @@ namespace funcoes_ponte
 	{
 
 		vector<Table> ret;
-		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3),2);
+		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3), 2);
 		for (size_t i = 0; i < path.size(); i++)
 		{
 			ret.push_back(vec3_table(path[i]));
@@ -2378,11 +2373,11 @@ namespace funcoes_ponte
 		}
 
 #ifdef USE_LUA_JIT
-	float current_progression = std::max(0.001, lua_tonumber(L, 2));
+		float current_progression = std::max(0.001, lua_tonumber(L, 2));
 #else
-	float current_progression = std::max(0.001f, lua_tonumber(L, 2));
+		float current_progression = std::max(0.001f, lua_tonumber(L, 2));
 #endif
-		
+
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;
@@ -2800,7 +2795,6 @@ namespace funcoes_ponte
 																 pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
 																 pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
 																 pair<string, lua_function>("transform_look_to", funcoes_ponte::transform_look_to),
-																 
 
 																 pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
 																 pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
@@ -3038,8 +3032,11 @@ class componente_lua : public componente
 	unordered_map<string, shared_ptr<string>> scripts_lua_string;
 	unordered_map<string, bool> scripts_lua_iniciados;
 
+	unordered_map<string, lua_State *> estados_lua_co;
+
 public:
 	unordered_map<string, lua_State *> estados_lua;
+
 	set<lua_State *> to_benchmark;
 
 	vector<string> pegar_lista_scripts()
@@ -3115,6 +3112,37 @@ public:
 		}
 	}
 
+	void continue_coroutine(string state_name, string function_name)
+	{
+		lua_State *L = estados_lua[state_name];
+
+		if (estados_lua_co.find(state_name) == estados_lua_co.end())
+		{
+			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
+		}
+		lua_State *co = estados_lua_co[state_name];
+
+		int status = lua_status(co);
+
+		if (status == LUA_OK || status == LUA_YIELD)
+		{
+			int res = lua_resume(co, L, 0, 0);
+			if (res != LUA_OK && res != LUA_YIELD)
+			{
+				printf("Error: %s\n", lua_tostring(co, -1));
+			}
+		}
+		else
+		{
+			// Se a coroutine terminou ou nunca foi iniciada, iniciamos ou reiniciamos a função 'UPDATE'
+			lua_getglobal(L, function_name.c_str());
+			if (lua_pcall(L, 0, 0, 0) != LUA_OK)
+			{
+				printf("Error: %s\n", lua_tostring(L, -1));
+			}
+		}
+	}
+
 	void iniciar()
 	{
 
@@ -3137,6 +3165,7 @@ public:
 
 				lua_getglobal(p.second, "START");
 				lua_call(p.second, 0, 0);
+				// continue_coroutine(p.first,"START")
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
