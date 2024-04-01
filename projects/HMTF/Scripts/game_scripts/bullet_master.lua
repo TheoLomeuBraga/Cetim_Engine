@@ -145,6 +145,8 @@ start_per_type = {
             target = hit_info.position
         end
         bullet.target = target
+
+        --damage
         
 
         local dist = distance(start,target)
