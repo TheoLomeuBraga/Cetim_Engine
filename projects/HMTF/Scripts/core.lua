@@ -224,6 +224,9 @@ end
 
 function START()
 
+    
+    
+
     post_processing:get()
     post_processing.material = matreial:new()
     post_processing.material.shader = "post_processing"

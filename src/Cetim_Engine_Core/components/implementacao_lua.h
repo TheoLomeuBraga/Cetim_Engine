@@ -3112,51 +3112,43 @@ public:
 		}
 	}
 
-	void continue_coroutine(string state_name, string function_name)
+	void start_coroutine(string state_name)
 	{
-		print("A");
+		print("START A");
+
 		lua_State *L = estados_lua[state_name];
-		lua_State *co = NULL;
-		if (estados_lua_co.find(state_name) != estados_lua_co.end())
+		/**/
+		if (estados_lua_co.find(state_name) == estados_lua_co.end())
 		{
-			// lua_getglobal(L, function_name.c_str());
-			// estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
-			co = estados_lua_co[state_name];
-		}
-
-		print("B");
-
-		
-
-		if (!co)
-		{
-			print("C1");
-
-			lua_getglobal(L, function_name.c_str());
 			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
-			co = estados_lua_co[state_name];
-
-			print("D1");
-
-			int res = lua_resume(co, L, 0,0);
-			print("E1");
-			if (res != LUA_OK && res != LUA_YIELD)
-			{
-				printf("Error: %s\n", lua_tostring(co, -1));
-			}
 		}
-		else
-		{
-			print("C2");
-			// Se a coroutine terminou ou nunca foi iniciada, iniciamos ou reiniciamos a função 'UPDATE'
-			lua_getglobal(L, function_name.c_str());
-			if (lua_pcall(L, 0, 0, 0) != LUA_OK)
-			{
-				printf("Error: %s\n", lua_tostring(L, -1));
-			}
-		}
+		lua_State *co = estados_lua_co[state_name];
+		
+		print("START B");
 
-		print("END");
+		lua_getglobal(co, "START");
+		print("START C");
+		lua_resume(co,L , 0,NULL);
+		print("START E");
+
+		print("START END");
+	}
+
+	void continue_coroutine(string state_name)
+	{
+		print("UPDATE A");
+		lua_State *L = estados_lua[state_name];
+		lua_State *co = estados_lua_co[state_name];
+
+		print("UPDATE B");
+
+		lua_getglobal(L, "UPDATE");
+		const char *msg = lua_tostring(L, -1); // Obtém a mensagem enviada pela coroutine
+		printf("%s\n", msg);				   // Imprime a mensagem
+		lua_pop(L, 1);						   // Remove a mensagem da pilha
+		lua_resume(L, co, 0,0);				   // Continua a execução da coroutine
+
+		print("UPDATE END");
 	}
 
 	void iniciar()
@@ -3181,7 +3173,9 @@ public:
 
 				lua_getglobal(p.second, "START");
 				lua_call(p.second, 0, 0);
-				//continue_coroutine(p.first, "START");
+
+				
+				//start_coroutine(p.first);
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
@@ -3225,14 +3219,14 @@ public:
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
-					//continue_coroutine(p.first, "UPDATE");
+					//continue_coroutine(p.first);
 				}
 				else
 				{
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
-					//continue_coroutine(p.first, "UPDATE");
+					//continue_coroutine(p.first);
 				}
 			}
 			else
