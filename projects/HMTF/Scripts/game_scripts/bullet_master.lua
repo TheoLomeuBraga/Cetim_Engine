@@ -83,9 +83,7 @@ update_per_type = {
             return
         end
 
-        local dist = distance(bullet.start,bullet.target)
-
-        bcomps.transform:change_scale(0.25 * bullet.timer,0.25 * bullet.timer,dist)
+        bcomps.transform:change_scale(0.25 * bullet.timer,0.25 * bullet.timer,bullet.distance)
         
     end
 }
@@ -139,14 +137,28 @@ start_per_type = {
 
         local start = bullet.start
         local target = bullet.target
+
+        local hit = false
+        local hit_info = {}
+        hit,hit_info = raycast_3D(start,target)
+        if hit then
+            target = hit_info.position
+        end
+        bullet.target = target
+        
+
         local dist = distance(start,target)
+        print(dist)
 
         
         local mp = midpoint(start, target)
         bcomps.transform:change_position(mp.x,mp.y,mp.z)
 
         bcomps.transform:look_at(bullet.target)
-        bcomps.transform:change_scale(0.25,0.25,dist)
+
+        bullet.distance = dist
+        bcomps.transform:change_scale(0.25,0.25,bullet.distance)
+        
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
         sb1.transform:change_rotation(90,0,0)
