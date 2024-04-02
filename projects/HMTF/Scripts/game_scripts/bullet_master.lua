@@ -16,93 +16,89 @@ require("objects.time")
 require("short_cuts.create_collision")
 require("short_cuts.create_mesh")
 
-local mat = matreial:new()
 
-local layers = {}
-bullets_list = {}
-bullets_data = {}
-function bullets_data:new(obj, direction, spred, id, speed, life_time, damage, base_impulse, target, friendly, color,
-                          behavior)
-    return {
-        object = obj,
-        direction = direction,
-        spred = spred,
-        id = id,
-        speed = speed,
-        life_time = life_time,
-        timer = life_time,
-        damage = damage,
-        base_impulse = base_impulse,
-        target = target,
-        friendly = friendly,
-        behavior = behavior,
-        color = color,
-    }
-end
 
---poly_mesh_object = {}
 
-function add_bullet(data)
-    table.insert(bullets_list, data)
-end
+bullet_list = {}
 
-function remove_bullet(adres)
-    remove_object(bullets_list[adres].object.object_ptr)
-    table.remove(bullets_list, adres)
-end
+target_points = {}
 
+local bullet_types = {
+    ray = 0,
+    fast = 1,
+    big = 2,
+    missile = 3,
+
+    prediction_ray = 4,
+    prediction_fast = 5,
+    prediction_big = 6,
+    prediction_missile = 7,
+}
+
+local bullet_groups = {
+    friend = 0,
+    foe = 1,
+    hazard = 2
+}
+
+layers = nil
 function START()
     layers = global_data.layers
 
-
-    mat.shader = "Shaders/mesh"
-    mat.textures[1] = "Textures/white.png"
 end
+
+--[[
+    obj
+    type
+    group
+    start
+    target_direction
+    speed
+    color
+]]
+
+function distance(a, b)
+    local dx = b.x - a.x
+    local dy = b.y - a.y
+    local dz = b.z - a.z
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+end
+
+function midpoint(a, b)
+    local mx = (a.x + b.x) / 2
+    local my = (a.y + b.y) / 2
+    local mz = (a.z + b.z) / 2
+    return {x = mx, y = my, z = mz}
+end
+
+update_per_type = {
+    [bullet_types.ray] = function (bullet)
+
+        local bcomps = bullet.obj.components
+
+        bullet.timer = bullet.timer - time.delta
+
+        if bullet.timer <= 0 then
+            bullet.dead = true
+            return
+        end
+
+        bcomps.transform:change_scale(0.25 * bullet.timer,0.25 * bullet.timer,bullet.distance)
+        
+    end
+}
 
 function UPDATE()
     time:get()
-
     
-
-    for key, value in pairs(bullets_list) do
-
-        bullets_list[key].timer = bullets_list[key].timer - (time.delta * time.scale)
-        
-
-        local bullet = bullets_list[key].object
-
-        bullet.components.transform:get()
-        local next_pos = (bullet.components.transform.position)
-
-        next_pos.x = next_pos.x + bullets_list[key].base_impulse.x * time.delta * time.scale
-        next_pos.y = next_pos.y + bullets_list[key].base_impulse.y * time.delta * time.scale
-        next_pos.z = next_pos.z + bullets_list[key].base_impulse.z * time.delta * time.scale
-
-        local id = bullets_list[key].id
-        next_pos.x = next_pos.x + (bullets_list[key].spred[id].x * bullets_list[key].speed) * time.delta * time.scale
-        next_pos.y = next_pos.y + (bullets_list[key].spred[id].y * bullets_list[key].speed) * time.delta * time.scale
-        next_pos.z = next_pos.z + (bullets_list[key].spred[id].z * bullets_list[key].speed) * time.delta * time.scale
-
-        next_pos.x = next_pos.x + (bullets_list[key].direction.x * bullets_list[key].speed) * time.delta * time.scale
-        next_pos.y = next_pos.y + (bullets_list[key].direction.y * bullets_list[key].speed) * time.delta * time.scale
-        next_pos.z = next_pos.z + (bullets_list[key].direction.z * bullets_list[key].speed) * time.delta * time.scale
-
-        bullet.components.transform:change_position(next_pos.x, next_pos.y, next_pos.z)
-
-        if bullets_list[key].timer <= 0 then
-            
-            remove_bullet(key)
+    for index, value in pairs(bullet_list) do
+        update_per_type[value.type](value)
+        if value.dead then
+            remove_object(value.obj.object_ptr)
+            table.remove(bullet_list,index)
         end
-        
-
-        --[[
-        local objects_coliding = bullet.components[components.physics_3D]:get_objects_coliding()
-        for key, value in pairs(objects_coliding) do
-            print(value.object)
-        end
-        ]]
     end
-    
+
 end
 
 function COLLIDE(collision_info)
@@ -111,59 +107,123 @@ end
 function END()
 end
 
-function summon_bullet(args)
-    --args.pos, args.mesh, args.spred, args.speed, args.life_time, args.damage, args.quantity, args.hit_scan,args.base_impulse,args.target,args.behavior
+function set_target_point(args)
+    target_points[args[1]] = args[2]
+    return {}
+end
+
+function remove_target_point(args)
+    target_points[args[1]] = nil
+    return {}
+end
+
+local mesh_mat = matreial:new()
+mesh_mat.shader = "mesh"
+mesh_mat.textures[1] = "Textures/white.png"
+
+local sprite_mat = matreial:new()
+sprite_mat.shader = "sprite"
+sprite_mat.textures[1] = "Textures/white.png"
 
 
 
 
+start_per_type = {
+    [bullet_types.ray] = function (bullet)
 
-    --[[]]
-    for i = 1, args.quantity, 1 do
-        if args.hit_scan > 0 then
-            
-        else
-            local bullet = game_object(create_object(layers.cenary))
+        bullet.timer = 1
+        
+        local bcomps = bullet.obj.components
 
-            bullet.components.transform.is_ui = false
-            bullet.components.transform.position = args.pos
-            bullet.components.transform.rotation = { x = 0, y = 45, z = 0 }
-            bullet.components.transform.scale = { x = 0.5, y = 0.5, z = 0.5 }
-            bullet.components.transform.billboarding = 2
-            bullet.components.transform:set()
+        local start = bullet.start
+        local target = bullet.target
 
-            
-            bullet.components.render_shader.layer = 2
-            bullet.components.render_shader.vertex_size = 6
-            local mat2 = deepcopy(mat)
-            mat2.shader = "Shaders/2D_bullet"
-            mat2.color = { r = 1, g = 1, b = 1, a = 0.99 }
-            mat2.textures[1] = "Textures/energy_buble.svg"
-            bullet.components.render_shader.material = mat2
-            bullet.components.render_shader:set()
-            
-            bullet.components[components.physics_3D].boady_dynamic = boady_dynamics.dynamic
-            bullet.components[components.physics_3D].collision_shape = collision_shapes.sphere
-            bullet.components[components.physics_3D].gravity_scale = 0
-            bullet.components[components.physics_3D].collision_mesh = nil
-            bullet.components[components.physics_3D].triger = true
-            bullet.components[components.physics_3D].collision_layer = { layer = 10, layers_can_colide = { 9, } }
-            bullet.components[components.physics_3D].scale = 0.25
-            bullet.components[components.physics_3D].friction = 0
-            bullet.components[components.physics_3D].get_collision_info = true
-            bullet.components[components.physics_3D]:set()
-
-            local bullet_data = bullets_data:new(bullet, args.direction, args.spred, i, args.speed, args.life_time,args.damage,args.base_impulse, args.target, args.friendly, args.color, args.behavior)
-            add_bullet(bullet_data)
+        local hit = false
+        local hit_info = {}
+        hit,hit_info = raycast_3D(start,target)
+        if hit then
+            target = hit_info.position
         end
+        bullet.target = target
+
+        --damage
+        
+
+        local dist = distance(start,target)
+        print(dist)
+
+        
+        local mp = midpoint(start, target)
+        bcomps.transform:change_position(mp.x,mp.y,mp.z)
+
+        bcomps.transform:look_at(bullet.target)
+
+        bullet.distance = dist
+        bcomps.transform:change_scale(0.25,0.25,bullet.distance)
+        
+
+        local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
+        sb1.transform:change_rotation(90,0,0)
+        sb1.render_shader.material = sprite_mat
+        sb1.render_shader.material.color = bullet.color
+        sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
+        sb1.render_shader.layer = 2
+        sb1.render_shader:set()
+
+        local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
+        sb2.transform:change_rotation(0,90,0)
+        sb2.render_shader.material = sprite_mat
+        sb2.render_shader.material.color = bullet.color
+        sb2.render_shader.material.color.a = sb2.render_shader.material.color.a - 0.001
+        sb2.render_shader.layer = 2
+        sb2.render_shader:set()
+        
+        
+        
     end
+}
+
+function summon_bullet(args)
+
+   
+
+    local bullet_type = args[1]
+    local damage_type = args[2]
+    local group = args[3]
+    local start = args[4]
+    local target_direction_position = args[5]
+    local speed = args[6]
+    local color = args[7]
+    local distance = args[8]
+    local damage = args[9]
+    local obj = game_object(create_object(layers.main))
+    local obj = game_object(create_object(layers.main))
+
+    local bullet_data = {
+        obj = obj,
+        type = bullet_type,
+        damage_type = damage_type,
+        group = group,
+        start = start,
+        target = target_direction_position,
+        speed = speed,
+        color = color,
+        distance = distance,
+        damage = damage
+    }
+
+    start_per_type[bullet_data.type](bullet_data)
+
+    table.insert(bullet_list,bullet_data)
 
     return {}
 end
 
-function clear(args)
-    while #bullets_list > 0 do
-        remove_bullet(1)
+function clean(args)
+    for index, value in pairs(bullet_list) do
+        remove_object(value.obj.object_ptr)
     end
+    entitys_list = {}
+    target_points = {}
     return {}
 end

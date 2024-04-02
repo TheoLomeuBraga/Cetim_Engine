@@ -41,7 +41,7 @@ function START()
 end
 
 whait_time = 0
-local update_entity_map = {
+local update_per_type = {
     test_entity = function(entity)
         local pos = entity.obj.components.transform:get_global_position()
 
@@ -83,7 +83,7 @@ function UPDATE()
 
 
         for index, value in ipairs(entitys_list) do
-            update_entity_map[value.type](value)
+            update_per_type[value.type](value)
         end
 
         if time_to_clean_paths > 0.25 then
@@ -101,7 +101,7 @@ end
 function END()
 end
 
-local actions_per_type = {
+local start_per_type = {
     test_entity = function(entity)
         local model_path = "3D Models/test_friend.gltf"
 
@@ -120,7 +120,7 @@ local actions_per_type = {
         entity_physics_3D:set()
 
         local entity_data = get_scene_3D(model_path)
-        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "Shaders/mesh",
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "mesh",
             true, false)
 
         entity.rig_obj = entity_structures.obj
@@ -151,7 +151,7 @@ function summon_entity(args)
 
 
 
-    actions_per_type[type](entity)
+    start_per_type[type](entity)
 
 
 
@@ -165,7 +165,7 @@ function remove_entity(adres)
     table.remove(entitys_list, adres)
 end
 
-function clear(args)
+function clean(args)
     for index, value in pairs(entitys_list) do
         remove_object(value.obj.object_ptr)
     end

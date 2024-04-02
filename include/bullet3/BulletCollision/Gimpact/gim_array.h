@@ -113,7 +113,7 @@ public:
 		clear_range(0);
 	}
 
-	inline void clear_memory()
+	inline void clean_memory()
 	{
 		clear();
 		destroyData();
@@ -137,7 +137,7 @@ public:
 
 	~gim_array()
 	{
-		clear_memory();
+		clean_memory();
 	}
 
 	inline GUINT size() const

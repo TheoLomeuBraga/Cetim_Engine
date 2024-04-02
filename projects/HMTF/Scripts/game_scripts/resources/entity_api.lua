@@ -7,13 +7,21 @@ require("objects.global_data")
 
 local core_obj = nil
 
-function summon_entity(pos,rot_y,type)
-    
+function summon_entity(pos, rot_y, type)
     if core_obj == nil then
         core_obj = game_object(global_data.core_object_ptr)
     end
-    
-    local args = {pos=pos,rot_y=rot_y,type=type}
-    core_obj.components.lua_scripts.scripts["game_scripts/entity_master"].functions.summon_entity(args) 
 
+    local args = { pos = pos, rot_y = rot_y, type = type }
+    core_obj.components.lua_scripts.scripts["game_scripts/entity_master"].functions.summon_entity(args)
+end
+
+function clean_entityes()
+    if global_data.core_object_ptr ~= nil then
+        if core_obj == nil then
+            core_obj = game_object(global_data.core_object_ptr)
+        end
+
+        core_obj.components.lua_scripts.scripts["game_scripts/entity_master"].functions.clean({})
+    end
 end

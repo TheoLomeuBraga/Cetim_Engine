@@ -134,7 +134,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         self.style = deepcopy(style)
 
         local render_shader_mat = matreial:new()
-        render_shader_mat.shader = "Shaders/button"
+        render_shader_mat.shader = "button"
         render_shader_mat.color = deepcopy(self.style.color)
         render_shader_mat.inputs["border_color_x"] = self.style.border_color_r
         render_shader_mat.inputs["border_color_y"] = self.style.border_color_g
@@ -158,7 +158,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
         
         if text ~= nil and text ~= "" then
             local render_text_mat = matreial:new()
-            render_text_mat.shader = "Shaders/text"
+            render_text_mat.shader = "text"
             render_text_mat.color = deepcopy(self.style.text_color)
 
             

@@ -764,7 +764,7 @@ void Reindenizar()
 {
 
 	
-	//Tempo::targetFPS(deltaTimer.get());
+	Tempo::targetFPS(deltaTimer.get());
 	deltaTimer.clear();
 
 	current_time = Tempo::current_time();

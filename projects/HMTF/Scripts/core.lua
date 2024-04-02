@@ -25,6 +25,7 @@ require("objects.gravity")
 require("objects.render_layer")
 require("objects.post_processing")
 
+
 local serializer = require("libs.serialize")
 
 register_function_set("file_system")
@@ -54,7 +55,7 @@ function set_load_image(args)
     end
 
     local mat = matreial:new()
-    mat.shader = "Shaders/background"
+    mat.shader = "background"
     if args.path ~= nil and args.path ~= "" then
         mat.textures[1] = args.path
         if args.color ~= nil then
@@ -92,7 +93,8 @@ function load_sceane_step()
         
         previous_cenary = cenary
 
-        cenary = require("level_loaders." .. name)
+        cenary = require("Levels." .. name .. ".loader")
+        
         cenary:START()
         
     end
@@ -115,8 +117,8 @@ load_sceane_request_name = nil
 
 function load_sceane(cenary_name)
     
-    this_object.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clear({})
-    this_object.components.lua_scripts.scripts["game_scripts/entity_master"].functions.clear({})
+    
+    
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)
@@ -222,9 +224,12 @@ end
 
 function START()
 
+    
+    
+
     post_processing:get()
     post_processing.material = matreial:new()
-    post_processing.material.shader = "Shaders/post_processing"
+    post_processing.material.shader = "post_processing"
     post_processing:set()
     
     layers:create()
@@ -232,7 +237,7 @@ function START()
     set_render_layers()
     --get_set_parallel_loading(set_lua, true)
     local mat = matreial:new()
-    mat.shader = "Shaders/background"
+    mat.shader = "background"
     mat.textures[1] = "Textures/white.png"
     mat.color.r = 0.2
     mat.color.g = 0.2

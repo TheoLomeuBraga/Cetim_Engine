@@ -200,8 +200,9 @@ public:
 		}
 	}
 
-	unsigned int pegar_shader(string shade)
+	unsigned int pegar_shader(string nome)
 	{
+		string shade = string("Shaders/") + nome;
 		if (shaders.find(shade) == shaders.end())
 		{
 			string nome = shade;
@@ -303,7 +304,7 @@ public:
 	void teste_desenhar_malha(shared_ptr<transform_> tf, shared_ptr<objeto_jogo> cam)
 	{
 
-		unsigned int shader_s = pegar_shader("Shaders/teste_malha");
+		unsigned int shader_s = pegar_shader("teste_malha");
 		glUseProgram(shader_s);
 
 		// transform
@@ -352,7 +353,7 @@ public:
 	{
 
 		glDisable(GL_CULL_FACE);
-		unsigned int shader_s = pegar_shader("Shaders/oclusion_querie");
+		unsigned int shader_s = pegar_shader("oclusion_querie");
 		glUseProgram(shader_s);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
 		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
@@ -1599,7 +1600,10 @@ public:
 		if (cam->pegar_componente<transform_>() != NULL)
 		{
 			transparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), transparent);
+			std::reverse(transparent.begin(), transparent.end());
+
 			nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
+			//std::reverse(nontransparent.begin(), nontransparent.end());
 		}
 
 		return {nontransparent, transparent, ui};

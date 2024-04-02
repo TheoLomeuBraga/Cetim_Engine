@@ -38,14 +38,11 @@ end
 function transform_component:get_translation_position(x,y,z)
     return get_translation_position_transform(self.object_ptr,x,y,z)
 end
-function transform_component:look_at(target_position,look_up,look_axe)
-    if look_axe == nil then
-        look_axe = {x=0,y=1,z=0}
+function transform_component:look_at(target,up)
+    if up == nil then
+        up = {x=0,y=1,z=0}
     end
-    if look_up == nil then
-        look_up = false
-    end
-    return c_transform_look_at(self.object_ptr,look_axe,target_position,look_up)
+    c_transform_look_to(self.object_ptr,target,up)
 end
 
 

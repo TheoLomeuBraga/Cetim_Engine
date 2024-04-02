@@ -48,7 +48,6 @@ using namespace Tempo;
 #include <unistd.h>
 #endif
 
-
 #ifdef USE_LUA_JIT
 extern "C"
 {
@@ -739,7 +738,7 @@ namespace funcoes_ponte
 
 		Table ret;
 		ret.setFloat("time", Tempo::total_timer.get());
-		//ret.setFloat("delta", deltaTimer.get());
+		// ret.setFloat("delta", deltaTimer.get());
 		ret.setFloat("delta", Tempo::deltaTime);
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);
@@ -880,7 +879,7 @@ namespace funcoes_ponte
 	}
 
 	// memory
-	int clear_memory(lua_State *L)
+	int clean_memory(lua_State *L)
 	{
 		buffers_som.limpar_lixo();
 		ManuseioDados::mapeamento_fontes.limpar_lixo();
@@ -1201,8 +1200,6 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	
-
 	int rotate_transform(lua_State *L)
 	{
 		int argumentos = lua_gettop(L);
@@ -1326,9 +1323,8 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int transform_look_at(lua_State *L)
+	int transform_look_to(lua_State *L)
 	{
-		
 		int argumentos = lua_gettop(L);
 		objeto_jogo *obj = NULL;
 		if (argumentos > 0)
@@ -1337,18 +1333,7 @@ namespace funcoes_ponte
 		}
 		shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
 
-		vec3 up_axe = table_vec3(lua_totable(L, 2));
-		vec3 target_position = table_vec3(lua_totable(L, 3));
-		bool look_up = lua_tonumber(L, 4);
-
-		if(look_up){
-			vec3 rot = tf->billboarding_spherical(target_position);
-			change_rot(obj, rot);
-		}else{
-			vec3 rot = tf->billboarding_planar(target_position);
-			change_rot(obj, rot);
-		}
-		
+		tf->olhar_para(table_vec3(lua_totable(L, 2)), table_vec3(lua_totable(L, 3)));
 
 		return 0;
 	}
@@ -2316,7 +2301,7 @@ namespace funcoes_ponte
 	{
 
 		vector<Table> ret;
-		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3),2);
+		vector<vec3> path = navmesh::generate_path(table_vec3(lua_totable(L, 1)), table_vec3(lua_totable(L, 2)), lua_tostring(L, 3), 2);
 		for (size_t i = 0; i < path.size(); i++)
 		{
 			ret.push_back(vec3_table(path[i]));
@@ -2386,7 +2371,13 @@ namespace funcoes_ponte
 		{
 			return 0;
 		}
+
+#ifdef USE_LUA_JIT
+		float current_progression = std::max(0.001, lua_tonumber(L, 2));
+#else
 		float current_progression = std::max(0.001f, lua_tonumber(L, 2));
+#endif
+
 		float speed_or_walk_distance = lua_tonumber(L, 3);
 
 		glm::vec3 target;
@@ -2647,7 +2638,7 @@ namespace funcoes_ponte
 		rm->camada = 4;
 
 		Material mat;
-		mat.shad = "Shaders/mesh";
+		mat.shad = "mesh";
 
 		if (lua_cube_color.x < 1)
 		{
@@ -2787,7 +2778,7 @@ namespace funcoes_ponte
 															pair<string, lua_function>("set_time_scale", funcoes_ponte::set_time_scale),
 														}),
 		pair<string, map<string, lua_function>>("memory", {
-															  pair<string, lua_function>("clear_memory", funcoes_ponte::clear_memory),
+															  pair<string, lua_function>("clean_memory", funcoes_ponte::clean_memory),
 															  pair<string, lua_function>("is_loaded", funcoes_ponte::is_loaded),
 															  pair<string, lua_function>("memory_usage_info", funcoes_ponte::memory_usage_info),
 															  pair<string, lua_function>("make_banchmark", make_banchmark),
@@ -2803,8 +2794,7 @@ namespace funcoes_ponte
 
 																 pair<string, lua_function>("move_transform", funcoes_ponte::move_transform),
 																 pair<string, lua_function>("rotate_transform", funcoes_ponte::rotate_transform),
-																 pair<string, lua_function>("transform_look_at", funcoes_ponte::transform_look_at),
-																 
+																 pair<string, lua_function>("transform_look_to", funcoes_ponte::transform_look_to),
 
 																 pair<string, lua_function>("change_transfotm_position", funcoes_ponte::change_transfotm_position),
 																 pair<string, lua_function>("change_transfotm_rotation", funcoes_ponte::change_transfotm_rotation),
@@ -2941,6 +2931,7 @@ void load_base_lua_state(lua_State *L, string path)
 
 	// configurar diretorio
 	string lua_path = argumentos[1] + "/Scripts/?.lua;" + argumentos[1] + "/Scripts/engine_libs/?.lua";
+	lua_path += string(";") + argumentos[1] + "/?.lua;" + argumentos[1] + "/engine_libs/?.lua";
 
 	string link_libs_path = argumentos[1] + string("/Scripts/link_libs/?.dll;") + argumentos[1] + string("/Scripts/link_libs/?.so");
 
@@ -3041,8 +3032,11 @@ class componente_lua : public componente
 	unordered_map<string, shared_ptr<string>> scripts_lua_string;
 	unordered_map<string, bool> scripts_lua_iniciados;
 
+	unordered_map<string, lua_State *> estados_lua_co;
+
 public:
 	unordered_map<string, lua_State *> estados_lua;
+
 	set<lua_State *> to_benchmark;
 
 	vector<string> pegar_lista_scripts()
@@ -3118,6 +3112,45 @@ public:
 		}
 	}
 
+	void start_coroutine(string state_name)
+	{
+		print("START A");
+
+		lua_State *L = estados_lua[state_name];
+		/**/
+		if (estados_lua_co.find(state_name) == estados_lua_co.end())
+		{
+			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
+		}
+		lua_State *co = estados_lua_co[state_name];
+		
+		print("START B");
+
+		lua_getglobal(co, "START");
+		print("START C");
+		lua_resume(co,L , 0,NULL);
+		print("START E");
+
+		print("START END");
+	}
+
+	void continue_coroutine(string state_name)
+	{
+		print("UPDATE A");
+		lua_State *L = estados_lua[state_name];
+		lua_State *co = estados_lua_co[state_name];
+
+		print("UPDATE B");
+
+		lua_getglobal(L, "UPDATE");
+		const char *msg = lua_tostring(L, -1); // Obtém a mensagem enviada pela coroutine
+		printf("%s\n", msg);				   // Imprime a mensagem
+		lua_pop(L, 1);						   // Remove a mensagem da pilha
+		lua_resume(L, co, 0,0);				   // Continua a execução da coroutine
+
+		print("UPDATE END");
+	}
+
 	void iniciar()
 	{
 
@@ -3140,6 +3173,9 @@ public:
 
 				lua_getglobal(p.second, "START");
 				lua_call(p.second, 0, 0);
+
+				
+				//start_coroutine(p.first);
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
@@ -3179,17 +3215,18 @@ public:
 
 				if (benchmark)
 				{
-
 					Benchmark_Timer bt(p.first);
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
+					//continue_coroutine(p.first);
 				}
 				else
 				{
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
+					//continue_coroutine(p.first);
 				}
 			}
 			else

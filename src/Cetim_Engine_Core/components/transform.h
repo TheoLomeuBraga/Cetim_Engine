@@ -99,14 +99,14 @@ public:
 
 	vec3 pegar_direcao_local(vec3 dir)
 	{
-		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
+		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - pegar_pos_global();
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
 
 	vec3 pegar_direcao_global(vec3 dir)
 	{
-		glm::mat4 translationMatrix = glm::translate(matrizTransform, dir);
+		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
 		return glm::vec3(ret.x, ret.y, ret.z);
 	}
@@ -133,21 +133,7 @@ public:
 		pegar_matriz();
 	}
 
-	glm::vec3 olhar_para(glm::vec3 look_axe ,glm::vec3 target,bool usar_eixo_y = false)
-	{
-		if(usar_eixo_y){
-			look_axe.y=0;
-			target.y=0;
-		}
-		glm::mat4 lookAtMatrix = glm::lookAt(pegar_pos_global(), target, look_axe);
-		glm::quat quaternionRotation = glm::quat_cast(lookAtMatrix);
-		glm::vec3 eulerAngles = glm::eulerAngles(quaternionRotation);
-		rot = glm::eulerAngles(quaternionRotation);
-		quater = quaternionRotation;
-		return eulerAngles;
-	}
-
-	glm::vec3 billboarding_spherical(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
+	glm::vec3 billboarding_spherical(glm::vec3 target, glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		up = pegar_direcao_local(up);
@@ -162,12 +148,12 @@ public:
 		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
 
 		euler_angles.z = up.z;
-		
+
 		quater = graus_quat(euler_angles);
 		return euler_angles;
 	}
 
-	glm::vec3 billboarding_planar(glm::vec3 target,glm::vec3 up = vec3(0, 1, 0))
+	glm::vec3 billboarding_planar(glm::vec3 target, glm::vec3 up = vec3(0, 1, 0))
 	{
 		glm::vec3 position = pegar_matriz()[3];
 		target.y = position.y;
@@ -182,10 +168,47 @@ public:
 		// Constrói o vetor em graus
 		glm::vec3 euler_angles = glm::vec3(pitch, yaw, 0.0f);
 
-		
-		
 		quater = graus_quat(euler_angles);
 		return euler_angles;
+	}
+
+	glm::vec3 olhar_para(glm::vec3 target, glm::vec3 up)
+	{
+
+		glm::vec3 position = pegar_matriz()[3];
+
+		// Calcula a direção para o alvo
+		glm::vec3 direction = glm::normalize(target - position);
+
+		// Se a direção for vertical, não podemos calcular pitch e yaw diretamente
+		if (glm::length(glm::cross(up, direction)) < 0.001f)
+		{
+			// Define a direção vertical com o oposto do up fornecido
+			glm::vec3 vertical_dir = glm::vec3(up.x, -up.y, up.z);
+			// Calcula o ângulo de pitch
+			float dot_product = glm::dot(glm::normalize(direction), glm::normalize(vertical_dir));
+			// Garante que o produto interno esteja dentro do intervalo [-1, 1]
+			dot_product = glm::clamp(dot_product, -1.0f, 1.0f);
+			// Calcula o ângulo de pitch
+			float pitch = glm::degrees(acos(dot_product));
+			// Verifica se o alvo está acima ou abaixo da posição atual
+			if (target.y > position.y)
+			{
+				pitch = -pitch;
+			}
+			// Retorna pitch e yaw com rotação apenas em torno do eixo y
+			return glm::vec3(pitch, 0.0f, 0.0f);
+		}
+
+		// Calcula os ângulos de pitch e yaw
+		float pitch = glm::degrees(asin(-direction.y));
+		float yaw = glm::degrees(atan2(direction.x, direction.z));
+
+		vec3 rot = glm::vec3(pitch, yaw, 0.0f);
+		quater = graus_quat(rot);
+
+		// Constrói o vetor de euler_angles
+		return rot;
 	}
 
 	void atualizar_tf()
