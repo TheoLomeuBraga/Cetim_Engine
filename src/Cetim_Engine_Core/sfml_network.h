@@ -12,7 +12,7 @@ class sfml_network : public network_api
     bool sendUDPData(sf::UdpSocket &socket, const std::vector<uint8_t> &data, const sf::IpAddress &address, unsigned short port)
     {
         sf::Packet packet;
-        for (auto byte : data)
+        for (uint8_t byte : data)
         {
             packet << byte;
         }

@@ -68,8 +68,6 @@ function summon_bullet(type,damage_type,group,start,target_direction,speed,color
             speed = 1
         end
 
-        
-
         core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.summon_bullet({type,damage_type,group,start,target_direction,speed,color,distance,damage})
     end
 end

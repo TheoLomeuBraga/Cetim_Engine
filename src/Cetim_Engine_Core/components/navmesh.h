@@ -638,7 +638,7 @@ public:
         }
     }
 
-    std::vector<glm::vec3> generate_this_path(glm::vec3 start, glm::vec3 end,unsigned int pathPolysCount = 256)
+    std::vector<glm::vec3> generate_this_path(glm::vec3 start, glm::vec3 end,const unsigned int pathPolysCount = 256)
     {
 
         std::vector<glm::vec3> path;

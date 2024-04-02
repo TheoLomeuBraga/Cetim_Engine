@@ -29,6 +29,7 @@ using namespace Tempo;
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <filesystem>
 
 #include "table.h"
 #include "table_conversors.h"
@@ -608,34 +609,8 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 namespace funcoes_ponte
 {
 
-	// exemplos get set
-	/*
-	int get_set_example(lua_State* L){
-		if(lua_tonumber(L, 1) == get_lua){
-			Table ret;
-
-			lua_pushtable(L,ret);
-			return 1;
-		}else{
-			Table t = lua_totable(L,2);
-			return 0;
-		}
-	}
-	int get_set_transform(lua_State* L){
-		if(lua_tonumber(L, 1) == get_lua){
-			Table ret;
-			objeto_jogo* obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-
-			lua_pushtable(L,ret);
-			return 1;
-		}else{
-			Table t = lua_totable(L,2);
-			objeto_jogo* obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-
-			return 0;
-		}
-	}
-	*/
+	
+	
 
 	// screen
 
@@ -648,30 +623,8 @@ namespace funcoes_ponte
 	// Função em C para criar um diretório
 	int create_directory(lua_State *L)
 	{
-		const char *diretorio = luaL_checkstring(L, 1);
-
-#ifdef _WIN32
-		if (_mkdir(diretorio) == 0)
-		{
-			lua_pushboolean(L, 1);
-		}
-		else
-		{
-			lua_pushboolean(L, 0);
-		}
-#endif
-#ifdef __unix__
-		if (mkdir(diretorio, S_IRWXU | S_IRWXG | S_IRWXO) == 0)
-		{
-			lua_pushboolean(L, 1);
-		}
-		else
-		{
-			lua_pushboolean(L, 0);
-		}
-#endif
-
-		return 1; // Número de valores de retorno
+		std::filesystem::create_directories(luaL_checkstring(L, 1));
+		return 0; 
 	}
 
 	int get_set_window(lua_State *L)
@@ -2751,6 +2704,20 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int save_table(lua_State *L){
+		string s = lua_tostring(L,1);
+		Table t = lua_totable(L,2);
+
+		return 0;
+	}
+
+	int load_table(lua_State *L){
+		Table ret;
+		
+		lua_pushtable(L,ret);
+		return 1;
+	}
+
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
 		pair<string, map<string, lua_function>>("file_system", {
 																   pair<string, lua_function>("get_config_folder_path", funcoes_ponte::get_config_folder_path),
@@ -2880,6 +2847,11 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("debug", {
 															 pair<string, lua_function>("print_cube", print_cube),
 															 pair<string, lua_function>("clean_cube", clean_cube),
+
+														 }),
+		pair<string, map<string, lua_function>>("serialization", {
+															 pair<string, lua_function>("save_table", funcoes_ponte::save_table),
+															 pair<string, lua_function>("load_table", funcoes_ponte::load_table),
 
 														 }),
 	};

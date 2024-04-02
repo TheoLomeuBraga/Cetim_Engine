@@ -136,6 +136,10 @@ start_per_type = {
         local bcomps = bullet.obj.components
 
         local start = bullet.start
+        local start_effect = bullet.start.effect
+        if start_effect == nil then
+            start_effect = bullet.start
+        end
         local target = bullet.target
 
         local hit = false
@@ -147,13 +151,12 @@ start_per_type = {
         bullet.target = target
 
         --damage
-        
 
-        local dist = distance(start,target)
+        local dist = distance(start_effect,target)
         print(dist)
 
         
-        local mp = midpoint(start, target)
+        local mp = midpoint(start_effect, target)
         bcomps.transform:change_position(mp.x,mp.y,mp.z)
 
         bcomps.transform:look_at(bullet.target)

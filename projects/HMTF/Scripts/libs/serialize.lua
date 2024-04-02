@@ -39,7 +39,6 @@ function serializer.save_table_base64(file_name, table)
     end
 end
 
--- Função para carregar uma table a partir de um file
 function serializer.load_table_base64(file_name)
     local file = io.open(file_name, "r")
     if file then
@@ -62,7 +61,6 @@ function serializer.save_table_json(file_name, table)
     end
 end
 
--- Função para carregar uma table a partir de um file
 function serializer.load_table_json(file_name)
     local file = io.open(file_name, "r")
     if file then

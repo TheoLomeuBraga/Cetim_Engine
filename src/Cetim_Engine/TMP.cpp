@@ -12,7 +12,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "implementacao_glfw.h"
-
+#include "compression.h"
 
 
 void InitImGui() {
@@ -93,7 +93,7 @@ void register_ecs_components(){
 void configuracaoInicial()
 {
 
-    register_ecs_components();
+    //register_ecs_components();
 
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
