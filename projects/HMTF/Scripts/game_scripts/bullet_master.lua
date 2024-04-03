@@ -83,7 +83,7 @@ update_per_type = {
             return
         end
 
-        bcomps.transform:change_scale(0.25 * bullet.timer,0.25 * bullet.timer,bullet.distance)
+        bcomps.transform:change_scale(1 * bullet.timer,1 * bullet.timer,bullet.distance)
         
     end
 }
@@ -153,7 +153,6 @@ start_per_type = {
         --damage
 
         local dist = distance(start_effect,target)
-        print(dist)
 
         
         local mp = midpoint(start_effect, target)
@@ -162,7 +161,7 @@ start_per_type = {
         bcomps.transform:look_at(bullet.target)
 
         bullet.distance = dist
-        bcomps.transform:change_scale(0.25,0.25,bullet.distance)
+        bcomps.transform:change_scale(1,1,bullet.distance)
         
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
@@ -170,14 +169,15 @@ start_per_type = {
         sb1.render_shader.material = sprite_mat
         sb1.render_shader.material.color = bullet.color
         sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
+        sb1.render_shader.material.textures[1] = "Textures/energy_ray.svg"
+        sb1.render_shader.material.position_scale = Vec4:new(0,0,1,dist)
         sb1.render_shader.layer = 2
         sb1.render_shader:set()
 
         local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
-        sb2.transform:change_rotation(0,90,0)
-        sb2.render_shader.material = sprite_mat
-        sb2.render_shader.material.color = bullet.color
-        sb2.render_shader.material.color.a = sb2.render_shader.material.color.a - 0.001
+        sb2.transform:change_rotation(90,0,90)
+        sb2.render_shader.material = sb1.render_shader.material
+        
         sb2.render_shader.layer = 2
         sb2.render_shader:set()
         

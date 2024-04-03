@@ -107,7 +107,9 @@
         "stdfloat": "cpp",
         "coroutine": "cpp",
         "rope": "cpp",
-        "slist": "cpp"
+        "slist": "cpp",
+        "csetjmp": "cpp",
+        "scoped_allocator": "cpp"
     },
     "cmake.configureOnOpen": false,
     "Lua.diagnostics.disable": [

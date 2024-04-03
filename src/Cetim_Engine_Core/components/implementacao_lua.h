@@ -1837,7 +1837,6 @@ namespace funcoes_ponte
 			Table ret;
 			lua_pushtable(L, material_table(api_grafica->pos_processamento_info));
 			vec4 cor = api_grafica->pos_processamento_info.cor;
-			print("color", cor.x, cor.y, cor.z, cor.w);
 			return 1;
 		}
 		else
@@ -1846,7 +1845,6 @@ namespace funcoes_ponte
 			api_grafica->pos_processamento_info = table_material(t);
 			// cor
 			vec4 cor = api_grafica->pos_processamento_info.cor;
-			print("color", cor.x, cor.y, cor.z, cor.w);
 			return 0;
 		}
 	}

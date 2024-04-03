@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -11,7 +12,8 @@ private:
 
     unsigned char power = 2;
 
-    void start_comp(){
+    void start_comp()
+    {
         zs.zalloc = Z_NULL;
         zs.zfree = Z_NULL;
         zs.opaque = Z_NULL;
@@ -33,18 +35,19 @@ private:
             ret = deflateInit(&zs, Z_BEST_COMPRESSION);
             break;
         }
-        
+
         if (ret != Z_OK)
             throw std::runtime_error("Failed to initialize zlib for compression");
     }
 
-    void end_comp(){
+    void end_comp()
+    {
         deflateEnd(&zs);
     }
 
 public:
-
-    compression_manager(unsigned char power = 2){
+    compression_manager(unsigned char power = 2)
+    {
         this->power = power;
     }
 
@@ -142,3 +145,4 @@ public:
         return decompressed_data;
     }
 };
+
