@@ -18,9 +18,15 @@ using string = std::string;
 #include "scene.h"
 #include "table.h"
 
-
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include "compression.h"
 
@@ -88,8 +94,6 @@ namespace ManuseioDados
 		}
 		return false;
 	}
-
-	
 
 	void add_loading_request(std::string file)
 	{
@@ -191,12 +195,11 @@ namespace ManuseioDados
 
 	shared_ptr<fonte> carregar_fonte(string lugar)
 	{
-		
+
 		std::lock_guard<std::mutex> lock(mapeamento_fontes_mtx);
 
 		ifstream file(lugar);
 
-		
 		if (file)
 		{
 			if (mapeamento_fontes.pegar(lugar).get() == NULL && has_loading_request(lugar) == false)
@@ -223,8 +226,6 @@ namespace ManuseioDados
 
 				FT_Set_Pixel_Sizes(face, 0, font_quality);
 
-				
-
 				std::map<wchar_t, caractere_info> chars;
 
 				FT_UInt glyphIndex;
@@ -245,7 +246,8 @@ namespace ManuseioDados
 					cp.second.adivancement = (float)face->glyph->advance.x / 64;
 
 					std::vector<uint8_t> bm(cp.second.width * cp.second.height);
-					for(size_t i = 0 ; i < cp.second.width * cp.second.height ; i++){
+					for (size_t i = 0; i < cp.second.width * cp.second.height; i++)
+					{
 						bm[i] = face->glyph->bitmap.buffer[i];
 					}
 					cp.second.bitmap = bm;
@@ -298,8 +300,6 @@ namespace ManuseioDados
 	bool use_texture_max_size = true;
 	ivec2 texture_max_size(256, 256);
 
-
-
 	mapeamento_assets<imagem> mapeamento_imagems;
 	std::mutex mapeamento_imagems_mtx;
 
@@ -315,8 +315,6 @@ namespace ManuseioDados
 		int canais = 4;
 
 		unsigned char *data = NULL;
-
-		
 
 		if (Existe(local))
 		{
@@ -343,8 +341,6 @@ namespace ManuseioDados
 
 					nsvgRasterize(rast, imagemSVG, 0, 0, static_cast<float>(X) / static_cast<float>(imagemSVG->width), data, X, Y, X * canais);
 
-					
-
 					nsvgDeleteRasterizer(rast);
 					nsvgDelete(imagemSVG);
 
@@ -370,7 +366,7 @@ namespace ManuseioDados
 					image.local = local;
 
 					stbi_image_free(data);
-					//delete[] data;
+					// delete[] data;
 					delete[] data2;
 
 					remove_loading_request(local);
@@ -382,7 +378,7 @@ namespace ManuseioDados
 					image.local = local;
 
 					stbi_image_free(data);
-					//delete[] data;
+					// delete[] data;
 
 					remove_loading_request(local);
 					return mapeamento_imagems.aplicar(local, image);
@@ -460,8 +456,6 @@ namespace ManuseioDados
 		std::lock_guard<std::mutex> lock(mapeamento_tilesets_mtx);
 
 		string pasta_imagems = pegar_pasta_arquivo(local);
-
-		
 
 		if (Existe(local.c_str()))
 		{
@@ -696,7 +690,7 @@ namespace ManuseioDados
 		bool s;
 		string usemtl;
 		vector<unsigned int> f;
-		
+
 		if (cenas_3D.pegar(local).get() == NULL)
 		{
 			while (getline(arquivo_obj, linha))
@@ -799,7 +793,7 @@ namespace ManuseioDados
 				m.second->arquivo_origem = local;
 				m.second->comprimir();
 				m.second->pegar_tamanho_maximo();
-				
+
 				calculate_mesh_tangent(*(m.second.get()));
 
 				ret.malhas.insert(m);
@@ -890,6 +884,23 @@ namespace ManuseioDados
 		return ret;
 	}
 
+	std::string table_bin(const Table &table)
+	{
+		std::stringstream ss;
+		boost::archive::binary_oarchive oa(ss);
+		oa << table;
+		return ss.str();
+	}
+
+	Table bin_table(const std::string &table_bin)
+	{
+		std::stringstream ss(table_bin);
+		boost::archive::binary_iarchive ia(ss);
+		Table table;
+		ia >> table;
+		return table;
+	}
+
 	void storeTableData(std::string filename, Table table)
 	{
 		json data = table_json(table);
@@ -947,7 +958,6 @@ namespace ManuseioDados
 
 		Full_Map_Info map_info = read_map_file(local);
 
-		
 		return cenas_3D.aplicar(local, ret);
 	}
 	void importar_map_thread(string local, shared_ptr<cena_3D> *ret)
@@ -977,8 +987,6 @@ namespace ManuseioDados
 
 		for (size_t a = 0; a < m.sub_meshes.size(); a++)
 		{
-
-			
 
 			malha ma;
 			if (a > 0)
@@ -1050,7 +1058,6 @@ namespace ManuseioDados
 				if (m.sub_meshes[a].skin)
 				{
 					ma.pele = true;
-					
 				}
 
 				ma.vertices.push_back(v);
@@ -1174,9 +1181,9 @@ namespace ManuseioDados
 	{
 
 		// skin_count = 0;
-		
+
 		cena_3D ret;
-		
+
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
 

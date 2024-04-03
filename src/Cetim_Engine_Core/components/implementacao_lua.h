@@ -625,14 +625,13 @@ namespace funcoes_ponte
 	}
 
 	int save_table_compressed(lua_State *L){
-		json j = table_json(lua_totable(L,2));
 
-		std::ofstream arquivo(lua_tostring(L,1));
+		std::ofstream arquivo(lua_tostring(L,1), std::ios::binary);
 
 		if(!arquivo.is_open()){return 0;}
 
 		compression_manager cm(3);
-		arquivo << cm.compress(j.dump());
+		arquivo << cm.compress(ManuseioDados::table_bin(lua_totable(L,2)));
 
 		return 0;
 	}
@@ -640,17 +639,18 @@ namespace funcoes_ponte
 	int load_table_compressed(lua_State *L){
 		
 
-		std::ifstream arquivo(lua_tostring(L,1));
+		std::ifstream arquivo(lua_tostring(L,1), std::ios::binary);
 
 		if(!arquivo.is_open()){return 0;}
 
-		std::string data;
-		std::getline(arquivo, data);
+		std::stringstream buffer;
+    	buffer << arquivo.rdbuf();
+		std::string data = buffer.str();
+
 
 		compression_manager cm(3);
-		json j = json::parse(cm.decompress(data)); 
 
-		lua_pushtable(L,json_table(j));
+		lua_pushtable(L,ManuseioDados::bin_table(cm.decompress(data)));
 		return 1;
 	}
 

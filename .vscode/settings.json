@@ -104,7 +104,10 @@
         "source_location": "cpp",
         "hash_map": "cpp",
         "*.inc": "cpp",
-        "stdfloat": "cpp"
+        "stdfloat": "cpp",
+        "coroutine": "cpp",
+        "rope": "cpp",
+        "slist": "cpp"
     },
     "cmake.configureOnOpen": false,
     "Lua.diagnostics.disable": [
