@@ -18,6 +18,7 @@ using string = std::string;
 #include "scene.h"
 #include "table.h"
 
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -296,6 +297,8 @@ namespace ManuseioDados
 
 	bool use_texture_max_size = true;
 	ivec2 texture_max_size(256, 256);
+
+
 
 	mapeamento_assets<imagem> mapeamento_imagems;
 	std::mutex mapeamento_imagems_mtx;

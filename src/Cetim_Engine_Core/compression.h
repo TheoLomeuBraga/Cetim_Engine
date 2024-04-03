@@ -9,12 +9,31 @@ class compression_manager
 private:
     z_stream zs;
 
+    unsigned char power = 2;
+
     void start_comp(){
         zs.zalloc = Z_NULL;
         zs.zfree = Z_NULL;
         zs.opaque = Z_NULL;
 
-        int ret = deflateInit(&zs, Z_DEFAULT_COMPRESSION);
+        int ret;
+
+        switch (power)
+        {
+        case 0:
+            ret = deflateInit(&zs, Z_NO_COMPRESSION);
+            break;
+        case 1:
+            ret = deflateInit(&zs, Z_BEST_SPEED);
+            break;
+        case 2:
+            ret = deflateInit(&zs, Z_DEFAULT_COMPRESSION);
+            break;
+        case 3:
+            ret = deflateInit(&zs, Z_BEST_COMPRESSION);
+            break;
+        }
+        
         if (ret != Z_OK)
             throw std::runtime_error("Failed to initialize zlib for compression");
     }
@@ -25,6 +44,9 @@ private:
 
 public:
 
+    compression_manager(unsigned char power = 2){
+        this->power = power;
+    }
 
     std::string getZlibErrorMessage(int err_code)
     {

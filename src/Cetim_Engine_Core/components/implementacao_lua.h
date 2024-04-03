@@ -631,7 +631,7 @@ namespace funcoes_ponte
 
 		if(!arquivo.is_open()){return 0;}
 
-		compression_manager cm;
+		compression_manager cm(3);
 		arquivo << cm.compress(j.dump());
 
 		return 0;
@@ -647,7 +647,7 @@ namespace funcoes_ponte
 		std::string data;
 		std::getline(arquivo, data);
 
-		compression_manager cm;
+		compression_manager cm(3);
 		json j = json::parse(cm.decompress(data)); 
 
 		lua_pushtable(L,json_table(j));
