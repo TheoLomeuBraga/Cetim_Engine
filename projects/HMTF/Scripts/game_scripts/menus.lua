@@ -10,7 +10,7 @@ require("short_cuts.create_sound")
 require("objects.window")
 local serializer = require("libs.serialize")
 require("math")
-register_function_set("file_system")
+
 
 local config_path = get_config_folder_path() .. "/hmtf"
 local config_file_path = config_path .. "/configs_save.lua"

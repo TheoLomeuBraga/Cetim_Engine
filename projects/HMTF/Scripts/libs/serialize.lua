@@ -1,6 +1,7 @@
 local serpent = require("libs.serpent")
 local base64 = require("libs.base64")
 local json = require("libs.json")
+register_function_set("file_system")
 
 local serializer = {}
 
@@ -71,6 +72,14 @@ function serializer.load_table_json(file_name)
     else
         return nil
     end
+end
+
+function serializer.save_table_compressed(file_name, table)
+    return save_table_compressed(file_name, table)
+end
+
+function serializer.load_table_compressed(file_name)
+    return load_table_compressed(file_name)
 end
 
 return serializer

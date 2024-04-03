@@ -624,6 +624,36 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int save_table_compressed(lua_State *L){
+		json j = table_json(lua_totable(L,2));
+
+		std::ofstream arquivo(lua_tostring(L,1));
+
+		if(!arquivo.is_open()){return 0;}
+
+		compression_manager cm;
+		arquivo << cm.compress(j.dump());
+
+		return 0;
+	}
+
+	int load_table_compressed(lua_State *L){
+		
+
+		std::ifstream arquivo(lua_tostring(L,1));
+
+		if(!arquivo.is_open()){return 0;}
+
+		std::string data;
+		std::getline(arquivo, data);
+
+		compression_manager cm;
+		json j = json::parse(cm.decompress(data)); 
+
+		lua_pushtable(L,json_table(j));
+		return 1;
+	}
+
 	int get_set_window(lua_State *L)
 	{
 		if (lua_tonumber(L, 1) == get_lua)
@@ -2711,6 +2741,9 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("file_system", {
 																   pair<string, lua_function>("get_config_folder_path", funcoes_ponte::get_config_folder_path),
 																   pair<string, lua_function>("create_directory", funcoes_ponte::create_directory),
+
+																   pair<string, lua_function>("save_table_compressed", funcoes_ponte::save_table_compressed),
+																   pair<string, lua_function>("load_table_compressed", funcoes_ponte::load_table_compressed),
 															   }),
 		pair<string, map<string, lua_function>>("game_object", {
 																   pair<string, lua_function>("create_object", funcoes_ponte::create_object),

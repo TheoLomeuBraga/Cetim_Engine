@@ -207,6 +207,9 @@ function set_render_layers()
 end
 
 function load_configs()
+
+   
+
     configs = serializer.load_table(config_file_path)
     if configs ~= nil then
         serializer.save_table(config_file_path,configs)
