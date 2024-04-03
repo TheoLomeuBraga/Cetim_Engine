@@ -112,8 +112,7 @@ function select_wepon(wepon)
         part_list = objects.parts_list,
         part_ptr_list = objects.parts_ptr_list,
         animations = wepon_data.animations,
-
-        shoot_sound = "Audio/sounds/shot_3.wav",
+        shoot_sound = "Audio/sounds/lazer_sound_1.wav",
 
         automatic = wepon.automatic,
         fire_rate = wepon.fire_rate,

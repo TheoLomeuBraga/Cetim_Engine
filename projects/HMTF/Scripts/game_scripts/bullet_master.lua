@@ -162,6 +162,8 @@ start_per_type = {
 
         bullet.distance = dist
         bcomps.transform:change_scale(1,1,bullet.distance)
+
+        
         
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
@@ -177,7 +179,6 @@ start_per_type = {
         local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
         sb2.transform:change_rotation(90,0,90)
         sb2.render_shader.material = sb1.render_shader.material
-        
         sb2.render_shader.layer = 2
         sb2.render_shader:set()
         
