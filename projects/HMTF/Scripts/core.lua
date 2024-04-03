@@ -208,13 +208,14 @@ end
 
 function load_configs()
 
-    --[[
+    --[[]]
    local t = {"ola mundo",{1,2,3}}
    print(t[1],t[2][1],t[2][2],t[2][3])
    serializer.save_table_compressed("a.bin",t)
+   
    t = serializer.load_table_compressed("a.bin")
    print(t[1],t[2][1],t[2][2],t[2][3])
-   ]]
+   
 
     configs = serializer.load_table(config_file_path)
     if configs ~= nil then

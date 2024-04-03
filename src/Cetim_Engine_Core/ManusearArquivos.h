@@ -23,6 +23,10 @@ using json = nlohmann::json;
 
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/string.hpp>
@@ -887,7 +891,7 @@ namespace ManuseioDados
 	std::string table_bin(const Table &table)
 	{
 		std::stringstream ss;
-		boost::archive::binary_oarchive oa(ss);
+		boost::archive::text_oarchive oa(ss);
 		oa << table;
 		return ss.str();
 	}
@@ -895,7 +899,7 @@ namespace ManuseioDados
 	Table bin_table(const std::string &table_bin)
 	{
 		std::stringstream ss(table_bin);
-		boost::archive::binary_iarchive ia(ss);
+		boost::archive::text_iarchive ia(ss);
 		Table table;
 		ia >> table;
 		return table;
