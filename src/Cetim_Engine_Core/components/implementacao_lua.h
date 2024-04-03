@@ -609,9 +609,6 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 namespace funcoes_ponte
 {
 
-	
-	
-
 	// screen
 
 	int get_config_folder_path(lua_State *L)
@@ -624,7 +621,7 @@ namespace funcoes_ponte
 	int create_directory(lua_State *L)
 	{
 		std::filesystem::create_directories(luaL_checkstring(L, 1));
-		return 0; 
+		return 0;
 	}
 
 	int get_set_window(lua_State *L)
@@ -2704,19 +2701,33 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int save_table(lua_State *L){
-		string s = lua_tostring(L,1);
-		Table t = lua_totable(L,2);
+	
 
-		return 0;
-	}
-
-	int load_table(lua_State *L){
-		Table ret;
-		
-		lua_pushtable(L,ret);
+	int compress(lua_State *L){
+		compression_manager cm;
+		lua_pushlstring(L,cm.decompress(lua_tostring(L,1)));
 		return 1;
 	}
+
+	int decompress(lua_State *L){
+		compression_manager cm;
+		lua_pushlstring(L,cm.decompress(lua_tostring(L,1)));
+		return 1;
+	}
+
+	int compress_table(lua_State *L){
+		compression_manager cm;
+		
+		return 1;
+	}
+
+	int decompress_table(lua_State *L){
+		compression_manager cm;
+		
+		return 1;
+	}
+
+	
 
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
 		pair<string, map<string, lua_function>>("file_system", {
@@ -2844,16 +2855,20 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("3D_sceane", {
 																 pair<string, lua_function>("get_scene_3D", get_scene_3D),
 															 }),
+		pair<string, map<string, lua_function>>("compression", {
+																 pair<string, lua_function>("compress", funcoes_ponte::compress),
+																 pair<string, lua_function>("decompress", funcoes_ponte::decompress),
+																pair<string, lua_function>("compress_table", funcoes_ponte::compress_table),
+																 pair<string, lua_function>("decompress_table", funcoes_ponte::decompress_table),
+																 
+															 }),
 		pair<string, map<string, lua_function>>("debug", {
 															 pair<string, lua_function>("print_cube", print_cube),
 															 pair<string, lua_function>("clean_cube", clean_cube),
 
-														 }),
-		pair<string, map<string, lua_function>>("serialization", {
-															 pair<string, lua_function>("save_table", funcoes_ponte::save_table),
-															 pair<string, lua_function>("load_table", funcoes_ponte::load_table),
+														 })
 
-														 }),
+
 	};
 
 };
@@ -3095,12 +3110,12 @@ public:
 			estados_lua.insert(pair<string, lua_State *>(state_name, lua_newthread(L)));
 		}
 		lua_State *co = estados_lua_co[state_name];
-		
+
 		print("START B");
 
 		lua_getglobal(co, "START");
 		print("START C");
-		lua_resume(co,L , 0,NULL);
+		lua_resume(co, L, 0, NULL);
 		print("START E");
 
 		print("START END");
@@ -3118,7 +3133,7 @@ public:
 		const char *msg = lua_tostring(L, -1); // Obtém a mensagem enviada pela coroutine
 		printf("%s\n", msg);				   // Imprime a mensagem
 		lua_pop(L, 1);						   // Remove a mensagem da pilha
-		lua_resume(L, co, 0,0);				   // Continua a execução da coroutine
+		lua_resume(L, co, 0, 0);			   // Continua a execução da coroutine
 
 		print("UPDATE END");
 	}
@@ -3146,8 +3161,7 @@ public:
 				lua_getglobal(p.second, "START");
 				lua_call(p.second, 0, 0);
 
-				
-				//start_coroutine(p.first);
+				// start_coroutine(p.first);
 				scripts_lua_iniciados[p.first] = true;
 			}
 		}
@@ -3191,14 +3205,14 @@ public:
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
-					//continue_coroutine(p.first);
+					// continue_coroutine(p.first);
 				}
 				else
 				{
 					lua_State *L = p.second;
 					lua_getglobal(p.second, "UPDATE");
 					lua_call(L, 0, 0);
-					//continue_coroutine(p.first);
+					// continue_coroutine(p.first);
 				}
 			}
 			else

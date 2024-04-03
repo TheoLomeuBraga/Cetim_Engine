@@ -224,8 +224,6 @@ end
 
 function START()
 
-    
-    
 
     post_processing:get()
     post_processing.material = matreial:new()

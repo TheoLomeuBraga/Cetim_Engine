@@ -21,6 +21,8 @@ using string = std::string;
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#include "compression.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION

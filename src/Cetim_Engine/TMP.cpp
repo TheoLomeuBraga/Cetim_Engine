@@ -70,6 +70,7 @@ void ShutdownImGui() {
 #include "ui_element.h"
 #include <bitset>
 #include "table_conversors.h"
+#include "compression.h"
 
 
 #include "ecs/ecs.h"
@@ -92,8 +93,6 @@ void register_ecs_components(){
 
 void configuracaoInicial()
 {
-
-    //register_ecs_components();
 
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
