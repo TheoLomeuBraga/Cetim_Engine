@@ -2703,29 +2703,7 @@ namespace funcoes_ponte
 
 	
 
-	int compress(lua_State *L){
-		compression_manager cm;
-		lua_pushlstring(L,cm.decompress(lua_tostring(L,1)));
-		return 1;
-	}
-
-	int decompress(lua_State *L){
-		compression_manager cm;
-		lua_pushlstring(L,cm.decompress(lua_tostring(L,1)));
-		return 1;
-	}
-
-	int compress_table(lua_State *L){
-		compression_manager cm;
-		
-		return 1;
-	}
-
-	int decompress_table(lua_State *L){
-		compression_manager cm;
-		
-		return 1;
-	}
+	
 
 	
 
@@ -2854,13 +2832,6 @@ namespace funcoes_ponte
 															   }),
 		pair<string, map<string, lua_function>>("3D_sceane", {
 																 pair<string, lua_function>("get_scene_3D", get_scene_3D),
-															 }),
-		pair<string, map<string, lua_function>>("compression", {
-																 pair<string, lua_function>("compress", funcoes_ponte::compress),
-																 pair<string, lua_function>("decompress", funcoes_ponte::decompress),
-																pair<string, lua_function>("compress_table", funcoes_ponte::compress_table),
-																 pair<string, lua_function>("decompress_table", funcoes_ponte::decompress_table),
-																 
 															 }),
 		pair<string, map<string, lua_function>>("debug", {
 															 pair<string, lua_function>("print_cube", print_cube),
