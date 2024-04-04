@@ -163,11 +163,12 @@ start_per_type = {
         bullet.distance = dist
         bcomps.transform:change_scale(1,1,bullet.distance)
 
-        
+        local extra_rot = math.random(0, 360)
+        print(extra_rot)
         
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
-        sb1.transform:change_rotation(90,0,0)
+        sb1.transform:change_rotation(90,0,extra_rot)
         sb1.render_shader.material = sprite_mat
         sb1.render_shader.material.color = bullet.color
         sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
@@ -177,7 +178,7 @@ start_per_type = {
         sb1.render_shader:set()
 
         local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
-        sb2.transform:change_rotation(90,0,90)
+        sb2.transform:change_rotation(90,0,90 + extra_rot)
         sb2.render_shader.material = sb1.render_shader.material
         sb2.render_shader.layer = 2
         sb2.render_shader:set()
