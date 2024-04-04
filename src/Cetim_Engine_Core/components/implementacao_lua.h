@@ -2598,52 +2598,6 @@ namespace funcoes_ponte
 
 		navmesh_print_cube_in_space(table_vec3(lua_totable(L, 1)));
 
-		/*
-		if (!display_lua_cubes)
-		{
-			display_lua_cubes = novo_objeto_jogo();
-		}
-
-		shared_ptr<objeto_jogo> display_lua_cube = novo_objeto_jogo();
-		display_lua_cube->adicionar_componente<transform_>();
-		display_lua_cube->pegar_componente<transform_>()->pos = table_vec3(lua_totable(L, 1));
-		display_lua_cube->pegar_componente<transform_>()->esca = vec3(1, 1, 1);
-
-		display_lua_cube->adicionar_componente<render_malha>();
-		shared_ptr<render_malha> rm = display_lua_cube->pegar_componente<render_malha>();
-
-		rm->usar_oclusao = false;
-		rm->camada = 4;
-
-		Material mat;
-		mat.shad = "mesh";
-
-		if (lua_cube_color.x < 1)
-		{
-			lua_cube_color.x += 0.5;
-		}
-		else if (lua_cube_color.y < 1)
-		{
-			lua_cube_color.y += 0.5;
-		}
-		else if (lua_cube_color.z < 1)
-		{
-			lua_cube_color.z += 0.5;
-		}
-		else
-		{
-			lua_cube_color = vec4(0, 0, 0, 1);
-		}
-
-		mat.cor = lua_cube_color;
-		mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
-
-		rm->malhas = {ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]};
-
-		rm->mats = {mat};
-		cena_objetos_selecionados->adicionar_objeto(display_lua_cubes, display_lua_cube);
-		*/
-
 		return 0;
 	}
 
