@@ -85,6 +85,8 @@ update_per_type = {
 
         bcomps.transform:change_scale(1 * bullet.timer,1 * bullet.timer,bullet.distance)
         
+    end,
+    [bullet_types.fast] = function (bullet)
     end
 }
 
@@ -164,8 +166,6 @@ start_per_type = {
         bcomps.transform:change_scale(1,1,bullet.distance)
 
         local extra_rot = math.random(0, 360)
-        print(extra_rot)
-        
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
         sb1.transform:change_rotation(90,0,extra_rot)
@@ -185,6 +185,8 @@ start_per_type = {
         
         
         
+    end,
+    [bullet_types.fast] = function (bullet)
     end
 }
 
