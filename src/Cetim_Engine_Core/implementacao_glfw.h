@@ -565,6 +565,45 @@ namespace controle
 		return count;
 	}
 
+	unordered_map<string, float> correct_mising_keys(unordered_map<string, float> mk)
+	{
+		unordered_map<string, float> ret = mk;
+
+		unordered_map<string, float> base_reference = {
+			std::pair<std::string, float>("a",0),
+			std::pair<std::string, float>("b",0),
+			std::pair<std::string, float>("x",0),
+			std::pair<std::string, float>("y",0),
+			std::pair<std::string, float>("lb",0),
+			std::pair<std::string, float>("rb",0),
+			std::pair<std::string, float>("back",0),
+			std::pair<std::string, float>("start",0),
+			std::pair<std::string, float>("la",0),
+			std::pair<std::string, float>("ra",0),
+			std::pair<std::string, float>("left",0),
+			std::pair<std::string, float>("right",0),
+			std::pair<std::string, float>("up",0),
+			std::pair<std::string, float>("down",0),
+
+			std::pair<std::string, float>("lx",0),
+			std::pair<std::string, float>("ly",0),
+			std::pair<std::string, float>("rx",0),
+			std::pair<std::string, float>("ry",0),
+			std::pair<std::string, float>("lt",0),
+			std::pair<std::string, float>("rt",0),
+		};
+
+		for (pair<string, float> p : base_reference)
+		{
+			if (ret.find(p.first) == ret.end())
+			{
+				ret.insert(p);
+			}
+		}
+
+		return ret;
+	}
+
 	unordered_map<string, float> last_inputs;
 
 	unordered_map<string, float> generateJoystickKeyMap(int joystick)
@@ -581,12 +620,8 @@ namespace controle
 		{
 			last_inputs = controle_dualshock_4::generateJoystickKeyMap(joystick);
 		}
-		else if (joystick_name == "Sony Interactive Entertainment Wireless Controller Touchpad")
-		{
-			// controle_dualshock_4::generateJoystickKeyMapTouch(joystick);
-		}
 
-		return last_inputs;
+		return correct_mising_keys(last_inputs);
 
 		// defout
 	}
@@ -755,15 +790,13 @@ void AntesReindenizar()
 
 bool iniciada_logica_scripts;
 
-
 Tempo::Timer deltaTimer;
 
-long double current_time=0,time_last_frame=0;
+long double current_time = 0, time_last_frame = 0;
 
 void Reindenizar()
 {
 
-	
 	Tempo::targetFPS(deltaTimer.get());
 	deltaTimer.clear();
 
@@ -772,24 +805,17 @@ void Reindenizar()
 	Tempo::deltaTime = current_time - time_last_frame;
 
 	time_last_frame = current_time;
-	
 
 	for (function<void()> f : Antes_Render_Func)
 	{
 		f();
 	}
 
-	
-
 	cena_objetos_selecionados->atualisar();
 
 	cena_objetos_selecionados->atualisar_transforms();
 
 	cena_objetos_selecionados->atualisar_Logica_Scripst();
-	
-	
-	
-	
 
 	reindenizar_cenario();
 

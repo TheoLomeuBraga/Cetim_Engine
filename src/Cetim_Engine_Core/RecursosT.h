@@ -102,6 +102,21 @@ public:
 	unordered_map<string, float> inputs;
 };
 
+class vr_headset_hand_input{
+	glm::vec3 position;
+	glm::quat rotation;
+	float trigers[4];
+	float buttons[4];
+	glm::vec2 analog_touch;
+	bool analog_touch_click;
+};
+
+class vr_headset_input{
+	vr_headset_hand_input hands[2];
+	glm::vec3 position;
+	glm::quat rotation;
+};
+
 class progresso_carregamento
 {
 public:

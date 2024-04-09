@@ -17,6 +17,7 @@ public:
 	teclado keyboard_input;
 	input_mouse mouse_input;
 	vector<joystick> joysticks_input;
+	vr_headset_input vr_input;
 
 	virtual string get_text_input() { return ""; }
 	virtual void set_text_input(bool on) {}
@@ -27,6 +28,9 @@ public:
 	{
 		vector<joystick> vj;
 		return vj;
+	}
+	virtual vr_headset_input get_vr_headset_input(){
+		return vr_input;
 	}
 
 	virtual void set_mouse_position(float x, float y) {}
@@ -47,6 +51,7 @@ void get_input()
 		manuseio_inputs->get_keyboard_input();
 		manuseio_inputs->get_mouse_input();
 		manuseio_inputs->get_joysticks_input();
+		manuseio_inputs->get_vr_headset_input();
 	}
 }
 
