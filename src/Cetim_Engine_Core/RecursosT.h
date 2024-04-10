@@ -103,6 +103,7 @@ public:
 };
 
 class vr_headset_hand_input{
+public:
 	glm::vec3 position;
 	glm::quat rotation;
 	std::map<std::string,float> actions;
@@ -123,10 +124,20 @@ class vr_headset_hand_input{
 	}
 };
 
+struct eye_position_vr{
+	glm::mat4 projection;
+	glm::mat4 view;
+};
+typedef struct eye_position_vr eye_position_vr;
+
 class vr_headset_input{
-	vr_headset_hand_input hands[2];
+public:
 	glm::vec3 position;
 	glm::quat rotation;
+
+	vr_headset_hand_input hands[2];
+	eye_position_vr eyes[2];
+
 };
 
 class progresso_carregamento
