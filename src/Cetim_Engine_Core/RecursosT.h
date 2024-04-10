@@ -105,10 +105,22 @@ public:
 class vr_headset_hand_input{
 	glm::vec3 position;
 	glm::quat rotation;
-	float trigers[4];
-	float buttons[4];
-	glm::vec2 analog_touch;
-	bool analog_touch_click;
+	std::map<std::string,float> actions;
+
+	float get_action(std::string act){
+		if(actions.find(act) != actions.end()){
+			return actions[act];
+		}
+		return 0;
+	}
+
+	void set_action(std::string act,float power){
+		actions.insert(pair<std::string,float>(act,power));
+	}
+
+	void clean_actions(){
+		actions.clear();
+	}
 };
 
 class vr_headset_input{

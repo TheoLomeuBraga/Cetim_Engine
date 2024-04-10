@@ -187,6 +187,7 @@ start_per_type = {
         
     end,
     [bullet_types.fast] = function (bullet)
+        
     end
 }
 
@@ -203,7 +204,6 @@ function summon_bullet(args)
     local color = args[7]
     local distance = args[8]
     local damage = args[9]
-    local obj = game_object(create_object(layers.main))
     local obj = game_object(create_object(layers.main))
 
     local bullet_data = {
