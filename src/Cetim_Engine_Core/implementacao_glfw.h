@@ -418,7 +418,7 @@ namespace controle_dualshock_4
 
 		std::pair<std::string, std::string>("8", "back"),
 		std::pair<std::string, std::string>("9", "start"),
-		// std::pair<std::string, std::string>("10", ""),
+		std::pair<std::string, std::string>("10", ""),
 		std::pair<std::string, std::string>("11", "la"),
 		std::pair<std::string, std::string>("12", "ra"),
 		std::pair<std::string, std::string>("13", "up"),
@@ -455,10 +455,10 @@ namespace controle_dualshock_4
 			for (int i = 0; i < buttonCount; ++i)
 			{
 
+				//print("button",i,(int)buttons[i]);
+
 				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
-
-					//print("button",i,(int)buttons[i]);
 
 					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
 					{
@@ -486,6 +486,8 @@ namespace controle_dualshock_4
 
 			for (int i = 0; i < axisCount; ++i)
 			{
+
+				//print("axes",i,axes[i]);
 
 				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
 				{
