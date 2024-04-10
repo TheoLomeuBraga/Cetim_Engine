@@ -109,7 +109,9 @@
         "rope": "cpp",
         "slist": "cpp",
         "csetjmp": "cpp",
-        "scoped_allocator": "cpp"
+        "scoped_allocator": "cpp",
+        "stdio.h": "c",
+        "string.h": "c"
     },
     "cmake.configureOnOpen": false,
     "Lua.diagnostics.disable": [
