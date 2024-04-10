@@ -378,6 +378,36 @@ namespace controle_xbox_360
 namespace controle_dualshock_4
 {
 
+	#ifdef _WIN32
+	std::map<std::string, std::string> ajust_keys_map = {
+		std::pair<std::string, std::string>("0", "x"),
+		std::pair<std::string, std::string>("1", "a"),
+		std::pair<std::string, std::string>("2", "b"),
+		std::pair<std::string, std::string>("3", "y"),
+		std::pair<std::string, std::string>("4", "lb"),
+		std::pair<std::string, std::string>("5", "rb"),
+
+		std::pair<std::string, std::string>("8", "back"),
+		std::pair<std::string, std::string>("9", "start"),
+		std::pair<std::string, std::string>("10", "la"),
+		std::pair<std::string, std::string>("11", "ra"),
+		std::pair<std::string, std::string>("12", ""),
+		std::pair<std::string, std::string>("13", ""),
+		std::pair<std::string, std::string>("14", "up"),
+		std::pair<std::string, std::string>("15", "right"),
+		std::pair<std::string, std::string>("16", "down"),
+		std::pair<std::string, std::string>("17", "left"),
+
+		std::pair<std::string, std::string>("axis_0", "lx"),
+		std::pair<std::string, std::string>("axis_1", "ly"),
+		std::pair<std::string, std::string>("axis_2", "rx"),
+		std::pair<std::string, std::string>("axis_3", "lt"),
+		std::pair<std::string, std::string>("axis_4", "rt"),
+		std::pair<std::string, std::string>("axis_5", "ry"),
+	};
+	#endif
+
+	#ifdef __linux__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
 		std::pair<std::string, std::string>("1", "b"),
@@ -403,6 +433,7 @@ namespace controle_dualshock_4
 		std::pair<std::string, std::string>("axis_4", "ry"),
 		std::pair<std::string, std::string>("axis_5", "rt"),
 	};
+	#endif
 
 	static std::vector<float> prevJoystickButtonsState;
 
@@ -426,6 +457,8 @@ namespace controle_dualshock_4
 
 				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
+
+					//print("button",i,(int)buttons[i]);
 
 					if (buttons[i] == GLFW_PRESS && prevJoystickButtonsState[i] == GLFW_RELEASE)
 					{
@@ -456,6 +489,7 @@ namespace controle_dualshock_4
 
 				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
 				{
+#ifdef __linux__
 					if (i == 2 || i == 5)
 					{
 						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
@@ -464,6 +498,17 @@ namespace controle_dualshock_4
 					{
 						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
 					}
+#endif
+#ifdef _WIN32
+					if (i == 3 || i == 4)
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = (axes[i] + 1) / 2;
+					}
+					else
+					{
+						joystickKeyMap[ajust_keys_map[string("axis_") + std::to_string(i)]] = axes[i];
+					}
+#endif
 				}
 			}
 		}
@@ -610,7 +655,7 @@ namespace controle
 	{
 
 		std::string joystick_name = glfwGetJoystickName(joystick);
-		// print(joystick_name);
+		//print(joystick_name);
 
 		if (joystick_name == "Xbox 360 Wireless Receiver")
 		{

@@ -78,7 +78,6 @@ int main()
     strcat(cmd, LPATHW);
 
     single_line(&cmd);
-    run_command(cmd);;
     if (!SetEnvironmentVariable("PATH", cmd)) {
         perror("Erro ao definir variável de ambiente");
         return 1;
