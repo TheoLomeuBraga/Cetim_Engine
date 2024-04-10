@@ -63,20 +63,24 @@ void single_line(char *str)
 }
 
 #ifdef _WIN32
+#include <Windows.h>
 int main()
 {
 
     char current_directory[256] = "";
-    strcpy(current_directory, run_command("pwd"));
+    if (GetCurrentDirectory(256, current_directory) == 0) {
+        printf("Erro ao obter o diretório atual\n");
+        return 1;
+    }
 
     char cmd[256] = "";
     strcat(cmd, current_directory);
-    strcat(cmd, LPATHL);
+    strcat(cmd, LPATHW);
 
     single_line(&cmd);
     run_command(cmd);;
-    if (setenv("LD_LIBRARY_PATH", cmd, 1) != 0) {
-        perror("Erro ao definir LD_LIBRARY_PATH");
+    if (!SetEnvironmentVariable("PATH", cmd)) {
+        perror("Erro ao definir variável de ambiente");
         return 1;
     }
 
@@ -84,7 +88,7 @@ int main()
     char cmd2[256] = "";
     strcat(cmd2, current_directory);
     strcat(cmd2, EPATH);
-    strcat(cmd2, " ");
+    strcat(cmd2, ".exe ");
     strcat(cmd2, current_directory);
     strcat(cmd2, CPATH);
 
