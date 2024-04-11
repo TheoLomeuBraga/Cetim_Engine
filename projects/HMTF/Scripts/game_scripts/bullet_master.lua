@@ -187,7 +187,8 @@ start_per_type = {
         
     end,
     [bullet_types.fast] = function (bullet)
-        
+        bullet.obj.transform.billboarding = 1
+        bullet.obj.transform:set()
     end
 }
 

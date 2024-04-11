@@ -42,6 +42,9 @@ public:
 
 	imagem *alvo_render;
 
+	bool is_vr = false;
+	glm::mat4 matrizVisao_vr[2], matrizProjecao_vr[2];
+
 	camera() {}
 
 	void pegar_matriz_visao()
@@ -49,32 +52,38 @@ public:
 		if (paiTF != NULL)
 		{
 
-			mat4 new_mat;
-			vec3 nada;
-			vec4 nada2;
-			vec3 pos;
-			quat qua;
-
-			if (paiTF->paiTF == NULL)
+			if (is_vr == false)
 			{
-				new_mat = paiTF->matrizTransform;
+				mat4 new_mat;
+				vec3 nada;
+				vec4 nada2;
+				vec3 pos;
+				quat qua;
+
+				if (paiTF->paiTF == NULL)
+				{
+					new_mat = paiTF->matrizTransform;
+				}
+				else
+				{
+					new_mat = paiTF->paiTF->matrizTransform;
+				}
+
+				new_mat = translate(new_mat, paiTF->pos);
+
+				vec3 rot = quat_graus(paiTF->quater);
+				rot = vec3(-rot.x, rot.y, -rot.z);
+
+				new_mat *= toMat4(graus_quat(rot));
+
+				glm::decompose(new_mat, nada, qua, pos, nada, nada2);
+
+				matrizVisao = getCameraViewMatrix(new_mat);
+				matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
 			}
-			else
-			{
-				new_mat = paiTF->paiTF->matrizTransform;
+			else{
+				
 			}
-
-			new_mat = translate(new_mat, paiTF->pos);
-
-			vec3 rot = quat_graus(paiTF->quater);
-			rot = vec3(-rot.x, rot.y, -rot.z);
-
-			new_mat *= toMat4(graus_quat(rot));
-
-			glm::decompose(new_mat, nada, qua, pos, nada, nada2);
-
-			matrizVisao = getCameraViewMatrix(new_mat);
-			matrizVisao = translate(matrizVisao, vec3(pos.x, -pos.y, pos.z));
 		}
 	}
 
@@ -238,7 +247,7 @@ namespace camera_ecs
 			vec3 pos;
 			quat qua;
 
-			//terminar isso
+			// terminar isso
 
 			vec3 rot = quat_graus(tf->rotation);
 			rot = vec3(-rot.x, rot.y, -rot.z);
@@ -247,7 +256,6 @@ namespace camera_ecs
 
 			cam->view = getCameraViewMatrix(new_mat);
 			cam->view = translate(cam->view, vec3(pos.x, -pos.y, pos.z));
-			
 		}
 	}
 

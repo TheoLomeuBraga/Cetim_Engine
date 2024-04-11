@@ -293,50 +293,7 @@ public:
 		teste_cam->pegar_componente<camera>()->atualizar_tf();
 	}
 
-	void teste_desenhar_malha()
-	{
-		if (teste_cam == NULL)
-		{
-			iniciar_teste_tf_teste_cam();
-		}
-		teste_desenhar_malha(teste_tf, teste_cam);
-	}
-	void teste_desenhar_malha(shared_ptr<transform_> tf, shared_ptr<objeto_jogo> cam)
-	{
-
-		unsigned int shader_s = pegar_shader("teste_malha");
-		glUseProgram(shader_s);
-
-		// transform
-		glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
-		glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &tf->matrizTransform[0][0]);
-		glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizVisao[0][0]);
-		glUniformMatrix4fv(shader_uniform_location[shader_s]["projection"], 1, GL_FALSE, &cam->pegar_componente<camera>()->matrizProjecao[0][0]);
-
-		for (int i = 0; i < 4; i++)
-		{
-			glEnableVertexAttribArray(i);
-		}
-
-		// posição
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, posicao)));
-		// uv
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, uv)));
-		// normal
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, normal)));
-		// cor
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), reinterpret_cast<void *>(offsetof(vertice, cor)));
-
-		glDisable(GL_CULL_FACE);
-
-		glDrawElements(
-			GL_TRIANGLES,							   // mode
-			malhas[oclusion_box.get()].tamanho_indice, // count
-			GL_UNSIGNED_INT,						   // type
-			(void *)0								   // element array buffer offset
-		);
-	}
-
+	
 	void criar_oclusion_querie(shared_ptr<objeto_jogo> obj)
 	{
 		if (oclusion_queries.find(obj) == oclusion_queries.end())
