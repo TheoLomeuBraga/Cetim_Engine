@@ -26,7 +26,7 @@ local assets_needed = {
     new_asset_list_element(asset_types.image,"Textures/null.svg"),
     new_asset_list_element(asset_types.image,"Levels/hub/null.png"),
     new_asset_list_element(asset_types.image,"Textures/arm_cannon_texture.png"),
-    new_asset_list_element(asset_types.image,"Textures/energy_buble.svg"),
+    new_asset_list_element(asset_types.image,"Textures/energy_buble.png"),
     
     new_asset_list_element(asset_types.scene_3D,"3D Models/bullets.gltf"),
     new_asset_list_element(asset_types.scene_3D,"3D Models/arm_cannon.gltf"),

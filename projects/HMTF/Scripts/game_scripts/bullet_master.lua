@@ -87,6 +87,7 @@ update_per_type = {
         
     end,
     [bullet_types.fast] = function (bullet)
+        local obj_comp = bullet.obj.components
     end
 }
 
@@ -142,8 +143,8 @@ start_per_type = {
         if start_effect == nil then
             start_effect = bullet.start
         end
-        local target = bullet.target
 
+        local target = bullet.target
         local hit = false
         local hit_info = {}
         hit,hit_info = raycast_3D(start,target)
@@ -154,10 +155,10 @@ start_per_type = {
 
         --damage
 
-        local dist = distance(start_effect,target)
+        local dist = distance(start_effect,bullet.target)
 
         
-        local mp = midpoint(start_effect, target)
+        local mp = midpoint(start_effect, bullet.target)
         bcomps.transform:change_position(mp.x,mp.y,mp.z)
 
         bcomps.transform:look_at(bullet.target)
@@ -169,7 +170,7 @@ start_per_type = {
 
         local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
         sb1.transform:change_rotation(90,0,extra_rot)
-        sb1.render_shader.material = sprite_mat
+        sb1.render_shader.material = deepcopy(sprite_mat)
         sb1.render_shader.material.color = bullet.color
         sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
         sb1.render_shader.material.textures[1] = "Textures/energy_ray.svg"
@@ -183,12 +184,48 @@ start_per_type = {
         sb2.render_shader.layer = 2
         sb2.render_shader:set()
         
-        
-        
     end,
     [bullet_types.fast] = function (bullet)
-        bullet.obj.transform.billboarding = 1
-        bullet.obj.transform:set()
+
+        local target = bullet.target
+        local hit = false
+        local hit_info = {}
+        hit,hit_info = raycast_3D(bullet.start,target)
+        if hit then
+            target = hit_info.position
+        end
+        bullet.target = target
+
+        local obj_comp = bullet.obj.components
+
+        obj_comp.transform.billboarding = 2
+        obj_comp.transform.position = bullet.start
+        obj_comp.transform.scale.x = 0.25
+        obj_comp.transform.scale.y = 0.25
+        obj_comp.transform:set()
+
+        obj_comp.render_shader.material = deepcopy(sprite_mat)
+        obj_comp.render_shader.material.color = bullet.color
+        obj_comp.render_shader.material.color = {r=1,g=0.1,b=0.1,a=obj_comp.render_shader.material.color.a - 0.001}
+        obj_comp.render_shader.material.textures[1] = "Textures/energy_buble.png"
+        obj_comp.render_shader.material.position_scale = Vec4:new(0,0,1,1)
+        obj_comp.render_shader.layer = 2
+        obj_comp.render_shader:set()
+        
+
+        --[[
+        
+        
+
+        obj_comp.render_mesh.layer = 2
+        obj_comp.render_mesh.meshes_cout = 1
+        obj_comp.render_mesh.meshes =  {{ file = "3D Models/bullets.gltf", name = "round_bullet" }}
+        obj_comp.render_mesh.materials = {deepcopy(mesh_mat)}
+        obj_comp.render_mesh.materials[1].color = bullet.color
+        obj_comp.render_mesh.materials[1].color.a = bullet.color.a - 0.001
+        obj_comp.render_mesh:set()
+        ]]
+        
     end
 }
 
