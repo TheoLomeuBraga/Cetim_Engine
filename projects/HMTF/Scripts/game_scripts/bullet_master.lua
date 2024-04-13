@@ -71,6 +71,36 @@ function midpoint(a, b)
     return {x = mx, y = my, z = mz}
 end
 
+function normalize(vector)
+    local length = math.sqrt(vector.x^2 + vector.y^2 + vector.z^2)
+    return {
+        x = vector.x / length,
+        y = vector.y / length,
+        z = vector.z / length
+    }
+end
+
+function calculate_next_position(a, b, t)
+    -- Calculando o vetor direção do ponto 'a' para o ponto 'b'
+    local direction_vector = {
+        x = b.x - a.x,
+        y = b.y - a.y,
+        z = b.z - a.z
+    }
+    
+    -- Normalizando o vetor direção
+    local normalized_direction = normalize(direction_vector)
+    
+    -- Calculando a próxima posição baseada na velocidade 't' e na direção normalizada
+    local next_position = {
+        x = a.x + normalized_direction.x * t,
+        y = a.y + normalized_direction.y * t,
+        z = a.z + normalized_direction.z * t
+    }
+    
+    return next_position
+end
+
 update_per_type = {
     [bullet_types.ray] = function (bullet)
 
@@ -88,6 +118,7 @@ update_per_type = {
     end,
     [bullet_types.fast] = function (bullet)
         local obj_comp = bullet.obj.components
+        local distance = distance(obj_comp.transform:get_global_position(), bullet.target)
     end
 }
 
@@ -212,20 +243,6 @@ start_per_type = {
         obj_comp.render_shader.layer = 2
         obj_comp.render_shader:set()
         
-
-        --[[
-        
-        
-
-        obj_comp.render_mesh.layer = 2
-        obj_comp.render_mesh.meshes_cout = 1
-        obj_comp.render_mesh.meshes =  {{ file = "3D Models/bullets.gltf", name = "round_bullet" }}
-        obj_comp.render_mesh.materials = {deepcopy(mesh_mat)}
-        obj_comp.render_mesh.materials[1].color = bullet.color
-        obj_comp.render_mesh.materials[1].color.a = bullet.color.a - 0.001
-        obj_comp.render_mesh:set()
-        ]]
-        
     end
 }
 
@@ -242,6 +259,7 @@ function summon_bullet(args)
     local color = args[7]
     local distance = args[8]
     local damage = args[9]
+    local effect = args[10]
     local obj = game_object(create_object(layers.main))
 
     local bullet_data = {
@@ -254,7 +272,8 @@ function summon_bullet(args)
         speed = speed,
         color = color,
         distance = distance,
-        damage = damage
+        damage = damage,
+        effect = effect
     }
 
     start_per_type[bullet_data.type](bullet_data)
