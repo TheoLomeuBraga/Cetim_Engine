@@ -81,17 +81,13 @@ function normalize(vector)
 end
 
 function calculate_next_position(a, b, t)
-    -- Calculando o vetor direção do ponto 'a' para o ponto 'b'
-    local direction_vector = {
-        x = b.x - a.x,
-        y = b.y - a.y,
-        z = b.z - a.z
-    }
+    -- Calcula o vetor direção do ponto a para o ponto b
+    local direction = {x = b.x - a.x, y = b.y - a.y, z = b.z - a.z}
     
-    -- Normalizando o vetor direção
-    local normalized_direction = normalize(direction_vector)
+    -- Normaliza o vetor direção
+    local normalized_direction = normalize(direction)
     
-    -- Calculando a próxima posição baseada na velocidade 't' e na direção normalizada
+    -- Calcula a próxima posição do objeto
     local next_position = {
         x = a.x + normalized_direction.x * t,
         y = a.y + normalized_direction.y * t,
@@ -100,6 +96,7 @@ function calculate_next_position(a, b, t)
     
     return next_position
 end
+
 
 update_per_type = {
     [bullet_types.ray] = function (bullet)
@@ -118,7 +115,29 @@ update_per_type = {
     end,
     [bullet_types.fast] = function (bullet)
         local obj_comp = bullet.obj.components
-        local distance = distance(obj_comp.transform:get_global_position(), bullet.target)
+        local last_pos = obj_comp.transform:get_global_position()
+        local distance = distance(last_pos, bullet.target)
+
+        local next_pos = calculate_next_position(last_pos,bullet.target, bullet.speed * time.delta)
+        if distance <= bullet.speed * time.delta then
+            bullet.dead = true
+        end
+
+        obj_comp.transform:change_position(next_pos.x,next_pos.y,next_pos.z)
+
+        local hit = false
+        local hit_info = {}
+        hit,hit_info = raycast_3D(last_pos,next_pos)
+        if hit then
+            print(hit)
+            bullet.dead = true
+        end
+
+        --[[
+            process damage
+        ]]
+
+        
     end
 }
 
