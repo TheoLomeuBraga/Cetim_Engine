@@ -2151,6 +2151,20 @@ namespace funcoes_ponte
 		}
 	}
 
+	int get_screen_point_direction(lua_State *L){
+		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+		shared_ptr<camera> cam = obj->pegar_componente<camera>();
+
+		pair<vec3,vec3> ray = cam->getRayPoints(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+		Table ret;
+
+		ret.setTable("1",vec3_table(ray.first));
+		ret.setTable("2",vec3_table(ray.second));
+
+		lua_pushtable(L,ret);
+		return 1;
+	}
+
 	int get_set_physic_3D(lua_State *L)
 	{
 
@@ -2759,6 +2773,7 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_text_size", funcoes_ponte::get_text_size),
 															  pair<string, lua_function>("get_set_render_shader", funcoes_ponte::get_set_render_shader),
 															  pair<string, lua_function>("get_set_camera", funcoes_ponte::get_set_camera),
+															  pair<string, lua_function>("get_screen_point_direction", funcoes_ponte::get_screen_point_direction),
 															  pair<string, lua_function>("get_set_render_mesh", funcoes_ponte::get_set_render_mesh),
 															  pair<string, lua_function>("get_set_render_poly_mesh", funcoes_ponte::get_set_render_poly_mesh),
 															  pair<string, lua_function>("get_scene_3D", funcoes_ponte::get_scene_3D),
