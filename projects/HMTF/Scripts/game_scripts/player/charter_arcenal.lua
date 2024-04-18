@@ -192,11 +192,12 @@ function shoot()
     pos.effect = camera.components.transform:get_global_position(-0.3,-0.3,1)
     
     local target = camera.components.transform:get_global_position(0,0,50)
+    
 
     
     
-    --summon_bullet(bullet_types.ray,"","",pos,target,0,{r=1,g=0,b=0,a=1},100,1)
-    summon_bullet(bullet_types.fast,"","",pos,target,25,{r=1,g=0,b=0,a=1},100,1,"")
+    summon_bullet(bullet_types.ray,"","",pos,target,0,{r=1,g=0,b=0,a=1},100,1)
+    --summon_bullet(bullet_types.fast,"","",pos,target,25,{r=1,g=0,b=0,a=1},100,1,"")
 
     
 end

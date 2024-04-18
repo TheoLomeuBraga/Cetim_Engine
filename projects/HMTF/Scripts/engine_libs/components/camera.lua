@@ -36,16 +36,13 @@ function camera_component:get()
     self.fcp = j.fcp
     self.ncp = j.ncp
 end
-function camera_component:get()
-    local j = get_set_camera(get_lua,self.object_ptr)
-    self.orthographc = j.orthographc > 0
-    self.size = deepcopyjson(j.size)
-    self.zoom = j.zoom
-    self.resolution = deepcopyjson(j.resolution)
-    self.fcp = j.fcp
-    self.ncp = j.ncp
+function camera_component:set()
+    get_set_camera(set_lua,self)
 end
+--[[]]
 function camera_component:get_screen_point_direction(x,y,distance)
     return c_get_screen_point_direction(self.object_ptr,x,y,distance)
 end
+
+
 component_map[components.camera] = apply_component_metatable(camera_component:new(nil))

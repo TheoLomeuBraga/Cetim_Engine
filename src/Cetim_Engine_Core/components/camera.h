@@ -92,7 +92,7 @@ public:
 
 		pegar_matriz_visao();
 	}
-
+	
 	std::pair<glm::vec3, glm::vec3> getRayPoints(float xScreen, float yScreen,float distance = 1)
 	{
 		// Normalizar as coordenadas da tela para o intervalo de [-1, 1]
