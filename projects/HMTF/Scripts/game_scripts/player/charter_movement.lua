@@ -182,7 +182,6 @@ end
 
 function UPDATE()
     time:get()
-
     
     if game_state == game_states.play then
         gravity:get()
@@ -321,6 +320,8 @@ function UPDATE()
 
 
             movement_inpulse = deepcopy(impulse)
+
+            this_physics_3d:set_linear_velocity(movement_inpulse.x, movement_inpulse.y, movement_inpulse.z)
 
 
             if not hit_down then
