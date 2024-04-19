@@ -92,33 +92,37 @@ public:
 
 		pegar_matriz_visao();
 	}
-	
-	std::pair<glm::vec3, glm::vec3> getRayPoints(float xScreen, float yScreen,float distance = 1)
+
+	std::pair<glm::vec3, glm::vec3> getRayPoints(float screenX, float screenY, float distance)
 	{
-		// Normalizar as coordenadas da tela para o intervalo de [-1, 1]
-		float xNDC = (xScreen * 2.0f) - 1.0f;
-		float yNDC = 1.0f - (yScreen * 2.0f);
+		if (paiTF)
+		{
+			pegar_matriz_visao();
+			// Converta as coordenadas do mouse em coordenadas de tela normalizadas
+			float normalizedX = (2.0f * screenX) / 1 - 1.0f;
+			float normalizedY = 1.0f - (2.0f * screenY) / 1;
 
-		// Calcula a matriz de inversão de VP (view-projection)
-		glm::mat4 invVP = glm::inverse(matrizProjecao * matrizVisao);
+			// Converta as coordenadas normalizadas em coordenadas de espaço de câmera
+			glm::vec4 rayClip(normalizedX, normalizedY, -1.0f, 1.0f);
 
-		// Ponto no espaço de câmera
-		glm::vec4 rayClip = glm::vec4(xNDC, yNDC, -1.0, 1.0);
+			glm::vec4 rayEye = glm::inverse(matrizProjecao) * rayClip;
+			rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
 
-		// Transforma o ponto para o espaço de coordenadas do mundo
-		glm::vec4 rayEye = invVP * rayClip;
-		rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
+			// Converta as coordenadas de espaço de câmera em coordenadas de espaço do mundo
+			glm::vec4 rayWorld = glm::inverse(matrizVisao) * rayEye;
+			glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld));
+			rayDir.y = -rayDir.y;
 
-		// Transforma o raio para o espaço do mundo
-		glm::vec3 rayDir = glm::normalize(glm::vec3(glm::inverse(matrizVisao) * rayEye));
+			// Posição da câmera no mundo
+			glm::vec3 cameraPosition = paiTF->pegar_pos_global();
 
-		// Ponto de início do raio
-		glm::vec3 rayStart = glm::vec3(glm::inverse(matrizVisao) * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			// Calcula um ponto longe na direção do raio
+			glm::vec3 rayEnd = cameraPosition + rayDir * -distance;
 
-		// Ponto de fim do raio (usando a distância fornecida)
-		glm::vec3 rayEnd = rayStart + rayDir * distance;
+			return std::make_pair(cameraPosition, rayEnd);
+		}
 
-		return std::make_pair(rayStart, rayEnd);
+		return std::make_pair(vec3(0, 0, 0), vec3(0, 0, 0));
 	}
 
 	glm::mat4 gerar_matriz_perspectiva(float zoom, int resX, int resY, float ncp, float fcp)

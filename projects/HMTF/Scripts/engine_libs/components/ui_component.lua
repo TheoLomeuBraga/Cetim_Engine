@@ -56,7 +56,7 @@ function advanced_ui_style:new()
         space_betwen_lines = 2,
         background_image = "Textures/null.svg",
         border_image = "Textures/null.svg",
-        text_font = "Fonts/Glowworm Regular.ttf",
+        text_font = "Fonts/OpenSans.ttf",
     }
 end
 

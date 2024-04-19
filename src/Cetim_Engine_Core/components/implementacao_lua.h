@@ -40,6 +40,8 @@ using namespace Tempo;
 
 #include "config_folder_path.h"
 
+#include "menu_manager.h"
+
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir(path, mode) _mkdir(path)

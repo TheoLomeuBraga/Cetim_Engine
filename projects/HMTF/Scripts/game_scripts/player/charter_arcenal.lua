@@ -187,11 +187,20 @@ function shoot()
     camera.components.audio_source.path = selected_wepom.shoot_sound
     camera.components.audio_source.volume = 2.5
     camera.components.audio_source:set()
+
     
+    
+    --[[
     local pos = camera.components.transform:get_global_position(0,0,1)
     pos.effect = camera.components.transform:get_global_position(-0.3,-0.3,1)
-    
     local target = camera.components.transform:get_global_position(0,0,50)
+    ]]
+
+    local pos = camera.components.transform:get_global_position(0,0,1)
+    pos.effect = camera.components.transform:get_global_position(-0.3,-0.3,1)
+    local target = camera.components.transform:get_global_position(0,0,50)
+
+    
     
 
     

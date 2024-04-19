@@ -19,7 +19,7 @@ function ui_style:new()
         color_hover = { r = 0, g = 0, b = 1, a = 1 },
         color_click = { r = 0, g = 0, b = 1, a = 1 },
 
-        text_font = "Fonts/Glowworm Regular.ttf",
+        text_font = "Fonts/OpenSans.ttf",
         text_color = { r = 0, g = 1, b = 0, a = 1 },
 
         border_size = 0.1,
