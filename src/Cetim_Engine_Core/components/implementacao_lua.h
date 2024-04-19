@@ -1463,6 +1463,11 @@ namespace funcoes_ponte
 			ret.setString("text", converter.to_bytes(rt->texto));
 			ret.setFloat("text_location_x", (char)rt->text_location_x);
 			ret.setFloat("text_location_y", (char)rt->text_location_y);
+			Table sChanges;
+			for(pair<unsigned int,text_style_change> p : rt->style_changes){
+				sChanges.setTable(to_string(p.first + 1),text_style_change_table(p.second));
+			}
+			ret.setTable("style_changes", sChanges);
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1479,6 +1484,11 @@ namespace funcoes_ponte
 			rt->mat = table_material(t.getTable("material"));
 			rt->text_location_x = (char)t.getFloat("text_location_x");
 			rt->text_location_y = (char)t.getFloat("text_location_y");
+			unordered_map<unsigned int,text_style_change> style_changes;
+			for(pair<std::string, Table> p : t.getTable("style_changes").m_tableMap){
+				style_changes.insert(pair<unsigned int,text_style_change>(std::stoi(p.first) - 1,table_text_style_change(p.second)));
+			}
+			rt->style_changes = style_changes;
 			return 0;
 		}
 	}

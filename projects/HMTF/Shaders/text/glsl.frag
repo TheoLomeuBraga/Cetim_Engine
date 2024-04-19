@@ -48,10 +48,10 @@ vec4 applyXBRFilter(sampler2D tex, vec2 uv)
 }
 
 void main(){
-    
+        
     float f = applyXBRFilter(textures[0],uv).x;
     if(f > 0.01){
-        f *= 20;
+        f = 1;
     }else{
         f = 0;
     }

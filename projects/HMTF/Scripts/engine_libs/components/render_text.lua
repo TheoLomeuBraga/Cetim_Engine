@@ -15,6 +15,28 @@ render_text_location = {
 	right = 5
 }
 
+text_style_change = {}
+function text_style_change:new(font,color)
+    return {
+        font = font,
+        color = color
+    }
+end
+
+test_style_r = {
+    font = "Fonts/OpenSans.ttf",
+    color = {r=1,g=0,b=0,a=1}
+}
+test_style_g = {
+    font = "Fonts/OpenSans.ttf",
+    color = {r=0,g=1,b=0,a=1}
+}
+test_style_b = {
+    font = "Fonts/OpenSans.ttf",
+    color = {r=0,g=0,b=1,a=1}
+}
+
+
 render_text_component = create_base_component(components.render_text)
 render_text_component.layer = 2
 render_text_component.font = ""
@@ -24,6 +46,9 @@ render_text_component.uniform_space_between_characters = false
 render_text_component.material = matreial:new()
 render_text_component.text_location_x = render_text_location.center
 render_text_component.text_location_y = render_text_location.center
+render_text_component.style_changes = {}
+
+
 function render_text_component:clean()
     self.layer = 2
     self.font = ""
@@ -33,6 +58,8 @@ function render_text_component:clean()
     self.material = matreial:new()
     self.text_location_x = render_text_location.center
     self.text_location_y = render_text_location.center
+    self.style_changes = {}
+
 end
     function render_text_component:get()
         local j = get_set_render_text(get_lua,self.object_ptr)
@@ -44,7 +71,7 @@ end
         self.material = j.material
         self.text_location_x = j.text_location_x
         self.text_location_x = j.text_location_y
-
+        self.style_changes = j.style_changes
         
     end
     function render_text_component:set()

@@ -554,6 +554,21 @@ Table scene_3D_table_with_cache(shared_ptr<cena_3D> sceane)
     return scene_3D_table_cache[sceane];
 }
 
+Table text_style_change_table(text_style_change style){
+    Table ret;
+    ret.setString("font",style.font->path);
+    ret.setTable("color",color_table(style.color));
+    return ret;
+}
+
+text_style_change table_text_style_change(Table style){
+    text_style_change ret;
+    ret.color = table_color(style.getTable("color"));
+    ret.font = ManuseioDados::carregar_fonte(style.getString("font"));
+    return ret;
+}
+
+
 void register_scene_3D_table(shared_ptr<cena_3D> sceane)
 {
     scene_3D_table_with_cache(sceane);

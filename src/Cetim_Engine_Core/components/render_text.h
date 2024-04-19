@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <string>
 #include <locale>
+#include <unordered_map>
 
 
 #include <functional>
@@ -15,7 +16,6 @@ using String = std::string;
 
 #include "RecursosT.h"
 #include "game_object.h"
-
 
 enum render_text_location
 {
@@ -36,11 +36,20 @@ std::wstring convert_to_wstring(const std::string& text) {
     return converter.from_bytes(text);
 }
 
+struct text_style_change_struct {
+	glm::vec4 color = vec4(0,0,0,1);
+	shared_ptr<fonte> font = NULL;
+};
+typedef struct text_style_change_struct text_style_change;
+
 class render_texto : public componente
 {
 public:
 	Material mat;
 	shared_ptr<fonte> font;
+
+	unordered_map<unsigned int,text_style_change> style_changes;
+
 	bool ligado = true;
 	uint8_t camada = 0;
 	float tamanho_max_linha = 1000;
@@ -50,6 +59,9 @@ public:
 	wstring texto;
 	char text_location_x = render_text_location::CENTER;
 	char text_location_y = render_text_location::CENTER;
+
+	
+
 
 	vec2 get_text_size()
 	{
@@ -183,5 +195,11 @@ public:
 		texto = convert_to_wstring(text);
 	}
 
-	render_texto() {}
+	/**/
+	
+	
+
+	render_texto(){
+		
+	}
 };

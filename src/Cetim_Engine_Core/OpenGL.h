@@ -1032,7 +1032,8 @@ public:
 				glUniform1i(tipo_vertice, 1);
 				glBindVertexArray(quad_array);
 
-#define texto rt->texto
+				wstring texto;
+				texto = rt->texto;
 
 				unsigned int count_linhas = 0;
 				for (int i = 0; i < texto.size(); i++)
@@ -1044,6 +1045,12 @@ public:
 				}
 
 				shared_ptr<fonte> font = rt->font;
+				
+				/*
+				rt->style_changes.insert(pair<unsigned int,text_style_change>(1,{vec4(1,0,0,1),ManuseioDados::carregar_fonte("Fonts/PrintedCircuitBoardItalic.ttf")}));
+				rt->style_changes.insert(pair<unsigned int,text_style_change>(2,{vec4(0,1,0,1),ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf")}));
+				rt->style_changes.insert(pair<unsigned int,text_style_change>(3,{vec4(0,0,1,1),ManuseioDados::carregar_fonte("Fonts/PrintedCircuitBoardItalic.ttf")}));
+				*/
 
 				if (font != NULL)
 				{
@@ -1065,6 +1072,16 @@ public:
 
 					for (int i = 0; i < texto.size(); i++)
 					{
+
+						if(rt->style_changes.find(i) != rt->style_changes.end()){
+							text_style_change new_style = rt->style_changes[i];
+							glUniform4f(glGetUniformLocation(shader_s, "color"), new_style.color.x, new_style.color.y, new_style.color.z, new_style.color.w);
+							if(new_style.font){
+								font = new_style.font;
+							}
+							print("font",new_style.font->path,"color",new_style.color.x,new_style.color.y,new_style.color.z);
+						}
+
 						wchar_t letra = texto.at(i);
 						if (letra == '\n')
 						{

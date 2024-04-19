@@ -190,11 +190,7 @@ function shoot()
 
     
     
-    --[[
-    local pos = camera.components.transform:get_global_position(0,0,1)
-    pos.effect = camera.components.transform:get_global_position(-0.3,-0.3,1)
-    local target = camera.components.transform:get_global_position(0,0,50)
-    ]]
+    
 
     local pos = camera.components.transform:get_global_position(0,0,1)
     pos.effect = camera.components.transform:get_global_position(-0.3,-0.3,1)
