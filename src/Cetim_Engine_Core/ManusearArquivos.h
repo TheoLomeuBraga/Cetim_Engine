@@ -1326,6 +1326,7 @@ namespace ManuseioDados
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".obj", importar_obj),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".map", importar_map),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_gltf),
+		pair<string, shared_ptr<cena_3D> (*)(string)>(".glb", importar_gltf),
 	};
 
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)

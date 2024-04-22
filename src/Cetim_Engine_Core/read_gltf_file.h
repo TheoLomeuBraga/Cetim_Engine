@@ -7,7 +7,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "base64.h"
 
-
 bool file_exist(string nome)
 {
     ifstream file(nome.c_str());
@@ -175,6 +174,39 @@ namespace gltf_loader
         nlohmann::json extensions, extras;
     };
 
+    std::vector<std::uint8_t> readFileToVector(const std::string &filename)
+    {
+        std::vector<std::uint8_t> data; // Vector to store file data
+
+        // Open the file in binary mode
+        std::ifstream file(filename, std::ios::binary);
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return data; // Return an empty vector if the file couldn't be opened
+        }
+
+        // Get the file size
+        file.seekg(0, std::ios::end);
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        // Reserve space in the vector for all bytes in the file
+        data.resize(static_cast<std::size_t>(size));
+
+        // Read bytes from the file into the vector
+        if (!file.read(reinterpret_cast<char *>(data.data()), size))
+        {
+            std::cerr << "Error reading file: " << filename << std::endl;
+            data.clear(); // Clear the data in case of read error
+        }
+
+        // Close the file after reading
+        file.close();
+
+        return data;
+    }
+
     class GLTFLoader
     {
     public:
@@ -227,8 +259,19 @@ namespace gltf_loader
 
         try
         {
-
-            gltf = json::parse(file);
+            std::string extencion;
+            size_t pontoPos = filename.find_last_of(".");
+            if (pontoPos != std::string::npos && pontoPos < filename.length() - 1)
+            {
+                extencion = filename.substr(pontoPos + 1);
+            }
+            if(extencion == "glb"){
+                gltf = json::from_bson(readFileToVector(filename));
+            }else{
+                gltf = json::parse(file);
+            }
+            
+            
         }
         catch (const std::exception &e)
         {
@@ -1420,7 +1463,6 @@ namespace gltf_loader
 
         loadSkins();
         assigneSkinsToMeshes();
-
 
         return true;
     }
