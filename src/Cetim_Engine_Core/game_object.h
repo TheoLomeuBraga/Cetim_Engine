@@ -5,6 +5,7 @@
 using String = std::string;
 
 #include "RecursosT.h"
+#include "table.h"
 
 class objeto_jogo;
 
@@ -26,6 +27,7 @@ private:
 	map<string, shared_ptr<componente>> componentes;
 
 public:
+	Table local_lua_data;
 	static int instancias;
 
 	shared_ptr<objeto_jogo> get_this_object() {return esse_objeto;}

@@ -453,6 +453,9 @@ int get_lua_var(lua_State *L);
 int set_lua_var(lua_State *L);
 int call_lua_function(lua_State *L);
 
+int local_data_get_var(lua_State *L);
+int local_data_set_var(lua_State *L);
+
 // banchmark
 int make_banchmark(lua_State *L);
 
@@ -2837,6 +2840,8 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_lua_var", get_lua_var),
 															  pair<string, lua_function>("set_lua_var", set_lua_var),
 															  pair<string, lua_function>("call_lua_function", call_lua_function),
+															  pair<string, lua_function>("local_data_set_var", local_data_set_var),
+															  pair<string, lua_function>("local_data_get_var", local_data_get_var),
 														  }),
 		pair<string, map<string, lua_function>>("global_data", {
 																   pair<string, lua_function>("global_data_get_var", global_data_get_var),
@@ -3005,6 +3010,8 @@ class componente_lua : public componente
 	unordered_map<string, lua_State *> estados_lua_co;
 
 public:
+
+	
 	unordered_map<string, lua_State *> estados_lua;
 
 	set<lua_State *> to_benchmark;
@@ -3682,6 +3689,79 @@ int set_lua_var(lua_State *L)
 		cl->mudar_tabela(script_name, var_name, lua_totable(L, 4));
 	}
 
+	return 0;
+}
+
+int local_data_get_var(lua_State *L){
+
+	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	Table local_data = obj->local_lua_data;
+
+	
+	int lua_type_id = lua_type(L, 2);
+	string key;
+	if (lua_type_id == LUA_TSTRING)
+	{
+		key = lua_tostring(L,2);
+	}
+	else if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
+	{
+		key = to_string(lua_tonumber(L,2));
+	}else{
+		return 0;
+	}
+	
+	if (local_data.haveTable(key))
+	{
+		lua_pushtable(L,local_data.getTable(key));
+		return 1;
+	}else if(local_data.haveFloat(key)){
+		lua_pushnumber(L,local_data.getFloat(key));
+		return 1;
+	}else if(local_data.haveString(key)){
+		lua_pushstring(L,local_data.getString(key).c_str());
+		return 1;
+	}
+	
+	lua_pushnil(L);
+	return 1;
+}
+
+int local_data_set_var(lua_State *L){
+	
+	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
+	
+	int lua_type_id = lua_type(L, 2);
+	string key;
+	if (lua_type_id == LUA_TSTRING)
+	{
+		key = lua_tostring(L,2);
+	}
+	else if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
+	{
+		key = to_string(lua_tonumber(L,2));
+	}else{
+		return 0;
+	}
+
+	lua_type_id = lua_type(L, 3);
+
+	if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
+	{
+		float value = lua_tonumber(L,3);
+		obj->local_lua_data.setFloat(key.c_str(),value);
+		print(value);
+	}
+	else if (lua_type_id == LUA_TSTRING)
+	{
+		string value = lua_tostring(L,3);
+		obj->local_lua_data.setString(key.c_str(),value);
+	}
+	else if (lua_type_id == LUA_TTABLE)
+	{
+		Table value = lua_totable(L,3);
+		obj->local_lua_data.setTable(key.c_str(),value);
+	}
 	return 0;
 }
 

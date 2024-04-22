@@ -6,6 +6,7 @@ require("objects.game_object")
 require("objects.time")
 require("objects.material")
 require("objects.global_data")
+require("objects.local_data")
 require("objects.vectors")
 require("objects.input")
 require("objects.gravity")
@@ -151,9 +152,10 @@ function get_charter_data()
     inputs_last_frame = global_data.inputs_last_frame
 end
 
-function START()
 
+function START()
     
+
     this_object = game_object(this_object_ptr)
     camera = game_object(this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement","camera_ptr"))
     get_charter_data()
@@ -206,6 +208,7 @@ function shoot()
 
     
 end
+
 
 function UPDATE()
 
