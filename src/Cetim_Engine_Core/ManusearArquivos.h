@@ -43,6 +43,8 @@ using json = nlohmann::json;
 #define ANIMATION_FPS_COUNT 30
 #include "read_gltf_file.h"
 
+#include "tinygltf/tiny_gltf.h"
+
 #define NANOSVG_ALL_COLOR_KEYWORDS
 #define NANOSVG_IMPLEMENTATION
 #include "nanosvg.h"
@@ -1299,34 +1301,36 @@ namespace ManuseioDados
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);
 		}
-		else
+		while (has_loading_request(local))
 		{
-			while (has_loading_request(local))
-			{
-			}
-			return cenas_3D.pegar(local);
 		}
-	}
-	void importar_gltf_thread(string local, shared_ptr<cena_3D> *ret)
-	{
-
-		*ret = importar_gltf(local);
+		return cenas_3D.pegar(local);
 	}
 
-	void importar_gltfs_thread(string local, vector<shared_ptr<cena_3D> *> ret)
+	shared_ptr<cena_3D> importar_glb(string local)
 	{
-		for (shared_ptr<cena_3D> *r : ret)
+
+		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
-			importar_gltf_thread(local, r);
+			cena_3D ret;
+
+			//adicionar codigo
+
+			remove_loading_request(local);
+			return cenas_3D.aplicar(local, ret);
 		}
+
+		while (has_loading_request(local))
+		{
+		}
+		return cenas_3D.pegar(local);
 	}
 
 	// arquivo_origem
 	map<string, shared_ptr<cena_3D> (*)(string)> funcoes_abrir_modelos_3D = {
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".obj", importar_obj),
-		pair<string, shared_ptr<cena_3D> (*)(string)>(".map", importar_map),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_gltf),
-		
+		pair<string, shared_ptr<cena_3D> (*)(string)>(".glb", importar_glb),
 	};
 
 	shared_ptr<cena_3D> carregar_modelo_3D(string local)
