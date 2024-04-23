@@ -38,12 +38,15 @@ using json = nlohmann::json;
 #include <stb-master/stb_image_resize.h>
 #include <stb-master/stb_image.h>
 
+#define TINYGLTF_NO_STB_IMAGE
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
+#define TINYGLTF_IMPLEMENTATION
+#include "tinygltf/tiny_gltf.h"
+
 #include "read_map_file.h"
 
 #define ANIMATION_FPS_COUNT 30
 #include "read_gltf_file.h"
-
-#include "tinygltf/tiny_gltf.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS
 #define NANOSVG_IMPLEMENTATION
@@ -1180,6 +1183,126 @@ namespace ManuseioDados
 		return ret;
 	}
 
+	bool TinyGLTFLoadImageData(tinygltf::Image *image, const int image_idx, std::string *err, std::string *warn, int req_width, int req_height, const unsigned char *bytes, int size, void *user_data)
+	{
+		(void)warn;
+
+		tinygltf::LoadImageDataOption option;
+		if (user_data)
+		{
+			option = *reinterpret_cast<tinygltf::LoadImageDataOption *>(user_data);
+		}
+
+		int w = 0, h = 0, comp = 0, req_comp = 0;
+
+		unsigned char *data = nullptr;
+
+		// preserve_channels true: Use channels stored in the image file.
+		// false: force 32-bit textures for common Vulkan compatibility. It appears
+		// that some GPU drivers do not support 24-bit images for Vulkan
+		req_comp = option.preserve_channels ? 0 : 4;
+		int bits = 8;
+		int pixel_type = TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE;
+
+		// It is possible that the image we want to load is a 16bit per channel image
+		// We are going to attempt to load it as 16bit per channel, and if it worked,
+		// set the image data accordingly. We are casting the returned pointer into
+		// unsigned char, because we are representing "bytes". But we are updating
+		// the Image metadata to signal that this image uses 2 bytes (16bits) per
+		// channel:
+		if (stbi_is_16_bit_from_memory(bytes, size))
+		{
+			data = reinterpret_cast<unsigned char *>(
+				stbi_load_16_from_memory(bytes, size, &w, &h, &comp, req_comp));
+			if (data)
+			{
+				bits = 16;
+				pixel_type = TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT;
+			}
+		}
+
+		// at this point, if data is still NULL, it means that the image wasn't
+		// 16bit per channel, we are going to load it as a normal 8bit per channel
+		// image as we used to do:
+		// if image cannot be decoded, ignore parsing and keep it by its path
+		// don't break in this case
+		// FIXME we should only enter this function if the image is embedded. If
+		// image->uri references
+		// an image file, it should be left as it is. Image loading should not be
+		// mandatory (to support other formats)
+		if (!data)
+			data = stbi_load_from_memory(bytes, size, &w, &h, &comp, req_comp);
+		if (!data)
+		{
+			// NOTE: you can use `warn` instead of `err`
+			if (err)
+			{
+				(*err) +=
+					"Unknown image format. STB cannot decode image data for image[" +
+					std::to_string(image_idx) + "] name = \"" + image->name + "\".\n";
+			}
+			return false;
+		}
+
+		if ((w < 1) || (h < 1))
+		{
+			stbi_image_free(data);
+			if (err)
+			{
+				(*err) += "Invalid image data for image[" + std::to_string(image_idx) +
+						  "] name = \"" + image->name + "\"\n";
+			}
+			return false;
+		}
+
+		if (req_width > 0)
+		{
+			if (req_width != w)
+			{
+				stbi_image_free(data);
+				if (err)
+				{
+					(*err) += "Image width mismatch for image[" +
+							  std::to_string(image_idx) + "] name = \"" + image->name +
+							  "\"\n";
+				}
+				return false;
+			}
+		}
+
+		if (req_height > 0)
+		{
+			if (req_height != h)
+			{
+				stbi_image_free(data);
+				if (err)
+				{
+					(*err) += "Image height mismatch. for image[" +
+							  std::to_string(image_idx) + "] name = \"" + image->name +
+							  "\"\n";
+				}
+				return false;
+			}
+		}
+
+		if (req_comp != 0)
+		{
+			// loaded data has `req_comp` channels(components)
+			comp = req_comp;
+		}
+
+		image->width = w;
+		image->height = h;
+		image->component = comp;
+		image->bits = bits;
+		image->pixel_type = pixel_type;
+		image->image.resize(static_cast<size_t>(w * h * comp) * size_t(bits / 8));
+		std::copy(data, data + w * h * comp * (bits / 8), image->image.begin());
+		stbi_image_free(data);
+
+		return true;
+	}
+
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 
@@ -1312,10 +1435,43 @@ namespace ManuseioDados
 
 		if (cenas_3D.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
+			add_loading_request(local);
+
 			cena_3D ret;
 
-			//adicionar codigo
+			tinygltf::Model model;
+			tinygltf::TinyGLTF loader;
 
+			loader.SetImageLoader(&TinyGLTFLoadImageData, NULL);
+
+			std::string err;
+			std::string warn;
+
+			bool work = loader.LoadBinaryFromFile(&model, &err, &warn, local);
+
+			if (!warn.empty())
+			{
+				std::cout << "Warning: " << warn << std::endl;
+			}
+
+			if (!err.empty())
+			{
+				std::cerr << "Erro: " << err << std::endl;
+			}
+
+			if (!work)
+			{
+				std::cerr << "Falha ao carregar o arquivo GLB." << std::endl;
+			}
+
+			std::cout << "Número de malhas (meshes): " << model.meshes.size() << std::endl;
+			std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
+			std::cout << "Número de materiais: " << model.materials.size() << std::endl;
+			std::cout << "Número de animações: " << model.animations.size() << std::endl;
+			std::cout << "Número de skins: " << model.skins.size() << std::endl;
+			std::cout << "Número de nodes: " << model.nodes.size() << std::endl;
+
+			ret.nome = local;
 			remove_loading_request(local);
 			return cenas_3D.aplicar(local, ret);
 		}
