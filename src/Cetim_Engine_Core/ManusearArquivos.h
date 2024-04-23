@@ -406,13 +406,13 @@ namespace ManuseioDados
 		}
 	}
 
-	shared_ptr<imagem> registrar_Imagem(string name,unsigned int res_x,unsigned int res_y,unsigned char *data)
+	shared_ptr<imagem> registrar_Imagem(string name,unsigned int res_x,unsigned int res_y,unsigned int chanals,unsigned char *data)
 	{
 
 		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
 		add_loading_request(name);
 
-		imagem image = imagem(sizex, sizey, canais, data);
+		imagem image = imagem(res_x, res_y, chanals, data);
 		
 		remove_loading_request(name);
 		return mapeamento_imagems.aplicar(name, image);
