@@ -406,6 +406,18 @@ namespace ManuseioDados
 		}
 	}
 
+	shared_ptr<imagem> registrar_Imagem(string name,unsigned int res_x,unsigned int res_y,unsigned char *data)
+	{
+
+		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+		add_loading_request(name);
+
+		imagem image = imagem(sizex, sizey, canais, data);
+		
+		remove_loading_request(name);
+		return mapeamento_imagems.aplicar(name, image);
+	}
+
 	void carregar_Imagem_thread(string local, shared_ptr<imagem> *ret)
 	{
 		*ret = carregar_Imagem(local);
