@@ -406,14 +406,29 @@ namespace ManuseioDados
 		}
 	}
 
-	shared_ptr<imagem> registrar_Imagem(string name,unsigned int res_x,unsigned int res_y,unsigned int chanals,unsigned char *data)
+	shared_ptr<imagem> registrar_Imagem(string name, unsigned int res_x, unsigned int res_y, unsigned int chanals, unsigned char *data)
 	{
 
 		std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
 		add_loading_request(name);
 
-		imagem image = imagem(res_x, res_y, chanals, data);
-		
+		imagem image;
+
+		if (use_texture_max_size && res_x > texture_max_size.x || res_x > texture_max_size.y)
+		{
+			unsigned int sizex = std::min((int)res_x, texture_max_size.x);
+			unsigned int sizey = std::min((int)res_y, texture_max_size.y);
+			unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * chanals];
+			stbir_resize_uint8(data, res_x, res_y, 0, data2, sizex, sizey, 0, chanals);
+			image = imagem(sizex, sizey, chanals, data2);
+			delete[] data2;
+		}
+		else
+		{
+			image = imagem(res_x, res_y, chanals, data);
+		}
+
+		image.local = name;
 		remove_loading_request(name);
 		return mapeamento_imagems.aplicar(name, image);
 	}
@@ -1058,7 +1073,9 @@ namespace ManuseioDados
 						{
 							if (!m.sub_meshes[a].BoneIDs[b].empty())
 							{
-								v.id_ossos[b] = gltf_loader.skins[m.skin].jointIndices[(m.sub_meshes[a].BoneIDs[i][b])];
+								size_t BoneID = m.sub_meshes[a].BoneIDs[i][b];
+								gltf_loader::Skin skin = gltf_loader.skins[m.skin];
+								v.id_ossos[b] = skin.jointIndices[BoneID];
 							}
 						}
 						if (b < m.sub_meshes[a].Weights.size())
