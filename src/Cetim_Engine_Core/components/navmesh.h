@@ -450,7 +450,7 @@ void navmesh_print_cube_in_space(vec3 pos)
     rm->camada = 4;
 
     Material mat;
-    mat.shad = "mesh";
+    mat.shader = "mesh";
     mat.cor = vec4(navmesh_color_intensity, 0.0, 0.5, 1);
     navmesh_color_intensity += 0.5;
     if (navmesh_color_intensity > 1)
@@ -555,7 +555,7 @@ public:
             rm->camada = 4;
 
             Material mat;
-            mat.shad = "mesh";
+            mat.shader = "mesh";
             mat.cor = vec4(0.1, 0.1, 1, 0.5);
             mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 

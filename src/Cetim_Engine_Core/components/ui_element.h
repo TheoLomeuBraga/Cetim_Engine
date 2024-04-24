@@ -100,7 +100,7 @@ public:
 
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
-        mat.shad = "ui_componente";
+        mat.shader = "ui_componente";
 
         base_obj = novo_objeto_jogo();
         cena_objetos_selecionados->adicionar_objeto(esse_objeto, base_obj);
@@ -124,7 +124,7 @@ public:
         cena_objetos_selecionados->adicionar_objeto(base_obj, background_obj);
 
         mat.cor = vec4(0, 0, 1, 1);
-        mat.shad = "text";
+        mat.shader = "text";
         text_obj = novo_objeto_jogo();
         text_obj->adicionar_componente<transform_>(transform_());
         text_obj->pegar_componente<transform_>()->UI = true;
@@ -241,11 +241,11 @@ public:
 
         Material mat;
         mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/null.svg");
-        mat.shad = "text";
+        mat.shader = "text";
         mat.cor = current_style.text_color;
         text_obj->pegar_componente<render_texto>()->mat = mat;
 
-        mat.shad = "ui_componente";
+        mat.shader = "ui_componente";
         mat.cor = current_style.background_color;
         if (current_style.background_image != NULL)
         {

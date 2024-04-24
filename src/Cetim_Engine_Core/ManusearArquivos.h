@@ -1155,7 +1155,7 @@ namespace ManuseioDados
 			else
 			{
 				Material mat;
-				mat.shad = "mesh";
+				mat.shader = "mesh";
 				mat.texturas[0] = carregar_Imagem("Textures/null.png");
 				ret.meus_materiais.push_back(mat);
 			}
@@ -1181,7 +1181,7 @@ namespace ManuseioDados
 					else
 					{
 						Material mat;
-						mat.shad = "mesh";
+						mat.shader = "mesh";
 						mat.texturas[0] = carregar_Imagem("Textures/null.png");
 						ret.meus_materiais.push_back(mat);
 					}
@@ -1255,7 +1255,7 @@ namespace ManuseioDados
 			for (int i = 0; i < gltf_loader.materials.size(); i++)
 			{
 				Material mat;
-				mat.shad = "mesh";
+				mat.shader = "mesh";
 				mat.cor = gltf_loader.materials[i].baseColorFactor;
 
 				if (gltf_loader.materials[i].textureIndex > -1)
@@ -1462,7 +1462,7 @@ namespace ManuseioDados
 	pair<string, Material> tgl_material_convert(tinygltf::Material in_mat){
 		pair<string, Material> ret;
 		ret.first = in_mat.name;
-		ret.second.shad = "mesh";
+		ret.second.shader = "mesh";
 
 
 		return ret;

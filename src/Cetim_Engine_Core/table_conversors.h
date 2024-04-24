@@ -171,7 +171,7 @@ Table vTable_table(vector<Table> v)
 Material table_material(Table t)
 {
     Material m;
-    m.shad = t.getString("shader");
+    m.shader = t.getString("shader");
     m.lado_render = (char)t.getFloat("normal_direction");
 
     Table color = t.getTable("color");
@@ -214,7 +214,7 @@ Material table_material(Table t)
 Table material_table(Material m)
 {
     Table t;
-    t.setString("shader", m.shad);
+    t.setString("shader", m.shader);
     t.setFloat("normal_direction", (float)m.lado_render);
 
     Table color;

@@ -518,7 +518,7 @@ enum lado_render_malha
 class Material
 {
 public:
-	string shad = "";
+	string shader = "";
 
 	char lado_render = lado_render_malha::both;
 
@@ -544,7 +544,7 @@ public:
 	bool operator==(const Material &other) const
 	{
 		return (
-			shad == other.shad &&
+			shader == other.shader &&
 			lado_render == other.lado_render &&
 			equal(begin(filtro), end(filtro), begin(other.filtro)) &&
 			equal(begin(texturas), end(texturas), begin(other.texturas), [](const auto &a, const auto &b)

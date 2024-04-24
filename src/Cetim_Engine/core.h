@@ -110,7 +110,7 @@ void iniciarTeste3()
 	start_graphcal_lib();
 	start_input_lib();
 	
-	api_grafica->pos_processamento_info.shad = "recursos/Shaders/post_processing";
+	api_grafica->pos_processamento_info.shader = "recursos/Shaders/post_processing";
 
 	MatrizMundi = mat4(1.0f);
 
@@ -142,7 +142,7 @@ void iniciarTeste3()
 
 	// pos processamento
 
-	api_grafica->pos_processamento_info.shad = "post_processing";
+	api_grafica->pos_processamento_info.shader = "post_processing";
 	api_grafica->pos_processamento_info.cor = vec4(1, 1, 1, 1);
 	api_grafica->pos_processamento_info.gama = 1;
 

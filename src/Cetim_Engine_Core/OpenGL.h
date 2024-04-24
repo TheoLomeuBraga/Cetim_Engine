@@ -939,7 +939,7 @@ public:
 						{
 
 							// aplicar material
-							unsigned int shader_s = pegar_shader(mat.shad);
+							unsigned int shader_s = pegar_shader(mat.shader);
 							glUseProgram(shader_s);
 
 							// apply_transform(shader_s, tf, ca);
@@ -995,7 +995,7 @@ public:
 			if (rs != NULL)
 			{
 				// shader
-				unsigned int shader_s = pegar_shader(rs->mat.shad);
+				unsigned int shader_s = pegar_shader(rs->mat.shader);
 				glUseProgram(shader_s);
 
 				apply_transform(shader_s, tf, ca);
@@ -1019,7 +1019,7 @@ public:
 				// https://learnopengl.com/In-Practice/Text-Rendering
 
 				// shader
-				unsigned int shader_s = pegar_shader(rt->mat.shad);
+				unsigned int shader_s = pegar_shader(rt->mat.shader);
 				glUseProgram(shader_s);
 
 				// transform
@@ -1184,7 +1184,7 @@ public:
 				glDisable(GL_CULL_FACE);
 
 				// shader
-				unsigned int shader_s = pegar_shader(rtm->mat.shad);
+				unsigned int shader_s = pegar_shader(rtm->mat.shader);
 				glUseProgram(shader_s);
 
 				apply_material(shader_s, rtm->mat);
@@ -1353,7 +1353,7 @@ public:
 				glDisable(GL_CULL_FACE);
 
 				// shader
-				unsigned int shader_s = pegar_shader(RS->mat.shad);
+				unsigned int shader_s = pegar_shader(RS->mat.shader);
 				glUseProgram(shader_s);
 				apply_material(shader_s, RS->mat);
 
@@ -1427,7 +1427,7 @@ public:
 					{
 
 						// set up
-						unsigned int shader_s = pegar_shader(mat.shad);
+						unsigned int shader_s = pegar_shader(mat.shader);
 						glUseProgram(shader_s);
 
 						glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
@@ -1703,7 +1703,7 @@ public:
 		glViewport(0, 0, res.x, res.y);
 
 		// aplicar shader
-		unsigned int pp_shader = pegar_shader(pos_processamento_info.shad);
+		unsigned int pp_shader = pegar_shader(pos_processamento_info.shader);
 		glUseProgram(pp_shader);
 		// aplicar frame_buffers_texturas
 		for (int i = 0; i < SAIDAS_SHADER; i++)
