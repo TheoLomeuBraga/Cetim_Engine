@@ -1459,6 +1459,8 @@ namespace ManuseioDados
 		return cenas_3D.pegar(local);
 	}
 
+
+
 	shared_ptr<cena_3D> importar_glb(string local)
 	{
 
@@ -1492,9 +1494,14 @@ namespace ManuseioDados
 			{
 				std::cerr << "Falha ao carregar o arquivo GLB." << std::endl;
 			}
+			
+			std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
+			for(tinygltf::Image i : model.images){
+				//registrar_Imagem(string name, unsigned int res_x, unsigned int res_y, unsigned int chanals, unsigned char *data)
+				registrar_Imagem(local + string(":") + i.name, i.width, i.height, i.component, &i.image[0]);
+			}
 
 			std::cout << "Número de malhas (meshes): " << model.meshes.size() << std::endl;
-			std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
 			std::cout << "Número de materiais: " << model.materials.size() << std::endl;
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
 			std::cout << "Número de skins: " << model.skins.size() << std::endl;
