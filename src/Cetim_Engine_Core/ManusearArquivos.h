@@ -1518,6 +1518,9 @@ namespace ManuseioDados
 		case TINYGLTF_TYPE_VEC4:
 			numElements = 4;
 			break;
+		case TINYGLTF_TYPE_MAT4:
+			numElements = 16;
+			break;
 		default:
 			std::cerr << "Unsupported accessor type!" << std::endl;
 			return;
@@ -1705,7 +1708,6 @@ namespace ManuseioDados
 			for (tinygltf::Primitive p : mesh.primitives)
 			{
 				string mesh_name = base_mesh_name + to_string(i);
-				print("base_mesh_name", mesh_name);
 
 				std::vector<unsigned int> indice = {};
 				std::vector<vertice> vertices = {};
@@ -1723,7 +1725,6 @@ namespace ManuseioDados
 					indice.push_back(indexDataPtr[i]);
 				}
 
-				print("indice.size()", indice.size());
 				shared_ptr<malha> ret_malha = make_shared<malha>();
 				ret_malha->indice = indice;
 				ret_malha->vertices = vertices;
@@ -1771,7 +1772,34 @@ namespace ManuseioDados
 		return table;
 	}
 
-	objeto_3D tgl_node_convert(string local, tinygltf::Model model, int node_id, set<string> &meshes_included)
+	glm::mat4 getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin)
+	{
+		// Verifique se o inverseBindMatrices é válido
+		if (skin.inverseBindMatrices < 0 || skin.inverseBindMatrices >= model.accessors.size())
+		{
+			// Retornar uma matriz de identidade se o accessor não for válido
+			return glm::mat4(1.0f);
+		}
+
+		const tinygltf::Accessor &inverseBindAccessor = model.accessors[skin.inverseBindMatrices];
+		std::vector<float> inverseBindData;
+		convertAccessorData(model, inverseBindAccessor, inverseBindData);
+
+		// Certifique-se de que temos exatamente 16 floats (uma matriz 4x4)
+		if (inverseBindData.size() != 16)
+		{
+			// Retornar uma matriz de identidade se os dados não estiverem corretos
+			return glm::mat4(1.0f);
+		}
+
+		// Preencha a matriz 4x4 com os dados
+		glm::mat4 inverseBindMatrix = glm::make_mat4(inverseBindData.data());
+
+		// Agora inverseBindMatrix contém a matriz 4x4 dos inverseBindMatrices
+		return inverseBindMatrix;
+	}
+
+	objeto_3D tgl_node_convert(string local, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
 	{
 		objeto_3D ret;
 
@@ -1794,6 +1822,11 @@ namespace ManuseioDados
 			ret.escala = vec3(node.scale[0], node.scale[1], node.scale[2]);
 		}
 
+		if (node.skin > -1 && model.skins[node.skin].inverseBindMatrices > -1)
+		{
+			offset_matrices[node_id] = getInverseBindMatrices(model,model.skins[node.skin]);
+		}
+
 		if (node.mesh > -1)
 		{
 
@@ -1814,7 +1847,7 @@ namespace ManuseioDados
 
 		for (int i : node.children)
 		{
-			ret.filhos.push_back(tgl_node_convert(local, model, i, meshes_included));
+			ret.filhos.push_back(tgl_node_convert(local, offset_matrices, model, i, meshes_included));
 		}
 
 		return ret;
@@ -1874,7 +1907,7 @@ namespace ManuseioDados
 			set<string> meshes_included;
 			for (int i : model.scenes[0].nodes)
 			{
-				ret.objetos.filhos.push_back(tgl_node_convert(local, model, i, meshes_included));
+				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.offset_matrices, model, i, meshes_included));
 			}
 
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
