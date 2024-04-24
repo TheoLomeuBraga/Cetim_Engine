@@ -1621,6 +1621,33 @@ namespace ManuseioDados
 		std::vector<float> normalData;
 		convertAccessorData(model, normalAccessor, normalData);
 
+		std::vector<float> colorData;
+		if (primitive.attributes.find("COLOR_0") != primitive.attributes.end())
+		{
+			const tinygltf::Accessor &normalAccessor = model.accessors[primitive.attributes.at("COLOR_0")];
+			convertAccessorData(model, normalAccessor, normalData);
+		}
+
+		std::vector<int> jointsData;
+		if (primitive.attributes.find("JOINTS_0") != primitive.attributes.end())
+		{
+			const tinygltf::Accessor &jointsAccessor = model.accessors[primitive.attributes.at("JOINTS_0")];
+			std::vector<float> jointsDataFloat;
+			convertAccessorData(model, jointsAccessor, jointsDataFloat);
+			jointsData.resize(jointsDataFloat.size());
+			for (size_t i = 0; i < jointsDataFloat.size(); ++i)
+			{
+				jointsData[i] = static_cast<int>(jointsDataFloat[i]);
+			}
+		}
+
+		std::vector<float> weightsData;
+		if (primitive.attributes.find("WEIGHTS_0") != primitive.attributes.end())
+		{
+			const tinygltf::Accessor &weightsAccessor = model.accessors[primitive.attributes.at("WEIGHTS_0")];
+			convertAccessorData(model, weightsAccessor, weightsData);
+		}
+
 		size_t vertexCount = positionAccessor.count;
 		for (size_t i = 0; i < vertexCount; ++i)
 		{
@@ -1634,6 +1661,28 @@ namespace ManuseioDados
 			vert.normal[0] = normalData[i * 3];
 			vert.normal[1] = normalData[i * 3 + 1];
 			vert.normal[2] = normalData[i * 3 + 2];
+
+			if (!colorData.empty())
+			{
+				vert.cor[0] = colorData[i * 3];
+				vert.cor[1] = colorData[i * 3 + 1];
+				vert.cor[2] = colorData[i * 3 + 2];
+			}
+			else
+			{
+				vert.cor[0] = 1;
+				vert.cor[1] = 1;
+				vert.cor[2] = 1;
+			}
+
+			if (!jointsData.empty() && !weightsData.empty())
+			{
+				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
+				{
+					vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
+					vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
+				}
+			}
 
 			// Você pode adicionar mais atributos conforme necessário, como cor, tangente, bitangente, etc.
 
@@ -1674,7 +1723,7 @@ namespace ManuseioDados
 					indice.push_back(indexDataPtr[i]);
 				}
 
-				print("indice.size()",indice.size());
+				print("indice.size()", indice.size());
 				shared_ptr<malha> ret_malha = make_shared<malha>();
 				ret_malha->indice = indice;
 				ret_malha->vertices = vertices;
