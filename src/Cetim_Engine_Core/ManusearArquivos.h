@@ -322,87 +322,77 @@ namespace ManuseioDados
 
 		unsigned char *data = NULL;
 
-		if (Existe(local))
+		if (Existe(local) && mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
 		{
-
-			if (mapeamento_imagems.pegar(local).get() == NULL && has_loading_request(local) == false)
+			add_loading_request(local);
+			if (obterExtensaoArquivo(local) == "svg")
 			{
-				add_loading_request(local);
-				if (obterExtensaoArquivo(local) == "svg")
+
+				X = svg_res.x;
+				Y = svg_res.y;
+
+				NSVGimage *imagemSVG = nsvgParseFromFile(local.c_str(), "px", 96.0f);
+
+				if (!imagemSVG)
 				{
-
-					X = svg_res.x;
-					Y = svg_res.y;
-
-					NSVGimage *imagemSVG = nsvgParseFromFile(local.c_str(), "px", 96.0f);
-
-					if (!imagemSVG)
-					{
-						print("Error loading SVG ", local);
-					}
-
-					NSVGrasterizer *rast = nsvgCreateRasterizer();
-
-					data = new unsigned char[X * Y * canais];
-
-					nsvgRasterize(rast, imagemSVG, 0, 0, static_cast<float>(X) / static_cast<float>(imagemSVG->width), data, X, Y, X * canais);
-
-					nsvgDeleteRasterizer(rast);
-					nsvgDelete(imagemSVG);
-
-					imagem image = imagem(X, Y, canais, data);
-					image.local = local;
-
-					delete[] data;
-
-					remove_loading_request(local);
-					return mapeamento_imagems.aplicar(local, image);
+					print("Error loading SVG ", local);
 				}
 
-				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
+				NSVGrasterizer *rast = nsvgCreateRasterizer();
 
-				if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
-				{
-					unsigned int sizex = std::min(X, texture_max_size.x);
-					unsigned int sizey = std::min(Y, texture_max_size.y);
-					unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
-					stbir_resize_uint8(data, X, Y, 0, data2, sizex, sizey, 0, canais);
+				data = new unsigned char[X * Y * canais];
 
-					imagem image = imagem(sizex, sizey, canais, data2);
-					image.local = local;
+				nsvgRasterize(rast, imagemSVG, 0, 0, static_cast<float>(X) / static_cast<float>(imagemSVG->width), data, X, Y, X * canais);
 
-					stbi_image_free(data);
-					// delete[] data;
-					delete[] data2;
+				nsvgDeleteRasterizer(rast);
+				nsvgDelete(imagemSVG);
 
-					remove_loading_request(local);
-					return mapeamento_imagems.aplicar(local, image);
-				}
-				else
-				{
-					imagem image = imagem(X, Y, canais, data);
-					image.local = local;
+				imagem image = imagem(X, Y, canais, data);
+				image.local = local;
 
-					stbi_image_free(data);
-					// delete[] data;
+				delete[] data;
 
-					remove_loading_request(local);
-					return mapeamento_imagems.aplicar(local, image);
-				}
+				remove_loading_request(local);
+				return mapeamento_imagems.aplicar(local, image);
+			}
+
+			data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
+
+			if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
+			{
+				unsigned int sizex = std::min(X, texture_max_size.x);
+				unsigned int sizey = std::min(Y, texture_max_size.y);
+				unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
+				stbir_resize_uint8(data, X, Y, 0, data2, sizex, sizey, 0, canais);
+
+				imagem image = imagem(sizex, sizey, canais, data2);
+				image.local = local;
+
+				stbi_image_free(data);
+				// delete[] data;
+				delete[] data2;
+
+				remove_loading_request(local);
+				return mapeamento_imagems.aplicar(local, image);
 			}
 			else
 			{
-				while (has_loading_request(local))
-				{
-				}
-				return mapeamento_imagems.pegar(local);
+				imagem image = imagem(X, Y, canais, data);
+				image.local = local;
+
+				stbi_image_free(data);
+				// delete[] data;
+
+				remove_loading_request(local);
+				return mapeamento_imagems.aplicar(local, image);
 			}
 		}
 		else
 		{
-			print("nao foi possivel carregar imagem", local);
-			shared_ptr<imagem> ret;
-			return ret;
+			while (has_loading_request(local))
+			{
+			}
+			return mapeamento_imagems.pegar(local);
 		}
 	}
 
@@ -414,6 +404,7 @@ namespace ManuseioDados
 
 		imagem image;
 
+		image.local = name;
 		if (use_texture_max_size && res_x > texture_max_size.x || res_x > texture_max_size.y)
 		{
 			unsigned int sizex = std::min((int)res_x, texture_max_size.x);
@@ -428,7 +419,7 @@ namespace ManuseioDados
 			image = imagem(res_x, res_y, chanals, data);
 		}
 
-		image.local = name;
+		print("registrar_Imagem", name, mapeamento_imagems.aplicar(name, image));
 		remove_loading_request(name);
 		return mapeamento_imagems.aplicar(name, image);
 	}
@@ -1008,8 +999,6 @@ namespace ManuseioDados
 		}
 	}
 
-	// size_t skin_count = 0;
-
 	std::vector<malha> converter_malha_gltf(gltf_loader::GLTFLoader gltf_loader, gltf_loader::Mesh m, string file_path)
 	{
 
@@ -1339,6 +1328,8 @@ namespace ManuseioDados
 		return cenas_3D.pegar(local);
 	}
 
+	// tiny
+
 	bool TinyGLTFLoadImageData(tinygltf::Image *image, const int image_idx, std::string *err, std::string *warn, int req_width, int req_height, const unsigned char *bytes, int size, void *user_data)
 	{
 		(void)warn;
@@ -1485,13 +1476,15 @@ namespace ManuseioDados
 				const tinygltf::Image &image = model.images[texture.source];
 				string name = local + string(":") + image.name;
 				ret.second.texturas[i] = carregar_Imagem(name);
-			}else{
+			}
+			else
+			{
 				break;
 			}
 		}
 
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
-		ret.second.cor = vec4(bcf[0],bcf[1],bcf[2],bcf[3]);
+		ret.second.cor = vec4(bcf[0], bcf[1], bcf[2], bcf[3]);
 
 		ret.second.suave = in_mat.pbrMetallicRoughness.roughnessFactor;
 		ret.second.metalico = in_mat.pbrMetallicRoughness.metallicFactor;
@@ -1499,7 +1492,284 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	
+	void convertAccessorData(const tinygltf::Model &model, const tinygltf::Accessor &accessor, std::vector<float> &data)
+	{
+		const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
+		const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
+
+		size_t count = accessor.count;
+		size_t byteStride = accessor.ByteStride(bufferView);
+
+		const uint8_t *bufferDataPtr = buffer.data.data() + bufferView.byteOffset + accessor.byteOffset;
+
+		// Determine the number of elements per type
+		size_t numElements = 1;
+		switch (accessor.type)
+		{
+		case TINYGLTF_TYPE_SCALAR:
+			numElements = 1;
+			break;
+		case TINYGLTF_TYPE_VEC2:
+			numElements = 2;
+			break;
+		case TINYGLTF_TYPE_VEC3:
+			numElements = 3;
+			break;
+		case TINYGLTF_TYPE_VEC4:
+			numElements = 4;
+			break;
+		default:
+			std::cerr << "Unsupported accessor type!" << std::endl;
+			return;
+		}
+
+		size_t componentSize = 0;
+		switch (accessor.componentType)
+		{
+		case TINYGLTF_COMPONENT_TYPE_BYTE:
+		case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+			componentSize = sizeof(uint8_t);
+			break;
+		case TINYGLTF_COMPONENT_TYPE_SHORT:
+		case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+			componentSize = sizeof(uint16_t);
+			break;
+		case TINYGLTF_COMPONENT_TYPE_INT:
+		case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+			componentSize = sizeof(uint32_t);
+			break;
+		case TINYGLTF_COMPONENT_TYPE_FLOAT:
+			componentSize = sizeof(float);
+			break;
+		case TINYGLTF_COMPONENT_TYPE_DOUBLE:
+			componentSize = sizeof(double);
+			break;
+		default:
+			std::cerr << "Unsupported component type!" << std::endl;
+			return;
+		}
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			for (size_t j = 0; j < numElements; ++j)
+			{
+				// Calculate the byte offset for the current element
+				size_t elementByteOffset = byteStride * i + componentSize * j;
+
+				// Use componentType to read the data correctly
+				switch (accessor.componentType)
+				{
+				case TINYGLTF_COMPONENT_TYPE_BYTE:
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+				{
+					uint8_t value;
+					memcpy(&value, bufferDataPtr + elementByteOffset, sizeof(uint8_t));
+					data.push_back(static_cast<float>(value));
+					break;
+				}
+				case TINYGLTF_COMPONENT_TYPE_SHORT:
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+				{
+					uint16_t value;
+					memcpy(&value, bufferDataPtr + elementByteOffset, sizeof(uint16_t));
+					data.push_back(static_cast<float>(value));
+					break;
+				}
+				case TINYGLTF_COMPONENT_TYPE_INT:
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				{
+					uint32_t value;
+					memcpy(&value, bufferDataPtr + elementByteOffset, sizeof(uint32_t));
+					data.push_back(static_cast<float>(value));
+					break;
+				}
+				case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				{
+					float value;
+					memcpy(&value, bufferDataPtr + elementByteOffset, sizeof(float));
+					data.push_back(value);
+					break;
+				}
+				case TINYGLTF_COMPONENT_TYPE_DOUBLE:
+				{
+					double value;
+					memcpy(&value, bufferDataPtr + elementByteOffset, sizeof(double));
+					data.push_back(static_cast<float>(value));
+					break;
+				}
+				default:
+					std::cerr << "Unsupported component type!" << std::endl;
+					break;
+				}
+			}
+		}
+	}
+
+	void convertPrimitiveToVertices(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<vertice_struct> &vertices)
+	{
+		vertice_struct vert;
+
+		const tinygltf::Accessor &positionAccessor = model.accessors[primitive.attributes.at("POSITION")];
+		std::vector<float> positionData;
+		convertAccessorData(model, positionAccessor, positionData);
+
+		const tinygltf::Accessor &uvAccessor = model.accessors[primitive.attributes.at("TEXCOORD_0")];
+		std::vector<float> uvData;
+		convertAccessorData(model, uvAccessor, uvData);
+
+		const tinygltf::Accessor &normalAccessor = model.accessors[primitive.attributes.at("NORMAL")];
+		std::vector<float> normalData;
+		convertAccessorData(model, normalAccessor, normalData);
+
+		size_t vertexCount = positionAccessor.count;
+		for (size_t i = 0; i < vertexCount; ++i)
+		{
+			vert.posicao[0] = positionData[i * 3];
+			vert.posicao[1] = positionData[i * 3 + 1];
+			vert.posicao[2] = positionData[i * 3 + 2];
+
+			vert.uv[0] = uvData[i * 2];
+			vert.uv[1] = uvData[i * 2 + 1];
+
+			vert.normal[0] = normalData[i * 3];
+			vert.normal[1] = normalData[i * 3 + 1];
+			vert.normal[2] = normalData[i * 3 + 2];
+
+			// Você pode adicionar mais atributos conforme necessário, como cor, tangente, bitangente, etc.
+
+			vertices.push_back(vert);
+		}
+	}
+
+	vector<pair<string, shared_ptr<malha>>> tgl_converter_malha(string local, tinygltf::Model model, int node_id, int mesh_id, set<string> &meshes_included)
+	{
+		vector<pair<string, shared_ptr<malha>>> ret = {};
+
+		if (mesh_id > -1 && meshes_included.find(model.meshes[mesh_id].name) == meshes_included.end())
+		{
+
+			tinygltf::Node node = model.nodes[node_id];
+			tinygltf::Mesh mesh = model.meshes[mesh_id];
+			string base_mesh_name = mesh.name + ":";
+
+			int i = 0;
+			for (tinygltf::Primitive p : mesh.primitives)
+			{
+				string mesh_name = base_mesh_name + to_string(i);
+				print("base_mesh_name", mesh_name);
+
+				std::vector<unsigned int> indice = {};
+				std::vector<vertice> vertices = {};
+
+				convertPrimitiveToVertices(model, p, vertices);
+
+				const tinygltf::Accessor &indexAccessor = model.accessors[p.indices];
+				const tinygltf::BufferView &indexBufferView = model.bufferViews[indexAccessor.bufferView];
+				const tinygltf::Buffer &indexBuffer = model.buffers[indexBufferView.buffer];
+				const unsigned int *indexDataPtr = reinterpret_cast<const unsigned int *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
+
+				size_t indexCount = indexAccessor.count;
+				for (size_t i = 0; i < indexCount; ++i)
+				{
+					indice.push_back(indexDataPtr[i]);
+				}
+
+				print("indice.size()",indice.size());
+				shared_ptr<malha> ret_malha = make_shared<malha>();
+				ret_malha->indice = indice;
+				ret_malha->vertices = vertices;
+
+				ret.push_back(pair<string, shared_ptr<malha>>(mesh_name, ret_malha));
+
+				i++;
+			}
+
+			if (node.skin > -1)
+			{
+				tinygltf::Skin skin = model.skins[node.skin];
+			}
+		}
+
+		return ret;
+	}
+
+	Table value_to_table(tinygltf::Value value)
+	{
+		Table table;
+		if (value.IsObject())
+		{
+			for (const auto &key : value.Keys())
+			{
+				const tinygltf::Value &innerValue = value.Get(key);
+
+				if (innerValue.IsNumber())
+				{
+					table.m_floatMap[key] = innerValue.GetNumberAsDouble();
+				}
+				else if (innerValue.IsString())
+				{
+					table.m_stringMap[key] = innerValue.Get<std::string>();
+				}
+				else if (innerValue.IsObject())
+				{
+					Table innerTable;
+					innerTable = value_to_table(innerValue);
+					table.m_tableMap[key] = innerTable;
+				}
+				// Você pode adicionar mais casos para outros tipos, se necessário
+			}
+		}
+		return table;
+	}
+
+	objeto_3D tgl_node_convert(string local, tinygltf::Model model, int node_id, set<string> &meshes_included)
+	{
+		objeto_3D ret;
+
+		tinygltf::Node node = model.nodes[node_id];
+
+		ret.id = node_id;
+
+		// print("node_id",node_id);
+
+		if (node.translation.size() > 0)
+		{
+			ret.posicao = vec3(node.translation[0], node.translation[1], node.translation[2]);
+		}
+		if (node.rotation.size() > 0)
+		{
+			ret.quaternion = quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+		}
+		if (node.scale.size() > 0)
+		{
+			ret.escala = vec3(node.scale[0], node.scale[1], node.scale[2]);
+		}
+
+		if (node.mesh > -1)
+		{
+
+			tinygltf::Mesh mesh = model.meshes[node.mesh];
+
+			for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, node_id, node.mesh, meshes_included))
+			{
+				ret.minhas_malhas.push_back(p.second);
+			}
+
+			for (tinygltf::Primitive p : mesh.primitives)
+			{
+				ret.meus_materiais.push_back(tgl_material_convert(local, model, model.materials[p.material]).second);
+			}
+		}
+
+		ret.variaveis = value_to_table(node.extras);
+
+		for (int i : node.children)
+		{
+			ret.filhos.push_back(tgl_node_convert(local, model, i, meshes_included));
+		}
+
+		return ret;
+	}
 
 	shared_ptr<cena_3D> importar_glb(string local)
 	{
@@ -1550,10 +1820,15 @@ namespace ManuseioDados
 			std::cout << "Número de scenes: " << model.scenes.size() << std::endl;
 			std::cout << "Número de nodes: " << model.nodes.size() << std::endl;
 			std::cout << "Número de skins: " << model.skins.size() << std::endl;
-
 			std::cout << "Número de malhas (meshes): " << model.meshes.size() << std::endl;
+
+			set<string> meshes_included;
+			for (int i : model.scenes[0].nodes)
+			{
+				ret.objetos.filhos.push_back(tgl_node_convert(local, model, i, meshes_included));
+			}
+
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
-			
 
 			ret.nome = local;
 			remove_loading_request(local);

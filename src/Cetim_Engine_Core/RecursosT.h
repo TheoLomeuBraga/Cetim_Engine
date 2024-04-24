@@ -958,7 +958,6 @@ struct objeto_3D_struct
 	vec3 posicao = glm::vec3(0, 0, 0);
 	quat quaternion = glm::quat(1, 0, 0, 0);
 	vec3 escala = glm::vec3(1, 1, 1);
-	mat4 inverseBindMatrix = glm::mat4(1.0f);
 	vector<shared_ptr<malha>> minhas_malhas;
 	vector<Material> meus_materiais;
 	Table variaveis;
