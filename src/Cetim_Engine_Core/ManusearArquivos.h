@@ -1106,13 +1106,13 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	mat4 buscar_offset_matrices(gltf_loader::GLTFLoader loader, size_t id)
+	mat4 buscar_offset_matrices(gltf_loader::GLTFLoader loader, size_t node_id)
 	{
 		for (gltf_loader::Skin s : loader.skins)
 		{
 			for (size_t i = 0; i < s.jointIndices.size(); i++)
 			{
-				if (s.jointIndices[i] == id)
+				if (s.jointIndices[i] == node_id)
 				{
 					return s.inverseBindMatrices[i];
 				}
@@ -1211,7 +1211,7 @@ namespace ManuseioDados
 
 		return ret;
 	}
-	
+
 	shared_ptr<cena_3D> importar_gltf(string local)
 	{
 
@@ -1459,14 +1459,47 @@ namespace ManuseioDados
 		return true;
 	}
 
-	pair<string, Material> tgl_material_convert(tinygltf::Material in_mat){
+	pair<string, Material> tgl_material_convert(string local, tinygltf::Model model, tinygltf::Material in_mat)
+	{
 		pair<string, Material> ret;
 		ret.first = in_mat.name;
 		ret.second.shader = "mesh";
 
+		/*
+		if (in_mat.values.find("filter") != in_mat.values.end())
+		{
+			auto filter = in_mat.values.at("filter").number_array;
+			for (size_t i = 0; i < NO_TEXTURAS && i < filter.size(); ++i)
+			{
+				ret.second.filtro[i] = static_cast<int>(filter[i]);
+			}
+		}
+		*/
+
+		for (int i = 0; i < NO_TEXTURAS; ++i)
+		{
+			if (in_mat.pbrMetallicRoughness.baseColorTexture.index >= 0)
+			{
+				const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
+				const tinygltf::Texture &texture = model.textures[texture_index];
+				const tinygltf::Image &image = model.images[texture.source];
+				string name = local + string(":") + image.name;
+				ret.second.texturas[i] = carregar_Imagem(name);
+			}else{
+				break;
+			}
+		}
+
+		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
+		ret.second.cor = vec4(bcf[0],bcf[1],bcf[2],bcf[3]);
+
+		ret.second.suave = in_mat.pbrMetallicRoughness.roughnessFactor;
+		ret.second.metalico = in_mat.pbrMetallicRoughness.metallicFactor;
 
 		return ret;
 	}
+
+	
 
 	shared_ptr<cena_3D> importar_glb(string local)
 	{
@@ -1501,21 +1534,26 @@ namespace ManuseioDados
 			{
 				std::cerr << "Falha ao carregar o arquivo GLB." << std::endl;
 			}
-			
+
 			std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
-			for(tinygltf::Image i : model.images){
-				//registrar_Imagem(string name, unsigned int res_x, unsigned int res_y, unsigned int chanals, unsigned char *data)
-				registrar_Imagem(local + string(":") + i.name, i.width, i.height, i.component, &i.image[0]);
+			for (tinygltf::Image i : model.images)
+			{
+				string name = local + string(":") + i.name;
+				ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, registrar_Imagem(name, i.width, i.height, i.component, &i.image[0])));
 			}
 			std::cout << "Número de materiais: " << model.materials.size() << std::endl;
-			for(tinygltf::Material m : model.materials){
-				ret.materiais.insert(tgl_material_convert(m));
+			for (tinygltf::Material m : model.materials)
+			{
+				ret.materiais.insert(tgl_material_convert(local, model, m));
 			}
+
+			std::cout << "Número de scenes: " << model.scenes.size() << std::endl;
+			std::cout << "Número de nodes: " << model.nodes.size() << std::endl;
+			std::cout << "Número de skins: " << model.skins.size() << std::endl;
 
 			std::cout << "Número de malhas (meshes): " << model.meshes.size() << std::endl;
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
-			std::cout << "Número de skins: " << model.skins.size() << std::endl;
-			std::cout << "Número de nodes: " << model.nodes.size() << std::endl;
+			
 
 			ret.nome = local;
 			remove_loading_request(local);
