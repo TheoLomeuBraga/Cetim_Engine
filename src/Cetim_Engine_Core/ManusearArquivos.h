@@ -1143,7 +1143,7 @@ namespace ManuseioDados
 			}
 			else
 			{
-				
+
 				Material mat;
 				mat.shader = "mesh";
 				mat.texturas[0] = carregar_Imagem("Textures/null.png");
@@ -1448,48 +1448,42 @@ namespace ManuseioDados
 		std::copy(data, data + w * h * comp * (bits / 8), image->image.begin());
 		stbi_image_free(data);
 
-		
-		
-
-
 		return true;
 	}
 
 	pair<string, Material> tgl_material_convert(string local, tinygltf::Model model, tinygltf::Material in_mat)
 	{
+
 		pair<string, Material> ret;
 		ret.first = in_mat.name;
 		ret.second.shader = "mesh";
 
 		if (in_mat.pbrMetallicRoughness.baseColorTexture.index > -1)
 		{
+
 			const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
 			const tinygltf::Texture &texture = model.textures[texture_index];
 			const tinygltf::Image &image = model.images[texture.source];
 			string name = image.name;
 			ret.second.texturas[0] = carregar_Imagem(name);
-			if(ret.second.texturas[0] == NULL){
-				print("ERROR texture is NULL");
-			}else{
 
-			}
-			//print("texturas",name,ret.second.texturas[0]->local,ret.second.texturas[0]->res.x,ret.second.texturas[0]->res.y);
+			// print("texturas",name,ret.second.texturas[0]->local,ret.second.texturas[0]->res.x,ret.second.texturas[0]->res.y);
 		}
 		else
 		{
 			ret.second.texturas[0] = carregar_Imagem("Textures/white.png");
 		}
 
-		//ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:test_gradient");
-		//ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:null");
-		//ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
+		// ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:test_gradient");
+		// ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:null");
+		// ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
 
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
 		ret.second.cor = vec4(bcf[0], bcf[1], bcf[2], bcf[3]);
 
 		ret.second.suave = in_mat.pbrMetallicRoughness.roughnessFactor;
 		ret.second.metalico = in_mat.pbrMetallicRoughness.metallicFactor;
-		ret.second.uv_pos_sca = vec4(0,0,1,1);
+		ret.second.uv_pos_sca = vec4(0, 0, 1, 1);
 
 		return ret;
 	}
@@ -1642,7 +1636,8 @@ namespace ManuseioDados
 			jointsData.resize(jointsDataFloat.size());
 			for (size_t i = 0; i < jointsDataFloat.size(); ++i)
 			{
-				jointsData[i] = static_cast<int>(jointsDataFloat[i]);
+				jointsData[i] = static_cast<size_t>(jointsDataFloat[i]);
+				print("jointsDataFloat",jointsData[i]);
 			}
 		}
 
@@ -1684,8 +1679,11 @@ namespace ManuseioDados
 			{
 				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
 				{
-					vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
-					vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
+					//vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
+					//vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
+					vert.id_ossos[j] = (static_cast<int>(jointsData[j]));
+					vert.peso_ossos[j] = (static_cast<float>(weightsData[j]));
+					//print("jointsData",vert.id_ossos[j],"weightsData",vert.peso_ossos[j]);
 				}
 			}
 
@@ -1771,7 +1769,7 @@ namespace ManuseioDados
 				ret_malha.vertices = vertices;
 				ret_malha.comprimir();
 
-				//print("ret_malha.nome",ret_malha.nome);
+				// print("ret_malha.nome",ret_malha.nome);
 
 				ret.push_back(pair<string, shared_ptr<malha>>(mesh_name, make_shared<malha>(ret_malha)));
 
@@ -1851,12 +1849,9 @@ namespace ManuseioDados
 
 		ret.id = node_id;
 
-		// print("node_id",node_id);
-
 		if (node.translation.size() > 0)
 		{
 			ret.posicao = vec3(node.translation[0], node.translation[1], node.translation[2]);
-			//print("ret.posicao",ret.posicao.x,ret.posicao.y,ret.posicao.z);
 		}
 		if (node.rotation.size() > 0)
 		{
@@ -1885,7 +1880,17 @@ namespace ManuseioDados
 
 			for (tinygltf::Primitive p : mesh.primitives)
 			{
-				ret.meus_materiais.push_back(tgl_material_convert(local, model, model.materials[p.material]).second);
+				if (p.material > -1)
+				{
+					ret.meus_materiais.push_back(tgl_material_convert(local, model, model.materials[p.material]).second);
+				}
+				else
+				{
+					Material mat;
+					mat.shader = "mesh";
+					mat.texturas[0] = carregar_Imagem("Textures/white.png");
+					ret.meus_materiais.push_back(mat);
+				}
 			}
 		}
 
@@ -1899,10 +1904,74 @@ namespace ManuseioDados
 		return ret;
 	}
 
+	vec2 tgl_getAnimationTimeDuration(const tinygltf::Model &model, const tinygltf::Animation &gltfAnimation)
+	{
+		float startTime = std::numeric_limits<float>::max();
+		float endTime = std::numeric_limits<float>::min();
+
+		// Iterar sobre os canais de animação
+		for (const auto &channel : gltfAnimation.channels)
+		{
+			// Verificar se o canal tem um sampler válido
+			if (channel.sampler >= 0 && channel.sampler < gltfAnimation.samplers.size())
+			{
+				const auto &sampler = gltfAnimation.samplers[channel.sampler];
+
+				// Verificar se o sampler tem entrada (input) e saída (output) válidos
+				if (sampler.input >= 0 && sampler.input < model.accessors.size() &&
+					sampler.output >= 0 && sampler.output < model.accessors.size())
+				{
+					const auto &inputAccessor = model.accessors[sampler.input];
+					const auto &outputAccessor = model.accessors[sampler.output];
+					const auto &inputBufferView = model.bufferViews[inputAccessor.bufferView];
+					const auto &inputBuffer = model.buffers[inputBufferView.buffer];
+
+					// Interpretar os tempos de entrada
+					const int count = inputAccessor.count;
+					for (int i = 0; i < count; ++i)
+					{
+						const float time = *reinterpret_cast<const float *>(&inputBuffer.data[inputBufferView.byteOffset + i * sizeof(float)]);
+						startTime = std::min(startTime, time);
+						endTime = std::max(endTime, time);
+					}
+				}
+			}
+		}
+
+		// Se não houver canais de animação válidos, definir tempo de início e duração como 0
+		if (startTime == std::numeric_limits<float>::max() || endTime == std::numeric_limits<float>::min())
+		{
+			startTime = 0.0f;
+			endTime = 0.0f;
+		}
+
+		return vec2(startTime, endTime - startTime);
+	}
+
+	animacao tgl_convertAnimation(tinygltf::Model model, const tinygltf::Animation &gltfAnimation)
+	{
+		animacao result;
+		result.nome = gltfAnimation.name;
+
+		vec2 duration = tgl_getAnimationTimeDuration(model, gltfAnimation);
+		result.start_time = duration.x;
+		result.duration = duration.y;
+
+		
+
+		return result;
+	}
+
 	pair<string, animacao> tgl_animation_convert(string local, tinygltf::Model model, tinygltf::Animation animatior)
 	{
 		pair<string, animacao> ret;
-		
+
+		ret.first = animatior.name;
+		ret.second = tgl_convertAnimation(model, animatior);
+		ret.second.nome = ret.first;
+
+		print(ret.second.nome, ret.second.start_time, ret.second.duration);
+
 		return ret;
 	}
 
@@ -1922,8 +1991,16 @@ namespace ManuseioDados
 
 			std::string err;
 			std::string warn;
+			bool work;
 
-			bool work = loader.LoadBinaryFromFile(&model, &err, &warn, local);
+			if (obterExtensaoArquivo(local) == "glb")
+			{
+				work = loader.LoadBinaryFromFile(&model, &err, &warn, local);
+			}
+			else
+			{
+				work = loader.LoadASCIIFromFile(&model, &err, &warn, local);
+			}
 
 			if (!warn.empty())
 			{
@@ -1944,16 +2021,18 @@ namespace ManuseioDados
 			for (tinygltf::Image i : model.images)
 			{
 				string name = i.name;
-				if(!carregar_Imagem(name)){
+				if (!carregar_Imagem(name))
+				{
 					shared_ptr<imagem> img = registrar_Imagem(name, i.width, i.height, i.component, i.image.data());
 					img->local = name;
 					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));
-				}else{
-					shared_ptr<imagem> img = carregar_Imagem(name)
+				}
+				else
+				{
+					shared_ptr<imagem> img = carregar_Imagem(name);
 					img->local = name;
 					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));
 				}
-				
 			}
 
 			// std::cout << "Número de materiais: " << model.materials.size() << std::endl;
@@ -1975,7 +2054,7 @@ namespace ManuseioDados
 				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.malhas, ret.offset_matrices, model, i, meshes_included));
 			}
 
-			std::cout << "Número de animações: " << model.animations.size() << std::endl;
+			// std::cout << "Número de animações: " << model.animations.size() << std::endl;
 			for (tinygltf::Animation a : model.animations)
 			{
 				ret.animacoes.insert(tgl_animation_convert(local, model, a));
@@ -1996,6 +2075,7 @@ namespace ManuseioDados
 	map<string, shared_ptr<cena_3D> (*)(string)> funcoes_abrir_modelos_3D = {
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".obj", importar_obj),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_gltf),
+		// pair<string, shared_ptr<cena_3D> (*)(string)>(".gltf", importar_glb),
 		pair<string, shared_ptr<cena_3D> (*)(string)>(".glb", importar_glb),
 	};
 

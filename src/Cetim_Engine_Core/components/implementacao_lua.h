@@ -2643,7 +2643,7 @@ namespace funcoes_ponte
 	int set_keyframe(lua_State *L)
 	{
 		
-		/*
+		
 		int args_no = lua_gettop(L);
 
 		if (args_no == 5)
@@ -2703,13 +2703,12 @@ namespace funcoes_ponte
 			}
 			else
 			{
-				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
+				//apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
 			}
 		}
 		else if (args_no == 6)
 		{
 		}
-		*/
 
 		return 0;
 	}
