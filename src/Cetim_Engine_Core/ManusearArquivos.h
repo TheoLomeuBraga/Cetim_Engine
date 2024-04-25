@@ -1880,7 +1880,9 @@ namespace ManuseioDados
 					ret.minhas_malhas.push_back(p.second);
 					meshes.insert(p);
 				}
-			}else{
+			}
+			else
+			{
 				for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, NULL, node_id, node.mesh, meshes_included))
 				{
 					ret.minhas_malhas.push_back(p.second);
@@ -1958,6 +1960,12 @@ namespace ManuseioDados
 		return vec2(startTime, endTime - startTime);
 	}
 
+	vector<key_frame> get_keyframe(const tinygltf::Model &model, tinygltf::Animation animatior, float time)
+	{
+		vector<key_frame> ret;
+		return ret;
+	}
+
 	animacao tgl_convertAnimation(tinygltf::Model model, const tinygltf::Animation &gltfAnimation)
 	{
 		animacao result;
@@ -1966,6 +1974,12 @@ namespace ManuseioDados
 		vec2 duration = tgl_getAnimationTimeDuration(model, gltfAnimation);
 		result.start_time = duration.x;
 		result.duration = duration.y;
+
+		for (float t = duration.x; t < duration.x + duration.y; t += 1.0 / ANIMATION_FPS_COUNT)
+		{
+			t = std::min(t, duration.x + duration.y);
+			result.keyFrames.push_back(get_keyframe(model, gltfAnimation, t));
+		}
 
 		return result;
 	}
