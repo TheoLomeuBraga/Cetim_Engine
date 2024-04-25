@@ -290,21 +290,16 @@ public:
                     }
                     else
                     {
-                        print("AAAAA2");
                         btConvexHullShape *convexHullShape = new btConvexHullShape();
-                        print("BBBBB2");
 
                         for (int i = 0; i < collision_mesh->vertices.size(); i++)
                         {
                             convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0] * escala.x, collision_mesh->vertices[i].posicao[1] * escala.y, collision_mesh->vertices[i].posicao[2] * escala.z));
                         }
 
-                        print("CCCCC2");
-
                         Shape = convexHullShape;
                         btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
                         btMeshes_shapes_count++;
-                        print("DDDDD2");
                     }
                 }
             }

@@ -419,7 +419,7 @@ namespace ManuseioDados
 			image = imagem(res_x, res_y, chanals, data);
 		}
 
-		print("registrar_Imagem", name, mapeamento_imagems.aplicar(name, image));
+		mapeamento_imagems.aplicar(name, image);
 		remove_loading_request(name);
 		return mapeamento_imagems.aplicar(name, image);
 	}
@@ -1456,31 +1456,21 @@ namespace ManuseioDados
 		ret.first = in_mat.name;
 		ret.second.shader = "mesh";
 
-		/*
-		if (in_mat.values.find("filter") != in_mat.values.end())
+		if (in_mat.pbrMetallicRoughness.baseColorTexture.index >= 0)
 		{
-			auto filter = in_mat.values.at("filter").number_array;
-			for (size_t i = 0; i < NO_TEXTURAS && i < filter.size(); ++i)
-			{
-				ret.second.filtro[i] = static_cast<int>(filter[i]);
-			}
+			const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
+			const tinygltf::Texture &texture = model.textures[texture_index];
+			const tinygltf::Image &image = model.images[texture.source];
+			string name = local + string(":") + image.name;
+			ret.second.texturas[0] = carregar_Imagem(name);
 		}
-		*/
-
-		for (int i = 0; i < NO_TEXTURAS; ++i)
+		else
 		{
-			if (in_mat.pbrMetallicRoughness.baseColorTexture.index >= 0)
-			{
-				const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
-				const tinygltf::Texture &texture = model.textures[texture_index];
-				const tinygltf::Image &image = model.images[texture.source];
-				string name = local + string(":") + image.name;
-				ret.second.texturas[i] = carregar_Imagem(name);
-			}
-			else
-			{
-				break;
-			}
+			ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
+		}
+
+		for(int i = 1; i < NO_TEXTURAS; i++){
+			ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
 		}
 
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
@@ -1488,6 +1478,7 @@ namespace ManuseioDados
 
 		ret.second.suave = in_mat.pbrMetallicRoughness.roughnessFactor;
 		ret.second.metalico = in_mat.pbrMetallicRoughness.metallicFactor;
+		ret.second.uv_pos_sca = vec4(0,0,1,1);
 
 		return ret;
 	}
@@ -1720,42 +1711,47 @@ namespace ManuseioDados
 
 				size_t indexCount = indexAccessor.count;
 
-				if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE){
+				if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE)
+				{
 					const uint8_t *indexDataPtr = reinterpret_cast<const uint8_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
-					
+
 					for (size_t i = 0; i < indexCount; ++i)
 					{
 						if (indexDataPtr[i] < vertices.size())
 						{
-							print("uint8_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							// print("uint8_t indexDataPtr", (unsigned int)indexDataPtr[i]);
 							indice.push_back((unsigned int)indexDataPtr[i]);
 						}
 					}
-				}else if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT){
+				}
+				else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
+				{
 					const uint16_t *indexDataPtr = reinterpret_cast<const uint16_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
 					for (size_t i = 0; i < indexCount; ++i)
 					{
 						if (indexDataPtr[i] < vertices.size())
 						{
-							print("uint16_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							// print("uint16_t indexDataPtr", (unsigned int)indexDataPtr[i]);
 							indice.push_back((unsigned int)indexDataPtr[i]);
 						}
 					}
-				}else if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT){
+				}
+				else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
+				{
 					const uint32_t *indexDataPtr = reinterpret_cast<const uint32_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
 					for (size_t i = 0; i < indexCount; ++i)
 					{
 						if (indexDataPtr[i] < vertices.size())
 						{
-							print("uint32_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							// print("uint32_t indexDataPtr", (unsigned int)indexDataPtr[i]);
 							indice.push_back((unsigned int)indexDataPtr[i]);
 						}
 					}
-				}else{
+				}
+				else
+				{
 					throw std::runtime_error("Unsupported index component type.");
 				}
-
-				
 
 				malha ret_malha;
 				ret_malha.nome = mesh_name;
@@ -1763,6 +1759,8 @@ namespace ManuseioDados
 				ret_malha.indice = indice;
 				ret_malha.vertices = vertices;
 				ret_malha.comprimir();
+
+				//print("ret_malha.nome",ret_malha.nome);
 
 				ret.push_back(pair<string, shared_ptr<malha>>(mesh_name, make_shared<malha>(ret_malha)));
 
@@ -1847,6 +1845,7 @@ namespace ManuseioDados
 		if (node.translation.size() > 0)
 		{
 			ret.posicao = vec3(node.translation[0], node.translation[1], node.translation[2]);
+			//print("ret.posicao",ret.posicao.x,ret.posicao.y,ret.posicao.z);
 		}
 		if (node.rotation.size() > 0)
 		{

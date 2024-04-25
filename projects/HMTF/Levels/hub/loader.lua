@@ -88,8 +88,8 @@ function level:START()
 
     coroutine.yield()
 
-    level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
-    --level.scene_3D_data = get_scene_3D("Levels/hub/hub.glb")
+    --level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
+    level.scene_3D_data = get_scene_3D("Levels/hub/hub.glb")
     
 
     coroutine.yield()
@@ -106,8 +106,8 @@ function level:START()
 
     camera = {}
 
-    global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
-    --global_data.level_animation_data = {path="Levels/hub/hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
+    --global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
+    global_data.level_animation_data = {path="Levels/hub/hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
 
