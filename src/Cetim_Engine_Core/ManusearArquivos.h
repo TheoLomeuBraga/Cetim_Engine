@@ -1725,11 +1725,14 @@ namespace ManuseioDados
 					indice.push_back(indexDataPtr[i]);
 				}
 
-				shared_ptr<malha> ret_malha = make_shared<malha>();
-				ret_malha->indice = indice;
-				ret_malha->vertices = vertices;
+				malha ret_malha;
+				ret_malha.nome = mesh_name;
+				ret_malha.arquivo_origem = local;
+				ret_malha.indice = indice;
+				ret_malha.vertices = vertices;
+				ret_malha.comprimir();
 
-				ret.push_back(pair<string, shared_ptr<malha>>(mesh_name, ret_malha));
+				ret.push_back(pair<string, shared_ptr<malha>>(mesh_name, make_shared<malha>(ret_malha)));
 
 				i++;
 			}
@@ -1799,7 +1802,7 @@ namespace ManuseioDados
 		return inverseBindMatrix;
 	}
 
-	objeto_3D tgl_node_convert(string local, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
+	objeto_3D tgl_node_convert(string local,map<string, shared_ptr<malha>> &meshes, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
 	{
 		objeto_3D ret;
 
@@ -1835,6 +1838,7 @@ namespace ManuseioDados
 			for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, node_id, node.mesh, meshes_included))
 			{
 				ret.minhas_malhas.push_back(p.second);
+				meshes.insert(p);
 			}
 
 			for (tinygltf::Primitive p : mesh.primitives)
@@ -1847,7 +1851,7 @@ namespace ManuseioDados
 
 		for (int i : node.children)
 		{
-			ret.filhos.push_back(tgl_node_convert(local, offset_matrices, model, i, meshes_included));
+			ret.filhos.push_back(tgl_node_convert(local,meshes, offset_matrices, model, i, meshes_included));
 		}
 
 		return ret;
@@ -1855,6 +1859,7 @@ namespace ManuseioDados
 
 	pair<string, animacao> tgl_animation_convert(string local,tinygltf::Model model,tinygltf::Animation animatior){
 		pair<string, animacao> ret;
+
 		return ret;
 	}
 
@@ -1892,27 +1897,30 @@ namespace ManuseioDados
 				std::cerr << "Falha ao carregar o arquivo GLB." << std::endl;
 			}
 
-			std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
+			//std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
 			for (tinygltf::Image i : model.images)
 			{
 				string name = local + string(":") + i.name;
 				ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, registrar_Imagem(name, i.width, i.height, i.component, &i.image[0])));
 			}
-			std::cout << "Número de materiais: " << model.materials.size() << std::endl;
+
+			//std::cout << "Número de materiais: " << model.materials.size() << std::endl;
 			for (tinygltf::Material m : model.materials)
 			{
 				ret.materiais.insert(tgl_material_convert(local, model, m));
 			}
 
+			/*
 			std::cout << "Número de scenes: " << model.scenes.size() << std::endl;
 			std::cout << "Número de nodes: " << model.nodes.size() << std::endl;
 			std::cout << "Número de skins: " << model.skins.size() << std::endl;
 			std::cout << "Número de malhas (meshes): " << model.meshes.size() << std::endl;
+			*/
 
 			set<string> meshes_included;
 			for (int i : model.scenes[0].nodes)
 			{
-				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.offset_matrices, model, i, meshes_included));
+				ret.objetos.filhos.push_back(tgl_node_convert(local,ret.malhas, ret.offset_matrices, model, i, meshes_included));
 			}
 
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;

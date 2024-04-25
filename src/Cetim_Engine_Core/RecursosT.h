@@ -42,8 +42,6 @@ using namespace std;
 vec3 gravidade = vec3(0, -9.8f, 0);
 // vec3 gravidade = vec3(0, 0, 0);
 
-
-
 struct printable_any
 {
 	std::variant<std::string, int, double> m_val;
@@ -102,42 +100,48 @@ public:
 	unordered_map<string, float> inputs;
 };
 
-class vr_headset_hand_input{
+class vr_headset_hand_input
+{
 public:
 	glm::vec3 position;
 	glm::quat rotation;
-	std::map<std::string,float> actions;
+	std::map<std::string, float> actions;
 
-	float get_action(std::string act){
-		if(actions.find(act) != actions.end()){
+	float get_action(std::string act)
+	{
+		if (actions.find(act) != actions.end())
+		{
 			return actions[act];
 		}
 		return 0;
 	}
 
-	void set_action(std::string act,float power){
-		actions.insert(pair<std::string,float>(act,power));
+	void set_action(std::string act, float power)
+	{
+		actions.insert(pair<std::string, float>(act, power));
 	}
 
-	void clean_actions(){
+	void clean_actions()
+	{
 		actions.clear();
 	}
 };
 
-struct eye_position_vr{
+struct eye_position_vr
+{
 	glm::mat4 projection;
 	glm::mat4 view;
 };
 typedef struct eye_position_vr eye_position_vr;
 
-class vr_headset_input{
+class vr_headset_input
+{
 public:
 	glm::vec3 position;
 	glm::quat rotation;
 
 	vr_headset_hand_input hands[2];
 	eye_position_vr eyes[2];
-
 };
 
 class progresso_carregamento
@@ -603,8 +607,6 @@ struct vertice_struct
 };
 typedef struct vertice_struct vertice;
 
-
-
 struct VertexPositionHasher
 {
 	std::size_t operator()(const glm::vec3 &v) const
@@ -613,30 +615,6 @@ struct VertexPositionHasher
 		std::size_t h2 = std::hash<float>{}(v.y);
 		std::size_t h3 = std::hash<float>{}(v.z);
 		return h1 ^ (h2 << 1) ^ (h3 << 2); // Combine os valores hash
-	}
-};
-
-struct VertexHasher
-{
-	std::size_t operator()(const vertice &v) const
-	{
-		std::size_t seed = 0;
-		for (int i = 0; i < 3; ++i)
-		{
-			seed ^= std::hash<float>{}(v.posicao[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-			seed ^= std::hash<float>{}(v.normal[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-			seed ^= std::hash<float>{}(v.cor[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-		}
-		seed ^= std::hash<float>{}(v.uv[0]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-		seed ^= std::hash<float>{}(v.uv[1]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
-		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
-		{
-			seed ^= std::hash<int>{}(v.id_ossos[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-			seed ^= std::hash<float>{}(v.peso_ossos[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-		}
-
-		return seed;
 	}
 };
 
@@ -679,6 +657,37 @@ bool has_duplicates(const std::vector<float> &values)
 	return false; // Nenhum valor duplicado encontrado
 }
 
+struct vertice_hash
+{
+	size_t operator()(const vertice_struct &vert) const
+	{
+		size_t hash = 17;
+		// Calcula o hash para cada campo do vertice_struct
+		hash = hash * 31 + hash_array(vert.posicao, 3);
+		hash = hash * 31 + hash_array(vert.uv, 2);
+		hash = hash * 31 + hash_array(vert.normal, 3);
+		hash = hash * 31 + hash_array(vert.cor, 3);
+		hash = hash * 31 + hash_array(vert.tangent, 3);
+		hash = hash * 31 + hash_array(vert.bitangents, 3);
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i) {
+                hash = hash * 31 + std::hash<int>()(vert.id_ossos[i]);
+            }
+		hash = hash * 31 + hash_array(vert.peso_ossos, MAX_BONE_INFLUENCE);
+		return hash;
+	}
+
+	// Função auxiliar para calcular o hash de um array de floats
+	size_t hash_array(const float *arr, size_t size) const
+	{
+		size_t hash = 0;
+		for (size_t i = 0; i < size; ++i)
+		{
+			hash = hash * 31 + std::hash<float>()(arr[i]);
+		}
+		return hash;
+	}
+};
+
 class malha;
 void remover_malha(malha *ma);
 class malha : public asset
@@ -691,35 +700,33 @@ public:
 	vector<vertice> vertices;
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 
-	void comprimir()
-	{
-		// Mapeia cada vértice único para um novo índice
-		std::unordered_map<vertice, unsigned int, VertexHasher> uniqueVertexMap;
-		std::vector<vertice> newVertices;
-		std::vector<unsigned int> newIndices;
+	void comprimir() {
+        std::unordered_map<vertice_struct, unsigned int, vertice_hash> indexMap;
+        std::vector<vertice_struct> uniqueVertices;
+        std::vector<unsigned int> newIndices;
 
-		newIndices.reserve(indice.size());
+        // Percorre todos os vértices
+        for (const auto& vert : vertices) {
+            // Verifica se o vértice já está no mapa
+            auto it = indexMap.find(vert);
+            if (it == indexMap.end()) {
+                // Se não, adiciona o vértice ao vetor de vértices únicos e atribui um novo índice
+                unsigned int newIndex = static_cast<unsigned int>(uniqueVertices.size());
+                indexMap[vert] = newIndex;
+                uniqueVertices.push_back(vert);
+                // Adiciona o novo índice ao vetor de novos índices
+                newIndices.push_back(newIndex);
+            } else {
+                // Se sim, atribui o índice correspondente ao vértice
+                newIndices.push_back(it->second);
+            }
+        }
 
-		// Processa cada índice na malha
-		for (size_t i = 0; i < indice.size(); ++i)
-		{
-			const vertice &v = vertices[indice[i]];
-
-			// Se o vértice não estiver no mapa, adicione-o
-			if (uniqueVertexMap.find(v) == uniqueVertexMap.end())
-			{
-				uniqueVertexMap[v] = newVertices.size();
-				newVertices.push_back(v);
-			}
-
-			// Use o índice do vértice único
-			newIndices.push_back(uniqueVertexMap[v]);
-		}
-
-		// Atualiza a malha com os novos vértices e índices
-		vertices = std::move(newVertices);
-		indice = std::move(newIndices);
-	}
+        // Atualiza o vetor de vértices da malha
+        vertices = std::move(uniqueVertices);
+        // Atualiza o vetor de índices da malha
+        indice = std::move(newIndices);
+    }
 
 	// Custom comparison function for vertices based only on position.
 	static bool posComp(const vertice &v1, const vertice &v2)
@@ -851,44 +858,47 @@ public:
 	}
 };
 
-void calculate_mesh_tangent(malha& mesh) {
-    for (size_t i = 0; i < mesh.indice.size(); i += 3) {
-        vertice& v0 = mesh.vertices[mesh.indice[i]];
-        vertice& v1 = mesh.vertices[mesh.indice[i + 1]];
-        vertice& v2 = mesh.vertices[mesh.indice[i + 2]];
+void calculate_mesh_tangent(malha &mesh)
+{
+	for (size_t i = 0; i < mesh.indice.size(); i += 3)
+	{
+		vertice &v0 = mesh.vertices[mesh.indice[i]];
+		vertice &v1 = mesh.vertices[mesh.indice[i + 1]];
+		vertice &v2 = mesh.vertices[mesh.indice[i + 2]];
 
-        glm::vec3 edge1 = glm::vec3(v1.posicao[0] - v0.posicao[0], v1.posicao[1] - v0.posicao[1], v1.posicao[2] - v0.posicao[2]);
-        glm::vec3 edge2 = glm::vec3(v2.posicao[0] - v0.posicao[0], v2.posicao[1] - v0.posicao[1], v2.posicao[2] - v0.posicao[2]);
+		glm::vec3 edge1 = glm::vec3(v1.posicao[0] - v0.posicao[0], v1.posicao[1] - v0.posicao[1], v1.posicao[2] - v0.posicao[2]);
+		glm::vec3 edge2 = glm::vec3(v2.posicao[0] - v0.posicao[0], v2.posicao[1] - v0.posicao[1], v2.posicao[2] - v0.posicao[2]);
 
-        glm::vec2 deltaUV1 = glm::vec2(v1.uv[0] - v0.uv[0], v1.uv[1] - v0.uv[1]);
-        glm::vec2 deltaUV2 = glm::vec2(v2.uv[0] - v0.uv[0], v2.uv[1] - v0.uv[1]);
+		glm::vec2 deltaUV1 = glm::vec2(v1.uv[0] - v0.uv[0], v1.uv[1] - v0.uv[1]);
+		glm::vec2 deltaUV2 = glm::vec2(v2.uv[0] - v0.uv[0], v2.uv[1] - v0.uv[1]);
 
-        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
 
-        glm::vec3 tangent;
-        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-        tangent = glm::normalize(tangent);
+		glm::vec3 tangent;
+		tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+		tangent = glm::normalize(tangent);
 
-        glm::vec3 bitangent;
-        bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-        bitangent = glm::normalize(bitangent);
+		glm::vec3 bitangent;
+		bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+		bitangent = glm::normalize(bitangent);
 
-        // Aqui você pode definir as tangentes e bitangentes para cada vértice do triângulo
-        // Este é um exemplo simplificado que atribui os mesmos valores para todos os vértices do triângulo
-        for (int j = 0; j < 3; j++) {
-            v0.tangent[j] = tangent[j];
-            v1.tangent[j] = tangent[j];
-            v2.tangent[j] = tangent[j];
+		// Aqui você pode definir as tangentes e bitangentes para cada vértice do triângulo
+		// Este é um exemplo simplificado que atribui os mesmos valores para todos os vértices do triângulo
+		for (int j = 0; j < 3; j++)
+		{
+			v0.tangent[j] = tangent[j];
+			v1.tangent[j] = tangent[j];
+			v2.tangent[j] = tangent[j];
 
-            v0.bitangents[j] = bitangent[j];
-            v1.bitangents[j] = bitangent[j];
-            v2.bitangents[j] = bitangent[j];
-        }
-    }
+			v0.bitangents[j] = bitangent[j];
+			v1.bitangents[j] = bitangent[j];
+			v2.bitangents[j] = bitangent[j];
+		}
+	}
 }
 
 std::shared_ptr<malha> apply_transformation_to_mesh(std::shared_ptr<malha> myMesh, glm::mat4 transform)
@@ -1155,7 +1165,7 @@ public:
 	virtual void remover_fonte(fonte *f) {}
 	virtual void remover_shader(shader *nome) {}
 	virtual void reindenizar_cenario() {}
-	virtual void carregar_shader(string shade){}
+	virtual void carregar_shader(string shade) {}
 };
 API_grafica_classe *api_grafica;
 

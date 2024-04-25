@@ -18,7 +18,7 @@ bool file_exist(string nome)
 }
 
 #ifndef ANIMATION_FPS_COUNT
-#define ANIMATION_FPS_COUNT 20
+#define ANIMATION_FPS_COUNT 30
 #endif
 
 #ifndef MAX_BONE_INFLUENCE

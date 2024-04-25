@@ -83,30 +83,21 @@ function level:START()
     loading_screen.open()
 
     coroutine.yield()
-    
-    --print("stop_coroutine_if_is_not_loaded start")
 
     stop_coroutine_if_is_not_loaded(assets_needed)
 
-    --print("stop_coroutine_if_is_not_loaded end")
-
-    --print("CCCCC")
-
     coroutine.yield()
-    level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
 
+    --level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
+    level.scene_3D_data = get_scene_3D("Levels/hub/hub.glb")
     
 
     coroutine.yield()
-
-    --print("DDDDD")
     cenary_builders.cenary = create_object(layers.cenary)
 
     coroutine.yield()
     
     scene_data = cenary_builders.scene(cenary_builders.cenary,2,level.scene_3D_data,true)
-
-    --print("FFFFF")
 
     coroutine.yield()
     
@@ -115,7 +106,8 @@ function level:START()
 
     camera = {}
 
-    global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
+    --global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
+    global_data.level_animation_data = {path="Levels/hub/hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
 
