@@ -1604,7 +1604,7 @@ namespace ManuseioDados
 		}
 	}
 
-	void tgl_convertPrimitiveToVertices(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<vertice_struct> &vertices)
+	void tgl_convertPrimitiveToVertices(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<vertice_struct> &vertices, tinygltf::Skin *skin)
 	{
 		vertice_struct vert;
 
@@ -1628,7 +1628,7 @@ namespace ManuseioDados
 		}
 
 		std::vector<int> jointsData;
-		if (primitive.attributes.find("JOINTS_0") != primitive.attributes.end())
+		if (primitive.attributes.find("JOINTS_0") != primitive.attributes.end() && skin != NULL)
 		{
 			const tinygltf::Accessor &jointsAccessor = model.accessors[primitive.attributes.at("JOINTS_0")];
 			std::vector<float> jointsDataFloat;
@@ -1636,8 +1636,7 @@ namespace ManuseioDados
 			jointsData.resize(jointsDataFloat.size());
 			for (size_t i = 0; i < jointsDataFloat.size(); ++i)
 			{
-				jointsData[i] = static_cast<size_t>(jointsDataFloat[i]);
-				print("jointsDataFloat",jointsData[i]);
+				jointsData[i] = skin->joints[static_cast<size_t>(jointsDataFloat[i])];
 			}
 		}
 
@@ -1679,11 +1678,11 @@ namespace ManuseioDados
 			{
 				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
 				{
-					//vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
-					//vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
+					// vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
+					// vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
 					vert.id_ossos[j] = (static_cast<int>(jointsData[j]));
 					vert.peso_ossos[j] = (static_cast<float>(weightsData[j]));
-					//print("jointsData",vert.id_ossos[j],"weightsData",vert.peso_ossos[j]);
+					// print("jointsData",vert.id_ossos[j],"weightsData",vert.peso_ossos[j]);
 				}
 			}
 
@@ -1693,7 +1692,7 @@ namespace ManuseioDados
 		}
 	}
 
-	vector<pair<string, shared_ptr<malha>>> tgl_converter_malha(string local, tinygltf::Model model, int node_id, int mesh_id, set<string> &meshes_included)
+	vector<pair<string, shared_ptr<malha>>> tgl_converter_malha(string local, tinygltf::Model model, tinygltf::Skin *skin, int node_id, int mesh_id, set<string> &meshes_included)
 	{
 		vector<pair<string, shared_ptr<malha>>> ret = {};
 
@@ -1712,7 +1711,7 @@ namespace ManuseioDados
 				std::vector<unsigned int> indice = {};
 				std::vector<vertice> vertices = {};
 
-				tgl_convertPrimitiveToVertices(model, p, vertices);
+				tgl_convertPrimitiveToVertices(model, p, vertices, skin);
 
 				const tinygltf::Accessor &indexAccessor = model.accessors[p.indices];
 				const tinygltf::BufferView &indexBufferView = model.bufferViews[indexAccessor.bufferView];
@@ -1872,10 +1871,21 @@ namespace ManuseioDados
 
 			tinygltf::Mesh mesh = model.meshes[node.mesh];
 
-			for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, node_id, node.mesh, meshes_included))
+			if (node.skin > -1)
 			{
-				ret.minhas_malhas.push_back(p.second);
-				meshes.insert(p);
+				tinygltf::Skin skin = model.skins[node.skin];
+
+				for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, &skin, node_id, node.mesh, meshes_included))
+				{
+					ret.minhas_malhas.push_back(p.second);
+					meshes.insert(p);
+				}
+			}else{
+				for (pair<string, shared_ptr<malha>> p : tgl_converter_malha(local, model, NULL, node_id, node.mesh, meshes_included))
+				{
+					ret.minhas_malhas.push_back(p.second);
+					meshes.insert(p);
+				}
 			}
 
 			for (tinygltf::Primitive p : mesh.primitives)
@@ -1956,8 +1966,6 @@ namespace ManuseioDados
 		vec2 duration = tgl_getAnimationTimeDuration(model, gltfAnimation);
 		result.start_time = duration.x;
 		result.duration = duration.y;
-
-		
 
 		return result;
 	}
