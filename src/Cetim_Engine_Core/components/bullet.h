@@ -239,8 +239,11 @@ public:
             if (collision_mesh != NULL)
             {
 
+                
+
                 if (dinamica == estatico)
                 {
+                    
                     mesh_shape_address = get_mesh_shape_address(collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
 
                     if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
@@ -266,11 +269,15 @@ public:
                             btVector3 vertex3 = btVector3(v.posicao[0] * escala.x, v.posicao[1] * escala.y, v.posicao[2] * escala.z);
 
                             tm->addTriangle(vertex1, vertex2, vertex3);
+
                         }
+
+                       
 
                         Shape = new btBvhTriangleMeshShape(tm, true);
                         btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
                         btMeshes_shapes_count++;
+                        
                     }
                 }
                 else
@@ -283,16 +290,21 @@ public:
                     }
                     else
                     {
+                        print("AAAAA2");
                         btConvexHullShape *convexHullShape = new btConvexHullShape();
+                        print("BBBBB2");
 
                         for (int i = 0; i < collision_mesh->vertices.size(); i++)
                         {
                             convexHullShape->addPoint(btVector3(collision_mesh->vertices[i].posicao[0] * escala.x, collision_mesh->vertices[i].posicao[1] * escala.y, collision_mesh->vertices[i].posicao[2] * escala.z));
                         }
 
+                        print("CCCCC2");
+
                         Shape = convexHullShape;
                         btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
                         btMeshes_shapes_count++;
+                        print("DDDDD2");
                     }
                 }
             }

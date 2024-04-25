@@ -607,6 +607,11 @@ struct vertice_struct
 };
 typedef struct vertice_struct vertice;
 
+bool vertices_iguais(vertice v1, vertice v2)
+{
+	return std::memcmp(&v1, &v2, sizeof(vertice)) == 0;
+}
+
 struct VertexPositionHasher
 {
 	std::size_t operator()(const glm::vec3 &v) const
@@ -701,31 +706,7 @@ public:
 	vec3 tamanho_maximo = vec3(0, 0, 0), centro = vec3(0, 0, 0);
 
 	void comprimir() {
-        std::unordered_map<vertice_struct, unsigned int, vertice_hash> indexMap;
-        std::vector<vertice_struct> uniqueVertices;
-        std::vector<unsigned int> newIndices;
-
-        // Percorre todos os vértices
-        for (const auto& vert : vertices) {
-            // Verifica se o vértice já está no mapa
-            auto it = indexMap.find(vert);
-            if (it == indexMap.end()) {
-                // Se não, adiciona o vértice ao vetor de vértices únicos e atribui um novo índice
-                unsigned int newIndex = static_cast<unsigned int>(uniqueVertices.size());
-                indexMap[vert] = newIndex;
-                uniqueVertices.push_back(vert);
-                // Adiciona o novo índice ao vetor de novos índices
-                newIndices.push_back(newIndex);
-            } else {
-                // Se sim, atribui o índice correspondente ao vértice
-                newIndices.push_back(it->second);
-            }
-        }
-
-        // Atualiza o vetor de vértices da malha
-        vertices = std::move(uniqueVertices);
-        // Atualiza o vetor de índices da malha
-        indice = std::move(newIndices);
+        
     }
 
 	// Custom comparison function for vertices based only on position.

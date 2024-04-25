@@ -2642,7 +2642,8 @@ namespace funcoes_ponte
 
 	int set_keyframe(lua_State *L)
 	{
-
+		
+		/*
 		int args_no = lua_gettop(L);
 
 		if (args_no == 5)
@@ -2708,6 +2709,7 @@ namespace funcoes_ponte
 		else if (args_no == 6)
 		{
 		}
+		*/
 
 		return 0;
 	}

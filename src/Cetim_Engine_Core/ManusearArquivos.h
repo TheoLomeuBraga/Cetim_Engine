@@ -1717,13 +1717,45 @@ namespace ManuseioDados
 				const tinygltf::Accessor &indexAccessor = model.accessors[p.indices];
 				const tinygltf::BufferView &indexBufferView = model.bufferViews[indexAccessor.bufferView];
 				const tinygltf::Buffer &indexBuffer = model.buffers[indexBufferView.buffer];
-				const unsigned int *indexDataPtr = reinterpret_cast<const unsigned int *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
 
 				size_t indexCount = indexAccessor.count;
-				for (size_t i = 0; i < indexCount; ++i)
-				{
-					indice.push_back(indexDataPtr[i]);
+
+				if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE){
+					const uint8_t *indexDataPtr = reinterpret_cast<const uint8_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
+					
+					for (size_t i = 0; i < indexCount; ++i)
+					{
+						if (indexDataPtr[i] < vertices.size())
+						{
+							print("uint8_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							indice.push_back((unsigned int)indexDataPtr[i]);
+						}
+					}
+				}else if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT){
+					const uint16_t *indexDataPtr = reinterpret_cast<const uint16_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
+					for (size_t i = 0; i < indexCount; ++i)
+					{
+						if (indexDataPtr[i] < vertices.size())
+						{
+							print("uint16_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							indice.push_back((unsigned int)indexDataPtr[i]);
+						}
+					}
+				}else if(indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT){
+					const uint32_t *indexDataPtr = reinterpret_cast<const uint32_t *>(indexBuffer.data.data() + indexBufferView.byteOffset + indexAccessor.byteOffset);
+					for (size_t i = 0; i < indexCount; ++i)
+					{
+						if (indexDataPtr[i] < vertices.size())
+						{
+							print("uint32_t indexDataPtr", (unsigned int)indexDataPtr[i]);
+							indice.push_back((unsigned int)indexDataPtr[i]);
+						}
+					}
+				}else{
+					throw std::runtime_error("Unsupported index component type.");
 				}
+
+				
 
 				malha ret_malha;
 				ret_malha.nome = mesh_name;
@@ -1802,7 +1834,7 @@ namespace ManuseioDados
 		return inverseBindMatrix;
 	}
 
-	objeto_3D tgl_node_convert(string local,map<string, shared_ptr<malha>> &meshes, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
+	objeto_3D tgl_node_convert(string local, map<string, shared_ptr<malha>> &meshes, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
 	{
 		objeto_3D ret;
 
@@ -1827,7 +1859,7 @@ namespace ManuseioDados
 
 		if (node.skin > -1 && model.skins[node.skin].inverseBindMatrices > -1)
 		{
-			offset_matrices[node_id] = tgl_getInverseBindMatrices(model,model.skins[node.skin]);
+			offset_matrices[node_id] = tgl_getInverseBindMatrices(model, model.skins[node.skin]);
 		}
 
 		if (node.mesh > -1)
@@ -1851,13 +1883,14 @@ namespace ManuseioDados
 
 		for (int i : node.children)
 		{
-			ret.filhos.push_back(tgl_node_convert(local,meshes, offset_matrices, model, i, meshes_included));
+			ret.filhos.push_back(tgl_node_convert(local, meshes, offset_matrices, model, i, meshes_included));
 		}
 
 		return ret;
 	}
 
-	pair<string, animacao> tgl_animation_convert(string local,tinygltf::Model model,tinygltf::Animation animatior){
+	pair<string, animacao> tgl_animation_convert(string local, tinygltf::Model model, tinygltf::Animation animatior)
+	{
 		pair<string, animacao> ret;
 
 		return ret;
@@ -1897,14 +1930,14 @@ namespace ManuseioDados
 				std::cerr << "Falha ao carregar o arquivo GLB." << std::endl;
 			}
 
-			//std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
+			// std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
 			for (tinygltf::Image i : model.images)
 			{
 				string name = local + string(":") + i.name;
 				ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, registrar_Imagem(name, i.width, i.height, i.component, &i.image[0])));
 			}
 
-			//std::cout << "Número de materiais: " << model.materials.size() << std::endl;
+			// std::cout << "Número de materiais: " << model.materials.size() << std::endl;
 			for (tinygltf::Material m : model.materials)
 			{
 				ret.materiais.insert(tgl_material_convert(local, model, m));
@@ -1920,12 +1953,13 @@ namespace ManuseioDados
 			set<string> meshes_included;
 			for (int i : model.scenes[0].nodes)
 			{
-				ret.objetos.filhos.push_back(tgl_node_convert(local,ret.malhas, ret.offset_matrices, model, i, meshes_included));
+				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.malhas, ret.offset_matrices, model, i, meshes_included));
 			}
 
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
-			for(tinygltf::Animation a : model.animations){
-				ret.animacoes.insert(tgl_animation_convert(local,model,a));
+			for (tinygltf::Animation a : model.animations)
+			{
+				ret.animacoes.insert(tgl_animation_convert(local, model, a));
 			}
 
 			ret.nome = local;
