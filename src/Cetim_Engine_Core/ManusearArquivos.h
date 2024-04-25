@@ -1492,7 +1492,7 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	void convertAccessorData(const tinygltf::Model &model, const tinygltf::Accessor &accessor, std::vector<float> &data)
+	void tgl_convertAccessorData(const tinygltf::Model &model, const tinygltf::Accessor &accessor, std::vector<float> &data)
 	{
 		const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
 		const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
@@ -1608,27 +1608,27 @@ namespace ManuseioDados
 		}
 	}
 
-	void convertPrimitiveToVertices(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<vertice_struct> &vertices)
+	void tgl_convertPrimitiveToVertices(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<vertice_struct> &vertices)
 	{
 		vertice_struct vert;
 
 		const tinygltf::Accessor &positionAccessor = model.accessors[primitive.attributes.at("POSITION")];
 		std::vector<float> positionData;
-		convertAccessorData(model, positionAccessor, positionData);
+		tgl_convertAccessorData(model, positionAccessor, positionData);
 
 		const tinygltf::Accessor &uvAccessor = model.accessors[primitive.attributes.at("TEXCOORD_0")];
 		std::vector<float> uvData;
-		convertAccessorData(model, uvAccessor, uvData);
+		tgl_convertAccessorData(model, uvAccessor, uvData);
 
 		const tinygltf::Accessor &normalAccessor = model.accessors[primitive.attributes.at("NORMAL")];
 		std::vector<float> normalData;
-		convertAccessorData(model, normalAccessor, normalData);
+		tgl_convertAccessorData(model, normalAccessor, normalData);
 
 		std::vector<float> colorData;
 		if (primitive.attributes.find("COLOR_0") != primitive.attributes.end())
 		{
 			const tinygltf::Accessor &normalAccessor = model.accessors[primitive.attributes.at("COLOR_0")];
-			convertAccessorData(model, normalAccessor, normalData);
+			tgl_convertAccessorData(model, normalAccessor, normalData);
 		}
 
 		std::vector<int> jointsData;
@@ -1636,7 +1636,7 @@ namespace ManuseioDados
 		{
 			const tinygltf::Accessor &jointsAccessor = model.accessors[primitive.attributes.at("JOINTS_0")];
 			std::vector<float> jointsDataFloat;
-			convertAccessorData(model, jointsAccessor, jointsDataFloat);
+			tgl_convertAccessorData(model, jointsAccessor, jointsDataFloat);
 			jointsData.resize(jointsDataFloat.size());
 			for (size_t i = 0; i < jointsDataFloat.size(); ++i)
 			{
@@ -1648,7 +1648,7 @@ namespace ManuseioDados
 		if (primitive.attributes.find("WEIGHTS_0") != primitive.attributes.end())
 		{
 			const tinygltf::Accessor &weightsAccessor = model.accessors[primitive.attributes.at("WEIGHTS_0")];
-			convertAccessorData(model, weightsAccessor, weightsData);
+			tgl_convertAccessorData(model, weightsAccessor, weightsData);
 		}
 
 		size_t vertexCount = positionAccessor.count;
@@ -1712,7 +1712,7 @@ namespace ManuseioDados
 				std::vector<unsigned int> indice = {};
 				std::vector<vertice> vertices = {};
 
-				convertPrimitiveToVertices(model, p, vertices);
+				tgl_convertPrimitiveToVertices(model, p, vertices);
 
 				const tinygltf::Accessor &indexAccessor = model.accessors[p.indices];
 				const tinygltf::BufferView &indexBufferView = model.bufferViews[indexAccessor.bufferView];
@@ -1743,7 +1743,7 @@ namespace ManuseioDados
 		return ret;
 	}
 
-	Table value_to_table(tinygltf::Value value)
+	Table tgl_value_to_table(tinygltf::Value value)
 	{
 		Table table;
 		if (value.IsObject())
@@ -1763,7 +1763,7 @@ namespace ManuseioDados
 				else if (innerValue.IsObject())
 				{
 					Table innerTable;
-					innerTable = value_to_table(innerValue);
+					innerTable = tgl_value_to_table(innerValue);
 					table.m_tableMap[key] = innerTable;
 				}
 				// Você pode adicionar mais casos para outros tipos, se necessário
@@ -1772,7 +1772,7 @@ namespace ManuseioDados
 		return table;
 	}
 
-	glm::mat4 getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin)
+	glm::mat4 tgl_getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin)
 	{
 		// Verifique se o inverseBindMatrices é válido
 		if (skin.inverseBindMatrices < 0 || skin.inverseBindMatrices >= model.accessors.size())
@@ -1783,7 +1783,7 @@ namespace ManuseioDados
 
 		const tinygltf::Accessor &inverseBindAccessor = model.accessors[skin.inverseBindMatrices];
 		std::vector<float> inverseBindData;
-		convertAccessorData(model, inverseBindAccessor, inverseBindData);
+		tgl_convertAccessorData(model, inverseBindAccessor, inverseBindData);
 
 		// Certifique-se de que temos exatamente 16 floats (uma matriz 4x4)
 		if (inverseBindData.size() != 16)
@@ -1824,7 +1824,7 @@ namespace ManuseioDados
 
 		if (node.skin > -1 && model.skins[node.skin].inverseBindMatrices > -1)
 		{
-			offset_matrices[node_id] = getInverseBindMatrices(model,model.skins[node.skin]);
+			offset_matrices[node_id] = tgl_getInverseBindMatrices(model,model.skins[node.skin]);
 		}
 
 		if (node.mesh > -1)
@@ -1843,13 +1843,18 @@ namespace ManuseioDados
 			}
 		}
 
-		ret.variaveis = value_to_table(node.extras);
+		ret.variaveis = tgl_value_to_table(node.extras);
 
 		for (int i : node.children)
 		{
 			ret.filhos.push_back(tgl_node_convert(local, offset_matrices, model, i, meshes_included));
 		}
 
+		return ret;
+	}
+
+	pair<string, animacao> tgl_animation_convert(string local,tinygltf::Model model,tinygltf::Animation animatior){
+		pair<string, animacao> ret;
 		return ret;
 	}
 
@@ -1911,6 +1916,9 @@ namespace ManuseioDados
 			}
 
 			std::cout << "Número de animações: " << model.animations.size() << std::endl;
+			for(tinygltf::Animation a : model.animations){
+				ret.animacoes.insert(tgl_animation_convert(local,model,a));
+			}
 
 			ret.nome = local;
 			remove_loading_request(local);
