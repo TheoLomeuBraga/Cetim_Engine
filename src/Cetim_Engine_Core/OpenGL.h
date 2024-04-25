@@ -551,7 +551,6 @@ public:
 
 	void ogl_adicionar_textura(imagem *img)
 	{
-
 		if (texturas.find(img) == texturas.end() && img != NULL)
 		{
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);

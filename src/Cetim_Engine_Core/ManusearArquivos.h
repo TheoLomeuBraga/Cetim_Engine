@@ -1136,13 +1136,14 @@ namespace ManuseioDados
 
 			int material_index = loader.meshes[mesh_index].sub_meshes[0].material;
 
-			if (material_index <= loader.materials.size() - 1 && loader.materials.size() != 0)
+			if (material_index < loader.materials.size() && loader.materials.size() != 0)
 			{
 				string material_name = loader.materials[material_index].name;
 				ret.meus_materiais.push_back(cena.materiais[material_name]);
 			}
 			else
 			{
+				
 				Material mat;
 				mat.shader = "mesh";
 				mat.texturas[0] = carregar_Imagem("Textures/null.png");
@@ -1447,6 +1448,10 @@ namespace ManuseioDados
 		std::copy(data, data + w * h * comp * (bits / 8), image->image.begin());
 		stbi_image_free(data);
 
+		
+		
+
+
 		return true;
 	}
 
@@ -1456,22 +1461,28 @@ namespace ManuseioDados
 		ret.first = in_mat.name;
 		ret.second.shader = "mesh";
 
-		if (in_mat.pbrMetallicRoughness.baseColorTexture.index >= 0)
+		if (in_mat.pbrMetallicRoughness.baseColorTexture.index > -1)
 		{
 			const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
 			const tinygltf::Texture &texture = model.textures[texture_index];
 			const tinygltf::Image &image = model.images[texture.source];
-			string name = local + string(":") + image.name;
+			string name = image.name;
 			ret.second.texturas[0] = carregar_Imagem(name);
+			if(ret.second.texturas[0] == NULL){
+				print("ERROR texture is NULL");
+			}else{
+
+			}
+			//print("texturas",name,ret.second.texturas[0]->local,ret.second.texturas[0]->res.x,ret.second.texturas[0]->res.y);
 		}
 		else
 		{
-			ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
+			ret.second.texturas[0] = carregar_Imagem("Textures/white.png");
 		}
 
-		for(int i = 1; i < NO_TEXTURAS; i++){
-			ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
-		}
+		//ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:test_gradient");
+		//ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:null");
+		//ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
 
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
 		ret.second.cor = vec4(bcf[0], bcf[1], bcf[2], bcf[3]);
@@ -1891,7 +1902,7 @@ namespace ManuseioDados
 	pair<string, animacao> tgl_animation_convert(string local, tinygltf::Model model, tinygltf::Animation animatior)
 	{
 		pair<string, animacao> ret;
-
+		
 		return ret;
 	}
 
@@ -1907,7 +1918,7 @@ namespace ManuseioDados
 			tinygltf::Model model;
 			tinygltf::TinyGLTF loader;
 
-			loader.SetImageLoader(&TinyGLTFLoadImageData, NULL);
+			loader.SetImageLoader(&TinyGLTFLoadImageData, nullptr);
 
 			std::string err;
 			std::string warn;
@@ -1932,8 +1943,17 @@ namespace ManuseioDados
 			// std::cout << "Número de texturas (images): " << model.images.size() << std::endl;
 			for (tinygltf::Image i : model.images)
 			{
-				string name = local + string(":") + i.name;
-				ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, registrar_Imagem(name, i.width, i.height, i.component, &i.image[0])));
+				string name = i.name;
+				if(!carregar_Imagem(name)){
+					shared_ptr<imagem> img = registrar_Imagem(name, i.width, i.height, i.component, i.image.data());
+					img->local = name;
+					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));
+				}else{
+					shared_ptr<imagem> img = carregar_Imagem(name)
+					img->local = name;
+					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));
+				}
+				
 			}
 
 			// std::cout << "Número de materiais: " << model.materials.size() << std::endl;
