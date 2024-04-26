@@ -1767,6 +1767,7 @@ namespace ManuseioDados
 				ret_malha.arquivo_origem = local;
 				ret_malha.indice = indice;
 				ret_malha.vertices = vertices;
+				if(skin){ret_malha.pele = true;}
 				ret_malha.comprimir();
 
 				// print("ret_malha.nome",ret_malha.nome);
@@ -1814,32 +1815,33 @@ namespace ManuseioDados
 		return table;
 	}
 
-	glm::mat4 tgl_getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin)
-	{
-		// Verifique se o inverseBindMatrices é válido
-		if (skin.inverseBindMatrices < 0 || skin.inverseBindMatrices >= model.accessors.size())
-		{
-			// Retornar uma matriz de identidade se o accessor não for válido
-			return glm::mat4(1.0f);
-		}
+	glm::mat4 tgl_getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin, size_t node_id) {
+    // Check if the node_id is within the range of joints in the skin
+    auto it = std::find(skin.joints.begin(), skin.joints.end(), node_id);
+    if (it == skin.joints.end()) {
+        // If the node_id is not part of the joints, return an identity matrix
+        return glm::mat4(1.0);
+    }
 
-		const tinygltf::Accessor &inverseBindAccessor = model.accessors[skin.inverseBindMatrices];
-		std::vector<float> inverseBindData;
-		tgl_convertAccessorData(model, inverseBindAccessor, inverseBindData);
+    size_t jointIndex = std::distance(skin.joints.begin(), it);
 
-		// Certifique-se de que temos exatamente 16 floats (uma matriz 4x4)
-		if (inverseBindData.size() != 16)
-		{
-			// Retornar uma matriz de identidade se os dados não estiverem corretos
-			return glm::mat4(1.0f);
-		}
+    // Access the inverseBindMatrices accessor
+    if (skin.inverseBindMatrices >= 0) {
+        const tinygltf::Accessor &accessor = model.accessors[skin.inverseBindMatrices];
+        const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
+        
+        // Calculate the offset into the buffer for the specific jointIndex
+        size_t offset = accessor.byteOffset + bufferView.byteOffset + jointIndex * accessor.ByteStride(bufferView);
+        const unsigned char *dataPtr = &buffer.data[offset];
 
-		// Preencha a matriz 4x4 com os dados
-		glm::mat4 inverseBindMatrix = glm::make_mat4(inverseBindData.data());
-
-		// Agora inverseBindMatrix contém a matriz 4x4 dos inverseBindMatrices
-		return inverseBindMatrix;
-	}
+        // Create a glm::mat4 and copy the data from the buffer
+        glm::mat4 matrix;
+        memcpy(glm::value_ptr(matrix), dataPtr, sizeof(glm::mat4));
+        return glm::transpose(matrix); // Transpose if necessary based on column/row major difference
+    } 
+	return glm::mat4(1.0);
+}
 
 	objeto_3D tgl_node_convert(string local, map<string, shared_ptr<malha>> &meshes, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
 	{
@@ -1864,7 +1866,7 @@ namespace ManuseioDados
 
 		if (node.skin > -1 && model.skins[node.skin].inverseBindMatrices > -1)
 		{
-			offset_matrices[node_id] = tgl_getInverseBindMatrices(model, model.skins[node.skin]);
+			offset_matrices[node_id] = tgl_getInverseBindMatrices(model, model.skins[node.skin],node_id);
 		}
 
 		if (node.mesh > -1)

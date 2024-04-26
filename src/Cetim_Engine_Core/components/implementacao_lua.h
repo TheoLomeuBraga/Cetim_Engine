@@ -2703,7 +2703,7 @@ namespace funcoes_ponte
 			}
 			else
 			{
-				//apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
+				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
 			}
 		}
 		else if (args_no == 6)
