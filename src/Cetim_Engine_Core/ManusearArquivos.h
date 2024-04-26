@@ -1630,6 +1630,7 @@ namespace ManuseioDados
 		std::vector<int> jointsData;
 		if (primitive.attributes.find("JOINTS_0") != primitive.attributes.end() && skin != NULL)
 		{
+
 			const tinygltf::Accessor &jointsAccessor = model.accessors[primitive.attributes.at("JOINTS_0")];
 			std::vector<float> jointsDataFloat;
 			tgl_convertAccessorData(model, jointsAccessor, jointsDataFloat);
@@ -1889,6 +1890,7 @@ namespace ManuseioDados
 					meshes.insert(p);
 				}
 			}
+			
 
 			for (tinygltf::Primitive p : mesh.primitives)
 			{
