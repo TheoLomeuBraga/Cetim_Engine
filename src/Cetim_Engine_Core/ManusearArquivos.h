@@ -1855,7 +1855,7 @@ namespace ManuseioDados
 		}
 		if (node.rotation.size() > 0)
 		{
-			ret.quaternion = quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+			ret.quaternion = quat(node.rotation[3],node.rotation[0], node.rotation[1], node.rotation[2]);
 		}
 		if (node.scale.size() > 0)
 		{
