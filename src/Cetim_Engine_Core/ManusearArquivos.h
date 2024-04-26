@@ -1960,13 +1960,74 @@ namespace ManuseioDados
 		return vec2(startTime, endTime - startTime);
 	}
 
-	vector<key_frame> get_keyframe(const tinygltf::Model &model, tinygltf::Animation animatior, float time)
+	std::vector<key_frame> get_keyframe(const tinygltf::Model &model, tinygltf::Animation &animation, float time)
 	{
-		vector<key_frame> ret;
+		std::vector<key_frame> ret;
+
+		/**/
+
+		for (const auto &channel : animation.channels)
+		{
+			key_frame kf;
+			kf.object_id = channel.target_node; // Assume node ID maps directly to object ID
+
+			const tinygltf::AnimationSampler &sampler = animation.samplers[channel.sampler];
+			const tinygltf::Accessor &input = model.accessors[sampler.input];
+			const tinygltf::Accessor &output = model.accessors[sampler.output];
+			const tinygltf::BufferView &inputBufferView = model.bufferViews[input.bufferView];
+			const tinygltf::BufferView &outputBufferView = model.bufferViews[output.bufferView];
+			const tinygltf::Buffer &inputBuffer = model.buffers[inputBufferView.buffer];
+			const tinygltf::Buffer &outputBuffer = model.buffers[outputBufferView.buffer];
+
+			// Accessor data as raw bytes
+			const unsigned char *inputData = &inputBuffer.data[inputBufferView.byteOffset + input.byteOffset];
+			const unsigned char *outputData = &outputBuffer.data[outputBufferView.byteOffset + output.byteOffset];
+
+			// Find the closest frame(s)
+			for (size_t i = 0; i < input.count - 1; ++i)
+			{
+				float frameTime0 = *((float *)(inputData + i * sizeof(float)));
+				float frameTime1 = *((float *)(inputData + (i + 1) * sizeof(float)));
+
+				if (time >= frameTime0 && time <= frameTime1)
+				{
+					float t = (time - frameTime0) / (frameTime1 - frameTime0);
+
+					// Depending on the channel.target_path, interpolate the right data
+					if (channel.target_path == "translation")
+					{
+						glm::vec3 pos0 = *((glm::vec3 *)(outputData + i * 3 * sizeof(float)));
+						glm::vec3 pos1 = *((glm::vec3 *)(outputData + (i + 1) * 3 * sizeof(float)));
+						kf.position = glm::mix(pos0, pos1, t);
+						kf.has_position = true;
+					}
+					else if (channel.target_path == "scale")
+					{
+						glm::vec3 scale0 = *((glm::vec3 *)(outputData + i * 3 * sizeof(float)));
+						glm::vec3 scale1 = *((glm::vec3 *)(outputData + (i + 1) * 3 * sizeof(float)));
+						kf.scale = glm::mix(scale0, scale1, t);
+						kf.has_scale = true;
+					}
+					else if (channel.target_path == "rotation")
+					{
+						glm::quat rot0 = *((glm::quat *)(outputData + i * 4 * sizeof(float)));
+						glm::quat rot1 = *((glm::quat *)(outputData + (i + 1) * 4 * sizeof(float)));
+						kf.rotation = glm::slerp(rot0, rot1, t);
+						kf.has_rotation = true;
+					}
+					break;
+				}
+			}
+
+			ret.push_back(kf);
+		}
+
+		
+
 		return ret;
 	}
 
-	animacao tgl_convertAnimation(tinygltf::Model model, const tinygltf::Animation &gltfAnimation)
+	animacao tgl_convertAnimation(tinygltf::Model model,tinygltf::Animation &gltfAnimation)
 	{
 		animacao result;
 		result.nome = gltfAnimation.name;
