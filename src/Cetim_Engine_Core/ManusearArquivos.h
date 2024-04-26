@@ -1119,7 +1119,6 @@ namespace ManuseioDados
 		mat4 offset_matrix = buscar_offset_matrices(loader, node.id);
 		if (offset_matrix != mat4(1.0f))
 		{
-
 			cena.offset_matrices[node.id] = offset_matrix;
 		}
 
@@ -1314,9 +1313,6 @@ namespace ManuseioDados
 
 				ret.animacoes.insert(pair<string, animacao>(a.name, ani));
 			}
-
-			// ret.objetos.escala.x *= -1;
-			// ret.objetos.escala.z *= -1;
 
 			ret.nome = local;
 
@@ -1677,14 +1673,20 @@ namespace ManuseioDados
 
 			if (!jointsData.empty() && !weightsData.empty())
 			{
+
+				
 				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
 				{
 					// vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
 					// vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
-					vert.id_ossos[j] = (static_cast<int>(jointsData[j]));
-					vert.peso_ossos[j] = (static_cast<float>(weightsData[j]));
-					// print("jointsData",vert.id_ossos[j],"weightsData",vert.peso_ossos[j]);
+					int jw_id = (i * MAX_BONE_INFLUENCE) + j;
+					vert.id_ossos[j] = (static_cast<int>(jointsData[jw_id]));
+					vert.peso_ossos[j] = (static_cast<float>(weightsData[jw_id]));
+					
 				}
+
+				cout << "jointsData:	" << jointsData[0] << "	" << jointsData[1] << "	" << jointsData[2] << "	" << jointsData[3] << "	" << endl;
+				cout << "weightsData:	" << weightsData[0] << "	" << weightsData[1] << "	" << weightsData[2] << "	" << weightsData[3] << "	" << endl;
 			}
 
 			// Você pode adicionar mais atributos conforme necessário, como cor, tangente, bitangente, etc.
@@ -1767,7 +1769,10 @@ namespace ManuseioDados
 				ret_malha.arquivo_origem = local;
 				ret_malha.indice = indice;
 				ret_malha.vertices = vertices;
-				if(skin){ret_malha.pele = true;}
+				if (skin)
+				{
+					ret_malha.pele = true;
+				}
 				ret_malha.comprimir();
 
 				// print("ret_malha.nome",ret_malha.nome);
@@ -1815,35 +1820,36 @@ namespace ManuseioDados
 		return table;
 	}
 
-	glm::mat4 tgl_getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin, size_t node_id) {
-    // Check if the node_id is within the range of joints in the skin
-    auto it = std::find(skin.joints.begin(), skin.joints.end(), node_id);
-    if (it == skin.joints.end()) {
-        // If the node_id is not part of the joints, return an identity matrix
-        return glm::mat4(1.0);
-    }
+	glm::mat4 tgl_getInverseBindMatrices(const tinygltf::Model &model, const tinygltf::Skin &skin, size_t node_id)
+	{
+		glm::mat4 matrix = glm::mat4(1.0f); // Default to identity matrix
 
-    size_t jointIndex = std::distance(skin.joints.begin(), it);
+		// Find the joint index corresponding to the node_id
+		auto jointIndexIt = std::find(skin.joints.begin(), skin.joints.end(), node_id);
+		if (jointIndexIt != skin.joints.end() && skin.inverseBindMatrices >= 0)
+		{
+			size_t jointIndex = std::distance(skin.joints.begin(), jointIndexIt);
+			const tinygltf::Accessor &accessor = model.accessors[skin.inverseBindMatrices];
+			std::vector<float> matrixData;
+			tgl_convertAccessorData(model, accessor, matrixData);
 
-    // Access the inverseBindMatrices accessor
-    if (skin.inverseBindMatrices >= 0) {
-        const tinygltf::Accessor &accessor = model.accessors[skin.inverseBindMatrices];
-        const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
-        
-        // Calculate the offset into the buffer for the specific jointIndex
-        size_t offset = accessor.byteOffset + bufferView.byteOffset + jointIndex * accessor.ByteStride(bufferView);
-        const unsigned char *dataPtr = &buffer.data[offset];
+			// Ensure we have the right amount of data for a single matrix
+			if (matrixData.size() >= (jointIndex + 1) * 16)
+			{
+				size_t startIndex = jointIndex * 16;
+				for (size_t i = 0; i < 16; ++i)
+				{
+					size_t row = i / 4;
+					size_t col = i % 4;
+					matrix[row][col] = matrixData[startIndex + i];
+				}
+			}
+		}
 
-        // Create a glm::mat4 and copy the data from the buffer
-        glm::mat4 matrix;
-        memcpy(glm::value_ptr(matrix), dataPtr, sizeof(glm::mat4));
-        return glm::transpose(matrix); // Transpose if necessary based on column/row major difference
-    } 
-	return glm::mat4(1.0);
-}
+		return matrix;
+	}
 
-	objeto_3D tgl_node_convert(string local, map<string, shared_ptr<malha>> &meshes, map<size_t, mat4> &offset_matrices, tinygltf::Model model, int node_id, set<string> &meshes_included)
+	objeto_3D tgl_node_convert(string local, map<string, shared_ptr<malha>> &meshes, tinygltf::Model model, int node_id, set<string> &meshes_included)
 	{
 		objeto_3D ret;
 
@@ -1862,11 +1868,6 @@ namespace ManuseioDados
 		if (node.scale.size() > 0)
 		{
 			ret.escala = vec3(node.scale[0], node.scale[1], node.scale[2]);
-		}
-
-		if (node.skin > -1 && model.skins[node.skin].inverseBindMatrices > -1)
-		{
-			offset_matrices[node_id] = tgl_getInverseBindMatrices(model, model.skins[node.skin],node_id);
 		}
 
 		if (node.mesh > -1)
@@ -1892,7 +1893,6 @@ namespace ManuseioDados
 					meshes.insert(p);
 				}
 			}
-			
 
 			for (tinygltf::Primitive p : mesh.primitives)
 			{
@@ -1914,7 +1914,7 @@ namespace ManuseioDados
 
 		for (int i : node.children)
 		{
-			ret.filhos.push_back(tgl_node_convert(local, meshes, offset_matrices, model, i, meshes_included));
+			ret.filhos.push_back(tgl_node_convert(local, meshes, model, i, meshes_included));
 		}
 
 		return ret;
@@ -2026,12 +2026,10 @@ namespace ManuseioDados
 			ret.push_back(kf);
 		}
 
-		
-
 		return ret;
 	}
 
-	animacao tgl_convertAnimation(tinygltf::Model model,tinygltf::Animation &gltfAnimation)
+	animacao tgl_convertAnimation(tinygltf::Model model, tinygltf::Animation &gltfAnimation)
 	{
 		animacao result;
 		result.nome = gltfAnimation.name;
@@ -2138,13 +2136,24 @@ namespace ManuseioDados
 			set<string> meshes_included;
 			for (int i : model.scenes[0].nodes)
 			{
-				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.malhas, ret.offset_matrices, model, i, meshes_included));
+				ret.objetos.filhos.push_back(tgl_node_convert(local, ret.malhas, model, i, meshes_included));
 			}
 
 			// std::cout << "Número de animações: " << model.animations.size() << std::endl;
 			for (tinygltf::Animation a : model.animations)
 			{
 				ret.animacoes.insert(tgl_animation_convert(local, model, a));
+			}
+
+			for (tinygltf::Skin skin : model.skins)
+			{
+				for (int joint : skin.joints)
+				{
+					if (ret.offset_matrices.find(joint) == ret.offset_matrices.end())
+					{
+						ret.offset_matrices[joint] = tgl_getInverseBindMatrices(model, skin, joint);
+					}
+				}
 			}
 
 			ret.nome = local;
