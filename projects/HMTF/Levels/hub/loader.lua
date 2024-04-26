@@ -30,7 +30,7 @@ local assets_needed = {
     
     new_asset_list_element(asset_types.scene_3D,"3D Models/bullets.gltf"),
     new_asset_list_element(asset_types.scene_3D,"3D Models/arm_cannon.gltf"),
-    new_asset_list_element(asset_types.scene_3D,"Levels/hub/hub.gltf"),
+    --new_asset_list_element(asset_types.scene_3D,"Levels/hub/hub.gltf"),
     new_asset_list_element(asset_types.scene_3D,"Levels/hub/hub.glb"),
 
     new_asset_list_element(asset_types.audio,"Audio/sounds/jump.wav"),

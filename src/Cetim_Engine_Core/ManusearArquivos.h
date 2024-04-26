@@ -1677,19 +1677,11 @@ namespace ManuseioDados
 				
 				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
 				{
-					// vert.id_ossos[j] = (j < static_cast<int>(jointsData.size())) ? jointsData[j] : 0;
-					// vert.peso_ossos[j] = (j < static_cast<float>(weightsData.size())) ? weightsData[j] : 0.0f;
-					int jw_id = (i * MAX_BONE_INFLUENCE) + j;
+					const int jw_id = (i * MAX_BONE_INFLUENCE) + j;
 					vert.id_ossos[j] = (static_cast<int>(jointsData[jw_id]));
 					vert.peso_ossos[j] = (static_cast<float>(weightsData[jw_id]));
-					
 				}
-
-				cout << "jointsData:	" << jointsData[0] << "	" << jointsData[1] << "	" << jointsData[2] << "	" << jointsData[3] << "	" << endl;
-				cout << "weightsData:	" << weightsData[0] << "	" << weightsData[1] << "	" << weightsData[2] << "	" << weightsData[3] << "	" << endl;
 			}
-
-			// Você pode adicionar mais atributos conforme necessário, como cor, tangente, bitangente, etc.
 
 			vertices.push_back(vert);
 		}
@@ -2054,8 +2046,6 @@ namespace ManuseioDados
 		ret.first = animatior.name;
 		ret.second = tgl_convertAnimation(model, animatior);
 		ret.second.nome = ret.first;
-
-		print(ret.second.nome, ret.second.start_time, ret.second.duration);
 
 		return ret;
 	}
