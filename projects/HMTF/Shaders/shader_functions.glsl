@@ -1,41 +1,5 @@
 // Função que aplica o dithering estilo PlayStation 1 a uma textura com ajuste de intensidade
-vec4 applyPSXDithering(sampler2D texture, vec2 uv, float intensity,float palet_limitation_intensity) {
 
-    vec2 textureSize2d = vec2(1,1) / textureSize(post_procesing_render_input[0],0) / 2;
-    //uv = vec2(uv.x + textureSize2d.x,uv.y + textureSize2d.y);
-
-    // Matriz de padrões de dithering
-    const mat3 ditherMatrix = mat3(
-        vec3( 1.0, 5.0, 3.0),
-        vec3( 7.0, 9.0, 6.0),
-        vec3( 4.0, 2.0, 8.0)
-    );
-
-    // Tamanho da textura
-    vec2 textureSize = textureSize(texture, 0);
-
-    // Coordenada de textura ajustada
-    vec2 adjustedUV = uv * textureSize - 0.5;
-
-    // Índices inteiros para selecionar o padrão de dithering
-    ivec2 ditherIndex = ivec2(adjustedUV) % 3;
-
-    // Padrão de dithering na posição do pixel
-    float ditherValue = ditherMatrix[ditherIndex.x][ditherIndex.y] / 9.0;
-
-    // Ajuste da intensidade do dithering
-    ditherValue *= intensity;
-
-    // Coordenada de textura ajustada com o dithering
-    vec2 ditheredUV = (adjustedUV + ditherValue) / textureSize;
-
-    // Obtém a cor da textura na coordenada ditheredUV
-    vec4 color = texture2D(texture, ditheredUV);
-
-    color = floor(color * (pow(2.0, palet_limitation_intensity) - 1.0)) / (pow(2.0, palet_limitation_intensity) - 1.0);
-
-    return color;
-}
 
 vec4 applyXBRFilter(sampler2D tex, vec2 uv)
 {
