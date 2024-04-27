@@ -45,7 +45,7 @@ local selected_wepom = {
 
 local wepom_list = {
     test_wepon = {
-        file = "3D Models/arm_cannon.gltf",
+        file = "3D Models/arm_cannon.glb",
         automatic = false,
         fire_rate = 0.1,
         projectile_speed = 50,
