@@ -1145,7 +1145,7 @@ namespace ManuseioDados
 
 				Material mat;
 				mat.shader = "mesh";
-				mat.texturas[0] = carregar_Imagem("Textures/null.png");
+				mat.texturas[0] = carregar_Imagem("Textures/white.png");
 				ret.meus_materiais.push_back(mat);
 			}
 

@@ -70,7 +70,7 @@ void main() {
     //adicionar Dithering
     
 
-    ret = color * reduce_color_bits(applyPSXDithering(post_procesing_render_input[0], uv,0.5),4);
+    ret = color * reduce_color_bits(applyPSXDithering(post_procesing_render_input[0], uv,1),4);
     
     //ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv),4);
     
