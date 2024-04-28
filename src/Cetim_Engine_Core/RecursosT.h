@@ -1117,7 +1117,7 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 	pegar_primeiros_map_thread<string, shared_ptr<imagem>>(m, ret);
 }
 
-#define SAIDAS_SHADER 6
+#define SAIDAS_SHADER 16
 #define quantidade_fontes_luz 99
 class API_grafica_classe
 {
