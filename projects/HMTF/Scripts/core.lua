@@ -17,6 +17,7 @@ require("objects.window")
 require("objects.global_data")
 require("short_cuts.create_camera")
 require("short_cuts.create_render_shader")
+require("short_cuts.create_mesh")
 require("objects.layers_table")
 require("objects.vectors")
 require("objects.input")
@@ -249,7 +250,8 @@ function START()
     layers:create()
 
     set_render_layers()
-    --get_set_parallel_loading(set_lua, true)
+
+    
     local mat = matreial:new()
     mat.shader = "background"
     mat.textures[1] = "Textures/white.png"
@@ -257,7 +259,7 @@ function START()
     mat.color.g = 0.2
     mat.color.b = 0.2
     back_ground = create_render_shader(layers.sky_box, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
-    --{file = "engine assets/engine_models.glb",name = "sky_box:0"}
+
 
     window.resolution.x = 256
     window.resolution.y = 224
