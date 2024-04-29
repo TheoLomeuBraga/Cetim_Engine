@@ -7,6 +7,7 @@ require("components.audio_source")
 
 require("components.component_index")
 require("objects.game_object")
+require("objects.local_data")
 
 this_object = {}
 
@@ -18,7 +19,9 @@ consumables = {}
 
 au = {}
 
+
 function play_pick_up_sound(args)
+    
     
     
     --this_object.components.audio_source
@@ -42,12 +45,17 @@ function play_pick_up_sound(args)
     return {}
 end
 
+my_data = {}
+
 function START()
     this_object = game_object(this_object_ptr)
 
     speaker = game_object(create_object(this_object_ptr))
 
     au = speaker.components.audio_source 
+
+    my_data = local_data(this_object_ptr)
+    my_data.health = 100
 end
 
 function UPDATE()

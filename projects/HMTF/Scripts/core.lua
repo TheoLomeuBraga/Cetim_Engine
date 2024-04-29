@@ -282,7 +282,7 @@ function START()
     
     load_configs()
     load_sceane("main_menu")
-    global_data.localization_file = "localization/AmericanEnglish.json"
+    global_data.localization_file = "localization/dialog.json"
 
     
     
