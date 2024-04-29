@@ -436,8 +436,6 @@ float navmesh_color_intensity = 0.0;
 void navmesh_print_cube_in_space(vec3 pos)
 {
 
-    // ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]
-
     shared_ptr<objeto_jogo> display_nav_mesh = novo_objeto_jogo();
     display_nav_mesh->adicionar_componente<transform_>();
     display_nav_mesh->pegar_componente<transform_>()->pos = pos;
@@ -459,7 +457,7 @@ void navmesh_print_cube_in_space(vec3 pos)
     }
     mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 
-    rm->malhas = {ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"]};
+    rm->malhas = {ManuseioDados::importar_obj("engine assets/oclusion_box.obj")->malhas["Cube"]};
 
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);

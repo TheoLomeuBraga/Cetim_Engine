@@ -450,7 +450,7 @@ public:
 		sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_frag, GL_FRAGMENT_SHADER));
 
-		oclusion_box = ManuseioDados::importar_obj("3D Models/oclusion_box.obj")->malhas["Cube"];
+		oclusion_box = ManuseioDados::importar_obj("engine assets/oclusion_box.obj")->malhas["Cube"];
 		adicionar_malha(oclusion_box.get());
 
 		glClearColor(0, 0, 0, 0);
