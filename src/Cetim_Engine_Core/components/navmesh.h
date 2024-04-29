@@ -457,7 +457,7 @@ void navmesh_print_cube_in_space(vec3 pos)
     }
     mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 
-    rm->malhas = {ManuseioDados::importar_obj("engine assets/oclusion_box.obj")->malhas["Cube"]};
+    rm->malhas = {ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"]};
 
     rm->mats = {mat};
     cena_objetos_selecionados->adicionar_objeto(display_nav_mesh);

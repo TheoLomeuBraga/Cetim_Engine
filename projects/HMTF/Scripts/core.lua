@@ -257,6 +257,7 @@ function START()
     mat.color.g = 0.2
     mat.color.b = 0.2
     back_ground = create_render_shader(layers.sky_box, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    --{file = "engine assets/engine_models.glb",name = "sky_box:0"}
 
     window.resolution.x = 256
     window.resolution.y = 224
