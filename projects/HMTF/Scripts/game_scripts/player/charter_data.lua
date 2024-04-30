@@ -67,15 +67,16 @@ function START()
     local mat = matreial:new("health_display")
     mat.textures[1] = "Textures/ui/hud_life_energy.svg"
     mat.color = {r=0.0,g=0.5,b=1,a=1}
-    mat.inputs["power"] = 0.25
-    health_display = create_render_shader(global_data.layers.hud,true,Vec3:new(-0.1,0,0),Vec3:new(0,0,0),Vec3:new(0.25,0.25,0.25),5,mat)
+    mat.inputs["power"] = 1
+    health_display = create_render_shader(global_data.layers.hud,true,Vec3:new(-0.1,0,0),Vec3:new(0,0,0),Vec3:new(0.25,0.25,0.25),4,mat)
 
-    mat.inputs["power"] = 0.25
+    mat.inputs["power"] = 1
     mat.color = {r=1.0,g=1.0,b=0.0,a=1}
-    power_display = create_render_shader(global_data.layers.hud,true,Vec3:new(0.1,0,0),Vec3:new(0,0,0),Vec3:new(-0.25,0.25,0.25),5,mat)
+    power_display = create_render_shader(global_data.layers.hud,true,Vec3:new(0.1,0,0),Vec3:new(0,0,0),Vec3:new(-0.25,0.25,0.25),4,mat)
 end
 
 function UPDATE()
+
 end
 
 function COLLIDE(collision_info)
