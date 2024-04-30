@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 #include "args.h"
 
@@ -378,7 +379,7 @@ namespace controle_xbox_360
 namespace controle_dualshock_4
 {
 
-	#ifdef _WIN32
+#ifdef _WIN32
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "x"),
 		std::pair<std::string, std::string>("1", "a"),
@@ -405,9 +406,9 @@ namespace controle_dualshock_4
 		std::pair<std::string, std::string>("axis_4", "rt"),
 		std::pair<std::string, std::string>("axis_5", "ry"),
 	};
-	#endif
+#endif
 
-	#ifdef __linux__
+#ifdef __linux__
 	std::map<std::string, std::string> ajust_keys_map = {
 		std::pair<std::string, std::string>("0", "a"),
 		std::pair<std::string, std::string>("1", "b"),
@@ -433,7 +434,7 @@ namespace controle_dualshock_4
 		std::pair<std::string, std::string>("axis_4", "ry"),
 		std::pair<std::string, std::string>("axis_5", "rt"),
 	};
-	#endif
+#endif
 
 	static std::vector<float> prevJoystickButtonsState;
 
@@ -455,7 +456,7 @@ namespace controle_dualshock_4
 			for (int i = 0; i < buttonCount; ++i)
 			{
 
-				//print("button",i,(int)buttons[i]);
+				// print("button",i,(int)buttons[i]);
 
 				if (ajust_keys_map.find(std::to_string(i)) != ajust_keys_map.end())
 				{
@@ -487,7 +488,7 @@ namespace controle_dualshock_4
 			for (int i = 0; i < axisCount; ++i)
 			{
 
-				//print("axes",i,axes[i]);
+				// print("axes",i,axes[i]);
 
 				if (ajust_keys_map.find(string("axis_") + std::to_string(i)) != ajust_keys_map.end())
 				{
@@ -617,27 +618,27 @@ namespace controle
 		unordered_map<string, float> ret = mk;
 
 		unordered_map<string, float> base_reference = {
-			std::pair<std::string, float>("a",0),
-			std::pair<std::string, float>("b",0),
-			std::pair<std::string, float>("x",0),
-			std::pair<std::string, float>("y",0),
-			std::pair<std::string, float>("lb",0),
-			std::pair<std::string, float>("rb",0),
-			std::pair<std::string, float>("back",0),
-			std::pair<std::string, float>("start",0),
-			std::pair<std::string, float>("la",0),
-			std::pair<std::string, float>("ra",0),
-			std::pair<std::string, float>("left",0),
-			std::pair<std::string, float>("right",0),
-			std::pair<std::string, float>("up",0),
-			std::pair<std::string, float>("down",0),
+			std::pair<std::string, float>("a", 0),
+			std::pair<std::string, float>("b", 0),
+			std::pair<std::string, float>("x", 0),
+			std::pair<std::string, float>("y", 0),
+			std::pair<std::string, float>("lb", 0),
+			std::pair<std::string, float>("rb", 0),
+			std::pair<std::string, float>("back", 0),
+			std::pair<std::string, float>("start", 0),
+			std::pair<std::string, float>("la", 0),
+			std::pair<std::string, float>("ra", 0),
+			std::pair<std::string, float>("left", 0),
+			std::pair<std::string, float>("right", 0),
+			std::pair<std::string, float>("up", 0),
+			std::pair<std::string, float>("down", 0),
 
-			std::pair<std::string, float>("lx",0),
-			std::pair<std::string, float>("ly",0),
-			std::pair<std::string, float>("rx",0),
-			std::pair<std::string, float>("ry",0),
-			std::pair<std::string, float>("lt",0),
-			std::pair<std::string, float>("rt",0),
+			std::pair<std::string, float>("lx", 0),
+			std::pair<std::string, float>("ly", 0),
+			std::pair<std::string, float>("rx", 0),
+			std::pair<std::string, float>("ry", 0),
+			std::pair<std::string, float>("lt", 0),
+			std::pair<std::string, float>("rt", 0),
 		};
 
 		for (pair<string, float> p : base_reference)
@@ -657,7 +658,7 @@ namespace controle
 	{
 
 		std::string joystick_name = glfwGetJoystickName(joystick);
-		//print(joystick_name);
+		// print(joystick_name);
 
 		if (joystick_name == "Xbox 360 Wireless Receiver")
 		{
@@ -844,13 +845,14 @@ long double current_time = 0, time_last_frame = 0;
 void Reindenizar()
 {
 
-	
-
 	current_time = Tempo::current_time();
-
-	Tempo::deltaTime = current_time - time_last_frame;
-
+	// Tempo::deltaTime = current_time - time_last_frame;
+	const long double tempo_passado = current_time - time_last_frame;
+	Tempo::deltaTime = std::floor(tempo_passado / Tempo::time_step) * Tempo::time_step;
 	time_last_frame = current_time;
+
+	Tempo::targetFPS(deltaTimer.get());
+	deltaTimer.clear();
 
 	for (function<void()> f : Antes_Render_Func)
 	{
@@ -869,9 +871,6 @@ void Reindenizar()
 	{
 		f();
 	}
-
-	Tempo::targetFPS(deltaTimer.get());
-	deltaTimer.clear();
 }
 
 // Janela
