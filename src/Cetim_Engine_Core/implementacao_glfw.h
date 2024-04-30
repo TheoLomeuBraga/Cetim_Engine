@@ -844,8 +844,7 @@ long double current_time = 0, time_last_frame = 0;
 void Reindenizar()
 {
 
-	Tempo::targetFPS(deltaTimer.get());
-	deltaTimer.clear();
+	
 
 	current_time = Tempo::current_time();
 
@@ -870,6 +869,9 @@ void Reindenizar()
 	{
 		f();
 	}
+
+	Tempo::targetFPS(deltaTimer.get());
+	deltaTimer.clear();
 }
 
 // Janela
