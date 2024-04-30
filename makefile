@@ -23,10 +23,10 @@ ifeq ($(OS),Windows_NT)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -flto
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math
 	endif
 	ifeq ($(OPT),3)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -flto
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
@@ -48,10 +48,10 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -flto
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math
 	endif
 	ifeq ($(OPT),3)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -flto
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
