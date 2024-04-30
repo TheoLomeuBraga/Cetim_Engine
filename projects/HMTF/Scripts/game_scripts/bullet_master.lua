@@ -103,7 +103,7 @@ update_per_type = {
 
         local bcomps = bullet.obj.components
 
-        bullet.timer = bullet.timer - time.delta
+        bullet.timer = bullet.timer - (time.delta * 4)
 
         if bullet.timer <= 0 then
             bullet.dead = true
