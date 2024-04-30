@@ -6,7 +6,7 @@ layout(location = 1) in vec2 uv;
 layout(location = 0) out vec4 ret;
 
 // material
- uniform sampler2D textures[6];
+uniform sampler2D textures[6];
 uniform vec4 color;
 uniform vec4 uv_position_scale;
 
@@ -15,7 +15,15 @@ vec2 re_pos_uv(vec2 UV,vec4 UV_PosSca){
 return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
+uniform float power;
+
+
+
 void main(){
 
-    ret = color * texture(textures[0],(uv * uv_position_scale.zw) + uv_position_scale.xy);
+    ret = vec4(0,0,0,0);
+    if(uv.y > 1 - power){
+        ret = color * texture(textures[0],(uv * uv_position_scale.zw) + uv_position_scale.xy);
+    }
+    
 }
