@@ -93,7 +93,7 @@ function START()
     direction_reference.components.transform:set()
 end
 
-speed = 12
+speed = 16
 speed_boost = 1
 speed_boost_air = 1
 mouse_sensitivity = 0

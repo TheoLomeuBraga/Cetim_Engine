@@ -840,21 +840,25 @@ bool iniciada_logica_scripts;
 
 Tempo::Timer deltaTimer;
 
-long double current_time = 0, time_last_frame = 0;
+long double current_time = 0, time_last_frame = 0,rest_time = 0;
 
 void Reindenizar()
 {
-	Tempo::targetFPS(deltaTimer.get());
-	deltaTimer.clear();
 
-	
-	current_time = Tempo::current_time();
-	//Tempo::deltaTime = current_time - time_last_frame;
-	const long double tempo_passado = current_time - time_last_frame;
-	Tempo::deltaTime = std::floor(tempo_passado / Tempo::time_step) * Tempo::time_step;
-	if(Tempo::deltaTime == 0){Tempo::deltaTime = Tempo::time_step;}
-	time_last_frame = current_time;
+	while(true){
+		
 
+		Tempo::deltaTime = std::floor(deltaTimer.get() / Tempo::time_step) * Tempo::time_step;	
+		
+
+		if(Tempo::deltaTime == 0){continue;}
+
+		deltaTimer.clear();
+
+		time_last_frame = current_time;
+
+		break;
+	}
 	
 
 	for (function<void()> f : Antes_Render_Func)

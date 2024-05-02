@@ -305,6 +305,7 @@ end
 
 local reload_last_frame = false
 function UPDATE()
+
     count_fps:update()
     
     if not keep_loading() and cenary ~= nil then
