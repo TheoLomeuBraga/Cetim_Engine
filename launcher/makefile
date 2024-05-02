@@ -7,7 +7,7 @@ LPATHW := /libs/x86_64/windows/dll
 
 
 
-compile_cmd = gcc
+compile_cmd = gcc -Os
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)	
 	compile_cmd += launch.c -o ../$(NAME).exe -DEPATH='"$(EPATH)"' -DCPATH='"$(CPATH)"' -DLPATHL='"$(LPATHL)"' -DLPATHW='"$(LPATHW)"'
@@ -21,6 +21,7 @@ endif
 
 all:
 	cd ..
+	
 	
 	
 	$(compile_cmd)
