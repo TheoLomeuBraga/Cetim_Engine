@@ -39,7 +39,7 @@ namespace Tempo
 		}
 	};
 
-	
+	Timer total_timer;
 	double tempo;
 	double velocidadeTempo = 1;
 
