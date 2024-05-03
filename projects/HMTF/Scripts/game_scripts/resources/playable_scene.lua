@@ -121,6 +121,7 @@ cenary_builders = {
         ret.parts_ptr_list = deepcopy(entity_ptr_list)
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
+            
         end
 
         entity_ptr_list = {}
