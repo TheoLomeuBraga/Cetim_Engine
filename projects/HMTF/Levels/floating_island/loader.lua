@@ -106,7 +106,7 @@ function level:START()
     camera = {}
 
     --global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
-    global_data.level_animation_data = {path="Levels/hub/hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
+    global_data.level_animation_data = {path="Levels/floating_island/floating_island.glb",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
 
