@@ -1847,6 +1847,8 @@ namespace ManuseioDados
 
 		tinygltf::Node node = model.nodes[node_id];
 
+		ret.nome = node.name;
+
 		ret.id = node_id;
 
 		if (node.translation.size() > 0)

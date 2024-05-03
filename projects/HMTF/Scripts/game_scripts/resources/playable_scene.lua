@@ -12,13 +12,12 @@ menus = {
     open_pause_menu = function()
         if global_data.open_pause_menu_ptr == nil then
             global_data.open_pause_menu_ptr = create_object(global_data.layers.hud)
-        local menu_obj = game_object(create_object(global_data.layers.hud))
-        menu_obj.components.transform:set()
-            
-        menu_obj.components.lua_scripts:add_script("game_scripts/menus")
-        menu_obj.components.lua_scripts.scripts["game_scripts/menus"].variables.menu_selected = "pause"
+            local menu_obj = game_object(create_object(global_data.layers.hud))
+            menu_obj.components.transform:set()
+
+            menu_obj.components.lua_scripts:add_script("game_scripts/menus")
+            menu_obj.components.lua_scripts.scripts["game_scripts/menus"].variables.menu_selected = "pause"
         end
-        
     end,
 }
 
@@ -67,7 +66,14 @@ cenary_builders = {
         local ret = game_object(create_object(father))
         entity_ptr_list[part_data.id] = ret.object_ptr
 
-        
+        if part_data.name ~= "" or part_data.name ~= nil then
+            ret:get()
+            ret.name = part_data.name
+            ret:set()
+        end
+
+
+
         ret.components.transform.position = deepcopy(part_data.position)
         ret.components.transform.rotation = deepcopy(part_data.rotation)
 
@@ -84,7 +90,6 @@ cenary_builders = {
         end
 
         if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
-            
             ret.components.render_mesh.layer = layer
             ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
             ret.components.render_mesh.meshes = part_data.meshes
@@ -121,23 +126,26 @@ cenary_builders = {
         ret.parts_ptr_list = deepcopy(entity_ptr_list)
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
-            
         end
+
 
         entity_ptr_list = {}
         return ret
     end,
 
     scene_part = function(father, layer, part_data, yield)
-
         --local sp = stopwatch:new()
-        
-        local ret = {}
-        ret = game_object(create_object(father))
-        
+
+        local ret = game_object(create_object(father))
         scene_ptr_list[part_data.id] = ret.object_ptr
 
-        
+        if part_data.name ~= "" or part_data.name ~= nil then
+            ret:get()
+            ret.name = part_data.name
+            ret:set()
+        end
+
+
         ret.components.transform.position = deepcopy(part_data.position)
         ret.components.transform.rotation = deepcopy(part_data.rotation)
 
@@ -149,8 +157,8 @@ cenary_builders = {
 
         ret.components.transform:set()
 
-        
-        
+
+
         local add_physics = function(rb, is_triger)
             if part_data.meshes ~= nil and part_data.meshes[1] ~= nil then
                 if rb then
@@ -181,7 +189,6 @@ cenary_builders = {
         end
 
         local add_mesh = function(color)
-            
             if part_data.meshes ~= nil and part_data.materials ~= nil then
                 if color ~= nil then
                     for key, value in pairs(part_data.materials) do
@@ -190,7 +197,7 @@ cenary_builders = {
                     end
                 end
 
-                
+
                 ret.components.render_mesh.layer = layer
                 ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
                 ret.components.render_mesh.meshes = deepcopy(part_data.meshes)
@@ -204,7 +211,7 @@ cenary_builders = {
 
             scene_ptr_list[part_data.id] = ret2.object_ptr
 
-            
+
             ret2.components.transform.position = deepcopy(part_data.position)
             ret2.components.transform.rotation = deepcopy(part_data.rotation)
 
@@ -246,7 +253,7 @@ cenary_builders = {
                 ret.components[components.physics_3D]:set()
             end
 
-            
+
             ret.components.render_mesh.layer = layer
             ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
             ret.components.render_mesh.meshes = deepcopy(part_data.meshes)
@@ -254,36 +261,32 @@ cenary_builders = {
             ret.components.render_mesh:set()
 
 
-            
+
             ret.components.lua_scripts:add_script("game_scripts/item")
-            ret.components.lua_scripts:set_variable("game_scripts/item", "item_type",part_data.variables.item_type)
-            ret.components.lua_scripts:set_variable("game_scripts/item", "item_name",part_data.variables.item_name)
+            ret.components.lua_scripts:set_variable("game_scripts/item", "item_type", part_data.variables.item_type)
+            ret.components.lua_scripts:set_variable("game_scripts/item", "item_name", part_data.variables.item_name)
 
             if part_data.variables.amount ~= nil then
-                ret.components.lua_scripts:set_variable("game_scripts/item", "amount",part_data.variables.amount)
+                ret.components.lua_scripts:set_variable("game_scripts/item", "amount", part_data.variables.amount)
             end
-            
-            
-            
+
+
+
 
             change_ret()
-
         elseif part_data.variables.type == "camera" then
-            
             ret.components.camera:set()
         elseif part_data.variables.type == "player_start" then
-            
             ret.components[components.physics_3D].get_collision_info = true
             ret.components[components.physics_3D]:set()
 
-            
+
             ret.components.lua_scripts:add_script("game_scripts/player/charter_movement")
             ret.components.lua_scripts:add_script("game_scripts/player/charter_data")
             ret.components.lua_scripts:add_script("game_scripts/player/charter_interaction")
             ret.components.lua_scripts:add_script("game_scripts/player/charter_arcenal")
 
             change_ret()
-
         elseif part_data.variables.type == "music" then
             ret.components.audio_source.path = "Audio/musics/" ..
                 part_data.variables.sound_source .. ".wav"
@@ -294,7 +297,6 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
-
         elseif part_data.variables.type == "sound" then
             ret.components.audio_source.path = "Audio/sounds/" ..
                 part_data.variables.sound_source .. ".wav"
@@ -305,9 +307,7 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
-        
         elseif part_data.variables.type == "background_music" then
-
             ret = game_object(create_object(father))
 
             ret.components.audio_source.path = "Audio/musics/" ..
@@ -319,15 +319,13 @@ cenary_builders = {
             ret.components.audio_source:set()
 
             add_mesh(nil)
-
         elseif part_data.variables.type == "mensage" then
-            
             ret.components.lua_scripts:add_script("game_scripts/mensage")
 
             local mensage = part_data.variables.mensage
             local mensage_index = part_data.variables.mensage_index
             if mensage_index ~= nil then
-                ret.components.lua_scripts:set_variable("game_scripts/mensage", "mensage_index",mensage_index)
+                ret.components.lua_scripts:set_variable("game_scripts/mensage", "mensage_index", mensage_index)
             elseif mensage ~= nil then
                 ret.components.lua_scripts:set_variable("game_scripts/mensage", "mensage", mensage)
             end
@@ -347,34 +345,31 @@ cenary_builders = {
                 part_data.variables.triger_target)
 
             if part_data.variables.key ~= nil then
-                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "key_to_open",part_data.variables.key)
+                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "key_to_open",
+                    part_data.variables.key)
             end
 
 
             add_mesh(nil)
             add_physics(true, true)
         elseif part_data.variables.type == "entity" then
-
             if part_data.variables.entity_type == nil or part_data.variables.entity_type == "test_entity" then
-                summon_entity(deepcopy(part_data.position),part_data.rotation.y,"test_entity")
+                summon_entity(deepcopy(part_data.position), part_data.rotation.y, "test_entity")
             end
 
             change_ret()
-        
         elseif part_data.variables.type == "navmesh" then
-
-            create_navmesh(part_data.position,part_data.rotation,part_data.scale,part_data.meshes[1],part_data.variables.tag)
+            create_navmesh(part_data.position, part_data.rotation, part_data.scale, part_data.meshes[1],
+                part_data.variables.tag)
             change_ret()
-
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end
-        
+
         if yield == true then
-            
             coroutine.yield()
         end
-        
+
 
         for key, value in pairs(part_data.children) do
             cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
@@ -406,7 +401,7 @@ cenary_builders = {
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
         end
-        
+
 
         return ret
     end,

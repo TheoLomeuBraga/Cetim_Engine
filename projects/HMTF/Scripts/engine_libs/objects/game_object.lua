@@ -80,7 +80,7 @@ function game_object:new(object_ptr, not_recreate)
     end
 
     function obj:get()
-        local j = get_set_object(lua_get, self.object_ptr)
+        local j = get_set_object(0, self.object_ptr)
         self.name = j.name
         self.father = j.father
         self.children_ptr = deepcopyjson(j.childrens)
@@ -88,7 +88,7 @@ function game_object:new(object_ptr, not_recreate)
     end
 
     function obj:set()
-        get_set_object(lua_set, self)
+        get_set_object(1, self)
     end
 
     if not_recreate ~= true then

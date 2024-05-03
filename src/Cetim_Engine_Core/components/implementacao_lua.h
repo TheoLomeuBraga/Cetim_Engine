@@ -817,27 +817,20 @@ namespace funcoes_ponte
 	{
 
 		int argumentos = lua_gettop(L);
-		string output = "";
 		objeto_jogo *obj = NULL;
-		int get_set = lua_tonumber(L, 1);
 
-		if (get_set == get_lua)
+		if (lua_tonumber(L, 1) == get_lua)
 		{
-
+			
 			Table ret;
-
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
-
-			ret.setString("name", obj->nome.c_str());
-
+			ret.setString("name", obj->nome);
 			ret.setString("father", ponteiro_string(obj->pai));
-
 			vector<string> criancas;
 			for (shared_ptr<objeto_jogo> p : obj->filhos)
 			{
 				criancas.push_back(ponteiro_string(p.get()));
 			}
-
 			ret.setTable("childrens", vString_table(criancas));
 			lua_pushtable(L, ret);
 			return 1;
@@ -845,20 +838,15 @@ namespace funcoes_ponte
 		else
 		{
 			Table t = lua_totable(L, 2);
-
 			obj = string_ponteiro<objeto_jogo>(t.getString("object_ptr"));
-
 			obj->nome = t.getString("name");
-
 			vector<string> criancas = table_vString(t.getTable("childrens"));
 			obj->filhos = {};
 			for (string s : criancas)
 			{
 				obj->filhos.push_back(string_ponteiro<objeto_jogo>(s)->get_this_object());
 			}
-
 			obj->pai = string_ponteiro<objeto_jogo>(t.getString("father"));
-
 			return 0;
 		}
 	}
