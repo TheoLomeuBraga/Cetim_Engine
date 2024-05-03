@@ -851,7 +851,6 @@ void Reindenizar()
 
 		if (Tempo::deltaTime < Tempo::time_step)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Dorme por um tempo muito curto para reduzir o uso da CPU
 			continue;
 		}
 
