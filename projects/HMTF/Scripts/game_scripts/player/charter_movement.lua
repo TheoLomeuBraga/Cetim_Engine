@@ -310,7 +310,7 @@ function UPDATE()
             else
                 impulse = {
                     x = (move_dir.x * (speed + speed_boost_air)),
-                    y = (move_dir.y * (speed + speed_boost_air) / time.delta) + inpulse_y,
+                    y = inpulse_y,
                     z = (move_dir.z * (speed + speed_boost_air))
                 }
             end

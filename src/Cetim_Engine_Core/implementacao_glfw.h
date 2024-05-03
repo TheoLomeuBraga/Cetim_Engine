@@ -840,26 +840,27 @@ bool iniciada_logica_scripts;
 
 Tempo::Timer deltaTimer;
 
-long double current_time = 0, time_last_frame = 0,rest_time = 0;
+long double current_time = 0, time_last_frame = 0, rest_time = 0;
 
 void Reindenizar()
 {
 
-	while(true){
-		
+	while (true)
+	{
+		Tempo::deltaTime = std::floor(deltaTimer.get() / Tempo::time_step) * Tempo::time_step;
 
-		Tempo::deltaTime = std::floor(deltaTimer.get() / Tempo::time_step) * Tempo::time_step;	
-		
-
-		if(Tempo::deltaTime == 0){continue;}
+		if (Tempo::deltaTime < Tempo::time_step)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Dorme por um tempo muito curto para reduzir o uso da CPU
+			continue;
+		}
 
 		deltaTimer.clear();
 
-		time_last_frame = current_time;
+		// Atualizações e lógica do jogo aqui
 
 		break;
 	}
-	
 
 	for (function<void()> f : Antes_Render_Func)
 	{

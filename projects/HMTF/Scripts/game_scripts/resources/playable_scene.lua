@@ -342,7 +342,7 @@ cenary_builders = {
         elseif part_data.variables.type == "door_triger" then
             ret.components.lua_scripts:add_script("game_scripts/door_triger")
             ret.components.lua_scripts:set_variable("game_scripts/door_triger", "triger_target",
-                part_data.variables.triger_target)
+                part_data.variables.triger_target.name)
 
             if part_data.variables.key ~= nil then
                 ret.components.lua_scripts:set_variable("game_scripts/door_triger", "key_to_open",
