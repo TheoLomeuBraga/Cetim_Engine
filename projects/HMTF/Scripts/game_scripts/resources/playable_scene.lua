@@ -280,6 +280,9 @@ cenary_builders = {
             ret.components[components.physics_3D].get_collision_info = true
             ret.components[components.physics_3D]:set()
 
+            ret.components.transform:get()
+            ret.components.transform.position.y = ret.components.transform.position.y + 2
+            ret.components.transform:set()
 
             ret.components.lua_scripts:add_script("game_scripts/player/charter_movement")
             ret.components.lua_scripts:add_script("game_scripts/player/charter_data")

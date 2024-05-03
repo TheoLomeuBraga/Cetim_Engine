@@ -30,7 +30,7 @@ local assets_needed = {
     
     new_asset_list_element(asset_types.scene_3D,"3D Models/bullets.gltf"),
     new_asset_list_element(asset_types.scene_3D,"3D Models/arm_cannon.glb"),
-    new_asset_list_element(asset_types.scene_3D,"Levels/hub/hub.glb"),
+    new_asset_list_element(asset_types.scene_3D,"Levels/floating_island_hub/floating_island_hub.glb"),
 
     new_asset_list_element(asset_types.audio,"Audio/sounds/jump.wav"),
     new_asset_list_element(asset_types.audio,"Audio/sounds/shot_1.wav"),
@@ -88,7 +88,7 @@ function level:START()
     coroutine.yield()
 
     --level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
-    level.scene_3D_data = get_scene_3D("Levels/hub/hub.glb")
+    level.scene_3D_data = get_scene_3D("Levels/floating_island_hub/floating_island_hub.glb")
     
 
     coroutine.yield()
@@ -106,7 +106,7 @@ function level:START()
     camera = {}
 
     --global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
-    global_data.level_animation_data = {path="Levels/floating_island/floating_island.glb",parts_ptr_list=scene_data.parts_ptr_list}
+    global_data.level_animation_data = {path="Levels/floating_island_hub/floating_island_hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
 
     loading_screen.close()
 
