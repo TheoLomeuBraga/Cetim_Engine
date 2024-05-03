@@ -10,7 +10,7 @@ namespace Tempo
 {
 
 
-	const unsigned int target_frames = 120;
+	const unsigned int target_frames = 60;
 	const long double time_step = 1.0 / (long double)target_frames;
 	long double deltaTime = 0;
 
