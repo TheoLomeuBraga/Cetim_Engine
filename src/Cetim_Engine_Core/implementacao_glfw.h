@@ -856,8 +856,6 @@ void Reindenizar()
 
 		deltaTimer.clear();
 
-		// Atualizações e lógica do jogo aqui
-
 		break;
 	}
 
