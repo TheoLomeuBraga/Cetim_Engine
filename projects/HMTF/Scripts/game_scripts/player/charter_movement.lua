@@ -27,7 +27,7 @@ check_top = {}
 check_down = {}
 
 direction_reference = {}
-movement = { x = 0, y = 0, z = 0 }
+linear_velocity = { x = 0, y = 0, z = 0 }
 
 local core_obj = {}
 
@@ -108,9 +108,11 @@ camera_rotation = { x = 180, y = 0 }
 
 this_object_physics_3D_seted = false
 
-force_y = 20
+jump_power = 20
+
 
 inpulse = { x = 0, y = 0, z = 0 }
+land_friction = 10
 
 base_directional_input = { x = 0, y = 0, z = 0 }
 directional_input = { x = 0, y = 0, z = 0 }
@@ -118,8 +120,7 @@ directional_input = { x = 0, y = 0, z = 0 }
 
 platform_movement = { x = 0, y = 0, z = 0 }
 
-friction = 10
-air_friction = 0.5
+
 
 pause_last_frame = false
 
@@ -279,7 +280,7 @@ function UPDATE()
 
             --jump
             if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-                inpulse.y = force_y
+                inpulse.y = jump_power
                 base_directional_input = deepcopy(input_dir)
 
                 this_object.components.audio_source.path = "Audio/sounds/jump.wav"
@@ -299,17 +300,55 @@ function UPDATE()
             local linear_velocity = { x = 0, y = 0, z = 0 }
 
             --move
-            if hit_down and not (inpulse.y > 0) then
+            if hit_down and  inpulse.y <= 0 then
+
+                --inpulse
+
+                local delta_friction = land_friction * time.delta
+
+                if math.abs(inpulse.x) < delta_friction then
+                    inpulse.x = 0
+                end
+                if math.abs(inpulse.z) < delta_friction then
+                    inpulse.z = 0
+                end
+
+                if inpulse.x > 0 then
+                    inpulse.x = inpulse.x - (delta_friction)
+                elseif inpulse.x < 0 then
+                    inpulse.x = inpulse.x + (delta_friction)
+                end
+
+                if inpulse.z > 0 then
+                    inpulse.z = inpulse.z - (delta_friction)
+                elseif inpulse.z < 0 then
+                    inpulse.z = inpulse.z + (delta_friction)
+                end
+
+                if inpulse.x < 0 then
+                    inpulse.x = inpulse.x + (time.delta * land_friction)
+                elseif inpulse.x > 0 then
+                    inpulse.x = inpulse.x - (time.delta * land_friction)
+                end
+
+                if inpulse.z < 0 then
+                    inpulse.z = inpulse.z + (time.delta * land_friction)
+                elseif inpulse.z > 0 then
+                    inpulse.z = inpulse.z - (time.delta * land_friction)
+                end
+                
+                --movement
+
                 linear_velocity = {
-                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x,
-                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y,
-                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z
+                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x  + inpulse.x,
+                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y  + inpulse.y,
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z  + inpulse.z
                 }
             else
                 linear_velocity = {
-                    x = (move_dir.x * (speed + speed_boost_air)),
+                    x = (move_dir.x * (speed + speed_boost_air)) + inpulse.x,
                     y = inpulse.y,
-                    z = (move_dir.z * (speed + speed_boost_air))
+                    z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z
                 }
             end
 
