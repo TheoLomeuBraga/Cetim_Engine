@@ -27,7 +27,7 @@ check_top = {}
 check_down = {}
 
 direction_reference = {}
-movement_inpulse = { x = 0, y = 0, z = 0 }
+movement = { x = 0, y = 0, z = 0 }
 
 local core_obj = {}
 
@@ -110,10 +110,10 @@ this_object_physics_3D_seted = false
 
 force_y = 20
 
-inpulse_y = 0
+inpulse = { x = 0, y = 0, z = 0 }
 
-base_directional_inpulse = { x = 0, y = 0, z = 0 }
-directional_inpulse = { x = 0, y = 0, z = 0 }
+base_directional_input = { x = 0, y = 0, z = 0 }
+directional_input = { x = 0, y = 0, z = 0 }
 
 
 platform_movement = { x = 0, y = 0, z = 0 }
@@ -124,8 +124,6 @@ air_friction = 0.5
 pause_last_frame = false
 
 extra_jumps_utilizeds = 0
-
-local inpulse = {}
 
 
 
@@ -274,57 +272,51 @@ function UPDATE()
             local move_dir = crossProduct(input_dir, hit_info.normal)
 
             --hit floor
-            if hit_down and not (inpulse_y > 0) then
-                inpulse_y = 0
+            if hit_down and not (inpulse.y > 0) then
+                inpulse.y = 0
                 extra_jumps_utilizeds = 0
             end
 
             --jump
-            if hit_down and inpulse_y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-                inpulse_y = force_y
-                base_directional_inpulse = deepcopy(input_dir)
+            if hit_down and inpulse.y <= 0 and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+                inpulse.y = force_y
+                base_directional_input = deepcopy(input_dir)
 
                 this_object.components.audio_source.path = "Audio/sounds/jump.wav"
                 this_object.components.audio_source.volume = 20
                 this_object.components.audio_source:set()
             end
 
-            directional_inpulse = crossProduct(base_directional_inpulse, hit_info.normal)
+            directional_input = crossProduct(base_directional_input, hit_info.normal)
 
             --hit cealing
-            if hit_top and inpulse_y > 0 then
-                inpulse_y = 0
+            if hit_top and inpulse.y > 0 then
+                inpulse.y = 0
             end
 
 
 
-            local impulse = { x = 0, y = 0, z = 0 }
+            local linear_velocity = { x = 0, y = 0, z = 0 }
 
             --move
-            if hit_down and not (inpulse_y > 0) then
-                impulse = {
+            if hit_down and not (inpulse.y > 0) then
+                linear_velocity = {
                     x = (move_dir.x * (speed + speed_boost)) + platform_movement.x,
                     y = (move_dir.y * (speed + speed_boost)) + platform_movement.y,
                     z = (move_dir.z * (speed + speed_boost)) + platform_movement.z
                 }
             else
-                impulse = {
+                linear_velocity = {
                     x = (move_dir.x * (speed + speed_boost_air)),
-                    y = inpulse_y,
+                    y = inpulse.y,
                     z = (move_dir.z * (speed + speed_boost_air))
                 }
             end
 
-            
-
-
-
-            movement_inpulse = deepcopy(impulse)
-
-            this_physics_3d:set_linear_velocity(movement_inpulse.x, movement_inpulse.y, movement_inpulse.z)
+            this_physics_3d:set_linear_velocity(linear_velocity.x, linear_velocity.y, linear_velocity.z)
 
             if not hit_down then
-                inpulse_y = inpulse_y + (time.delta * time.scale * gravity.force.y * 2)
+                inpulse.y = inpulse.y + (time.delta * time.scale * gravity.force.y * 2)
             end
         else
             this_physics_3d:set_linear_velocity(0, 0, 0)
