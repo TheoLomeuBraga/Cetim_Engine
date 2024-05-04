@@ -322,7 +322,6 @@ function UPDATE()
             movement_inpulse = deepcopy(impulse)
 
             this_physics_3d:set_linear_velocity(movement_inpulse.x, movement_inpulse.y, movement_inpulse.z)
-            print("AAAAA",movement_inpulse.y,hit_down)
 
             if not hit_down then
                 inpulse_y = inpulse_y + (time.delta * time.scale * gravity.force.y * 2)
