@@ -43,7 +43,7 @@ def add_entity(self, context):
     mesh.from_pydata(verts, edges, faces)
         
     # Cria um objeto com esse mesh
-    obj = bpy.data.objects.new("Player Entity", mesh)
+    obj = bpy.data.objects.new("Entity", mesh)
     context.scene.collection.objects.link(obj)
         
     # Define a propriedade 'type' no objeto criado
