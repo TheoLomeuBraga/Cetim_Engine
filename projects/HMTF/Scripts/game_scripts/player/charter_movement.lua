@@ -35,13 +35,7 @@ local layers = {}
 
 health = 100
 max_health = 100
-inventory = {
-    extra_jumps = 1,
-    jump_booster = 5,
-    gun = 0,
-    sword = 0,
-    super_charger = 0,
-}
+
 
 local game_states = {
     play = 0,
@@ -57,6 +51,12 @@ this_physics_3d = {}
 
 
 function START()
+
+    global_data.inventory = {
+        jump_boost = 1,
+        jump_dash = 1,
+    }
+
     global_data.player_object_ptr = this_object_ptr
 
     core_obj = game_object(global_data.core_object_ptr)
@@ -153,35 +153,44 @@ function aproche_to_target_value(num, speed, target_value)
     return ret
 end
 
---[[
-function interact()
-    local ray_start = camera.components.transform:get_global_position(0, 0, 0)
-    local ray_end_direction = camera.components.transform:get_local_direction(0, 0, -10)
-    local ray_end = {
-        x = ray_start.x - ray_end_direction.x,
-        y = ray_start.y - ray_end_direction.y,
-        z = ray_start.z - ray_end_direction.z
-    }
+function manage_inpulse_land(i)
+    local delta_friction = land_friction * time.delta
 
-    local hit = false
-    local hit_info = {}
-    hit, hit_info = raycast_3D(ray_start, ray_end)
+    if math.abs(i.x) < delta_friction then
+        i.x = 0
+    end
+    if math.abs(i.z) < delta_friction then
+        i.z = 0
+    end
 
-    if hit then
-        local hit_object = game_object(hit_info.collision_object)
+    if i.x > 0 then
+        i.x = i.x - (delta_friction)
+    elseif i.x < 0 then
+        i.x = i.x + (delta_friction)
+    end
 
-        if hit_object.components ~= nil and hit_object.components.lua_scripts ~= nil and hit_object.components.lua_scripts:has_script("game_scripts/mensage") and inputs.interact > 0 and inputs_last_frame.interact < 1 then
-            hit_object.components.lua_scripts:call_function("game_scripts/mensage", "interact", {})
-        end
+    if i.z > 0 then
+        i.z = i.z - (delta_friction)
+    elseif i.z < 0 then
+        i.z = i.z + (delta_friction)
+    end
+
+    if i.x < 0 then
+        i.x = i.x + (time.delta * land_friction)
+    elseif i.x > 0 then
+        i.x = i.x - (time.delta * land_friction)
+    end
+
+    if i.z < 0 then
+        i.z = i.z + (time.delta * land_friction)
+    elseif i.z > 0 then
+        i.z = i.z - (time.delta * land_friction)
     end
 end
-]]
-
-
 
 function UPDATE()
     time:get()
-    
+
     if game_state == game_states.play then
         gravity:get()
 
@@ -300,49 +309,16 @@ function UPDATE()
             local linear_velocity = { x = 0, y = 0, z = 0 }
 
             --move
-            if hit_down and  inpulse.y <= 0 then
-
+            if hit_down and inpulse.y <= 0 then
                 --inpulse
+                manage_inpulse_land(inpulse)
 
-                local delta_friction = land_friction * time.delta
-
-                if math.abs(inpulse.x) < delta_friction then
-                    inpulse.x = 0
-                end
-                if math.abs(inpulse.z) < delta_friction then
-                    inpulse.z = 0
-                end
-
-                if inpulse.x > 0 then
-                    inpulse.x = inpulse.x - (delta_friction)
-                elseif inpulse.x < 0 then
-                    inpulse.x = inpulse.x + (delta_friction)
-                end
-
-                if inpulse.z > 0 then
-                    inpulse.z = inpulse.z - (delta_friction)
-                elseif inpulse.z < 0 then
-                    inpulse.z = inpulse.z + (delta_friction)
-                end
-
-                if inpulse.x < 0 then
-                    inpulse.x = inpulse.x + (time.delta * land_friction)
-                elseif inpulse.x > 0 then
-                    inpulse.x = inpulse.x - (time.delta * land_friction)
-                end
-
-                if inpulse.z < 0 then
-                    inpulse.z = inpulse.z + (time.delta * land_friction)
-                elseif inpulse.z > 0 then
-                    inpulse.z = inpulse.z - (time.delta * land_friction)
-                end
-                
                 --movement
 
                 linear_velocity = {
-                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x  + inpulse.x,
-                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y  + inpulse.y,
-                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z  + inpulse.z
+                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x + inpulse.x,
+                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y + inpulse.y,
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z + inpulse.z
                 }
             else
                 linear_velocity = {
@@ -370,7 +346,6 @@ function UPDATE()
         --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
 
         this_physics_3d:get()
-        
     end
 
 
