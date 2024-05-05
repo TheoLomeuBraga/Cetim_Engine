@@ -1,11 +1,25 @@
 import bpy
 
 def add_player_start(self, context):
-    # Adiciona um cubo à cena
-    bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, location=bpy.context.scene.cursor.location)
+    # Cria um novo mesh personalizado
+    mesh = bpy.data.meshes.new("PlayerStartMesh")
+    verts = [(-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0)]  # coordenadas dos vértices
+    edges = [(0, 1), (1, 2), (2, 3), (3, 0)]  # arestas conectando os vértices
+    faces = [(0, 1, 2, 3)]  # face formada pelos vértices
+    mesh.from_pydata(verts, edges, faces)
+    
+    # Cria um objeto com esse mesh
+    obj = bpy.data.objects.new("Player_Start", mesh)
+    context.scene.collection.objects.link(obj)
+    
     # Define a propriedade 'type' no objeto criado
-    obj = bpy.context.active_object  # obtém o objeto recém-criado que é ativo
-    obj["type"] = "player_start"  # adiciona uma propriedade personalizada chamada 'type'
+    obj["type"] = "player_start"
+    
+    # Move o objeto para a posição do cursor
+    obj.location = context.scene.cursor.location
+
+    # Define a exibição do objeto como wireframe
+    obj.display_type = 'WIRE'
 
 class OBJECT_OT_add_player_start(bpy.types.Operator):
     """Adicione um cubo comum"""
@@ -27,7 +41,7 @@ def draw_item(self, context):
     layout.operator(OBJECT_OT_add_player_start.bl_idname, text="Player Start")
 
 def add_menu(self, context):
-    self.layout.menu("VIEW3D_MT_ceatim_engine", text="Ceatim Engine")
+    self.layout.menu("VIEW3D_MT_ceatim_engine", text="Ceatim Engine",icon="PREFERENCES")
 
 class VIEW3D_MT_ceatim_engine(bpy.types.Menu):
     bl_label = "Ceatim Engine"
