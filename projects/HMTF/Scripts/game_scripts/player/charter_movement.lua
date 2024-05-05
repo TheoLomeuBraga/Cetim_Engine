@@ -112,7 +112,7 @@ jump_power = 20
 
 
 inpulse = { x = 0, y = 0, z = 0 }
-land_friction = 10
+
 
 base_directional_input = { x = 0, y = 0, z = 0 }
 directional_input = { x = 0, y = 0, z = 0 }
@@ -152,6 +152,8 @@ function aproche_to_target_value(num, speed, target_value)
     end
     return ret
 end
+
+land_friction = 10
 
 function manage_inpulse_land(i)
     local delta_friction = land_friction * time.delta
