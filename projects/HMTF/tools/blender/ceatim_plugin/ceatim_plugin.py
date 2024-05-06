@@ -1,25 +1,10 @@
 import bpy
 
 def add_player_start(self, context):
-    # Cria um novo mesh personalizado
-    mesh = bpy.data.meshes.new("PlayerStartMesh")
-    verts = [(-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0)]  # coordenadas dos vértices
-    edges = [(0, 1), (1, 2), (2, 3), (3, 0)]  # arestas conectando os vértices
-    faces = [(0, 1, 2, 3)]  # face formada pelos vértices
-    mesh.from_pydata(verts, edges, faces)
-    
-    # Cria um objeto com esse mesh
-    obj = bpy.data.objects.new("Player Start", mesh)
-    context.scene.collection.objects.link(obj)
-    
-    # Define a propriedade 'type' no objeto criado
+    bpy.ops.object.empty_add(type='CONE', align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
+    obj = context.active_object
     obj["type"] = "player_start"
-    
-    # Move o objeto para a posição do cursor
-    obj.location = context.scene.cursor.location
-
-    # Define a exibição do objeto como wireframe
-    obj.display_type = 'WIRE'
+    obj.name = "Player Start"
 
 class OBJECT_OT_add_player_start(bpy.types.Operator):
     """Adicione um cubo comum"""
@@ -35,26 +20,11 @@ class OBJECT_OT_add_player_start(bpy.types.Operator):
         return {'FINISHED'}
     
 def add_entity(self, context):
-    # Cria um novo mesh personalizado
-    mesh = bpy.data.meshes.new("PlayerStartMesh")
-    verts = [(-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0)]  # coordenadas dos vértices
-    edges = [(0, 1), (1, 2), (2, 3), (3, 0)]  # arestas conectando os vértices
-    faces = [(0, 1, 2, 3)]  # face formada pelos vértices
-    mesh.from_pydata(verts, edges, faces)
-        
-    # Cria um objeto com esse mesh
-    obj = bpy.data.objects.new("Entity", mesh)
-    context.scene.collection.objects.link(obj)
-        
-    # Define a propriedade 'type' no objeto criado
+    bpy.ops.object.empty_add(type='CONE', align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
+    obj = context.active_object
+    obj.name = "Entity"
     obj["type"] = "entity"
     obj["entity_type"] = "test_entity"
-        
-    # Move o objeto para a posição do cursor
-    obj.location = context.scene.cursor.location
-
-    # Define a exibição do objeto como wireframe
-    obj.display_type = 'WIRE'
 
 class OBJECT_OT_add_entity(bpy.types.Operator):
     """Adicione um cubo comum"""
@@ -70,8 +40,36 @@ class OBJECT_OT_add_entity(bpy.types.Operator):
     def execute(self, context):
         add_entity(self, context)
         return {'FINISHED'}
+    
 
-objects_ot = [OBJECT_OT_add_player_start,OBJECT_OT_add_entity]
+
+    
+def add_door_triger(self, context):
+    bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
+
+    obj = context.active_object
+    obj["type"] = "door_triger"
+    obj["key"] = ""
+    obj["trigger_target"] = bpy.data.actions["Action"]
+
+    obj.name = "Door Triger"
+    
+
+
+class OBJECT_OT_add_door_triger(bpy.types.Operator):
+    """Adicione um cubo comum"""
+    bl_idname = "mesh.add_door_triger"
+    bl_label = "Door Triger"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    text = "Door Triger"
+    icon='CUBE'
+
+    def execute(self, context):
+        add_door_triger(self, context)
+        return {'FINISHED'}
+
+objects_ot = [OBJECT_OT_add_player_start,OBJECT_OT_add_entity,OBJECT_OT_add_door_triger]
 
 
 
