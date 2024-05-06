@@ -25,7 +25,7 @@ function START()
 end
 
 stay_open_in_some_moment = false
-stay_open = 1
+stay_open = 0
 function get_valid_touches()
     if stay_open > 0 and stay_open_in_some_moment then
         return true
