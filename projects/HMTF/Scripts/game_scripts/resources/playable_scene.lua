@@ -354,6 +354,10 @@ cenary_builders = {
                     part_data.variables.key)
             end
 
+            if part_data.variables.stay_open ~= nil then
+                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "stay_open",part_data.variables.stay_open)
+            end
+
 
             add_mesh(nil)
             add_physics(true, true)

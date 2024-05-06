@@ -24,7 +24,12 @@ function START()
     this_physics_3d:set()
 end
 
+stay_open_in_some_moment = false
+stay_open = 1
 function get_valid_touches()
+    if stay_open > 0 and stay_open_in_some_moment then
+        return true
+    end
     for key, value in pairs(this_physics_3d:get_objects_coliding()) do
         
         local obj = game_object(value)
@@ -45,6 +50,7 @@ function get_valid_touches()
                 for key, value in pairs(keys) do
 
                     if key_to_open == value then
+                        stay_open_in_some_moment = true
                         return true
                     end
                     

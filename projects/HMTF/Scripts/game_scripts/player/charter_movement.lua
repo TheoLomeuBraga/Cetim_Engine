@@ -332,6 +332,8 @@ function UPDATE()
 
             this_physics_3d:set_linear_velocity(linear_velocity.x, linear_velocity.y, linear_velocity.z)
 
+            print("set_linear_velocity",linear_velocity.x, linear_velocity.y, linear_velocity.z)
+
             if not hit_down then
                 inpulse.y = inpulse.y + (time.delta * time.scale * gravity.force.y * 2)
             end

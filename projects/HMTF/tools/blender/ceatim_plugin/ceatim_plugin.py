@@ -50,6 +50,7 @@ def add_door_triger(self, context):
     obj = context.active_object
     obj["type"] = "door_triger"
     obj["key"] = ""
+    obj["stay_open"] = 0
     obj["trigger_target"] = bpy.data.actions["Action"]
 
     obj.name = "Door Triger"
