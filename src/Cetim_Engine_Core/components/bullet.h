@@ -239,11 +239,9 @@ public:
             if (collision_mesh != NULL)
             {
 
-                
-
                 if (dinamica == estatico)
                 {
-                    
+
                     mesh_shape_address = get_mesh_shape_address(collision_mesh->arquivo_origem + ":" + collision_mesh->nome + ":static:" + std::to_string(escala.x) + ":" + std::to_string(escala.y) + ":" + std::to_string(escala.z));
 
                     if (btMeshes_shapes.find(mesh_shape_address) != btMeshes_shapes.end())
@@ -269,15 +267,11 @@ public:
                             btVector3 vertex3 = btVector3(v.posicao[0] * escala.x, v.posicao[1] * escala.y, v.posicao[2] * escala.z);
 
                             tm->addTriangle(vertex1, vertex2, vertex3);
-
                         }
-
-                       
 
                         Shape = new btBvhTriangleMeshShape(tm, true);
                         btMeshes_shapes.insert(pair<shared_ptr<std::string>, btCollisionShape *>(mesh_shape_address, Shape));
                         btMeshes_shapes_count++;
-                        
                     }
                 }
                 else
@@ -356,8 +350,6 @@ public:
                 btRigidBody::btRigidBodyConstructionInfo CI(btScalar(densidade), MotionState, Shape, Inertia);
                 Shape->calculateLocalInertia(btScalar(densidade), Inertia);
 
-                
-
                 bt_obj_rb = new btRigidBody(CI);
                 bt_obj_rb->setAngularFactor(btVector3(rotacionarX, rotacionarY, rotacionarZ));
                 bt_obj_rb->setRestitution(elasticidade);
@@ -388,12 +380,10 @@ public:
 
                 dynamicsWorld->addRigidBody(bt_obj_rb);
                 bt_obj = bt_obj_rb;
-
-                
             }
             else if (dinamica == cinematico)
             {
-                
+
                 btVector3 Inertia = btVector3(0, 0, 0);
                 btRigidBody::btRigidBodyConstructionInfo CI(0, MotionState, Shape, Inertia);
                 bt_obj_rb = new btRigidBody(CI);
@@ -523,8 +513,8 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
                 bt_obj_rb->activate();
+                bt_obj_rb->applyCentralForce(btVector3(forca.x, forca.y, forca.z));
             }
         }
     }
@@ -534,8 +524,8 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
                 bt_obj_rb->activate();
+                bt_obj_rb->applyCentralImpulse(btVector3(forca.x, forca.y, forca.z));
             }
         }
     }
@@ -545,8 +535,11 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+
                 bt_obj_rb->activate();
+                bt_obj_rb->setLinearVelocity(btVector3(forca.x, forca.y, forca.z));
+
+                
             }
         }
     }
@@ -557,8 +550,9 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
                 bt_obj_rb->activate();
+                bt_obj_rb->applyTorque(btVector3(forca.x, forca.y, forca.z));
+                
             }
         }
     }
@@ -568,8 +562,8 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
                 bt_obj_rb->activate();
+                bt_obj_rb->applyTorqueImpulse(btVector3(forca.x, forca.y, forca.z));
             }
         }
     }
@@ -579,8 +573,8 @@ public:
         {
             if (bt_obj_rb != NULL && bt_obj != NULL)
             {
-                bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
                 bt_obj_rb->activate();
+                bt_obj_rb->setAngularVelocity(btVector3(forca.x, forca.y, forca.z));
             }
         }
     }
@@ -799,8 +793,6 @@ void get_bu_collisions_no_per_object()
 
 Tempo::Timer bullet_timer;
 
-
-
 double bullet_past_time = 0;
 
 void atualisar_global_bullet()
@@ -813,7 +805,7 @@ void atualisar_global_bullet()
 
     bullet_past_time += bullet_timer.get();
     bullet_timer.clear();
-    
+
     /*
     unsigned char bullet_time_step_count = 0;
     while (bullet_past_time > Tempo::time_step)
@@ -826,9 +818,11 @@ void atualisar_global_bullet()
         dynamicsWorld->stepSimulation(Tempo::time_step * Tempo::velocidadeTempo * bullet_time_step_count, 4 * bullet_time_step_count);
     }
     */
-   dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo, 8);
-    
-    
+
+    if (Tempo::deltaTime * Tempo::velocidadeTempo > 0)
+    {
+        dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo, 8);
+    }
 
     /*
     while(bullet_past_time > bullet_time_step){
