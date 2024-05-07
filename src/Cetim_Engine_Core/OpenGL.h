@@ -35,8 +35,6 @@ struct mesh_ogl_struct
 };
 typedef struct mesh_ogl_struct mesh_ogl;
 
-
-
 // EDITOR_MODE
 
 string nome_shader_vert = "recursos/Shaders/vert/Shader.vert", nome_shader_geom = "recursos/Shaders/geom/Shader.geom", nome_shader_frag = "recursos/Shaders/frag/Shader.frag";
@@ -297,7 +295,6 @@ public:
 		teste_cam->pegar_componente<camera>()->atualizar_tf();
 	}
 
-	
 	void criar_oclusion_querie(shared_ptr<objeto_jogo> obj)
 	{
 		if (oclusion_queries.find(obj) == oclusion_queries.end())
@@ -1048,7 +1045,7 @@ public:
 				}
 
 				shared_ptr<fonte> font = rt->font;
-				
+
 				/*
 				rt->style_changes.insert(pair<unsigned int,text_style_change>(1,{vec4(1,0,0,1),ManuseioDados::carregar_fonte("Fonts/PrintedCircuitBoardItalic.ttf")}));
 				rt->style_changes.insert(pair<unsigned int,text_style_change>(2,{vec4(0,1,0,1),ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf")}));
@@ -1076,13 +1073,15 @@ public:
 					for (int i = 0; i < texto.size(); i++)
 					{
 
-						if(rt->style_changes.find(i) != rt->style_changes.end()){
+						if (rt->style_changes.find(i) != rt->style_changes.end())
+						{
 							text_style_change new_style = rt->style_changes[i];
 							glUniform4f(glGetUniformLocation(shader_s, "color"), new_style.color.x, new_style.color.y, new_style.color.z, new_style.color.w);
-							if(new_style.font){
+							if (new_style.font)
+							{
 								font = new_style.font;
 							}
-							print("font",new_style.font->path,"color",new_style.color.x,new_style.color.y,new_style.color.z);
+							print("font", new_style.font->path, "color", new_style.color.x, new_style.color.y, new_style.color.z);
 						}
 
 						wchar_t letra = texto.at(i);
@@ -1580,7 +1579,7 @@ public:
 			std::reverse(transparent.begin(), transparent.end());
 
 			nontransparent = tf_ordenate_by_distance(cam->pegar_componente<transform_>()->pegar_pos_global(), nontransparent);
-			//std::reverse(nontransparent.begin(), nontransparent.end());
+			// std::reverse(nontransparent.begin(), nontransparent.end());
 		}
 
 		return {nontransparent, transparent, ui};
@@ -1752,14 +1751,39 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void draw_ui_element(ui_element_instruction element){
+	void draw_ui_element(ui_element_instruction element)
+	{
 		ui_elements_to_draw.push_back(element);
 	}
 
-	void render_ui_elements(){
-		for(ui_element_instruction e : ui_elements_to_draw){
+	void render_ui_elements(std::shared_ptr<objeto_jogo> cam)
+	{
+
+		glm::mat4 cam_matrix(1.0f);
+		unsigned int shader = pegar_shader("ui_element");
+		glUseProgram(shader);
+
+		// projection * vision * transform
+		if (cam != NULL)
+		{
+			shared_ptr<camera> ca = cam->pegar_componente<camera>();
+			if (ca != NULL)
+			{
+				cam_matrix = ca->matrizProjecao * ca->matrizVisao;
+			}
+		}
+
+		for (ui_element_instruction e : ui_elements_to_draw)
+		{
 			
 		}
+
+		ui_elements_to_draw.clear();
+
+		//testes
+		ui_element_instruction test_ui_element_instruction;
+		ui_elements_to_draw.push_back(test_ui_element_instruction);
+
 	}
 
 	int pegar_id_obj(int X, int Y)
@@ -1828,12 +1852,15 @@ public:
 			}
 		}
 
-		render_ui_elements();
+		if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL){
+			render_ui_elements(cena_objetos_selecionados->cameras[relevancia_camera]);
+		}else{
+			render_ui_elements(NULL);
+		}
+		
 
 		ogl_aplicar_pos_processamento();
 	}
-
-	
 
 	~OpenGL_API()
 	{

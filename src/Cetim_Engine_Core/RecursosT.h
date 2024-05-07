@@ -1118,7 +1118,15 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 }
 
 struct ui_element_instruction_struct {
-	
+	bool is_3D = false;
+	vec3 position = vec3(0,0,0);
+	vec2 scale = vec2(1,1);
+	float border_size = 0.05;
+	float roundnes = 0.25;
+	vec4 color = vec4(1,1,1,1);
+	vec4 border_color = vec4(0,0,0,1);
+	shared_ptr<imagem> image = NULL;
+	shared_ptr<imagem> border_image = NULL;
 };
 typedef struct ui_element_instruction_struct ui_element_instruction;
 
