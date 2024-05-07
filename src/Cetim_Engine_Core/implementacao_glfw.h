@@ -840,20 +840,23 @@ bool iniciada_logica_scripts;
 
 Tempo::Timer deltaTimer;
 
-long double rest_time = 0;
+long double tempoPerdido = 0;
 
 void Reindenizar()
 {
 
 	while (true)
 	{
-		Tempo::deltaTime = (static_cast<int>(deltaTimer.get() / Tempo::time_step)) * Tempo::time_step;
+		float tempoTotal = deltaTimer.get() + tempoPerdido; // Inclui o tempo perdido anterior
+		Tempo::deltaTime = static_cast<int>(tempoTotal / Tempo::time_step) * Tempo::time_step;
 
 		if (Tempo::deltaTime < Tempo::time_step)
 		{
 			continue;
 		}
-	
+
+		tempoPerdido = tempoTotal - Tempo::deltaTime; // Calcula o novo tempo perdido
+
 		deltaTimer.clear();
 
 		break;
@@ -944,10 +947,9 @@ void IniciarJanela()
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
-	
-	//glfwSwapInterval(0);
+	glfwSwapInterval(0);
 
-	//glfwSwapInterval(1);
+	// glfwSwapInterval(1);
 
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
