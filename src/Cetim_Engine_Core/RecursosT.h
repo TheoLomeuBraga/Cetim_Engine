@@ -1117,6 +1117,11 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 	pegar_primeiros_map_thread<string, shared_ptr<imagem>>(m, ret);
 }
 
+struct ui_element_instruction_struct {
+	
+};
+typedef struct ui_element_instruction_struct ui_element_instruction;
+
 #define SAIDAS_SHADER 16
 #define quantidade_fontes_luz 99
 class API_grafica_classe
@@ -1147,6 +1152,7 @@ public:
 	virtual void remover_shader(shader *nome) {}
 	virtual void reindenizar_cenario() {}
 	virtual void carregar_shader(string shade) {}
+	virtual void draw_ui_element(ui_element_instruction element) {}
 };
 API_grafica_classe *api_grafica;
 
@@ -1217,6 +1223,13 @@ shared_ptr<imagem> rodar_compute_shader(Material mat, int resx, int resy, int ch
 {
 	return api_grafica->rodar_compute_shader(mat, resx, resy, chanels);
 }
+void draw_ui_element(ui_element_instruction element){
+	if (api_grafica != NULL)
+	{
+		api_grafica->draw_ui_element(element);
+	}
+}
+
 
 class network_conection
 {

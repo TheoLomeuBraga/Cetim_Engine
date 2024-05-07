@@ -11,8 +11,8 @@ OPT ?= 0
 #the luajit suport causes stacks overflows
 JIT ?= 0
 
-SRC_IMGUI :=  ./include/imgui/imgui.cpp ./include/imgui/imgui_widgets.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/backends/imgui_impl_glfw.cpp  
 
+SRC_IMGUI = ./include/imgui/imgui.cpp ./include/imgui/backends/imgui_impl_glfw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_widgets.cpp
 
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)

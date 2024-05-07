@@ -35,6 +35,8 @@ struct mesh_ogl_struct
 };
 typedef struct mesh_ogl_struct mesh_ogl;
 
+
+
 // EDITOR_MODE
 
 string nome_shader_vert = "recursos/Shaders/vert/Shader.vert", nome_shader_geom = "recursos/Shaders/geom/Shader.geom", nome_shader_frag = "recursos/Shaders/frag/Shader.frag";
@@ -81,6 +83,8 @@ public:
 	string bone_matrixes_ids[256];
 
 	Material material_last_frame;
+
+	vector<ui_element_instruction> ui_elements_to_draw;
 
 	std::string processIncludes(const std::string &path, const std::string &directory = "Shaders")
 	{
@@ -1748,7 +1752,17 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	virtual int pegar_id_obj(int X, int Y)
+	void draw_ui_element(ui_element_instruction element){
+		ui_elements_to_draw.push_back(element);
+	}
+
+	void render_ui_elements(){
+		for(ui_element_instruction e : ui_elements_to_draw){
+			
+		}
+	}
+
+	int pegar_id_obj(int X, int Y)
 	{
 
 		return 0;
@@ -1814,8 +1828,12 @@ public:
 			}
 		}
 
+		render_ui_elements();
+
 		ogl_aplicar_pos_processamento();
 	}
+
+	
 
 	~OpenGL_API()
 	{
