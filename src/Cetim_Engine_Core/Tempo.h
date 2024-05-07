@@ -39,6 +39,29 @@ namespace Tempo
 		}
 	};
 
+	class HDTimer
+	{
+	private:
+		using clock = std::chrono::high_resolution_clock;
+
+		std::chrono::time_point<clock> start_time;
+
+	public:
+		HDTimer() : start_time(clock::now()) {}
+
+		void clear()
+		{
+			start_time = clock::now();
+		}
+
+		long double get()
+		{
+			auto end_time = clock::now();
+			std::chrono::duration<long double> elapsed_seconds = end_time - start_time;
+			return elapsed_seconds.count();
+		}
+	};
+
 	Timer total_timer;
 	double tempo;
 	double velocidadeTempo = 1;

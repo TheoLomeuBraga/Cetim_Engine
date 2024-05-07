@@ -41,9 +41,6 @@ class OBJECT_OT_add_entity(bpy.types.Operator):
         add_entity(self, context)
         return {'FINISHED'}
     
-
-
-    
 def add_door_triger(self, context):
     bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
 
@@ -69,10 +66,33 @@ class OBJECT_OT_add_door_triger(bpy.types.Operator):
     def execute(self, context):
         add_door_triger(self, context)
         return {'FINISHED'}
+    
+def add_sound(self, context):
+    bpy.ops.object.empty_add(type='SPHERE', align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
 
-objects_ot = [OBJECT_OT_add_player_start,OBJECT_OT_add_entity,OBJECT_OT_add_door_triger]
+
+    obj = context.active_object
+    obj["type"] = "sound"
+    obj["path"] = ""
+
+    obj.name = "sound"
+    
 
 
+class OBJECT_OT_add_sound(bpy.types.Operator):
+    """Adicione um cubo comum"""
+    bl_idname = "mesh.add_sound"
+    bl_label = "Sound"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    text = "Sound"
+    icon='PLAY_SOUND'
+
+    def execute(self, context):
+        add_sound(self, context)
+        return {'FINISHED'}
+
+objects_ot = [OBJECT_OT_add_player_start,OBJECT_OT_add_entity,OBJECT_OT_add_door_triger,OBJECT_OT_add_sound]
 
 def draw_item(self, context):
     layout = self.layout

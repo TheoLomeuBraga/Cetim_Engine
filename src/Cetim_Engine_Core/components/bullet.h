@@ -806,39 +806,14 @@ void atualisar_global_bullet()
     bullet_past_time += bullet_timer.get();
     bullet_timer.clear();
 
-    /*
-    unsigned char bullet_time_step_count = 0;
-    while (bullet_past_time > Tempo::time_step)
-    {
-
-        bullet_time_step_count++;
-        bullet_past_time -= Tempo::time_step;
-    }
-    if(bullet_time_step_count){
-        dynamicsWorld->stepSimulation(Tempo::time_step * Tempo::velocidadeTempo * bullet_time_step_count, 4 * bullet_time_step_count);
-    }
-    */
+    
 
     if (Tempo::deltaTime * Tempo::velocidadeTempo > 0)
     {
         dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo, 8);
     }
 
-    /*
-    while(bullet_past_time > bullet_time_step){
-        dynamicsWorld->stepSimulation(bullet_time_step * Tempo::velocidadeTempo, 4);
-        bullet_past_time -= bullet_time_step;
-    }
-    */
-
-    /*
-    float bullet_passo_tempo = ((float)bullet_physics_timer.get()) * Tempo::velocidadeTempo;
-    if (Tempo::velocidadeTempo > 0)
-    {
-        dynamicsWorld->stepSimulation(bullet_passo_tempo, 8);
-        bullet_physics_timer.clear();
-    }
-    */
+    
 }
 
 void iniciar_atualisar_global_bullet()

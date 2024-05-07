@@ -303,7 +303,7 @@ cenary_builders = {
         elseif part_data.variables.type == "sound" then
             ret.components.audio_source.path = "Audio/sounds/" ..
                 part_data.variables.sound_source .. ".wav"
-            ret.components.audio_source.loop = false
+            ret.components.audio_source.loop = true
             ret.components.audio_source.volume = 10
             ret.components.audio_source.min_distance = 5
             ret.components.audio_source.atenuation = 1

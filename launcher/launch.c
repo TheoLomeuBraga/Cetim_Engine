@@ -111,7 +111,7 @@ int main()
     strcat(cmd, LPATHL);
 
     single_line(&cmd);
-    run_command(cmd);;
+    run_command(cmd);
     if (setenv("LD_LIBRARY_PATH", cmd, 1) != 0) {
         perror("Erro ao definir LD_LIBRARY_PATH");
         return 1;

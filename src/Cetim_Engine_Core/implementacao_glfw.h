@@ -840,20 +840,20 @@ bool iniciada_logica_scripts;
 
 Tempo::Timer deltaTimer;
 
-long double current_time = 0, time_last_frame = 0, rest_time = 0;
+long double rest_time = 0;
 
 void Reindenizar()
 {
 
 	while (true)
 	{
-		Tempo::deltaTime = std::floor(deltaTimer.get() / Tempo::time_step) * Tempo::time_step;
+		Tempo::deltaTime = (static_cast<int>(deltaTimer.get() / Tempo::time_step)) * Tempo::time_step;
 
 		if (Tempo::deltaTime < Tempo::time_step)
 		{
 			continue;
 		}
-
+	
 		deltaTimer.clear();
 
 		break;
@@ -944,9 +944,10 @@ void IniciarJanela()
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW
-	glfwSwapInterval(1);
+	
+	//glfwSwapInterval(0);
 
-	// glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
