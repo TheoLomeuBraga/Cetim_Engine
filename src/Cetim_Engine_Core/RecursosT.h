@@ -1123,6 +1123,7 @@ struct ui_element_instruction_struct {
 	vec2 scale = vec2(1,1);
 	float border_size = 0.05;
 	float roundnes = 0.25;
+	float skew = 0.5;
 	vec4 color = vec4(1,1,1,1);
 	vec4 border_color = vec4(0,0,0,1);
 	shared_ptr<imagem> image = NULL;
