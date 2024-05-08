@@ -1133,7 +1133,7 @@ struct ui_element_instruction_struct {
 	vec4 border_color = vec4(0,1,0,1);
 	shared_ptr<imagem> border_image = NULL;
 
-	shared_ptr<fonte> fonte_texto;
+	shared_ptr<fonte> text_font = NULL;
 	vec4 text_color = vec4(0,0,1,1);
 	float text_size = 0.5;
 	std::wstring text = L"hello world";

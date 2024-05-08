@@ -1783,8 +1783,9 @@ public:
 			mat4 translation = glm::scale(translate(mat4(1.0f), e.position), scale);
 			if (e.is_3D)
 			{
-				cam_matrix = cam_matrix * translation;
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &cam_matrix[0][0]);
+				translation = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * translation;
+				translation = cam_matrix * translation;
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
 			}
 			else
 			{
@@ -1795,52 +1796,203 @@ public:
 			glUniform3f(glGetUniformLocation(shader, "position"), e.position.x, e.position.y, e.position.z);
 			glUniform2f(glGetUniformLocation(shader, "scale"), e.scale.x, e.scale.y);
 
-			// shape
-
-			glUniform1f(glGetUniformLocation(shader, "roundnes"), e.roundnes);
-			glUniform1f(glGetUniformLocation(shader, "skew"), e.skew);
-			glUniform1f(glGetUniformLocation(shader, "border_size"), e.border_size);
-
-			// color
-			glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
-			glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
-
-			//textura
-
-			if (e.image == NULL)
+			if (e.color.w + e.border_color.w > 0)
 			{
-				e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
-			}
-			ogl_adicionar_textura(e.image.get());
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glUniform1i(glGetUniformLocation(shader, "image"), 0);
+				// shape
 
-			if (e.border_image == NULL)
+				glUniform1f(glGetUniformLocation(shader, "roundnes"), e.roundnes);
+				glUniform1f(glGetUniformLocation(shader, "skew"), e.skew);
+				glUniform1f(glGetUniformLocation(shader, "border_size"), e.border_size);
+
+				// color
+				glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
+				glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
+
+				// textura
+
+				if (e.image == NULL)
+				{
+					e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
+				}
+				ogl_adicionar_textura(e.image.get());
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glUniform1i(glGetUniformLocation(shader, "image"), 0);
+
+				if (e.border_image == NULL)
+				{
+					e.border_image = ManuseioDados::carregar_Imagem("Textures/white.png");
+				}
+				ogl_adicionar_textura(e.border_image.get());
+				glActiveTexture(GL_TEXTURE0 + 1);
+				glBindTexture(GL_TEXTURE_2D, texturas[e.border_image.get()]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glUniform1i(glGetUniformLocation(shader, "border_image"), 0);
+
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+
+			// texto
+
+			/*
+			if (e.text.size() > 0 && e.text_font != NULL)
 			{
-				e.border_image = ManuseioDados::carregar_Imagem("Textures/white.png");
+
+				// https://learnopengl.com/In-Practice/Text-Rendering
+
+				// shader
+				unsigned int shader_s = pegar_shader("ui_element_text");
+				glUseProgram(shader_s);
+
+				// transform
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
+
+				apply_material(shader_s, rt->mat);
+
+				wstring texto = e.text;
+
+				unsigned int count_linhas = 0;
+				for (int i = 0; i < texto.size(); i++)
+				{
+					if (texto.at(i) == '\n')
+					{
+						count_linhas++;
+					}
+				}
+
+				shared_ptr<fonte> font = e.text_font;
+
+				if (font != NULL)
+				{
+
+					vec2 tamanho_texto = vec2(0, 0);
+					vector<vec2> tamanho_linhas = {};
+					if (rt->text_location_x != 0 && rt->text_location_y != 0)
+					{
+						tamanho_texto = rt->get_text_size();
+						tamanho_linhas = rt->get_lines_size();
+					}
+
+					mat4 lugar_texto = tf->matrizTransform;
+
+					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
+					float altura_linha = 0;
+					unsigned int no_linha = 0;
+					float tamanho_linha = 0;
+
+					for (int i = 0; i < texto.size(); i++)
+					{
+
+						if (rt->style_changes.find(i) != rt->style_changes.end())
+						{
+							text_style_change new_style = rt->style_changes[i];
+							glUniform4f(glGetUniformLocation(shader_s, "color"), new_style.color.x, new_style.color.y, new_style.color.z, new_style.color.w);
+							if (new_style.font)
+							{
+								font = new_style.font;
+							}
+							print("font", new_style.font->path, "color", new_style.color.x, new_style.color.y, new_style.color.z);
+						}
+
+						wchar_t letra = texto.at(i);
+						if (letra == '\n')
+						{
+							altura_linha -= +rt->espaco_entre_linhas;
+							no_linha++;
+							pos_char.x = 0;
+						}
+						else
+						{
+
+							caractere_info char_ = font->chars[letra];
+
+							sca_char = vec2(char_.width, char_.height);
+
+							vec2 bearing = vec2(char_.left, char_.top);
+
+							if (rt->uniform_space_between_characters)
+							{
+								pos_adi_char = vec2(1, 0);
+							}
+							else
+							{
+								pos_adi_char = vec2((float)char_.adivancement / font->quality, 1 / font->quality);
+							}
+
+							pos_char.x += pos_adi_char.x;
+							float size_char_y = ((((float)sca_char.y) / (float)font->quality));
+							vec3 pos_letra = vec3(pos_char.x, altura_linha + size_char_y, 0);
+
+							if (rt->text_location_x == render_text_location::CENTER)
+							{
+								pos_letra.x = (pos_letra.x - tamanho_texto.x) + (tamanho_texto.x - tamanho_linhas[no_linha].x);
+							}
+							else if (rt->text_location_x == render_text_location::LEFT)
+							{
+
+								pos_letra.x = pos_letra.x + ((-tamanho_texto.x - (tamanho_linhas[no_linha].x * 2)) + tamanho_texto.x);
+							}
+
+							if (rt->text_location_y == render_text_location::CENTER)
+							{
+								pos_letra.y = (pos_letra.y + (rt->espaco_entre_linhas / 2) * count_linhas) - size_char_y / 2;
+							}
+							else if (rt->text_location_y == render_text_location::TOP)
+							{
+								pos_letra.y = pos_letra.y - tamanho_texto.y;
+							}
+							else if (rt->text_location_y == render_text_location::DOWN)
+							{
+								pos_letra.y = pos_letra.y - rt->espaco_entre_linhas;
+							}
+
+							mat4 lugar_letra = translate(lugar_texto, pos_letra);
+							lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
+
+							// textura
+							adicionar_fonte(font.get());
+							glActiveTexture(GL_TEXTURE0);
+							glBindTexture(GL_TEXTURE_2D, fontes[font.get()][letra]);
+
+							glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
+
+							
+							for (pair<string, float> p : rt->mat.inputs)
+							{
+								glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
+							}
+
+							// transform
+							glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &lugar_letra[0][0]);
+
+							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+							pos_char.x += pos_adi_char.x;
+
+							if (pos_char.x > rt->tamanho_max_linha)
+							{
+								altura_linha -= +rt->espaco_entre_linhas;
+								no_linha++;
+								pos_char.x = 0;
+							}
+						}
+					}
+				}
 			}
-			ogl_adicionar_textura(e.border_image.get());
-			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, texturas[e.border_image.get()]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glUniform1i(glGetUniformLocation(shader, "border_image"), 0);
-
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			//texto
-
-			
-
+			*/
 		}
 
 		ui_elements_to_draw.clear();
 
 		// testes
 		ui_element_instruction test_ui_element_instruction;
+		ui_elements_to_draw.push_back(test_ui_element_instruction);
+
+		test_ui_element_instruction.is_3D = true;
+		test_ui_element_instruction.position = vec3(-19.0,39.0,-139.0);
 		ui_elements_to_draw.push_back(test_ui_element_instruction);
 	}
 
