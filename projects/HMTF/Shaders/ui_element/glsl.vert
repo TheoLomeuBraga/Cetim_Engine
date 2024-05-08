@@ -6,6 +6,7 @@ vec3 quad_data[4] = vec3[4](vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3
 layout(location = 0) out vec4 POS;
 layout(location = 1) out vec2 UV;
 
+/*
 uniform bool is_3D;
 uniform mat4 matrix;
 uniform vec3 position;
@@ -15,6 +16,10 @@ uniform float skew;
 uniform float border_size;
 uniform vec4 color;
 uniform vec4 border_color;
+*/
+
+uniform mat4 matrix;
+uniform float skew;
 
 void main() {
   //tela

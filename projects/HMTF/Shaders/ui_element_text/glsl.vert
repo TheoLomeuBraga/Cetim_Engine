@@ -26,14 +26,15 @@ uniform mat4 matrix;
  void main(){
   //tela
    
-   POS =vec4( quad_data[gl_VertexID].x,-quad_data[gl_VertexID].y,quad_data[gl_VertexID].z,1);
+   
    
    
    UV= vec2(max(0,quad_data[gl_VertexID].x),max(0,quad_data[gl_VertexID].y));
 
    //gl_Position = POS;
-   
-   gl_Position =  matrix * POS; 
+  
+  POS =vec4( quad_data[gl_VertexID].x,-quad_data[gl_VertexID].y,quad_data[gl_VertexID].z,1);
+  gl_Position =  matrix * POS; 
    
 
 

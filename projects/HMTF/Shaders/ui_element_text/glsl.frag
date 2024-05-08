@@ -6,7 +6,7 @@ layout(location = 1) in vec2 uv;
 layout(location = 0) out vec4 ret;
 
 // material
- uniform sampler2D textures[6];
+ uniform sampler2D char_texture;
 uniform vec4 color;
 
 //fun�oes
@@ -49,13 +49,12 @@ vec4 applyXBRFilter(sampler2D tex, vec2 uv)
 
 void main(){
         
-    float f = applyXBRFilter(textures[0],uv).x;
+    float f = applyXBRFilter(char_texture,uv).x;
     if(f > 0.01){
         f = 1;
     }else{
         f = 0;
     }
     ret = vec4(color.x,color.y,color.z,f);
-
   
 }

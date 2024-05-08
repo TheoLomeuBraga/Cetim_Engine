@@ -5,12 +5,8 @@ layout(location = 0) in vec4 POS;
 layout(location = 1) in vec2 UV;
 layout(location = 0) out vec4 ret;
 
-uniform bool is_3D;
-uniform mat4 matrix;
-uniform vec3 position;
-uniform vec2 scale;
+
 uniform float roundnes;
-uniform float skew;
 uniform float border_size;
 uniform vec4 color;
 uniform vec4 border_color;
@@ -68,9 +64,6 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 }
 
 void main() {
-
-    //float ib = 1 - is_border();
-    //ret = vec4(color.xyz,is_valid_spot());
 
     
     vec4 ib = mix(color * texture2D(image,UV),border_color * texture2D(border_image,UV),is_border());

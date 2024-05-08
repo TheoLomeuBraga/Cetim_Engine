@@ -1754,8 +1754,6 @@ public:
 	{
 
 		glm::mat4 cam_matrix(1.0f);
-		unsigned int shader = pegar_shader("ui_element");
-		glUseProgram(shader);
 
 		// projection * vision * transform
 		if (cam != NULL)
@@ -1767,233 +1765,416 @@ public:
 			}
 		}
 
-		// deph
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		glDisable(GL_CULL_FACE);
-		glUniform1i(tipo_vertice, 1);
-		glBindVertexArray(quad_array);
-
 		for (ui_element_instruction e : ui_elements_to_draw)
 		{
-			// transform
-			vec3 scale(e.scale.x, e.scale.y, 1);
-			mat4 translation = glm::scale(translate(mat4(1.0f), e.position), scale);
-			if (e.is_3D)
+
+			auto get_matrix = [&](mat4 t)
 			{
-				translation = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * translation;
-				translation = cam_matrix * translation;
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
-			}
-			else
-			{
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
-			}
-
-			glUniform1i(glGetUniformLocation(shader, "is_3D"), e.is_3D);
-			glUniform3f(glGetUniformLocation(shader, "position"), e.position.x, e.position.y, e.position.z);
-			glUniform2f(glGetUniformLocation(shader, "scale"), e.scale.x, e.scale.y);
-
-			if (e.color.w + e.border_color.w > 0)
-			{
-				// shape
-
-				glUniform1f(glGetUniformLocation(shader, "roundnes"), e.roundnes);
-				glUniform1f(glGetUniformLocation(shader, "skew"), e.skew);
-				glUniform1f(glGetUniformLocation(shader, "border_size"), e.border_size);
-
-				// color
-				glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
-				glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
-
-				// textura
-
-				if (e.image == NULL)
+				if (e.is_3D)
 				{
-					e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
+					mat4 matrix = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * t;
+					matrix = cam_matrix * matrix;
+					return matrix;
 				}
-				ogl_adicionar_textura(e.image.get());
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glUniform1i(glGetUniformLocation(shader, "image"), 0);
+				return t;
+			};
 
-				if (e.border_image == NULL)
-				{
-					e.border_image = ManuseioDados::carregar_Imagem("Textures/white.png");
-				}
-				ogl_adicionar_textura(e.border_image.get());
-				glActiveTexture(GL_TEXTURE0 + 1);
-				glBindTexture(GL_TEXTURE_2D, texturas[e.border_image.get()]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glUniform1i(glGetUniformLocation(shader, "border_image"), 0);
-
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			}
-
-			// texto
-
-			/*
-			if (e.text.size() > 0 && e.text_font != NULL)
+			if (!e.is_mesh)
 			{
 
-				// https://learnopengl.com/In-Practice/Text-Rendering
+				glUniform1i(tipo_vertice, 1);
+				glBindVertexArray(quad_array);
 
-				// shader
-				unsigned int shader_s = pegar_shader("ui_element_text");
-				glUseProgram(shader_s);
+				glDisable(GL_DEPTH_TEST);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				glDisable(GL_CULL_FACE);
+
+				unsigned int shader = pegar_shader("ui_element");
+				glUseProgram(shader);
 
 				// transform
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
+				vec3 scale(e.scale.x, e.scale.y, 1);
+				mat4 translation = glm::scale(translate(mat4(1.0f), e.position) * toMat4(graus_quat(e.rotation)), scale);
+				mat4 translation_matrix = get_matrix(translation);
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation_matrix[0][0]);
 
-				apply_material(shader_s, rt->mat);
+				glUniform1i(glGetUniformLocation(shader, "is_3D"), e.is_3D);
+				glUniform3f(glGetUniformLocation(shader, "position"), e.position.x, e.position.y, e.position.z);
+				glUniform2f(glGetUniformLocation(shader, "scale"), e.scale.x, e.scale.y);
 
-				wstring texto = e.text;
-
-				unsigned int count_linhas = 0;
-				for (int i = 0; i < texto.size(); i++)
+				if (e.color.w + e.border_color.w > 0)
 				{
-					if (texto.at(i) == '\n')
+					// shape
+
+					glUniform1f(glGetUniformLocation(shader, "roundnes"), e.roundnes);
+					glUniform1f(glGetUniformLocation(shader, "skew"), e.skew);
+					glUniform1f(glGetUniformLocation(shader, "border_size"), e.border_size);
+
+					// color
+					glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
+					glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
+
+					// textura
+
+					if (e.image == NULL)
 					{
-						count_linhas++;
+						e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
 					}
+					ogl_adicionar_textura(e.image.get());
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					glUniform1i(glGetUniformLocation(shader, "image"), 0);
+
+					if (e.border_image == NULL)
+					{
+						e.border_image = ManuseioDados::carregar_Imagem("Textures/white.png");
+					}
+					ogl_adicionar_textura(e.border_image.get());
+					glActiveTexture(GL_TEXTURE0 + 1);
+					glBindTexture(GL_TEXTURE_2D, texturas[e.border_image.get()]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					glUniform1i(glGetUniformLocation(shader, "border_image"), 0);
+
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 				}
 
-				shared_ptr<fonte> font = e.text_font;
-
-				if (font != NULL)
+				if (e.text.size() > 0 && e.text_font != NULL)
 				{
 
-					vec2 tamanho_texto = vec2(0, 0);
-					vector<vec2> tamanho_linhas = {};
-					if (rt->text_location_x != 0 && rt->text_location_y != 0)
-					{
-						tamanho_texto = rt->get_text_size();
-						tamanho_linhas = rt->get_lines_size();
-					}
+					// https://learnopengl.com/In-Practice/Text-Rendering
 
-					mat4 lugar_texto = tf->matrizTransform;
+					// shader
+					unsigned int shader = pegar_shader("ui_element_text");
+					glUseProgram(shader);
 
-					vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
-					float altura_linha = 0;
-					unsigned int no_linha = 0;
-					float tamanho_linha = 0;
+					// transform
+					// glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
+					glUniform4f(glGetUniformLocation(shader, "color"), e.text_color.x, e.text_color.y, e.text_color.z, e.text_color.w);
 
+					wstring texto = e.text;
+
+					unsigned int count_linhas = 0;
 					for (int i = 0; i < texto.size(); i++)
 					{
-
-						if (rt->style_changes.find(i) != rt->style_changes.end())
+						if (texto.at(i) == '\n')
 						{
-							text_style_change new_style = rt->style_changes[i];
-							glUniform4f(glGetUniformLocation(shader_s, "color"), new_style.color.x, new_style.color.y, new_style.color.z, new_style.color.w);
-							if (new_style.font)
+							count_linhas++;
+						}
+					}
+
+					shared_ptr<fonte> font = e.text_font;
+
+					// const float tamanho_max_linha = 1000.0f; // mudar depois
+					const float tamanho_max_linha = 1000.0f;
+					const bool uniform_space_between_characters = false;
+					const float espaco_entre_linhas = 3.0f;
+
+					const char text_location_x = render_text_location::CENTER;
+					const char text_location_y = render_text_location::CENTER;
+
+					if (font && texto.size())
+					{
+
+						auto get_text_size = [&]()
+						{
+							vec2 ret = vec2(0, 0);
+
+							vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
+							float altura_linha = 0;
+							float tamanho_linha = 0;
+
+							for (int i = 0; i < texto.size(); i++)
 							{
-								font = new_style.font;
+								wchar_t letra = texto.at(i);
+								if (letra == '\n')
+								{
+									altura_linha -= espaco_entre_linhas;
+									ret.x = std::max(ret.x, pos_char.x);
+									ret.y = std::min(ret.y, altura_linha);
+									pos_char.x = 0;
+								}
+								else if (letra == ' ')
+								{
+									pos_char.x += 1;
+									if (pos_char.x > tamanho_max_linha)
+									{
+										altura_linha -= espaco_entre_linhas;
+										ret.x = std::max(ret.x, pos_char.x);
+										ret.y = std::min(ret.y, altura_linha);
+										pos_char.x = 0;
+									}
+								}
+								else
+								{
+
+									caractere_info char_ = font->chars[letra];
+
+									sca_char = vec2(char_.width, char_.height);
+
+									vec2 bearing = vec2(char_.left, char_.top);
+
+									if (uniform_space_between_characters)
+									{
+										pos_adi_char = vec2(1, 0);
+									}
+									else
+									{
+										pos_adi_char = vec2((float)char_.adivancement / font->quality, 0);
+									}
+
+									pos_char.x += pos_adi_char.x;
+
+									pos_char.y += pos_adi_char.y;
+
+									if (pos_char.x > tamanho_max_linha)
+									{
+										altura_linha -= espaco_entre_linhas;
+										ret.x = std::max(ret.x, pos_char.x);
+										ret.y = std::min(ret.y, altura_linha);
+										pos_char.x = 0;
+									}
+								}
 							}
-							print("font", new_style.font->path, "color", new_style.color.x, new_style.color.y, new_style.color.z);
+							ret.x = std::max(ret.x, pos_char.x);
+							ret.y = std::min(ret.y, altura_linha);
+							return ret;
+						};
+
+						auto get_lines_size = [&]()
+						{
+							vector<vec2> ret = {vec2(0, 0)};
+
+							vec2 pos_char(0, 0), pos_adi_char(0, 0), sca_char(1, 1);
+							float altura_linha = 0;
+							float tamanho_linha = 0;
+							int no_linha = 0;
+
+							for (int i = 0; i < texto.size(); i++)
+							{
+								wchar_t letra = texto.at(i);
+								if (letra == '\n')
+								{
+									altura_linha -= +espaco_entre_linhas;
+									ret[no_linha] = vec2(pos_char.x, espaco_entre_linhas);
+									ret.push_back(vec2(0, 0));
+									no_linha++;
+									pos_char.x = 0;
+								}
+
+								else
+								{
+
+									caractere_info char_ = font->chars[letra];
+
+									sca_char = vec2(char_.width, char_.height);
+
+									vec2 bearing = vec2(char_.left, char_.top);
+
+									if (uniform_space_between_characters)
+									{
+										pos_adi_char = vec2(1, 0);
+									}
+									else
+									{
+										pos_adi_char = vec2((float)char_.adivancement / font->quality, 0);
+									}
+
+									pos_char.x += pos_adi_char.x;
+
+									pos_char.y += pos_adi_char.y;
+
+									if (pos_char.x > tamanho_max_linha)
+									{
+										altura_linha -= +espaco_entre_linhas;
+										ret[no_linha] = vec2(pos_char.x, espaco_entre_linhas);
+										ret.push_back(vec2(0, 0));
+										no_linha++;
+										pos_char.x = 0;
+									}
+								}
+							}
+							ret[no_linha] = vec2(pos_char.x, espaco_entre_linhas);
+							ret.push_back(vec2(0, 0));
+							return ret;
+						};
+
+						vec2 tamanho_texto = vec2(0, 0);
+						vector<vec2> tamanho_linhas = {};
+						if (text_location_x != 0 && text_location_y != 0)
+						{
+							tamanho_texto = get_text_size();
+							tamanho_linhas = get_lines_size();
 						}
 
-						wchar_t letra = texto.at(i);
-						if (letra == '\n')
+						vec2 pos_char(0, 0);
+						vec2 pos_adi_char(0, 0);
+						vec2 sca_char(1, 1);
+						float altura_linha = 0;
+						unsigned int no_linha = 0;
+						float tamanho_linha = 0;
+
+						for (int i = 0; i < texto.size(); i++)
 						{
-							altura_linha -= +rt->espaco_entre_linhas;
-							no_linha++;
-							pos_char.x = 0;
-						}
-						else
-						{
 
-							caractere_info char_ = font->chars[letra];
-
-							sca_char = vec2(char_.width, char_.height);
-
-							vec2 bearing = vec2(char_.left, char_.top);
-
-							if (rt->uniform_space_between_characters)
+							wchar_t letra = texto.at(i);
+							if (letra == '\n')
 							{
-								pos_adi_char = vec2(1, 0);
-							}
-							else
-							{
-								pos_adi_char = vec2((float)char_.adivancement / font->quality, 1 / font->quality);
-							}
-
-							pos_char.x += pos_adi_char.x;
-							float size_char_y = ((((float)sca_char.y) / (float)font->quality));
-							vec3 pos_letra = vec3(pos_char.x, altura_linha + size_char_y, 0);
-
-							if (rt->text_location_x == render_text_location::CENTER)
-							{
-								pos_letra.x = (pos_letra.x - tamanho_texto.x) + (tamanho_texto.x - tamanho_linhas[no_linha].x);
-							}
-							else if (rt->text_location_x == render_text_location::LEFT)
-							{
-
-								pos_letra.x = pos_letra.x + ((-tamanho_texto.x - (tamanho_linhas[no_linha].x * 2)) + tamanho_texto.x);
-							}
-
-							if (rt->text_location_y == render_text_location::CENTER)
-							{
-								pos_letra.y = (pos_letra.y + (rt->espaco_entre_linhas / 2) * count_linhas) - size_char_y / 2;
-							}
-							else if (rt->text_location_y == render_text_location::TOP)
-							{
-								pos_letra.y = pos_letra.y - tamanho_texto.y;
-							}
-							else if (rt->text_location_y == render_text_location::DOWN)
-							{
-								pos_letra.y = pos_letra.y - rt->espaco_entre_linhas;
-							}
-
-							mat4 lugar_letra = translate(lugar_texto, pos_letra);
-							lugar_letra = scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
-
-							// textura
-							adicionar_fonte(font.get());
-							glActiveTexture(GL_TEXTURE0);
-							glBindTexture(GL_TEXTURE_2D, fontes[font.get()][letra]);
-
-							glUniform1i(glGetUniformLocation(shader_s, "textures[0]"), 0);
-
-							
-							for (pair<string, float> p : rt->mat.inputs)
-							{
-								glUniform1f(glGetUniformLocation(shader_s, p.first.c_str()), p.second);
-							}
-
-							// transform
-							glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &lugar_letra[0][0]);
-
-							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-							pos_char.x += pos_adi_char.x;
-
-							if (pos_char.x > rt->tamanho_max_linha)
-							{
-								altura_linha -= +rt->espaco_entre_linhas;
+								altura_linha -= espaco_entre_linhas;
 								no_linha++;
 								pos_char.x = 0;
 							}
+							else
+							{
+								float e_scale = (e.scale.x + e.scale.y) / 10.0f;
+								mat4 text_translation = glm::scale(translate(mat4(1.0f), e.position) * toMat4(graus_quat(e.rotation)), vec3(e.text_size * e_scale, e.text_size * e_scale, 1));
+
+								caractere_info char_ = font->chars[letra];
+
+								sca_char = vec2(char_.width, char_.height);
+
+								vec2 bearing = vec2(char_.left, char_.top);
+
+								if (uniform_space_between_characters)
+								{
+									pos_adi_char = vec2(1, 0);
+								}
+								else
+								{
+									pos_adi_char = vec2((float)char_.adivancement / font->quality, 1 / font->quality);
+								}
+
+								pos_char.x += pos_adi_char.x;
+								float size_char_y = ((((float)sca_char.y) / (float)font->quality));
+								vec3 pos_letra = vec3(pos_char.x, altura_linha + size_char_y, 0);
+
+								if (text_location_x == render_text_location::CENTER)
+								{
+									pos_letra.x = (pos_letra.x - tamanho_texto.x) + (tamanho_texto.x - tamanho_linhas[no_linha].x);
+								}
+								else if (text_location_x == render_text_location::LEFT)
+								{
+									pos_letra.x = pos_letra.x + ((-tamanho_texto.x - (tamanho_linhas[no_linha].x * 2)) + tamanho_texto.x);
+								}
+
+								if (text_location_y == render_text_location::CENTER)
+								{
+									pos_letra.y = (pos_letra.y + (espaco_entre_linhas / 2) * count_linhas) - size_char_y / 2;
+								}
+								else if (text_location_y == render_text_location::TOP)
+								{
+									pos_letra.y = pos_letra.y - tamanho_texto.y;
+								}
+								else if (text_location_y == render_text_location::DOWN)
+								{
+									pos_letra.y = pos_letra.y - espaco_entre_linhas;
+								}
+
+								mat4 lugar_letra = translate(text_translation, pos_letra);
+								lugar_letra = glm::scale(lugar_letra, vec3(sca_char.x / font->quality, sca_char.y / font->quality, 1));
+
+								// textura
+								adicionar_fonte(font.get());
+								glActiveTexture(GL_TEXTURE0);
+								glBindTexture(GL_TEXTURE_2D, fontes[font.get()][letra]);
+
+								glUniform1i(glGetUniformLocation(shader, "char_texture"), 0);
+
+								// transform
+								glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &get_matrix(lugar_letra)[0][0]);
+
+								glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+								pos_char.x += pos_adi_char.x;
+
+								if (pos_char.x > tamanho_max_linha)
+								{
+									altura_linha -= espaco_entre_linhas;
+									no_linha++;
+									pos_char.x = 0;
+								}
+							}
 						}
 					}
 				}
 			}
-			*/
+			else
+			{
+				/*
+				glEnable(GL_DEPTH_TEST);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				glDisable(GL_CULL_FACE);
+				*/
+
+				glDisable(GL_DEPTH_TEST);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				glDisable(GL_CULL_FACE);
+
+				if (e.mesh)
+				{
+					unsigned int shader = pegar_shader("ui_element_mesh");
+					glUseProgram(shader);
+
+					vec3 scale(e.scale.x, e.scale.y, e.scale.z);
+					mat4 translation = glm::scale(translate(mat4(1.0f), e.position) * toMat4(graus_quat(e.rotation)), scale);
+					mat4 translation_matrix = get_matrix(translation);
+					glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation_matrix[0][0]);
+
+					vec4 wasd = translation_matrix * vec4(0,0,0,1);
+					print("wasd",wasd.x,wasd.y,wasd.z);
+
+					glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
+
+					if (e.image == NULL)
+					{
+						e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
+					}
+					ogl_adicionar_textura(e.image.get());
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					glUniform1i(glGetUniformLocation(shader, "image"), 0);
+
+					selecionar_desenhar_malha(e.mesh.get(), GL_TRIANGLES);
+				}
+			}
 		}
 
 		ui_elements_to_draw.clear();
 
 		// testes
-		ui_element_instruction test_ui_element_instruction;
-		ui_elements_to_draw.push_back(test_ui_element_instruction);
+		/**/
+		ui_element_instruction tuiei, tuiei2, tuiei3;
 
-		test_ui_element_instruction.is_3D = true;
-		test_ui_element_instruction.position = vec3(-19.0,39.0,-139.0);
-		ui_elements_to_draw.push_back(test_ui_element_instruction);
+		/*
+		tuiei.text_font = ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf");
+		tuiei.text = L"Hello\nWorld!";
+		tuiei.position = vec3(0, -0.5, 0);
+		tuiei.scale = vec3(0.4, 0.2,0);
+		ui_elements_to_draw.push_back(tuiei);
+
+		tuiei2.text_font = ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf");
+		tuiei2.text = L"Hello\nWorld!";
+		tuiei2.is_3D = true;
+		tuiei2.position = vec3(-19.51806, 39.95957, -139.0894);
+		tuiei2.rotation = vec3(0.0, 45.0, 0.0);
+		tuiei2.scale = vec3(4, 2,0);
+		ui_elements_to_draw.push_back(tuiei2);
+		
+
+		tuiei3.is_mesh = true;
+		tuiei3.is_3D = false;
+		//tuiei3.position = vec3(-19.51806, 39.95957, -139.0894);
+		tuiei3.position = vec3(0,0,0);
+		tuiei3.rotation = vec3(45.0, 45.0, 0.0);
+		tuiei3.scale = vec3(1,1,1);
+		tuiei3.color = vec4(1,0,1,1);
+		tuiei3.mesh = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
+		ui_elements_to_draw.push_back(tuiei3);
+		*/
 	}
 
 	int pegar_id_obj(int X, int Y)
