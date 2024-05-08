@@ -1046,12 +1046,6 @@ public:
 
 				shared_ptr<fonte> font = rt->font;
 
-				/*
-				rt->style_changes.insert(pair<unsigned int,text_style_change>(1,{vec4(1,0,0,1),ManuseioDados::carregar_fonte("Fonts/PrintedCircuitBoardItalic.ttf")}));
-				rt->style_changes.insert(pair<unsigned int,text_style_change>(2,{vec4(0,1,0,1),ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf")}));
-				rt->style_changes.insert(pair<unsigned int,text_style_change>(3,{vec4(0,0,1,1),ManuseioDados::carregar_fonte("Fonts/PrintedCircuitBoardItalic.ttf")}));
-				*/
-
 				if (font != NULL)
 				{
 
@@ -1718,7 +1712,7 @@ public:
 			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
 			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), i);
 		}
-		// alicar pos processamento
+		// aplicar pos processamento
 		glBindVertexArray(quad_array);
 		glUniform1i(tipo_vertice, 2);
 
@@ -1768,22 +1762,44 @@ public:
 		{
 			shared_ptr<camera> ca = cam->pegar_componente<camera>();
 			if (ca != NULL)
-			{
+			{	
 				cam_matrix = ca->matrizProjecao * ca->matrizVisao;
 			}
 		}
 
+		//deph
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_CULL_FACE);
+		glUniform1i(tipo_vertice, 1);
+		glBindVertexArray(quad_array);
+
 		for (ui_element_instruction e : ui_elements_to_draw)
 		{
-			
+			//transform
+			vec3 scale(e.scale.x,e.scale.y,1);
+			mat4 translation = translate(glm::scale(mat4(1.0f),scale),e.position);
+			if(e.is_3D){
+				cam_matrix = cam_matrix * translation;
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"),1,GL_FALSE,&cam_matrix[0][0]);
+			}else{
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"),1,GL_FALSE,&translation[0][0]);
+			}
+
+			glUniform1i(glGetUniformLocation(shader, "is_3D"),e.is_3D);
+			glUniform3f(glGetUniformLocation(shader, "position"),e.position.x,e.position.y,e.position.z);
+			glUniform2f(glGetUniformLocation(shader, "scale"),e.scale.x,e.scale.y);
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 		ui_elements_to_draw.clear();
 
-		//testes
+		// testes
 		ui_element_instruction test_ui_element_instruction;
 		ui_elements_to_draw.push_back(test_ui_element_instruction);
-
 	}
 
 	int pegar_id_obj(int X, int Y)
@@ -1852,12 +1868,14 @@ public:
 			}
 		}
 
-		if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL){
+		if (cena_objetos_selecionados->cameras.size() >= relevancia_camera + 1 && cena_objetos_selecionados->cameras[relevancia_camera] != NULL)
+		{
 			render_ui_elements(cena_objetos_selecionados->cameras[relevancia_camera]);
-		}else{
+		}
+		else
+		{
 			render_ui_elements(NULL);
 		}
-		
 
 		ogl_aplicar_pos_processamento();
 	}

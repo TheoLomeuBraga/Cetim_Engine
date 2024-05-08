@@ -3,10 +3,13 @@
 
 vec3 quad_data[4] = vec3[4](vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0));
 
-uniform mat4 matrix;
-
 layout(location = 0) out vec4 POS;
 layout(location = 1) out vec2 UV;
+
+uniform bool is_3D;
+uniform mat4 matrix;
+uniform vec3 position;
+uniform vec2 scale;
 
 void main() {
   //tela
@@ -18,6 +21,7 @@ void main() {
   UV = vec2(max(0, q.x), max(0, q.y));
 
   gl_Position = matrix * POS;
+  //gl_Position = POS;
 
 
 

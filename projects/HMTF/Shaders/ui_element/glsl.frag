@@ -14,5 +14,5 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 
 void main() {
 
-    ret = color;
+    ret = vec4(1,1,1,1);
 }
