@@ -14,6 +14,8 @@ uniform float skew;
 uniform float border_size;
 uniform vec4 color;
 uniform vec4 border_color;
+uniform sampler2D image;
+uniform sampler2D border_image;
 
 
 float is_border() {
@@ -71,7 +73,7 @@ void main() {
     //ret = vec4(color.xyz,is_valid_spot());
 
     
-    vec4 ib = mix(color,border_color,is_border());
+    vec4 ib = mix(color * texture2D(image,UV),border_color * texture2D(border_image,UV),is_border());
     ret = vec4(ib.xyz,ib.w * is_valid_spot());
     
 

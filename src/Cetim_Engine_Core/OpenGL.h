@@ -1805,19 +1805,36 @@ public:
 			glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
 			glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
 
-			if(e.image == NULL){
-				e.image = carregar_Imagem("Textures/null.png");
+			//textura
+
+			if (e.image == NULL)
+			{
+				e.image = ManuseioDados::carregar_Imagem("Textures/white.png");
 			}
+			ogl_adicionar_textura(e.image.get());
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texturas[e.image.get()]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glUniform1i(glGetUniformLocation(shader, "image"), 0);
+
+			if (e.border_image == NULL)
+			{
+				e.border_image = ManuseioDados::carregar_Imagem("Textures/white.png");
+			}
+			ogl_adicionar_textura(e.border_image.get());
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, texturas[e.border_image.get()]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glUniform1i(glGetUniformLocation(shader, "border_image"), 0);
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			//texto
 
 			
 
-			if(e.border_image == NULL){
-				e.border_image = carregar_Imagem("Textures/white.png");
-			}
-
-
-
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 		ui_elements_to_draw.clear();
