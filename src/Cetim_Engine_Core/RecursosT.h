@@ -1120,21 +1120,21 @@ void pegar_nomes_texturas_thread(map<string, shared_ptr<imagem>> m, vector<strin
 struct ui_element_instruction_struct {
 
 	bool is_3D = false;
-	vec3 position = vec3(0.1,0.1,0);
-	vec2 scale = vec2(0.1,0.1);
+	vec3 position = vec3(0,0,0);
+	vec2 scale = vec2(0.5,0.5);
 
 	float roundnes = 0.25;
 	float skew = 0.5;
 
-	vec4 color = vec4(1,1,1,1);
+	vec4 color = vec4(1,0,0,1);
 	shared_ptr<imagem> image = NULL;
 
-	vec4 border_color = vec4(0,0,0,1);
-	float border_size = 0.05;
+	float border_size = 0.1;
+	vec4 border_color = vec4(0,1,0,1);
 	shared_ptr<imagem> border_image = NULL;
 
 	shared_ptr<fonte> fonte_texto;
-	vec4 text_color = vec4(0,0,0,1);
+	vec4 text_color = vec4(0,0,1,1);
 	float text_size = 0.5;
 	std::wstring text = L"hello world";
 };

@@ -10,18 +10,28 @@ uniform bool is_3D;
 uniform mat4 matrix;
 uniform vec3 position;
 uniform vec2 scale;
+uniform float roundnes;
+uniform float skew;
+uniform float border_size;
+uniform vec4 color;
+uniform vec4 border_color;
 
 void main() {
   //tela
 
   vec3 q = quad_data[gl_VertexID];
 
-  POS = vec4(q, 1);
-
   UV = vec2(max(0, q.x), max(0, q.y));
 
+  if(q.y == 1){
+    q.x += skew / 2;
+  }else if(q.y == -1){
+    q.x -= skew / 2;
+  }
+
+  POS = vec4(q, 1);
+
   gl_Position = matrix * POS;
-  //gl_Position = POS;
 
 
 

@@ -1762,12 +1762,12 @@ public:
 		{
 			shared_ptr<camera> ca = cam->pegar_componente<camera>();
 			if (ca != NULL)
-			{	
+			{
 				cam_matrix = ca->matrizProjecao * ca->matrizVisao;
 			}
 		}
 
-		//deph
+		// deph
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -1778,23 +1778,44 @@ public:
 
 		for (ui_element_instruction e : ui_elements_to_draw)
 		{
-			//transform
-			vec3 scale(e.scale.x,e.scale.y,1);
-			mat4 translation = translate(glm::scale(mat4(1.0f),scale),e.position);
-			if(e.is_3D){
+			// transform
+			vec3 scale(e.scale.x, e.scale.y, 1);
+			mat4 translation = glm::scale(translate(mat4(1.0f), e.position), scale);
+			if (e.is_3D)
+			{
 				cam_matrix = cam_matrix * translation;
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"),1,GL_FALSE,&cam_matrix[0][0]);
-			}else{
-				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"),1,GL_FALSE,&translation[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &cam_matrix[0][0]);
+			}
+			else
+			{
+				glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation[0][0]);
 			}
 
-			glUniform1i(glGetUniformLocation(shader, "is_3D"),e.is_3D);
-			glUniform3f(glGetUniformLocation(shader, "position"),e.position.x,e.position.y,e.position.z);
-			glUniform2f(glGetUniformLocation(shader, "scale"),e.scale.x,e.scale.y);
+			glUniform1i(glGetUniformLocation(shader, "is_3D"), e.is_3D);
+			glUniform3f(glGetUniformLocation(shader, "position"), e.position.x, e.position.y, e.position.z);
+			glUniform2f(glGetUniformLocation(shader, "scale"), e.scale.x, e.scale.y);
 
-			//shape
+			// shape
+
+			glUniform1f(glGetUniformLocation(shader, "roundnes"), e.roundnes);
+			glUniform1f(glGetUniformLocation(shader, "skew"), e.skew);
+			glUniform1f(glGetUniformLocation(shader, "border_size"), e.border_size);
+
+			// color
+			glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
+			glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
+
+			if(e.image == NULL){
+				e.image = carregar_Imagem("Textures/null.png");
+			}
 
 			
+
+			if(e.border_image == NULL){
+				e.border_image = carregar_Imagem("Textures/white.png");
+			}
+
+
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
