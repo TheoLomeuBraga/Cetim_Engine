@@ -1792,6 +1792,10 @@ public:
 			glUniform3f(glGetUniformLocation(shader, "position"),e.position.x,e.position.y,e.position.z);
 			glUniform2f(glGetUniformLocation(shader, "scale"),e.scale.x,e.scale.y);
 
+			//shape
+
+			
+
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
