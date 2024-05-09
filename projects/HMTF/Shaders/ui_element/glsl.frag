@@ -17,6 +17,9 @@ uniform sampler2D border_image;
 float is_border() {
     float bs = border_size / 2.0;
     float corner_radius = roundnes;
+    if(roundnes == 0.0){
+        corner_radius = 0.005;
+    }
     float inner_width = 1.0 - 2.0 * corner_radius;
     float inner_height = 1.0 - 2.0 * corner_radius;
 
@@ -41,6 +44,7 @@ float is_border() {
 
 
 float is_valid_spot() {
+    if(roundnes == 0.0){return 1.0;}
     float corner_radius = roundnes;
     float inner_width = 1.0 - 2.0 * corner_radius;
     float inner_height = 1.0 - 2.0 * corner_radius;

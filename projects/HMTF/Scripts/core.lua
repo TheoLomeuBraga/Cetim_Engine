@@ -26,6 +26,8 @@ require("objects.gravity")
 require("objects.render_layer")
 require("objects.post_processing")
 
+require("function_sets.simple_ui")
+
 
 local serializer = require("libs.serialize")
 
@@ -305,6 +307,8 @@ end
 
 local reload_last_frame = false
 function UPDATE()
+
+    simple_ui_display(simple_ui_transform(),"olã")
 
     count_fps:update()
     
