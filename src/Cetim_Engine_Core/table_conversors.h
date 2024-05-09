@@ -581,3 +581,12 @@ void clean_scene_3D_table_cache()
 }
 
 
+ui_element_instruction ui_element_instruction_table(table t){
+    ui_element_instruction ret;
+    return ret;
+}
+
+table table_ui_element_instruction(ui_element_instruction t){
+    table ret;
+    return ret;
+}

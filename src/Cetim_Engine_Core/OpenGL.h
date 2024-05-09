@@ -2146,10 +2146,9 @@ public:
 		ui_elements_to_draw.clear();
 
 		// testes
-		/**/
+		/*
 		ui_element_instruction tuiei, tuiei2, tuiei3;
 
-		/*
 		tuiei.text_font = ManuseioDados::carregar_fonte("Fonts/OpenSans.ttf");
 		tuiei.text = L"Hello\nWorld!";
 		tuiei.position = vec3(0, -0.5, 0);
