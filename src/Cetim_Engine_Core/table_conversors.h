@@ -594,19 +594,17 @@ ui_element_instruction ui_element_instruction_table(Table t){
     ret.rotation = table_vec3(t.getTable("rotation"));
 
     ret.color = table_color(t.getTable("color"));
-    ret.image = ManuseioDados::carregar_Imagem(t.getString("image"))
+    ret.image = ManuseioDados::carregar_Imagem(t.getString("image"));
     for(pair<std::string, float> p : t.getTable("inputs").m_floatMap){
-        ret.inputs.insert(pair<std::string, float>(p))
+        ret.inputs.insert(pair<std::string, float>(p));
     }
 
-    if(t.getFloat("is_mesh") < 1){
-
-        
-
+    if(t.getFloat("is_mesh") > 0){
+        Table mesh_table = t.getTable("mesh");
+        ret.mesh = ManuseioDados::carregar_malha(mesh_table.getString("file"), mesh_table.getString("name"));
     }else{
 
     }
-    
     return ret;
 }
 
