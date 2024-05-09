@@ -17,7 +17,7 @@ SRC_IMGUI = ./include/imgui/imgui.cpp ./include/imgui/backends/imgui_impl_glfw.c
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E 
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -DDEBUG
 	endif
 	ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
@@ -42,7 +42,7 @@ ifeq ($(OS),Windows_NT)
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E 
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -DDEBUG
 	endif
 	ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2
@@ -66,7 +66,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address -DDEBUG
 	endif
 		ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2

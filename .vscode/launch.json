@@ -13,9 +13,9 @@
             "args": [
                 "-std=c++20",
                 "-I${workspaceFolder}/src/Font_Reader",
-                "-I${workspaceFolder}/src/Theo_Master_Peace",
-                "-I${workspaceFolder}/src/Theo_Master_Peace_Core",
-                "-I${workspaceFolder}/src/Theo_Master_Peace_Core/components",
+                "-I${workspaceFolder}/src/Cetim_Engine",
+                "-I${workspaceFolder}/src/Cetim_Engine_Core",
+                "-I${workspaceFolder}/src/Cetim_Engine_Core/components",
                 "-I${workspaceFolder}/include",
                 "-I${workspaceFolder}/include/freetype",
                 "-I${workspaceFolder}/include/imgui",

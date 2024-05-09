@@ -604,6 +604,18 @@ ui_element_instruction ui_element_instruction_table(Table t){
         ret.mesh = ManuseioDados::carregar_malha(mesh_table.getString("file"), mesh_table.getString("name"));
     }else{
 
+        ret.roundnes = t.getFloat("roundnes");
+        ret.skew = t.getFloat("skew");
+
+        ret.border_size = t.getFloat("border_size");
+        ret.border_color = table_color(t.getTable("border_color"));
+        ret.border_image = ManuseioDados::carregar_Imagem(t.getString("border_image"));
+
+        ret.text_font = ManuseioDados::carregar_fonte(t.getString("text_font"));
+        ret.text_color = table_color(t.getTable("text_color"));
+        ret.text_size = t.getFloat("text_size");
+        ret.text = string_wstring(t.getString("text"));
+
     }
     return ret;
 }

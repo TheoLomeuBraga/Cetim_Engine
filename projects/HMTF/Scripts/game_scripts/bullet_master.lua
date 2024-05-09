@@ -129,7 +129,7 @@ update_per_type = {
         local hit_info = {}
         hit,hit_info = raycast_3D(last_pos,next_pos)
         if hit then
-            print(hit)
+            --print(hit)
             bullet.dead = true
         end
 

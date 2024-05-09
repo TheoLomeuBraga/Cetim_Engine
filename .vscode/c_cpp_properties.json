@@ -3,14 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/Font_Reader",
-                "${workspaceFolder}/src/Theo_Master_Peace",
-                "${workspaceFolder}/src/Theo_Master_Peace_Core",
-                "${workspaceFolder}/src/Theo_Master_Peace_Core/components",
+                "${workspaceFolder}/src/Cetim_Engine",
+                "${workspaceFolder}/src/Cetim_Engine_Core",
+                "${workspaceFolder}/src/Cetim_Engine_Core/components",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/freetype",
                 "${workspaceFolder}/include/bullet3",
-                "${workspaceFolder}/src/Theo_Master_Peace_Core",
+                "${workspaceFolder}/src/Cetim_Engine_Core",
                 "${workspaceFolder}/include/imgui/backends",
                 "${workspaceFolder}/include/nanosvg"
             ],
