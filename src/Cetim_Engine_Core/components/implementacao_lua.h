@@ -2606,6 +2606,11 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int simple_ui_display(lua_State *L){
+		draw_ui_element(ui_element_instruction_table(lua_totable(L,1)));
+		return 0;
+	}
+
 	shared_ptr<objeto_jogo> display_lua_cubes = NULL;
 
 	vec4 lua_cube_color = vec4(0, 0, 0, 1);
@@ -2842,6 +2847,10 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("debug", {
 															 pair<string, lua_function>("print_cube", print_cube),
 															 pair<string, lua_function>("clean_cube", clean_cube),
+
+														 }),
+		pair<string, map<string, lua_function>>("ui", {
+															 pair<string, lua_function>("simple_ui_display", simple_ui_display),
 
 														 })
 

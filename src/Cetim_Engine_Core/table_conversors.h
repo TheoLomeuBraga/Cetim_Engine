@@ -580,13 +580,20 @@ void clean_scene_3D_table_cache()
     scene_3D_table_cache.clear();
 }
 
+wstring string_wstring(string s){
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	return converter.from_bytes(s.c_str());
+}
 
-ui_element_instruction ui_element_instruction_table(table t){
+
+ui_element_instruction ui_element_instruction_table(Table t){
     ui_element_instruction ret;
     return ret;
 }
 
+/*
 table table_ui_element_instruction(ui_element_instruction t){
     table ret;
     return ret;
 }
+*/
