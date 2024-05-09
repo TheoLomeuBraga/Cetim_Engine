@@ -1126,6 +1126,8 @@ struct ui_element_instruction_struct {
 
 	vec4 color = vec4(1,0,0,1);
 	shared_ptr<imagem> image = NULL;
+
+	map<string,float> inputs = {};
 	
 	bool is_mesh = false;
 

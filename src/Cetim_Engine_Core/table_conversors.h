@@ -588,6 +588,25 @@ wstring string_wstring(string s){
 
 ui_element_instruction ui_element_instruction_table(Table t){
     ui_element_instruction ret;
+    ret.is_3D = t.getFloat("is_3D") > 0;
+    ret.position = table_vec3(t.getTable("position"));
+    ret.scale = table_vec3(t.getTable("scale"));
+    ret.rotation = table_vec3(t.getTable("rotation"));
+
+    ret.color = table_color(t.getTable("color"));
+    ret.image = ManuseioDados::carregar_Imagem(t.getString("image"))
+    for(pair<std::string, float> p : t.getTable("inputs").m_floatMap){
+        ret.inputs.insert(pair<std::string, float>(p))
+    }
+
+    if(t.getFloat("is_mesh") < 1){
+
+        
+
+    }else{
+
+    }
+    
     return ret;
 }
 

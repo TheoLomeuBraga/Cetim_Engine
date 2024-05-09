@@ -1814,6 +1814,10 @@ public:
 					glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
 					glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
 
+					for(pair<string,float> p : e.inputs){
+						glUniform1f(glGetUniformLocation(shader, p.first.c_str()), p.second);
+					}
+
 					// textura
 
 					if (e.image == NULL)
@@ -2122,8 +2126,9 @@ public:
 					mat4 translation_matrix = get_matrix(translation);
 					glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation_matrix[0][0]);
 
-					vec4 wasd = translation_matrix * vec4(0,0,0,1);
-					print("wasd",wasd.x,wasd.y,wasd.z);
+					for(pair<string,float> p : e.inputs){
+						glUniform1f(glGetUniformLocation(shader, p.first.c_str()), p.second);
+					}
 
 					glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
 
