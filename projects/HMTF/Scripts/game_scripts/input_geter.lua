@@ -20,6 +20,8 @@ inputs = {
     mouse_view_y = 0,
     analog_view_x = 0,
     analog_view_y = 0,
+    mouse_pos_x = 0,
+    mouse_pos_y = 0,
     menu = false,
 }
 

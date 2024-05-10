@@ -87,3 +87,55 @@ function simple_ui_display(ui_transform,text,ui_style)
     c_simple_ui_display(ui_info)
 end
 
+function simple_ui_lable(ui_transform,ui_style)
+    simple_ui_display(ui_transform,"",ui_style)
+end
+
+function simple_ui_text(ui_transform,text,ui_style)
+    if ui_style == nil then
+        ui_style = simple_ui_style()
+    end
+    ui_style.color.a = 0
+    ui_style.border_color.a = 0
+    simple_ui_display(ui_transform,text,ui_style)
+end
+
+local simple_ui_cursor_position = {x=0,y=0}
+local simple_ui_joystick_selection = -1
+local simple_ui_confirm = 0
+function set_selection_state(cursor_position,ui_joystick_id,confirm)
+    simple_ui_cursor_position = cursor_position
+    simple_ui_joystick_selection = ui_joystick_id
+    simple_ui_confirm = confirm
+end
+function is_selected(ui_transform,ui_joystick_id)
+
+    if ui_joystick_id == simple_ui_joystick_selection then
+        if simple_ui_confirm == 1 then
+            return 1
+        else 
+            return 0.5
+        end
+    end
+
+    local cpt = {x=(simple_ui_cursor_position.x * 2) - 1,y=(((1 - simple_ui_cursor_position.y) * 2) - 1)}
+    if ui_transform.position.x - ui_transform.scale.x < cpt.x and ui_transform.position.x + ui_transform.scale.x > cpt.x and ui_transform.position.y - ui_transform.scale.y < cpt.y and ui_transform.position.y + ui_transform.scale.y > cpt.y then
+        if simple_ui_confirm == 1 then
+            return 1
+        else 
+            return 0.5
+        end
+    end
+
+    return 0
+end
+
+function simple_ui_button(ui_transform,text,ui_style,ui_joystick_id)
+    simple_ui_display(ui_transform,text,ui_style)
+    return is_selected(ui_transform,ui_joystick_id)
+end
+
+function simple_ui_slider()
+    
+end
+

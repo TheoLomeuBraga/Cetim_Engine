@@ -308,7 +308,20 @@ end
 local reload_last_frame = false
 function UPDATE()
 
-    simple_ui_display(simple_ui_transform(),"olã")
+    --simple_ui_display(simple_ui_transform(),"olã")
+    --simple_ui_lable(simple_ui_transform())
+    --simple_ui_text(simple_ui_transform(),"olã",nil)
+
+    if global_data.inputs ~= nil then
+        local inputs = global_data.inputs
+        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},-1,inputs.action_1)
+    end 
+    
+
+    local ui_transform = simple_ui_transform()
+    ui_transform.position = {x=-0.75,y=0.75,z=0}
+    ui_transform.scale = {x=0.25,y=0.25}
+    print(simple_ui_button(ui_transform,"text",nil,1))
 
     count_fps:update()
     
