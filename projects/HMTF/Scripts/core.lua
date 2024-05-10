@@ -309,12 +309,20 @@ local ui_next_pos = {x=0,y=0}
 cursor_pos_last_frame = {x=0,y=0,z=0}
 
 local reload_last_frame = false
+function bool_to_num(num)
+    if num then
+        return 1
+    end
+    return 0
+end
 function UPDATE()
 
     if global_data.inputs ~= nil then
         local inputs = global_data.inputs
+        local inputs_last_frame = global_data.inputs_last_frame
+
         local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
-        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,inputs.action_1)
+        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,bool_to_num(inputs.action_1 == 1 and inputs_last_frame.action_1 == 0))
         cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
     end 
     
@@ -330,7 +338,10 @@ function UPDATE()
     ui_transform = simple_ui_transform()
     ui_transform.position = {x=ui_next_pos.x,y=ui_next_pos.y,z=0}
     ui_transform.scale = {x=0.25,y=0.25}
-    print(simple_ui_button(ui_transform,"text",nil,1))
+   
+    if simple_ui_button(ui_transform,"text",nil,1) == 1 then
+        print("text")
+    end
 
     count_fps:update()
     
