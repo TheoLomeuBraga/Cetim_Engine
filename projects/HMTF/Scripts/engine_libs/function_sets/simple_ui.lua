@@ -101,10 +101,12 @@ function simple_ui_text(ui_transform,text,ui_style)
 end
 
 local simple_ui_cursor_position = {x=0,y=0}
+local simple_ui_cursor_movement = {x=0,y=0}
 local simple_ui_joystick_selection = -1
 local simple_ui_confirm = 0
-function set_selection_state(cursor_position,ui_joystick_id,confirm)
+function set_selection_state(cursor_position,ursor_movement,ui_joystick_id,confirm)
     simple_ui_cursor_position = cursor_position
+    simple_ui_cursor_movement = ursor_movement
     simple_ui_joystick_selection = ui_joystick_id
     simple_ui_confirm = confirm
 end
@@ -135,7 +137,11 @@ function simple_ui_button(ui_transform,text,ui_style,ui_joystick_id)
     return is_selected(ui_transform,ui_joystick_id)
 end
 
-function simple_ui_slider()
-    
+function simple_ui_slider(ui_transform,text,ui_style,ui_joystick_id)
+    simple_ui_display(ui_transform,text,ui_style)
+    if is_selected(ui_transform,ui_joystick_id) == 1 then
+        return {x=simple_ui_cursor_movement.x,y=simple_ui_cursor_movement.y,z=0}
+    end
+    return {x=0,y=0,z=0}
 end
 

@@ -305,21 +305,30 @@ function count_fps:update()
     end
 end
 
+local ui_next_pos = {x=0,y=0}
+cursor_pos_last_frame = {x=0,y=0,z=0}
+
 local reload_last_frame = false
 function UPDATE()
 
-    --simple_ui_display(simple_ui_transform(),"olã")
-    --simple_ui_lable(simple_ui_transform())
-    --simple_ui_text(simple_ui_transform(),"olã",nil)
-
     if global_data.inputs ~= nil then
         local inputs = global_data.inputs
-        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},-1,inputs.action_1)
+        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
+        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,inputs.action_1)
+        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
     end 
     
 
     local ui_transform = simple_ui_transform()
-    ui_transform.position = {x=-0.75,y=0.75,z=0}
+    ui_transform.position = {x=ui_next_pos.x,y=0.30 + ui_next_pos.y,z=0}
+    ui_transform.scale = {x=0.25,y=0.05}
+    local slider_result = simple_ui_slider(ui_transform,"-----",nil,1)
+    ui_next_pos.x = ui_next_pos.x + (slider_result.x * 2)
+    ui_next_pos.y = ui_next_pos.y + (slider_result.y * 2)
+    
+    
+    ui_transform = simple_ui_transform()
+    ui_transform.position = {x=ui_next_pos.x,y=ui_next_pos.y,z=0}
     ui_transform.scale = {x=0.25,y=0.25}
     print(simple_ui_button(ui_transform,"text",nil,1))
 
