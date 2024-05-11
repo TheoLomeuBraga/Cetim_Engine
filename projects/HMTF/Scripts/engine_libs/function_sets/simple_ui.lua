@@ -1,4 +1,5 @@
 register_function_set("ui")
+require("objects.global_data")
 
 function simple_ui_transform(position, scale, is_ui, rotation)
     if position == nil then
@@ -51,6 +52,7 @@ function simple_ui_style(color, border_size, border_color, text_color)
         skew = 0.0,
         border_size = 0.01,
         border_color = border_color,
+        text_color = text_color,
         text_font = "Fonts/OpenSans.ttf",
         text_size = 1.0,
     }
@@ -98,6 +100,18 @@ function simple_ui_text(ui_transform, text, ui_style)
     ui_style.color.a = 0
     ui_style.border_color.a = 0
     simple_ui_display(ui_transform, text, ui_style)
+end
+
+function update_simple_ui()
+    if global_data.inputs ~= nil then
+        local inputs = global_data.inputs
+        local inputs_last_frame = global_data.inputs_last_frame
+
+        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
+        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,inputs.action_1)
+        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
+    end 
+    
 end
 
 local simple_ui_cursor_position = { x = 0, y = 0 }
@@ -167,4 +181,30 @@ function simple_ui_slider(ui_transform, text, ui_style, ui_joystick_id)
         return { x = simple_ui_cursor_movement.x, y = simple_ui_cursor_movement.y, z = 0 }
     end
     return { x = 0, y = 0, z = 0 }
+end
+
+
+
+
+
+local ui_next_pos = {x=0,y=0}
+cursor_pos_last_frame = {x=0,y=0,z=0}
+local reload_last_frame = false
+function simple_ui_example()
+    
+    local ui_transform = simple_ui_transform()
+    ui_transform.position = {x=ui_next_pos.x,y=0.30 + ui_next_pos.y,z=0}
+    ui_transform.scale = {x=0.25,y=0.05}
+    local slider_result = simple_ui_slider(ui_transform,"window",nil,1)
+    ui_next_pos.x = ui_next_pos.x + (slider_result.x * 2)
+    ui_next_pos.y = ui_next_pos.y + (slider_result.y * 2)
+    
+    local style = simple_ui_style({r=0.5,g=0.5,b=0.5,a=1}, 0.05, {r=1,g=0,b=0,a=1}, {r=1,g=0,b=0,a=1})
+    ui_transform = simple_ui_transform()
+    ui_transform.position = {x=ui_next_pos.x,y=ui_next_pos.y,z=0}
+    ui_transform.scale = {x=0.25,y=0.25}
+   
+    if simple_ui_button(ui_transform,"push me",style,1) == 1 then
+        window:close()
+    end
 end

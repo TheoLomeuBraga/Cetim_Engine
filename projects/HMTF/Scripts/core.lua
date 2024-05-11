@@ -305,43 +305,12 @@ function count_fps:update()
     end
 end
 
-local ui_next_pos = {x=0,y=0}
-cursor_pos_last_frame = {x=0,y=0,z=0}
 
-local reload_last_frame = false
-function bool_to_num(num)
-    if num then
-        return 1
-    end
-    return 0
-end
 function UPDATE()
 
-    if global_data.inputs ~= nil then
-        local inputs = global_data.inputs
-        local inputs_last_frame = global_data.inputs_last_frame
-
-        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
-        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,inputs.action_1)
-        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
-    end 
+    update_simple_ui()
     
-
-    local ui_transform = simple_ui_transform()
-    ui_transform.position = {x=ui_next_pos.x,y=0.30 + ui_next_pos.y,z=0}
-    ui_transform.scale = {x=0.25,y=0.05}
-    local slider_result = simple_ui_slider(ui_transform,"window",nil,1)
-    ui_next_pos.x = ui_next_pos.x + (slider_result.x * 2)
-    ui_next_pos.y = ui_next_pos.y + (slider_result.y * 2)
-    
-    
-    ui_transform = simple_ui_transform()
-    ui_transform.position = {x=ui_next_pos.x,y=ui_next_pos.y,z=0}
-    ui_transform.scale = {x=0.25,y=0.25}
-   
-    if simple_ui_button(ui_transform,"push me",nil,1) == 1 then
-        window:close()
-    end
+    --simple_ui_example()
 
     count_fps:update()
     
