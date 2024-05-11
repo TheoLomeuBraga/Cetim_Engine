@@ -11,7 +11,6 @@ class OBJECT_OT_add_player_start(bpy.types.Operator):
     bl_idname = "mesh.add_player_start"
     bl_label = "Player Start"
     bl_options = {'REGISTER', 'UNDO'}
-
     text = "Player Start"
     icon='ARMATURE_DATA'
 
@@ -31,11 +30,8 @@ class OBJECT_OT_add_entity(bpy.types.Operator):
     bl_idname = "mesh.add_entity"
     bl_label = "Entity"
     bl_options = {'REGISTER', 'UNDO'}
-
     text ="Entity"
     icon='GHOST_ENABLED'
-
-    
 
     def execute(self, context):
         add_entity(self, context)
@@ -43,13 +39,11 @@ class OBJECT_OT_add_entity(bpy.types.Operator):
     
 def add_door_triger(self, context):
     bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
-
     obj = context.active_object
     obj["type"] = "door_triger"
     obj["key"] = ""
     obj["stay_open"] = 0
     obj["trigger_target"] = bpy.data.actions["Action"]
-
     obj.name = "Door Triger"
     
 
@@ -59,22 +53,17 @@ class OBJECT_OT_add_door_triger(bpy.types.Operator):
     bl_idname = "mesh.add_door_triger"
     bl_label = "Door Triger"
     bl_options = {'REGISTER', 'UNDO'}
-
     text = "Door Triger"
     icon='CUBE'
-
     def execute(self, context):
         add_door_triger(self, context)
         return {'FINISHED'}
     
 def add_sound(self, context):
     bpy.ops.object.empty_add(type='SPHERE', align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
-
-
     obj = context.active_object
     obj["type"] = "sound"
     obj["path"] = ""
-
     obj.name = "sound"
     
 
