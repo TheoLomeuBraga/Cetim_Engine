@@ -255,12 +255,12 @@ function START()
 
     
     local mat = matreial:new()
-    mat.shader = "background"
-    mat.textures[1] = "Textures/white.png"
+    mat.shader = "skybox"
+    mat.textures[1] = "Textures/null.png"
     mat.color.r = 0.2
     mat.color.g = 0.2
     mat.color.b = 0.2
-    back_ground = create_render_shader(layers.sky_box, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
 
 
     window.resolution.x = 256
