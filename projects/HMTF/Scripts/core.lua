@@ -71,13 +71,13 @@ function set_load_image(args)
 
         local mat = matreial:new()
         mat.shader = "skybox"
-        mat.textures[1] = "Textures/test_sb_ds.png"
+        mat.textures[1] = "Textures/test_sb.svg"
         mat.color.r = 1
         mat.color.g = 1
         mat.color.b = 1
         --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
         back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1,
-            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") },false)
+            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
     else
         remove_object(load_image.object_ptr)
         load_image = nil
@@ -245,14 +245,14 @@ function START()
 
     local mat = matreial:new()
     mat.shader = "skybox"
-    mat.textures[1] = "Textures/test_sb_ds.png"
+    mat.textures[1] = "Textures/test_sb.svg"
     mat.color.r = 1
     mat.color.g = 1
     mat.color.b = 1
     mat.normal_direction = 1
     --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
     back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },
-        { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") },false)
+        { mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
 
 
     window.resolution.x = 256
