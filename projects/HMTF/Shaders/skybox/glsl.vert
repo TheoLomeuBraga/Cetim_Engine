@@ -29,17 +29,13 @@ void main() {
    vert_out.COLOR = color;
    vert_out.NORMAL_COLOR = normal * 0.5 + 0.5;
 
+   vec4 position = vec4(0,0,0,1);
+
    mat4 tf = transform;
-   tf[3][0] = 0.0;
-   tf[3][1] = 0.0;
-   tf[3][2] = 0.0;
-   tf[3][3] = 1.0;
+   tf[3] = position;
 
    mat4 v = vision;
-   v[3][0] = 0.0;
-   v[3][1] = 0.0;
-   v[3][2] = 0.0;
-   v[3][3] = 1.0;
+   v[3] = position;
 
    gl_Position = (projection * v * tf) * vert_out.POS;
 
