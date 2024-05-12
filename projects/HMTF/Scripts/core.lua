@@ -51,7 +51,7 @@ cenary = nil
 previous_cenary = nil
 
 local skybox_position = Vec3:new(0,0,0)
-local skybox_scale = Vec3:new(1000,1000,1000)
+local skybox_scale = Vec3:new(1,1,1)
 
 function set_load_image(args)
     if load_image ~= nil then
@@ -78,7 +78,7 @@ function set_load_image(args)
         mat.color.b = 1
         --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
         back_ground = create_mesh(layers.sky_box, false, skybox_position, Vec3:new(0, 0, 0), skybox_scale, 1,
-            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") })
+            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") },false)
     else
         remove_object(load_image.object_ptr)
         load_image = nil
@@ -253,7 +253,7 @@ function START()
     mat.normal_direction = 2
     --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
     back_ground = create_mesh(layers.sky_box, false, skybox_position, Vec3:new(0, 0, 0), skybox_scale, 1, { mat },
-        { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") })
+        { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") },false)
 
 
     window.resolution.x = 256
