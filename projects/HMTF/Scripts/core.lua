@@ -50,8 +50,10 @@ load_image = nil
 cenary = nil
 previous_cenary = nil
 
-function set_load_image(args)
+local skybox_position = Vec3:new(0,0,0)
+local skybox_scale = Vec3:new(1000,1000,1000)
 
+function set_load_image(args)
     if load_image ~= nil then
         remove_object(load_image.object_ptr)
         load_image = nil
@@ -64,24 +66,30 @@ function set_load_image(args)
         if args.color ~= nil then
             mat.color.r = args.color.r
             mat.color.g = args.color.g
-            mat.color.b = args.color.b 
+            mat.color.b = args.color.b
         end
         mat.color.a = 1
 
-        load_image = create_render_shader(layers.hud, true, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 5, mat)
+        local mat = matreial:new()
+        mat.shader = "skybox"
+        mat.textures[1] = "Textures/test_sb_ds.png"
+        mat.color.r = 1
+        mat.color.g = 1
+        mat.color.b = 1
+        --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+        back_ground = create_mesh(layers.sky_box, false, skybox_position, Vec3:new(0, 0, 0), skybox_scale, 1,
+            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") })
     else
         remove_object(load_image.object_ptr)
         load_image = nil
     end
-    
 end
 
-
 sceane_name = ""
-local loader = coroutine.create(function () end)
+local loader = coroutine.create(function() end)
 function load_sceane_step()
     name = ""
-    
+
     if type(sceane_name) == "string" then
         name = sceane_name
     elseif type(sceane_name) == "table" then
@@ -90,49 +98,36 @@ function load_sceane_step()
         end
     end
 
-    
-    
+
+
     if type(sceane_name) == "string" or type(sceane_name) == "table" then
-        
         previous_cenary = cenary
 
         cenary = require("Levels." .. name .. ".loader")
-        
+
         cenary:START()
-        
     end
-    
-    
-    
 end
 
-local unloader = coroutine.create(function () end)
+local unloader = coroutine.create(function() end)
 function unload_sceane_step()
-    
     if previous_cenary ~= nil then
         previous_cenary:END()
         previous_cenary = nil
     end
-    
 end
 
 load_sceane_request_name = nil
 
 function load_sceane(cenary_name)
-    
-    
-    
     sceane_name = cenary_name
     loader = coroutine.create(load_sceane_step)
     unloader = coroutine.create(unload_sceane_step)
     load_sceane_request_name = nil
-    
 end
 
 function load_sceane_request(cenary_name)
-    
     load_sceane_request_name = cenary_name
-    
 end
 
 function keep_loading()
@@ -204,31 +199,30 @@ function set_render_layers()
         use_deep = false,
     }
 
-    
+
 
     renders_layers:set()
 end
 
 function load_configs()
-
     --[[
    local t = {"ola mundo",{1,2,3}}
    print(t[1],t[2][1],t[2][2],t[2][3])
    serializer.save_table_compressed("a.bin",t)
    ]]
-   
-   
-   --[[
+
+
+    --[[
    t = serializer.load_table_compressed("a.bin")
    print(t[1],t[2][1],t[2][2],t[2][3])
    ]]
-   
+
 
     configs = serializer.load_table(config_file_path)
     if configs ~= nil then
-        serializer.save_table(config_file_path,configs)
+        serializer.save_table(config_file_path, configs)
         get_set_global_volume(configs.volume)
-        global_data.mouse_sensitivity=configs.mouse_sensitivity
+        global_data.mouse_sensitivity = configs.mouse_sensitivity
         window.full_screen = configs.full_screen
         window:set()
     else
@@ -239,28 +233,27 @@ function load_configs()
     end
 end
 
-
-
 function START()
-
-
     post_processing:get()
     post_processing.material = matreial:new()
     post_processing.material.shader = "post_processing"
     post_processing:set()
-    
+
     layers:create()
 
     set_render_layers()
 
-    
+
     local mat = matreial:new()
     mat.shader = "skybox"
-    mat.textures[1] = "Textures/null.png"
-    mat.color.r = 0.2
-    mat.color.g = 0.2
-    mat.color.b = 0.2
-    back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    mat.textures[1] = "Textures/test_sb_ds.png"
+    mat.color.r = 1
+    mat.color.g = 1
+    mat.color.b = 1
+    mat.normal_direction = 2
+    --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
+    back_ground = create_mesh(layers.sky_box, false, skybox_position, Vec3:new(0, 0, 0), skybox_scale, 1, { mat },
+        { mesh_location:new("engine assets/engine_models.glb", "sky_box:0") })
 
 
     window.resolution.x = 256
@@ -268,7 +261,7 @@ function START()
 
     window:set()
     gravity:set()
-    
+
 
     global_data.core_object_ptr = this_object_ptr
     global_data.mouse_sensitivity = 6
@@ -278,19 +271,16 @@ function START()
     this_object.components.lua_scripts:add_script("game_scripts/input_geter")
     this_object.components.lua_scripts:add_script("game_scripts/bullet_master")
     this_object.components.lua_scripts:add_script("game_scripts/entity_master")
-    
-    
-    
-    
+
+
+
+
     load_configs()
     load_sceane("main_menu")
     global_data.localization_file = "localization/dialog.json"
-
-    
-    
 end
 
-local count_fps ={
+local count_fps = {
     time = 0,
     frames = 0,
 }
@@ -300,20 +290,18 @@ function count_fps:update()
     self.frames = self.frames + 1
     if self.time >= 1 then
         self.time = 0
-        print("FPS",self.frames)
+        print("FPS", self.frames)
         self.frames = 0
     end
 end
 
-
 function UPDATE()
-
     update_simple_ui()
-    
+
     --simple_ui_example()
 
     count_fps:update()
-    
+
     if not keep_loading() and cenary ~= nil then
         cenary:UPDATE()
     end

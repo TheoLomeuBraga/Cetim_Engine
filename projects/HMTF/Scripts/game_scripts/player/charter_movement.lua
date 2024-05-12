@@ -109,7 +109,7 @@ camera_rotation = { x = 180, y = 0 }
 this_object_physics_3D_seted = false
 
 jump_power = 20
-
+--jump_power = 1000
 
 inpulse = { x = 0, y = 0, z = 0 }
 

@@ -1,38 +1,46 @@
 #version 330 core
 #extension GL_ARB_separate_shader_objects : require
 
-layout(location = 0) out vec4 POS;
-layout(location = 1) out vec2 UV;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in vec3 color;
+layout(location = 3) in ivec4 boneIds;
+layout(location = 4) in vec4 weights;
+layout(location = 5) in vec3 normal;
+layout(location = 6) in vec3 tangent;
+layout(location = 7) in vec3 bitangents;
 
-mat4 PVT;
-uniform float tempo;
 
-//triangulo
-uniform vec3[3] vertice_triangulo;
-uniform vec2[3] uv_triangulo;
 
-uniform int lod;
+out Vertex {
+   vec4 POS;
+   vec2 UV;
+   vec3 COLOR;
+   vec3 NORMAL_COLOR;
+} vert_out;
 
-//Vertices
-
-vec3 quad_data[6] = vec3[6](vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(1, 1, 0), vec3(-1, 1, 0), vec3(-1, -1, 0));
-
+uniform bool ui;
 uniform mat4 projection, vision, transform;
 
 void main() {
-  //tela
 
-  POS = vec4(quad_data[gl_VertexID], 1);
+   vert_out.POS = vec4(position, 1);
+   vert_out.UV = uv;
+   vert_out.COLOR = color;
+   vert_out.NORMAL_COLOR = normal * 0.5 + 0.5;
 
-  UV = vec2(max(0, quad_data[gl_VertexID].x), -max(0, quad_data[gl_VertexID].y));
+   mat4 tf = transform;
+   tf[3][0] = 0.0;
+   tf[3][1] = 0.0;
+   tf[3][2] = 0.0;
+   tf[3][3] = 1.0;
 
-  gl_Position = POS;
+   mat4 v = vision;
+   v[3][0] = 0.0;
+   v[3][1] = 0.0;
+   v[3][2] = 0.0;
+   v[3][3] = 1.0;
 
-    // Transforma a posição para o espaço do mundo
-  vec4 worldPos = inverse(vision) * inverse(projection) * POS;
-  worldPos /= worldPos.w; // Normaliza para converter para coordenadas de direção
-
-    // Configura as saídas
-  UV = worldPos.xy;     // Usa as coordenadas XYZ como direção para amostrar a textura da skybox
+   gl_Position = (projection * v * tf) * vert_out.POS;
 
 }
