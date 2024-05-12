@@ -593,6 +593,7 @@ ui_element_instruction ui_element_instruction_table(Table t){
     ret.scale = table_vec3(t.getTable("scale"));
     ret.rotation = table_vec3(t.getTable("rotation"));
 
+    ret.shader = t.getString("shader");
     ret.color = table_color(t.getTable("color"));
     ret.image = ManuseioDados::carregar_Imagem(t.getString("image"));
     for(pair<std::string, float> p : t.getTable("inputs").m_floatMap){

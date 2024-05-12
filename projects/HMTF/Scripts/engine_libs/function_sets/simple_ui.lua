@@ -44,6 +44,7 @@ function simple_ui_style(color, border_size, border_color, text_color)
         text_color = { r = 0, g = 0, b = 0, a = 1 }
     end
     return {
+        shader = "ui_element",
         color = color,
         image = "Textures/white.png",
         inputs = {},

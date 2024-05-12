@@ -1124,6 +1124,7 @@ struct ui_element_instruction_struct {
 	vec3 scale = vec3(0.5,0.5,0.5);
 	vec3 rotation = vec3(0,0,0);
 
+	string shader = "ui_element";
 	vec4 color = vec4(1,0,0,1);
 	shared_ptr<imagem> image = NULL;
 

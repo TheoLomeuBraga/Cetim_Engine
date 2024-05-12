@@ -1789,7 +1789,7 @@ public:
 				glClear(GL_DEPTH_BUFFER_BIT);
 				glDisable(GL_CULL_FACE);
 
-				unsigned int shader = pegar_shader("ui_element");
+				unsigned int shader = pegar_shader(e.shader);
 				glUseProgram(shader);
 
 				// transform

@@ -295,8 +295,8 @@ function count_fps:update()
 end
 
 function UPDATE()
-    update_simple_ui()
 
+    --update_simple_ui()
     --simple_ui_example()
 
     count_fps:update()
