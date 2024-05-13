@@ -113,6 +113,8 @@ function level:START()
     time:set_speed(1)
 
     global_data.pause = 0
+
+    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.set_background_image({ path = "Textures/test_sb.svg", color = { r = 1, g = 1, b = 1 } })
     
 end
 

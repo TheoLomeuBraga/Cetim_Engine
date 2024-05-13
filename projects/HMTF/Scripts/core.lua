@@ -52,15 +52,28 @@ previous_cenary = nil
 
 
 
-function set_load_image(args)
+function set_background_image(args)
+    
     if load_image ~= nil then
         remove_object(load_image.object_ptr)
         load_image = nil
     end
 
+    if back_ground ~= nil and back_ground.object_ptr ~= nil then
+        remove_object(back_ground.object_ptr)
+        back_ground = nil
+    end
+
     local mat = matreial:new()
     mat.shader = "background"
     if args.path ~= nil and args.path ~= "" then
+        local mat = matreial:new()
+        mat.shader = "skybox"
+        mat.textures[1] = "Textures/null.svg"
+        mat.color.r = 1
+        mat.color.g = 1
+        mat.color.b = 1
+
         mat.textures[1] = args.path
         if args.color ~= nil then
             mat.color.r = args.color.r
@@ -69,19 +82,12 @@ function set_load_image(args)
         end
         mat.color.a = 1
 
-        local mat = matreial:new()
-        mat.shader = "skybox"
-        mat.textures[1] = "Textures/test_sb.svg"
-        mat.color.r = 1
-        mat.color.g = 1
-        mat.color.b = 1
+
         --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
         back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1,
-            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
-    else
-        remove_object(load_image.object_ptr)
-        load_image = nil
+            { mat }, { mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") }, false)
     end
+    return {}
 end
 
 sceane_name = ""
@@ -245,15 +251,13 @@ function START()
 
     local mat = matreial:new()
     mat.shader = "skybox"
-    mat.textures[1] = "Textures/test_sb.svg"
+    mat.textures[1] = "Textures/null.png"
     mat.color.r = 1
     mat.color.g = 1
     mat.color.b = 1
     mat.normal_direction = 1
-    --back_ground = create_render_shader(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, mat)
-    back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },
-        { mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
-
+    --back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },{ mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
+    set_background_image({ path = "Textures/null.png", color = mat.color })
 
     window.resolution.x = 256
     window.resolution.y = 224
@@ -295,7 +299,6 @@ function count_fps:update()
 end
 
 function UPDATE()
-
     --update_simple_ui()
     --simple_ui_example()
 

@@ -28,7 +28,7 @@ loading_screen = {
 
     open = function()
         loading_screen.obj = game_object(global_data.core_object_ptr)
-        loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image",{ path = "Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
+        loading_screen.obj.components.lua_scripts:call_function("core", "set_background_image",{ path = "Textures/loading.png", color = { r = 1, g = 1, b = 1 } })
         loading_screen.cam = create_camera_perspective(layers.camera, { x = 0, y = 0, z = 0 }, { x = 0, y = 0, z = 0 },90, 0.1, 1000)
         set_lisener_object(loading_screen.cam.object_ptr)
 
@@ -48,7 +48,7 @@ loading_screen = {
     end,
 
     close = function()
-        loading_screen.obj.components.lua_scripts:call_function("core", "set_load_image", {})
+        loading_screen.obj.components.lua_scripts:call_function("core", "set_background_image", {})
         loading_screen.obj.components.lua_scripts:remove_script("game_scripts/loading_sreen_script")
         remove_object(loading_screen.cam.object_ptr)
         remove_object(loading_screen.spin_obj.object_ptr)
