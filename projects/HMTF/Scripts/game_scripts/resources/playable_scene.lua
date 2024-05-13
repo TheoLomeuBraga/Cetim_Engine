@@ -70,8 +70,6 @@ cenary_builders = {
             ret:set()
         end
 
-
-
         ret.components.transform.position = deepcopy(part_data.position)
         ret.components.transform.rotation = deepcopy(part_data.rotation)
 
@@ -96,8 +94,11 @@ cenary_builders = {
             ret.components.render_mesh:set()
         end
 
-
-
+        if part_data.variables.type == "texture_bone_y" then
+            ret.components.lua_scripts:add_script("game_scripts/animation/texture_bone_y")
+            ret.components.lua_scripts:set_variable("game_scripts/animation/texture_bone_y", "target_name",part_data.variables.target.name)
+            ret.components.lua_scripts:set_variable("game_scripts/animation/texture_bone_y", "no_textures_y",part_data.variables.no_textures_y)
+        end
 
         if yield == true then
             coroutine.yield()
@@ -126,6 +127,12 @@ cenary_builders = {
             ret.parts_list[key] = game_object(value)
         end
 
+        for index, value in ipairs(ret.parts_list) do
+            value.components.lua_scripts:get()
+            if value.components.lua_scripts.scripts["game_scripts/animation/texture_bone_y"] ~= nil then
+                value.components.lua_scripts.scripts["game_scripts/animation/texture_bone_y"].variables.parts_ptr_list = ret.parts_ptr_list
+            end
+        end
 
         entity_ptr_list = {}
         return ret
@@ -341,21 +348,20 @@ cenary_builders = {
             add_mesh(nil)
             add_physics(false, true)
         elseif part_data.variables.type == "door_triger" then
-            ret.components.lua_scripts:add_script("game_scripts/door_triger")
-            ret.components.lua_scripts:set_variable("game_scripts/door_triger", "triger_target",
-                part_data.variables.triger_target.name)
-            
-            
+
+            ret.components.lua_scripts:add_script("game_scripts/animation/door_triger")
+            ret.components.lua_scripts:set_variable("game_scripts/animation/door_triger", "triger_target",part_data.variables.triger_target.name)
 
             if part_data.variables.key ~= nil or part_data.variables.key ~= "" then
-                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "key_to_open",
+                ret.components.lua_scripts:set_variable("game_scripts/animation/door_triger", "key_to_open",
                     part_data.variables.key)
             end
 
             if part_data.variables.stay_open ~= nil then
-                ret.components.lua_scripts:set_variable("game_scripts/door_triger", "stay_open",part_data.variables.stay_open)
+                ret.components.lua_scripts:set_variable("game_scripts/animation/door_triger", "stay_open",part_data.variables.stay_open)
             end
 
+            
 
             add_mesh(nil)
             add_physics(true, true)
@@ -411,6 +417,16 @@ cenary_builders = {
             ret.parts_list[key] = game_object(value)
         end
 
+        
+        for index, value in ipairs(ret.parts_list) do
+            value.components.lua_scripts:get()
+            if value.components.lua_scripts.scripts["game_scripts/animation/door_triger"] ~= nil then
+                value.components.lua_scripts.scripts["game_scripts/animation/door_triger"].variables.level_animation_data = {
+                    parts_ptr_list = ret.parts_ptr_list,
+                    path = ceane_data.path
+                }
+            end
+        end
 
         return ret
     end,

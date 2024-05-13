@@ -1,7 +1,6 @@
 require("components.extras")
 require("components.component_all")
 require("components.component_index")
-require("objects.global_data")
 require("objects.time")
 require("short_cuts.create_sound")
 require("short_cuts.create_render_shader")
@@ -83,12 +82,7 @@ function UPDATE()
     
     
     
-    if level_animation_data.path == nil then
-        level_animation_data = global_data.level_animation_data
-        if level_animation_data == nil then
-            level_animation_data = {}
-        end
-    else
+    if level_animation_data.path ~= nil then
         if start_base_animation then
             set_keyframe(level_animation_data.path, level_animation_data.parts_ptr_list, true, triger_target,0)
             start_base_animation = false

@@ -42,7 +42,7 @@ local assets_needed = {
     new_asset_list_element(asset_types.script,"game_scripts/player/charter_movement"),
 
     new_asset_list_element(asset_types.script,"game_scripts/mensage"),
-    new_asset_list_element(asset_types.script,"game_scripts/door_triger"),
+    new_asset_list_element(asset_types.script,"game_scripts/animation/door_triger"),
     new_asset_list_element(asset_types.script,"game_scripts/item"),
     
 }
@@ -105,9 +105,6 @@ function level:START()
 
     camera = {}
 
-    --global_data.level_animation_data = {path="Levels/hub/hub.gltf",parts_ptr_list=scene_data.parts_ptr_list}
-    global_data.level_animation_data = {path="Levels/hub/hub.glb",parts_ptr_list=scene_data.parts_ptr_list}
-
     loading_screen.close()
 
     time:set_speed(1)
@@ -141,7 +138,6 @@ end
 function level:END()
     remove_object(cenary_builders.cenary)
     coroutine.yield()
-    global_data.level_animation_data = {}
     clean_memory()
     coroutine.yield()
     remove_all_navmesh()
