@@ -53,6 +53,10 @@ previous_cenary = nil
 
 
 function set_background_image(args)
+
+    if args.shader == nil then
+        args.shader = "background"
+    end
     
     if load_image ~= nil then
         remove_object(load_image.object_ptr)
@@ -65,7 +69,7 @@ function set_background_image(args)
     end
 
     local mat = matreial:new()
-    mat.shader = "background"
+    mat.shader = args.shader
     if args.path ~= nil and args.path ~= "" then
         local mat = matreial:new()
         mat.shader = "skybox"
@@ -251,13 +255,13 @@ function START()
 
     local mat = matreial:new()
     mat.shader = "skybox"
-    mat.textures[1] = "Textures/null.png"
+    mat.textures[1] = "Textures/white.png"
     mat.color.r = 1
     mat.color.g = 1
     mat.color.b = 1
     mat.normal_direction = 1
     --back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },{ mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
-    set_background_image({ path = "Textures/null.png", color = mat.color })
+    set_background_image({ path = mat.textures[1], color = mat.color })
 
     window.resolution.x = 256
     window.resolution.y = 224
