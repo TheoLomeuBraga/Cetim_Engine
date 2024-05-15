@@ -11,6 +11,8 @@ require("objects.window")
 local serializer = require("libs.serialize")
 require("math")
 
+require("function_sets.simple_ui")
+
 
 local config_path = get_config_folder_path() .. "/hmtf"
 local config_file_path = config_path .. "/configs_save.lua"

@@ -337,7 +337,6 @@ function UPDATE()
             end
 
             if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-                print("jump boost")
 
                 inpulse.y = inpulse.y + jump_power
                 base_directional_input = deepcopy(input_dir)

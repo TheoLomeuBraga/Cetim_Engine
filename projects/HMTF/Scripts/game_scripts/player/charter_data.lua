@@ -5,7 +5,7 @@ require("objects.global_data")
 require("objects.local_data")
 require("objects.time")
 require("components.audio_source")
-
+require("function_sets.simple_ui")
 require("components.component_index")
 require("objects.game_object")
 
@@ -53,6 +53,12 @@ my_data = {}
 health_display = {}
 power_display = {}
 
+local health_transform = {}
+local health_style = {}
+
+local power_transform = {}
+local power_style = {}
+
 function START()
     this_object = game_object(this_object_ptr)
 
@@ -61,22 +67,30 @@ function START()
     au = speaker.components.audio_source 
 
     my_data = local_data(this_object_ptr)
-    my_data.health = 100
+    my_data.health = 100.0
+    my_data.max_health = 100.0
 
-    --health_display
-    local mat = matreial:new("health_display")
-    mat.textures[1] = "Textures/ui/hud_life_energy.svg"
-    mat.color = {r=0.0,g=0.5,b=1,a=1}
-    mat.inputs["power"] = 1
-    health_display = create_render_shader(global_data.layers.hud,true,Vec3:new(-0.1,0,0),Vec3:new(0,0,0),Vec3:new(0.25,0.25,0.25),4,mat)
+    my_data.power = 100.0
+    my_data.max_power = 100.0
+    
 
-    mat.inputs["power"] = 1
-    mat.color = {r=1.0,g=1.0,b=0.0,a=1}
-    power_display = create_render_shader(global_data.layers.hud,true,Vec3:new(0.1,0,0),Vec3:new(0,0,0),Vec3:new(-0.25,0.25,0.25),4,mat)
+    health_transform = simple_ui_transform({x=-0.05,y=0,z=0}, {x=0.1,y=0.1,z=0.1})
+    health_style = simple_ui_style({r=0.25,g=0.25,b=1,a=1})
+    health_style.shader = "ui_element_heath_bar"
+    health_style.image = "Textures/ui/hud_life_energy.svg"
+
+    power_transform = simple_ui_transform({x=0.05,y=0,z=0}, {x=-0.1,y=0.1,z=0.1})
+    power_style = simple_ui_style({r=1,g=1,b=0.25,a=1})
+    power_style.shader = "ui_element_heath_bar"
+    power_style.image = "Textures/ui/hud_life_energy.svg"
 end
 
 function UPDATE()
+    health_style.inputs.power = my_data.health / my_data.max_health
+    power_style.inputs.power = my_data.power / my_data.max_power
 
+    simple_ui_lable(health_transform,health_style)
+    simple_ui_lable(power_transform,power_style)
 end
 
 function COLLIDE(collision_info)
