@@ -23,6 +23,7 @@ require("math")
 has_jump_booster = 1
 local jump_booster_used = false
 
+
 local this_object = {}
 camera = {}
 camera_ptr = ""
@@ -35,9 +36,6 @@ linear_velocity = { x = 0, y = 0, z = 0 }
 local core_obj = {}
 
 local layers = {}
-
-health = 100
-max_health = 100
 
 
 local game_states = {
@@ -112,6 +110,8 @@ camera_rotation = { x = 180, y = 0 }
 this_object_physics_3D_seted = false
 
 jump_power = 20
+boost_power = 25
+land_friction = 30
 --jump_power = 1000
 
 inpulse = { x = 0, y = 0, z = 0 }
@@ -156,7 +156,7 @@ function aproche_to_target_value(num, speed, target_value)
     return ret
 end
 
-land_friction = 10
+
 
 function manage_inpulse_land(i)
     local delta_friction = land_friction * time.delta
@@ -338,6 +338,19 @@ function UPDATE()
 
             if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
                 print("jump boost")
+
+                inpulse.y = inpulse.y + jump_power
+                base_directional_input = deepcopy(input_dir)
+                
+                if math.abs(move_dir.x) + math.abs(move_dir.z) > 0.5 then
+                    inpulse.x = boost_power * move_dir.x
+                    inpulse.z = boost_power * move_dir.z 
+                end
+
+                this_object.components.audio_source.path = "Audio/sounds/jump.wav"
+                this_object.components.audio_source.volume = 20
+                this_object.components.audio_source:set()
+
                 jump_booster_used = true
             end
 
