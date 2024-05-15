@@ -50,7 +50,6 @@ local simple_lua_script_manager_meta_table = {
                     __script_name__ = script_name,
                 },
             }
-            --print("AAAAA",ret.object_ptr,ret.script_name)
             setmetatable(ret.functions, function_meta_table)
             setmetatable(ret.variables, var_meta_table)
             return ret

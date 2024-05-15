@@ -20,6 +20,9 @@ require("game_scripts.resources.playable_scene")
 
 require("math")
 
+has_jump_booster = 1
+local jump_booster_used = false
+
 local this_object = {}
 camera = {}
 camera_ptr = ""
@@ -314,6 +317,9 @@ function UPDATE()
             if hit_down and inpulse.y <= 0 then
                 --inpulse
                 manage_inpulse_land(inpulse)
+                
+                jump_booster_used = false
+
 
                 --movement
 
@@ -328,6 +334,11 @@ function UPDATE()
                     y = inpulse.y,
                     z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z
                 }
+            end
+
+            if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+                print("jump boost")
+                jump_booster_used = true
             end
 
             this_physics_3d:set_linear_velocity(linear_velocity.x, linear_velocity.y, linear_velocity.z)

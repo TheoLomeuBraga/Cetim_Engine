@@ -25,8 +25,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "benchmark.h"
-
 struct mesh_ogl_struct
 {
 	int tamanho_indice;
