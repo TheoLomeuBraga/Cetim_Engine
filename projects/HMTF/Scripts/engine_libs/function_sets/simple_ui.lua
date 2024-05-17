@@ -103,18 +103,6 @@ function simple_ui_text(ui_transform, text, ui_style)
     simple_ui_display(ui_transform, text, ui_style)
 end
 
-function update_simple_ui()
-    if global_data.inputs ~= nil then
-        local inputs = global_data.inputs
-        local inputs_last_frame = global_data.inputs_last_frame
-
-        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
-        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,-1,inputs.action_1)
-        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
-    end 
-    
-end
-
 local simple_ui_cursor_position = { x = 0, y = 0 }
 local simple_ui_cursor_movement = { x = 0, y = 0 }
 local simple_ui_joystick_selection = -1
@@ -127,6 +115,23 @@ function set_selection_state(cursor_position, ursor_movement, ui_joystick_id, co
     simple_ui_confirm_last_frame = simple_ui_confirm
     simple_ui_confirm = confirm
 end
+
+function update_simple_ui()
+    if global_data.ui_selection_id == nil then
+        global_data.ui_selection_id = -1
+    end
+    if global_data.inputs ~= nil then
+        local inputs = global_data.inputs
+        local inputs_last_frame = global_data.inputs_last_frame
+
+        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
+        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,global_data.ui_selection_id,inputs.action_1)
+        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
+    end 
+    
+end
+
+
 
 function is_cliked(ui_transform, ui_joystick_id)
     if simple_ui_confirm_last_frame == 0 then
