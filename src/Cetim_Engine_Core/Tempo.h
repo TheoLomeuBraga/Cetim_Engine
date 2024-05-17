@@ -8,11 +8,10 @@
 
 namespace Tempo
 {
-
-	#ifdef DEBUG
-		const unsigned int target_frames = 30;
+	#ifdef TARGET_FPS
+		const unsigned int target_frames = TARGET_FPS;
 	#else
-		const unsigned int target_frames = 60;
+		const unsigned int target_frames = 30;
 	#endif
 	
 	const long double time_step = 1.0 / (long double)target_frames;
