@@ -852,6 +852,7 @@ void Reindenizar()
 
 		if (Tempo::deltaTime < Tempo::time_step)
 		{
+			this_thread::sleep_for(chrono::microseconds((unsigned int)(Tempo::deltaTime - Tempo::time_step)/1000));
 			continue;
 		}
 
