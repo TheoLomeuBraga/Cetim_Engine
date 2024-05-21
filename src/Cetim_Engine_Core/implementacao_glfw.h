@@ -767,14 +767,6 @@ public:
 
 bool janela_inteira = false;
 
-void checarEstencoesGL()
-{
-	GLenum err = glewInit();
-	if (err != GLEW_OK)
-		exit(1);		   // or handle the error in a nicer way
-	if (!GLEW_VERSION_2_1) // check that the machine supports the 2.1 API.
-		exit(1);		   // or handle the error in a nicer way
-}
 
 void mudar_logo_janela(shared_ptr<imagem> img)
 {
@@ -852,7 +844,7 @@ void Reindenizar()
 
 		if (Tempo::deltaTime < Tempo::time_step)
 		{
-			this_thread::sleep_for(chrono::microseconds((unsigned int)(Tempo::deltaTime - Tempo::time_step)/1000));
+			this_thread::sleep_for(chrono::microseconds((unsigned int)(Tempo::deltaTime - Tempo::time_step) / 1000));
 			continue;
 		}
 
@@ -915,11 +907,17 @@ void IniciarJanela()
 	monitor_res.x = mode->width;
 	monitor_res.y = mode->height;
 
+	/*
 	glfwWindowHint(GLFW_SAMPLES, configuracoes::janelaConfig.antiCerrilhado);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
+	*/
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 
 	if (configuracoes::janelaConfig.transparente == true)
 	{
@@ -933,12 +931,10 @@ void IniciarJanela()
 
 	if (janelaInteira)
 	{
-		// janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, configuracoes::janelaConfig.nome, glfwGetPrimaryMonitor(), NULL);
 		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(argumentos[1]).c_str(), glfwGetPrimaryMonitor(), NULL);
 	}
 	else
 	{
-		// janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, configuracoes::janelaConfig.nome, NULL, NULL);
 		janela = glfwCreateWindow(configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, pegar_nome_arquivo(argumentos[1]).c_str(), NULL, NULL);
 	}
 
@@ -952,12 +948,14 @@ void IniciarJanela()
 
 	// glfwSwapInterval(1);
 
+	/**/
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
 	{
 		fprintf(stderr, "falha en iniciar o GLFW\n");
 		cout << "falha en iniciar o GLFW\n";
 	}
+	
 
 	glfwSetWindowSizeCallback(janela, MudarTamanhoJanela);
 

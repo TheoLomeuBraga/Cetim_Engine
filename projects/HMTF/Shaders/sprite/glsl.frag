@@ -1,4 +1,7 @@
-#version 330 core
+#version 300 es
+
+precision mediump float;
+
 in vec4 pos;
 in vec2 uv;
 

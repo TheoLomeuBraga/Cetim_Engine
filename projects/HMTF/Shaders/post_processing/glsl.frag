@@ -1,4 +1,5 @@
-#version 330 core
+#version 300 es
+precision mediump float;
 
 in vec4 pos;
 in vec2 uv;
@@ -6,7 +7,7 @@ in vec2 uv;
 layout(location = 0) out vec4 ret;
 
 // material
-uniform sampler2D post_procesing_render_input[6];
+uniform sampler2D post_procesing_render_input[16];
 uniform sampler2D textures[6];
 uniform vec4 color;
 uniform float gama;
@@ -16,8 +17,8 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
     return UV * UV_PosSca.zw + UV_PosSca.xy;
 }
 
-vec4 reduce_color_bits(vec4 color, int bits) {
-    if(bits < 1 || bits > 7) {
+vec4 reduce_color_bits(vec4 color, float bits) {
+    if(bits < 1.0 || bits > 7.0) {
         return color; // Retorna a cor original se bits não está no intervalo [1, 7]
     }
 
@@ -40,7 +41,7 @@ float channelError(float col, float colMin, float colMax) {
 
 vec3 applyDithering(vec2 uv) {
     // Define a matriz de dithering 8x8 (Bayer matrix)
-    float bayerMatrix[64] = float[](0, 48, 12, 60, 3, 51, 15, 63, 32, 16, 44, 28, 35, 19, 47, 31, 8, 56, 4, 52, 11, 59, 7, 55, 40, 24, 36, 20, 43, 27, 39, 23, 2, 50, 14, 62, 1, 49, 13, 61, 34, 18, 46, 30, 33, 17, 45, 29, 10, 58, 6, 54, 9, 57, 5, 53, 42, 26, 38, 22, 41, 25, 37, 21);
+    float bayerMatrix[64] = float[](0.0, 48.0, 12.0, 60.0, 3.0, 51.0, 15.0, 63.0, 32.0, 16.0, 44.0, 28.0, 35.0, 19.0, 47.0, 31.0, 8.0, 56.0, 4.0, 52.0, 11.0, 59.0, 7.0, 55.0, 40.0, 24.0, 36.0, 20.0, 43.0, 27.0, 39.0, 23.0, 2.0, 50.0, 14.0, 62.0, 1.0, 49.0, 13.0, 61.0, 34.0, 18.0, 46.0, 30.0, 33.0, 17.0, 45.0, 29.0, 10.0, 58.0, 6.0, 54.0, 9.0, 57.0, 5.0, 53.0, 42.0, 26.0, 38.0, 22.0, 41.0, 25.0, 37.0, 21.0);
 
     // Escala as coordenadas UV para o intervalo da matriz 8x8
     vec2 scaledUV = mod(floor(uv * 8.0), 8.0);
@@ -62,9 +63,7 @@ float ditheredChannel(float error, vec2 ditherBlockUV) {
     }
 }
 
-vec4 mix(vec4 a, vec4 b, float amt) {
-    return ((1.0 - amt) * a) + (b * amt);
-}
+
 
 /// YUV/RGB color space calculations
 
@@ -113,13 +112,13 @@ vec3 getPixel(vec2 uv) {
 
 void main() {
 
-    const int ditter = 1;
+    const float ditter = 1.0;
 
-    if(ditter > 0) {
-        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4);
+    if(ditter > 0.0) {
+        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4.0);
 
     // Normalized pixel coordinates (from 0 to 1)
-        vec2 tex_size = textureSize(post_procesing_render_input[0], 0);
+        vec2 tex_size = vec2(textureSize(post_procesing_render_input[0], 0));
         vec2 uv = (uv * tex_size) / tex_size;
 
     // Time varying pixel color
@@ -128,7 +127,6 @@ void main() {
     // Output to screen
         ret = vec4(col, 1.0);
     } else {
-        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4);
+        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4.0);
     }
-
 }

@@ -152,7 +152,7 @@ extern "C" {
 
 #elif defined(GLFW_INCLUDE_ES2)
 
- #include <GLES2/gl2.h>
+ #include <GL/glew.h>
  #if defined(GLFW_INCLUDE_GLEXT)
   #include <GLES2/gl2ext.h>
  #endif

@@ -143,6 +143,7 @@ public:
 			{
 				std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
 				glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+				print("error in shader: ",shader[i].first);
 				printf("%s\n", &VertexShaderErrorMessage[0]);
 			}
 
@@ -157,6 +158,7 @@ public:
 			{
 				std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 				glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+				print("error in shader: ",shader[i].first);
 				printf("%s\n", &ProgramErrorMessage[0]);
 			}
 		}
@@ -223,7 +225,7 @@ public:
 
 			if (ManuseioDados::Existe(arquivos[1]))
 			{
-				p.push_back(pair<string, unsigned int>(arquivos[1], GL_GEOMETRY_SHADER));
+				// p.push_back(pair<string, unsigned int>(arquivos[1], GL_GEOMETRY_SHADER));
 			}
 
 			if (ManuseioDados::Existe(arquivos[2]))
@@ -257,7 +259,7 @@ public:
 	{
 		if (compute_shaders.find(shade) == compute_shaders.end())
 		{
-			compute_shaders.insert(pair<string, unsigned int>(shade, CompilarShader_ogl({pair<string, unsigned int>(shade + "/glsl.comp", GL_COMPUTE_SHADER)})));
+			// compute_shaders.insert(pair<string, unsigned int>(shade, CompilarShader_ogl({pair<string, unsigned int>(shade + "/glsl.comp", GL_COMPUTE_SHADER)})));
 		}
 		return compute_shaders[shade];
 	}
@@ -333,7 +335,7 @@ public:
 
 					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
 
-					glBeginQuery(GL_SAMPLES_PASSED, p.second);
+					glBeginQuery(GL_ANY_SAMPLES_PASSED, p.second);
 
 					// ajustar
 					glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
@@ -371,7 +373,7 @@ public:
 						);
 					}
 
-					glEndQuery(GL_SAMPLES_PASSED);
+					glEndQuery(GL_ANY_SAMPLES_PASSED);
 				}
 			}
 		}
@@ -393,7 +395,7 @@ public:
 	{
 		for (pair<shared_ptr<objeto_jogo>, unsigned int> p : oclusion_queries)
 		{
-			glGetQueryObjectiv(p.second, GL_QUERY_RESULT, &oclusion_queries_resultados[p.first]);
+			glGetQueryObjectuiv(p.second, GL_QUERY_RESULT, (GLuint *)&oclusion_queries_resultados[p.first]);
 
 			shared_ptr<render_malha> rm = p.first->pegar_componente<render_malha>();
 			if (rm->usar_oclusao)
@@ -446,7 +448,7 @@ public:
 
 		vector<pair<string, unsigned int>> sha;
 		sha.push_back(pair<string, unsigned int>(nome_shader_vert, GL_VERTEX_SHADER));
-		sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
+		// sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_frag, GL_FRAGMENT_SHADER));
 
 		oclusion_box = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
@@ -590,8 +592,8 @@ public:
 				glGenTextures(1, &fontes[f][char_fonte_atual.first]);
 				glBindTexture(GL_TEXTURE_2D, fontes[f][char_fonte_atual.first]);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 				charters_bitmaps[f][char_fonte_atual.first] = vetor_ponteiro<unsigned char>(f->chars[char_fonte_atual.first].bitmap);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, f->chars[char_fonte_atual.first].width, f->chars[char_fonte_atual.first].height, 0, GL_RED, GL_UNSIGNED_BYTE, charters_bitmaps[f][char_fonte_atual.first]);
@@ -1689,17 +1691,16 @@ public:
 
 	void ogl_aplicar_pos_processamento()
 	{
-
-		// aplicar resolu��o
-
+		// Aplicar resolução
 		aplicar_frame_buffer_principal();
 		vec2 res = loop_principal::pegar_res();
 		glViewport(0, 0, res.x, res.y);
 
-		// aplicar shader
+		// Aplicar shader
 		unsigned int pp_shader = pegar_shader(pos_processamento_info.shader);
 		glUseProgram(pp_shader);
-		// aplicar frame_buffers_texturas
+
+		// Aplicar frame_buffers_texturas
 		for (int i = 0; i < SAIDAS_SHADER; i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
@@ -1707,28 +1708,27 @@ public:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-			string local = string("post_procesing_render_input[") + to_string(i) + string("]");
+			std::string local = "post_procesing_render_input[" + std::to_string(i) + "]";
 			glUniform1i(glGetUniformLocation(pp_shader, local.c_str()), i);
 		}
-		// aplicar pos processamento
+
+		// Aplicar pós-processamento
 		glBindVertexArray(quad_array);
 		glUniform1i(tipo_vertice, 2);
 
-		// glUniform4f(glGetUniformLocation(pp_shader, "color"), pos_processamento_info.cor.x, pos_processamento_info.cor.y, pos_processamento_info.cor.z, pos_processamento_info.cor.w);
-
-		// tempo
+		// Passar o tempo ao shader
 		glUniform1f(glGetUniformLocation(pp_shader, "time"), Tempo::tempo);
 
-		// texturas
+		// Aplicar texturas adicionais
 		for (int i = 0; i < NO_TEXTURAS; i++)
 		{
-			if (pos_processamento_info.texturas[i] != NULL)
+			if (pos_processamento_info.texturas[i] != nullptr)
 			{
 				ogl_adicionar_textura(pos_processamento_info.texturas[i].get());
-				glActiveTexture(GL_TEXTURE0 + i);
+				glActiveTexture(GL_TEXTURE0 + SAIDAS_SHADER + i);
 				glBindTexture(GL_TEXTURE_2D, texturas[pos_processamento_info.texturas[i].get()]);
-				string nome_veriavel = string("textures[") + to_string(i) + string("]");
-				glUniform1i(glGetUniformLocation(pp_shader, nome_veriavel.c_str()), i);
+				std::string nome_variavel = "textures[" + std::to_string(i) + "]";
+				glUniform1i(glGetUniformLocation(pp_shader, nome_variavel.c_str()), SAIDAS_SHADER + i);
 			}
 			else
 			{
@@ -1741,6 +1741,7 @@ public:
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	}
 
 	void draw_ui_element(ui_element_instruction element)
@@ -1812,7 +1813,8 @@ public:
 					glUniform4f(glGetUniformLocation(shader, "color"), e.color.x, e.color.y, e.color.z, e.color.w);
 					glUniform4f(glGetUniformLocation(shader, "border_color"), e.border_color.x, e.border_color.y, e.border_color.z, e.border_color.w);
 
-					for(pair<string,float> p : e.inputs){
+					for (pair<string, float> p : e.inputs)
+					{
 						glUniform1f(glGetUniformLocation(shader, p.first.c_str()), p.second);
 					}
 
@@ -2124,7 +2126,8 @@ public:
 					mat4 translation_matrix = get_matrix(translation);
 					glUniformMatrix4fv(glGetUniformLocation(shader, "matrix"), 1, GL_FALSE, &translation_matrix[0][0]);
 
-					for(pair<string,float> p : e.inputs){
+					for (pair<string, float> p : e.inputs)
+					{
 						glUniform1f(glGetUniformLocation(shader, p.first.c_str()), p.second);
 					}
 
@@ -2165,7 +2168,7 @@ public:
 		tuiei2.rotation = vec3(0.0, 45.0, 0.0);
 		tuiei2.scale = vec3(4, 2,0);
 		ui_elements_to_draw.push_back(tuiei2);
-		
+
 
 		tuiei3.is_mesh = true;
 		tuiei3.is_3D = false;

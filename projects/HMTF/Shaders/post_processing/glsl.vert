@@ -1,4 +1,5 @@
-#version 330 core
+#version 300 es
+precision mediump float;
 
 
 out vec4 pos;
@@ -32,7 +33,7 @@ void main() {
 
   pos = vec4(quad_data[gl_VertexID], 1);
 
-  uv = vec2(max(0, quad_data[gl_VertexID].x), max(0, quad_data[gl_VertexID].y));
+  uv = vec2(max(0.0, quad_data[gl_VertexID].x), max(0.0, quad_data[gl_VertexID].y));
 
   gl_Position = pos;
 

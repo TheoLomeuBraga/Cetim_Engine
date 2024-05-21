@@ -1,6 +1,7 @@
-#version 330 core
+#version 300 es
+precision mediump float;
 
-vec3 quad_data[4] = vec3[4](vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0));
+vec3 quad_data[4] = vec3[4](vec3(1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(-1.0, 1.0, 0.0));
 
 out vec4 pos;
 out vec2 uv;
@@ -21,22 +22,20 @@ uniform mat4 matrix;
 uniform float skew;
 
 void main() {
-  //tela
+    // Calcular a posição
+    vec3 q = quad_data[gl_VertexID];
 
-  vec3 q = quad_data[gl_VertexID];
+    // Calcular as coordenadas de textura
+    uv = vec2(max(0.0, q.x), max(0.0, q.y));
 
-  uv = vec2(max(0, q.x), max(0, q.y));
+    // Ajustar a posição com skew
+    if (q.y == 1.0) {
+        q.x += skew / 2.0;
+    } else if (q.y == -1.0) {
+        q.x -= skew / 2.0;
+    }
 
-  if(q.y == 1){
-    q.x += skew / 2;
-  }else if(q.y == -1){
-    q.x -= skew / 2;
-  }
+    pos = vec4(q, 1.0);
 
-  pos = vec4(q, 1);
-
-  gl_Position = matrix * pos;
-
-
-
+    gl_Position = matrix * pos;
 }
