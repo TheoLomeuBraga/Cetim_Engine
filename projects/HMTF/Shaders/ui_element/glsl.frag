@@ -70,7 +70,7 @@ vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
 void main() {
 
     
-    vec4 ib = mix(color * texture2D(image,uv),border_color * texture2D(border_image,uv),is_border());
+    vec4 ib = mix(color * texture(image,uv),border_color * texture(border_image,uv),is_border());
     ret = vec4(ib.xyz,ib.w * is_valid_spot());
     
 

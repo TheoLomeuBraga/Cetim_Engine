@@ -892,6 +892,24 @@ void MudarRes(int x, int y)
 
 bool janelaInteira = false;
 
+bool checkGLES2Support() {
+    glfwInit();
+    GLFWwindow* window = glfwCreateWindow(100, 100, "Test", NULL, NULL);
+    glfwMakeContextCurrent(window);
+    
+    GLenum err = glewInit();
+    if (GLEW_OK != err) {
+        std::cerr << "GLEW Error: " << glewGetErrorString(err) << std::endl;
+        return false;
+    }
+
+    // Check for OpenGL ES 2.0 support
+    bool es2Supported = glewIsSupported("GL_ARB_ES2_compatibility") || glewIsSupported("GL_OES_EGL_image");
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return es2Supported;
+}
+
 ivec2 monitor_res = ivec2(0, 0);
 void IniciarJanela()
 {
@@ -917,7 +935,9 @@ void IniciarJanela()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+	//glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+	
 
 	if (configuracoes::janelaConfig.transparente == true)
 	{
@@ -940,7 +960,8 @@ void IniciarJanela()
 
 	if (janela == NULL)
 	{
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not opengl 3.3 compatible..\n");
+		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not OpenGL ES 3.0 compatible..\n");
+		checkGLES2Support();
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(janela); // Initialize GLEW

@@ -115,7 +115,7 @@ void main() {
     const float ditter = 1.0;
 
     if(ditter > 0.0) {
-        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4.0);
+         ret = color * reduce_color_bits(texture(post_procesing_render_input[0], uv, 0.01), 4.0);
 
     // Normalized pixel coordinates (from 0 to 1)
         vec2 tex_size = vec2(textureSize(post_procesing_render_input[0], 0));
@@ -127,6 +127,6 @@ void main() {
     // Output to screen
         ret = vec4(col, 1.0);
     } else {
-        ret = color * reduce_color_bits(texture2D(post_procesing_render_input[0], uv, 0.01), 4.0);
+        ret = color * reduce_color_bits(texture(post_procesing_render_input[0], uv, 0.01), 4.0);
     }
 }
