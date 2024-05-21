@@ -1,8 +1,7 @@
 #version 330 core
-#extension GL_ARB_separate_shader_objects : require
 
-layout(location = 0) in vec4 POS;
-layout(location = 1) in vec2 UV;
+in vec4 pos;
+in vec2 uv;
 layout(location = 0) out vec4 ret;
 
 
@@ -24,12 +23,12 @@ float is_border() {
     float inner_height = 1.0 - 2.0 * corner_radius;
 
     // Verifica se está nas bordas laterais retas
-    if (UV.x < bs + corner_radius || UV.x > 1.0 - bs - corner_radius || UV.y < bs + corner_radius || UV.y > 1.0 - bs - corner_radius) {
+    if (uv.x < bs + corner_radius || uv.x > 1.0 - bs - corner_radius || uv.y < bs + corner_radius || uv.y > 1.0 - bs - corner_radius) {
         return 1.0f; // Está na borda
     }
     
     // Verifica se está nas áreas arredondadas dos cantos
-    vec2 uv_centered = UV - 0.5; // Centraliza as coordenadas UV
+    vec2 uv_centered = uv - 0.5; // Centraliza as coordenadas uv
     uv_centered.x *= 2.0; // Escala para -1.0 a 1.0
     uv_centered.y *= 2.0; // Escala para -1.0 a 1.0
     
@@ -49,7 +48,7 @@ float is_valid_spot() {
     float inner_width = 1.0 - 2.0 * corner_radius;
     float inner_height = 1.0 - 2.0 * corner_radius;
 
-    vec2 uv_centered = UV - 0.5;
+    vec2 uv_centered = uv - 0.5;
     uv_centered.x *= 2.0;
     uv_centered.y *= 2.0;
 
@@ -64,13 +63,13 @@ float is_valid_spot() {
 
 //fun�oes
 vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
-    return UV * UV_PosSca.zw + UV_PosSca.xy;
+    return uv * UV_PosSca.zw + UV_PosSca.xy;
 }
 
 void main() {
 
     
-    vec4 ib = mix(color * texture2D(image,UV),border_color * texture2D(border_image,UV),is_border());
+    vec4 ib = mix(color * texture2D(image,uv),border_color * texture2D(border_image,uv),is_border());
     ret = vec4(ib.xyz,ib.w * is_valid_spot());
     
 

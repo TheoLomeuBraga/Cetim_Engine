@@ -10,24 +10,26 @@ layout(location = 5) in vec3 normal;
 layout(location = 6) in vec3 tangent;
 layout(location = 7) in vec3 bitangents;
 
-
-
-out Vertex {
+struct Vertex {
    vec4 POS;
    vec2 UV;
    vec3 COLOR;
    vec3 NORMAL_COLOR;
-} vert_out;
+};
+
+out Vertex vert;
+
+
 
 uniform bool ui;
 uniform mat4 projection, vision, transform;
 
 void main() {
 
-   vert_out.POS = vec4(position, 1);
-   vert_out.UV = uv;
-   vert_out.COLOR = color;
-   vert_out.NORMAL_COLOR = normal * 0.5 + 0.5;
+   vert.POS = vec4(position, 1);
+   vert.UV = uv;
+   vert.COLOR = color;
+   vert.NORMAL_COLOR = normal * 0.5 + 0.5;
 
    vec4 position = vec4(0,0,0,1);
 
@@ -37,6 +39,6 @@ void main() {
    mat4 v = vision;
    v[3] = position;
 
-   gl_Position = (projection * v * tf) * vert_out.POS;
+   gl_Position = (projection * v * tf) * vert.POS;
 
 }

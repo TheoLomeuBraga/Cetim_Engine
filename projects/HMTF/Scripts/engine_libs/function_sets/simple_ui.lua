@@ -211,6 +211,6 @@ function simple_ui_example()
     ui_transform.scale = {x=0.25,y=0.25}
    
     if simple_ui_button(ui_transform,"push me",style,1) == 1 then
-        window:close()
+        print("A")
     end
 end

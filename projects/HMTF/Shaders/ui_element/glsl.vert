@@ -1,10 +1,9 @@
 #version 330 core
-#extension GL_ARB_separate_shader_objects : require
 
 vec3 quad_data[4] = vec3[4](vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0));
 
-layout(location = 0) out vec4 POS;
-layout(location = 1) out vec2 UV;
+out vec4 pos;
+out vec2 uv;
 
 /*
 uniform bool is_3D;
@@ -26,7 +25,7 @@ void main() {
 
   vec3 q = quad_data[gl_VertexID];
 
-  UV = vec2(max(0, q.x), max(0, q.y));
+  uv = vec2(max(0, q.x), max(0, q.y));
 
   if(q.y == 1){
     q.x += skew / 2;
@@ -34,9 +33,9 @@ void main() {
     q.x -= skew / 2;
   }
 
-  POS = vec4(q, 1);
+  pos = vec4(q, 1);
 
-  gl_Position = matrix * POS;
+  gl_Position = matrix * pos;
 
 
 

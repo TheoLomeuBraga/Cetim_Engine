@@ -1,13 +1,9 @@
 #version 330 core
-#extension GL_ARB_separate_shader_objects : require
 
 layout(location = 0) out vec4 ret;
 
-in Vertex {
-   vec4 POS;
-   vec2 UV;
-   vec3 COLOR;
-} vert_in;
+
+
 
 // material
 uniform sampler2D image;
