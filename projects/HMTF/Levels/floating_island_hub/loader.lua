@@ -100,7 +100,7 @@ function level:START()
 
     coroutine.yield()
     
-    game_object:new(cenary_builders.cenary).components.lua_scripts:add_script("game_scripts/navegation_test")
+    --game_object:new(cenary_builders.cenary).components.lua_scripts:add_script("game_scripts/navegation_test")
     
 
     camera = {}

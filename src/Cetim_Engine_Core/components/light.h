@@ -19,7 +19,7 @@ public:
 	unsigned char tipo_luz;
 	vec3 cor;
 	float angulo_alcance;
-	float alcance;
+	float distancia;
 
 	bool ligado = true;
 	fonte_luz() {}

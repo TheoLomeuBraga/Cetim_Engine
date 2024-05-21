@@ -14,27 +14,29 @@
 #include "implementacao_glfw.h"
 #include "compression.h"
 
-
-void InitImGui() {
+void InitImGui()
+{
     // Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO();
-	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(janela, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(janela, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
 }
 
 // Function to update the ImGui UI
-void UpdateImGuiUI() {
+void UpdateImGuiUI()
+{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void ShutdownImGui() {
+void ShutdownImGui()
+{
     ImGui::Begin("Demo window");
     ImGui::Button("Hello!");
     ImGui::End();
@@ -73,13 +75,14 @@ void ShutdownImGui() {
 #include "compression.h"
 
 
+
 #include "ecs/ecs.h"
 #include "ecs/ecs_components_systems/ecs_name.h"
 #include "ecs/ecs_components_systems/ecs_parents.h"
 #include "ecs/ecs_components_systems/ecs_tag.h"
 
-
-void register_ecs_components(){
+void register_ecs_components()
+{
 
     register_name_component();
     register_family_component();
@@ -88,11 +91,20 @@ void register_ecs_components(){
     camera_ecs::register_camera_component();
     ecs_render_mesh::register_render_mesh_component();
     ecs_render_sprite::register_render_sprite_component();
-
 }
 
 void configuracaoInicial()
 {
+    /*
+    SDL_Init(SDL_INIT_AUDIO);
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+    }
+    Mix_CloseAudio();
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_GAMECONTROLLER);
+    */
 
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
@@ -109,7 +121,6 @@ void configuracaoInicial()
     Antes_Render_Func.push_back(terminar_atualisar_global_box2D);
 
     Antes_Render_Func.push_back(teste3);
-
 }
 void comecar()
 {
@@ -119,11 +130,11 @@ void comecar()
     thread temp(Tempo::IniciarTempo);
     temp.detach();
 
-    //gerente_janela = new gerenciador_janela_glfw(true);
+    // gerente_janela = new gerenciador_janela_glfw(true);
     start_window_lib();
 
     thread grafi(loop_principal::loop_principal);
-    //start_input_geter();
+    // start_input_geter();
 
     grafi.join();
 }
@@ -131,15 +142,13 @@ void comecar()
 int main(int argc, char **argv)
 {
 
-    
-
     aplicar_argumentos(argc, argv);
 
     escrever("argumentos{");
     for (string s : argumentos)
     {
         cout << "	";
-        print("    ",s);
+        print("    ", s);
     }
     escrever("}");
 

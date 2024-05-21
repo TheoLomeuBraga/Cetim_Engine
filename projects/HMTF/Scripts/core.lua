@@ -279,12 +279,15 @@ function START()
     this_object.components.lua_scripts:add_script("game_scripts/bullet_master")
     this_object.components.lua_scripts:add_script("game_scripts/entity_master")
 
-
-
+    
 
     load_configs()
     load_sceane("main_menu")
     global_data.localization_file = "localization/dialog.json"
+
+    local light = game_object(create_object())
+    light.components.light:get()
+    light.components.transform:get()
 end
 
 local count_fps = {

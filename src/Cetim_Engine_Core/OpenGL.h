@@ -281,7 +281,7 @@ public:
 		}
 	}
 
-	shared_ptr<malha> oclusion_box;
+	//shared_ptr<malha> oclusion_box;
 
 	shared_ptr<transform_> teste_tf;
 	shared_ptr<objeto_jogo> teste_cam = NULL;
@@ -454,8 +454,8 @@ public:
 		// sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_frag, GL_FRAGMENT_SHADER));
 
-		oclusion_box = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
-		adicionar_malha(oclusion_box.get());
+		//oclusion_box = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
+		//adicionar_malha(oclusion_box.get());
 
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -1029,6 +1029,7 @@ public:
 				apply_transform(shader_s, tf, ca);
 
 				apply_material(shader_s, rt->mat);
+				apply_light(shader_s);
 
 				glDisable(GL_CULL_FACE);
 
@@ -1185,6 +1186,7 @@ public:
 				// shader
 				unsigned int shader_s = pegar_shader(rtm->mat.shader);
 				glUseProgram(shader_s);
+				apply_light(shader_s);
 
 				apply_material(shader_s, rtm->mat);
 
@@ -1355,6 +1357,7 @@ public:
 				unsigned int shader_s = pegar_shader(RS->mat.shader);
 				glUseProgram(shader_s);
 				apply_material(shader_s, RS->mat);
+				apply_light(shader_s);
 
 				// tempo
 				glUniform1f(glGetUniformLocation(shader_s, "time"), Tempo::tempo);

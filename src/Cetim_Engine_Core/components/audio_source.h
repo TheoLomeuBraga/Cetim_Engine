@@ -258,40 +258,6 @@ mapeamento_assets<sf::SoundBuffer> buffers_som;
 std::set<std::string> sfml_audio_loading_requests_files = {};
 std::mutex buffers_som_mtx;
 
-const double sf_hz = 1800.0;
-void limitate_sf_buffer(sf::SoundBuffer* sb) {
-    // Obter informações do buffer original
-    const sf::Int16* samples = sb->getSamples();
-    std::size_t sampleCount = sb->getSampleCount();
-    unsigned int sampleRate = sb->getSampleRate();
-    unsigned int channelCount = sb->getChannelCount();
-
-    // Calcular a nova contagem de amostras
-    double src_ratio = sf_hz / sampleRate;
-    std::size_t newSampleCount = static_cast<std::size_t>(sampleCount * src_ratio);
-
-    // Vetor para armazenar os novos dados de amostra
-    std::vector<sf::Int16> newSamples(newSampleCount * channelCount);
-
-    // Reamostrar os dados
-    for (std::size_t i = 0; i < newSampleCount; ++i) {
-        double pos = i / src_ratio;
-        std::size_t index = static_cast<std::size_t>(pos) * channelCount;
-
-        for (unsigned int channel = 0; channel < channelCount; ++channel) {
-            if (index + channel < sampleCount) {
-                newSamples[i * channelCount + channel] = samples[index + channel];
-            } else {
-                newSamples[i * channelCount + channel] = 0;
-            }
-        }
-    }
-
-    // Criar um novo buffer com a taxa de amostragem reduzida
-    if (!sb->loadFromSamples(newSamples.data(), newSamples.size(), channelCount, (unsigned int)sf_hz)) {
-        std::cerr << "Erro ao carregar o buffer de som reamostrado!" << std::endl;
-    }
-}
 
 shared_ptr<sf::SoundBuffer> carregar_audio_buffer(string local)
 {
@@ -301,7 +267,6 @@ shared_ptr<sf::SoundBuffer> carregar_audio_buffer(string local)
 	{
 		buffers_som.aplicar(local, sf::SoundBuffer());
 		buffers_som.pegar(local)->loadFromFile(local.c_str());
-		//limitate_sf_buffer(buffers_som.pegar(local).get());
 	}
 	sfml_audio_loading_requests_files.erase(local);
 	return buffers_som.pegar(local);

@@ -2791,6 +2791,8 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("set_ui_curson_location", funcoes_ponte::set_ui_curson_location),
 															  pair<string, lua_function>("get_set_ui_component", funcoes_ponte::get_set_ui_component),
 															  pair<string, lua_function>("set_ui_component_function", funcoes_ponte::set_ui_component_function),
+															  pair<string, lua_function>("get_set_light", funcoes_ponte::get_set_light),
+															  
 
 														  }),
 		pair<string, map<string, lua_function>>("physics", {
