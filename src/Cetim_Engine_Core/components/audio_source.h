@@ -36,9 +36,10 @@ void start_sdl_audio()
 		return;
 	}
 
-	// spec.freq = 44100;
+	//spec.freq = 44100;
+	//spec.format = SDL_AUDIO_S16LE;
 	spec.freq = 16000;
-	spec.format = SDL_AUDIO_S32LE;
+	spec.format = SDL_AUDIO_S8;
 	spec.channels = 1;
 	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
 	Mix_AllocateChannels(255);

@@ -102,7 +102,7 @@ function level:START()
     
     game_object:new(cenary_builders.cenary).components.lua_scripts:add_script("game_scripts/navegation_test")
 
-    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.set_background_image({ path = "Textures/test_sb.svg", color = { r = 1, g = 1, b = 1 } })
+    
     
 
     camera = {}
@@ -110,6 +110,8 @@ function level:START()
     loading_screen.close()
 
     time:set_speed(1)
+
+    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.set_background_image({ path = "Textures/test_sb.svg", color = { r = 1, g = 1, b = 1 } })
 
     global_data.pause = 0
     

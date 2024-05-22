@@ -1,9 +1,12 @@
 #pragma once
 
+#define GLFW
+
+#ifdef GLFW
 #include "RecursosT.h"
 #include "input.h"
 #include "LoopPrincipal.h"
-
+#include <GLFW/glfw3.h>
 #include <chrono>
 #include <thread>
 #include <cmath>
@@ -11,8 +14,6 @@
 #include "args.h"
 
 #include "benchmark.h"
-
-#include <GLFW/glfw3.h>
 
 GLFWwindow *janela;
 
@@ -1109,3 +1110,5 @@ public:
 		encerrar();
 	}
 };
+
+#endif

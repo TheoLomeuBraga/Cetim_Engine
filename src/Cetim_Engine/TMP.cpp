@@ -16,6 +16,7 @@
 
 void InitImGui()
 {
+    /*
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -25,23 +26,28 @@ void InitImGui()
     ImGui_ImplOpenGL3_Init("#version 330");
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    */
 }
 
 // Function to update the ImGui UI
 void UpdateImGuiUI()
 {
+    /*
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    */
 }
 
 void ShutdownImGui()
 {
+    /*
     ImGui::Begin("Demo window");
     ImGui::Button("Hello!");
     ImGui::End();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    */
 }
 //*/
 
