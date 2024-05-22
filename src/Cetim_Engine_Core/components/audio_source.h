@@ -161,6 +161,7 @@ public:
 		float rotacao_necessaria = angulo_direcao_a_para_b - angulo_direcao_atual;
 
 		// Normalizar a rotação para o intervalo [-180, 180)
+		/*
 		if (rotacao_necessaria > 180.0f)
 		{
 			rotacao_necessaria -= 360.0f;
@@ -169,6 +170,7 @@ public:
 		{
 			rotacao_necessaria += 360.0f;
 		}
+		*/
 
 		return rotacao_necessaria;
 	}
@@ -186,6 +188,7 @@ public:
 			// Calcular ângulo em relação ao ouvinte
 			vec3 tf_dir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
 			float angle = calcular_rotacao_necessaria(lpos, gpos, tf_dir);
+			print(angle);
 
 			// Calcular distância
 			float distance = glm::length(direction);
