@@ -295,15 +295,30 @@ public:
 		}
 	}
 
+	input_mouse get_mouse_input()
+	{
+		input_mouse ret;
+		for (SDL_Event e : event_list)
+		{
+			if (e.type == SDL_MOUSEWHEEL)
+			{
+				break;
+			}
+			if (e.type == SDL_MOUSEMOTION)
+			{
+				break;
+			}
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				break;
+			}
+		}
+		return ret;
+	}
 	teclado get_keyboard_input() { return teclado(); }
-	input_mouse get_mouse_input() { return input_mouse(); }
 
 	TOUCHES get_touch_screen() { return {}; }
-	vector<joystick> get_joysticks_input()
-	{
-		vector<joystick> vj;
-		return vj;
-	}
+	vector<joystick> get_joysticks_input() { return {}; }
 
 	vr_headset_input get_vr_headset_input()
 	{
