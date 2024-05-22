@@ -80,8 +80,7 @@ void ShutdownImGui()
 #include "table_conversors.h"
 #include "compression.h"
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_mixer.h>
+
 
 #include "ecs/ecs.h"
 #include "ecs/ecs_components_systems/ecs_name.h"
@@ -107,7 +106,7 @@ void configuracaoInicial()
     
     
     
-    Iniciar_Render_Func.push_back(start_sdl_audio);
+    Iniciar_Render_Func.push_back(start_sdl);
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
     Iniciar_Render_Func.push_back(terminar_iniciar_global_bullet);

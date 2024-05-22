@@ -28,9 +28,9 @@ std::set<std::string> audio_source_loading_requests_files = {};
 #include <SDL3/SDL_mixer.h>
 
 SDL_AudioSpec spec;
-void start_sdl_audio()
+void start_sdl()
 {
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_SENSOR) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return;

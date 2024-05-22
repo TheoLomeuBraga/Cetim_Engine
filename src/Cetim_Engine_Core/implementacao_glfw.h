@@ -15,6 +15,51 @@
 #include "benchmark.h"
 
 
+#include <SDL3/SDL.h>
+
+class gerenciador_janela_sdl : public gerenciador_janela
+{
+public:
+	gerenciador_janela_sdl(bool tela_inteira) {  }
+	bool esta_janela_inteira() { return false; }
+	void mudar_cursor(shared_ptr<imagem> cursor) {  }
+	void enable_cursor(bool enable) {  }
+	void mudar_imagem_janela(shared_ptr<imagem> janela) {  }
+	void mudar_pos_cursor(float pos_x, float pos_y) {  }
+	void mudar_res(float res_x, float res_y) {  }
+	bool e_janela_cheia() { return false; }
+	vec2 pegar_res(){return vec2(0,0);}
+
+	void iniciar()
+	{
+	}
+
+	void encerrar()
+	{
+	}
+
+	void loop()
+	{
+
+		iniciar();
+		do
+		{
+		} while (true);
+
+		encerrar();
+	}
+
+	ivec2 pos_janela;
+	void setar_tela_inteira_como(bool tela_cheia)
+	{
+	}
+
+	~gerenciador_janela_sdl()
+	{
+		encerrar();
+	}
+};
+
 #define GLFW
 
 #ifdef GLFW
