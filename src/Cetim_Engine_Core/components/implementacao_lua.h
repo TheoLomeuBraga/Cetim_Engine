@@ -1001,7 +1001,7 @@ namespace funcoes_ponte
 
 				manuseio_inputs->get_text_input();
 
-				teclado t = manuseio_inputs->keyboard_input;
+				teclado t = manuseio_inputs->get_keyboard_input();
 
 				if (t.teclas.find(key) != t.teclas.end())
 				{
@@ -1025,7 +1025,7 @@ namespace funcoes_ponte
 			}
 			else if (device == 3)
 			{
-				input_mouse m = manuseio_inputs->mouse_input;
+				input_mouse m = manuseio_inputs->get_mouse_input();
 
 				if (m.botoes.find(key) != m.botoes.end())
 				{

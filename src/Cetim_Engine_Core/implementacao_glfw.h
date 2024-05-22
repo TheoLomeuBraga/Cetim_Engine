@@ -95,10 +95,12 @@ public:
 	{
 		if (enable)
 		{
+			SDL_SetRelativeMouseMode(SDL_FALSE);
 			SDL_ShowCursor();
 		}
 		else
 		{
+			SDL_SetRelativeMouseMode(SDL_TRUE);
 			SDL_HideCursor();
 		}
 	}
@@ -297,25 +299,69 @@ public:
 
 	input_mouse get_mouse_input()
 	{
-		input_mouse ret;
+		mouse_input.movimentos["movement_x"] = 0;
+		mouse_input.movimentos["movement_y"] = 0;
 		for (SDL_Event e : event_list)
 		{
 			if (e.type == SDL_MOUSEWHEEL)
 			{
-				break;
+				mouse_input.botoes["scroll"] = e.wheel.y;
 			}
-			if (e.type == SDL_MOUSEMOTION)
+			else if (e.type == SDL_MOUSEMOTION)
 			{
-				break;
+				int mouseX = e.motion.x;
+                int mouseY = e.motion.y;
+                int relX = e.motion.xrel;
+                int relY = e.motion.yrel;
+				mouse_input.movimentos["x"] = mouseX;
+				mouse_input.movimentos["y"] = mouseY;
+
+				int width, height;
+				SDL_GetWindowSize(window, &width, &height);
+				mouse_input.movimentos["movement_x"] = (float)relX / (float)width;
+				mouse_input.movimentos["movement_y"] = (float)relY  / (float)height;
+				
+				mouse_input.movimentos["normalized_x"] = (float)mouseX / (float)width;
+				mouse_input.movimentos["normalized_y"] = (float)mouseY / (float)height;
 			}
-			if (e.type == SDL_MOUSEBUTTONDOWN)
+			else if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				break;
+				if (e.button.button == SDL_BUTTON_LEFT)
+				{
+					mouse_input.botoes["left"] = 1;
+				}
+				else if (e.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse_input.botoes["right"] = 1;
+				}
+				else if (e.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse_input.botoes["scroll_button"] = 1;
+				}
+			}
+			else if (SDL_MOUSEBUTTONUP)
+			{
+				if (e.button.button == SDL_BUTTON_LEFT)
+				{
+					mouse_input.botoes["left"] = 0;
+				}
+				else if (e.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse_input.botoes["right"] = 0;
+				}
+				else if (e.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse_input.botoes["scroll_button"] = 0;
+				}
 			}
 		}
-		return ret;
+
+		return mouse_input;
 	}
-	teclado get_keyboard_input() { return teclado(); }
+	
+	teclado get_keyboard_input() { 
+		return teclado(); 
+	}
 
 	TOUCHES get_touch_screen() { return {}; }
 	vector<joystick> get_joysticks_input() { return {}; }
