@@ -1,6 +1,5 @@
 #pragma once
 #include <thread>
-#include <GLFW/glfw3.h>
 using String = std::string;
 
 #include "Config.h"

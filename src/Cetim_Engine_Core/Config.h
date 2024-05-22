@@ -2,7 +2,6 @@
 #include <iostream>
 using String = std::string;
 #include "RecursosT.h"
-#include <GLFW/glfw3.h>
 
 
 namespace configuracoes {
