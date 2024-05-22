@@ -101,14 +101,14 @@ public:
 	{
 		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]) - pegar_pos_global();
-		return glm::vec3(ret.x, ret.y, ret.z);
+		return ret;
 	}
 
 	vec3 pegar_direcao_global(vec3 dir)
 	{
 		glm::mat4 translationMatrix = glm::translate(pegar_matriz(), dir);
 		glm::vec3 ret = glm::vec3(translationMatrix[3]);
-		return glm::vec3(ret.x, ret.y, ret.z);
+		return ret;
 	}
 
 	vec3 mover_direcao(vec3 dir)

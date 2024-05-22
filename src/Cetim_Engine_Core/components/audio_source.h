@@ -11,6 +11,12 @@
 #include <filesystem>
 #include <thread>
 #include <mutex>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 std::set<std::string> audio_source_loading_requests_files = {};
 
@@ -140,51 +146,76 @@ public:
 		// aplicar_info();
 	}
 
-	void atualisar() {
-    if (channel != -1 && listener_transform != nullptr && tf != nullptr) {
-        glm::vec3 lpos = listener_transform->pegar_pos_global();
-        glm::vec3 gpos = tf->pegar_pos_global();
+	float calcular_rotacao_necessaria(const glm::vec3 &ponto_a, const glm::vec3 &ponto_b, const glm::vec3 &direcao)
+	{
+		// Calcular a direção de A para B
+		glm::vec3 direcao_a_para_b = glm::normalize(ponto_b - ponto_a);
 
-        // Calcular vetor da posição do ouvinte para a posição da fonte sonora
-        glm::vec3 direction = gpos - lpos;
+		// Calcular o ângulo em relação ao eixo z (assumindo que a rotação inicial é em torno de y)
+		float angulo_direcao_a_para_b = glm::degrees(atan2(direcao_a_para_b.x, direcao_a_para_b.z));
 
-        // Calcular ângulo em relação ao ouvinte
-        float angle = glm::degrees(atan2(direction.x, direction.z));
-        if (angle < 0) {
-            angle += 360.0f;
-        }
+		// Calcular o ângulo da direção atual
+		float angulo_direcao_atual = glm::degrees(atan2(direcao.x, direcao.z));
 
-        // Ajustar o ângulo com base na rotação y do transform
-        float rotation_y = listener_transform->pegar_graus_global().y;
-		print(rotation_y);
-        angle = fmod(angle + rotation_y, 360.0f); // Use '+' para ajustar com a rotação do transform
-        if (angle < 0) {
-            angle += 360.0f;
-        }
+		// Calcular a rotação necessária
+		float rotacao_necessaria = angulo_direcao_a_para_b - angulo_direcao_atual;
 
-        // Calcular distância
-        float distance = glm::length(direction);
-        if (distance < 1.0f) {
-            distance = 0;
-        }
+		// Normalizar a rotação para o intervalo [-180, 180)
+		if (rotacao_necessaria > 180.0f)
+		{
+			rotacao_necessaria -= 360.0f;
+		}
+		else if (rotacao_necessaria < -180.0f)
+		{
+			rotacao_necessaria += 360.0f;
+		}
 
-        // Normalizar a distância para o intervalo de 0 a 255
-        Uint8 sdl_distance = static_cast<Uint8>(glm::clamp(distance / 10.0f * 255.0f, 0.0f, 255.0f)); // Ajustar a escala de distância conforme necessário
+		return rotacao_necessaria;
+	}
 
-        if (distance == 0) {
-            Mix_SetPosition(channel, 0, 0);
-        } else if (Mix_SetPosition(channel, static_cast<Sint16>(angle), sdl_distance) == 0) {
-            printf("Mix_SetPosition: %s\n", Mix_GetError());
-        }
-    } else if (channel != -1) {
-        // Posição padrão se nenhuma transformação estiver disponível
-        if (Mix_SetPosition(channel, 0, 0) == 0) {
-            printf("Mix_SetPosition: %s\n", Mix_GetError());
-        }
-    }
-}
+	void atualisar()
+	{
+		if (channel != -1 && listener_transform != nullptr && tf != nullptr)
+		{
+			glm::vec3 lpos = listener_transform->pegar_pos_global();
+			glm::vec3 gpos = tf->pegar_pos_global();
 
-	
+			// Calcular vetor da posição do ouvinte para a posição da fonte sonora
+			glm::vec3 direction = gpos - lpos;
+
+			// Calcular ângulo em relação ao ouvinte
+			vec3 tf_dir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
+			float angle = calcular_rotacao_necessaria(lpos, gpos, tf_dir);
+
+			// Calcular distância
+			float distance = glm::length(direction);
+			if (distance < 1.0f)
+			{
+				distance = 0;
+			}
+
+			// Normalizar a distância para o intervalo de 0 a 255
+			Uint8 sdl_distance = static_cast<Uint8>(glm::clamp(distance / 10.0f * 255.0f, 0.0f, 255.0f)); // Ajustar a escala de distância conforme necessário
+
+			if (distance == 0)
+			{
+				Mix_SetPosition(channel, 0, 0);
+			}
+			else if (Mix_SetPosition(channel, static_cast<Sint16>(angle), sdl_distance) == 0)
+			{
+				printf("Mix_SetPosition: %s\n", Mix_GetError());
+			}
+		}
+		else if (channel != -1)
+		{
+			// Posição padrão se nenhuma transformação estiver disponível
+			if (Mix_SetPosition(channel, 0, 0) == 0)
+			{
+				printf("Mix_SetPosition: %s\n", Mix_GetError());
+			}
+		}
+	}
+
 	// void finalisar() {
 	//     if (channel != -1) {
 	//         Mix_HaltChannel(channel);

@@ -1380,7 +1380,6 @@ void escrever(X texto)
 
 vec3 quat_graus(quat q)
 {
-	// return degrees(glm::eulerAngles(q) * 3.14159f / 180.f);
 	return glm::degrees(glm::eulerAngles(q));
 }
 
