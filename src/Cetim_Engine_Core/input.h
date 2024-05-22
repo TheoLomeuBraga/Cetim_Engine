@@ -7,6 +7,8 @@ using String = std::string;
 // #include "vibrar_controle.cpp"
 #include "RecursosT.h"
 
+#define TOUCHES std::vector<vec2>
+
 class input_manager
 {
 public:
@@ -16,6 +18,7 @@ public:
 	teclado keyboard_input;
 	input_mouse mouse_input;
 	vector<joystick> joysticks_input;
+	vector<TOUCHES> touch_screen_input;
 	vr_headset_input vr_input;
 
 	virtual string get_text_input() { return ""; }
@@ -23,6 +26,7 @@ public:
 
 	virtual teclado get_keyboard_input() { return teclado(); }
 	virtual input_mouse get_mouse_input() { return input_mouse(); }
+	virtual TOUCHES get_touch_screen() { return {}; }
 	virtual vector<joystick> get_joysticks_input()
 	{
 		vector<joystick> vj;

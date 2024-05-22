@@ -17,7 +17,7 @@
 // #include "imgui_impl_glfw.cpp"
 // #include "imgui_impl_glfw.h"
 
-#include <GL/glew.h>
+
 #include <glm/glm.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>

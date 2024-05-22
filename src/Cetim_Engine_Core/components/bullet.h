@@ -798,6 +798,7 @@ double bullet_past_time = 0;
 void atualisar_global_bullet()
 {
 
+    
     clean_collisions();
     get_3D_collisions();
     clean_bu_collisions_no_per_object();

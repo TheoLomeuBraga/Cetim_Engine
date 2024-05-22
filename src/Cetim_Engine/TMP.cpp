@@ -105,8 +105,7 @@ void configuracaoInicial()
 
     
     
-    
-    Iniciar_Render_Func.push_back(start_sdl);
+    start_sdl();
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
     Iniciar_Render_Func.push_back(terminar_iniciar_global_bullet);

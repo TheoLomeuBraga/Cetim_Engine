@@ -629,33 +629,39 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	int save_table_compressed(lua_State *L){
+	int save_table_compressed(lua_State *L)
+	{
 
-		std::ofstream arquivo(lua_tostring(L,1), std::ios::binary);
+		std::ofstream arquivo(lua_tostring(L, 1), std::ios::binary);
 
-		if(!arquivo.is_open()){return 0;}
+		if (!arquivo.is_open())
+		{
+			return 0;
+		}
 
 		compression_manager cm(3);
-		arquivo << cm.compress(ManuseioDados::table_bin(lua_totable(L,2)));
+		arquivo << cm.compress(ManuseioDados::table_bin(lua_totable(L, 2)));
 
 		return 0;
 	}
 
-	int load_table_compressed(lua_State *L){
-		
+	int load_table_compressed(lua_State *L)
+	{
 
-		std::ifstream arquivo(lua_tostring(L,1), std::ios::binary);
+		std::ifstream arquivo(lua_tostring(L, 1), std::ios::binary);
 
-		if(!arquivo.is_open()){return 0;}
+		if (!arquivo.is_open())
+		{
+			return 0;
+		}
 
 		std::stringstream buffer;
-    	buffer << arquivo.rdbuf();
+		buffer << arquivo.rdbuf();
 		std::string data = buffer.str();
-
 
 		compression_manager cm(3);
 
-		lua_pushtable(L,ManuseioDados::bin_table(cm.decompress(data)));
+		lua_pushtable(L, ManuseioDados::bin_table(cm.decompress(data)));
 		return 1;
 	}
 
@@ -723,7 +729,7 @@ namespace funcoes_ponte
 
 		Table ret;
 		ret.setFloat("time", Tempo::total_timer.get());
-		//ret.setFloat("delta", deltaTimer.get());
+		// ret.setFloat("delta", deltaTimer.get());
 		ret.setFloat("delta", Tempo::deltaTime);
 		ret.setFloat("scale", Tempo::velocidadeTempo);
 		lua_pushtable(L, ret);
@@ -821,7 +827,7 @@ namespace funcoes_ponte
 
 		if (lua_tonumber(L, 1) == get_lua)
 		{
-			
+
 			Table ret;
 			obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 2));
 			ret.setString("name", obj->nome);
@@ -987,47 +993,50 @@ namespace funcoes_ponte
 		int joystick_no = lua_tonumber(L, 2);
 		string key = lua_tostring(L, 3);
 
-		if (device == 1)
+		if (manuseio_inputs != NULL)
 		{
 
-			manuseio_inputs->get_text_input();
-
-			teclado t = manuseio_inputs->keyboard_input;
-
-			if (t.teclas.find(key) != t.teclas.end())
+			if (device == 1)
 			{
-				ret = t.teclas[key];
-			}
-		}
-		else if (device == 2)
-		{
 
-			if (joystick_no <= manuseio_inputs->joysticks_input.size())
-			{
-				manuseio_inputs->get_joysticks_input();
+				manuseio_inputs->get_text_input();
 
-				joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
+				teclado t = manuseio_inputs->keyboard_input;
 
-				if (j.inputs.find(key) != j.inputs.end())
+				if (t.teclas.find(key) != t.teclas.end())
 				{
-					ret = j.inputs[key];
+					ret = t.teclas[key];
+				}
+			}
+			else if (device == 2)
+			{
+
+				if (joystick_no <= manuseio_inputs->joysticks_input.size())
+				{
+					manuseio_inputs->get_joysticks_input();
+
+					joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
+
+					if (j.inputs.find(key) != j.inputs.end())
+					{
+						ret = j.inputs[key];
+					}
+				}
+			}
+			else if (device == 3)
+			{
+				input_mouse m = manuseio_inputs->mouse_input;
+
+				if (m.botoes.find(key) != m.botoes.end())
+				{
+					ret = m.botoes[key];
+				}
+				else if (m.movimentos.find(key) != m.movimentos.end())
+				{
+					ret = m.movimentos[key];
 				}
 			}
 		}
-		else if (device == 3)
-		{
-			input_mouse m = manuseio_inputs->mouse_input;
-
-			if (m.botoes.find(key) != m.botoes.end())
-			{
-				ret = m.botoes[key];
-			}
-			else if (m.movimentos.find(key) != m.movimentos.end())
-			{
-				ret = m.movimentos[key];
-			}
-		}
-
 		lua_pushnumber(L, ret);
 		return 1;
 	}
@@ -1455,8 +1464,9 @@ namespace funcoes_ponte
 			ret.setFloat("text_location_x", (char)rt->text_location_x);
 			ret.setFloat("text_location_y", (char)rt->text_location_y);
 			Table sChanges;
-			for(pair<unsigned int,text_style_change> p : rt->style_changes){
-				sChanges.setTable(to_string(p.first + 1),text_style_change_table(p.second));
+			for (pair<unsigned int, text_style_change> p : rt->style_changes)
+			{
+				sChanges.setTable(to_string(p.first + 1), text_style_change_table(p.second));
 			}
 			ret.setTable("style_changes", sChanges);
 			lua_pushtable(L, ret);
@@ -1475,9 +1485,10 @@ namespace funcoes_ponte
 			rt->mat = table_material(t.getTable("material"));
 			rt->text_location_x = (char)t.getFloat("text_location_x");
 			rt->text_location_y = (char)t.getFloat("text_location_y");
-			unordered_map<unsigned int,text_style_change> style_changes;
-			for(pair<std::string, Table> p : t.getTable("style_changes").m_tableMap){
-				style_changes.insert(pair<unsigned int,text_style_change>(std::stoi(p.first) - 1,table_text_style_change(p.second)));
+			unordered_map<unsigned int, text_style_change> style_changes;
+			for (pair<std::string, Table> p : t.getTable("style_changes").m_tableMap)
+			{
+				style_changes.insert(pair<unsigned int, text_style_change>(std::stoi(p.first) - 1, table_text_style_change(p.second)));
 			}
 			rt->style_changes = style_changes;
 			return 0;
@@ -2154,17 +2165,18 @@ namespace funcoes_ponte
 		}
 	}
 
-	int get_screen_point_direction(lua_State *L){
+	int get_screen_point_direction(lua_State *L)
+	{
 		objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 		shared_ptr<camera> cam = obj->pegar_componente<camera>();
 
-		pair<vec3,vec3> ray = cam->getRayPoints(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+		pair<vec3, vec3> ray = cam->getRayPoints(lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 		Table ret;
 
-		ret.setTable("1",vec3_table(ray.first));
-		ret.setTable("2",vec3_table(ray.second));
+		ret.setTable("1", vec3_table(ray.first));
+		ret.setTable("2", vec3_table(ray.second));
 
-		lua_pushtable(L,ret);
+		lua_pushtable(L, ret);
 		return 1;
 	}
 
@@ -2606,8 +2618,9 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int simple_ui_display(lua_State *L){
-		draw_ui_element(ui_element_instruction_table(lua_totable(L,1)));
+	int simple_ui_display(lua_State *L)
+	{
+		draw_ui_element(ui_element_instruction_table(lua_totable(L, 1)));
 		return 0;
 	}
 
@@ -2635,8 +2648,7 @@ namespace funcoes_ponte
 
 	int set_keyframe(lua_State *L)
 	{
-		
-		
+
 		int args_no = lua_gettop(L);
 
 		if (args_no == 5)
@@ -2705,12 +2717,6 @@ namespace funcoes_ponte
 
 		return 0;
 	}
-
-	
-
-	
-
-	
 
 	map<string, map<string, lua_function>> funcoes_ponte_map_secoes = {
 		pair<string, map<string, lua_function>>("file_system", {
@@ -2792,7 +2798,6 @@ namespace funcoes_ponte
 															  pair<string, lua_function>("get_set_ui_component", funcoes_ponte::get_set_ui_component),
 															  pair<string, lua_function>("set_ui_component_function", funcoes_ponte::set_ui_component_function),
 															  pair<string, lua_function>("get_set_light", funcoes_ponte::get_set_light),
-															  
 
 														  }),
 		pair<string, map<string, lua_function>>("physics", {
@@ -2852,10 +2857,9 @@ namespace funcoes_ponte
 
 														 }),
 		pair<string, map<string, lua_function>>("ui", {
-															 pair<string, lua_function>("simple_ui_display", simple_ui_display),
+														  pair<string, lua_function>("simple_ui_display", simple_ui_display),
 
-														 })
-
+													  })
 
 	};
 
@@ -3010,8 +3014,6 @@ class componente_lua : public componente
 	unordered_map<string, lua_State *> estados_lua_co;
 
 public:
-
-	
 	unordered_map<string, lua_State *> estados_lua;
 
 	set<lua_State *> to_benchmark;
@@ -3692,55 +3694,64 @@ int set_lua_var(lua_State *L)
 	return 0;
 }
 
-int local_data_get_var(lua_State *L){
+int local_data_get_var(lua_State *L)
+{
 
 	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
 	Table local_data = obj->local_lua_data;
 
-	
 	int lua_type_id = lua_type(L, 2);
 	string key;
 	if (lua_type_id == LUA_TSTRING)
 	{
-		key = lua_tostring(L,2);
+		key = lua_tostring(L, 2);
 	}
 	else if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
 	{
-		key = to_string(lua_tonumber(L,2));
-	}else{
+		key = to_string(lua_tonumber(L, 2));
+	}
+	else
+	{
 		return 0;
 	}
-	
+
 	if (local_data.haveTable(key))
 	{
-		lua_pushtable(L,local_data.getTable(key));
-		return 1;
-	}else if(local_data.haveFloat(key)){
-		lua_pushnumber(L,local_data.getFloat(key));
-		return 1;
-	}else if(local_data.haveString(key)){
-		lua_pushstring(L,local_data.getString(key).c_str());
+		lua_pushtable(L, local_data.getTable(key));
 		return 1;
 	}
-	
+	else if (local_data.haveFloat(key))
+	{
+		lua_pushnumber(L, local_data.getFloat(key));
+		return 1;
+	}
+	else if (local_data.haveString(key))
+	{
+		lua_pushstring(L, local_data.getString(key).c_str());
+		return 1;
+	}
+
 	lua_pushnil(L);
 	return 1;
 }
 
-int local_data_set_var(lua_State *L){
-	
+int local_data_set_var(lua_State *L)
+{
+
 	objeto_jogo *obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-	
+
 	int lua_type_id = lua_type(L, 2);
 	string key;
 	if (lua_type_id == LUA_TSTRING)
 	{
-		key = lua_tostring(L,2);
+		key = lua_tostring(L, 2);
 	}
 	else if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
 	{
-		key = to_string(lua_tonumber(L,2));
-	}else{
+		key = to_string(lua_tonumber(L, 2));
+	}
+	else
+	{
 		return 0;
 	}
 
@@ -3748,19 +3759,19 @@ int local_data_set_var(lua_State *L){
 
 	if (lua_type_id == LUA_TNUMBER || lua_type_id == LUA_TNIL || lua_type_id == LUA_TBOOLEAN)
 	{
-		float value = lua_tonumber(L,3);
-		obj->local_lua_data.setFloat(key.c_str(),value);
+		float value = lua_tonumber(L, 3);
+		obj->local_lua_data.setFloat(key.c_str(), value);
 		print(value);
 	}
 	else if (lua_type_id == LUA_TSTRING)
 	{
-		string value = lua_tostring(L,3);
-		obj->local_lua_data.setString(key.c_str(),value);
+		string value = lua_tostring(L, 3);
+		obj->local_lua_data.setString(key.c_str(), value);
 	}
 	else if (lua_type_id == LUA_TTABLE)
 	{
-		Table value = lua_totable(L,3);
-		obj->local_lua_data.setTable(key.c_str(),value);
+		Table value = lua_totable(L, 3);
+		obj->local_lua_data.setTable(key.c_str(), value);
 	}
 	return 0;
 }

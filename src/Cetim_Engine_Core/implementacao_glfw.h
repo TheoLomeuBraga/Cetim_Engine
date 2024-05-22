@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "RecursosT.h"
 #include "input.h"
 #include "LoopPrincipal.h"
@@ -14,37 +12,231 @@
 
 #include "benchmark.h"
 
-
+#define SDL_ENABLE_OLD_NAMES
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
+
+SDL_Window *window;
+
+vector<SDL_Event> event_list = {};
+
+bool text_getted_this_frame = false;
+
+SDL_Surface *toSDLSurface(shared_ptr<imagem> img)
+{
+	if (img->data.empty())
+	{
+		cerr << "Image data is empty!" << endl;
+		return nullptr;
+	}
+
+	Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+
+	int depth = 32;				// Profundidade de cor: 32 bits para RGBA
+	int pitch = img->res.x * 4; // Cada pixel tem 4 bytes (RGBA)
+
+	SDL_Surface *surface = SDL_CreateSurfaceFrom(
+		const_cast<unsigned char *>(img->data.data()), // Ponteiro para os dados de pixel
+		img->res.x,									   // Largura da imagem
+		img->res.y,									   // Altura da imagem
+		depth,										   // Profundidade de cor
+		SDL_PIXELFORMAT_RGBA8888);
+
+	if (surface == nullptr)
+	{
+		cerr << "SDL_CreateRGBSurfaceFrom Error: " << SDL_GetError() << endl;
+	}
+
+	return surface;
+}
 
 class gerenciador_janela_sdl : public gerenciador_janela
 {
+private:
+	bool is_full_sceen = false;
+
 public:
-	gerenciador_janela_sdl(bool tela_inteira) {  }
-	bool esta_janela_inteira() { return false; }
-	void mudar_cursor(shared_ptr<imagem> cursor) {  }
-	void enable_cursor(bool enable) {  }
-	void mudar_imagem_janela(shared_ptr<imagem> janela) {  }
-	void mudar_pos_cursor(float pos_x, float pos_y) {  }
-	void mudar_res(float res_x, float res_y) {  }
-	bool e_janela_cheia() { return false; }
-	vec2 pegar_res(){return vec2(0,0);}
+	bool running = true;
+	SDL_Event event;
+	SDL_GLContext glContext;
+	Tempo::Timer sw;
+
+	gerenciador_janela_sdl() {}
+	bool esta_janela_inteira() { return is_full_sceen; }
+	void mudar_cursor(shared_ptr<imagem> cursor) {}
+
+	void mudar_imagem_janela(shared_ptr<imagem> janela)
+	{
+		if (janela != NULL)
+		{
+			SDL_SetWindowIcon(window, toSDLSurface(janela));
+		}
+	}
+	void mudar_pos_cursor(float pos_x, float pos_y) {}
+
+	void mudar_res(float res_x, float res_y)
+	{
+		SDL_SetWindowSize(window, res_x, res_y);
+	}
+
+	void enable_cursor(bool enable)
+	{
+		if (enable)
+		{
+			SDL_ShowCursor();
+		}
+		else
+		{
+			SDL_HideCursor();
+		}
+	}
+
+	bool e_janela_cheia()
+	{
+		return is_full_sceen;
+	}
+
+	vec2 pegar_res()
+	{
+		int width, height;
+		SDL_GetWindowSize(window, &width, &height);
+		return vec2(width, height);
+	}
 
 	void iniciar()
 	{
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+		window = SDL_CreateWindow(pegar_nome_arquivo(argumentos[1]).c_str(), configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+		if (window == nullptr)
+		{
+			std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+		}
+
+		glContext = SDL_GL_CreateContext(window);
+		if (!glContext)
+		{
+			std::cerr << "SDL_GL_CreateContext Error: " << SDL_GetError() << std::endl;
+			SDL_DestroyWindow(window);
+			SDL_Quit();
+		}
+
+		// Initialize GLEW
+		glewExperimental = GL_TRUE;
+		GLenum err = glewInit();
+		if (err != GLEW_OK)
+		{
+			std::cerr << "GLEW Error: " << glewGetErrorString(err) << std::endl;
+			SDL_GL_DeleteContext(glContext);
+			SDL_DestroyWindow(window);
+			SDL_Quit();
+		}
+
+		mudar_imagem_janela(ManuseioDados::carregar_Imagem("icon.svg"));
+
+		for (function<void()> f : Iniciar_Render_Func)
+		{
+			f();
+		}
 	}
 
 	void encerrar()
 	{
+		SDL_GL_DeleteContext(glContext);
+		SDL_DestroyWindow(window);
+	}
+
+	Tempo::Timer deltaTimer;
+
+	long double tempoPerdido = 0;
+	void Reindenizar()
+	{
+
+		while (true)
+		{
+			float tempoTotal = deltaTimer.get() + tempoPerdido; // Inclui o tempo perdido anterior
+			Tempo::deltaTime = static_cast<int>(tempoTotal / Tempo::time_step) * Tempo::time_step;
+
+			if (Tempo::deltaTime < Tempo::time_step)
+			{
+				this_thread::sleep_for(chrono::microseconds((unsigned int)(Tempo::deltaTime - Tempo::time_step) / 1000));
+				continue;
+			}
+
+			tempoPerdido = tempoTotal - Tempo::deltaTime; // Calcula o novo tempo perdido
+
+			deltaTimer.clear();
+
+			break;
+		}
+
+		for (function<void()> f : Antes_Render_Func)
+		{
+			f();
+		}
+
+		cena_objetos_selecionados->atualisar();
+
+		cena_objetos_selecionados->atualisar_transforms();
+
+		cena_objetos_selecionados->atualisar_Logica_Scripst();
+
+		reindenizar_cenario();
+
+		for (function<void()> f : Depois_Render_Func)
+		{
+			f();
+		}
 	}
 
 	void loop()
 	{
 
 		iniciar();
-		do
+
+		while (running)
 		{
-		} while (true);
+			event_list.clear();
+
+			while (SDL_PollEvent(&event))
+			{
+				if (event.type == SDL_EVENT_QUIT)
+				{
+					running = false;
+				}
+				text_getted_this_frame = false;
+				event_list.push_back(event);
+			}
+
+			// tempo
+			float t = sw.get();
+			sw.clear();
+			Tempo::tempUltFrameRender = Tempo::varTempRender;
+			Tempo::varTempRender = t;
+
+			Tempo::FPS = 1 / Tempo::varTempRender;
+			Reindenizar();
+
+			// Swap buffers
+			SDL_GL_SwapWindow(window);
+		}
 
 		encerrar();
 	}
@@ -52,12 +244,73 @@ public:
 	ivec2 pos_janela;
 	void setar_tela_inteira_como(bool tela_cheia)
 	{
+		SDL_SetWindowFullscreen(window, tela_cheia);
+		is_full_sceen = tela_cheia;
 	}
 
 	~gerenciador_janela_sdl()
 	{
 		encerrar();
 	}
+};
+
+class input_manager_sdl : public input_manager
+{
+public:
+	input_manager_sdl() {}
+	string text_input;
+	teclado keyboard_input;
+	input_mouse mouse_input;
+	vector<joystick> joysticks_input;
+	vector<TOUCHES> touch_screen_input;
+	vr_headset_input vr_input;
+
+	string get_text_input()
+	{
+		if (!text_getted_this_frame)
+		{
+			for (SDL_Event e : event_list)
+			{
+				if (e.type == SDL_TEXTINPUT)
+				{
+					text_input += e.text.text;
+					break;
+				}
+			}
+			text_getted_this_frame = true;
+		}
+		return text_input;
+	}
+	void set_text_input(bool on)
+	{
+		if (on)
+		{
+			text_input = "";
+			SDL_StartTextInput();
+		}
+		else
+		{
+			text_input = "";
+			SDL_StopTextInput();
+		}
+	}
+
+	teclado get_keyboard_input() { return teclado(); }
+	input_mouse get_mouse_input() { return input_mouse(); }
+
+	TOUCHES get_touch_screen() { return {}; }
+	vector<joystick> get_joysticks_input()
+	{
+		vector<joystick> vj;
+		return vj;
+	}
+
+	vr_headset_input get_vr_headset_input()
+	{
+		return vr_input;
+	}
+
+	void set_mouse_position(float x, float y) {}
 };
 
 #define GLFW
@@ -820,7 +1073,6 @@ public:
 
 bool janela_inteira = false;
 
-
 void mudar_logo_janela(shared_ptr<imagem> img)
 {
 	if (img != NULL)
@@ -872,14 +1124,6 @@ void ativar_cursor(bool ativar)
 }
 
 vector<int> a;
-
-void AntesReindenizar()
-{
-	for (function<void()> f : Iniciar_Render_Func)
-	{
-		f();
-	}
-}
 
 bool iniciada_logica_scripts;
 
@@ -945,22 +1189,24 @@ void MudarRes(int x, int y)
 
 bool janelaInteira = false;
 
-bool checkGLES2Support() {
-    glfwInit();
-    GLFWwindow* window = glfwCreateWindow(100, 100, "Test", NULL, NULL);
-    glfwMakeContextCurrent(window);
-    
-    GLenum err = glewInit();
-    if (GLEW_OK != err) {
-        std::cerr << "GLEW Error: " << glewGetErrorString(err) << std::endl;
-        return false;
-    }
+bool checkGLES2Support()
+{
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(100, 100, "Test", NULL, NULL);
+	glfwMakeContextCurrent(window);
 
-    // Check for OpenGL ES 2.0 support
-    bool es2Supported = glewIsSupported("GL_ARB_ES2_compatibility") || glewIsSupported("GL_OES_EGL_image");
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    return es2Supported;
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		std::cerr << "GLEW Error: " << glewGetErrorString(err) << std::endl;
+		return false;
+	}
+
+	// Check for OpenGL ES 2.0 support
+	bool es2Supported = glewIsSupported("GL_ARB_ES2_compatibility") || glewIsSupported("GL_OES_EGL_image");
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	return es2Supported;
 }
 
 ivec2 monitor_res = ivec2(0, 0);
@@ -988,9 +1234,8 @@ void IniciarJanela()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	//glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+	// glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
-	
 
 	if (configuracoes::janelaConfig.transparente == true)
 	{
@@ -1029,7 +1274,6 @@ void IniciarJanela()
 		fprintf(stderr, "falha en iniciar o GLFW\n");
 		cout << "falha en iniciar o GLFW\n";
 	}
-	
 
 	glfwSetWindowSizeCallback(janela, MudarTamanhoJanela);
 
@@ -1047,7 +1291,10 @@ void IniciarJanela()
 		}
 	}
 
-	AntesReindenizar();
+	for (function<void()> f : Iniciar_Render_Func)
+	{
+		f();
+	}
 
 	cout << "Graficos Online" << endl;
 
