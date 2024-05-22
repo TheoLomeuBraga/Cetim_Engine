@@ -188,7 +188,6 @@ public:
 			// Calcular ângulo em relação ao ouvinte
 			vec3 tf_dir = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
 			float angle = calcular_rotacao_necessaria(lpos, gpos, tf_dir);
-			print(angle);
 
 			// Calcular distância
 			float distance = glm::length(direction);
