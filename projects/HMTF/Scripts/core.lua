@@ -285,9 +285,7 @@ function START()
     load_sceane("main_menu")
     global_data.localization_file = "localization/dialog.json"
 
-    local light = game_object(create_object())
-    light.components.light:get()
-    light.components.transform:get()
+    
 end
 
 local count_fps = {

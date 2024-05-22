@@ -1790,12 +1790,12 @@ namespace funcoes_ponte
 	{
 		if (lua_gettop(L) > 0)
 		{
-			get_set_global_volume_sfml(lua_tonumber(L, 1));
+			get_set_global_volume_sdl(lua_tonumber(L, 1));
 			return 0;
 		}
 		else
 		{
-			lua_pushnumber(L, global_volume_sfml);
+			lua_pushnumber(L, global_volume_sdl);
 			return 1;
 		}
 	}

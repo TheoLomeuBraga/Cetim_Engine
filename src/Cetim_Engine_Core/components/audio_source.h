@@ -14,239 +14,182 @@
 
 std::set<std::string> audio_source_loading_requests_files = {};
 
+#define USE_SDL
+
 #ifdef USE_SDL
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-bool start_audio_source_on = false;
-void start_audio_source()
-{
-	if (!start_audio_source_on)
-	{
-		SDL_Init(SDL_INIT_AUDIO);
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_mixer.h>
 
-		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
-		Mix_AllocateChannels(256);
-		start_audio_source_on = true;
+SDL_AudioSpec spec;
+void start_sdl_audio()
+{
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		return;
 	}
+
+	// spec.freq = 44100;
+	spec.freq = 16000;
+	spec.format = SDL_AUDIO_S32LE;
+	spec.channels = 1;
+	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
+	Mix_AllocateChannels(255);
 }
 
-class sdl_sound_manager
+mapeamento_assets<Mix_Chunk> buffers_som;
+std::set<std::string> sdl_audio_loading_requests_files = {};
+std::mutex buffers_som_mtx;
+
+std::shared_ptr<Mix_Chunk> carregar_audio_buffer(std::string local)
 {
-	Mix_Chunk *buffer = NULL;
-
-public:
-	std::string path;
-	sdl_sound_manager(std::string path)
+	std::lock_guard<std::mutex> lock(buffers_som_mtx);
+	sdl_audio_loading_requests_files.insert(local);
+	if (buffers_som.pegar(local) == nullptr)
 	{
-		start_audio_source();
-		this->path = path;
-	}
-
-	Mix_Chunk *get()
-	{
-		if (!buffer)
+		auto chunk = Mix_LoadWAV(local.c_str());
+		if (chunk != nullptr)
 		{
-			buffer = Mix_LoadWAV(path.c_str());
-		}
-		return buffer;
-	}
-
-	~sdl_sound_manager()
-	{
-		if (buffer)
-		{
-			Mix_FreeChunk(buffer);
+			buffers_som.aplicar_ptr(local, std::shared_ptr<Mix_Chunk>(chunk, Mix_FreeChunk));
 		}
 	}
-};
-
-mapeamento_assets<sdl_sound_manager> buffers_som;
-
-std::mutex buffers_som_sdl_mtx;
-
-shared_ptr<sdl_sound_manager> carregar_audio_buffer(string local)
-{
-	std::lock_guard<std::mutex> lock(buffers_som_sdl_mtx);
-	audio_source_loading_requests_files.insert(local);
-	if (buffers_som_sdl.pegar(local) == NULL)
-	{
-		buffers_som_sdl.aplicar(local, sdl_sound_manager(local));
-	}
-	buffers_som_sdl.pegar(local)->get();
-	audio_source_loading_requests_files.erase(local);
-	return buffers_som_sdl.pegar(local);
+	sdl_audio_loading_requests_files.erase(local);
+	return buffers_som.pegar(local);
 }
 
-void carregar_audio_buffer_thread(string local, shared_ptr<sdl_sound_manager> *ret)
+void carregar_audio_buffer_thread(std::string local, std::shared_ptr<Mix_Chunk> *ret)
 {
 	*ret = carregar_audio_buffer(local);
 }
 
-shared_ptr<transform_> listener_transform = NULL;
+std::shared_ptr<transform_> listener_transform = nullptr;
+float global_volume_sdl = 0;
 
-float global_volume_sfml = 0;
-
-void get_set_global_volume_sfml(float vol)
+void get_set_global_volume_sdl(float vol)
 {
-	Mix_VolumeMusic(vol);
-	global_volume_sfml = vol;
-}
 
-void calcula_panning(float angle_listener_deg, float angle_audio_deg, Uint8 &left, Uint8 &right)
-{
-	// Lógica para calcular o panning com base nos ângulos
-	// Aqui você pode ajustar de acordo com sua lógica específica
-
-	// Exemplo simples: Panning linear entre 0 (esquerda) e 255 (direita)
-	float percentagem_pan = (angle_audio_deg - angle_listener_deg + 180.0) / 360.0;
-	left = static_cast<Uint8>((1.0 - percentagem_pan) * 255);
-	right = static_cast<Uint8>(percentagem_pan * 255);
+	global_volume_sdl = vol;
+	if (vol * MIX_MAX_VOLUME > 0)
+	{
+		Mix_Volume(-1, static_cast<int>(vol * MIX_MAX_VOLUME / 100.0f));
+		return;
+	}
+	Mix_Volume(-1, 0);
 }
 
 class audio_source : public componente
 {
-	shared_ptr<sdl_sound_manager> sound_buffer = NULL;
-	int channel;
-
-	Uint8 previousLeft = 255;
-	Uint8 previousRight = 255;
+private:
+	float volume = 0;
 
 public:
-	audio_info info;
+	struct audio_info
+	{
+		std::string nome;
+		float tempo = 0;
+		float volume = 100;
+		bool loop = false;
+		float velocidade = 1.0f;
+		float min_distance = 1.0f;
+		float atenuation = 1.0f;
+		bool pausa = false;
+	} info;
 
-	shared_ptr<transform_> tf = NULL;
+	std::shared_ptr<Mix_Chunk> buffer;
+	int channel = -1;
+	std::shared_ptr<transform_> tf = NULL;
+
+	audio_source() {}
+	audio_source(audio_info info) : info(info) {}
 
 	void aplicar_info()
 	{
-
-		sound_buffer = carregar_audio_buffer(info.nome);
-
-		if (sound_buffer)
+		buffer = carregar_audio_buffer(info.nome);
+		if (buffer != nullptr)
 		{
-
-			if (info.loop)
+			channel = Mix_PlayChannel(-1, buffer.get(), info.loop ? -1 : 0);
+			if (channel != -1)
 			{
-				channel = Mix_PlayChannel(-1, sound_buffer->get(), -1);
-			}
-			else
-			{
-				channel = Mix_PlayChannel(-1, sound_buffer->get(), 0);
-			}
-			Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
-			if (info.pausa)
-			{
+				Mix_Volume(channel, static_cast<int>(info.volume * MIX_MAX_VOLUME / 100.0f));
+				volume = info.volume;
 				Mix_Pause(channel);
+				if (!info.pausa)
+				{
+					Mix_Resume(channel);
+				}
 			}
-			else
-			{
-				Mix_Resume(channel);
-			}
-			Mix_SetPanning(channel, 255, 255);
-			// Mix_SetDistance(channel,info.min_distance);
 		}
 		tf = esse_objeto->pegar_componente<transform_>();
 	}
 
 	audio_info pegar_info()
 	{
-		return info;
+		audio_info ret = info;
+		if (channel != -1)
+		{
+			ret.tempo = Mix_GetChunk(channel)->alen;
+			ret.volume = volume;
+			ret.loop = Mix_Playing(channel) ? true : false;
+		}
+		return ret;
 	}
 
-	int iniciado = 0;
 	void iniciar()
 	{
 		// aplicar_info();
 	}
 
-	void atualisar()
-	{
-		// cout << pegar_info().volume << endl;
+	void atualisar() {
+    if (channel != -1 && listener_transform != nullptr && tf != nullptr) {
+        glm::vec3 lpos = listener_transform->pegar_pos_global();
+        glm::vec3 gpos = tf->pegar_pos_global();
 
-		tf = esse_objeto->pegar_componente<transform_>();
+        // Calcular vetor da posição do ouvinte para a posição da fonte sonora
+        glm::vec3 direction = gpos - lpos;
 
-		if (listener_transform != NULL && tf != NULL)
-		{
-			vec3 pos_lisener = listener_transform->pegar_pos_global();
-			vec3 listenerDirection = listener_transform->pegar_direcao_local(vec3(0, 0, -1));
-			vec3 pos_audio = tf->pegar_pos_global();
-			float distance = glm::distance(pos_lisener, pos_audio) / 2;
+        // Calcular ângulo em relação ao ouvinte
+        float angle = glm::degrees(atan2(direction.x, direction.z));
+        if (angle < 0) {
+            angle += 360.0f;
+        }
 
-			// Defina variáveis globais ou membros da classe para armazenar o estado anterior de panning
+        // Ajustar o ângulo com base na rotação y do transform
+        float rotation_y = listener_transform->pegar_graus_global().y;
+		print(rotation_y);
+        angle = fmod(angle + rotation_y, 360.0f); // Use '+' para ajustar com a rotação do transform
+        if (angle < 0) {
+            angle += 360.0f;
+        }
 
-			auto SetPanning = [&]()
-			{
-				vec2 listenerDirection_2d = glm::normalize(vec2(listenerDirection.x, listenerDirection.z));
-				glm::vec2 audioDirNormalized = glm::normalize(vec2(pos_audio.x, pos_audio.z) - vec2(pos_lisener.x, pos_lisener.z));
+        // Calcular distância
+        float distance = glm::length(direction);
+        if (distance < 1.0f) {
+            distance = 0;
+        }
 
-				if (glm::distance(listenerDirection_2d, audioDirNormalized) > 0.1)
-				{
-					float angle_listener = atan2(listenerDirection_2d.y, listenerDirection_2d.x);
-					float angle_audio = atan2(audioDirNormalized.y - listenerDirection_2d.y, audioDirNormalized.x - listenerDirection_2d.x);
-					float angle_listener_deg = angle_listener * (180.0 / 3.14159265358979323846);
-					float angle_audio_deg = angle_audio * (180.0 / 3.14159265358979323846);
+        // Normalizar a distância para o intervalo de 0 a 255
+        Uint8 sdl_distance = static_cast<Uint8>(glm::clamp(distance / 10.0f * 255.0f, 0.0f, 255.0f)); // Ajustar a escala de distância conforme necessário
 
-					Uint8 targetLeft, targetRight;
-					calcula_panning(angle_listener_deg, angle_audio_deg, targetLeft, targetRight);
+        if (distance == 0) {
+            Mix_SetPosition(channel, 0, 0);
+        } else if (Mix_SetPosition(channel, static_cast<Sint16>(angle), sdl_distance) == 0) {
+            printf("Mix_SetPosition: %s\n", Mix_GetError());
+        }
+    } else if (channel != -1) {
+        // Posição padrão se nenhuma transformação estiver disponível
+        if (Mix_SetPosition(channel, 0, 0) == 0) {
+            printf("Mix_SetPosition: %s\n", Mix_GetError());
+        }
+    }
+}
 
-					// Ajuste gradual dos valores de panning
-					const float smoothingFactor = 0.2; // Ajuste conforme necessário
-
-					Uint8 smoothedLeft = static_cast<Uint8>(previousLeft + smoothingFactor * (targetLeft - previousLeft));
-					Uint8 smoothedRight = static_cast<Uint8>(previousRight + smoothingFactor * (targetRight - previousRight));
-
-					Mix_SetPanning(channel, std::min(smoothedRight + (smoothedLeft / 4), 255), std::min(smoothedLeft + (smoothedRight / 4), 255));
-
-					// Atualize os valores anteriores
-					previousLeft = smoothedLeft;
-					previousRight = smoothedRight;
-				}
-				else
-				{
-					Mix_SetPanning(channel, 255, 255);
-
-					// Redefina os valores anteriores quando não há mudança significativa
-					previousLeft = 255;
-					previousRight = 255;
-				}
-			};
-
-			if (distance > info.min_distance && distance < info.atenuation + info.min_distance)
-			{
-				float attenuationFactor = 1.0f - ((distance - info.min_distance) / info.atenuation);
-				attenuationFactor = std::max(0.0f, std::min(1.0f, attenuationFactor));
-				Mix_Volume(channel, static_cast<int>(attenuationFactor * (info.volume / 100) * MIX_MAX_VOLUME));
-
-				SetPanning();
-			}
-			else if (distance < info.min_distance)
-			{
-				Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
-
-				SetPanning();
-			}
-			else
-			{
-				Mix_Volume(channel, 0);
-			}
-		}
-		else
-		{
-			Mix_SetPanning(channel, 255, 255);
-			Mix_Volume(channel, static_cast<int>((info.volume / 100) * MIX_MAX_VOLUME));
-		}
-	}
-
-	audio_source() {}
-	audio_source(audio_info info)
-	{
-		this->info = info;
-	}
-
-	void finalisar()
-	{
-		Mix_HaltChannel(channel);
-	}
+	
+	// void finalisar() {
+	//     if (channel != -1) {
+	//         Mix_HaltChannel(channel);
+	//     }
+	// }
 };
 
 #else
@@ -257,7 +200,6 @@ mapeamento_assets<sf::SoundBuffer> buffers_som;
 
 std::set<std::string> sfml_audio_loading_requests_files = {};
 std::mutex buffers_som_mtx;
-
 
 shared_ptr<sf::SoundBuffer> carregar_audio_buffer(string local)
 {
@@ -360,9 +302,9 @@ public:
 			vec3 gpos = tf->pegar_pos_global();
 			som->setPosition(sf::Vector3f(gpos.x, gpos.y, gpos.z));
 		}
-		else if(som.get())
+		else if (som.get())
 		{
-			som->setPosition(sf::Vector3f(0,0,0));
+			som->setPosition(sf::Vector3f(0, 0, 0));
 		}
 	}
 
@@ -378,7 +320,7 @@ public:
 		if(som.get()){
 			som->stop();
 		}
-		
+
 	}
 	*/
 };

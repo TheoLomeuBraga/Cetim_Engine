@@ -74,7 +74,8 @@ void ShutdownImGui()
 #include "table_conversors.h"
 #include "compression.h"
 
-
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_mixer.h>
 
 #include "ecs/ecs.h"
 #include "ecs/ecs_components_systems/ecs_name.h"
@@ -93,19 +94,14 @@ void register_ecs_components()
     ecs_render_sprite::register_render_sprite_component();
 }
 
+
 void configuracaoInicial()
 {
-    /*
-    SDL_Init(SDL_INIT_AUDIO);
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-    {
-        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-    }
-    Mix_CloseAudio();
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Init(SDL_INIT_GAMECONTROLLER);
-    */
 
+    
+    
+    
+    Iniciar_Render_Func.push_back(start_sdl_audio);
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
     Iniciar_Render_Func.push_back(start_lua_global_data);
     Iniciar_Render_Func.push_back(terminar_iniciar_global_bullet);
@@ -164,6 +160,9 @@ int main(int argc, char **argv)
     comecar();
 
     print_benchmark_results();
+
+    Mix_CloseAudio();
+    SDL_Quit();
 
     return 0;
 }
