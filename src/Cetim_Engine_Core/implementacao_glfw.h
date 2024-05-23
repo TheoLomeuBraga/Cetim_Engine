@@ -84,6 +84,7 @@ public:
 			SDL_SetWindowIcon(window, toSDLSurface(janela));
 		}
 	}
+
 	void mudar_pos_cursor(float pos_x, float pos_y) {}
 
 	void mudar_res(float res_x, float res_y)
@@ -213,7 +214,7 @@ public:
 
 		iniciar();
 
-		while (running)
+		while (running && gerente_janela->fechar == false)
 		{
 			event_list.clear();
 
@@ -267,6 +268,7 @@ public:
 	vector<TOUCHES> touch_screen_input;
 	vr_headset_input vr_input;
 
+	bool backspace_last_frame = false;
 	string get_text_input()
 	{
 		if (!text_getted_this_frame)
@@ -281,6 +283,14 @@ public:
 			}
 			text_getted_this_frame = true;
 		}
+
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		if (!text_input.empty() && state[SDL_SCANCODE_BACKSPACE] == true && backspace_last_frame == false)
+		{
+			text_input.resize(text_input.size() - 1); // Reduz o tamanho da string em 1
+		}
+		backspace_last_frame = state[SDL_SCANCODE_BACKSPACE];
+
 		return text_input;
 	}
 	void set_text_input(bool on)
@@ -301,6 +311,12 @@ public:
 	{
 		mouse_input.movimentos["movement_x"] = 0;
 		mouse_input.movimentos["movement_y"] = 0;
+
+		float x, y;
+        Uint32 mouseButtons = SDL_GetMouseState(&x, &y);
+		mouse_input.botoes["left"] = mouseButtons & SDL_BUTTON(SDL_BUTTON_LEFT);
+		mouse_input.botoes["right"] = mouseButtons &  SDL_BUTTON(SDL_BUTTON_RIGHT);
+		mouse_input.botoes["scroll_button"] = mouseButtons &  SDL_BUTTON(SDL_BUTTON_MIDDLE);
 		for (SDL_Event e : event_list)
 		{
 			if (e.type == SDL_MOUSEWHEEL)
@@ -310,57 +326,98 @@ public:
 			else if (e.type == SDL_MOUSEMOTION)
 			{
 				int mouseX = e.motion.x;
-                int mouseY = e.motion.y;
-                int relX = e.motion.xrel;
-                int relY = e.motion.yrel;
+				int mouseY = e.motion.y;
+				int relX = e.motion.xrel;
+				int relY = e.motion.yrel;
 				mouse_input.movimentos["x"] = mouseX;
 				mouse_input.movimentos["y"] = mouseY;
 
 				int width, height;
 				SDL_GetWindowSize(window, &width, &height);
 				mouse_input.movimentos["movement_x"] = (float)relX / (float)width;
-				mouse_input.movimentos["movement_y"] = (float)relY  / (float)height;
-				
+				mouse_input.movimentos["movement_y"] = (float)relY / (float)height;
+
 				mouse_input.movimentos["normalized_x"] = (float)mouseX / (float)width;
 				mouse_input.movimentos["normalized_y"] = (float)mouseY / (float)height;
-			}
-			else if (e.type == SDL_MOUSEBUTTONDOWN)
-			{
-				if (e.button.button == SDL_BUTTON_LEFT)
-				{
-					mouse_input.botoes["left"] = 1;
-				}
-				else if (e.button.button == SDL_BUTTON_RIGHT)
-				{
-					mouse_input.botoes["right"] = 1;
-				}
-				else if (e.button.button == SDL_BUTTON_MIDDLE)
-				{
-					mouse_input.botoes["scroll_button"] = 1;
-				}
-			}
-			else if (SDL_MOUSEBUTTONUP)
-			{
-				if (e.button.button == SDL_BUTTON_LEFT)
-				{
-					mouse_input.botoes["left"] = 0;
-				}
-				else if (e.button.button == SDL_BUTTON_RIGHT)
-				{
-					mouse_input.botoes["right"] = 0;
-				}
-				else if (e.button.button == SDL_BUTTON_MIDDLE)
-				{
-					mouse_input.botoes["scroll_button"] = 0;
-				}
 			}
 		}
 
 		return mouse_input;
 	}
-	
-	teclado get_keyboard_input() { 
-		return teclado(); 
+
+	teclado get_keyboard_input()
+	{
+		// Verifica o estado das teclas
+
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+		string keys = "    abcdefghijklmnopqrstuvwxyz1234567890";
+
+		for (unsigned int i = 4; i < 39; i++)
+		{
+			string is;
+			is.push_back(keys.at(i));
+
+			const unsigned int scancode = SDL_SCANCODE_A + i;
+			if (state[i])
+			{
+				keyboard_input.teclas[is] = 1;
+			}
+			else
+			{
+				keyboard_input.teclas[is] = 0;
+			}
+		}
+		if (state[SDL_SCANCODE_ESCAPE])
+		{
+			keyboard_input.teclas["escape"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["escape"] = 0;
+		}
+		if (state[SDL_SCANCODE_TAB])
+		{
+			keyboard_input.teclas["tab"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["tab"] = 0;
+		}
+		if (state[SDL_SCANCODE_SPACE])
+		{
+			keyboard_input.teclas["space"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["space"] = 0;
+		}
+		if (state[SDL_SCANCODE_LSHIFT])
+		{
+			keyboard_input.teclas["shift"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["shift"] = 0;
+		}
+		if (state[SDL_SCANCODE_KP_ENTER])
+		{
+			keyboard_input.teclas["enter"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["enter"] = 0;
+		}
+		if (state[SDL_SCANCODE_DELETE])
+		{
+			keyboard_input.teclas["delete"] = 1;
+		}
+		else
+		{
+			keyboard_input.teclas["delete"] = 0;
+		}
+
+		return keyboard_input;
 	}
 
 	TOUCHES get_touch_screen() { return {}; }
