@@ -21,9 +21,6 @@ endif
 
 all:
 	cd ..
-	
-	
-	
 	$(compile_cmd)
 
 clean:

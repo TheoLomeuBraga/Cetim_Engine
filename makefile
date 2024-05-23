@@ -12,7 +12,7 @@ OPT ?= 0
 JIT ?= 0
 
 
-SRC_IMGUI = ./include/imgui/imgui.cpp ./include/imgui/backends/imgui_impl_glfw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_widgets.cpp
+SRC_IMGUI = #./include/imgui/imgui.cpp ./include/imgui/backends/imgui_impl_glfw.cpp ./include/imgui/backends/imgui_impl_opengl3.cpp ./include/imgui/imgui_draw.cpp ./include/imgui/imgui_tables.cpp ./include/imgui/imgui_widgets.cpp
 INCLUDE_DIRS = -I./include/SDL3 -I./include/recastnavegation -I./src/Font_Reader -I./src/Cetim_Engine -I./src/Cetim_Engine_Core -I./src/Cetim_Engine_Core/components -I./include -I./include/freetype -I./include/bullet3 -I./include/imgui -I./include/imgui/backends -I./include/nanosvg
 
 OS := $(shell uname -s)
@@ -31,7 +31,7 @@ ifeq ($(OS),Windows_NT)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer
+	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
@@ -55,7 +55,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd -lglfw3 -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer
+	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
@@ -78,7 +78,7 @@ ifeq ($(OS),Linux)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/linux -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd -lglfw -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath  -lSDL3 -lSDL3_mixer
+	LIBS_ENGINE = -L./libs/x86_64/linux -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath  -lSDL3 -lSDL3_mixer
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif

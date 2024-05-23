@@ -431,7 +431,7 @@ public:
 	void set_mouse_position(float x, float y) {}
 };
 
-#define GLFW
+//#define GLFW
 
 #ifdef GLFW
 #include <GLFW/glfw3.h>
