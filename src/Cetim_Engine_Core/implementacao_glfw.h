@@ -313,10 +313,10 @@ public:
 		mouse_input.movimentos["movement_y"] = 0;
 
 		float x, y;
-        Uint32 mouseButtons = SDL_GetMouseState(&x, &y);
+		Uint32 mouseButtons = SDL_GetMouseState(&x, &y);
 		mouse_input.botoes["left"] = mouseButtons & SDL_BUTTON(SDL_BUTTON_LEFT);
-		mouse_input.botoes["right"] = mouseButtons &  SDL_BUTTON(SDL_BUTTON_RIGHT);
-		mouse_input.botoes["scroll_button"] = mouseButtons &  SDL_BUTTON(SDL_BUTTON_MIDDLE);
+		mouse_input.botoes["right"] = mouseButtons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+		mouse_input.botoes["scroll_button"] = mouseButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 		for (SDL_Event e : event_list)
 		{
 			if (e.type == SDL_MOUSEWHEEL)
@@ -421,7 +421,58 @@ public:
 	}
 
 	TOUCHES get_touch_screen() { return {}; }
-	vector<joystick> get_joysticks_input() { return {}; }
+
+	void print_button(Uint8 button)
+	{
+		switch (button)
+		{
+		case SDL_GAMEPAD_BUTTON_LABEL_A:
+			std::cout << "Botão A pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_B:
+			std::cout << "Botão B pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_X:
+			std::cout << "Botão X pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_Y:
+			std::cout << "Botão Y pressionado\n";
+			break;
+		default:
+			std::cout << "Botão desconhecido pressionado\n";
+			break;
+		}
+	}
+
+	SDL_Gamepad* gamepad = nullptr;
+
+	vector<joystick> get_joysticks_input()
+	{
+
+		for (SDL_Event event : event_list)
+		{
+			if (event.type == SDL_EVENT_GAMEPAD_ADDED)
+			{
+				gamepad = SDL_OpenGamepad(event.cdevice.which);
+				if (gamepad)
+				{
+					std::cout << "Gamepad conectado: " << SDL_GetGamepadName(gamepad) << std::endl;
+				}
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
+			{
+				print_button(event.gbutton.button);
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
+			{
+				SDL_CloseGamepad(gamepad);
+				gamepad = nullptr;
+				std::cout << "Gamepad desconectado\n";
+			}
+		}
+
+		return {};
+	}
 
 	vr_headset_input get_vr_headset_input()
 	{
@@ -431,7 +482,7 @@ public:
 	void set_mouse_position(float x, float y) {}
 };
 
-//#define GLFW
+// #define GLFW
 
 #ifdef GLFW
 #include <GLFW/glfw3.h>
