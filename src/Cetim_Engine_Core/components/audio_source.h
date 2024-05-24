@@ -36,6 +36,8 @@ void start_sdl()
 		return;
 	}
 
+	
+
 	//spec.freq = 44100;
 	//spec.format = SDL_AUDIO_S16LE;
 	spec.freq = 16000;

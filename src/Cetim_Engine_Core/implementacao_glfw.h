@@ -424,6 +424,7 @@ public:
 
 	void print_button(Uint8 button)
 	{
+		/*
 		switch (button)
 		{
 		case SDL_GAMEPAD_BUTTON_LABEL_A:
@@ -437,6 +438,23 @@ public:
 			break;
 		case SDL_GAMEPAD_BUTTON_LABEL_Y:
 			std::cout << "Botão Y pressionado\n";
+			break;
+		}
+		*/
+
+		switch (button)
+		{
+		case SDL_GAMEPAD_BUTTON_LABEL_CROSS:
+			std::cout << "Botão CROSS pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_CIRCLE:
+			std::cout << "Botão CIRCLE pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_SQUARE:
+			std::cout << "Botão SQUARE pressionado\n";
+			break;
+		case SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE:
+			std::cout << "Botão TRIANGLE pressionado\n";
 			break;
 		}
 	}
