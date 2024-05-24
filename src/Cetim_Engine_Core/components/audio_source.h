@@ -36,10 +36,8 @@ void start_sdl()
 		return;
 	}
 
-	
-
-	//spec.freq = 44100;
-	//spec.format = SDL_AUDIO_S16LE;
+	// spec.freq = 44100;
+	// spec.format = SDL_AUDIO_S16LE;
 	spec.freq = 16000;
 	spec.format = SDL_AUDIO_S8;
 	spec.channels = 1;
@@ -221,11 +219,13 @@ public:
 		}
 	}
 
-	// void finalisar() {
-	//     if (channel != -1) {
-	//         Mix_HaltChannel(channel);
-	//     }
-	// }
+	void finalisar()
+	{
+		if (channel != -1)
+		{
+			Mix_HaltChannel(channel);
+		}
+	}
 };
 
 #else
