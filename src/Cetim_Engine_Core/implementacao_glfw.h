@@ -438,13 +438,27 @@ public:
 		case SDL_GAMEPAD_BUTTON_LABEL_Y:
 			std::cout << "Botão Y pressionado\n";
 			break;
-		default:
-			std::cout << "Botão desconhecido pressionado\n";
-			break;
 		}
 	}
 
-	SDL_Gamepad* gamepad = nullptr;
+	void print_axis(Uint8 axis, Sint16 power)
+	{
+		float fpower = (float)power / 32767.0;
+		if (fpower > 0.2 || fpower < -0.2)
+		{
+			switch (axis)
+			{
+			case SDL_GAMEPAD_AXIS_LEFTX:
+				print("SDL_GAMEPAD_AXIS_LEFTX", fpower);
+				break;
+			case SDL_GAMEPAD_AXIS_LEFTY:
+				print("SDL_GAMEPAD_AXIS_LEFTY", fpower);
+				break;
+			}
+		}
+	}
+
+	SDL_Gamepad *gamepad = nullptr;
 
 	vector<joystick> get_joysticks_input()
 	{
@@ -462,6 +476,10 @@ public:
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
 				print_button(event.gbutton.button);
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
+			{
+				print_axis(event.gaxis.axis, event.gaxis.value);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{
