@@ -993,7 +993,7 @@ namespace funcoes_ponte
 		int joystick_no = lua_tonumber(L, 2);
 		string key = lua_tostring(L, 3);
 
-		manuseio_inputs->get_touch_screen();
+		//manuseio_inputs->get_touch_screen();
 
 		if (manuseio_inputs != NULL)
 		{

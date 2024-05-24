@@ -444,7 +444,7 @@ public:
 		}
 	}
 
-	void print_axis(Uint8 axis, Sint16 power)
+	void print_axis(SDL_Gamepad *gamepad,Uint8 axis, Sint16 power)
 	{
 		float fpower = (float)power / 32767.0;
 		if (fpower > 0.2 || fpower < -0.2)
@@ -460,9 +460,11 @@ public:
 			
 			case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 				print("SDL_GAMEPAD_AXIS_RIGHT_TRIGGER", fpower);
+				SDL_RumbleGamepad(gamepad,0,65535,500);
 				break;
 			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
+				SDL_RumbleGamepad(gamepad,65535,0,500);
 				break;
 			}
 		}
@@ -491,12 +493,7 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					print_axis(event.gaxis.axis, event.gaxis.value);
-					wait_next_print = 0;
-				}
+				print_axis(gamepad,event.gaxis.axis, event.gaxis.value);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
 			{
@@ -528,8 +525,12 @@ public:
 		return {};
 	}
 
-	void set_led(unsigned char r,unsigned char g,unsigned char b){
+	void set_led(unsigned char no,unsigned char r,unsigned char g,unsigned char b){
 		SDL_SetGamepadLED(gamepad, r,g,b);
+	}
+
+	void set_vibration(unsigned char no,float power_l,float power_r,float time){
+		SDL_RumbleGamepad(gamepad,power_l / 65535,power_r / 65535,time / 1000);
 	}
 
 	TOUCHES get_touch_screen()

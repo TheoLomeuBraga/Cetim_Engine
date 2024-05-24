@@ -33,7 +33,8 @@ public:
 		vector<joystick> vj;
 		return vj;
 	}
-	virtual void set_led(unsigned char r,unsigned char g,unsigned char b){}
+	virtual void set_led(unsigned char no,unsigned char r,unsigned char g,unsigned char b){}
+	virtual void set_vibration(unsigned char no,float power_l,float power_r,float time){}
 	virtual vr_headset_input get_vr_headset_input(){
 		return vr_input;
 	}
