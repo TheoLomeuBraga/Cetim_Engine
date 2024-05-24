@@ -112,9 +112,13 @@ public:
 
 	void aplicar_info()
 	{
+
+		Mix_HaltChannel(channel);
+		
 		buffer = carregar_audio_buffer(info.nome);
 		if (buffer != nullptr)
 		{
+			
 			channel = Mix_PlayChannel(-1, buffer.get(), info.loop ? -1 : 0);
 			if (channel != -1)
 			{
