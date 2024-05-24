@@ -476,8 +476,8 @@ public:
 		}
 	}
 
+	unsigned int wait_next_print;
 	SDL_Gamepad *gamepad = nullptr;
-
 	vector<joystick> get_joysticks_input()
 	{
 
@@ -490,6 +490,7 @@ public:
 				{
 					std::cout << "Gamepad conectado: " << SDL_GetGamepadName(gamepad) << std::endl;
 				}
+				SDL_SetGamepadSensorEnabled(gamepad, SDL_SENSOR_GYRO, SDL_TRUE);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
@@ -497,7 +498,31 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
-				print_axis(event.gaxis.axis, event.gaxis.value);
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					print_axis(event.gaxis.axis, event.gaxis.value);
+					wait_next_print = 0;
+				}
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
+			{
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					float *data = event.gsensor.data;
+					print("gyroscope: ",data[0], data[1], data[2]);
+					wait_next_print = 0;
+				}
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION)
+			{
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					print("touchpad: ",event.gtouchpad.x, event.gtouchpad.y);
+					wait_next_print = 0;
+				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{
