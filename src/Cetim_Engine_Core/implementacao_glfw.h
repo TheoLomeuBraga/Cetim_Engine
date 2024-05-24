@@ -444,17 +444,17 @@ public:
 
 		switch (button)
 		{
-		case SDL_GAMEPAD_BUTTON_LABEL_CROSS:
-			std::cout << "Botão CROSS pressionado\n";
+		case SDL_GAMEPAD_BUTTON_SOUTH:
+			std::cout << "Botão SOUTH pressionado\n";
 			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_CIRCLE:
-			std::cout << "Botão CIRCLE pressionado\n";
+		case SDL_GAMEPAD_BUTTON_WEST:
+			std::cout << "Botão WEST pressionado\n";
 			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_SQUARE:
-			std::cout << "Botão SQUARE pressionado\n";
+		case SDL_GAMEPAD_BUTTON_NORTH:
+			std::cout << "Botão NORTH pressionado\n";
 			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE:
-			std::cout << "Botão TRIANGLE pressionado\n";
+		case SDL_GAMEPAD_BUTTON_EAST:
+			std::cout << "Botão EAST pressionado\n";
 			break;
 		}
 	}
