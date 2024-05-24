@@ -420,46 +420,31 @@ public:
 		return keyboard_input;
 	}
 
-	TOUCHES get_touch_screen() { return {}; }
-
-	void print_button(Uint8 button)
+	void print_button(SDL_Gamepad *gamepad,Uint8 button)
 	{
-		/*
-		switch (button)
-		{
-		case SDL_GAMEPAD_BUTTON_LABEL_A:
-			std::cout << "Botão A pressionado\n";
-			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_B:
-			std::cout << "Botão B pressionado\n";
-			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_X:
-			std::cout << "Botão X pressionado\n";
-			break;
-		case SDL_GAMEPAD_BUTTON_LABEL_Y:
-			std::cout << "Botão Y pressionado\n";
-			break;
-		}
-		*/
 
 		switch (button)
 		{
 		case SDL_GAMEPAD_BUTTON_SOUTH:
+			SDL_SetGamepadLED(gamepad, 255,0,0);
 			std::cout << "Botão SOUTH pressionado\n";
 			break;
 		case SDL_GAMEPAD_BUTTON_WEST:
 			std::cout << "Botão WEST pressionado\n";
+			SDL_SetGamepadLED(gamepad, 0,0,255);
 			break;
 		case SDL_GAMEPAD_BUTTON_NORTH:
 			std::cout << "Botão NORTH pressionado\n";
+			SDL_SetGamepadLED(gamepad, 0,255,0);
 			break;
 		case SDL_GAMEPAD_BUTTON_EAST:
 			std::cout << "Botão EAST pressionado\n";
+			SDL_SetGamepadLED(gamepad, 255,255,255);
 			break;
 		}
 	}
 
-	void print_axis(Uint8 axis, Sint16 power)
+	void print_axis(SDL_Gamepad *gamepad,Uint8 axis, Sint16 power)
 	{
 		float fpower = (float)power / 32767.0;
 		if (fpower > 0.2 || fpower < -0.2)
@@ -471,6 +456,13 @@ public:
 				break;
 			case SDL_GAMEPAD_AXIS_LEFTY:
 				print("SDL_GAMEPAD_AXIS_LEFTY", fpower);
+				break;
+			}
+			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
+				break;
+			case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
+				print("SDL_GAMEPAD_AXIS_RIGHT_TRIGGER", fpower);
 				break;
 			}
 		}
@@ -494,14 +486,15 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
-				print_button(event.gbutton.button);
+				print_button(gamepad,event.gbutton.button);
+				
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
 				wait_next_print++;
 				if (wait_next_print >= 30)
 				{
-					print_axis(event.gaxis.axis, event.gaxis.value);
+					print_axis(gamepad,event.gaxis.axis, event.gaxis.value);
 					wait_next_print = 0;
 				}
 			}
@@ -511,7 +504,7 @@ public:
 				if (wait_next_print >= 30)
 				{
 					float *data = event.gsensor.data;
-					print("gyroscope: ",data[0], data[1], data[2]);
+					print("gyroscope: ", data[0], data[1], data[2]);
 					wait_next_print = 0;
 				}
 			}
@@ -520,7 +513,7 @@ public:
 				wait_next_print++;
 				if (wait_next_print >= 30)
 				{
-					print("touchpad: ",event.gtouchpad.x, event.gtouchpad.y);
+					print("touchpad: ", event.gtouchpad.x, event.gtouchpad.y);
 					wait_next_print = 0;
 				}
 			}
@@ -532,6 +525,40 @@ public:
 			}
 		}
 
+		return {};
+	}
+
+	TOUCHES get_touch_screen()
+	{
+		for (SDL_Event event : event_list)
+		{
+			if (event.type == SDL_EVENT_FINGER_DOWN)
+			{
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					print("toque");
+					wait_next_print = 0;
+				}
+			}
+			if (event.type == SDL_EVENT_FINGER_UP)
+			{
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					print("tfinger",event.tfinger.x,event.tfinger.y);
+					wait_next_print = 0;
+				}
+			}
+			if (event.type == SDL_EVENT_FINGER_MOTION)
+			{
+				wait_next_print++;
+				if (wait_next_print >= 30)
+				{
+					wait_next_print = 0;
+				}
+			}
+		}
 		return {};
 	}
 
