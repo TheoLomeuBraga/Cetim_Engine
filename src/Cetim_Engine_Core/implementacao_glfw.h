@@ -444,7 +444,7 @@ public:
 		}
 	}
 
-	void print_axis(SDL_Gamepad *gamepad,Uint8 axis, Sint16 power)
+	void print_axis(Uint8 axis, Sint16 power)
 	{
 		float fpower = (float)power / 32767.0;
 		if (fpower > 0.2 || fpower < -0.2)
@@ -457,12 +457,12 @@ public:
 			case SDL_GAMEPAD_AXIS_LEFTY:
 				print("SDL_GAMEPAD_AXIS_LEFTY", fpower);
 				break;
-			}
-			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
-				break;
+			
 			case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 				print("SDL_GAMEPAD_AXIS_RIGHT_TRIGGER", fpower);
+				break;
+			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
 				break;
 			}
 		}
@@ -494,7 +494,7 @@ public:
 				wait_next_print++;
 				if (wait_next_print >= 30)
 				{
-					print_axis(gamepad,event.gaxis.axis, event.gaxis.value);
+					print_axis(event.gaxis.axis, event.gaxis.value);
 					wait_next_print = 0;
 				}
 			}
@@ -526,6 +526,10 @@ public:
 		}
 
 		return {};
+	}
+
+	void set_led(unsigned char r,unsigned char g,unsigned char b){
+		SDL_SetGamepadLED(gamepad, r,g,b);
 	}
 
 	TOUCHES get_touch_screen()

@@ -27,11 +27,13 @@ public:
 	virtual teclado get_keyboard_input() { return teclado(); }
 	virtual input_mouse get_mouse_input() { return input_mouse(); }
 	virtual TOUCHES get_touch_screen() { return {}; }
+	
 	virtual vector<joystick> get_joysticks_input()
 	{
 		vector<joystick> vj;
 		return vj;
 	}
+	virtual void set_led(unsigned char r,unsigned char g,unsigned char b){}
 	virtual vr_headset_input get_vr_headset_input(){
 		return vr_input;
 	}
