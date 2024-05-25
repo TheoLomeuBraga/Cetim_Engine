@@ -420,31 +420,31 @@ public:
 		return keyboard_input;
 	}
 
-	void print_button(SDL_Gamepad *gamepad,Uint8 button)
+	void print_button(SDL_Gamepad *gamepad, Uint8 button)
 	{
 
 		switch (button)
 		{
 		case SDL_GAMEPAD_BUTTON_SOUTH:
-			SDL_SetGamepadLED(gamepad, 255,0,0);
+			SDL_SetGamepadLED(gamepad, 255, 0, 0);
 			std::cout << "Botão SOUTH pressionado\n";
 			break;
 		case SDL_GAMEPAD_BUTTON_WEST:
 			std::cout << "Botão WEST pressionado\n";
-			SDL_SetGamepadLED(gamepad, 0,0,255);
+			SDL_SetGamepadLED(gamepad, 0, 0, 255);
 			break;
 		case SDL_GAMEPAD_BUTTON_NORTH:
 			std::cout << "Botão NORTH pressionado\n";
-			SDL_SetGamepadLED(gamepad, 0,255,0);
+			SDL_SetGamepadLED(gamepad, 0, 255, 0);
 			break;
 		case SDL_GAMEPAD_BUTTON_EAST:
 			std::cout << "Botão EAST pressionado\n";
-			SDL_SetGamepadLED(gamepad, 255,255,255);
+			SDL_SetGamepadLED(gamepad, 255, 255, 255);
 			break;
 		}
 	}
 
-	void print_axis(SDL_Gamepad *gamepad,Uint8 axis, Sint16 power)
+	void print_axis(SDL_Gamepad *gamepad, Uint8 axis, Sint16 power)
 	{
 		float fpower = (float)power / 32767.0;
 		if (fpower > 0.2 || fpower < -0.2)
@@ -457,21 +457,33 @@ public:
 			case SDL_GAMEPAD_AXIS_LEFTY:
 				print("SDL_GAMEPAD_AXIS_LEFTY", fpower);
 				break;
-			
+
 			case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 				print("SDL_GAMEPAD_AXIS_RIGHT_TRIGGER", fpower);
-				SDL_RumbleGamepad(gamepad,0,65535,500);
+				SDL_RumbleGamepad(gamepad, 0, 65535, 500);
 				break;
 			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
-				SDL_RumbleGamepad(gamepad,65535,0,500);
+				SDL_RumbleGamepad(gamepad, 65535, 0, 500);
 				break;
 			}
 		}
 	}
 
 	unsigned int wait_next_print;
-	SDL_Gamepad *gamepad = nullptr;
+
+	map<SDL_CameraDeviceID, SDL_Gamepad *> sdl_gamepads;
+	unsigned char get_gamepad_no(SDL_Gamepad * gp){
+		unsigned char i = 0;
+		for(pair<SDL_CameraDeviceID, SDL_Gamepad *> p : sdl_gamepads){
+			if(gp == p.second){
+				return i;
+			}
+			i++;
+		}
+		return 0;
+	}
+
 	vector<joystick> get_joysticks_input()
 	{
 
@@ -479,21 +491,21 @@ public:
 		{
 			if (event.type == SDL_EVENT_GAMEPAD_ADDED)
 			{
-				gamepad = SDL_OpenGamepad(event.cdevice.which);
-				if (gamepad)
+
+				sdl_gamepads[event.cdevice.which] = SDL_OpenGamepad(event.cdevice.which);
+				if (sdl_gamepads[event.cdevice.which])
 				{
-					std::cout << "Gamepad conectado: " << SDL_GetGamepadName(gamepad) << std::endl;
+					std::cout << "Gamepad conectado: " << SDL_GetGamepadName(sdl_gamepads[event.cdevice.which]) << std::endl;
 				}
-				SDL_SetGamepadSensorEnabled(gamepad, SDL_SENSOR_GYRO, SDL_TRUE);
+				SDL_SetGamepadSensorEnabled(sdl_gamepads[event.cdevice.which], SDL_SENSOR_GYRO, SDL_TRUE);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
-				print_button(gamepad,event.gbutton.button);
-				
+				print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
-				print_axis(gamepad,event.gaxis.axis, event.gaxis.value);
+				print_axis(sdl_gamepads[event.cdevice.which], event.gaxis.axis, event.gaxis.value);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
 			{
@@ -516,8 +528,9 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{
-				SDL_CloseGamepad(gamepad);
-				gamepad = nullptr;
+				SDL_Gamepad * gp = sdl_gamepads[event.cdevice.which];
+				SDL_CloseGamepad(gp);
+				sdl_gamepads.erase(event.cdevice.which);
 				std::cout << "Gamepad desconectado\n";
 			}
 		}
@@ -525,12 +538,24 @@ public:
 		return {};
 	}
 
-	void set_led(unsigned char no,unsigned char r,unsigned char g,unsigned char b){
-		SDL_SetGamepadLED(gamepad, r,g,b);
+	void set_led(unsigned char no, unsigned char r, unsigned char g, unsigned char b)
+	{
+		if (no < sdl_gamepads.size())
+		{
+			auto it = sdl_gamepads.begin();
+			std::advance(it,no);
+			SDL_SetGamepadLED(it->second, r, g, b);
+		}
 	}
 
-	void set_vibration(unsigned char no,float power_l,float power_r,float time){
-		SDL_RumbleGamepad(gamepad,power_l / 65535,power_r / 65535,time / 1000);
+	void set_vibration(unsigned char no, float power_l, float power_r, float time)
+	{
+		if (no < sdl_gamepads.size())
+		{
+			auto it = sdl_gamepads.begin();
+			std::advance(it,no);
+			SDL_RumbleGamepad(it->second, power_l / 65535, power_r / 65535, time / 1000);
+		}
 	}
 
 	TOUCHES get_touch_screen()
@@ -551,7 +576,7 @@ public:
 				wait_next_print++;
 				if (wait_next_print >= 30)
 				{
-					print("tfinger",event.tfinger.x,event.tfinger.y);
+					print("tfinger", event.tfinger.x, event.tfinger.y);
 					wait_next_print = 0;
 				}
 			}
@@ -574,4 +599,3 @@ public:
 
 	void set_mouse_position(float x, float y) {}
 };
-
