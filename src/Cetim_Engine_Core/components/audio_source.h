@@ -40,9 +40,9 @@ void start_sdl()
 	// spec.format = SDL_AUDIO_S16LE;
 	spec.freq = 16000;
 	spec.format = SDL_AUDIO_S8;
-	spec.channels = 1;
+	spec.channels = 2;
 	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
-	Mix_AllocateChannels(255);
+	Mix_AllocateChannels(8);
 }
 
 mapeamento_assets<Mix_Chunk> buffers_som;
@@ -112,8 +112,8 @@ public:
 
 	void aplicar_info()
 	{
-
-		Mix_HaltChannel(channel);
+		if(channel != -1){Mix_HaltChannel(channel);}
+		
 		
 		buffer = carregar_audio_buffer(info.nome);
 		if (buffer != nullptr)
