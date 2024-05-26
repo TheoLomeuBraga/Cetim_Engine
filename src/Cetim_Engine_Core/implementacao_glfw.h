@@ -439,7 +439,7 @@ public:
 			break;
 		case SDL_GAMEPAD_BUTTON_EAST:
 			std::cout << "Botão EAST pressionado\n";
-			SDL_SetGamepadLED(gamepad, 255, 255, 255);
+			SDL_SetGamepadLED(gamepad, 255, 255, 0);
 			break;
 		}
 	}
@@ -519,12 +519,11 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION)
 			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					print("touchpad: ", event.gtouchpad.x, event.gtouchpad.y);
-					wait_next_print = 0;
-				}
+				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], event.gtouchpad.x * 255, event.gtouchpad.y * 255, 0);
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_UP)
+			{
+				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], 0,0,0);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{
