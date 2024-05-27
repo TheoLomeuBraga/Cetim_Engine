@@ -8,8 +8,7 @@ require("components.audio_source")
 require("function_sets.simple_ui")
 require("components.component_index")
 require("objects.game_object")
-
-
+require("game_scripts.resources.playable_scene")
 require("short_cuts.create_render_shader")
 
 this_object = {}
@@ -59,6 +58,22 @@ local health_style = {}
 local power_transform = {}
 local power_style = {}
 
+
+avatar_3D_data = {}
+base_avatar = {}
+avatar_3D = {}
+
+function create_avatar()
+    avatar_3D_data = get_scene_3D("3D Models/charters/female_charter.glb")
+    base_avatar = game_object(create_object(global_data.camera_ptr))
+    
+    base_avatar.components.transform:get()
+    base_avatar.components.transform.position = {x=0,y=0,z=10}
+    base_avatar.components.transform:set()
+
+    avatar_3D = cenary_builders.entity(base_avatar.object_ptr,4,avatar_3D_data,false,false)
+end
+
 function START()
     this_object = game_object(this_object_ptr)
 
@@ -83,6 +98,10 @@ function START()
     power_style = simple_ui_style({r=1,g=1,b=0.25,a=1})
     power_style.shader = "ui_element_heath_bar"
     power_style.image = "Textures/ui/hud_life_energy.svg"
+
+    create_avatar()
+
+    
 end
 
 function UPDATE()

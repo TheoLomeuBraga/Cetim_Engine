@@ -64,6 +64,7 @@ function START()
 
     camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
     camera_ptr = camera.object_ptr
+    global_data.camera_ptr = camera_ptr
     set_lisener_object(camera.object_ptr)
 
     layers = global_data.layers

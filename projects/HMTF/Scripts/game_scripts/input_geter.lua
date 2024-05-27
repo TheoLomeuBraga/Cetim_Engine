@@ -111,8 +111,6 @@ function UPDATE()
         main_input_method = "joystick"
     end
 
-    print(get_main_input_device())
-
     inputs.main_input_method = main_input_method
     
 
