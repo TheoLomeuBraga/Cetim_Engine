@@ -985,6 +985,22 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int set_joystick_vibration(lua_State *L){
+		if (manuseio_inputs != NULL)
+		{
+			manuseio_inputs->set_vibration(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+		}
+		return 0;
+	}
+
+	int set_joystick_led(lua_State *L){
+		if (manuseio_inputs != NULL)
+		{
+			manuseio_inputs->set_led(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+		}
+		return 0;
+	}
+
 	int get_input(lua_State *L)
 	{
 		float ret = 0;
@@ -2744,6 +2760,9 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("set_keyboard_text_input", funcoes_ponte::set_keyboard_text_input),
 															 pair<string, lua_function>("get_keyboard_text_input", funcoes_ponte::get_keyboard_text_input),
 															 pair<string, lua_function>("get_input", funcoes_ponte::get_input),
+															 pair<string, lua_function>("set_joystick_vibration", funcoes_ponte::set_joystick_vibration),
+															 pair<string, lua_function>("set_joystick_led", funcoes_ponte::set_joystick_led),
+															 
 														 }),
 		pair<string, map<string, lua_function>>("time", {
 															pair<string, lua_function>("get_time", funcoes_ponte::get_time),

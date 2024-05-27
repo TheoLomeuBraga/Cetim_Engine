@@ -147,6 +147,14 @@ function keys_axis:get_input_joystick(joystick_no, key)
     return get_input(input_devices.joystick, joystick_no, key)
 end
 
+function set_joystick_vibration(joystick_no,left,right,time)
+    c_set_joystick_vibration(joystick_no,left,right,time)
+end
+
+function set_joystick_led(joystick_no,r,g,b)
+    c_set_joystick_led(joystick_no,r,g,b)
+end
+
 function  enable_cursor(on)
     c_enable_cursor(on)
 end

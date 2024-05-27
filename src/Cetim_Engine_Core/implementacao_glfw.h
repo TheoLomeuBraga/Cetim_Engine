@@ -537,13 +537,13 @@ public:
 		return {};
 	}
 
-	void set_led(unsigned char no, unsigned char r, unsigned char g, unsigned char b)
+	void set_led(unsigned char no, float r, float g, float b)
 	{
 		if (no < sdl_gamepads.size())
 		{
 			auto it = sdl_gamepads.begin();
 			std::advance(it,no);
-			SDL_SetGamepadLED(it->second, r, g, b);
+			SDL_SetGamepadLED(it->second, (unsigned char)(r / 255), (unsigned char)(g / 255), (unsigned char)(b / 255));
 		}
 	}
 
