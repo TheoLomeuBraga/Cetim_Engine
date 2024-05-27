@@ -90,14 +90,9 @@ public:
 	unordered_map<string, int> teclas;
 };
 
-class joystick
-{
-public:
-	joystick() {}
-	// unordered_map<string, int> botoes;
-	// unordered_map<string, float> eixos;
-	unordered_map<string, float> inputs;
-};
+
+
+typedef unordered_map<string, float> joystick;
 
 class vr_headset_hand_input
 {

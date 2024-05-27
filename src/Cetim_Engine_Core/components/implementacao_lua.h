@@ -1035,9 +1035,9 @@ namespace funcoes_ponte
 
 					joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
 
-					if (j.inputs.find(key) != j.inputs.end())
+					if (j.find(key) != j.end())
 					{
-						ret = j.inputs[key];
+						ret = j[key];
 					}
 				}
 			}
