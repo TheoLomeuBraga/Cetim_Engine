@@ -112,8 +112,9 @@ input_keys = {
         touch_button = "touch_button",
         touch_x = "touch_x",
         touch_y = "touch_y",
-        movement_x = "movement_x",
-        movement_y = "movement_y",
+        rotation_x = "rotation_x",
+        rotation_y = "rotation_y",
+        rotation_z = "rotation_z",
     }
 
 }
@@ -157,7 +158,7 @@ function get_mouse_input(key)
     return c_get_input(3, 0, key)
 end
 
-function get_input_joystick(joystick_no, key)
+function get_joystick_input(joystick_no, key)
     return c_get_input(input_devices.joystick, joystick_no, key)
 end
 
@@ -172,3 +173,11 @@ end
 function  enable_cursor(on)
     c_enable_cursor(on)
 end
+
+-- 0 = keyboard
+-- 1 = joystick
+function  get_main_input_device()
+    return c_get_main_input_device()
+end
+
+

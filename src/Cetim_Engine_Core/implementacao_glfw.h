@@ -361,6 +361,7 @@ public:
 			const unsigned int scancode = SDL_SCANCODE_A + i;
 			if (state[i])
 			{
+				main_controller_device = 0;
 				keyboard_input.teclas[is] = 1;
 			}
 			else
@@ -370,6 +371,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_ESCAPE])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["escape"] = 1;
 		}
 		else
@@ -378,6 +380,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_TAB])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["tab"] = 1;
 		}
 		else
@@ -386,6 +389,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_SPACE])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["space"] = 1;
 		}
 		else
@@ -394,6 +398,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_LSHIFT])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["shift"] = 1;
 		}
 		else
@@ -402,6 +407,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_KP_ENTER])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["enter"] = 1;
 		}
 		else
@@ -410,6 +416,7 @@ public:
 		}
 		if (state[SDL_SCANCODE_DELETE])
 		{
+			main_controller_device = 0;
 			keyboard_input.teclas["delete"] = 1;
 		}
 		else
@@ -505,7 +512,7 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
-				//print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
+				main_controller_device = 1;
 				switch (event.gbutton.button)
 				{
 				case SDL_GAMEPAD_BUTTON_SOUTH:
@@ -549,6 +556,9 @@ public:
 					break;
 				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
 					sdl_gamepads_joysticks[event.cdevice.which]["rb"] = 1;
+					break;
+				case SDL_GAMEPAD_BUTTON_TOUCHPAD:
+					sdl_gamepads_joysticks[event.cdevice.which]["touch_button"] = 1;
 					break;
 				}
 			}
@@ -598,30 +608,51 @@ public:
 				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
 					sdl_gamepads_joysticks[event.cdevice.which]["rb"]= 0;
 					break;
+				case SDL_GAMEPAD_BUTTON_TOUCHPAD:
+					sdl_gamepads_joysticks[event.cdevice.which]["touch_button"] = 0;
+					break;
 				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
-				print_axis(sdl_gamepads[event.cdevice.which], event.gaxis.axis, event.gaxis.value);
-				
+				switch (event.gaxis.axis)
+				{
+					case SDL_GAMEPAD_AXIS_LEFTX:
+					sdl_gamepads_joysticks[event.cdevice.which]["lx"] = event.gaxis.value / 32767.0;
+						break;
+					case SDL_GAMEPAD_AXIS_LEFTY:
+					sdl_gamepads_joysticks[event.cdevice.which]["ly"] = event.gaxis.value / 32767.0;
+						break;
+					case SDL_GAMEPAD_AXIS_RIGHTX:
+					sdl_gamepads_joysticks[event.cdevice.which]["rx"] = event.gaxis.value / 32767.0;
+						break;
+					case SDL_GAMEPAD_AXIS_RIGHTY:
+					sdl_gamepads_joysticks[event.cdevice.which]["ry"] = event.gaxis.value / 32767.0;
+						break;
+					case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
+					sdl_gamepads_joysticks[event.cdevice.which]["rt"] = event.gaxis.value / 32767.0;
+						break;
+					case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+					sdl_gamepads_joysticks[event.cdevice.which]["lt"] = event.gaxis.value / 32767.0;
+						break;
+				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
 			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					float *data = event.gsensor.data;
-					print("gyroscope: ", data[0], data[1], data[2]);
-					wait_next_print = 0;
-				}
+				float *data = event.gsensor.data;
+				sdl_gamepads_joysticks[event.cdevice.which]["rotation_x"] = data[0];
+				sdl_gamepads_joysticks[event.cdevice.which]["rotation_y"] = data[1];
+				sdl_gamepads_joysticks[event.cdevice.which]["rotation_z"] = data[2];
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION)
 			{
-				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], event.gtouchpad.x * 255, event.gtouchpad.y * 255, 0);
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = event.gtouchpad.x;
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = event.gtouchpad.y;
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_UP)
 			{
-				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], 0, 0, 0);
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = -1;
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = -1;
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{

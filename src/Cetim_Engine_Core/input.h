@@ -21,6 +21,8 @@ public:
 	vector<TOUCHES> touch_screen_input;
 	vr_headset_input vr_input;
 
+	unsigned char main_controller_device = 0; // 0 = mouse & keyboard ; 1 = controller 
+
 	virtual string get_text_input() { return ""; }
 	virtual void set_text_input(bool on) {}
 
