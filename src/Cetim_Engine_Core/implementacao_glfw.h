@@ -491,8 +491,6 @@ public:
 	joystick get_joysticks_input(unsigned char no)
 	{
 
-		
-
 		for (SDL_Event event : event_list)
 		{
 			if (event.type == SDL_EVENT_GAMEPAD_ADDED)
@@ -508,6 +506,37 @@ public:
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
 				print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
+				switch (event.gbutton.button)
+				{
+				case SDL_GAMEPAD_BUTTON_SOUTH:
+					break;
+				case SDL_GAMEPAD_BUTTON_WEST:
+					break;
+				case SDL_GAMEPAD_BUTTON_NORTH:
+					break;
+				case SDL_GAMEPAD_BUTTON_EAST:
+					break;
+				case SDL_GAMEPAD_BUTTON_START:
+					break;
+				case SDL_GAMEPAD_BUTTON_BACK:
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_UP:
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
+					break;
+				case SDL_GAMEPAD_BUTTON_LEFT_STICK:
+					break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
+					break;
+				case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
+					break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
+					break;
+				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
 			{
@@ -515,6 +544,20 @@ public:
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
 				print_axis(sdl_gamepads[event.cdevice.which], event.gaxis.axis, event.gaxis.value);
+				switch(event.gaxis.axis){
+					case SDL_GAMEPAD_AXIS_LEFTX:
+						break:
+					case SDL_GAMEPAD_AXIS_LEFTY:
+						break:
+					case SDL_GAMEPAD_AXIS_RIGHTX:
+						break:
+					case SDL_GAMEPAD_AXIS_RIGHTY:
+						break:
+					case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+						break:
+					case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
+						break:
+				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
 			{
@@ -545,7 +588,8 @@ public:
 
 		auto j = sdl_gamepads_joysticks.begin();
 		std::advance(j, no);
-		if(j != sdl_gamepads_joysticks.end()){
+		if (j != sdl_gamepads_joysticks.end())
+		{
 			return j->second;
 		}
 
