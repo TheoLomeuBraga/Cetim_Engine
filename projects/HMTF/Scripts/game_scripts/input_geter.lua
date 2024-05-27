@@ -41,26 +41,26 @@ local main_input_method = "keyboard"
 function UPDATE()
     time:get()
 
-    local analog_foward =  apply_death_zone(keys_axis:get_input_joystick(1,"ly"),0.2)
-    local analog_left =  apply_death_zone(keys_axis:get_input_joystick(1,"lx"),0.2)
+    local analog_foward =  apply_death_zone(get_input_joystick(1,"ly"),0.2)
+    local analog_left =  apply_death_zone(get_input_joystick(1,"lx"),0.2)
 
-    local av_x = apply_death_zone(keys_axis:get_input_joystick(1,"rx"),0.2)
-    local av_y = apply_death_zone(keys_axis:get_input_joystick(1,"ry"),0.2)
+    local av_x = apply_death_zone(get_input_joystick(1,"rx"),0.2)
+    local av_y = apply_death_zone(get_input_joystick(1,"ry"),0.2)
 
     inputs = {
         foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
         left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - analog_left,
-        jump = keys_axis:get_input(input_devices.keyboard,"space") + keys_axis:get_input_joystick(1,"la"),
-        interact = keys_axis:get_input(input_devices.keyboard,"e") + keys_axis:get_input_joystick(1,"y"),
-        action_1 = keys_axis:get_input(input_devices.mouse,"left") + (keys_axis:get_input_joystick(1,"rt")) ,
-        action_2 = keys_axis:get_input(input_devices.mouse,"right") + (keys_axis:get_input_joystick(1,"lt")) ,
+        jump = keys_axis:get_input(input_devices.keyboard,"space") + get_input_joystick(1,"la"),
+        interact = keys_axis:get_input(input_devices.keyboard,"e") + get_input_joystick(1,"y"),
+        action_1 = keys_axis:get_input(input_devices.mouse,"left") + (get_input_joystick(1,"rt")) ,
+        action_2 = keys_axis:get_input(input_devices.mouse,"right") + (get_input_joystick(1,"lt")) ,
         mouse_pos_x = keys_axis:get_input(input_devices.mouse,"normalized_x"),
         mouse_pos_y = keys_axis:get_input(input_devices.mouse,"normalized_y"),
         mouse_view_x = keys_axis:get_input(input_devices.mouse,"movement_x"),
         mouse_view_y = keys_axis:get_input(input_devices.mouse,"movement_y"),
         analog_view_x = av_x,
         analog_view_y = av_y,
-        menu = keys_axis:get_input(input_devices.keyboard,"escape") + keys_axis:get_input_joystick(1,"start"),
+        menu = keys_axis:get_input(input_devices.keyboard,"escape") + get_input_joystick(1,"start"),
     }
 
     if keys_axis:get_input(input_devices.mouse,"movement_x") + keys_axis:get_input(input_devices.mouse,"movement_y") + keys_axis:get_input(input_devices.mouse,"left") > 0.01 then
