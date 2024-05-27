@@ -125,15 +125,15 @@ keys_axis = {
 
 
 
-function keys_axis:set_cursor_position(x, y)
+function set_cursor_position(x, y)
     c_set_cursor_position(x, y)
 end
 
-function keys_axis:get_text_input()
+function get_text_input()
     return c_get_keyboard_text_input()
 end
 
-function keys_axis:set_text_input_geter(on)
+function set_text_input_geter(on)
     c_set_keyboard_text_input(on)
 end
 
