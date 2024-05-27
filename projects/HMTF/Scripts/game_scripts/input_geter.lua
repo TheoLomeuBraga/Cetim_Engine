@@ -51,7 +51,7 @@ function UPDATE()
         foward = get_keyboard_input("w") - get_keyboard_input("s") - analog_foward,
         left = get_keyboard_input("a") - get_keyboard_input("d") - analog_left,
         jump = get_keyboard_input("space") + get_input_joystick(1,"la"),
-        interact = get_keyboard_input("e") + get_input_joystick(1,"y"),
+        interact = get_keyboard_input("e") + get_input_joystick(1,"north"),
         action_1 = get_mouse_input("left") + (get_input_joystick(1,"rt")) ,
         action_2 = get_mouse_input("right") + (get_input_joystick(1,"lt")) ,
         mouse_pos_x = get_mouse_input("normalized_x"),

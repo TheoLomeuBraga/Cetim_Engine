@@ -87,10 +87,10 @@ input_keys = {
         scroll = "scroll",
     },
     joystick = {
-        x = "x",
-        a = "a",
-        b = "b",
-        y = "y",
+        north = "north",
+        south = "south",
+        west = "west",
+        east = "east",
         lb = "lb",
         rb = "rb",
         back = "back",
@@ -108,7 +108,7 @@ input_keys = {
         rt_axis = "rt_axis",
         lt_axis = "lt_axis"
     }
-    
+
 }
 
 

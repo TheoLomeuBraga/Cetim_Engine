@@ -28,9 +28,9 @@ public:
 	virtual input_mouse get_mouse_input() { return input_mouse(); }
 	virtual TOUCHES get_touch_screen() { return {}; }
 	
-	virtual vector<joystick> get_joysticks_input()
+	virtual joystick get_joysticks_input(unsigned char no)
 	{
-		vector<joystick> vj;
+		joystick vj;
 		return vj;
 	}
 	virtual void set_led(unsigned char no,float r,float g,float b){}
@@ -56,7 +56,7 @@ void get_input()
 		manuseio_inputs->get_text_input();
 		manuseio_inputs->get_keyboard_input();
 		manuseio_inputs->get_mouse_input();
-		manuseio_inputs->get_joysticks_input();
+		manuseio_inputs->get_joysticks_input(0);
 		manuseio_inputs->get_vr_headset_input();
 	}
 }
@@ -68,7 +68,7 @@ void get_input_using_threads()
 		thread t1(&input_manager::get_text_input, manuseio_inputs);
 		thread t2(&input_manager::get_keyboard_input, manuseio_inputs);
 		thread t3(&input_manager::get_mouse_input, manuseio_inputs);
-		thread t4(&input_manager::get_joysticks_input, manuseio_inputs);
+		thread t4(&input_manager::get_joysticks_input, manuseio_inputs,0);
 
 		t1.join();
 		t2.join();
@@ -86,7 +86,7 @@ void start_get_input_loop()
 			manuseio_inputs->get_text_input();
 			manuseio_inputs->get_keyboard_input();
 			manuseio_inputs->get_mouse_input();
-			manuseio_inputs->get_joysticks_input();
+			manuseio_inputs->get_joysticks_input(0);
 		}
 	}
 }

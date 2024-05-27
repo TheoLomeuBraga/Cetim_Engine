@@ -484,9 +484,9 @@ public:
 		return 0;
 	}
 
-	vector<joystick> get_joysticks_input()
+	joystick get_joysticks_input(unsigned char no)
 	{
-		vector<joystick> ret = {};
+		joystick ret = {};
 
 		for (SDL_Event event : event_list)
 		{
@@ -503,6 +503,10 @@ public:
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
 				print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
+			}
+			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
+			{
+				
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{

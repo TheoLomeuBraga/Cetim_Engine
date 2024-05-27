@@ -985,18 +985,20 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int set_joystick_vibration(lua_State *L){
+	int set_joystick_vibration(lua_State *L)
+	{
 		if (manuseio_inputs != NULL)
 		{
-			manuseio_inputs->set_vibration(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+			manuseio_inputs->set_vibration(lua_tonumber(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 		}
 		return 0;
 	}
 
-	int set_joystick_led(lua_State *L){
+	int set_joystick_led(lua_State *L)
+	{
 		if (manuseio_inputs != NULL)
 		{
-			manuseio_inputs->set_led(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+			manuseio_inputs->set_led(lua_tonumber(L, 1), lua_tonumber(L, 2), lua_tonumber(L, 3), lua_tonumber(L, 4));
 		}
 		return 0;
 	}
@@ -1009,7 +1011,7 @@ namespace funcoes_ponte
 		int joystick_no = lua_tonumber(L, 2);
 		string key = lua_tostring(L, 3);
 
-		//manuseio_inputs->get_touch_screen();
+		// manuseio_inputs->get_touch_screen();
 
 		if (manuseio_inputs != NULL)
 		{
@@ -1029,16 +1031,11 @@ namespace funcoes_ponte
 			else if (device == 2)
 			{
 
-				if (joystick_no <= manuseio_inputs->joysticks_input.size())
+				joystick j = manuseio_inputs->get_joysticks_input(joystick_no - 1);
+
+				if (j.find(key) != j.end())
 				{
-					manuseio_inputs->get_joysticks_input();
-
-					joystick j = manuseio_inputs->joysticks_input[joystick_no - 1];
-
-					if (j.find(key) != j.end())
-					{
-						ret = j[key];
-					}
+					ret = j[key];
 				}
 			}
 			else if (device == 3)
@@ -2762,7 +2759,7 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("get_input", funcoes_ponte::get_input),
 															 pair<string, lua_function>("set_joystick_vibration", funcoes_ponte::set_joystick_vibration),
 															 pair<string, lua_function>("set_joystick_led", funcoes_ponte::set_joystick_led),
-															 
+
 														 }),
 		pair<string, map<string, lua_function>>("time", {
 															pair<string, lua_function>("get_time", funcoes_ponte::get_time),
