@@ -106,7 +106,10 @@ input_keys = {
         lx = "lx",
         ly = "ly",
         rt_axis = "rt_axis",
-        lt_axis = "lt_axis"
+        lt_axis = "lt_axis",
+        touch_button = "touch_button",
+        touch_x = "touch_x",
+        touch_y = "touch_y",
     }
 
 }

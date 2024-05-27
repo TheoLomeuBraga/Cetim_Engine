@@ -548,7 +548,7 @@ public:
 		{
 			auto it = sdl_gamepads.begin();
 			std::advance(it,no);
-			SDL_SetGamepadLED(it->second, (unsigned char)(r / 255), (unsigned char)(g / 255), (unsigned char)(b / 255));
+			SDL_SetGamepadLED(it->second, (unsigned char)(r * 255), (unsigned char)(g * 255), (unsigned char)(b * 255));
 		}
 	}
 
@@ -558,7 +558,7 @@ public:
 		{
 			auto it = sdl_gamepads.begin();
 			std::advance(it,no);
-			SDL_RumbleGamepad(it->second, power_l / 65535, power_r / 65535, time / 1000);
+			SDL_RumbleGamepad(it->second, power_l * 65535, power_r * 65535, time * 1000);
 		}
 	}
 

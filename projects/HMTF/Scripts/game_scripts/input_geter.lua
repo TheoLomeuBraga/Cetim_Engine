@@ -71,7 +71,7 @@ function UPDATE()
 
     inputs.main_input_method = main_input_method
 
-    
+    set_joystick_vibration(0,0.5,0.5,1)
     
 
     inputs.action_1 = math.max(0,inputs.action_1)
