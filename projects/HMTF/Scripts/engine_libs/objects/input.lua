@@ -110,6 +110,8 @@ input_keys = {
         touch_button = "touch_button",
         touch_x = "touch_x",
         touch_y = "touch_y",
+        movement_x = "movement_x",
+        movement_y = "movement_y",
     }
 
 }

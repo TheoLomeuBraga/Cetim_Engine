@@ -473,20 +473,25 @@ public:
 	unsigned int wait_next_print;
 
 	map<SDL_CameraDeviceID, SDL_Gamepad *> sdl_gamepads;
-	unsigned char get_gamepad_no(SDL_Gamepad * gp){
+	map<SDL_CameraDeviceID, joystick> sdl_gamepads_joysticks;
+	unsigned char get_gamepad_no(SDL_CameraDeviceID gp)
+	{
 		unsigned char i = 0;
-		for(pair<SDL_CameraDeviceID, SDL_Gamepad *> p : sdl_gamepads){
-			if(gp == p.second){
+		for (pair<SDL_CameraDeviceID, SDL_Gamepad *> p : sdl_gamepads)
+		{
+			if (gp == p.first)
+			{
 				return i;
 			}
 			i++;
 		}
-		return 0;
+		return -1;
 	}
 
 	joystick get_joysticks_input(unsigned char no)
 	{
-		joystick ret = {};
+
+		
 
 		for (SDL_Event event : event_list)
 		{
@@ -506,7 +511,6 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
 			{
-				
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
@@ -528,18 +532,24 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_UP)
 			{
-				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], 0,0,0);
+				SDL_SetGamepadLED(sdl_gamepads[event.cdevice.which], 0, 0, 0);
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
 			{
-				SDL_Gamepad * gp = sdl_gamepads[event.cdevice.which];
+				SDL_Gamepad *gp = sdl_gamepads[event.cdevice.which];
 				SDL_CloseGamepad(gp);
 				sdl_gamepads.erase(event.cdevice.which);
 				std::cout << "Gamepad desconectado\n";
 			}
 		}
 
-		return ret;
+		auto j = sdl_gamepads_joysticks.begin();
+		std::advance(j, no);
+		if(j != sdl_gamepads_joysticks.end()){
+			return j->second;
+		}
+
+		return {};
 	}
 
 	void set_led(unsigned char no, float r, float g, float b)
@@ -547,7 +557,7 @@ public:
 		if (no < sdl_gamepads.size())
 		{
 			auto it = sdl_gamepads.begin();
-			std::advance(it,no);
+			std::advance(it, no);
 			SDL_SetGamepadLED(it->second, (unsigned char)(r * 255), (unsigned char)(g * 255), (unsigned char)(b * 255));
 		}
 	}
@@ -557,7 +567,7 @@ public:
 		if (no < sdl_gamepads.size())
 		{
 			auto it = sdl_gamepads.begin();
-			std::advance(it,no);
+			std::advance(it, no);
 			SDL_RumbleGamepad(it->second, power_l * 65535, power_r * 65535, time * 1000);
 		}
 	}
