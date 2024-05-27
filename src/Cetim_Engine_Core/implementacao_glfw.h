@@ -505,59 +505,105 @@ public:
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
 			{
-				print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
+				//print_button(sdl_gamepads[event.cdevice.which], event.gbutton.button);
 				switch (event.gbutton.button)
 				{
 				case SDL_GAMEPAD_BUTTON_SOUTH:
+					sdl_gamepads_joysticks[event.cdevice.which]["south"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_WEST:
+					sdl_gamepads_joysticks[event.cdevice.which]["west"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_NORTH:
+					sdl_gamepads_joysticks[event.cdevice.which]["north"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_EAST:
+					sdl_gamepads_joysticks[event.cdevice.which]["east"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_START:
+					sdl_gamepads_joysticks[event.cdevice.which]["start"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_BACK:
+					sdl_gamepads_joysticks[event.cdevice.which]["back"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_UP:
+					sdl_gamepads_joysticks[event.cdevice.which]["up"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
+					sdl_gamepads_joysticks[event.cdevice.which]["down"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
+					sdl_gamepads_joysticks[event.cdevice.which]["left"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
+					sdl_gamepads_joysticks[event.cdevice.which]["right"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_LEFT_STICK:
+					sdl_gamepads_joysticks[event.cdevice.which]["la"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
+					sdl_gamepads_joysticks[event.cdevice.which]["ra"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
+					sdl_gamepads_joysticks[event.cdevice.which]["lb"] = 1;
 					break;
 				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
+					sdl_gamepads_joysticks[event.cdevice.which]["rb"] = 1;
 					break;
 				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
 			{
+				switch (event.gbutton.button)
+				{
+				case SDL_GAMEPAD_BUTTON_SOUTH:
+					sdl_gamepads_joysticks[event.cdevice.which]["south"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_WEST:
+					sdl_gamepads_joysticks[event.cdevice.which]["west"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_NORTH:
+					sdl_gamepads_joysticks[event.cdevice.which]["north"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_EAST:
+					sdl_gamepads_joysticks[event.cdevice.which]["east"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_START:
+					sdl_gamepads_joysticks[event.cdevice.which]["start"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_BACK:
+					sdl_gamepads_joysticks[event.cdevice.which]["back"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_UP:
+					sdl_gamepads_joysticks[event.cdevice.which]["up"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
+					sdl_gamepads_joysticks[event.cdevice.which]["down"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
+					sdl_gamepads_joysticks[event.cdevice.which]["left"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
+					sdl_gamepads_joysticks[event.cdevice.which]["right"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_LEFT_STICK:
+					sdl_gamepads_joysticks[event.cdevice.which]["la"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
+					sdl_gamepads_joysticks[event.cdevice.which]["ra"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
+					sdl_gamepads_joysticks[event.cdevice.which]["lb"]= 0;
+					break;
+				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
+					sdl_gamepads_joysticks[event.cdevice.which]["rb"]= 0;
+					break;
+				}
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
 			{
 				print_axis(sdl_gamepads[event.cdevice.which], event.gaxis.axis, event.gaxis.value);
-				switch(event.gaxis.axis){
-					case SDL_GAMEPAD_AXIS_LEFTX:
-						break:
-					case SDL_GAMEPAD_AXIS_LEFTY:
-						break:
-					case SDL_GAMEPAD_AXIS_RIGHTX:
-						break:
-					case SDL_GAMEPAD_AXIS_RIGHTY:
-						break:
-					case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-						break:
-					case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
-						break:
-				}
+				
 			}
 			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
 			{
