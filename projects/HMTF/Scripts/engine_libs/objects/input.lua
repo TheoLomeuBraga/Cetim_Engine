@@ -126,25 +126,25 @@ keys_axis = {
 
 
 function keys_axis:set_cursor_position(x, y)
-    set_cursor_position(x, y)
+    c_set_cursor_position(x, y)
 end
 
 function keys_axis:get_text_input()
-    return get_keyboard_text_input()
+    return c_get_keyboard_text_input()
 end
 
 function keys_axis:set_text_input_geter(on)
-    set_keyboard_text_input(on)
+    c_set_keyboard_text_input(on)
 end
 
 function keys_axis:get_input(device, key)
     --return get_input(device, 0, key_axis_dictionarys[device][key])
-    return get_input(device, 0, key)
+    return c_get_input(device, 0, key)
 end
 
 function keys_axis:get_input_joystick(joystick_no, key)
     --return get_input(input_devices.joystick, joystick_no, key_axis_dictionarys[input_devices.joystick][key])
-    return get_input(input_devices.joystick, joystick_no, key)
+    return c_get_input(input_devices.joystick, joystick_no, key)
 end
 
 function set_joystick_vibration(joystick_no,left,right,time)
