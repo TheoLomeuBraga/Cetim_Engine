@@ -184,8 +184,8 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
         if self.category ~= 0 then
             local mouse_pos = {
-                x = keys_axis:get_input(input_devices.mouse, "normalized_x"),
-                y = keys_axis:get_input(input_devices.mouse, "normalized_y"),
+                x = get_mouse_input( "normalized_x"),
+                y = get_mouse_input( "normalized_y"),
             }
     
             self.button_obj.components.transform:get()
@@ -198,7 +198,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             
             self.hover = (mouse_pos.x > pos.x and mouse_pos.x < (pos.x + sca.x)) and (mouse_pos.y > pos.y and mouse_pos.y < (pos.y + sca.y))
     
-            self.click = keys_axis:get_input(input_devices.mouse, "left") == 1
+            self.click = get_mouse_input( "left") == 1
             
     
             if  not self.hover then
@@ -250,7 +250,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
                 
             end
             
-            if self.click_function ~= nil and ( (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, "enter") == 1 and not self.enter_last_frame and self.insertion_mode)  then
+            if self.click_function ~= nil and ( (self.insertion_mode and not self.hover and self.click) or get_keyboard_input( "enter") == 1 and not self.enter_last_frame and self.insertion_mode)  then
 
                 self.insertion_mode = false
                 set_text_input_geter(self.insertion_mode)
@@ -281,7 +281,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
 
             self.insertion_mode_last_frame = self.insertion_mode
             self.click_last_frame = self.click
-            self.enter_last_frame = keys_axis:get_input(input_devices.keyboard, input_keys.keyboard[input_keys.keyboard.enter]) == 1
+            self.enter_last_frame = get_keyboard_input( input_keys.keyboard[input_keys.keyboard.enter]) == 1
 
         end
 

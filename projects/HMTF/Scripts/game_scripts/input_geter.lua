@@ -48,22 +48,22 @@ function UPDATE()
     local av_y = apply_death_zone(get_input_joystick(1,"ry"),0.2)
 
     inputs = {
-        foward = keys_axis:get_input(input_devices.keyboard,"w") - keys_axis:get_input(input_devices.keyboard,"s") - analog_foward,
-        left = keys_axis:get_input(input_devices.keyboard,"a") - keys_axis:get_input(input_devices.keyboard,"d") - analog_left,
-        jump = keys_axis:get_input(input_devices.keyboard,"space") + get_input_joystick(1,"la"),
-        interact = keys_axis:get_input(input_devices.keyboard,"e") + get_input_joystick(1,"y"),
-        action_1 = keys_axis:get_input(input_devices.mouse,"left") + (get_input_joystick(1,"rt")) ,
-        action_2 = keys_axis:get_input(input_devices.mouse,"right") + (get_input_joystick(1,"lt")) ,
-        mouse_pos_x = keys_axis:get_input(input_devices.mouse,"normalized_x"),
-        mouse_pos_y = keys_axis:get_input(input_devices.mouse,"normalized_y"),
-        mouse_view_x = keys_axis:get_input(input_devices.mouse,"movement_x"),
-        mouse_view_y = keys_axis:get_input(input_devices.mouse,"movement_y"),
+        foward = get_keyboard_input("w") - get_keyboard_input("s") - analog_foward,
+        left = get_keyboard_input("a") - get_keyboard_input("d") - analog_left,
+        jump = get_keyboard_input("space") + get_input_joystick(1,"la"),
+        interact = get_keyboard_input("e") + get_input_joystick(1,"y"),
+        action_1 = get_mouse_input("left") + (get_input_joystick(1,"rt")) ,
+        action_2 = get_mouse_input("right") + (get_input_joystick(1,"lt")) ,
+        mouse_pos_x = get_mouse_input("normalized_x"),
+        mouse_pos_y = get_mouse_input("normalized_y"),
+        mouse_view_x = get_mouse_input("movement_x"),
+        mouse_view_y = get_mouse_input("movement_y"),
         analog_view_x = av_x,
         analog_view_y = av_y,
-        menu = keys_axis:get_input(input_devices.keyboard,"escape") + get_input_joystick(1,"start"),
+        menu = get_keyboard_input("escape") + get_input_joystick(1,"start"),
     }
 
-    if keys_axis:get_input(input_devices.mouse,"movement_x") + keys_axis:get_input(input_devices.mouse,"movement_y") + keys_axis:get_input(input_devices.mouse,"left") > 0.01 then
+    if get_mouse_input("movement_x") + get_mouse_input("movement_y") + get_mouse_input("left") > 0.01 then
         main_input_method = "keyboard"
     elseif analog_foward + analog_left + av_x + av_y > 0 or analog_foward + analog_left + av_x + av_y < 0  then
         main_input_method = "joystick"
@@ -101,7 +101,7 @@ function UPDATE()
     
     if main_input_method == "keyboard" then
         set_ui_selection_id(0,false)
-        set_ui_curson_location({x=keys_axis:get_input(input_devices.mouse,"normalized_x"),y=keys_axis:get_input(input_devices.mouse,"normalized_y")},inputs.action_1 > 0)
+        set_ui_curson_location({x=get_mouse_input("normalized_x"),y=get_mouse_input("normalized_y")},inputs.action_1 > 0)
     elseif main_input_method == "joystick" then
         set_ui_curson_location({x=0,y=0},false)
         set_ui_selection_id(global_data.ui_selection_id,inputs.action_1 > 0)

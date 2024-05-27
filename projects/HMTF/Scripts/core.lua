@@ -314,7 +314,7 @@ function UPDATE()
     end
     keep_unloading()
 
-    local last_frame = keys_axis:get_input(input_devices.keyboard, "r") == 1
+    local last_frame = get_keyboard_input( "r") == 1
 
     if not reload_last_frame and last_frame then
         load_sceane(sceane_name)
@@ -325,7 +325,7 @@ function UPDATE()
         load_sceane(load_sceane_request_name)
     end
 
-    if keys_axis:get_input(input_devices.keyboard, "delete") == 1 then
+    if get_keyboard_input( "delete") == 1 then
         window:close()
     end
 end

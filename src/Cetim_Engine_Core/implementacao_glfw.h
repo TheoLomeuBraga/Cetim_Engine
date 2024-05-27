@@ -486,6 +486,7 @@ public:
 
 	vector<joystick> get_joysticks_input()
 	{
+		vector<joystick> ret = {};
 
 		for (SDL_Event event : event_list)
 		{
@@ -534,7 +535,7 @@ public:
 			}
 		}
 
-		return {};
+		return ret;
 	}
 
 	void set_led(unsigned char no, float r, float g, float b)

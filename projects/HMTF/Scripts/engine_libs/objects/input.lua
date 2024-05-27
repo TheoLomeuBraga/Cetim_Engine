@@ -138,12 +138,18 @@ function set_text_input_geter(on)
 end
 
 function keys_axis:get_input(device, key)
-    --return get_input(device, 0, key_axis_dictionarys[device][key])
     return c_get_input(device, 0, key)
 end
 
+function get_keyboard_input(key)
+    return c_get_input(1, 0, key)
+end
+
+function get_mouse_input(key)
+    return c_get_input(3, 0, key)
+end
+
 function get_input_joystick(joystick_no, key)
-    --return get_input(input_devices.joystick, joystick_no, key_axis_dictionarys[input_devices.joystick][key])
     return c_get_input(input_devices.joystick, joystick_no, key)
 end
 
