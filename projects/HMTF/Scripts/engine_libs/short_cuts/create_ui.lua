@@ -242,10 +242,10 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             if self.hover and self.click and not self.click_last_frame and self.click_function ~= nil then
                 
                 self.insertion_mode = not self.insertion_mode
-                keys_axis:set_text_input_geter(self.insertion_mode)
+                set_text_input_geter(self.insertion_mode)
                 
-                if keys_axis:get_text_input() ~= "" and keys_axis:get_text_input() ~= "" then
-                    self.click_function(keys_axis:get_text_input())
+                if get_text_input() ~= "" and get_text_input() ~= "" then
+                    self.click_function(get_text_input())
                 end
                 
             end
@@ -253,10 +253,10 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             if self.click_function ~= nil and ( (self.insertion_mode and not self.hover and self.click) or keys_axis:get_input(input_devices.keyboard, "enter") == 1 and not self.enter_last_frame and self.insertion_mode)  then
 
                 self.insertion_mode = false
-                keys_axis:set_text_input_geter(self.insertion_mode)
+                set_text_input_geter(self.insertion_mode)
 
-                if keys_axis:get_text_input() ~= "" and keys_axis:get_text_input() ~= "" then
-                    self.click_function(keys_axis:get_text_input())
+                if get_text_input() ~= "" and get_text_input() ~= "" then
+                    self.click_function(get_text_input())
                 end
 
                 
@@ -266,7 +266,7 @@ function create_ui(father, pos, sca, layer, style, text,text_size, image, click_
             local keyboard_text = ""
 
             if self.insertion_mode then
-                keyboard_text = keys_axis:get_text_input()
+                keyboard_text = get_text_input()
             end
 
             

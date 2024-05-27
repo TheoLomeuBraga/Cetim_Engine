@@ -59,7 +59,7 @@ function run_rotation()
         current_rot.y = current_rot.y - (mouse_move.y * base_sensivity)
         current_rot.y = math.max(-90, math.min(90, current_rot.y))
         this_object.components.transform:change_rotation(current_rot.y, current_rot.x, 0)
-        keys_axis:set_cursor_position(screen_center.x, screen_center.y)
+        set_cursor_position(screen_center.x, screen_center.y)
     end
     ]]
     current_rot.x = current_rot.x - (mouse_move.x * base_sensivity)
@@ -67,7 +67,7 @@ function run_rotation()
     current_rot.y = math.max(-90, math.min(90, current_rot.y))
     this_object.components.transform:change_rotation(current_rot.y, current_rot.x, 0)
     this_object.components.transform:get()
-    keys_axis:set_cursor_position(screen_center.x, screen_center.y)
+    set_cursor_position(screen_center.x, screen_center.y)
 
 end
 
