@@ -41,11 +41,12 @@ local main_input_method = "keyboard"
 function UPDATE()
     time:get()
 
-    local analog_foward =  apply_death_zone(get_joystick_input(1,"ly"),0.2)
-    local analog_left =  apply_death_zone(get_joystick_input(1,"lx"),0.2)
+    print(get_joystick_input(1,"ly"))
+    local analog_foward =  -apply_death_zone(get_joystick_input(1,"ly"),0.2)
+    local analog_left =  -apply_death_zone(get_joystick_input(1,"lx"),0.2)
 
-    local av_x = apply_death_zone(get_joystick_input(1,"rx"),0.2)
-    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2)
+    local av_x = apply_death_zone(get_joystick_input(1,"rx"),0.2) + get_joystick_input(1,"rotation_z")
+    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2) + -get_joystick_input(1,"rotation_x")
 
     if get_main_input_device() == 0 then
 
@@ -60,8 +61,8 @@ function UPDATE()
             action_2 = get_mouse_input("right") ,
             mouse_pos_x = get_mouse_input("normalized_x"),
             mouse_pos_y = get_mouse_input("normalized_y"),
-            mouse_view_x = get_mouse_input("movement_x"),
-            mouse_view_y = get_mouse_input("movement_y"),
+            mouse_view_x = get_mouse_input("rotation_x"),
+            mouse_view_y = get_mouse_input("rotation_y"),
             analog_view_x = 0,
             analog_view_y = 0,
             menu = get_keyboard_input("escape") ,
@@ -97,15 +98,15 @@ function UPDATE()
         action_2 = get_mouse_input("right") + (get_joystick_input(1,"lt")) ,
         mouse_pos_x = get_mouse_input("normalized_x"),
         mouse_pos_y = get_mouse_input("normalized_y"),
-        mouse_view_x = get_mouse_input("movement_x"),
-        mouse_view_y = get_mouse_input("movement_y"),
+        mouse_view_x = get_mouse_input("rotation_x"),
+        mouse_view_y = get_mouse_input("rotation_y"),
         analog_view_x = av_x,
         analog_view_y = av_y,
         menu = get_keyboard_input("escape") + get_joystick_input(1,"start"),
     }
     ]]
 
-    if get_mouse_input("movement_x") + get_mouse_input("movement_y") + get_mouse_input("left") > 0.01 then
+    if get_mouse_input("rotation_x") + get_mouse_input("rotation_y") + get_mouse_input("left") > 0.01 then
         main_input_method = "keyboard"
     elseif analog_foward + analog_left + av_x + av_y > 0 or analog_foward + analog_left + av_x + av_y < 0  then
         main_input_method = "joystick"

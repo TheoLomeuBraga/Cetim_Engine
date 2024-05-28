@@ -309,8 +309,8 @@ public:
 
 	input_mouse get_mouse_input()
 	{
-		mouse_input.movimentos["movement_x"] = 0;
-		mouse_input.movimentos["movement_y"] = 0;
+		mouse_input.movimentos["rotation_x"] = 0;
+		mouse_input.movimentos["rotation_y"] = 0;
 
 		float x, y;
 		Uint32 mouseButtons = SDL_GetMouseState(&x, &y);
@@ -334,8 +334,8 @@ public:
 
 				int width, height;
 				SDL_GetWindowSize(window, &width, &height);
-				mouse_input.movimentos["movement_x"] = (float)relX / (float)width;
-				mouse_input.movimentos["movement_y"] = (float)relY / (float)height;
+				mouse_input.movimentos["rotation_x"] = (float)relX / (float)width;
+				mouse_input.movimentos["rotation_y"] = (float)relY / (float)height;
 
 				mouse_input.movimentos["normalized_x"] = (float)mouseX / (float)width;
 				mouse_input.movimentos["normalized_y"] = (float)mouseY / (float)height;
