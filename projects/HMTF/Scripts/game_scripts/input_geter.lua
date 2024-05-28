@@ -41,7 +41,7 @@ local main_input_method = "keyboard"
 function UPDATE()
     time:get()
 
-    print(get_joystick_input(1,"ly"))
+    --print(get_joystick_input(1,"ly"))
     local analog_foward =  -apply_death_zone(get_joystick_input(1,"ly"),0.2)
     local analog_left =  -apply_death_zone(get_joystick_input(1,"lx"),0.2)
 

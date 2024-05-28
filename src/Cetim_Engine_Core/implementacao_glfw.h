@@ -500,18 +500,17 @@ public:
 
 		for (SDL_Event event : event_list)
 		{
-			if (event.type == SDL_EVENT_GAMEPAD_ADDED)
+			switch (event.type)
 			{
-
+			case SDL_EVENT_GAMEPAD_ADDED:
 				sdl_gamepads[event.cdevice.which] = SDL_OpenGamepad(event.cdevice.which);
 				if (sdl_gamepads[event.cdevice.which])
 				{
 					std::cout << "Gamepad conectado: " << SDL_GetGamepadName(sdl_gamepads[event.cdevice.which]) << std::endl;
 				}
 				SDL_SetGamepadSensorEnabled(sdl_gamepads[event.cdevice.which], SDL_SENSOR_GYRO, SDL_TRUE);
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
-			{
+				break;
+			case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 				main_controller_device = 1;
 				switch (event.gbutton.button)
 				{
@@ -561,106 +560,105 @@ public:
 					sdl_gamepads_joysticks[event.cdevice.which]["touch_button"] = 1;
 					break;
 				}
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
-			{
-				switch (event.gbutton.button)
+				break;
+			case SDL_EVENT_GAMEPAD_BUTTON_UP:
+			switch (event.gbutton.button)
 				{
 				case SDL_GAMEPAD_BUTTON_SOUTH:
-					sdl_gamepads_joysticks[event.cdevice.which]["south"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["south"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_WEST:
-					sdl_gamepads_joysticks[event.cdevice.which]["west"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["west"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_NORTH:
-					sdl_gamepads_joysticks[event.cdevice.which]["north"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["north"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_EAST:
-					sdl_gamepads_joysticks[event.cdevice.which]["east"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["east"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_START:
-					sdl_gamepads_joysticks[event.cdevice.which]["start"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["start"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_BACK:
-					sdl_gamepads_joysticks[event.cdevice.which]["back"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["back"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_UP:
-					sdl_gamepads_joysticks[event.cdevice.which]["up"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["up"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
-					sdl_gamepads_joysticks[event.cdevice.which]["down"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["down"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
-					sdl_gamepads_joysticks[event.cdevice.which]["left"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["left"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
-					sdl_gamepads_joysticks[event.cdevice.which]["right"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["right"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_LEFT_STICK:
-					sdl_gamepads_joysticks[event.cdevice.which]["la"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["la"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
-					sdl_gamepads_joysticks[event.cdevice.which]["ra"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["ra"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
-					sdl_gamepads_joysticks[event.cdevice.which]["lb"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["lb"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
-					sdl_gamepads_joysticks[event.cdevice.which]["rb"]= 0;
+					sdl_gamepads_joysticks[event.cdevice.which]["rb"] = 0;
 					break;
 				case SDL_GAMEPAD_BUTTON_TOUCHPAD:
 					sdl_gamepads_joysticks[event.cdevice.which]["touch_button"] = 0;
 					break;
 				}
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
-			{
-				switch (event.gaxis.axis)
+				break;
+			case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			switch (event.gaxis.axis)
 				{
-					case SDL_GAMEPAD_AXIS_LEFTX:
+				case SDL_GAMEPAD_AXIS_LEFTX:
 					sdl_gamepads_joysticks[event.cdevice.which]["lx"] = event.gaxis.value / 32767.0;
-						break;
-					case SDL_GAMEPAD_AXIS_LEFTY:
+					break;
+				case SDL_GAMEPAD_AXIS_LEFTY:
 					sdl_gamepads_joysticks[event.cdevice.which]["ly"] = event.gaxis.value / 32767.0;
-						break;
-					case SDL_GAMEPAD_AXIS_RIGHTX:
+					break;
+				case SDL_GAMEPAD_AXIS_RIGHTX:
 					sdl_gamepads_joysticks[event.cdevice.which]["rx"] = event.gaxis.value / 32767.0;
-						break;
-					case SDL_GAMEPAD_AXIS_RIGHTY:
+					break;
+				case SDL_GAMEPAD_AXIS_RIGHTY:
 					sdl_gamepads_joysticks[event.cdevice.which]["ry"] = event.gaxis.value / 32767.0;
-						break;
-					case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
+					break;
+				case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 					sdl_gamepads_joysticks[event.cdevice.which]["rt"] = event.gaxis.value / 32767.0;
-						break;
-					case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+					break;
+				case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 					sdl_gamepads_joysticks[event.cdevice.which]["lt"] = event.gaxis.value / 32767.0;
-						break;
+					break;
 				}
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_SENSOR_UPDATE && event.gsensor.sensor == SDL_SENSOR_GYRO)
-			{
-				float *data = event.gsensor.data;
+				break;
+			case SDL_EVENT_GAMEPAD_SENSOR_UPDATE:
+				if (event.gsensor.sensor == SDL_SENSOR_GYRO)
+				{
+					float *data = event.gsensor.data;
 				sdl_gamepads_joysticks[event.cdevice.which]["rotation_x"] = data[0];
 				sdl_gamepads_joysticks[event.cdevice.which]["rotation_y"] = data[1];
 				sdl_gamepads_joysticks[event.cdevice.which]["rotation_z"] = data[2];
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION)
-			{
+				}
+				break;
+			case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
 				sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = event.gtouchpad.x;
 				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = event.gtouchpad.y;
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_TOUCHPAD_UP)
-			{
-				sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = -1;
-				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = -1;
-			}
-			else if (event.type == SDL_EVENT_GAMEPAD_REMOVED)
-			{
-				SDL_Gamepad *gp = sdl_gamepads[event.cdevice.which];
+				break;
+			case SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
+			sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = 0;
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = 0;
+				break;
+			case SDL_EVENT_GAMEPAD_REMOVED:
+			SDL_Gamepad *gp = sdl_gamepads[event.cdevice.which];
 				SDL_CloseGamepad(gp);
 				sdl_gamepads.erase(event.cdevice.which);
 				std::cout << "Gamepad desconectado\n";
+				break;
 			}
+			
 		}
 
 		auto j = sdl_gamepads_joysticks.begin();
