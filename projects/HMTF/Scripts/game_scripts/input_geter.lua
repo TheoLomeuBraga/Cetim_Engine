@@ -45,8 +45,8 @@ function UPDATE()
     local analog_foward =  -apply_death_zone(get_joystick_input(1,"ly"),0.2)
     local analog_left =  -apply_death_zone(get_joystick_input(1,"lx"),0.2)
 
-    local av_x = apply_death_zone(get_joystick_input(1,"rx"),0.2) + get_joystick_input(1,"rotation_z")
-    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2) + -get_joystick_input(1,"rotation_x")
+    local av_x = apply_death_zone(get_joystick_input(1,"rx"),0.2)-- + get_joystick_input(1,"rotation_z")
+    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2)-- + -get_joystick_input(1,"rotation_x")
 
     if get_main_input_device() == 0 then
 
