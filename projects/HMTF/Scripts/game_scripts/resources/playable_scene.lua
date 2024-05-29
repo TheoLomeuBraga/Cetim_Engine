@@ -373,7 +373,7 @@ cenary_builders = {
                 part_data.variables.tag)
             change_ret()
         elseif part_data.variables.type == "print" then
-            print(part_data.variables.menssage)
+            --print(part_data.variables.menssage)
         elseif part_data.variables.type == nil then
             add_mesh(nil)
         end
