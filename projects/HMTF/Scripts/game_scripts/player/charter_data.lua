@@ -58,23 +58,28 @@ avatar_created = false
 function create_avatar()
     if global_data.camera_ptr ~= nil then
 
-        --[[
-        local model_path = "3D Models/arm_cannon.glb"
-        --local model_path = "3D Models/charters/female_charter.glb"
+        
+        local model_path = "3D Models/charters/female_charter.glb"
+
         avatar_3D_data = get_scene_3D(model_path)
 
         base_avatar = game_object(create_object(global_data.camera_ptr))
 
         base_avatar.components.transform:get()
-        base_avatar.components.transform.position = { x = 0.5, y = -0.5, z = 0 }
-        base_avatar.components.transform.scale = { x = 0.1, y = 0.1, z = 0.1 }
+        base_avatar.components.transform.position = { x = 2, y = -8, z = 10 }
+        base_avatar.components.transform.rotation = { x = 0, y = 180 + 45, z = 0 }
+        base_avatar.components.transform.scale = { x = 0.8, y = 0.8, z = 0.8 }
+
+        base_avatar.components.transform.position = { x = 2, y = -8, z = 10 }
+        base_avatar.components.transform.rotation = { x = 0, y = 180, z = 0 }
+        base_avatar.components.transform.scale = { x = 2, y = 2, z = 2 }
         base_avatar.components.transform:set()
 
 
         avatar_3D = cenary_builders.entity(base_avatar.object_ptr, 4, avatar_3D_data, "mesh", true, false)
 
-        set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "normal", 0.05)
-        ]]
+        set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "normal", 1)
+        
         avatar_created = true
     end
 end
