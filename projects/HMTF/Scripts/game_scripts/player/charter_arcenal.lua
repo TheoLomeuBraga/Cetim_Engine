@@ -84,6 +84,7 @@ function run_animation()
 
 
         set_keyframe(selected_wepom.file, selected_wepom.part_ptr_list, true, current_animation_state.name,current_animation_state.time)
+        --print(selected_wepom.file, selected_wepom.part_ptr_list, true, current_animation_state.name,current_animation_state.time)
     end
 end
 

@@ -54,6 +54,7 @@ function button_func(id,state)
     
 end
 
+
 function level:START()
 
     global_data.pause = 1
@@ -89,6 +90,7 @@ function level:START()
 
     --level.scene_3D_data = get_scene_3D("Levels/hub/hub.gltf")
     level.scene_3D_data = get_scene_3D("Levels/floating_island_hub/floating_island_hub.glb")
+    
     
 
     coroutine.yield()

@@ -55,14 +55,14 @@ loading_screen = {
     end,
 }
 
-local entity_ptr_list = {}
-local scene_ptr_list = {}
+
+
 
 cenary_builders = {
 
-    entity_part = function(father, layer, part_data, shader, use_oclusion, yield)
+    entity_part = function(father,ptr_list, layer, part_data, shader, use_oclusion, yield)
         local ret = game_object(create_object(father))
-        entity_ptr_list[part_data.id] = ret.object_ptr
+        ptr_list[part_data.id] = ret.object_ptr
 
         if part_data.name ~= "" or part_data.name ~= nil then
             ret:get()
@@ -105,7 +105,7 @@ cenary_builders = {
         end
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.entity_part(ret.object_ptr, layer, value, shader, use_oclusion, yield)
+            cenary_builders.entity_part(ret.object_ptr,ptr_list, layer, value, shader, use_oclusion, yield)
         end
 
         return ret
@@ -119,30 +119,27 @@ cenary_builders = {
         }
 
         if yield == nil then yield = false end
-        local entity_parts = cenary_builders.entity_part(father, layer, ceane_data.objects, shader, use_oclusion, yield)
 
-        ret.obj = deepcopy(entity_parts)
-        ret.parts_ptr_list = deepcopy(entity_ptr_list)
+        ret.obj = cenary_builders.entity_part(father,ret.parts_ptr_list, layer, ceane_data.objects, shader, use_oclusion, yield)
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
         end
-
+        
+        
         for index, value in ipairs(ret.parts_list) do
             value.components.lua_scripts:get()
             if value.components.lua_scripts.scripts["game_scripts/animation/texture_bone_y"] ~= nil then
                 value.components.lua_scripts.scripts["game_scripts/animation/texture_bone_y"].variables.parts_ptr_list = ret.parts_ptr_list
             end
         end
-
-        entity_ptr_list = {}
         return ret
     end,
 
-    scene_part = function(father, layer, part_data, yield)
+    scene_part = function(father,ptr_list, layer, part_data, yield)
         --local sp = stopwatch:new()
 
         local ret = game_object(create_object(father))
-        scene_ptr_list[part_data.id] = ret.object_ptr
+        ptr_list[part_data.id] = ret.object_ptr
 
         if part_data.name ~= "" or part_data.name ~= nil then
             ret:get()
@@ -214,7 +211,7 @@ cenary_builders = {
         local change_ret = function()
             local ret2 = game_object(create_object(father))
 
-            scene_ptr_list[part_data.id] = ret2.object_ptr
+            ptr_list[part_data.id] = ret2.object_ptr
 
 
             ret2.components.transform.position = deepcopy(part_data.position)
@@ -387,7 +384,7 @@ cenary_builders = {
 
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.scene_part(ret.object_ptr, layer, value, yield)
+            cenary_builders.scene_part(ret.object_ptr,ptr_list, layer, value, yield)
         end
 
         --print("sp",sp:get())
@@ -402,17 +399,10 @@ cenary_builders = {
             parts_list = {},
         }
 
-        local mat = matreial:new()
-        mat.shader = "mesh"
-        mat.textures = { "Textures/null.png" }
-        mat.color = { r = 0.5, g = 0.5, b = 1, a = 1 }
-
-
-
+        
 
         --if yield == nil then yield = false end
-        ret.obj = deepcopy(cenary_builders.scene_part(father, layer, ceane_data.objects, yield))
-        ret.parts_ptr_list = deepcopy(scene_ptr_list)
+        ret.obj = cenary_builders.scene_part(father,ret.parts_ptr_list, layer, ceane_data.objects, yield)
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
         end
