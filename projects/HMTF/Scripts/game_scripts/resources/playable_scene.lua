@@ -96,7 +96,7 @@ cenary_builders = {
 
         if part_data.variables.type == "texture_bone_y" then
             ret.components.lua_scripts:add_script("game_scripts/animation/texture_bone_y")
-            ret.components.lua_scripts:set_variable("game_scripts/animation/texture_bone_y", "target_name",part_data.variables.target.name)
+            ret.components.lua_scripts:set_variable("game_scripts/animation/texture_bone_y", "target_name",part_data.variables.target_name.name)
             ret.components.lua_scripts:set_variable("game_scripts/animation/texture_bone_y", "no_textures_y",part_data.variables.no_textures_y)
         end
 

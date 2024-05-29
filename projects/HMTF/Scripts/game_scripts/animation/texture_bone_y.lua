@@ -15,12 +15,25 @@ local target = nil
 this_object = nil
 
 function get_texture_pos_y()
+
+    print("A")
+
     if this_object == nil then
         this_object = game_object(this_object_ptr)
     end
 
-    this_object.components.transform.get()
-    return this_object.components.transform.position.y / no_textures_y
+    print("B")
+
+    if this_object.components.transform ~= nil then
+        this_object.components.transform:get()
+        print("C",this_object.components.transform.position.y,no_textures_y,this_object.components.transform.position.y / no_textures_y)
+        return this_object.components.transform.position.y / no_textures_y
+    end
+
+    print("C",0)
+
+    return 0
+    
 end
 
 function START()
@@ -28,7 +41,7 @@ end
 
 function UPDATE()
 
-    print("A")
+    
     
     if target == nil then
         for key, value in pairs(parts_ptr_list) do
