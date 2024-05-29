@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision lowp float;
 
 vec3 quad_data[4] = vec3[4](vec3(1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(-1.0, 1.0, 0.0));
 

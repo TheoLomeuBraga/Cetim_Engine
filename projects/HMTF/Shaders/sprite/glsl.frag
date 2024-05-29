@@ -1,6 +1,6 @@
 #version 300 es
 
-precision mediump float;
+precision lowp float;
 
 in vec4 pos;
 in vec2 uv;

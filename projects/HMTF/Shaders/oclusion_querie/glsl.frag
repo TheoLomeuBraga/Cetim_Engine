@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision lowp float;
 
 layout(location = 0) out vec4 ret;
 
