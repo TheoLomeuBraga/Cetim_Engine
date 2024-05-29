@@ -1470,12 +1470,12 @@ namespace ManuseioDados
 			ret.second.texturas[0] = carregar_Imagem("Textures/white.png");
 		}
 
-		// ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:test_gradient");
-		// ret.second.texturas[0] = carregar_Imagem("Levels/hub/hub.glb:null");
-		// ret.second.texturas[0] = carregar_Imagem("Textures/null.png");
-
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
 		ret.second.cor = vec4(bcf[0], bcf[1], bcf[2], bcf[3]);
+		if(ret.second.cor.w == 1 && in_mat.alphaMode != "OPAQUE"){
+			
+			ret.second.cor.w == 0.99;
+		}
 
 		ret.second.suave = in_mat.pbrMetallicRoughness.roughnessFactor;
 		ret.second.metalico = in_mat.pbrMetallicRoughness.metallicFactor;
@@ -2100,6 +2100,7 @@ namespace ManuseioDados
 				string name = i.name;
 				if (!carregar_Imagem(name))
 				{
+					
 					shared_ptr<imagem> img = registrar_Imagem(name, i.width, i.height, i.component, i.image.data());
 					img->local = name;
 					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));

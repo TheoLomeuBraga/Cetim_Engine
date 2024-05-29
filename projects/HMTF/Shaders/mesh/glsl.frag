@@ -1,4 +1,5 @@
 #version 300 es
+precision lowp int;
 precision lowp float;
 
 
@@ -28,6 +29,8 @@ void main() {
 
    
    ret = color * texture(textures[0], re_pos_uv(vert.UV, uv_position_scale)) * vec4(vert.COLOR.x,vert.COLOR.y,vert.COLOR.z,1);
-   //ret = vec4(vert.NORMAL_COLOR,color.w);
+   if(ret.w == 0.0){
+      discard;
+   }
 
 }

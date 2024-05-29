@@ -1,4 +1,5 @@
 #version 300 es
+precision lowp int;
 precision lowp float;
 
 vec3 quad_data[4] = vec3[4](

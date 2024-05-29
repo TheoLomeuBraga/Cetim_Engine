@@ -1,4 +1,6 @@
 #version 300 es
+precision lowp int;
+precision lowp int;
 precision lowp float;
 
 layout(location = 0) in vec3 position;

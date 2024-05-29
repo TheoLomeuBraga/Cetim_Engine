@@ -12,10 +12,23 @@ parts_ptr_list = {}
 
 local target = nil
 
+this_object = nil
+
+function get_texture_pos_y()
+    if this_object == nil then
+        this_object = game_object(this_object_ptr)
+    end
+
+    this_object.components.transform.get()
+    return this_object.components.transform.position.y / no_textures_y
+end
+
 function START()
 end
 
 function UPDATE()
+
+    print("A")
     
     if target == nil then
         for key, value in pairs(parts_ptr_list) do
@@ -27,6 +40,12 @@ function UPDATE()
             end
         end
     end
+
+    
+
+    target.components.render_mesh:get()
+    target.components.render_mesh.materials[1].position_scale.y = get_texture_pos_y()
+    target.components.render_mesh:set()
 
 end
 

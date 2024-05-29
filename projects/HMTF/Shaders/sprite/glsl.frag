@@ -1,5 +1,6 @@
 #version 300 es
 
+precision lowp int;
 precision lowp float;
 
 in vec4 pos;

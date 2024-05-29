@@ -76,7 +76,7 @@ public:
 	map<shared_ptr<objeto_jogo>, int> oclusion_queries_resultados;
 	unsigned int oclusion_querie_in_view = 0;
 
-	string bone_matrixes_ids[256];
+	string bone_matrixes_ids[255];
 
 	Material material_last_frame;
 
@@ -443,7 +443,7 @@ public:
 		print("GPU: ",string(reinterpret_cast<const char *>(glGetString(GL_RENDERER))));
 		
 
-		for (size_t i = 0; i < 256; i++)
+		for (size_t i = 0; i < 255; i++)
 		{
 
 			bone_matrixes_ids[i] = ("finalBonesMatrices[" + std::to_string(i) + "]");
@@ -546,6 +546,8 @@ public:
 			}
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frame_buffer_editor_texture, 0);
 		}
+
+
 	}
 
 	OpenGL_API()
@@ -905,13 +907,13 @@ public:
 					}
 				}
 
-				mat4 matrixes[256];
+				mat4 matrixes[255];
 
 				if (is_skin)
 				{
 					// criar_oclusion_querie(obj);
 
-					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
+					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)255); i++)
 					{
 
 						shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
@@ -975,7 +977,7 @@ public:
 
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
 
-								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)256); i++)
+								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)255); i++)
 								{
 
 									glUniformMatrix4fv(glGetUniformLocation(shader_s, bone_matrixes_ids[i].c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
