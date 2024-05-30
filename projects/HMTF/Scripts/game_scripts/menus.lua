@@ -392,9 +392,7 @@ function START()
 
     global_data.ui_selection_id = 1
 
-    window.resolution.x = 256 * 2
-    window.resolution.y = 224 * 2
-    window:set()
+    
 end
 
 function UPDATE()

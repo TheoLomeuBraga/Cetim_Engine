@@ -2,7 +2,7 @@ require("components.extras")
 require("components.component_all")
 require("components.component_index")
 require("objects.game_object")
-
+require("math")
 
 target_name = ""
 
@@ -23,7 +23,7 @@ function get_texture_pos_y()
     if this_object.components.transform ~= nil then
         this_object.components.transform:get()
         --print("C",this_object.components.transform.position.y,no_textures_y,this_object.components.transform.position.y / no_textures_y)
-        return this_object.components.transform.position.y / no_textures_y
+        return this_object.components.transform.position.y / math.floor(no_textures_y)
     end
 
     return 0
