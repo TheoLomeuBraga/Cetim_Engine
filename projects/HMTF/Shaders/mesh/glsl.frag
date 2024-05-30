@@ -29,8 +29,10 @@ void main() {
 
    
    ret = color * texture(textures[0], re_pos_uv(vert.UV, uv_position_scale)) * vec4(vert.COLOR.x,vert.COLOR.y,vert.COLOR.z,1);
+   /*
    if(ret.w == 0.0){
       discard;
    }
+   */
 
 }
