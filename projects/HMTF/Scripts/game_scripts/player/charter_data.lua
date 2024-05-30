@@ -70,9 +70,6 @@ function create_avatar()
         base_avatar.components.transform.rotation = { x = 0, y = 180 + 45, z = 0 }
         base_avatar.components.transform.scale = { x = 0.8, y = 0.8, z = 0.8 }
 
-        base_avatar.components.transform.position = { x = 2, y = -8, z = 10 }
-        base_avatar.components.transform.rotation = { x = 0, y = 180, z = 0 }
-        base_avatar.components.transform.scale = { x = 2, y = 2, z = 2 }
         base_avatar.components.transform:set()
 
 

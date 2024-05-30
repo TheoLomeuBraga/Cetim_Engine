@@ -133,8 +133,8 @@ end
 function toogle_full_screen(state, id)
     if state == "click" then
         window.full_screen = not window.full_screen
-        window.resolution.x = 256
-        window.resolution.y = 224
+        window.resolution.x = 256 * 2
+        window.resolution.y = 224 * 2
         window:set()
         save_configs()
     end
@@ -391,6 +391,10 @@ function START()
     start_all_menus()
 
     global_data.ui_selection_id = 1
+
+    window.resolution.x = 256 * 2
+    window.resolution.y = 224 * 2
+    window:set()
 end
 
 function UPDATE()

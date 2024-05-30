@@ -94,7 +94,7 @@ cenary_builders = {
             ret.components.render_mesh:set()
         end
 
-        print(part_data.variables.type)
+        --print(part_data.variables.type)
 
         if part_data.variables.type == "texture_bone_y" then
             ret.components.lua_scripts:add_script("game_scripts/animation/texture_bone_y")

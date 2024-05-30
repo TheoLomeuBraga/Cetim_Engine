@@ -90,6 +90,8 @@ public:
 	void mudar_res(float res_x, float res_y)
 	{
 		SDL_SetWindowSize(window, res_x, res_y);
+		configuracoes::janelaConfig.X = res_x;
+		configuracoes::janelaConfig.Y = res_y;
 	}
 
 	void enable_cursor(bool enable)

@@ -263,10 +263,10 @@ function START()
     --back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },{ mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
     set_background_image({ path = mat.textures[1], color = mat.color })
 
-    window.resolution.x = 256
-    window.resolution.y = 224
-
+    window.resolution.x = 256 * 2
+    window.resolution.y = 224 * 2
     window:set()
+
     gravity:set()
 
 
