@@ -573,7 +573,7 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		shared_ptr<render_malha> rm = obj->pegar_componente<render_malha>();
 		if (rm != NULL)
 		{
-			
+
 			if (objects_ptrs.size() > 0)
 			{
 				rm->bones = objects_ptrs;
@@ -1055,8 +1055,9 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int get_main_input_device(lua_State *L){
-		lua_pushnumber(L,manuseio_inputs->main_controller_device);
+	int get_main_input_device(lua_State *L)
+	{
+		lua_pushnumber(L, manuseio_inputs->main_controller_device);
 		return 1;
 	}
 
@@ -2685,49 +2686,52 @@ namespace funcoes_ponte
 			bool mix = lua_toboolean(L, 3);
 
 			string animation_name = lua_tostring(L, 4);
-			animacao ani = scene->animacoes[animation_name];
+			if (scene->animacoes.find(animation_name) != scene->animacoes.end())
+			{
+				animacao ani = scene->animacoes[animation_name];
 
-			float animation_time = lua_tonumber(L, 5);
-			if (animation_time > ani.duration)
-			{
-				animation_time = ani.duration;
-			}
-			else if (animation_time < 0)
-			{
-				animation_time = 0;
-			}
+				float animation_time = lua_tonumber(L, 5);
+				if (animation_time > ani.duration)
+				{
+					animation_time = ani.duration;
+				}
+				else if (animation_time < 0)
+				{
+					animation_time = 0;
+				}
 
-			float animation_frame = 0;
-			if (animation_time > ani.duration)
-			{
-				animation_frame = ani.keyFrames.size();
-			}
-			else
-			{
-				animation_frame = (animation_time * ani.keyFrames.size()) / ani.duration + 1;
-			}
+				float animation_frame = 0;
+				if (animation_time > ani.duration)
+				{
+					animation_frame = ani.keyFrames.size();
+				}
+				else
+				{
+					animation_frame = (animation_time * ani.keyFrames.size()) / ani.duration + 1;
+				}
 
-			float animation_frame_rest = animation_frame - (int)animation_frame;
+				float animation_frame_rest = animation_frame - (int)animation_frame;
 
-			if (animation_frame < 0)
-			{
-				animation_frame = 0;
-				animation_frame_rest = 0;
-			}
-			else if (animation_frame > ani.keyFrames.size())
-			{
-				animation_frame = ani.keyFrames.size();
-				animation_frame_rest = 0;
-			}
+				if (animation_frame < 0)
+				{
+					animation_frame = 0;
+					animation_frame_rest = 0;
+				}
+				else if (animation_frame > ani.keyFrames.size())
+				{
+					animation_frame = ani.keyFrames.size();
+					animation_frame_rest = 0;
+				}
 
-			if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
-			{
-				vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
-				apply_key_frame_transform(kfs, objects_ptrs, scene->offset_matrices);
-			}
-			else
-			{
-				apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
+				if (animation_frame_rest > 0 && animation_frame < ani.keyFrames.size() - 1 && mix)
+				{
+					vector<key_frame> kfs = mix_keyframes(ani.keyFrames[(int)animation_frame - 1], ani.keyFrames[((int)animation_frame)], animation_frame_rest);
+					apply_key_frame_transform(kfs, objects_ptrs, scene->offset_matrices);
+				}
+				else
+				{
+					apply_key_frame_transform(ani.keyFrames[(int)animation_frame - 1], objects_ptrs, scene->offset_matrices);
+				}
 			}
 		}
 		else if (args_no == 6)
@@ -2764,7 +2768,6 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("set_joystick_vibration", funcoes_ponte::set_joystick_vibration),
 															 pair<string, lua_function>("set_joystick_led", funcoes_ponte::set_joystick_led),
 															 pair<string, lua_function>("get_main_input_device", funcoes_ponte::get_main_input_device),
-
 
 														 }),
 		pair<string, map<string, lua_function>>("time", {

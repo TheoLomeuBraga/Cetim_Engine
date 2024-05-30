@@ -6,7 +6,7 @@ require("math")
 
 target_name = ""
 
-no_textures_y = 0
+no_textures_y = 0.0
 
 parts_ptr_list = {}
 
@@ -22,8 +22,9 @@ function get_texture_pos_y()
 
     if this_object.components.transform ~= nil then
         this_object.components.transform:get()
-        --print("C",this_object.components.transform.position.y,no_textures_y,this_object.components.transform.position.y / no_textures_y)
-        return this_object.components.transform.position.y / math.floor(no_textures_y)
+        local ret = math.floor(this_object.components.transform.position.y + 0.1) / no_textures_y
+        print(ret)
+        return ret
     end
 
     return 0

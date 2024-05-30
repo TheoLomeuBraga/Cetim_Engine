@@ -70,12 +70,17 @@ function create_avatar()
         base_avatar.components.transform.rotation = { x = 0, y = 180 + 45, z = 0 }
         base_avatar.components.transform.scale = { x = 0.8, y = 0.8, z = 0.8 }
 
+        base_avatar.components.transform.position = { x = 0, y = -20, z = 10 }
+        base_avatar.components.transform.rotation = { x = 0, y = 180, z = 0 }
+        base_avatar.components.transform.scale = { x = 3, y = 3, z = 3 }
         base_avatar.components.transform:set()
 
 
         avatar_3D = cenary_builders.entity(base_avatar.object_ptr, 4, avatar_3D_data, "mesh", true, false)
 
         set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "normal", 1)
+        set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "expecion_test_mouth", 0)
+        set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "expecion_test_eyes", 0)
         
         avatar_created = true
     end
