@@ -9,6 +9,12 @@ using String = std::string;
 
 #define TOUCHES std::vector<vec2>
 
+struct android_input_struct{
+	TOUCHES touches;
+	
+};
+typedef struct mobile_input_struct mobile_input;
+
 class input_manager
 {
 public:
@@ -18,7 +24,6 @@ public:
 	teclado keyboard_input;
 	input_mouse mouse_input;
 	vector<joystick> joysticks_input;
-	vector<TOUCHES> touch_screen_input;
 	vr_headset_input vr_input;
 
 	unsigned char main_controller_device = 0; // 0 = mouse & keyboard ; 1 = controller 
@@ -28,7 +33,6 @@ public:
 
 	virtual teclado get_keyboard_input() { return teclado(); }
 	virtual input_mouse get_mouse_input() { return input_mouse(); }
-	virtual TOUCHES get_touch_screen() { return {}; }
 	
 	virtual joystick get_joysticks_input(unsigned char no)
 	{

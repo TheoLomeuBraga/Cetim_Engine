@@ -267,7 +267,6 @@ public:
 	teclado keyboard_input;
 	input_mouse mouse_input;
 	vector<joystick> joysticks_input;
-	vector<TOUCHES> touch_screen_input;
 	vr_headset_input vr_input;
 
 	bool backspace_last_frame = false;
@@ -693,40 +692,7 @@ public:
 		}
 	}
 
-	TOUCHES get_touch_screen()
-	{
-		for (SDL_Event event : event_list)
-		{
-			if (event.type == SDL_EVENT_FINGER_DOWN)
-			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					print("toque");
-					wait_next_print = 0;
-				}
-			}
-			if (event.type == SDL_EVENT_FINGER_UP)
-			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					print("tfinger", event.tfinger.x, event.tfinger.y);
-					wait_next_print = 0;
-				}
-			}
-			if (event.type == SDL_EVENT_FINGER_MOTION)
-			{
-				wait_next_print++;
-				if (wait_next_print >= 30)
-				{
-					wait_next_print = 0;
-				}
-			}
-		}
-		return {};
-	}
-
+	
 	vr_headset_input get_vr_headset_input()
 	{
 		return vr_input;
