@@ -64,7 +64,7 @@ function create_avatar()
         base_avatar = game_object(create_object(global_data.camera_ptr))
 
         base_avatar.components.transform:get()
-        base_avatar.components.transform.position = { x = 2, y = -8, z = 10 }
+        base_avatar.components.transform.position = { x = 2, y = -9, z = 10 }
         base_avatar.components.transform.rotation = { x = 0, y = 180 + 45, z = 0 }
         base_avatar.components.transform.scale = { x = 0.8, y = 0.8, z = 0.8 }
 
