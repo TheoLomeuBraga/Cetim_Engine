@@ -23,7 +23,6 @@ function get_texture_pos_y()
     if this_object.components.transform ~= nil then
         this_object.components.transform:get()
         local ret = math.floor(this_object.components.transform.position.y + 0.1) / no_textures_y
-        print(ret)
         return ret
     end
 

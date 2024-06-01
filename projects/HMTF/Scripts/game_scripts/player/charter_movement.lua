@@ -46,7 +46,7 @@ local game_states = {
 game_state = 0
 
 
-
+camera_movement_intensity = 1
 
 this_physics_3d = {}
 
@@ -363,7 +363,9 @@ function UPDATE()
             this_physics_3d:set_linear_velocity(0, 0, 0)
         end
 
-        camera.components.transform:change_rotation(-camera_rotation.y, 0, 0)
+
+
+        camera.components.transform:change_rotation(-camera_rotation.y, 0, inputs.left * camera_movement_intensity)
         this_object.components.transform:change_rotation(0, camera_rotation.x, 0)
         pause_last_frame = global_data.pause < 1
 
