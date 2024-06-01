@@ -57,8 +57,6 @@ avatar_created = false
 
 function create_avatar()
     if global_data.camera_ptr ~= nil then
-
-        
         local model_path = "3D Models/charters/female_charter.glb"
 
         avatar_3D_data = get_scene_3D(model_path)
@@ -81,7 +79,7 @@ function create_avatar()
         set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "normal", 1)
         set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "expecion_test_mouth", 0)
         set_keyframe(model_path, avatar_3D.parts_ptr_list, true, "expecion_test_eyes", 0)
-        
+
         avatar_created = true
     end
 end
@@ -117,11 +115,15 @@ function UPDATE()
         create_avatar()
     end
 
-    health_style.inputs.power = my_data.health / my_data.max_health
-    power_style.inputs.power = my_data.power / my_data.max_power
 
-    simple_ui_lable(health_transform, health_style)
-    simple_ui_lable(power_transform, power_style)
+
+    if global_data.pause == 0 then
+        health_style.inputs.power = my_data.health / my_data.max_health
+        power_style.inputs.power = my_data.power / my_data.max_power
+
+        simple_ui_lable(health_transform, health_style)
+        simple_ui_lable(power_transform, power_style)
+    end
 end
 
 function COLLIDE(collision_info)

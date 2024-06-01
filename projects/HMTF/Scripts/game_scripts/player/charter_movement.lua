@@ -46,7 +46,7 @@ local game_states = {
 game_state = 0
 
 
-camera_movement_intensity = 1
+camera_movement_intensity = 2
 
 this_physics_3d = {}
 

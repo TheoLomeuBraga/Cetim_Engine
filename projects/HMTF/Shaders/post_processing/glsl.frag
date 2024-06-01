@@ -124,7 +124,7 @@ void main() {
 
     // Time varying pixel color
         vec3 col = getPixel(uv);
-        col = ditherColor(col, uv, tex_size.x, tex_size.y);
+        col = ditherColor(col, uv, 640.0, 240.0);
     // Output to screen
         ret = vec4(col, 1.0);
     } else {
