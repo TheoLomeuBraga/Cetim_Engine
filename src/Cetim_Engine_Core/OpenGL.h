@@ -40,6 +40,7 @@ string nome_shader_vert = "recursos/Shaders/vert/Shader.vert", nome_shader_geom 
 class OpenGL_API : public API_grafica_classe
 {
 public:
+	bool ajust_view_matrix = true;
 	bool show_oclusion_querie = false;
 
 	int id_camera;
@@ -143,7 +144,7 @@ public:
 			{
 				std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
 				glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-				print("error in shader: ",shader[i].first);
+				print("error in shader: ", shader[i].first);
 				printf("%s\n", &VertexShaderErrorMessage[0]);
 			}
 
@@ -158,7 +159,7 @@ public:
 			{
 				std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 				glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-				print("error in shader: ",shader[i].first);
+				print("error in shader: ", shader[i].first);
 				printf("%s\n", &ProgramErrorMessage[0]);
 			}
 		}
@@ -281,7 +282,7 @@ public:
 		}
 	}
 
-	//shared_ptr<malha> oclusion_box;
+	// shared_ptr<malha> oclusion_box;
 
 	shared_ptr<transform_> teste_tf;
 	shared_ptr<objeto_jogo> teste_cam = NULL;
@@ -332,8 +333,15 @@ public:
 
 				if (tf != NULL && rm != NULL && !tf->UI && rm->usar_oclusao && !tf->UI)
 				{
-
-					mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+					mat4 ajust;
+					if (ajust_view_matrix)
+					{
+						ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+					}
+					else
+					{
+						ajust = tf->matrizTransform;
+					}
 
 					glBeginQuery(GL_ANY_SAMPLES_PASSED, p.second);
 
@@ -439,9 +447,8 @@ public:
 	{
 
 		modelo_gpu = string(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
-		print("RENDER: ",string(reinterpret_cast<const char *>(glGetString(GL_VERSION))));
-		print("GPU: ",string(reinterpret_cast<const char *>(glGetString(GL_RENDERER))));
-		
+		print("RENDER: ", string(reinterpret_cast<const char *>(glGetString(GL_VERSION))));
+		print("GPU: ", string(reinterpret_cast<const char *>(glGetString(GL_RENDERER))));
 
 		for (size_t i = 0; i < 255; i++)
 		{
@@ -454,8 +461,8 @@ public:
 		// sha.push_back(pair<string, unsigned int>(nome_shader_geom, GL_GEOMETRY_SHADER));
 		sha.push_back(pair<string, unsigned int>(nome_shader_frag, GL_FRAGMENT_SHADER));
 
-		//oclusion_box = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
-		//adicionar_malha(oclusion_box.get());
+		// oclusion_box = ManuseioDados::importar_glb("engine assets/engine_models.glb")->malhas["oclusion_box:0"];
+		// adicionar_malha(oclusion_box.get());
 
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -546,8 +553,6 @@ public:
 			}
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frame_buffer_editor_texture, 0);
 		}
-
-
 	}
 
 	OpenGL_API()
@@ -778,7 +783,15 @@ public:
 
 		if (!tf->UI)
 		{
-			mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+			mat4 ajust;
+			if (ajust_view_matrix)
+			{
+				ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+			}
+			else
+			{
+				ajust = tf->matrizTransform;
+			}
 			glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &ajust[0][0]);
 		}
 		else
@@ -956,7 +969,10 @@ public:
 							{
 								ajust[3] = glm::vec4(glm::vec3(0, 0, 0), 1.0f);
 							}
-							ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
+							if (ajust_view_matrix)
+							{
+								ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * ajust;
+							}
 
 							glUniformMatrix4fv(shader_uniform_location[shader_s]["transform"], 1, GL_FALSE, &ajust[0][0]);
 							glUniformMatrix4fv(shader_uniform_location[shader_s]["vision"], 1, GL_FALSE, &ca->matrizVisao[0][0]);
@@ -1462,7 +1478,15 @@ public:
 						for (shared_ptr<transform_> tf : PMESH->transforms)
 						{
 
-							mat4 ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+							mat4 ajust;
+							if (ajust_view_matrix)
+							{
+								ajust = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * tf->matrizTransform;
+							}
+							else
+							{
+								ajust = tf->matrizTransform;
+							}
 
 							glUniform1i(shader_uniform_location[shader_s]["ui"], tf->UI);
 							glUniformMatrix4fv(transform, 1, GL_FALSE, &ajust[0][0]);
@@ -1749,7 +1773,6 @@ public:
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	}
 
 	void draw_ui_element(ui_element_instruction element)
