@@ -40,7 +40,7 @@ function set_target_point(name,point)
             speed = 1
         end
 
-        core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.set_target_point({name,point})
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.set_target_point({name,point})
     end
 end
 
@@ -54,7 +54,7 @@ function remove_target_point(name)
             speed = 1
         end
 
-        core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.remove_target_point({name})
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.remove_target_point({name})
     end
 end
 
@@ -68,7 +68,7 @@ function summon_bullet(type,damage_type,group,start,target_direction,speed,color
             speed = 1
         end
 
-        core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.summon_bullet({type,damage_type,group,start,target_direction,speed,color,distance,damage,effect})
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.summon_bullet({type,damage_type,group,start,target_direction,speed,color,distance,damage,effect})
     end
 end
 
@@ -78,6 +78,6 @@ function clean_bullets()
             core_obj = game_object(global_data.core_object_ptr)
         end
 
-        core_obj.components.lua_scripts.scripts["game_scripts/bullet_master"].functions.clean({})
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.clean({})
     end
 end
