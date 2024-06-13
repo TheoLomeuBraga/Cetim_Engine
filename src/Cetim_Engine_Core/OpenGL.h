@@ -926,6 +926,7 @@ public:
 				{
 					// criar_oclusion_querie(obj);
 
+					/*
 					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)255); i++)
 					{
 
@@ -935,6 +936,30 @@ public:
 							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
 						}
 					}
+					*/
+
+					unsigned char bone_count = std::min(RM->bones.size(), (size_t)255);
+					vector<shared_ptr<transform_>> bones;
+					for (size_t i = 0; i < bone_count; i++)
+					{
+						bones.push_back(RM->bones[i]->pegar_componente<transform_>());
+					}
+
+					auto proces_matrix = [=](mat4 *matrixes,unsigned char start,unsigned char offset){
+						for(unsigned char i = start;i < start+offset; i++){
+							shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
+							if(bone_tf != NULL){
+								matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
+							}
+							
+						}
+						
+					};
+
+					proces_matrix(matrixes,0,bone_count);
+
+					//size_t numThreads = std::thread::hardware_concurrency();
+					//std::vector<std::thread> threads;
 				}
 				else
 				{
@@ -993,11 +1018,7 @@ public:
 
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 1);
 
-								for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)255); i++)
-								{
-
-									glUniformMatrix4fv(glGetUniformLocation(shader_s, bone_matrixes_ids[i].c_str()), 1, GL_FALSE, &matrixes[i][0][0]);
-								}
+								glUniformMatrix4fv(glGetUniformLocation(shader_s, "finalBonesMatrices"), std::min(RM->bones.size(), (size_t)255), GL_FALSE, &matrixes[0][0][0]);
 							}
 							else
 							{

@@ -367,7 +367,10 @@ cenary_builders = {
         elseif part_data.variables.type == "entity" then
             if part_data.variables.entity_type == nil or part_data.variables.entity_type == "test_entity" then
                 summon_entity(deepcopy(part_data.position), part_data.rotation.y, "test_entity")
+            else
+                summon_entity(deepcopy(part_data.position), part_data.rotation.y, part_data.variables.entity_type)
             end
+            --print("entity_type",part_data.variables.entity_type)
 
             change_ret()
         elseif part_data.variables.type == "navmesh" then

@@ -632,8 +632,8 @@ public:
         {
             collisionInfo.obj = A;
             collisionInfo.cos_obj = B;
-            physics_3D_collisionInfos.emplace_back(collisionInfo);
-            bu->colis_infos.emplace_back(collisionInfo);
+            physics_3D_collisionInfos.push_back(collisionInfo);
+            bu->colis_infos.push_back(collisionInfo);
         }
 
         return 0; // return 0 to process all collisions

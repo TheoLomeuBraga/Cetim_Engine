@@ -49,7 +49,7 @@ local update_per_type = {
             entity.path = generate_navmesh_short_path(pos, player_position)
             entity.progression = { 0.0 }
         end
-        
+
 
         if distance(pos, player_position) > 10 then
             walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
@@ -57,10 +57,30 @@ local update_per_type = {
 
         --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
     end,
+    grass = function(entity)
+        local triger = entity.obj.components.physics_3D
+        triger:get()
+
+        if #triger:get_objects_coliding() > 1 then
+            set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
+
+            entity.animation_time = entity.animation_time + (time.delta * 4)
+            if entity.animation_time > get_scene_3D(entity.model_path).animations["normal"].duration then
+                entity.animation_time = get_scene_3D(entity.model_path).animations["normal"].duration
+            end
+        else
+            set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
+
+            entity.animation_time = entity.animation_time - (time.delta * 4)
+            if entity.animation_time < 0  then
+                entity.animation_time = 0
+            end
+        end
+    end
 }
 
 function UPDATE()
-    if global_data.pause ~=nil and global_data.pause < 1 then
+    if global_data.pause ~= nil and global_data.pause < 1 then
         time:get()
 
         player_position = { x = 0, y = 0, z = 0 }
@@ -128,6 +148,32 @@ local start_per_type = {
         entity.rig_obj.components.transform:set()
         entity.parts_ptr_list = entity_structures.parts_ptr_list
     end,
+    grass = function(entity)
+        local model_path = "3D Models/alien_grass.glb"
+
+        local entity_physics_3D = entity.obj.components.physics_3D
+        entity_physics_3D.boady_dynamic = boady_dynamics.dynamic
+        entity_physics_3D.collision_shape = collision_shapes.box
+        entity_physics_3D.scale = Vec3:new(0.5, 1, 0.5)
+        entity_physics_3D.rotate_x = false
+        entity_physics_3D.rotate_y = false
+        entity_physics_3D.rotate_z = false
+        entity_physics_3D.friction = 0
+        entity_physics_3D.gravity_scale = 0
+        entity_physics_3D.get_collision_info = true
+        entity_physics_3D.triger = true
+        entity_physics_3D:set()
+
+        local entity_data = get_scene_3D(model_path)
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "grass_mesh", true, false)
+
+        entity.rig_obj = entity_structures.obj
+        entity.parts_ptr_list = entity_structures.parts_ptr_list
+
+        entity.animation_time = 0
+        entity.model_path = model_path
+        set_keyframe(model_path, entity_structures.parts_ptr_list, true, "normal", entity.animation_time)
+    end
 }
 
 function summon_entity(args)

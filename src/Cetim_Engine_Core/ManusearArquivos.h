@@ -1619,8 +1619,8 @@ namespace ManuseioDados
 		std::vector<float> colorData;
 		if (primitive.attributes.find("COLOR_0") != primitive.attributes.end())
 		{
-			const tinygltf::Accessor &normalAccessor = model.accessors[primitive.attributes.at("COLOR_0")];
-			tgl_convertAccessorData(model, normalAccessor, normalData);
+			const tinygltf::Accessor &colorAccessor = model.accessors[primitive.attributes.at("COLOR_0")];
+			tgl_convertAccessorData(model, colorAccessor, colorData);
 		}
 
 		std::vector<int> jointsData;
