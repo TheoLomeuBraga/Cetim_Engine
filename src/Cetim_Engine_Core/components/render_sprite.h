@@ -10,7 +10,9 @@ using string = std::string;
 class render_sprite : public componente
 {
 public:
-	render_sprite() {}
+	render_sprite() {
+		should_update = false;
+	}
 	Material mat;
 	bool ligado = true;
 	uint8_t camada = 0;

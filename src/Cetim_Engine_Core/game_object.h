@@ -12,6 +12,7 @@ class objeto_jogo;
 class componente
 {
 public:
+	bool should_update = true;
 	shared_ptr<objeto_jogo> esse_objeto = NULL;
 	componente() {}
 	virtual void iniciar() {}
@@ -285,7 +286,9 @@ public:
 
 			for (pair<string, shared_ptr<componente>> p : componentes_copy)
 			{
-				p.second->atualisar();
+				if(p.second->should_update){
+					p.second->atualisar();
+				}
 			}
 		}
 	}
@@ -326,6 +329,8 @@ public:
 			obj->adicionar_cena();
 		}
 	}
+
+
 };
 int objeto_jogo::instancias = 0;
 

@@ -11,6 +11,7 @@ mat4 MatrizMundi = glm::mat4(1.0);
 class transform_ : public componente
 {
 public:
+	
 	glm::mat4 matrizTransform;
 	glm::mat4 offset_matrix = glm::mat4(1.0f);
 	unsigned char billboarding = 0;
@@ -28,6 +29,7 @@ public:
 
 	transform_()
 	{
+		should_update = false;
 		matrizTransform = MatrizMundi;
 	}
 	~transform_()

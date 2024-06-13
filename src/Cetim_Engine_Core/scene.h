@@ -80,6 +80,8 @@ public:
 
 	void adicionar_objeto_lista(shared_ptr<objeto_jogo> obj)
 	{
+
+		
 		
 		if (obj != NULL)
 		{
@@ -286,14 +288,15 @@ public:
 
 	void atualisar_transform_objeto(shared_ptr<objeto_jogo> obj)
 	{
+		
 		shared_ptr<transform_> TF = obj->pegar_componente<transform_>();
-		if (TF != NULL)
+		if (TF)
 		{
 			TF->atualizar_tf();
 		}
 
 		shared_ptr<camera> cam = obj->pegar_componente<camera>();
-		if (cam != NULL)
+		if (cam)
 		{
 			cam->paiTF = TF;
 			cam->atualizar_tf();
@@ -302,7 +305,7 @@ public:
 		for (shared_ptr<objeto_jogo> ob : obj->filhos)
 		{
 			shared_ptr<transform_> TF_filho = ob->pegar_componente<transform_>();
-			if (TF_filho != NULL)
+			if (TF_filho)
 			{
 				TF_filho->paiTF = TF.get();
 			}
@@ -366,6 +369,7 @@ public:
 
 	void atualisar_Logica_Scripst()
 	{
+		
 		for (shared_ptr<objeto_jogo> obj : lista_objetos)
 		{
 			obj->atualisar();

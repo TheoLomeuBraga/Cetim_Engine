@@ -926,18 +926,6 @@ public:
 				{
 					// criar_oclusion_querie(obj);
 
-					/*
-					for (size_t i = 0; i < std::min(RM->bones.size(), (size_t)255); i++)
-					{
-
-						shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
-						if (bone_tf != NULL)
-						{
-							matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
-						}
-					}
-					*/
-
 					unsigned char bone_count = std::min(RM->bones.size(), (size_t)255);
 					vector<shared_ptr<transform_>> bones;
 					for (size_t i = 0; i < bone_count; i++)
@@ -950,10 +938,8 @@ public:
 							shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
 							if(bone_tf != NULL){
 								matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
-							}
-							
+							}	
 						}
-						
 					};
 
 					proces_matrix(matrixes,0,bone_count);

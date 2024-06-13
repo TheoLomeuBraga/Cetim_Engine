@@ -200,6 +200,6 @@ public:
 	
 
 	render_texto(){
-		
+		should_update = false;
 	}
 };

@@ -27,7 +27,9 @@ public:
 	
 	vector<shared_ptr<transform_>> transforms;
 
-	poly_mesh() {}
+	poly_mesh() {
+		should_update = false;
+	}
 	~poly_mesh() {}
 };
 

@@ -16,5 +16,7 @@ class render_shader : public componente {
 		uint8_t camada = 0;
 		
 		uint8_t tamanho = 6;
-		render_shader() {}
+		render_shader() {
+			should_update = false;
+		}
 	};

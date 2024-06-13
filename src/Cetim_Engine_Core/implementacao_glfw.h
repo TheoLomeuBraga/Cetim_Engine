@@ -173,7 +173,8 @@ public:
 	long double tempoPerdido = 0;
 	void Reindenizar()
 	{
-
+		
+		/**/
 		while (true)
 		{
 			float tempoTotal = deltaTimer.get() + tempoPerdido; // Inclui o tempo perdido anterior
@@ -201,9 +202,13 @@ public:
 
 		cena_objetos_selecionados->atualisar_transforms();
 
+		Benchmark_Timer c("atualisar_Logica_Scripst");
 		cena_objetos_selecionados->atualisar_Logica_Scripst();
+		c.stop();
 
+		Benchmark_Timer d("reindenizar_cenario");
 		reindenizar_cenario();
+		d.stop();
 
 		for (function<void()> f : Depois_Render_Func)
 		{

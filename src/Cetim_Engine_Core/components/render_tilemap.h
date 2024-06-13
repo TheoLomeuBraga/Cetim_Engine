@@ -10,7 +10,9 @@ using string = std::string;
 
 class render_tilemap : public componente {
 	public:
-		render_tilemap(){}
+		render_tilemap(){
+			should_update = false;
+		}
 		Material mat;
 		bool ligado = true;
 		uint8_t camada = 0;

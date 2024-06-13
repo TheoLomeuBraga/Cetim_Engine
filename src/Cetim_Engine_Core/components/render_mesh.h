@@ -10,7 +10,9 @@ using String = std::string;
 class render_malha : public componente
 {
 public:
-	render_malha() {}
+	render_malha() {
+		should_update = false;
+	}
 	bool ligado = true;
 	// char lado_render = lado_render_malha::front;
 	bool usar_oclusao = true;
