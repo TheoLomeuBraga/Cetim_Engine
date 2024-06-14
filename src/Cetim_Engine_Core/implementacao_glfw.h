@@ -198,17 +198,16 @@ public:
 			f();
 		}
 
+
 		cena_objetos_selecionados->atualisar();
 
 		cena_objetos_selecionados->atualisar_transforms();
 
-		Benchmark_Timer c("atualisar_Logica_Scripst");
 		cena_objetos_selecionados->atualisar_Logica_Scripst();
-		c.stop();
 
-		Benchmark_Timer d("reindenizar_cenario");
+		
 		reindenizar_cenario();
-		d.stop();
+		
 
 		for (function<void()> f : Depois_Render_Func)
 		{

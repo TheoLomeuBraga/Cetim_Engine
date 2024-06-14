@@ -220,21 +220,25 @@ public:
 
 	transform_(glm::vec3 p, glm::vec3 r, glm::vec3 e)
 	{
+		should_update = false;
 		reset(false, NULL, p, r, e);
 	}
 
 	transform_(bool ui, glm::vec3 p, glm::vec3 r, glm::vec3 e)
 	{
+		should_update = false;
 		reset(ui, NULL, p, r, e);
 	}
 
 	transform_(transform_ *pai, glm::vec3 p, glm::vec3 r, glm::vec3 e)
 	{
+		should_update = false;
 		reset(false, pai, p, r, e);
 	}
 
 	transform_(bool ui, transform_ *pai, glm::vec3 p, glm::vec3 r, glm::vec3 e)
 	{
+		should_update = false;
 		reset(ui, pai, p, r, e);
 	}
 

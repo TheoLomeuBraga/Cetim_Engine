@@ -6,6 +6,7 @@ using String = std::string;
 
 #include "RecursosT.h"
 #include "table.h"
+#include "benchmark.h"
 
 class objeto_jogo;
 
@@ -31,14 +32,15 @@ public:
 	Table local_lua_data;
 	static int instancias;
 
-	shared_ptr<objeto_jogo> get_this_object() {return esse_objeto;}
+	shared_ptr<objeto_jogo> get_this_object() { return esse_objeto; }
 
 	void setar_esse_objeto(shared_ptr<objeto_jogo> objeto)
 	{
 		esse_objeto = objeto;
 	}
 
-	size_t get_components_count(){
+	size_t get_components_count()
+	{
 		return componentes.size();
 	}
 
@@ -99,7 +101,6 @@ public:
 			filhosB[i] = filhos[i];
 		}
 		filhos.swap(filhosB);
-		
 	}
 
 	void desconectar_componentes()
@@ -141,17 +142,16 @@ public:
 	template <typename X>
 	void adicionar_componente(string nome, X comp)
 	{
-		//limpar_lixo();
+		// limpar_lixo();
 		comp.esse_objeto = esse_objeto;
 		if (componentes.find(nome) == componentes.end())
 		{
-			
+
 			componentes.insert(pair<string, shared_ptr<componente>>(nome, std::make_shared<X>(comp)));
 			if (em_cena)
 			{
 				componentes[nome]->iniciar();
 			}
-
 		}
 	}
 	template <typename X>
@@ -188,7 +188,7 @@ public:
 
 	void remover_componente(string s)
 	{
-		//limpar_lixo();
+		// limpar_lixo();
 		if (componentes.find(s) != componentes.end())
 		{
 			if (em_cena)
@@ -280,17 +280,16 @@ public:
 	void atualisar()
 	{
 
-		if (em_cena)
-		{
-			map<string, shared_ptr<componente>> componentes_copy = componentes;
+		map<string, shared_ptr<componente>> componentes_copy = componentes;
 
-			for (pair<string, shared_ptr<componente>> p : componentes_copy)
+		for (pair<string, shared_ptr<componente>> p : componentes_copy)
+		{
+			if (p.second->should_update)
 			{
-				if(p.second->should_update){
-					p.second->atualisar();
-				}
+				p.second->atualisar();
 			}
 		}
+
 	}
 
 	void colidir(colis_info col)
@@ -329,8 +328,6 @@ public:
 			obj->adicionar_cena();
 		}
 	}
-
-
 };
 int objeto_jogo::instancias = 0;
 

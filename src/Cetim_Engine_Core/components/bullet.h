@@ -411,7 +411,7 @@ public:
 
     void atualisar()
     {
-        // aply_gravity();
+        
         shared_ptr<transform_> tf = esse_objeto->pegar_componente<transform_>();
         if (tf != NULL && bt_obj != NULL && !gatilho)
         {
@@ -797,7 +797,6 @@ double bullet_past_time = 0;
 
 void atualisar_global_bullet()
 {
-
     
     clean_collisions();
     get_3D_collisions();

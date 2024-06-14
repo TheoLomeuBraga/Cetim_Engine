@@ -81,8 +81,6 @@ public:
 	void adicionar_objeto_lista(shared_ptr<objeto_jogo> obj)
 	{
 
-		
-		
 		if (obj != NULL)
 		{
 			obj->remove_childrens_to_remove();
@@ -119,7 +117,6 @@ public:
 					objetos_camadas_render[RS->camada].push_back(obj);
 				}
 
-
 				else if ((PMESH != NULL && PMESH->ligado))
 				{
 					if (objetos_camadas_render_id.size() < (PMESH->camada + 1))
@@ -135,7 +132,6 @@ public:
 					objetos_camadas_render[PMESH->camada].push_back(obj);
 				}
 
-				
 				else if (tf != NULL && obj->get_components_count() > 1)
 				{
 
@@ -167,7 +163,7 @@ public:
 						}
 						objetos_camadas_render[rs->camada].push_back(obj);
 					}
-					
+
 					else if ((RT != NULL && RT->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RT->camada + 1))
@@ -182,7 +178,7 @@ public:
 						}
 						objetos_camadas_render[RT->camada].push_back(obj);
 					}
-					
+
 					else if ((RTM != NULL && RTM->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RTM->camada + 1))
@@ -198,7 +194,6 @@ public:
 						objetos_camadas_render[RTM->camada].push_back(obj);
 					}
 
-					
 					else if ((RM != NULL && RM->ligado))
 					{
 						if (objetos_camadas_render_id.size() < (RM->camada + 1))
@@ -214,7 +209,7 @@ public:
 						objetos_camadas_render[RM->camada].push_back(obj);
 					}
 					//*/
-					
+
 					else if ((FL != NULL && FL->ligado))
 					{
 						fontes_luzes_id.push_back(obj->ID);
@@ -277,8 +272,8 @@ public:
 
 	void atualisar()
 	{
-		
-		//Benchmark_Timer a("atualisar");
+
+		// Benchmark_Timer a("atualisar");
 		esvasiar_lixeira();
 		clean_lists();
 
@@ -288,7 +283,7 @@ public:
 
 	void atualisar_transform_objeto(shared_ptr<objeto_jogo> obj)
 	{
-		
+
 		shared_ptr<transform_> TF = obj->pegar_componente<transform_>();
 		if (TF)
 		{
@@ -369,10 +364,13 @@ public:
 
 	void atualisar_Logica_Scripst()
 	{
-		
+
 		for (shared_ptr<objeto_jogo> obj : lista_objetos)
 		{
-			obj->atualisar();
+			if (obj->em_cena)
+			{
+				obj->atualisar();
+			}
 		}
 	}
 

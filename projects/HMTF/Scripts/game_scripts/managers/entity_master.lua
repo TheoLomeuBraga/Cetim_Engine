@@ -58,6 +58,7 @@ local update_per_type = {
         --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
     end,
     grass = function(entity)
+        --[[
         local triger = entity.obj.components.physics_3D
         triger:get()
 
@@ -76,6 +77,7 @@ local update_per_type = {
                 entity.animation_time = 0
             end
         end
+        ]]
     end
 }
 
@@ -163,7 +165,13 @@ local start_per_type = {
         entity_physics_3D.get_collision_info = true
         entity_physics_3D.triger = true
         entity_physics_3D:set()
+        
+        local lgo = game_object(entity.obj.object_ptr)
+        for i = 1, 100, 1 do
+            lgo=game_object(lgo.object_ptr)
+        end
 
+        --[[
         local entity_data = get_scene_3D(model_path)
         local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "grass_mesh", true, false)
 
@@ -173,6 +181,7 @@ local start_per_type = {
         entity.animation_time = 0
         entity.model_path = model_path
         set_keyframe(model_path, entity_structures.parts_ptr_list, true, "normal", entity.animation_time)
+        ]]
     end
 }
 
