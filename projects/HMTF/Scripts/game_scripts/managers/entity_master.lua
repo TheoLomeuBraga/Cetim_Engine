@@ -62,14 +62,15 @@ local update_per_type = {
         local triger = entity.obj.components.physics_3D
         triger:get()
 
-        if #triger:get_objects_coliding() > 1 then
+        if #triger:get_objects_coliding() > 1 and entity.animation_time ~= 1 then
             set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
 
             entity.animation_time = entity.animation_time + (time.delta * 4)
             if entity.animation_time > get_scene_3D(entity.model_path).animations["normal"].duration then
                 entity.animation_time = get_scene_3D(entity.model_path).animations["normal"].duration
             end
-        else
+        elseif entity.animation_time ~= 0 then
+            
             set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
 
             entity.animation_time = entity.animation_time - (time.delta * 4)
@@ -165,19 +166,27 @@ local start_per_type = {
         entity_physics_3D.get_collision_info = true
         entity_physics_3D.triger = true
         entity_physics_3D:set()
-        
-        
 
+        --[[
+        local tgo = game_object(create_object(entity.obj.object_ptr))
+        for i = 1, 1000, 1 do
+            game_object(create_object(tgo.obj.object_ptr))
+            tgo.components.transform:get()
+        end
+        ]]
+        
         
         local entity_data = get_scene_3D(model_path)
         local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "grass_mesh", true, false)
 
+        
         entity.rig_obj = entity_structures.obj
         entity.parts_ptr_list = entity_structures.parts_ptr_list
 
         entity.animation_time = 0
         entity.model_path = model_path
         set_keyframe(model_path, entity_structures.parts_ptr_list, true, "normal", entity.animation_time)
+        
         
     end
 }

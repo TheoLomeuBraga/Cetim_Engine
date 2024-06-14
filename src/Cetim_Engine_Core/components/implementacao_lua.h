@@ -795,29 +795,6 @@ namespace funcoes_ponte
 		return 0;
 	}
 
-	/*
-	int get_object_family(lua_State *L)
-	{
-		Table ret;
-		int argumentos = lua_gettop(L);
-		string output = "";
-		objeto_jogo *obj = NULL;
-		obj = string_ponteiro<objeto_jogo>(lua_tostring(L, 1));
-
-		ret.setString("father", ponteiro_string(obj->pai));
-
-		vector<string> criancas;
-		for (shared_ptr<objeto_jogo> p : obj->filhos)
-		{
-			criancas.push_back(ponteiro_string(p.get()));
-		}
-
-		ret.setTable("childrens", vString_table(criancas));
-		lua_pushtable(L, ret);
-		return 1;
-	}
-	*/
-
 	int get_set_object(lua_State *L)
 	{
 

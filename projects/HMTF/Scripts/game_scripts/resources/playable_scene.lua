@@ -84,8 +84,8 @@ cenary_builders = {
         for key, value in pairs(part_data.materials) do
             part_data.materials[key].shader = shader
         end
-
-        if part_data.meshes ~= nil and part_data.materials ~= nil then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
+        
+        if part_data.meshes ~= nil and part_data.materials ~= nil and math.min(#part_data.meshes, #part_data.materials) ~= 0 then --and math.min(#part_data.meshes, #part_data.materials) > 0 then
             ret.components.render_mesh.layer = layer
             ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
             ret.components.render_mesh.meshes = part_data.meshes
@@ -257,13 +257,15 @@ cenary_builders = {
                 ret.components[components.physics_3D]:set()
             end
 
-
+            if part_data.meshes ~= nil and part_data.materials  ~= nil and math.min(#part_data.meshes, #part_data.materials) ~= 0 then
+                
+            
             ret.components.render_mesh.layer = layer
             ret.components.render_mesh.meshes_cout = math.min(#part_data.meshes, #part_data.materials)
             ret.components.render_mesh.meshes = deepcopy(part_data.meshes)
             ret.components.render_mesh.materials = deepcopy(part_data.materials)
             ret.components.render_mesh:set()
-
+        end
 
 
             ret.components.lua_scripts:add_script("game_scripts/item")

@@ -48,6 +48,9 @@ public:
 
 	void remover_objeto(shared_ptr<objeto_jogo> obj)
 	{
+
+		lista_objetos.erase(std::remove(lista_objetos.begin(), lista_objetos.end(), obj), lista_objetos.end());
+
 		for (shared_ptr<objeto_jogo> f : obj->filhos)
 		{
 			remover_objeto(f);
@@ -78,147 +81,145 @@ public:
 		}
 	}
 
-	void adicionar_objeto_lista(shared_ptr<objeto_jogo> obj)
+	void adicionar_objeto_lista()
 	{
 
-		if (obj != NULL)
+		for (shared_ptr<objeto_jogo> obj : lista_objetos)
 		{
-			obj->remove_childrens_to_remove();
-			if (obj->lixo)
+			if (obj != NULL)
 			{
-
-				remover_objeto(obj);
-			}
-			else
-			{
-
-				obj->em_cena = true;
-
-				obj->ID = lista_objetos.size();
-				lista_objetos.push_back(obj);
-
-				///*
-				// render shader
-				shared_ptr<render_sprite> RS = obj->pegar_componente<render_sprite>();
-				shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
-				shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
-				if ((RS != NULL && RS->ligado))
+				obj->remove_childrens_to_remove();
+				if (obj->lixo)
 				{
-					if (objetos_camadas_render_id.size() < (RS->camada + 1))
-					{
-						objetos_camadas_render_id.resize(RS->camada + 1);
-					}
-					objetos_camadas_render_id[RS->camada].push_back(obj->ID);
 
-					if (objetos_camadas_render.size() < (RS->camada + 1))
-					{
-						objetos_camadas_render.resize(RS->camada + 1);
-					}
-					objetos_camadas_render[RS->camada].push_back(obj);
+					remover_objeto(obj);
 				}
-
-				else if ((PMESH != NULL && PMESH->ligado))
-				{
-					if (objetos_camadas_render_id.size() < (PMESH->camada + 1))
-					{
-						objetos_camadas_render_id.resize(PMESH->camada + 1);
-					}
-					objetos_camadas_render_id[PMESH->camada].push_back(obj->ID);
-
-					if (objetos_camadas_render.size() < (PMESH->camada + 1))
-					{
-						objetos_camadas_render.resize(PMESH->camada + 1);
-					}
-					objetos_camadas_render[PMESH->camada].push_back(obj);
-				}
-
-				else if (tf != NULL && obj->get_components_count() > 1)
+				else
 				{
 
-					// camera
-					shared_ptr<camera> cam = obj->pegar_componente<camera>();
-					if (cam != NULL)
+					obj->em_cena = true;
+
+					// obj->ID = lista_objetos.size();
+					// lista_objetos.push_back(obj);
+
+					///*
+					// render shader
+					shared_ptr<render_sprite> RS = obj->pegar_componente<render_sprite>();
+					shared_ptr<poly_mesh> PMESH = obj->pegar_componente<poly_mesh>();
+					shared_ptr<transform_> tf = obj->pegar_componente<transform_>();
+					if ((RS != NULL && RS->ligado))
 					{
-						cameras_id.push_back(obj->ID);
-						cameras.push_back(obj);
+						if (objetos_camadas_render_id.size() < (RS->camada + 1))
+						{
+							objetos_camadas_render_id.resize(RS->camada + 1);
+						}
+						objetos_camadas_render_id[RS->camada].push_back(obj->ID);
+
+						if (objetos_camadas_render.size() < (RS->camada + 1))
+						{
+							objetos_camadas_render.resize(RS->camada + 1);
+						}
+						objetos_camadas_render[RS->camada].push_back(obj);
 					}
 
-					// objetos_camadas_render_id
-					shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
-					shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
-					shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
-					shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
-					shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
-					if ((rs != NULL && rs->ligado))
+					else if ((PMESH && PMESH->ligado))
 					{
-						if (objetos_camadas_render_id.size() < (rs->camada + 1))
+						if (objetos_camadas_render_id.size() < (PMESH->camada + 1))
 						{
-							objetos_camadas_render_id.resize(rs->camada + 1);
+							objetos_camadas_render_id.resize(PMESH->camada + 1);
 						}
-						objetos_camadas_render_id[rs->camada].push_back(obj->ID);
+						objetos_camadas_render_id[PMESH->camada].push_back(obj->ID);
 
-						if (objetos_camadas_render.size() < (rs->camada + 1))
+						if (objetos_camadas_render.size() < (PMESH->camada + 1))
 						{
-							objetos_camadas_render.resize(rs->camada + 1);
+							objetos_camadas_render.resize(PMESH->camada + 1);
 						}
-						objetos_camadas_render[rs->camada].push_back(obj);
+						objetos_camadas_render[PMESH->camada].push_back(obj);
 					}
 
-					else if ((RT != NULL && RT->ligado))
+					else if (tf && obj->get_components_count() > 1)
 					{
-						if (objetos_camadas_render_id.size() < (RT->camada + 1))
-						{
-							objetos_camadas_render_id.resize(RT->camada + 1);
-						}
-						objetos_camadas_render_id[RT->camada].push_back(obj->ID);
 
-						if (objetos_camadas_render.size() < (RT->camada + 1))
+						// camera
+						shared_ptr<camera> cam = obj->pegar_componente<camera>();
+						if (cam)
 						{
-							objetos_camadas_render.resize(RT->camada + 1);
+							cameras_id.push_back(obj->ID);
+							cameras.push_back(obj);
 						}
-						objetos_camadas_render[RT->camada].push_back(obj);
+
+						// objetos_camadas_render_id
+						shared_ptr<render_shader> rs = obj->pegar_componente<render_shader>();
+						shared_ptr<render_texto> RT = obj->pegar_componente<render_texto>();
+						shared_ptr<render_tilemap> RTM = obj->pegar_componente<render_tilemap>();
+						shared_ptr<render_malha> RM = obj->pegar_componente<render_malha>();
+						shared_ptr<fonte_luz> FL = obj->pegar_componente<fonte_luz>();
+						if ((rs && rs->ligado))
+						{
+							if (objetos_camadas_render_id.size() < (rs->camada + 1))
+							{
+								objetos_camadas_render_id.resize(rs->camada + 1);
+							}
+							objetos_camadas_render_id[rs->camada].push_back(obj->ID);
+
+							if (objetos_camadas_render.size() < (rs->camada + 1))
+							{
+								objetos_camadas_render.resize(rs->camada + 1);
+							}
+							objetos_camadas_render[rs->camada].push_back(obj);
+						}
+
+						else if ((RT && RT->ligado))
+						{
+							if (objetos_camadas_render_id.size() < (RT->camada + 1))
+							{
+								objetos_camadas_render_id.resize(RT->camada + 1);
+							}
+							objetos_camadas_render_id[RT->camada].push_back(obj->ID);
+
+							if (objetos_camadas_render.size() < (RT->camada + 1))
+							{
+								objetos_camadas_render.resize(RT->camada + 1);
+							}
+							objetos_camadas_render[RT->camada].push_back(obj);
+						}
+
+						else if ((RTM && RTM->ligado))
+						{
+							if (objetos_camadas_render_id.size() < (RTM->camada + 1))
+							{
+								objetos_camadas_render_id.resize(RTM->camada + 1);
+							}
+							objetos_camadas_render_id[RTM->camada].push_back(obj->ID);
+
+							if (objetos_camadas_render.size() < (RTM->camada + 1))
+							{
+								objetos_camadas_render.resize(RTM->camada + 1);
+							}
+							objetos_camadas_render[RTM->camada].push_back(obj);
+						}
+
+						else if ((RM && RM->ligado))
+						{
+							if (objetos_camadas_render_id.size() < (RM->camada + 1))
+							{
+								objetos_camadas_render_id.resize(RM->camada + 1);
+							}
+							objetos_camadas_render_id[RM->camada].push_back(obj->ID);
+
+							if (objetos_camadas_render.size() < (RM->camada + 1))
+							{
+								objetos_camadas_render.resize(RM->camada + 1);
+							}
+							objetos_camadas_render[RM->camada].push_back(obj);
+						}
+						//*/
+
+						else if ((FL && FL->ligado))
+						{
+							fontes_luzes_id.push_back(obj->ID);
+						}
 					}
-
-					else if ((RTM != NULL && RTM->ligado))
-					{
-						if (objetos_camadas_render_id.size() < (RTM->camada + 1))
-						{
-							objetos_camadas_render_id.resize(RTM->camada + 1);
-						}
-						objetos_camadas_render_id[RTM->camada].push_back(obj->ID);
-
-						if (objetos_camadas_render.size() < (RTM->camada + 1))
-						{
-							objetos_camadas_render.resize(RTM->camada + 1);
-						}
-						objetos_camadas_render[RTM->camada].push_back(obj);
-					}
-
-					else if ((RM != NULL && RM->ligado))
-					{
-						if (objetos_camadas_render_id.size() < (RM->camada + 1))
-						{
-							objetos_camadas_render_id.resize(RM->camada + 1);
-						}
-						objetos_camadas_render_id[RM->camada].push_back(obj->ID);
-
-						if (objetos_camadas_render.size() < (RM->camada + 1))
-						{
-							objetos_camadas_render.resize(RM->camada + 1);
-						}
-						objetos_camadas_render[RM->camada].push_back(obj);
-					}
-					//*/
-
-					else if ((FL != NULL && FL->ligado))
-					{
-						fontes_luzes_id.push_back(obj->ID);
-					}
-				}
-
-				for (shared_ptr<objeto_jogo> ob : obj->filhos)
-				{
-					adicionar_objeto_lista(ob);
 				}
 			}
 		}
@@ -262,7 +263,7 @@ public:
 
 	void clean_lists()
 	{
-		lista_objetos.clear();
+		// lista_objetos.clear();
 		cameras_id.clear();
 		objetos_camadas_render_id.clear();
 		fontes_luzes_id.clear();
@@ -274,10 +275,11 @@ public:
 	{
 
 		// Benchmark_Timer a("atualisar");
+
 		esvasiar_lixeira();
 		clean_lists();
 
-		adicionar_objeto_lista(objeto_cena);
+		adicionar_objeto_lista();
 		ordenar_luzes();
 	}
 
@@ -322,6 +324,8 @@ public:
 		pai->filhos.push_back(obj);
 		obj->pai = pai.get();
 		obj->adicionar_cena();
+
+		lista_objetos.push_back(obj);
 	}
 
 	void adicionar_objetos(shared_ptr<objeto_jogo> pai, vector<shared_ptr<objeto_jogo>> objs)
@@ -339,6 +343,8 @@ public:
 		pai->filhos.push_back(obj);
 		obj->pai = pai;
 		obj->adicionar_cena();
+
+		lista_objetos.push_back(obj->get_this_object());
 	}
 
 	void adicionar_objetos(objeto_jogo *pai, vector<shared_ptr<objeto_jogo>> objs)
@@ -356,7 +362,8 @@ public:
 	// objetos[a]->scriptsCpp
 	void iniciar_Logica_Scripst()
 	{
-		for (shared_ptr<objeto_jogo> obj : lista_objetos)
+		vector<shared_ptr<objeto_jogo>> lista_objetos_copy = lista_objetos;
+		for (shared_ptr<objeto_jogo> obj : lista_objetos_copy)
 		{
 			obj->iniciar();
 		}
@@ -364,8 +371,8 @@ public:
 
 	void atualisar_Logica_Scripst()
 	{
-
-		for (shared_ptr<objeto_jogo> obj : lista_objetos)
+		vector<shared_ptr<objeto_jogo>> lista_objetos_copy = lista_objetos;
+		for (shared_ptr<objeto_jogo> obj : lista_objetos_copy)
 		{
 			if (obj->em_cena)
 			{
