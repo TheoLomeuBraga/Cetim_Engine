@@ -60,9 +60,9 @@ loading_screen = {
 
 cenary_builders = {
 
-    entity_part = function(father,ptr_list, layer, part_data, shader, use_oclusion, yield)
+    entity_part = function(father,entity_ret, layer, part_data, shader, use_oclusion, yield)
         local ret = game_object(create_object(father))
-        ptr_list[part_data.id] = ret.object_ptr
+        entity_ret.parts_ptr_list[part_data.id] = ret.object_ptr
 
         if part_data.name ~= "" or part_data.name ~= nil then
             ret:get()
@@ -107,7 +107,7 @@ cenary_builders = {
         end
 
         for key, value in pairs(part_data.children) do
-            cenary_builders.entity_part(ret.object_ptr,ptr_list, layer, value, shader, use_oclusion, yield)
+            cenary_builders.entity_part(ret.object_ptr,entity_ret, layer, value, shader, use_oclusion, yield)
         end
 
         return ret
@@ -122,7 +122,7 @@ cenary_builders = {
 
         if yield == nil then yield = false end
 
-        ret.obj = cenary_builders.entity_part(father,ret.parts_ptr_list, layer, ceane_data.objects, shader, use_oclusion, yield)
+        ret.obj = cenary_builders.entity_part(father,ret, layer, ceane_data.objects, shader, use_oclusion, yield)
         for key, value in pairs(ret.parts_ptr_list) do
             ret.parts_list[key] = game_object(value)
         end
