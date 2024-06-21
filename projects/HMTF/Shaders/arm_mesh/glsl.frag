@@ -22,6 +22,7 @@ uniform float time;
 uniform float color_2_r;
 uniform float color_2_g;
 uniform float color_2_b;
+uniform float perlin_speed;
 
 //fun�oes
 vec2 re_pos_uv(vec2 UV, vec4 UV_PosSca) {
@@ -70,12 +71,12 @@ void main() {
 
    vec2 uv_pos = re_pos_uv(vert.UV, uv_position_scale);
 
-   vec2 uv_pos_noise = re_pos_uv(vert.UV, vec4(time * 2.5f, time * 2.5f, 50.0f,50.0f));
+   vec2 uv_pos_noise = re_pos_uv(vert.UV, vec4(time * perlin_speed, time * perlin_speed, 75.0f,75.0f));
 
-   float perlin_f = perlin(uv_pos_noise, 2.0f);
-   vec4 perlin_v4 = vec4(perlin_f, perlin_f, perlin_f, 1.0f);
+   float perlin_f = perlin(uv_pos_noise, 1.5f);
+   vec4 perlin_v4 = vec4(perlin_f, perlin_f, perlin_f, 2.0f);
 
-   vec4 spel_color = mix(vec4(color_2_r, color_2_g, color_2_b, 1.0f), color, perlin_v4);
+   vec4 spel_color = mix(color,vec4(color_2_r, color_2_g, color_2_b, 1.0f), perlin_v4);
 
    ret = mix(texture(textures[0], uv_pos), spel_color, vert.COLOR.x);
 

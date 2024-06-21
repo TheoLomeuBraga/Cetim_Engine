@@ -25,7 +25,7 @@ arms_data = nil
 arms_objs = nil
 
 
-function change_spel_color(r,g,b,r2,g2,b2)
+function change_spel_style(r,g,b,r2,g2,b2,speed)
     for index, value in ipairs(arms_objs.parts_ptr_list) do
         local obj = game_object(value)
         if obj.components.render_mesh then
@@ -36,6 +36,7 @@ function change_spel_color(r,g,b,r2,g2,b2)
                 value.inputs.color_2_r = r2;
                 value.inputs.color_2_g = g2;
                 value.inputs.color_2_b = b2;
+                value.inputs.perlin_speed = speed
             end
 
             obj.components.render_mesh:set()
@@ -53,7 +54,7 @@ function START()
     arms_objs = cenary_builders.entity(camera.object_ptr, 4, arms_data, "arm_mesh", false, false)
     set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",0)
 
-    change_spel_color(1,0,0,1,0.5,0)
+    change_spel_style(1,0,0,1,0.5,0,5)
 end
 
 

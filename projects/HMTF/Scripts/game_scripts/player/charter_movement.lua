@@ -325,15 +325,15 @@ function UPDATE()
                 --movement
 
                 linear_velocity = {
-                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x + inpulse.x,
-                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y + inpulse.y,
-                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z + inpulse.z
+                    x = (move_dir.x * (speed + speed_boost)) + platform_movement.x + inpulse.x * time.delta,
+                    y = (move_dir.y * (speed + speed_boost)) + platform_movement.y + inpulse.y * time.delta,
+                    z = (move_dir.z * (speed + speed_boost)) + platform_movement.z + inpulse.z * time.delta
                 }
             else
                 linear_velocity = {
-                    x = (move_dir.x * (speed + speed_boost_air)) + inpulse.x,
+                    x = (move_dir.x * (speed + speed_boost_air)) + inpulse.x * time.delta,
                     y = inpulse.y,
-                    z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z
+                    z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z * time.delta
                 }
             end
 
