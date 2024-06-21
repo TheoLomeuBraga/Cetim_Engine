@@ -62,7 +62,7 @@ void main() {
    }
 
    // Quantização para efeito de estilo pixelado
-   int psx_factor = 48;
+   int psx_factor = 128;
    gl_Position.x = (floor(gl_Position.x * float(psx_factor) + 0.5)) / float(psx_factor);
    gl_Position.y = (floor(gl_Position.y * float(psx_factor) + 0.5)) / float(psx_factor);
 }

@@ -51,7 +51,7 @@ function shoot()
     
 end
 
-
+animation_progresion = 0
 function UPDATE()
 
     
@@ -59,7 +59,12 @@ function UPDATE()
     if global_data.pause < 1 then
         time:get()
 
-        
+        animation_progresion = animation_progresion + time.delta
+
+        if animation_progresion > arms_data.animations["normal"].duration then
+            animation_progresion = 0
+        end
+        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",animation_progresion)
         
     end
 end

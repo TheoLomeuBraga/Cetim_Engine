@@ -63,7 +63,7 @@ void main() {
 
    vec2 uv_pos = re_pos_uv(vert.UV, uv_position_scale);
 
-   vec2 uv_pos_noise = re_pos_uv(vert.UV, vec4(time * 10.0,time * 10.0,100.0,100.0));
+   vec2 uv_pos_noise = re_pos_uv(vert.UV, vec4(time * 5.0,time * 5.0,100.0,100.0));
    float perlin_f = mix(0.9,1.0,perlin(uv_pos_noise, 1.0));
 
    vec4 perlin_v4 = vec4(perlin_f,perlin_f,perlin_f,1.0);
