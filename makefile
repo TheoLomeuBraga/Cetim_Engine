@@ -18,16 +18,16 @@ INCLUDE_DIRS = -I./include/SDL3 -I./include/recastnavegation -I./src/Font_Reader
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -DDEBUG
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -DDEBUG -DTARGET_FPS=30
 	endif
 	ifeq ($(OPT),1)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2 -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2 -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),3)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -DTARGET_FPS=480 -ftree-parallelize-loops=8
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -DTARGET_FPS=60 -ftree-parallelize-loops=8
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
@@ -42,16 +42,16 @@ ifeq ($(OS),Windows_NT)
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -DDEBUG
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -DDEBUG -DTARGET_FPS=30
 	endif
 	ifeq ($(OPT),1)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2 -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O2 -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -O3 -ffast-math -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),3)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -DTARGET_FPS=480 -ftree-parallelize-loops=8
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -pipe -Wa,-mbig-obj -mwindows -Wl,-E -s -Ofast -ffast-math -DTARGET_FPS=60 -ftree-parallelize-loops=8
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
@@ -65,13 +65,13 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 endif
 ifeq ($(OS),Linux)
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address -DDEBUG
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address -DDEBUG -DTARGET_FPS=30
 	endif
 		ifeq ($(OPT),1)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2 -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2 -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O3 -ffast-math -flto -DTARGET_FPS=120
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O3 -ffast-math -flto -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),3)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -Ofast -ffast-math -flto -DTARGET_FPS=480 -ftree-parallelize-loops=8

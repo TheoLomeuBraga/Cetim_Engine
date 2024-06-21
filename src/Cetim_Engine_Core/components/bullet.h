@@ -810,7 +810,11 @@ void atualisar_global_bullet()
 
     if (Tempo::deltaTime * Tempo::velocidadeTempo > 0)
     {
-        dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo, 8);
+        //dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo, 0);
+        for(unsigned char c = 0 ; c < 8 ; c++){
+            dynamicsWorld->stepSimulation(Tempo::deltaTime * Tempo::velocidadeTempo / 8, 0);
+        }
+        
     }
 
     

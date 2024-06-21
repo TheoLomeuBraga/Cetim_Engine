@@ -336,6 +336,7 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z * time.delta
                 }
             end
+            
 
             if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
 
@@ -345,7 +346,9 @@ function UPDATE()
                 if math.abs(move_dir.x) + math.abs(move_dir.z) > 0.5 then
                     inpulse.x = boost_power * move_dir.x
                     inpulse.z = boost_power * move_dir.z 
+                    print(boost_power * move_dir.x)
                 end
+
 
                 this_object.components.audio_source.path = "Audio/sounds/jump.wav"
                 this_object.components.audio_source.volume = 20

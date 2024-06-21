@@ -19,7 +19,7 @@ require("math")
 
 this_object = nil
 camera = nil
-
+base_arms = nil
 
 arms_data = nil
 arms_objs = nil
@@ -49,9 +49,11 @@ function START()
 
     this_object = game_object(this_object_ptr)
     camera = game_object(this_object.components.lua_scripts:get_variable("game_scripts/player/charter_movement","camera_ptr"))
-    
+    base_arms = game_object(create_object(camera.object_ptr))
+    base_arms.components.transform:set()
+
     arms_data = get_scene_3D("3D Models/charters/magic_arms.glb")
-    arms_objs = cenary_builders.entity(camera.object_ptr, 4, arms_data, "arm_mesh", false, false)
+    arms_objs = cenary_builders.entity(base_arms.object_ptr, 4, arms_data, "arm_mesh", false, false)
     set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",0)
 
     change_spel_style(1,0,0,1,0.5,0,5)
@@ -79,6 +81,18 @@ function UPDATE()
     
     if global_data.pause < 1 then
         time:get()
+
+        local inputs = global_data.inputs
+        local rot_cam_x = math.min((inputs.mouse_view_x * 100) + inputs.analog_view_x,10)
+        rot_cam_x = math.max(rot_cam_x,-10)
+
+        local rot_cam_y = math.min((inputs.mouse_view_y * 100) + inputs.analog_view_y,10)
+        rot_cam_y = math.max(rot_cam_y,-10)
+
+        base_arms.components.transform:get()
+        base_arms.components.transform.rotation.y = -rot_cam_x
+        base_arms.components.transform.rotation.x = rot_cam_y
+        base_arms.components.transform:set()
 
         animation_progresion = animation_progresion + time.delta
 
