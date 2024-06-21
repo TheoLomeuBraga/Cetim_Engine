@@ -65,10 +65,20 @@ void main() {
 
    vec2 uv_pos_noise = re_pos_uv(vert.UV, vec4(time * 5.0,time * 5.0,100.0,100.0));
    float perlin_f = mix(0.9,1.0,perlin(uv_pos_noise, 1.0));
-
    vec4 perlin_v4 = vec4(perlin_f,perlin_f,perlin_f,1.0);
-   ret = mix(texture(textures[0], uv_pos),color * perlin_v4,vert.COLOR.x);
-   //ret = vec4(vert.COLOR.x,vert.COLOR.y,vert.COLOR.z,1);
+   vec4 spel_color = color * perlin_v4;
+
+   
+
+   if(color == vec4(1.0,0.0,0.0,1.0)){
+
+      float perlin_f = perlin(uv_pos_noise, 2.0);
+      vec4 perlin_v4 = vec4(perlin_f,perlin_f,perlin_f,1.0);
+
+      spel_color = mix(vec4(1.0,0.5,0.0,1.0),color,perlin_v4);
+   }
+
+   ret = mix(texture(textures[0], uv_pos),spel_color,vert.COLOR.x);
 
 
 }

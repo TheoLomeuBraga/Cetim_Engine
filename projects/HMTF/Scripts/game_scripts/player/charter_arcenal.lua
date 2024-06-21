@@ -25,7 +25,20 @@ arms_data = nil
 arms_objs = nil
 
 
+function change_spel_color(r,g,b)
+    for index, value in ipairs(arms_objs.parts_ptr_list) do
+        local obj = game_object(value)
+        if obj.components.render_mesh then
+            obj.components.render_mesh:get()
 
+            for index, value in pairs(obj.components.render_mesh.materials) do
+                value.color = {r=r,g=g,b=b,a=1}
+            end
+
+            obj.components.render_mesh:set()
+        end
+    end
+end
 
 function START()
     
@@ -36,6 +49,8 @@ function START()
     arms_data = get_scene_3D("3D Models/charters/magic_arms.glb")
     arms_objs = cenary_builders.entity(camera.object_ptr, 4, arms_data, "arm_mesh", false, false)
     set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",0)
+
+    change_spel_color(1,0,0)
 end
 
 
@@ -50,6 +65,8 @@ function shoot()
 
     
 end
+
+
 
 animation_progresion = 0
 function UPDATE()
