@@ -111,9 +111,11 @@ function START()
 end
 
 function UPDATE()
+    --[[
     if not avatar_created then
         create_avatar()
     end
+    ]]
 
 
 

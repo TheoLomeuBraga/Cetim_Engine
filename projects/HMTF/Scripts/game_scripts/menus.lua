@@ -132,9 +132,10 @@ end
 
 function toogle_full_screen(state, id)
     if state == "click" then
+        window:get()
         window.full_screen = not window.full_screen
-        window.resolution.x = 256 * 2
-        window.resolution.y = 224 * 2
+        window.resolution.x = 256 * 4
+        window.resolution.y = 224 * 4
         window:set()
         save_configs()
     end
@@ -286,6 +287,7 @@ function start_config_menu()
         configs = serializer.load_table(config_file_path)
     end
 
+    window:get()
     window.full_screen = configs.full_screen
     window:set()
 
