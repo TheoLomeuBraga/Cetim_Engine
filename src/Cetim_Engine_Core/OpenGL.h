@@ -500,7 +500,7 @@ public:
 			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_FLOAT, NULL);
 			if (pixel_perfeito)
 			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1674,7 +1674,7 @@ public:
 				glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_FLOAT, NULL);
 				if (pixel_perfeito)
 				{
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1690,17 +1690,6 @@ public:
 			update_res = false;
 		}
 
-		/*
-		for (int i = 0; i < SAIDAS_SHADER; i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, frame_buffers_texturas[i]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res_interna.x, res_interna.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, frame_buffers_texturas[i], 0);
-		}
-		*/
 		glViewport(0, 0, res_interna.x, res_interna.y);
 
 		vector<vector<shared_ptr<objeto_jogo>>> orderd_objects = separate_ordenate_objects(obj, cam);

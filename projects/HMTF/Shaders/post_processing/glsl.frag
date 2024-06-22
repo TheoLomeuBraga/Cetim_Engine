@@ -111,6 +111,16 @@ vec3 getPixel(vec2 uv) {
 
 //László Matuska is my hero
 
+vec4 processMappedColor(vec4 hdrColor) {
+    // Tonemapping (Reinhard)
+    vec3 mappedColor = hdrColor.xyz / (hdrColor.xyz + vec3(1.0));
+    
+    // Gamma correction
+    mappedColor = pow(mappedColor, vec3(1.0 / 2.2));
+    
+    return vec4(mappedColor.x,mappedColor.y,mappedColor.z,hdrColor.w);
+}
+
 void main() {
 
     const float ditter = 1.0;
@@ -130,4 +140,6 @@ void main() {
     } else {
         ret = color * reduce_color_bits(texture(post_procesing_render_input[0], uv, 0.01), 4.0);
     }
+
+    //ret = processMappedColor(ret);
 }
