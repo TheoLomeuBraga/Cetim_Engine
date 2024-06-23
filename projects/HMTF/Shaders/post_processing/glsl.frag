@@ -10,6 +10,7 @@ layout(location = 0) out vec4 ret;
 // material
 uniform sampler2D post_procesing_render_input[16];
 uniform sampler2D textures[6];
+uniform vec4 uv_position_scale;
 uniform vec4 color;
 uniform float gama;
 
@@ -125,20 +126,22 @@ void main() {
 
     const float ditter = 1.0;
 
+    vec2 new_uv = re_pos_uv( uv, vec4(0.0,0.0,1.0/uv_position_scale.z,1.0/uv_position_scale.w));
+
     if(ditter > 0.0) {
-         ret = color * reduce_color_bits(texture(post_procesing_render_input[0], uv, 0.01), 4.0);
+         ret = color * reduce_color_bits(texture(post_procesing_render_input[0], new_uv, 0.01), 4.0);
 
     // Normalized pixel coordinates (from 0 to 1)
         vec2 tex_size = vec2(textureSize(post_procesing_render_input[0], 0));
-        vec2 uv = (uv * tex_size) / tex_size;
+        vec2 new_uv = (new_uv * tex_size) / tex_size;
 
     // Time varying pixel color
-        vec3 col = getPixel(uv);
-        col = ditherColor(col, uv, 640.0, 240.0);
+        vec3 col = getPixel(new_uv);
+        col = ditherColor(col, new_uv, 640.0, 240.0);
     // Output to screen
         ret = vec4(col, 1.0);
     } else {
-        ret = color * reduce_color_bits(texture(post_procesing_render_input[0], uv, 0.01), 4.0);
+        ret = color * reduce_color_bits(texture(post_procesing_render_input[0], new_uv, 0.01), 4.0);
     }
 
     //ret = processMappedColor(ret);

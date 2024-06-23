@@ -525,34 +525,7 @@ public:
 			escrever("framebuffer incompleto");
 		}
 
-		if (EDITOR_MODE)
-		{
-			// frame
-			glGenFramebuffers(1, &frame_buffer_editor);
-			glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_editor);
-			// deeph
-			glGenRenderbuffers(1, &deeph_buffer_editor);
-			glBindRenderbuffer(GL_RENDERBUFFER, deeph_buffer_editor);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, deeph_buffer_editor);
-			// textura
-			glGenTextures(1, &frame_buffer_editor_texture);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, frame_buffer_editor_texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-			if (pixel_perfeito)
-			{
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			}
-			else
-			{
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			}
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frame_buffer_editor_texture, 0);
-		}
+		
 	}
 
 	OpenGL_API()
@@ -1764,7 +1737,14 @@ public:
 			}
 		}
 
+		//pos_processamento_info.uv_pos_sca.x = 0.5;
+		//pos_processamento_info.uv_pos_sca.y = 0.5;
+		//pos_processamento_info.uv_pos_sca.z = 0.5;
+		//pos_processamento_info.uv_pos_sca.w = 0.5;
+
 		apply_material(pp_shader, pos_processamento_info);
+
+		
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
