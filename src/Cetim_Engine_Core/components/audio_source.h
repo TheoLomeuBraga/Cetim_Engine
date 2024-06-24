@@ -42,6 +42,7 @@ void start_sdl()
 	spec.format = SDL_AUDIO_S8;
 	spec.channels = 2;
 	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
+	Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3 | MIX_INIT_FLAC);
 	Mix_AllocateChannels(8);
 }
 
