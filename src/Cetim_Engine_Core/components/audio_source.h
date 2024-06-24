@@ -38,6 +38,7 @@ void start_sdl()
 
 	// spec.freq = 44100;
 	// spec.format = SDL_AUDIO_S16LE;
+	//spec.freq = 16000;
 	spec.freq = 16000;
 	spec.format = SDL_AUDIO_S8;
 	spec.channels = 2;
