@@ -16,7 +16,6 @@
 #define DRACO_MESH_MESH_CLEANUP_H_
 
 #include "draco/core/status.h"
-#include "draco/draco_features.h"
 #include "draco/mesh/mesh.h"
 
 namespace draco {

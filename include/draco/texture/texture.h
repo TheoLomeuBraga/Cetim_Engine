@@ -18,9 +18,6 @@
 #include "draco/draco_features.h"
 
 #ifdef DRACO_TRANSCODER_SUPPORTED
-#include <memory>
-#include <vector>
-
 #include "draco/io/image_compression_options.h"
 #include "draco/texture/source_image.h"
 
@@ -29,7 +26,7 @@ namespace draco {
 // Texture class storing the source image data.
 class Texture {
  public:
-  void Copy(const Texture &other) { source_image_.Copy(other.source_image_); }
+  void Copy(Texture &other) { source_image_.Copy(other.source_image_); }
 
   void set_source_image(const SourceImage &image) { source_image_.Copy(image); }
   const SourceImage &source_image() const { return source_image_; }

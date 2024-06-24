@@ -18,7 +18,6 @@
 #include "draco/draco_features.h"
 
 #ifdef DRACO_TRANSCODER_SUPPORTED
-#include <functional>
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -39,8 +38,7 @@ class GltfEncoder {
  public:
   // Types of output modes for the glTF data encoder. |COMPACT| will output
   // required and non-default glTF data. |VERBOSE| will output required and
-  // default glTF data as well as readable JSON even when the output is saved in
-  // a glTF-Binary file.
+  // default glTF data.
   enum OutputType { COMPACT, VERBOSE };
 
   GltfEncoder();
@@ -84,13 +82,10 @@ class GltfEncoder {
   void set_output_type(OutputType type) { output_type_ = type; }
   OutputType output_type() const { return output_type_; }
 
-  void set_copyright(const std::string &copyright) { copyright_ = copyright; }
-  std::string copyright() const { return copyright_; }
-
-  // The name of the attribute metadata that contains the glTF attribute
-  // name. For application-specific generic attributes, if the metadata for
-  // an attribute contains this key, then the value will be used as the
-  // encoded attribute name in the output GLTF.
+  // The name of the attribute metadata that contains the glTF attribute name.
+  // For application-specific generic attributes, if the metadata for an
+  // attribute contains this key, then the value will be used as the encoded
+  // attribute name in the output GLTF.
   static const char kDracoMetadataGltfAttributeName[];
 
  private:
@@ -99,10 +94,6 @@ class GltfEncoder {
                         EncoderBuffer *out_buffer);
   Status EncodeToBuffer(const Scene &scene, class GltfAsset *gltf_asset,
                         EncoderBuffer *out_buffer);
-
-  // Sets appropriate Json writer mode based on the provided |gltf_asset|
-  // options.
-  static void SetJsonWriterMode(class GltfAsset *gltf_asset);
 
   // Writes the ".gltf" and associted files. |gltf_asset| holds the glTF data.
   // |buffer| is the encoded glTF json data. |filename| is the name of the
@@ -129,7 +120,6 @@ class GltfEncoder {
 
   EncoderBuffer *out_buffer_;
   OutputType output_type_;
-  std::string copyright_;
 };
 
 }  // namespace draco

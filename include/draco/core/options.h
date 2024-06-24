@@ -19,8 +19,6 @@
 #include <map>
 #include <string>
 
-#include "draco/draco_features.h"
-
 namespace draco {
 
 // Class for storing generic options as a <name, value> pair in a string map.
@@ -29,8 +27,7 @@ namespace draco {
 // data type.
 class Options {
  public:
-  Options() = default;
-  ~Options() = default;
+  Options();
 
   // Merges |other_options| on top of the existing options of this instance
   // replacing all entries that are present in both options instances.
