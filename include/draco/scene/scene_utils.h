@@ -43,6 +43,12 @@ class SceneUtils {
   static IndexTypeVector<MeshInstanceIndex, MeshInstance> ComputeAllInstances(
       const Scene &scene);
 
+  // Computes all mesh instances in the node hierarchy originating from
+  // |node_index|. All instance transformations will be relative to the source
+  // node. That is transformation of parent nodes will not be included.
+  static IndexTypeVector<MeshInstanceIndex, MeshInstance>
+  ComputeAllInstancesFromNode(const Scene &scene, SceneNodeIndex node_index);
+
   // Computes global transform matrix of a |scene| node given by its |index|.
   static Eigen::Matrix4d ComputeGlobalNodeTransform(const Scene &scene,
                                                     SceneNodeIndex index);
@@ -97,8 +103,15 @@ class SceneUtils {
   // multiple materials, the returned scene will contain multiple meshes, one
   // for each of the source mesh's materials; if `mesh` has no material, one
   // will be created for it.
+  //
+  // By default, |MeshToScene| will attempt to deduplicate vertices if the mesh
+  // has multiple materials. This means lower memory usage and smaller output
+  // glTFs after encoding. However, for very large meshes, this may become an
+  // expensive operation. If that becomes an issue, you might want to consider
+  // disabling deduplication by setting |deduplicate_vertices| to false. Note
+  // that at this moment, disabling deduplication works ONLY for point clouds.
   static StatusOr<std::unique_ptr<Scene>> MeshToScene(
-      std::unique_ptr<Mesh> mesh);
+      std::unique_ptr<Mesh> mesh, bool deduplicate_vertices = true);
 
   // Creates a mesh according to mesh |instance| in |scene|. Error is returned
   // if there is no corresponding base mesh in the |scene| or the base mesh has
@@ -107,8 +120,19 @@ class SceneUtils {
       const Scene &scene, const MeshInstance &instance);
 
   // Cleans up a |scene| by removing unused base meshes, unused and empty mesh
-  // groups, unused materials, and unused texture coordinates.
+  // groups, unused materials, unused texture coordinates and unused scene
+  // nodes. The actual behavior of the cleanup operation can be controller via
+  // the user provided |options|.
+  struct CleanupOptions {
+    bool remove_invalid_mesh_instances = true;
+    bool remove_unused_mesh_groups = true;
+    bool remove_unused_meshes = true;
+    bool remove_unused_nodes = false;
+    bool remove_unused_tex_coords = false;
+    bool remove_unused_materials = true;
+  };
   static void Cleanup(Scene *scene);
+  static void Cleanup(Scene *scene, const CleanupOptions &options);
 
   // Removes mesh |instances| from |scene|.
   static void RemoveMeshInstances(const std::vector<MeshInstance> &instances,
@@ -126,6 +150,11 @@ class SceneUtils {
 
   // Returns true if geometry compression is eabled for any of |scene| meshes.
   static bool IsDracoCompressionEnabled(const Scene &scene);
+
+  // Returns a single tranformation matrix for each base mesh of the |scene|
+  // corresponding to the instance with the maximum scale.
+  static IndexTypeVector<MeshIndex, Eigen::Matrix4d>
+  FindLargestBaseMeshTransforms(const Scene &scene);
 };
 
 }  // namespace draco

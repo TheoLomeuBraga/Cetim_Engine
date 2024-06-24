@@ -23,6 +23,9 @@
 #include "draco/animation/animation.h"
 #include "draco/animation/skin.h"
 #include "draco/mesh/mesh.h"
+#include "draco/metadata/metadata.h"
+#include "draco/metadata/structural_metadata.h"
+#include "draco/scene/instance_array.h"
 #include "draco/scene/light.h"
 #include "draco/scene/mesh_group.h"
 #include "draco/scene/scene_indices.h"
@@ -39,7 +42,7 @@ namespace draco {
 // meshes in this scene.
 class Scene {
  public:
-  Scene() {}
+  Scene();
 
   void Copy(const Scene &s);
 
@@ -110,20 +113,48 @@ class Scene {
     return nodes_[index].get();
   }
 
+  // Either allocates new nodes or removes existing nodes that are beyond
+  // |num_nodes|.
+  void ResizeNodes(int num_nodes) {
+    const size_t old_num_nodes = nodes_.size();
+    nodes_.resize(num_nodes);
+    for (SceneNodeIndex i(old_num_nodes); i < num_nodes; ++i) {
+      nodes_[i].reset(new SceneNode());
+    }
+  }
+
   // Returns the number of root node indices in a scene.
   int NumRootNodes() const { return root_node_indices_.size(); }
   SceneNodeIndex GetRootNodeIndex(int i) const { return root_node_indices_[i]; }
+  const std::vector<SceneNodeIndex> &GetRootNodeIndices() const {
+    return root_node_indices_;
+  }
   void AddRootNodeIndex(SceneNodeIndex index) {
     root_node_indices_.push_back(index);
   }
   void SetRootNodeIndex(int i, SceneNodeIndex index) {
     root_node_indices_[i] = index;
   }
+  void RemoveAllRootNodeIndices() { root_node_indices_.clear(); }
 
   const MaterialLibrary &GetMaterialLibrary() const {
     return material_library_;
   }
   MaterialLibrary &GetMaterialLibrary() { return material_library_; }
+
+  // Library that contains non-material textures.
+  const TextureLibrary &GetNonMaterialTextureLibrary() const {
+    return non_material_texture_library_;
+  }
+  TextureLibrary &GetNonMaterialTextureLibrary() {
+    return non_material_texture_library_;
+  }
+
+  // Structural metadata.
+  const StructuralMetadata &GetStructuralMetadata() const {
+    return structural_metadata_;
+  }
+  StructuralMetadata &GetStructuralMetadata() { return structural_metadata_; }
 
   // Creates an animation and returns the index to the animation.
   AnimationIndex AddAnimation() {
@@ -171,6 +202,29 @@ class Scene {
   Light *GetLight(LightIndex index) { return lights_[index].get(); }
   const Light *GetLight(LightIndex index) const { return lights_[index].get(); }
 
+  // Creates a mesh group instance array and returns the index to it. This array
+  // is used for storing the attributes of the EXT_mesh_gpu_instancing glTF
+  // extension.
+  InstanceArrayIndex AddInstanceArray() {
+    std::unique_ptr<InstanceArray> array(new InstanceArray());
+    instance_arrays_.push_back(std::move(array));
+    return InstanceArrayIndex(instance_arrays_.size() - 1);
+  }
+
+  // Returns the number of mesh group instance arrays in a scene.
+  int NumInstanceArrays() const { return instance_arrays_.size(); }
+
+  // Returns a mesh group instance array in the scene.
+  InstanceArray *GetInstanceArray(InstanceArrayIndex index) {
+    return instance_arrays_[index].get();
+  }
+  const InstanceArray *GetInstanceArray(InstanceArrayIndex index) const {
+    return instance_arrays_[index].get();
+  }
+
+  const Metadata &GetMetadata() const { return *metadata_; }
+  Metadata &GetMetadata() { return *metadata_; }
+
  private:
   IndexTypeVector<MeshIndex, std::unique_ptr<Mesh>> meshes_;
   IndexTypeVector<MeshGroupIndex, std::unique_ptr<MeshGroup>> mesh_groups_;
@@ -183,8 +237,27 @@ class Scene {
   // rendering in Draco, e.g, while computing distortion metric.
   IndexTypeVector<LightIndex, std::unique_ptr<Light>> lights_;
 
+  // The mesh group instance array information will be written to the output
+  // scene but not processed by Draco simplifier modules.
+  IndexTypeVector<InstanceArrayIndex, std::unique_ptr<InstanceArray>>
+      instance_arrays_;
+
   // Materials used by this scene.
   MaterialLibrary material_library_;
+
+  // Texture library for storing non-material textures used by this scene, e.g.,
+  // textures containing mesh feature IDs of EXT_mesh_features glTF extension.
+  // Note that scene meshes contain pointers to non-material textures. It is
+  // responsibility of class user to update these pointers when updating the
+  // textures. See Scene::Copy() for example.
+  TextureLibrary non_material_texture_library_;
+
+  // Structural metadata defined by the EXT_structural_metadata glTF extension.
+  StructuralMetadata structural_metadata_;
+
+  // General metadata associated with the scene (not related to the
+  // EXT_structural_metadata extension).
+  std::unique_ptr<Metadata> metadata_;
 };
 
 }  // namespace draco
