@@ -1,5 +1,6 @@
 COMPILER := g++
 #COMPILER := clang++ 
+#COMPILER := x86_64-w64-mingw32-g++
 
 #FLAGS_WINDOWS :=  -pipe -Wa,-mbig-obj  -mwindows -Wl,-E -s -O3 -ffast-math 
 #FLAGS_WINDOWS_DEBUG :=  -pipe -Wa,-mbig-obj -Wl,-E  -s -O3 -ffast-math 
