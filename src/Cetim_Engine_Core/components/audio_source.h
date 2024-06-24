@@ -38,12 +38,12 @@ void start_sdl()
 
 	// spec.freq = 44100;
 	// spec.format = SDL_AUDIO_S16LE;
-	//spec.freq = 16000;
+	// spec.freq = 16000;
 	spec.freq = 16000;
 	spec.format = SDL_AUDIO_S8;
 	spec.channels = 2;
 	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
-	Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3 | MIX_INIT_FLAC);
+	Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3 | MIX_INIT_FLAC | MIX_INIT_MID);
 	Mix_AllocateChannels(255);
 }
 
@@ -87,6 +87,16 @@ void get_set_global_volume_sdl(float vol)
 	Mix_Volume(-1, 0);
 }
 
+std::string current_sf2 = "";
+void load_sf2(std::string path)
+{
+	if (SDL_setenv("SDL_SOUNDFONTS", path.c_str(), 1) != 0)
+	{
+		std::cerr << "Erro ao configurar o soundfont: " << SDL_GetError() << std::endl;
+		current_sf2 = path;
+	}
+}
+
 class audio_source : public componente
 {
 private:
@@ -114,13 +124,15 @@ public:
 
 	void aplicar_info()
 	{
-		if(channel != -1){Mix_HaltChannel(channel);}
-		
-		
+		if (channel != -1)
+		{
+			Mix_HaltChannel(channel);
+		}
+
 		buffer = carregar_audio_buffer(info.nome);
 		if (buffer != nullptr)
 		{
-			
+
 			channel = Mix_PlayChannel(-1, buffer.get(), info.loop ? -1 : 0);
 			if (channel != -1)
 			{
