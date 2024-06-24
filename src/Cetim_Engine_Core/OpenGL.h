@@ -446,6 +446,8 @@ public:
 	void iniciar_lib()
 	{
 
+		glDisable(GL_FRAMEBUFFER_SRGB);
+
 		modelo_gpu = string(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
 		print("RENDER: ", string(reinterpret_cast<const char *>(glGetString(GL_VERSION))));
 		print("GPU: ", string(reinterpret_cast<const char *>(glGetString(GL_RENDERER))));
