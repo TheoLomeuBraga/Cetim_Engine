@@ -17,6 +17,7 @@ INCLUDE_DIRS = -I./include/SDL3 -I./include/recastnavegation -I./src/Font_Reader
 
 OS := $(shell uname -s)
 ifeq ($(OS),Windows_NT)
+	INCLUDE_DIRS += -I./include/draco_windows
 	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E  -DDEBUG -DTARGET_FPS=30
 	endif
@@ -41,6 +42,7 @@ ifeq ($(OS),Windows_NT)
 	
 endif
 ifeq ($(findstring MINGW,$(OS)),MINGW)
+	INCLUDE_DIRS += -I./include/draco_windows
 	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -pipe -Wa,-mbig-obj -Wl,-E -DDEBUG -DTARGET_FPS=30
 	endif
@@ -64,6 +66,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	endif
 endif
 ifeq ($(OS),Linux)
+	INCLUDE_DIRS += -I./include/draco_linux
 	ifeq ($(OPT),0)
 		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address -DDEBUG -DTARGET_FPS=30
 	endif
