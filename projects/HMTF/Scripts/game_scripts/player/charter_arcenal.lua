@@ -74,13 +74,18 @@ end
 
 
 
-animation_progresion = 0
+animations_progresion = {
+    normal = 0,
+    walk = 0,
+}
 function UPDATE()
 
     
     
     if global_data.pause < 1 then
         time:get()
+
+        local inputs = global_data.inputs
 
         local inputs = global_data.inputs
         local rot_cam_x = math.min((inputs.mouse_view_x * 100) + inputs.analog_view_x,10)
@@ -94,13 +99,26 @@ function UPDATE()
         base_arms.components.transform.rotation.x = rot_cam_y
         base_arms.components.transform:set()
 
-        animation_progresion = animation_progresion + time.delta
+        animations_progresion.normal = animations_progresion.normal + time.delta
 
-        if animation_progresion > arms_data.animations["normal"].duration then
-            animation_progresion = 0
+        if animations_progresion.normal > arms_data.animations["normal"].duration then
+            animations_progresion.normal = 0
         end
-        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",animation_progresion)
+        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",animations_progresion.normal)
         
+
+        local walk_speed = math.max(0,math.abs(inputs.left) + math.abs(inputs.foward)) 
+        if walk_speed > 0 --[[ser false enquanto o pulo]] then
+            animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
+            if animations_progresion.walk > arms_data.animations["walk"].duration then
+                animations_progresion.walk = 0
+            end
+            print(animations_progresion.walk)
+        else 
+            animations_progresion.walk = 0
+        end
+        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "walk",animations_progresion.walk)
+
     end
 end
 
