@@ -27,6 +27,16 @@ std::set<std::string> audio_source_loading_requests_files = {};
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_mixer.h>
 
+std::string current_sf2 = "";
+void load_sf2(std::string path)
+{
+	if (SDL_setenv("SDL_SOUNDFONTS", path.c_str(), 1) != 0)
+	{
+		std::cerr << "Erro ao configurar o soundfont: " << SDL_GetError() << std::endl;
+		current_sf2 = path;
+	}
+}
+
 SDL_AudioSpec spec;
 void start_sdl()
 {
@@ -39,12 +49,13 @@ void start_sdl()
 	// spec.freq = 44100;
 	// spec.format = SDL_AUDIO_S16LE;
 	// spec.freq = 16000;
-	spec.freq = 16000;
+	spec.freq = 8100;
 	spec.format = SDL_AUDIO_S8;
 	spec.channels = 2;
 	Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_OUTPUT, &spec);
 	Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3 | MIX_INIT_FLAC | MIX_INIT_MID);
 	Mix_AllocateChannels(255);
+	load_sf2("engine assets/GeneralUser GS.sf2");
 }
 
 mapeamento_assets<Mix_Chunk> buffers_som;
@@ -87,15 +98,7 @@ void get_set_global_volume_sdl(float vol)
 	Mix_Volume(-1, 0);
 }
 
-std::string current_sf2 = "";
-void load_sf2(std::string path)
-{
-	if (SDL_setenv("SDL_SOUNDFONTS", path.c_str(), 1) != 0)
-	{
-		std::cerr << "Erro ao configurar o soundfont: " << SDL_GetError() << std::endl;
-		current_sf2 = path;
-	}
-}
+
 
 class audio_source : public componente
 {
