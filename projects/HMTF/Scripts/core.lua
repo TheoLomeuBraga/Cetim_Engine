@@ -285,6 +285,14 @@ function START()
     load_sceane("main_menu")
     global_data.localization_file = "localization/dialog.json"
 
+    sound = game_object(create_object())
+    sound.components.audio_source.path = "Audio/musics/floating_island_theme.mid"
+    sound.components.audio_source.loop = true
+    sound.components.audio_source.volume = 10
+    sound.components.audio_source.min_distance = 5
+    sound.components.audio_source.atenuation = 1
+    sound.components.audio_source:set()
+
     
 end
 

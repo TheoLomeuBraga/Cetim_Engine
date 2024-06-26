@@ -15,14 +15,6 @@ function set_lisener_object(obj)
     c_set_lisener_object(obj)
 end
 
-function get_set_sound_font(path)
-    if path ~= nil then
-        c_get_set_sound_font(path)
-    end
-
-    return c_get_set_sound_font()
-    
-end
 
 
 function get_set_audio(get_set, obj)

@@ -1794,20 +1794,6 @@ namespace funcoes_ponte
 		}
 	}
 
-	int get_set_sound_font(lua_State *L)
-	{
-		if (lua_gettop(L) > 0)
-		{
-			load_sf2(lua_tostring(L, 1));
-			return 0;
-		}
-		else
-		{
-			lua_pushstring(L, current_sf2.c_str());
-			return 1;
-		}
-	}
-
 	int get_set_global_volume(lua_State *L)
 	{
 		if (lua_gettop(L) > 0)
@@ -2848,7 +2834,6 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("get_set_audio", get_set_audio),
 															 pair<string, lua_function>("get_set_global_volume", get_set_global_volume),
 															 pair<string, lua_function>("set_lisener_object", set_lisener_object),
-															pair<string, lua_function>("get_set_sound_font", get_set_sound_font),
 															 
 														 }),
 		pair<string, map<string, lua_function>>("script", {
