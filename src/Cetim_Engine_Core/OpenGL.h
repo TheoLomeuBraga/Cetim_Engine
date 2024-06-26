@@ -443,8 +443,15 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	int compresion_format = GL_RGBA;
 	void iniciar_lib()
 	{
+
+		if(GL_EXT_texture_compression_s3tc){
+			compresion_format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			//compresion_format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			print("PSX compewssion ON");
+		}
 
 		glDisable(GL_FRAMEBUFFER_SRGB);
 
@@ -534,7 +541,7 @@ public:
 	{
 		iniciar_lib();
 	}
-
+	
 	void ogl_adicionar_textura(imagem *img)
 	{
 		if (texturas.find(img) == texturas.end() && img != NULL)
@@ -543,7 +550,7 @@ public:
 			texturas.insert(pair<imagem *, unsigned int>(img, 0));
 			glGenTextures(1, &texturas[img]);
 			glBindTexture(GL_TEXTURE_2D, texturas[img]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->res.x, img->res.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, &img->data[0]);
+			glTexImage2D(GL_TEXTURE_2D, 0, compresion_format, img->res.x, img->res.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, &img->data[0]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}

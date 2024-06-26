@@ -113,7 +113,6 @@ function UPDATE()
             if animations_progresion.walk > arms_data.animations["walk"].duration then
                 animations_progresion.walk = 0
             end
-            print(animations_progresion.walk)
         else 
             animations_progresion.walk = 0
         end
