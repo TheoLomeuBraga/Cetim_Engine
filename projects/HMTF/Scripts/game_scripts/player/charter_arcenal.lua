@@ -107,7 +107,7 @@ function UPDATE()
         set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",animations_progresion.normal)
         
 
-        local walk_speed = math.max(0,math.abs(inputs.left) + math.abs(inputs.foward)) 
+        local walk_speed = math.min(1,math.max(0,math.abs(inputs.left) + math.abs(inputs.foward)))
         if walk_speed > 0 --[[ser false enquanto o pulo]] then
             animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
             if animations_progresion.walk > arms_data.animations["walk"].duration then
