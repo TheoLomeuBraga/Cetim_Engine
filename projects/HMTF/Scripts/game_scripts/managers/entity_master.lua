@@ -44,6 +44,7 @@ whait_time = 0
 local update_per_type = {
     test_entity = function(entity)
         local pos = entity.obj.components.transform:get_global_position()
+        pos.y = pos.y - 1.5
 
         if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
             entity.path = generate_navmesh_short_path(pos, player_position)

@@ -661,13 +661,14 @@ public:
         filter.setExcludeFlags(0);    // Sem flags de exclusão
         filter.setAreaCost(63, 1.0f); // Custo padrão para áreas caminháveis
 
-        float tolerance[3] = {5, 5, 5}; // Tolerância para encontrar o polígono mais próximo
+        float tolerance[3] = {5, 15, 5}; // Tolerância para encontrar o polígono mais próximo
 
         float start_pos_ptr[3] = {0,0,0};
         float end_pos_ptr[3] = {0,0,0};
 
         // Encontrar os polígonos mais próximos de start e end
         dtPolyRef startRef, endRef;
+        
         query.findNearestPoly(startPos, tolerance, &filter, &startRef, start_pos_ptr);
         query.findNearestPoly(endPos, tolerance, &filter, &endRef, end_pos_ptr);
 
@@ -709,10 +710,10 @@ public:
         if (path.size() > 0)
         {
 
-            if(start_pos.x!=0||start_pos.y!=0||start_pos.z!=0){
+            if(start_pos.x!=0&&start_pos.y!=0&&start_pos.z!=0){
                 path[0] = start_pos;
             }
-            if(end_pos.x!=0||end_pos.y!=0||end_pos.z!=0){
+            if(end_pos.x!=0&&end_pos.y!=0&&end_pos.z!=0){
                 path[path.size() - 1] = end_pos;
             }
             
