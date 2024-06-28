@@ -227,13 +227,22 @@ cenary_builders = {
 
             ret2.components.transform:set()
         end
-
+        
         if part_data.variables.type == "sb" then
             add_physics(false, false)
             add_mesh(nil)
         elseif part_data.variables.type == "rb" then
             add_physics(true, false)
             add_mesh(nil)
+        elseif part_data.variables.type == "animated_terrain" then
+
+            for key, value in pairs(part_data.materials) do
+                part_data.materials[key].shader = "animated mesh terrain"
+            end
+
+            add_physics(false, false)
+            add_mesh(nil)
+
         elseif part_data.variables.type == "item" then
             ret.components.transform.position = deepcopy(part_data.position)
             ret.components.transform.rotation = deepcopy(part_data.rotation)

@@ -301,11 +301,11 @@ namespace ManuseioDados
 		}
 	}
 
-	ivec2 svg_res(255, 255);
+	ivec2 svg_res(256, 256);
 	// 512
 
 	bool use_texture_max_size = true;
-	ivec2 texture_max_size(255, 255);
+	ivec2 texture_max_size(256, 256);
 
 	mapeamento_assets<imagem> mapeamento_imagems;
 	std::mutex mapeamento_imagems_mtx;
@@ -451,25 +451,25 @@ namespace ManuseioDados
 
 		uint8_t *data = new unsigned char[4 * 2 * 2];
 		int i = 0;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
 		data[i++] = (uint8_t)0;
 		data[i++] = (uint8_t)0;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
 
 		data[i++] = (uint8_t)0;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
 		data[i++] = (uint8_t)0;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
 
 		data[i++] = (uint8_t)0;
 		data[i++] = (uint8_t)0;
-		data[i++] = (uint8_t)255;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
+		data[i++] = (uint8_t)256;
 
-		data[i++] = (uint8_t)255;
-		data[i++] = (uint8_t)255;
-		data[i++] = (uint8_t)255;
-		data[i++] = (uint8_t)255;
+		data[i++] = (uint8_t)256;
+		data[i++] = (uint8_t)256;
+		data[i++] = (uint8_t)256;
+		data[i++] = (uint8_t)256;
 		stbi_write_png("teste.png", 2, 2, 4, data, 2 * 4);
 	}
 
@@ -1458,23 +1458,37 @@ namespace ManuseioDados
 		if (in_mat.pbrMetallicRoughness.baseColorTexture.index > -1)
 		{
 
-			const int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
-			const tinygltf::Texture &texture = model.textures[texture_index];
-			const tinygltf::Image &image = model.images[texture.source];
+			int texture_index = in_mat.pbrMetallicRoughness.baseColorTexture.index;
+			tinygltf::Texture &texture = model.textures[texture_index];
+			tinygltf::Image &image = model.images[texture.source];
 			string name = image.name;
 			ret.second.texturas[0] = carregar_Imagem(name);
+
+			if (in_mat.emissiveTexture.index > -1)
+			{
+				texture_index = in_mat.emissiveTexture.index;
+				texture = model.textures[texture_index];
+				image = model.images[texture.source];
+				ret.second.texturas[1] = carregar_Imagem(name);
+			}
+			else
+			{
+				ret.second.texturas[1] = carregar_Imagem("Textures/white.png");
+			}
 
 			// print("texturas",name,ret.second.texturas[0]->local,ret.second.texturas[0]->res.x,ret.second.texturas[0]->res.y);
 		}
 		else
 		{
 			ret.second.texturas[0] = carregar_Imagem("Textures/white.png");
+			ret.second.texturas[1] = carregar_Imagem("Textures/white.png");
 		}
 
 		std::vector<double> bcf = in_mat.pbrMetallicRoughness.baseColorFactor;
 		ret.second.cor = vec4(bcf[0], bcf[1], bcf[2], bcf[3]);
-		if(ret.second.cor.w == 1 && in_mat.alphaMode != "OPAQUE"){
-			
+		if (ret.second.cor.w == 1 && in_mat.alphaMode != "OPAQUE")
+		{
+
 			ret.second.cor.w == 0.99;
 		}
 
@@ -1675,7 +1689,6 @@ namespace ManuseioDados
 			if (!jointsData.empty() && !weightsData.empty())
 			{
 
-				
 				for (int j = 0; j < MAX_BONE_INFLUENCE; ++j)
 				{
 					const int jw_id = (i * MAX_BONE_INFLUENCE) + j;
@@ -1858,7 +1871,7 @@ namespace ManuseioDados
 		}
 		if (node.rotation.size() > 0)
 		{
-			ret.quaternion = quat(node.rotation[3],node.rotation[0], node.rotation[1], node.rotation[2]);
+			ret.quaternion = quat(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
 		}
 		if (node.scale.size() > 0)
 		{
@@ -2101,7 +2114,7 @@ namespace ManuseioDados
 				string name = i.name;
 				if (!carregar_Imagem(name))
 				{
-					
+
 					shared_ptr<imagem> img = registrar_Imagem(name, i.width, i.height, i.component, i.image.data());
 					img->local = name;
 					ret.texturas.insert(pair<string, shared_ptr<imagem>>(name, img));
