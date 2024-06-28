@@ -1914,6 +1914,8 @@ namespace funcoes_ponte
 				materials.push_back(material_table(m));
 			}
 			ret.setTable("materials", vTable_table(materials));
+			ret.setFloat("render_count", mesh->render_count);
+			
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -1939,6 +1941,7 @@ namespace funcoes_ponte
 				materials.push_back(table_material(mat));
 			}
 			mesh->mats = materials;
+			mesh->render_count = t.getFloat("render_count");
 			return 0;
 		}
 	}

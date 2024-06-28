@@ -15,6 +15,7 @@ uniform float time,metallic,softness;
 uniform bool ui;
 uniform mat4 projection,vision,transform;
 uniform vec4 uv_position_scale;
+uniform int render_no;
 
 const int MAX_BONES = 256;
 const int MAX_BONE_INFLUENCE = 4;

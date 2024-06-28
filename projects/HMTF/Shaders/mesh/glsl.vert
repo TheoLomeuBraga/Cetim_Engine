@@ -27,6 +27,7 @@ out Vertex vert;
 
 uniform bool ui;
 uniform mat4 projection, vision, transform;
+uniform int render_no;
 
 void main() {
 

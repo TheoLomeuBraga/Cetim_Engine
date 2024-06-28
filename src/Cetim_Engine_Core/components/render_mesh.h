@@ -21,6 +21,7 @@ public:
 	vector<shared_ptr<malha>> malhas;
 	vector<Material> mats;
 	vector<objeto_jogo*> bones;
+	unsigned int render_count = 1;
 };
 
 #include "ecs/ecs.h"

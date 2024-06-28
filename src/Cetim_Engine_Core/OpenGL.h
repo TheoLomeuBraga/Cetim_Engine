@@ -447,9 +447,9 @@ public:
 	void iniciar_lib()
 	{
 
-		if(GL_EXT_texture_compression_s3tc){
+		if (GL_EXT_texture_compression_s3tc)
+		{
 			compresion_format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-			//compresion_format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 			print("PSX compewssion ON");
 		}
 
@@ -533,15 +533,13 @@ public:
 		{
 			escrever("framebuffer incompleto");
 		}
-
-		
 	}
 
 	OpenGL_API()
 	{
 		iniciar_lib();
 	}
-	
+
 	void ogl_adicionar_textura(imagem *img)
 	{
 		if (texturas.find(img) == texturas.end() && img != NULL)
@@ -647,7 +645,7 @@ public:
 	}
 
 	malha *last_ma = NULL;
-	void selecionar_desenhar_malha(malha *ma, int tipo)
+	void selecionar_desenhar_malha(malha *ma, int tipo, unsigned int shader_s, unsigned int count = 1)
 	{
 		if (last_ma != ma && malhas.find(ma) != malhas.end())
 		{
@@ -683,12 +681,17 @@ public:
 			// bitangents
 			glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(vertice), (void *)(offsetof(vertice, bitangents)));
 
-			glDrawElements(
-				tipo,					   // mode
-				malhas[ma].tamanho_indice, // count
-				GL_UNSIGNED_INT,		   // type
-				(void *)0				   // element array buffer offset
-			);
+			for (unsigned int i = 0; i < count; i++)
+			{
+				glUniform1i(glGetUniformLocation(shader_s, "render_no"), i);
+				
+				glDrawElements(
+					tipo,					   // mode
+					malhas[ma].tamanho_indice, // count
+					GL_UNSIGNED_INT,		   // type
+					(void *)0				   // element array buffer offset
+				);
+			}
 		}
 	}
 
@@ -915,19 +918,22 @@ public:
 						bones.push_back(RM->bones[i]->pegar_componente<transform_>());
 					}
 
-					auto proces_matrix = [=](mat4 *matrixes,unsigned char start,unsigned char offset){
-						for(unsigned char i = start;i < start+offset; i++){
+					auto proces_matrix = [=](mat4 *matrixes, unsigned char start, unsigned char offset)
+					{
+						for (unsigned char i = start; i < start + offset; i++)
+						{
 							shared_ptr<transform_> bone_tf = RM->bones[i]->pegar_componente<transform_>();
-							if(bone_tf != NULL){
+							if (bone_tf != NULL)
+							{
 								matrixes[i] = glm::scale(mat4(1.0), vec3(-1, 1, -1)) * bone_tf->pegar_matriz() * bone_tf->offset_matrix;
-							}	
+							}
 						}
 					};
 
-					proces_matrix(matrixes,0,bone_count);
+					proces_matrix(matrixes, 0, bone_count);
 
-					//size_t numThreads = std::thread::hardware_concurrency();
-					//std::vector<std::thread> threads;
+					// size_t numThreads = std::thread::hardware_concurrency();
+					// std::vector<std::thread> threads;
 				}
 				else
 				{
@@ -993,7 +999,7 @@ public:
 								glUniform1i(glGetUniformLocation(shader_s, "skin_mode"), 0);
 							}
 
-							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES);
+							selecionar_desenhar_malha(ma.get(), GL_TRIANGLES, shader_s, RM->render_count);
 						}
 					}
 				}
@@ -1746,14 +1752,12 @@ public:
 			}
 		}
 
-		//pos_processamento_info.uv_pos_sca.x = 0.5;
-		//pos_processamento_info.uv_pos_sca.y = 0.5;
-		//pos_processamento_info.uv_pos_sca.z = 0.5;
-		//pos_processamento_info.uv_pos_sca.w = 0.5;
+		// pos_processamento_info.uv_pos_sca.x = 0.5;
+		// pos_processamento_info.uv_pos_sca.y = 0.5;
+		// pos_processamento_info.uv_pos_sca.z = 0.5;
+		// pos_processamento_info.uv_pos_sca.w = 0.5;
 
 		apply_material(pp_shader, pos_processamento_info);
-
-		
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -2160,7 +2164,7 @@ public:
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 					glUniform1i(glGetUniformLocation(shader, "image"), 0);
 
-					selecionar_desenhar_malha(e.mesh.get(), GL_TRIANGLES);
+					selecionar_desenhar_malha(e.mesh.get(), GL_TRIANGLES,shader);
 				}
 			}
 		}
