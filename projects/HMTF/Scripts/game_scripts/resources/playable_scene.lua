@@ -237,7 +237,16 @@ cenary_builders = {
         elseif part_data.variables.type == "animated_terrain" then
 
             for key, value in pairs(part_data.materials) do
-                part_data.materials[key].shader = "animated mesh terrain"
+                part_data.materials[key].shader = "animated_mesh_terrain"
+            end
+
+            add_physics(false, false)
+            add_mesh(nil)
+            
+        elseif part_data.variables.type == "grass" then
+
+            for key, value in pairs(part_data.materials) do
+                part_data.materials[key].shader = "grass_2D_mesh"
             end
 
             add_physics(false, false)
