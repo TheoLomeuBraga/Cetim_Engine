@@ -99,11 +99,9 @@ void main() {
       }
    }
 
-   /*
    int psx_factor = 16;
    gl_Position.x = (floor(gl_Position.x * float(psx_factor) + 0.5)) / float(psx_factor);
    gl_Position.y = (floor(gl_Position.y * float(psx_factor) + 0.5)) / float(psx_factor);
-   */
 
    
 }
