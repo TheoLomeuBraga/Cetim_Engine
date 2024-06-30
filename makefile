@@ -33,7 +33,7 @@ ifeq ($(OS),Windows_NT)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer -ldraco
+	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer -ldraco -lavformat -lavcodec -lavutil -lswscale
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
@@ -58,7 +58,7 @@ ifeq ($(findstring MINGW,$(OS)),MINGW)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine.exe
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer -ldraco
+	LIBS_ENGINE = -L./libs/x86_64/windows -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lglew32 -lopengl32 -lbox2d -lfreetype -lBulletDynamics -lBulletCollision -lLinearMath -lSDL3 -lSDL3_mixer -ldraco -lavformat -lavcodec -lavutil -lswscale
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif
@@ -82,7 +82,7 @@ ifeq ($(OS),Linux)
 	endif
 	TARGET_ENGINE = ./build/cetim_engine
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
-	LIBS_ENGINE = -L./libs/x86_64/linux -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath  -lSDL3 -lSDL3_mixer -ldraco
+	LIBS_ENGINE = -L./libs/x86_64/linux -lz -lboost_serialization -lRecast -lDetour -lDetourCrowd  -lGLEW -lGL -lGLU -lfreetype -lbox2d -lsfml-network -lsfml-system -lBulletDynamics -lBulletCollision -lLinearMath  -lSDL3 -lSDL3_mixer -ldraco `pkg-config --cflags --libs libavformat libavcodec libavutil libswscale`
 	ifeq ($(JIT),0)
 		LIBS_ENGINE += -llua -DLUA_NUMBER=float
 	endif

@@ -55,6 +55,12 @@ using json = nlohmann::json;
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
+extern "C" {
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavutil/imgutils.h>
+}
+
 // fontes
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -356,36 +362,38 @@ namespace ManuseioDados
 				remove_loading_request(local);
 				return mapeamento_imagems.aplicar(local, image);
 			}
-
-			data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
-
-			if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
-			{
-				unsigned int sizex = std::min(X, texture_max_size.x);
-				unsigned int sizey = std::min(Y, texture_max_size.y);
-				unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
-				stbir_resize_uint8(data, X, Y, 0, data2, sizex, sizey, 0, canais);
-
-				imagem image = imagem(sizex, sizey, canais, data2);
-				image.local = local;
-
-				stbi_image_free(data);
-				// delete[] data;
-				delete[] data2;
-
-				remove_loading_request(local);
-				return mapeamento_imagems.aplicar(local, image);
-			}
 			else
 			{
-				imagem image = imagem(X, Y, canais, data);
-				image.local = local;
+				data = stbi_load(local.c_str(), &X, &Y, &canais, canais);
 
-				stbi_image_free(data);
-				// delete[] data;
+				if (use_texture_max_size && X > texture_max_size.x || Y > texture_max_size.y)
+				{
+					unsigned int sizex = std::min(X, texture_max_size.x);
+					unsigned int sizey = std::min(Y, texture_max_size.y);
+					unsigned char *data2 = new unsigned char[texture_max_size.x * texture_max_size.y * canais];
+					stbir_resize_uint8(data, X, Y, 0, data2, sizex, sizey, 0, canais);
 
-				remove_loading_request(local);
-				return mapeamento_imagems.aplicar(local, image);
+					imagem image = imagem(sizex, sizey, canais, data2);
+					image.local = local;
+
+					stbi_image_free(data);
+					// delete[] data;
+					delete[] data2;
+
+					remove_loading_request(local);
+					return mapeamento_imagems.aplicar(local, image);
+				}
+				else
+				{
+					imagem image = imagem(X, Y, canais, data);
+					image.local = local;
+
+					stbi_image_free(data);
+					// delete[] data;
+
+					remove_loading_request(local);
+					return mapeamento_imagems.aplicar(local, image);
+				}
 			}
 		}
 		else
