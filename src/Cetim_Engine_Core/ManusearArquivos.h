@@ -433,6 +433,16 @@ namespace ManuseioDados
 		return mapeamento_imagems.aplicar(name, image);
 	}
 
+	void start_ffmpef(){
+		av_register_all();
+
+	}
+
+	void end_ffmpef(){
+		
+	}
+	
+
 	void carregar_Imagem_thread(string local, shared_ptr<imagem> *ret)
 	{
 		*ret = carregar_Imagem(local);

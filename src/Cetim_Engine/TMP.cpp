@@ -106,6 +106,7 @@ void configuracaoInicial()
 {
 
     
+    ManuseioDados::start_ffmpef();
     
     start_sdl();
     Iniciar_Render_Func.push_back(iniciar_iniciar_global_bullet);
@@ -169,6 +170,7 @@ int main(int argc, char **argv)
 
     Mix_CloseAudio();
     SDL_Quit();
+    ManuseioDados::end_ffmpef();
 
     return 0;
 }
