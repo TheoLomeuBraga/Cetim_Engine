@@ -77,7 +77,7 @@ class OBJECT_OT_add_sound(bpy.types.Operator):
         add_sound(self, context)
         return {'FINISHED'}
 
-def OBJECT_OT_add_nav_mesh(self, context):
+def add_nav_mesh(self, context):
     bpy.ops.mesh.primitive_plane_add(size=2, enter_editmode=False, align='WORLD', location=context.scene.cursor.location, scale=(1, 1, 1))
     obj = context.active_object
     obj["type"] = "navmesh"
@@ -86,13 +86,13 @@ def OBJECT_OT_add_nav_mesh(self, context):
     
 class OBJECT_OT_add_nav_mesh(bpy.types.Operator):
     """Adicione um cubo comum"""
-    bl_idname = "mesh.OBJECT_OT_add_nav_mesh"
+    bl_idname = "mesh.add_nav_mesh"
     bl_label = "Navegation Mesh"
     bl_options = {'REGISTER', 'UNDO'}
     text = "Navegation Mesh"
     icon='PLANE'
     def execute(self, context):
-        OBJECT_OT_add_nav_mesh(self, context)
+        add_nav_mesh(self, context)
         return {'FINISHED'}
 
 objects_ot = [OBJECT_OT_add_player_start,OBJECT_OT_add_entity,OBJECT_OT_add_door_triger,OBJECT_OT_add_sound,OBJECT_OT_add_nav_mesh]
