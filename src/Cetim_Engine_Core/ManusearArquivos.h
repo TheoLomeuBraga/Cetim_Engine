@@ -447,8 +447,60 @@ namespace ManuseioDados
 	std::mutex load_frame_mtx;
 	std::set<std::string> load_frame_list;
 
+	double get_video_duration_from_file(const string &path)
+	{
+		AVFormatContext *formatContext = avformat_alloc_context();
+		if (avformat_open_input(&formatContext, path.c_str(), nullptr, nullptr) != 0)
+		{
+			cerr << "Erro ao abrir o arquivo." << endl;
+			return -1;
+		}
+
+		if (avformat_find_stream_info(formatContext, nullptr) < 0)
+		{
+			cerr << "Erro ao encontrar informações do stream." << endl;
+			avformat_close_input(&formatContext);
+			return -1;
+		}
+
+		int videoStreamIndex = -1;
+		for (unsigned int i = 0; i < formatContext->nb_streams; i++)
+		{
+			if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
+			{
+				videoStreamIndex = i;
+				break;
+			}
+		}
+
+		if (videoStreamIndex == -1)
+		{
+			cerr << "Nenhum stream de vídeo encontrado." << endl;
+			avformat_close_input(&formatContext);
+			return -1;
+		}
+
+		int64_t duration = formatContext->streams[videoStreamIndex]->duration;
+		if (duration == AV_NOPTS_VALUE)
+		{
+			duration = formatContext->duration;
+		}
+
+		double videoDuration = duration * av_q2d(formatContext->streams[videoStreamIndex]->time_base);
+		if (duration == AV_NOPTS_VALUE)
+		{
+			videoDuration = formatContext->duration / (double)AV_TIME_BASE;
+		}
+
+		avformat_close_input(&formatContext);
+		return videoDuration / 1000;
+	}
+
 	void load_frame_thread(string path, float time)
 	{
+
+		//time = get_video_duration_from_file(path) - time;
+
 		{
 			std::lock_guard<std::mutex> lock(load_frame_mtx);
 			load_frame_list.insert(path);
@@ -594,6 +646,8 @@ namespace ManuseioDados
 			load_frame_list.erase(path);
 		}
 	}
+
+	
 
 	void load_frame(string name, float time)
 	{

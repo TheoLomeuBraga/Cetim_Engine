@@ -8,6 +8,7 @@ speed = 50
 
 obj_ptr_to_rotate = nil
 local obj_to_rotate = nil
+local video_duration = 0
 
 function START()
     if obj_ptr_to_rotate ~= nil then
@@ -15,6 +16,7 @@ function START()
     end
 
     load_video_frame("Textures/loading_animation_logo.mkv",0.0)
+    video_duration = get_video_duration("Textures/loading_animation_logo.mkv")
 end
 
 local sw = stopwatch:new()
@@ -32,6 +34,7 @@ local video_time = 0
 
 local vf = "Textures/spiral.svg"
 
+
 function UPDATE()
     time:get()
 
@@ -41,15 +44,14 @@ function UPDATE()
 
     
     vf = get_video_frame("Textures/loading_animation_logo.mkv")
-    print("vf",vf)
     if vf ~= nil then
         style2.image = vf
 
         video_time = video_time + time.delta
-        if video_time > 1 then
+
+        if video_time > video_duration then
             video_time = 0
         end
-        print("Textures/loading_animation_logo.mkv",video_time)
         vf = load_video_frame("Textures/loading_animation_logo.mkv",video_time)
         
     else
@@ -57,7 +59,8 @@ function UPDATE()
     end
 
     simple_ui_display(tf, "Loading", style)
-    simple_ui_display(simple_ui_transform({x=0.8,y=-0.8,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=-rot}), "", style2)
+    --simple_ui_display(simple_ui_transform({x=0.8,y=-0.8,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=0}), "", style2)
+    simple_ui_display(simple_ui_transform({x=0.8,y=-0.8,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=0}), "", style2)
 end
 
 function COLLIDE(collision_info)

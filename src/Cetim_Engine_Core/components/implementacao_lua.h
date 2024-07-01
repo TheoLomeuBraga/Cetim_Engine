@@ -935,6 +935,12 @@ namespace funcoes_ponte
 		return 0;
 	}
 
+	int get_video_duration(lua_State *L){
+		lua_pushnumber(L,ManuseioDados::get_video_duration_from_file(lua_tostring(L,1)));
+		return 1;
+		
+	}
+
 	int get_video_frame(lua_State *L){
 		shared_ptr<imagem> img = ManuseioDados::get_frame(lua_tostring(L,1));
 		if(img != NULL){
@@ -2886,6 +2892,8 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("video", {
 														  pair<string, lua_function>("load_video_frame", load_video_frame),
 														  pair<string, lua_function>("get_video_frame", get_video_frame),
+														  pair<string, lua_function>("get_video_duration", get_video_duration),
+														  
 
 													  })
 
