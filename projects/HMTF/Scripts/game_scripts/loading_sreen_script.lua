@@ -58,8 +58,8 @@ function UPDATE()
     end
 
     simple_ui_display(tf, "Loading", style)
-    --simple_ui_display(simple_ui_transform({x=0.8,y=-0.8,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=0}), "", style2)
     simple_ui_display(simple_ui_transform({x=0.8,y=-0.8,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=0}), "", style2)
+    --simple_ui_display(simple_ui_transform({x=0.0,y=-0.0,z=0},{x=0.1,y=0.1,z=0.1},true,{x=0,y=0,z=0}), "", style2)
 end
 
 function COLLIDE(collision_info)

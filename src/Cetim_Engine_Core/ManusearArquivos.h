@@ -498,9 +498,6 @@ namespace ManuseioDados
 
 	void load_frame_thread(string path, float time)
 	{
-
-		
-
 		{
 			std::lock_guard<std::mutex> lock(load_frame_mtx);
 			load_frame_list.insert(path);
@@ -660,7 +657,7 @@ namespace ManuseioDados
 		std::lock_guard<std::mutex> lock(load_frame_mtx);
 		while (load_frame_list.find(name) != load_frame_list.end())
 		{
-			this_thread::sleep_for(chrono::microseconds(10));
+			//this_thread::sleep_for(chrono::microseconds(10));
 		}
 		return mapeamento_imagems.pegar(name);
 	}
