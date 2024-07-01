@@ -499,7 +499,7 @@ namespace ManuseioDados
 	void load_frame_thread(string path, float time)
 	{
 
-		//time = get_video_duration_from_file(path) - time;
+		
 
 		{
 			std::lock_guard<std::mutex> lock(load_frame_mtx);
@@ -651,7 +651,7 @@ namespace ManuseioDados
 
 	void load_frame(string name, float time)
 	{
-		std::thread t(load_frame_thread, name, time);
+		std::thread t(load_frame_thread, name, get_video_duration_from_file(name) - time -0.1);
 		t.detach();
 	}
 

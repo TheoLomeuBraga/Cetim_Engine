@@ -48,7 +48,6 @@ function UPDATE()
         style2.image = vf
 
         video_time = video_time + time.delta
-
         if video_time > video_duration then
             video_time = 0
         end
