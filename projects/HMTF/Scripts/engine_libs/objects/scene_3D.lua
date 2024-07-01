@@ -179,8 +179,14 @@ function apply_key_frame(game_objects_list, key_frame)
     end
 end
 
-function set_keyframe(path, obj_list, smooth, animation_name,moment)
-    c_set_keyframe(path, obj_list, smooth, animation_name,moment)
+
+function set_keyframe(path, obj_list, smooth, animation_name1,moment1,animation_name2,moment2,mix_power)
+    if animation_name2 == nil then
+        c_set_keyframe(path, obj_list, smooth, animation_name1,moment1)
+    else
+        c_set_keyframe(path, obj_list, smooth, animation_name1,moment1,animation_name2,moment2,mix_power)
+    end
+    
 end
 
 function get_scene_3D(path)

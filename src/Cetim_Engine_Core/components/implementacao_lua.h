@@ -930,25 +930,27 @@ namespace funcoes_ponte
 		return 1;
 	}
 
-	int load_video_frame(lua_State *L){
-		ManuseioDados::load_frame(lua_tostring(L,1), lua_tonumber(L,2));
+	int load_video_frame(lua_State *L)
+	{
+		ManuseioDados::load_frame(lua_tostring(L, 1), lua_tonumber(L, 2));
 		return 0;
 	}
 
-	int get_video_duration(lua_State *L){
-		lua_pushnumber(L,ManuseioDados::get_video_duration_from_file(lua_tostring(L,1)));
+	int get_video_duration(lua_State *L)
+	{
+		lua_pushnumber(L, ManuseioDados::get_video_duration_from_file(lua_tostring(L, 1)));
 		return 1;
-		
 	}
 
-	int get_video_frame(lua_State *L){
-		shared_ptr<imagem> img = ManuseioDados::get_frame(lua_tostring(L,1));
-		if(img != NULL){
-			lua_pushstring(L,img->local.c_str());
+	int get_video_frame(lua_State *L)
+	{
+		shared_ptr<imagem> img = ManuseioDados::get_frame(lua_tostring(L, 1));
+		if (img != NULL)
+		{
+			lua_pushstring(L, img->local.c_str());
 			return 1;
 		}
 		return 0;
-		
 	}
 
 	int memory_usage_info(lua_State *L)
@@ -1936,7 +1938,7 @@ namespace funcoes_ponte
 			}
 			ret.setTable("materials", vTable_table(materials));
 			ret.setFloat("render_count", mesh->render_count);
-			
+
 			lua_pushtable(L, ret);
 			return 1;
 		}
@@ -2735,8 +2737,107 @@ namespace funcoes_ponte
 				}
 			}
 		}
-		else if (args_no == 6)
+		else if (args_no == 8)
 		{
+
+			shared_ptr<cena_3D> scene = ManuseioDados::carregar_modelo_3D(lua_tostring(L, 1));
+
+			vector<string> objects_ptrs_str = table_vString(lua_totable(L, 2));
+			vector<objeto_jogo *> objects_ptrs = {};
+			for (int i = 0; i < objects_ptrs_str.size(); i++)
+			{
+				objects_ptrs.push_back(string_ponteiro<objeto_jogo>(objects_ptrs_str[i]));
+			}
+
+			bool mix = lua_toboolean(L, 3);
+
+			string animation_name1 = lua_tostring(L, 4);
+			string animation_name2 = lua_tostring(L, 6);
+			if (scene->animacoes.find(animation_name1) != scene->animacoes.end() && scene->animacoes.find(animation_name2) != scene->animacoes.end())
+			{
+				animacao ani1 = scene->animacoes[animation_name1];
+				animacao ani2 = scene->animacoes[animation_name2];
+
+				float animation_time1 = lua_tonumber(L, 5);
+				float animation_time2 = lua_tonumber(L, 7);
+				
+				if (animation_time1 > ani1.duration)
+				{
+					animation_time1 = ani1.duration;
+				}
+				else if (animation_time1 < 0)
+				{
+					animation_time1 = 0;
+				}
+
+				if (animation_time2 > ani2.duration)
+				{
+					animation_time2 = ani2.duration;
+				}
+				else if (animation_time2 < 0)
+				{
+					animation_time2 = 0;
+				}
+
+				float animation_frame1 = 0;
+				float animation_frame2 = 0;
+				if (animation_time1 > ani1.duration)
+				{
+					animation_frame1 = ani1.keyFrames.size();
+				}
+				else
+				{
+					animation_frame1 = (animation_time1 * ani1.keyFrames.size()) / ani1.duration + 1;
+				}
+
+				if (animation_time2 > ani2.duration)
+				{
+					animation_frame2 = ani2.keyFrames.size();
+				}
+				else
+				{
+					animation_frame2 = (animation_time2 * ani2.keyFrames.size()) / ani2.duration + 1;
+				}
+
+				float animation_frame_rest1 = animation_frame1 - (int)animation_frame1;
+				float animation_frame_rest2 = animation_frame2 - (int)animation_frame2;
+
+				if (animation_frame1 < 0)
+				{
+					animation_frame1 = 0;
+					animation_frame_rest1 = 0;
+				}
+				else if (animation_frame1 > ani1.keyFrames.size())
+				{
+					animation_frame1 = ani1.keyFrames.size();
+					animation_frame_rest1 = 0;
+				}
+
+				if (animation_frame2 < 0)
+				{
+					animation_frame2 = 0;
+					animation_frame_rest2 = 0;
+				}
+				else if (animation_frame2 > ani2.keyFrames.size())
+				{
+					animation_frame2 = ani2.keyFrames.size();
+					animation_frame_rest2 = 0;
+				}
+
+				float mix_power = lua_tonumber(L, 8);
+
+				if (animation_frame_rest1 > 0 && animation_frame1 < ani1.keyFrames.size() - 1 && animation_frame_rest2 > 0 && animation_frame2 < ani2.keyFrames.size() - 1 && mix)
+				{
+					vector<key_frame> kfs1 = mix_keyframes(ani1.keyFrames[(int)animation_frame1 - 1], ani1.keyFrames[((int)animation_frame1)], animation_frame_rest1);
+					vector<key_frame> kfs2 = mix_keyframes(ani1.keyFrames[(int)animation_frame2 - 1], ani2.keyFrames[((int)animation_frame2)], animation_frame_rest2);
+					apply_key_frame_transform(mix_keyframes(kfs1,kfs2,mix_power), objects_ptrs, scene->offset_matrices);
+				}
+				else
+				{
+					vector<key_frame> kfs = mix_keyframes(ani1.keyFrames[(int)animation_frame1 - 1], ani2.keyFrames[(int)animation_frame2 - 1], mix_power);
+					apply_key_frame_transform(kfs, objects_ptrs, scene->offset_matrices);
+				}
+			}
 		}
 
 		return 0;
@@ -2858,7 +2959,7 @@ namespace funcoes_ponte
 															 pair<string, lua_function>("get_set_audio", get_set_audio),
 															 pair<string, lua_function>("get_set_global_volume", get_set_global_volume),
 															 pair<string, lua_function>("set_lisener_object", set_lisener_object),
-															 
+
 														 }),
 		pair<string, map<string, lua_function>>("script", {
 															  pair<string, lua_function>("get_script_size", get_script_size),
@@ -2890,14 +2991,11 @@ namespace funcoes_ponte
 
 													  }),
 		pair<string, map<string, lua_function>>("video", {
-														  pair<string, lua_function>("load_video_frame", load_video_frame),
-														  pair<string, lua_function>("get_video_frame", get_video_frame),
-														  pair<string, lua_function>("get_video_duration", get_video_duration),
-														  
+															 pair<string, lua_function>("load_video_frame", load_video_frame),
+															 pair<string, lua_function>("get_video_frame", get_video_frame),
+															 pair<string, lua_function>("get_video_duration", get_video_duration),
 
-													  })
-
-													  
+														 })
 
 	};
 
