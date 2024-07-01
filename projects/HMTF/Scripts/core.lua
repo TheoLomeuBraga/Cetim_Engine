@@ -29,6 +29,7 @@ require("objects.post_processing")
 require("function_sets.simple_ui")
 
 
+
 local serializer = require("libs.serialize")
 
 register_function_set("file_system")
@@ -54,6 +55,8 @@ previous_cenary = nil
 
 function set_background_image(args)
 
+    
+
     if args.shader == nil then
         args.shader = "background"
     end
@@ -73,7 +76,7 @@ function set_background_image(args)
     if args.path ~= nil and args.path ~= "" then
         local mat = matreial:new()
         mat.shader = "skybox"
-        mat.textures[1] = "Textures/null.svg"
+        mat.textures[1] = test_texture
         mat.color.r = 1
         mat.color.g = 1
         mat.color.b = 1
@@ -242,7 +245,10 @@ function load_configs()
     end
 end
 
+
+
 function START()
+
     post_processing:get()
     post_processing.material = matreial:new()
     post_processing.material.shader = "post_processing"
@@ -260,7 +266,6 @@ function START()
     mat.color.g = 0
     mat.color.b = 0
     mat.normal_direction = 1
-    --back_ground = create_mesh(layers.sky_box, false, Vec3:new(0, 0, 0), Vec3:new(0, 0, 0), Vec3:new(1, 1, 1), 1, { mat },{ mesh_location:new("engine assets/engine_models.glb", "sky_sphere:0") },false)
     set_background_image({ path = mat.textures[1], color = mat.color })
 
     window.resolution.x = 256 * 2

@@ -55,10 +55,11 @@ using json = nlohmann::json;
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvgrast.h"
 
-extern "C" {
+extern "C"
+{
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
-#include <libavutil/imgutils.h>
+#include <libswscale/swscale.h>
 }
 
 // fontes
@@ -433,15 +434,181 @@ namespace ManuseioDados
 		return mapeamento_imagems.aplicar(name, image);
 	}
 
-	void start_ffmpef(){
+	void start_ffmpef()
+	{
+
 		av_register_all();
-
 	}
 
-	void end_ffmpef(){
-		
+	void end_ffmpef()
+	{
 	}
-	
+
+	std::mutex load_frame_mtx;
+	std::set<std::string> load_frame_list;
+
+	void load_frame_thread(string path, float time)
+	{
+		{
+			std::lock_guard<std::mutex> lock(load_frame_mtx);
+			load_frame_list.insert(path);
+		}
+
+		imagem ret;
+
+		AVFormatContext *formatContext = avformat_alloc_context();
+		if (avformat_open_input(&formatContext, path.c_str(), nullptr, nullptr) != 0)
+		{
+			cerr << "Erro ao abrir o arquivo." << endl;
+			return;
+		}
+
+		if (avformat_find_stream_info(formatContext, nullptr) < 0)
+		{
+			cerr << "Erro ao encontrar informações do stream." << endl;
+			avformat_close_input(&formatContext);
+			return;
+		}
+
+		AVCodec *codec = nullptr;
+		int videoStreamIndex = -1;
+		for (unsigned int i = 0; i < formatContext->nb_streams; i++)
+		{
+			if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
+			{
+				codec = avcodec_find_decoder(formatContext->streams[i]->codecpar->codec_id);
+				videoStreamIndex = i;
+				break;
+			}
+		}
+
+		if (videoStreamIndex == -1)
+		{
+			cerr << "Nenhum stream de vídeo encontrado." << endl;
+			avformat_close_input(&formatContext);
+			return;
+		}
+
+		AVCodecContext *codecContext = avcodec_alloc_context3(codec);
+		avcodec_parameters_to_context(codecContext, formatContext->streams[videoStreamIndex]->codecpar);
+		if (avcodec_open2(codecContext, codec, nullptr) < 0)
+		{
+			cerr << "Erro ao abrir o codec." << endl;
+			avcodec_free_context(&codecContext);
+			avformat_close_input(&formatContext);
+			return;
+		}
+
+		// Verificar a duração do vídeo
+		int64_t duration = formatContext->streams[videoStreamIndex]->duration;
+		double videoDuration = duration * av_q2d(formatContext->streams[videoStreamIndex]->time_base);
+		if (time > videoDuration)
+		{
+			cerr << "O tempo requerido é maior que a duração do vídeo." << endl;
+			avcodec_free_context(&codecContext);
+			avformat_close_input(&formatContext);
+			{
+				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+				load_frame_list.erase(path);
+			}
+			return;
+		}
+
+		AVPacket *packet = av_packet_alloc();
+		AVFrame *frame = av_frame_alloc();
+		SwsContext *swsCtx = sws_getContext(codecContext->width, codecContext->height, codecContext->pix_fmt,
+											codecContext->width, codecContext->height, AV_PIX_FMT_RGB24,
+											SWS_BILINEAR, nullptr, nullptr, nullptr);
+
+		int64_t targetFrame = static_cast<int64_t>(time / av_q2d(formatContext->streams[videoStreamIndex]->time_base));
+		av_seek_frame(formatContext, videoStreamIndex, targetFrame, AVSEEK_FLAG_BACKWARD);
+
+		while (av_read_frame(formatContext, packet) >= 0)
+		{
+			if (packet->stream_index == videoStreamIndex)
+			{
+				if (avcodec_send_packet(codecContext, packet) == 0)
+				{
+					while (avcodec_receive_frame(codecContext, frame) == 0)
+					{
+						int width = codecContext->width;
+						int height = codecContext->height;
+						int originalChannels = 3; // Originalmente RGB
+						int channels = 4;		  // RGBA
+
+						vector<unsigned char> imgData(width * height * channels);
+						vector<unsigned char> tempData(width * height * originalChannels);
+						uint8_t *dest[4] = {tempData.data(), nullptr, nullptr, nullptr};
+						int destLinesize[4] = {originalChannels * width, 0, 0, 0};
+						sws_scale(swsCtx, frame->data, frame->linesize, 0, height, dest, destLinesize);
+
+						// Copiando os dados RGB e adicionando o canal alfa
+						for (int y = 0; y < height; ++y)
+						{
+							for (int x = 0; ++x < width;)
+							{
+								int srcIndex = (y * width + x) * originalChannels;
+								int destIndex = (y * width + x) * channels;
+								imgData[destIndex] = tempData[srcIndex];		 // R
+								imgData[destIndex + 1] = tempData[srcIndex + 1]; // G
+								imgData[destIndex + 2] = tempData[srcIndex + 2]; // B
+								imgData[destIndex + 3] = 255;					 // A
+							}
+						}
+
+						ret = imagem(width, height, channels, imgData);
+						ret.local = path;
+
+						av_frame_unref(frame);
+						av_packet_unref(packet);
+
+						av_frame_free(&frame);
+						av_packet_free(&packet);
+						avcodec_free_context(&codecContext);
+						avformat_close_input(&formatContext);
+						sws_freeContext(swsCtx);
+
+						{
+							std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+							mapeamento_imagems.aplicar(path, ret);
+							load_frame_list.erase(path);
+						}
+
+						cout << "end load_frame_thread" << endl;
+						return;
+					}
+				}
+			}
+			av_packet_unref(packet);
+		}
+
+		av_frame_free(&frame);
+		av_packet_free(&packet);
+		avcodec_free_context(&codecContext);
+		avformat_close_input(&formatContext);
+		sws_freeContext(swsCtx);
+
+		{
+			std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+			load_frame_list.erase(path);
+		}
+	}
+
+	void load_frame(string name, float time)
+	{
+		std::thread t(load_frame_thread, name, time);
+		t.detach();
+	}
+
+	shared_ptr<imagem> get_frame(string name)
+	{
+		std::lock_guard<std::mutex> lock(load_frame_mtx);
+		while (load_frame_list.find(name) != load_frame_list.end())
+		{
+			this_thread::sleep_for(chrono::microseconds(10));
+		}
+		return mapeamento_imagems.pegar(name);
+	}
 
 	void carregar_Imagem_thread(string local, shared_ptr<imagem> *ret)
 	{

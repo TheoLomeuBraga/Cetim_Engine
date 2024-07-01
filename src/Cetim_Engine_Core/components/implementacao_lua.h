@@ -930,6 +930,21 @@ namespace funcoes_ponte
 		return 1;
 	}
 
+	int load_video_frame(lua_State *L){
+		ManuseioDados::load_frame(lua_tostring(L,1), lua_tonumber(L,2));
+		return 0;
+	}
+
+	int get_video_frame(lua_State *L){
+		shared_ptr<imagem> img = ManuseioDados::get_frame(lua_tostring(L,1));
+		if(img != NULL){
+			lua_pushstring(L,img->local.c_str());
+			return 1;
+		}
+		return 0;
+		
+	}
+
 	int memory_usage_info(lua_State *L)
 	{
 		print("KBs usage", lua_gc(L, LUA_GCCOUNTB, 0));
@@ -2867,7 +2882,14 @@ namespace funcoes_ponte
 		pair<string, map<string, lua_function>>("ui", {
 														  pair<string, lua_function>("simple_ui_display", simple_ui_display),
 
+													  }),
+		pair<string, map<string, lua_function>>("video", {
+														  pair<string, lua_function>("load_video_frame", load_video_frame),
+														  pair<string, lua_function>("get_video_frame", get_video_frame),
+
 													  })
+
+													  
 
 	};
 

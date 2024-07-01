@@ -1280,34 +1280,20 @@ public:
 
 	shared_ptr<Y> aplicar(string local, Y valor)
 	{
-		if (mapa.find(local) == mapa.end())
-		{
-			mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
-		}
+		mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
 		mapa[local] = make_shared<Y>(valor);
 		return mapa[local];
 	}
 
 	void aplicar_ptr(string local, shared_ptr<Y> valor)
 	{
-		if (mapa.find(local) == mapa.end())
-		{
-			mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
-		}
+		mapa.insert(pair<string, shared_ptr<Y>>(local, NULL));
 		mapa[local] = valor;
 	}
 
 	void retirar(string local)
 	{
-		map<string, shared_ptr<Y>> mapa2;
-		for (pair<string, shared_ptr<Y>> p : mapa)
-		{
-			if (p.first.compare(local) != 0)
-			{
-				mapa2.insert(p);
-			}
-		}
-		mapa.swap(mapa2);
+		mapa.erase(local);
 	}
 
 	void limpar()
