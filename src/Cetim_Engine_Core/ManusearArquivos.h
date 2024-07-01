@@ -501,7 +501,15 @@ namespace ManuseioDados
 
 		// Verificar a duração do vídeo
 		int64_t duration = formatContext->streams[videoStreamIndex]->duration;
+		if (duration == AV_NOPTS_VALUE)
+		{
+			duration = formatContext->duration;
+		}
 		double videoDuration = duration * av_q2d(formatContext->streams[videoStreamIndex]->time_base);
+		if (duration == AV_NOPTS_VALUE)
+		{
+			videoDuration = formatContext->duration / (double)AV_TIME_BASE;
+		}
 		if (time > videoDuration)
 		{
 			cerr << "O tempo requerido é maior que a duração do vídeo." << endl;
@@ -517,12 +525,25 @@ namespace ManuseioDados
 		AVPacket *packet = av_packet_alloc();
 		AVFrame *frame = av_frame_alloc();
 		SwsContext *swsCtx = sws_getContext(codecContext->width, codecContext->height, codecContext->pix_fmt,
-											codecContext->width, codecContext->height, AV_PIX_FMT_RGB24,
+											codecContext->width, codecContext->height, AV_PIX_FMT_RGBA,
 											SWS_BILINEAR, nullptr, nullptr, nullptr);
 
 		int64_t targetFrame = static_cast<int64_t>(time / av_q2d(formatContext->streams[videoStreamIndex]->time_base));
-		av_seek_frame(formatContext, videoStreamIndex, targetFrame, AVSEEK_FLAG_BACKWARD);
+		if (av_seek_frame(formatContext, videoStreamIndex, targetFrame, AVSEEK_FLAG_BACKWARD) < 0)
+		{
+			cerr << "Erro ao buscar para o frame alvo." << endl;
+			avcodec_free_context(&codecContext);
+			avformat_close_input(&formatContext);
+			{
+				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+				load_frame_list.erase(path);
+			}
+			return;
+		}
 
+		avcodec_flush_buffers(codecContext);
+
+		bool frameDecoded = false;
 		while (av_read_frame(formatContext, packet) >= 0)
 		{
 			if (packet->stream_index == videoStreamIndex)
@@ -531,55 +552,31 @@ namespace ManuseioDados
 				{
 					while (avcodec_receive_frame(codecContext, frame) == 0)
 					{
-						int width = codecContext->width;
-						int height = codecContext->height;
-						int originalChannels = 3; // Originalmente RGB
-						int channels = 4;		  // RGBA
-
-						vector<unsigned char> imgData(width * height * channels);
-						vector<unsigned char> tempData(width * height * originalChannels);
-						uint8_t *dest[4] = {tempData.data(), nullptr, nullptr, nullptr};
-						int destLinesize[4] = {originalChannels * width, 0, 0, 0};
-						sws_scale(swsCtx, frame->data, frame->linesize, 0, height, dest, destLinesize);
-
-						// Copiando os dados RGB e adicionando o canal alfa
-						for (int y = 0; y < height; ++y)
+						if (frame->pts >= targetFrame)
 						{
-							for (int x = 0; ++x < width;)
-							{
-								int srcIndex = (y * width + x) * originalChannels;
-								int destIndex = (y * width + x) * channels;
-								imgData[destIndex] = tempData[srcIndex];		 // R
-								imgData[destIndex + 1] = tempData[srcIndex + 1]; // G
-								imgData[destIndex + 2] = tempData[srcIndex + 2]; // B
-								imgData[destIndex + 3] = 255;					 // A
-							}
+							int width = codecContext->width;
+							int height = codecContext->height;
+							int channels = 4; // RGBA
+
+							vector<unsigned char> imgData(width * height * channels);
+							uint8_t *dest[4] = {imgData.data(), nullptr, nullptr, nullptr};
+							int destLinesize[4] = {channels * width, 0, 0, 0};
+							sws_scale(swsCtx, frame->data, frame->linesize, 0, height, dest, destLinesize);
+
+							ret = imagem(width, height, channels, imgData);
+							ret.local = path;
+
+							frameDecoded = true;
+							break;
 						}
-
-						ret = imagem(width, height, channels, imgData);
-						ret.local = path;
-
-						av_frame_unref(frame);
-						av_packet_unref(packet);
-
-						av_frame_free(&frame);
-						av_packet_free(&packet);
-						avcodec_free_context(&codecContext);
-						avformat_close_input(&formatContext);
-						sws_freeContext(swsCtx);
-
-						{
-							std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
-							mapeamento_imagems.aplicar(path, ret);
-							load_frame_list.erase(path);
-						}
-
-						cout << "end load_frame_thread" << endl;
-						return;
 					}
 				}
 			}
 			av_packet_unref(packet);
+			if (frameDecoded)
+			{
+				break;
+			}
 		}
 
 		av_frame_free(&frame);
@@ -590,6 +587,10 @@ namespace ManuseioDados
 
 		{
 			std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+			if (frameDecoded)
+			{
+				mapeamento_imagems.aplicar(path, ret);
+			}
 			load_frame_list.erase(path);
 		}
 	}
