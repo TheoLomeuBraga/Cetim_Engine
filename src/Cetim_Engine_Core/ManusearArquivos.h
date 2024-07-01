@@ -1503,6 +1503,24 @@ namespace ManuseioDados
 					mat.texturas[0] = ManuseioDados::carregar_Imagem("Textures/white.png");
 				}
 
+				if (gltf_loader.materials[i].emissiveTexture > -1)
+				{
+					string image_location = gltf_loader.textures[gltf_loader.materials[i].emissiveTexture].uri;
+					mat.texturas[1] = ret.texturas[image_location];
+
+					if (mat.cor.x == 0 and mat.cor.y == 0 and mat.cor.z == 0 and mat.cor.w == 0)
+					{
+						mat.cor.x = 1;
+						mat.cor.y = 1;
+						mat.cor.z = 1;
+						mat.cor.w = 1;
+					}
+				}
+				else
+				{
+					mat.texturas[1] = ManuseioDados::carregar_Imagem("Textures/white.png");
+				}
+
 				ret.materiais[gltf_loader.materials[i].name] = mat;
 			}
 
