@@ -153,6 +153,7 @@ function summon_bullet(args)
     local type = args[1]
     local start = args[2]
     local target = args[3]
+    local extra = args[4]
 
     local obj = game_object(create_object(layers.main))
 
@@ -160,7 +161,8 @@ function summon_bullet(args)
         obj = obj,
         type = type,
         start = start,
-        target = target
+        target = target,
+        extra = extra
     }
 
     start_per_type[bullet_data.type](bullet_data)

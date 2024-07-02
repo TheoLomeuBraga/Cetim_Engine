@@ -63,20 +63,32 @@ function shoot()
     --summon_bullet(bullet_types.fast,"","",pos,target,25,{r=1,g=0,b=0,a=1},100,1,"")
 end
 
+inputs_last_frame = {}
+current_hand_use = "atack_R"
 
 animations_progresion = {
-    normal = 0,
-    walk = 0,
-    atack_L = 0.0,
-    atack_R = 0.0
+    atack_L = -1.0,
+    atack_R = -1.0,
+    walk = -1.0,
+    normal = -1.0,
 }
+
+animations_order = {
+    [1] = "normal",
+    [2] = "walk",
+    [3] = "atack_L",
+    [4] = "atack_R",
+}
+
+
 function UPDATE()
     if global_data.pause < 1 then
         time:get()
 
-        local inputs = global_data.inputs
+        
 
         local inputs = global_data.inputs
+        local inputs_last_frame = global_data.inputs_last_frame
         local rot_cam_x = math.min((inputs.mouse_view_x * 100) + inputs.analog_view_x, 10)
         rot_cam_x = math.max(rot_cam_x, -10)
 
@@ -114,21 +126,48 @@ function UPDATE()
             animations_progresion.normal = -1
         end
 
-        for key, value in pairs(animations_progresion) do
-
-            if value > arms_data.animations[key].duration then
-                animations_progresion[key] = 0
+        if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
+            if current_hand_use == "atack_R"then
+                current_hand_use = "atack_L"
+                animations_progresion["atack_L"] = 0
+            elseif  current_hand_use == "atack_L"then
+                current_hand_use = "atack_R"
+                animations_progresion["atack_R"] = 0
             end
-            if value > -1 then  
-                set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, key,value)
+            
+            
+        end
+
+        if animations_progresion["atack_R"] >= 0 then
+            animations_progresion["atack_R"] = animations_progresion["atack_R"] + (time.delta * 2)
+            if animations_progresion["atack_R"] > arms_data.animations["atack_R"].duration then
+                animations_progresion["atack_R"] = -1
+            end
+        end
+        if animations_progresion["atack_L"] >= 0 then
+            animations_progresion["atack_L"] = animations_progresion["atack_L"] + (time.delta * 2)
+            if animations_progresion["atack_L"] > arms_data.animations["atack_L"].duration then
+                animations_progresion["atack_L"] = -1
+            end
+        end
+
+        for key, value in ipairs(animations_order) do
+            local value2 = animations_progresion[value]
+            if value2 > arms_data.animations[value].duration then
+                animations_progresion[value] = 0
+            end
+            if value2 > -1 then  
+                set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, value,value2)
             end
             
         end
 
-        --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_L",0.2)
-        --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_R", 0.2)
         
 
+        
+
+        --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_L",0.2)
+        --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_R", 0.2)
     end
 end
 

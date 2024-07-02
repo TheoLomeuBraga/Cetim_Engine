@@ -40,7 +40,7 @@ function remove_target_point(name)
     end
 end
 
-function summon_bullet(type,start,target)
+function summon_bullet(type,start,target,extra)
     if global_data.core_object_ptr ~= nil then
         if core_obj == nil then
             core_obj = game_object(global_data.core_object_ptr)
@@ -50,7 +50,7 @@ function summon_bullet(type,start,target)
             speed = 1
         end
 
-        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.summon_bullet({type,start,target})
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/bullet_master"].functions.summon_bullet({type,start,target,extra})
     end
 end
 
