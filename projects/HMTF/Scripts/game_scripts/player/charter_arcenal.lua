@@ -94,7 +94,7 @@ function atack_loop()
             --camera
             local start = camera.components.transform:get_global_position(0, 0, 1)
             local target = camera.components.transform:get_global_position(0, 0, 5)
-            summon_bullet("floor", start, target)
+            summon_bullet("normal", start, target)
         end
 
         if animations_progresion["atack_R"] >= 0 then

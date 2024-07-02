@@ -54,7 +54,7 @@ camera_movement_intensity = 2
 
 this_physics_3d = {}
 
-
+start_point = {0,0,0}
 function START()
 
     global_data.inventory = {
@@ -94,6 +94,7 @@ function START()
     this_physics_3d.scale = Vec3:new(1, 2, 1)
     this_physics_3d:set()
 
+    start_point = this_object.components.transform:get_global_position()
 
     direction_reference = game_object(this_object_ptr)
     direction_reference.components.transform:set()
@@ -375,8 +376,12 @@ function UPDATE()
         pause_last_frame = global_data.pause < 1
 
 
-        --this_object.components.transform:get()
+        this_object.components.transform:get()
         --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
+        if this_object.components.transform.position.y < -20 then
+            
+            this_object.components.transform:change_position(start_point.x,start_point.y,start_point.z)
+        end
 
         this_physics_3d:get()
     end

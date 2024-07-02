@@ -309,6 +309,8 @@ cenary_builders = {
             ret.components.lua_scripts:add_script("game_scripts/player/charter_interaction")
             ret.components.lua_scripts:add_script("game_scripts/player/charter_arcenal")
 
+            deepprint(ret.components.lua_scripts.scripts["game_scripts/player/charter_movement"].varables)
+            ret.components.lua_scripts.scripts["game_scripts/player/charter_movement"].variables.camera_rotation = {x=180 + part_data.rotation.y,y=0}
             change_ret()
         elseif part_data.variables.type == "music" then
             ret.components.audio_source.path = "Audio/musics/" ..

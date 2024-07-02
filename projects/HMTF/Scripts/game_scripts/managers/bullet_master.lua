@@ -103,6 +103,12 @@ update_per_type = {
         end
         data.timer = data.timer - time.delta
     end,
+    ["normal"] = function(data)
+        if data.timer < 0 then
+            data.dead = true
+        end
+        data.timer = data.timer - time.delta
+    end,
 }
 
 function UPDATE()
@@ -156,6 +162,13 @@ start_per_type = {
         data.obj.components.physics_3D:set()
         data.timer = 5
     end,
+    ["normal"] = function(data)
+        local mat = matreial:new("mesh")
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 4,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
+        data.obj.components.physics_3D:set()
+        data.timer = 5
+    end,
 }
 
 function summon_bullet(args)
@@ -173,6 +186,7 @@ function summon_bullet(args)
         target = target,
         extra = extra
     }
+
 
 
     
