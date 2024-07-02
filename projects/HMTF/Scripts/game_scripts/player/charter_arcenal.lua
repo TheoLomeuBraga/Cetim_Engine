@@ -103,8 +103,7 @@ function UPDATE()
         else
             animations_progresion.walk = 0
         end
-        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "walk",
-            animations_progresion.walk)
+        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "walk",animations_progresion.walk)
 
 
         --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_L",0.2)

@@ -62,7 +62,7 @@ function START()
 
     core_obj = game_object(global_data.core_object_ptr)
 
-    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 10000)
     camera_ptr = camera.object_ptr
     global_data.camera_ptr = camera_ptr
     set_lisener_object(camera.object_ptr)
@@ -340,7 +340,7 @@ function UPDATE()
 
             if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
 
-                inpulse.y = inpulse.y + jump_power
+                inpulse.y = jump_power
                 base_directional_input = deepcopy(input_dir)
                 
                 if math.abs(move_dir.x) + math.abs(move_dir.z) > 0.5 then
