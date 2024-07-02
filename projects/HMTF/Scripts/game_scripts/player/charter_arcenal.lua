@@ -63,9 +63,12 @@ function shoot()
     --summon_bullet(bullet_types.fast,"","",pos,target,25,{r=1,g=0,b=0,a=1},100,1,"")
 end
 
+
 animations_progresion = {
     normal = 0,
     walk = 0,
+    atack_L = 0.0,
+    atack_R = 0.0
 }
 function UPDATE()
     if global_data.pause < 1 then
@@ -85,26 +88,42 @@ function UPDATE()
         base_arms.components.transform.rotation.x = rot_cam_y
         base_arms.components.transform:set()
 
-        animations_progresion.normal = animations_progresion.normal + time.delta
+        
 
-        if animations_progresion.normal > arms_data.animations["normal"].duration then
-            animations_progresion.normal = 0
-        end
-        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal",
-            animations_progresion.normal)
+        --[[]]
+        
 
 
         local walk_speed = math.min(1, math.max(0, math.abs(inputs.left) + math.abs(inputs.foward)))
         if walk_speed > 0 --[[ser false enquanto o pulo]] then
-            animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
-            if animations_progresion.walk > arms_data.animations["walk"].duration then
+            if animations_progresion.walk < 0 then
                 animations_progresion.walk = 0
             end
+            animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
+            
         else
-            animations_progresion.walk = 0
+            animations_progresion.walk = -1
         end
-        set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "walk",animations_progresion.walk)
+        
+        if walk_speed == 0 then
+            if animations_progresion.normal < 0 then
+                animations_progresion.normal = 0
+            end
+            animations_progresion.normal = animations_progresion.normal + time.delta
+        else
+            animations_progresion.normal = -1
+        end
 
+        for key, value in pairs(animations_progresion) do
+
+            if value > arms_data.animations[key].duration then
+                animations_progresion[key] = 0
+            end
+            if value > -1 then  
+                set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, key,value)
+            end
+            
+        end
 
         --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_L",0.2)
         --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_R", 0.2)

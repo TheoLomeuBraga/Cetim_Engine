@@ -99,46 +99,7 @@ end
 
 
 update_per_type = {
-    [bullet_types.ray] = function (bullet)
 
-        local bcomps = bullet.obj.components
-
-        bullet.timer = bullet.timer - (time.delta * 4)
-
-        if bullet.timer <= 0 then
-            bullet.dead = true
-            return
-        end
-
-        bcomps.transform:change_scale(1 * bullet.timer,1 * bullet.timer,bullet.distance)
-        
-    end,
-    [bullet_types.fast] = function (bullet)
-        local obj_comp = bullet.obj.components
-        local last_pos = obj_comp.transform:get_global_position()
-        local distance = distance(last_pos, bullet.target)
-
-        local next_pos = calculate_next_position(last_pos,bullet.target, bullet.speed * time.delta)
-        if distance <= bullet.speed * time.delta then
-            bullet.dead = true
-        end
-
-        obj_comp.transform:change_position(next_pos.x,next_pos.y,next_pos.z)
-
-        local hit = false
-        local hit_info = {}
-        hit,hit_info = raycast_3D(last_pos,next_pos)
-        if hit then
-            --print(hit)
-            bullet.dead = true
-        end
-
-        --[[
-            process damage
-        ]]
-
-        
-    end
 }
 
 function UPDATE()
@@ -182,117 +143,24 @@ sprite_mat.textures[1] = "Textures/white.png"
 
 
 start_per_type = {
-    [bullet_types.ray] = function (bullet)
-
-        bullet.timer = 1
-        
-        local bcomps = bullet.obj.components
-
-        local start = bullet.start
-        local start_effect = bullet.start.effect
-        if start_effect == nil then
-            start_effect = bullet.start
-        end
-
-        local target = bullet.target
-        local hit = false
-        local hit_info = {}
-        hit,hit_info = raycast_3D(start,target)
-        if hit then
-            target = hit_info.position
-        end
-        bullet.target = target
-
-        --damage
-
-        local dist = distance(start_effect,bullet.target)
-
-        
-        local mp = midpoint(start_effect, bullet.target)
-        bcomps.transform:change_position(mp.x,mp.y,mp.z)
-
-        bcomps.transform:look_at(bullet.target)
-
-        bullet.distance = dist
-        bcomps.transform:change_scale(1,1,bullet.distance)
-
-        local extra_rot = math.random(0, 360)
-
-        local sb1 = game_object(create_object(bullet.obj.object_ptr)).components
-        sb1.transform:change_rotation(90,0,extra_rot)
-        sb1.render_shader.material = deepcopy(sprite_mat)
-        sb1.render_shader.material.color = bullet.color
-        sb1.render_shader.material.color.a = sb1.render_shader.material.color.a - 0.001
-        sb1.render_shader.material.textures[1] = "Textures/energy_ray.svg"
-        sb1.render_shader.material.position_scale = Vec4:new(0,0,1,dist)
-        sb1.render_shader.layer = 2
-        sb1.render_shader:set()
-
-        local sb2 = game_object(create_object(bullet.obj.object_ptr)).components
-        sb2.transform:change_rotation(90,0,90 + extra_rot)
-        sb2.render_shader.material = sb1.render_shader.material
-        sb2.render_shader.layer = 2
-        sb2.render_shader:set()
-        
-    end,
-    [bullet_types.fast] = function (bullet)
-
-        local target = bullet.target
-        local hit = false
-        local hit_info = {}
-        hit,hit_info = raycast_3D(bullet.start,target)
-        if hit then
-            target = hit_info.position
-        end
-        bullet.target = target
-
-        local obj_comp = bullet.obj.components
-
-        obj_comp.transform.billboarding = 2
-        obj_comp.transform.position = bullet.start
-        obj_comp.transform.scale.x = 0.25
-        obj_comp.transform.scale.y = 0.25
-        obj_comp.transform:set()
-
-        obj_comp.render_shader.material = deepcopy(sprite_mat)
-        obj_comp.render_shader.material.color = bullet.color
-        obj_comp.render_shader.material.color = {r=1,g=0.1,b=0.1,a=obj_comp.render_shader.material.color.a - 0.001}
-        obj_comp.render_shader.material.textures[1] = "Textures/energy_buble.png"
-        obj_comp.render_shader.material.position_scale = Vec4:new(0,0,1,1)
-        obj_comp.render_shader.layer = 2
-        obj_comp.render_shader:set()
-        
-    end
+    
 }
 
 function summon_bullet(args)
 
    
 
-    local bullet_type = args[1]
-    local damage_type = args[2]
-    local group = args[3]
-    local start = args[4]
-    local target_direction_position = args[5]
-    local speed = args[6]
-    local color = args[7]
-    local distance = args[8]
-    local damage = args[9]
-    local effect = args[10]
+    local type = args[1]
+    local start = args[2]
+    local target = args[3]
+
     local obj = game_object(create_object(layers.main))
 
     local bullet_data = {
         obj = obj,
-        type = bullet_type,
-        damage_type = damage_type,
-        group = group,
+        type = type,
         start = start,
-        target = target_direction_position,
-        speed = speed,
-        color = color,
-        distance = distance,
-        damage = damage,
-        effect = effect
+        target = target
     }
 
     start_per_type[bullet_data.type](bullet_data)
