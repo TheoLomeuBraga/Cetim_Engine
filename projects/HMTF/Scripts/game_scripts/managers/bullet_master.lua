@@ -104,10 +104,20 @@ update_per_type = {
         data.timer = data.timer - time.delta
     end,
     ["normal"] = function(data)
+        
+        data.progresion = data.progresion + (time.delta * 50)
+        
+        local next_pos = calculate_next_position(data.start, data.target, data.progresion)
+        data.obj.components.transform:change_position(next_pos.x,next_pos.y,next_pos.z)
+        data.obj.components.transform.position = next_pos
+        data.obj.components.transform:set()
+
         if data.timer < 0 then
             data.dead = true
         end
         data.timer = data.timer - time.delta
+
+        --data.dead = true
     end,
 }
 
@@ -157,17 +167,20 @@ sprite_mat.textures[1] = "Textures/white.png"
 start_per_type = {
     ["floor"] = function(data)
         local mat = matreial:new("mesh")
-        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 4,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        mat.textures[1] = "Textures/white.png"
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 2,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
         data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
         data.obj.components.physics_3D:set()
         data.timer = 5
     end,
     ["normal"] = function(data)
         local mat = matreial:new("mesh")
-        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 4,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
-        data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
-        data.obj.components.physics_3D:set()
+        mat.textures[1] = "Textures/white.png"
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 2,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        --data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
+        --data.obj.components.physics_3D:set()
         data.timer = 5
+        data.progresion = 0
     end,
 }
 
