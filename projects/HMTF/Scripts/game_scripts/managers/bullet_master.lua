@@ -44,7 +44,6 @@ local bullet_groups = {
 layers = nil
 function START()
     layers = global_data.layers
-
 end
 
 --[[
@@ -61,18 +60,18 @@ function distance(a, b)
     local dx = b.x - a.x
     local dy = b.y - a.y
     local dz = b.z - a.z
-    return math.sqrt(dx*dx + dy*dy + dz*dz)
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
 end
 
 function midpoint(a, b)
     local mx = (a.x + b.x) / 2
     local my = (a.y + b.y) / 2
     local mz = (a.z + b.z) / 2
-    return {x = mx, y = my, z = mz}
+    return { x = mx, y = my, z = mz }
 end
 
 function normalize(vector)
-    local length = math.sqrt(vector.x^2 + vector.y^2 + vector.z^2)
+    local length = math.sqrt(vector.x ^ 2 + vector.y ^ 2 + vector.z ^ 2)
     return {
         x = vector.x / length,
         y = vector.y / length,
@@ -82,37 +81,44 @@ end
 
 function calculate_next_position(a, b, t)
     -- Calcula o vetor direção do ponto a para o ponto b
-    local direction = {x = b.x - a.x, y = b.y - a.y, z = b.z - a.z}
-    
+    local direction = { x = b.x - a.x, y = b.y - a.y, z = b.z - a.z }
+
     -- Normaliza o vetor direção
     local normalized_direction = normalize(direction)
-    
+
     -- Calcula a próxima posição do objeto
     local next_position = {
         x = a.x + normalized_direction.x * t,
         y = a.y + normalized_direction.y * t,
         z = a.z + normalized_direction.z * t
     }
-    
+
     return next_position
 end
 
-
 update_per_type = {
-
+    ["floor"] = function(data)
+        if data.timer < 0 then
+            data.dead = true
+        end
+        data.timer = data.timer - time.delta
+    end,
 }
 
 function UPDATE()
     time:get()
     
+    
     for index, value in pairs(bullet_list) do
-        update_per_type[value.type](value)
+        if update_per_type[value.type] ~= nil then
+            update_per_type[value.type](value)
+        end
+
         if value.dead then
             remove_object(value.obj.object_ptr)
-            table.remove(bullet_list,index)
+            table.remove(bullet_list, index)
         end
     end
-
 end
 
 function COLLIDE(collision_info)
@@ -143,13 +149,16 @@ sprite_mat.textures[1] = "Textures/white.png"
 
 
 start_per_type = {
-    
+    ["floor"] = function(data)
+        local mat = matreial:new("mesh")
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 4,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
+        data.obj.components.physics_3D:set()
+        data.timer = 5
+    end,
 }
 
 function summon_bullet(args)
-
-   
-
     local type = args[1]
     local start = args[2]
     local target = args[3]
@@ -165,9 +174,16 @@ function summon_bullet(args)
         extra = extra
     }
 
-    start_per_type[bullet_data.type](bullet_data)
 
-    table.insert(bullet_list,bullet_data)
+    
+    if start_per_type[bullet_data.type] ~= nil then
+        start_per_type[bullet_data.type](bullet_data)
+        
+        table.insert(bullet_list, bullet_data)
+    end
+
+
+    
 
     return {}
 end

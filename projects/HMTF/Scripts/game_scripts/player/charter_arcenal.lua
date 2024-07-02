@@ -58,15 +58,13 @@ function START()
     change_spel_style(1, 0, 0, 1, 0.5, 0, 5)
 end
 
-function shoot()
-    --summon_bullet(bullet_types.ray,"","",pos,target,0,{r=1,g=0,b=0,a=1},100,1)
-    --summon_bullet(bullet_types.fast,"","",pos,target,25,{r=1,g=0,b=0,a=1},100,1,"")
-end
-
 inputs_last_frame = {}
 current_hand_use = "atack_R"
+current_element = ""
+loked_hands = 0
 
 animations_progresion = {
+    prepare_hands = -1.0,
     atack_L = -1.0,
     atack_R = -1.0,
     walk = -1.0,
@@ -74,68 +72,29 @@ animations_progresion = {
 }
 
 animations_order = {
-    [1] = "normal",
-    [2] = "walk",
-    [3] = "atack_L",
-    [4] = "atack_R",
+    [1] = "prepare_hands",
+    [2] = "normal",
+    [3] = "walk",
+    [4] = "atack_L",
+    [5] = "atack_R",
 }
 
-
-function UPDATE()
-    if global_data.pause < 1 then
-        time:get()
-
-        
-
-        local inputs = global_data.inputs
-        local inputs_last_frame = global_data.inputs_last_frame
-        local rot_cam_x = math.min((inputs.mouse_view_x * 100) + inputs.analog_view_x, 10)
-        rot_cam_x = math.max(rot_cam_x, -10)
-
-        local rot_cam_y = math.min((inputs.mouse_view_y * 100) + inputs.analog_view_y, 10)
-        rot_cam_y = math.max(rot_cam_y, -10)
-
-        base_arms.components.transform:get()
-        base_arms.components.transform.rotation.y = -rot_cam_x
-        base_arms.components.transform.rotation.x = rot_cam_y
-        base_arms.components.transform:set()
-
-        
-
-        --[[]]
-        
-
-
-        local walk_speed = math.min(1, math.max(0, math.abs(inputs.left) + math.abs(inputs.foward)))
-        if walk_speed > 0 --[[ser false enquanto o pulo]] then
-            if animations_progresion.walk < 0 then
-                animations_progresion.walk = 0
-            end
-            animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
-            
-        else
-            animations_progresion.walk = -1
-        end
-        
-        if walk_speed == 0 then
-            if animations_progresion.normal < 0 then
-                animations_progresion.normal = 0
-            end
-            animations_progresion.normal = animations_progresion.normal + time.delta
-        else
-            animations_progresion.normal = -1
-        end
-
-        if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 then
-            if current_hand_use == "atack_R"then
+function atack_loop()
+    if global_data["items"] ~= nil and global_data["items"]["normal_atack"] == 1 then
+        --if true then
+        if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and animations_progresion["atack_L"] == -1 and animations_progresion["atack_R"] == -1 then
+            if current_hand_use == "atack_R" then
                 current_hand_use = "atack_L"
                 animations_progresion["atack_L"] = 0
-            elseif  current_hand_use == "atack_L"then
+            elseif current_hand_use == "atack_L" then
                 current_hand_use = "atack_R"
                 animations_progresion["atack_R"] = 0
             end
-            
-            
+
+            --camera
+            local start = camera.components.transform:get_global_position(0, 0, 1)
+            local target = camera.components.transform:get_global_position(0, 0, 5)
+            summon_bullet("floor", start, target)
         end
 
         if animations_progresion["atack_R"] >= 0 then
@@ -150,21 +109,71 @@ function UPDATE()
                 animations_progresion["atack_L"] = -1
             end
         end
+    end
+end
+
+function UPDATE()
+    if global_data.pause < 1 then
+        time:get()
+
+
+
+        inputs = global_data.inputs
+        inputs_last_frame = global_data.inputs_last_frame
+        local rot_cam_x = math.min((inputs.mouse_view_x * 100) + inputs.analog_view_x, 10)
+        rot_cam_x = math.max(rot_cam_x, -10)
+
+        local rot_cam_y = math.min((inputs.mouse_view_y * 100) + inputs.analog_view_y, 10)
+        rot_cam_y = math.max(rot_cam_y, -10)
+
+        base_arms.components.transform:get()
+        base_arms.components.transform.rotation.y = -rot_cam_x
+        base_arms.components.transform.rotation.x = rot_cam_y
+        base_arms.components.transform:set()
+
+
+
+        --[[]]
+
+
+
+        local walk_speed = math.min(1, math.max(0, math.abs(inputs.left) + math.abs(inputs.foward)))
+        if walk_speed > 0 --[[ser false enquanto o pulo]] then
+            if animations_progresion.walk < 0 then
+                animations_progresion.walk = 0
+            end
+            animations_progresion.walk = animations_progresion.walk + (time.delta * walk_speed)
+        else
+            animations_progresion.walk = -1
+        end
+
+        if walk_speed == 0 then
+            if animations_progresion.normal < 0 then
+                animations_progresion.normal = 0
+            end
+            animations_progresion.normal = animations_progresion.normal + time.delta
+        else
+            animations_progresion.normal = -1
+        end
+
+        if global_data["items"] ~= nil and global_data["items"]["normal_atack"] == 1 then
+            atack_loop()
+        end
+
 
         for key, value in ipairs(animations_order) do
             local value2 = animations_progresion[value]
             if value2 > arms_data.animations[value].duration then
                 animations_progresion[value] = 0
             end
-            if value2 > -1 then  
-                set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, value,value2)
+            if value2 > -1 then
+                set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, value, value2)
             end
-            
         end
 
-        
 
-        
+
+
 
         --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_L",0.2)
         --set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "atack_R", 0.2)

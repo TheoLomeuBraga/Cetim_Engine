@@ -39,22 +39,20 @@ local is_player_touch = function(objs_touching)
                 table.insert(keys,item_name)
                 charter_data.variables.keys = keys
 
-            elseif item_type == "upgrade" then 
-
-                local upgrades = charter_data.variables.upgrades
-                table.insert(upgrades,item_name)
-                charter_data.variables.upgrades = upgrades
-
-            elseif item_type == "consumable" then 
-                
-                local consumables = charter_data.variables.consumables
-                if consumables[item_name] == nil then
-                    consumables[item_name] = 0
-                end
-                consumables[item_name] = consumables[item_name] + amount
-                charter_data.variables.consumables = consumables
-
             end
+
+            if global_data["items"] == nil then
+                global_data["items"] = {}
+            end
+
+            local items = global_data["items"]
+            if global_data["items"][item_type] == nil then 
+                items[item_type] = 0
+                global_data["items"] = items
+            end
+            
+            items[item_type] = items[item_type] + amount
+            global_data["items"] = items
 
             --obj_touching.components.lua_scripts:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
             charter_data.functions.play_pick_up_sound({item_type})

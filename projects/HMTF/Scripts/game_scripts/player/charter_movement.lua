@@ -20,7 +20,11 @@ require("game_scripts.resources.playable_scene")
 
 require("math")
 
-has_jump_booster = 1
+
+
+
+
+
 local jump_booster_used = false
 
 
@@ -336,9 +340,8 @@ function UPDATE()
                     z = (move_dir.z * (speed + speed_boost_air)) + inpulse.z * time.delta
                 }
             end
-            
 
-            if has_jump_booster == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
+            if global_data["items"] ~= nil and global_data["items"]["duble_jump"] == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
 
                 inpulse.y = jump_power
                 base_directional_input = deepcopy(input_dir)
@@ -346,7 +349,6 @@ function UPDATE()
                 if math.abs(move_dir.x) + math.abs(move_dir.z) > 0.5 then
                     inpulse.x = boost_power * move_dir.x
                     inpulse.z = boost_power * move_dir.z 
-                    print(boost_power * move_dir.x)
                 end
 
 

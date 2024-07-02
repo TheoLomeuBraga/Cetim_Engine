@@ -84,8 +84,12 @@ function create_avatar()
     end
 end
 
+local collision_component = {}
+
 function START()
     this_object = game_object(this_object_ptr)
+
+    collision_component = this_object.components.physics_3D
 
     speaker = game_object(create_object(this_object_ptr))
 
@@ -110,6 +114,8 @@ function START()
     power_style.image = "Textures/ui/hud_life_energy.svg"
 end
 
+
+
 function UPDATE()
     --[[
     if not avatar_created then
@@ -117,6 +123,7 @@ function UPDATE()
     end
     ]]
 
+    collision_component:get()
 
 
     if global_data.pause == 0 then

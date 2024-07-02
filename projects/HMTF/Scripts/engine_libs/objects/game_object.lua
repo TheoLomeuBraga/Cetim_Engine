@@ -3,6 +3,8 @@ register_function_set("game_object")
 require("components.extras")
 require("components.component_index")
 
+require("objects.local_data")
+
 
 function create_object(obj)
     if obj == nil then
@@ -51,11 +53,14 @@ function game_object:new(object_ptr, not_recreate)
         father = "",
         children_ptr = {},
         children = {},
+        data = local_data(object_ptr),
     }
 
 
     --deepprint(getmetatable(obj.components))
     setmetatable(obj.components, componenta_meta_table)
+
+    
 
     function obj:add_component(component_name)
         return self.components[component_name]
