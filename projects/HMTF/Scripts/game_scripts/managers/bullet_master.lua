@@ -106,7 +106,7 @@ start_per_type = {
         data.timer = 5
     end,
     ["normal"] = function(data)
-        local mat = matreial:new("explosion_mesh")
+        local mat = matreial:new("mesh")
         mat.textures[1] = "Textures/white.png"
         data.obj = create_mesh(create_object(), false, data.start, { x = 0, y = 0, z = 0 }, { x = 0.2, y = 0.2, z = 0.2 }, 2,{ mat }, { mesh_location:new("3D Models/new_bullets.glb", "magic projectile:0") }, false)
 

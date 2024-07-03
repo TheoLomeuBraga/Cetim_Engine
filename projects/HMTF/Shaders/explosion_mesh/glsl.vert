@@ -36,6 +36,19 @@ vec3 randomDirection(int seed) {
     return normalize(vec3(x, y, z));
 }
 
+mat4 createScaleMatrix(vec3 scaleFactors) {
+    return mat4(
+        vec4(scaleFactors.x, 0.0, 0.0, 0.0),
+        vec4(0.0, scaleFactors.y, 0.0, 0.0),
+        vec4(0.0, 0.0, scaleFactors.z, 0.0),
+        vec4(0.0, 0.0, 0.0, 1.0)
+    );
+}
+
+mat4 applyScale(mat4 transform, vec3 scaleFactors) {
+    mat4 scaleMatrix = createScaleMatrix(scaleFactors);
+    return transform * scaleMatrix;
+}
 
 void main() {
 
@@ -44,15 +57,13 @@ void main() {
    vert.COLOR = color;
    vert.NORMAL_COLOR = normal * 0.5f + 0.5f;
 
-   if (render_no != 0) {
-       vec3 randomDir = randomDirection(render_no);
+   vec3 randomDir = randomDirection(render_no);
        vert.POS.xyz += randomDir * progresion;
-   }
 
    if(ui) {
       gl_Position = transform * vert.POS;
    } else {
-      gl_Position = (projection * vision * transform) * vert.POS;
+      gl_Position = (projection * vision * transform)  * vert.POS;
    }
 
    // Quantização para efeito de estilo pixelado
