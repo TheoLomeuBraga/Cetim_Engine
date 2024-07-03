@@ -106,6 +106,9 @@ update_per_type = {
     ["normal"] = function(data)
         
         data.progresion = data.progresion + (time.delta * 50)
+
+        data.obj.components.transform:get()
+        local previous_position = data.obj.components.transform.position
         
         local next_pos = calculate_next_position(data.start, data.target, data.progresion)
         data.obj.components.transform:change_position(next_pos.x,next_pos.y,next_pos.z)
@@ -117,7 +120,13 @@ update_per_type = {
         end
         data.timer = data.timer - time.delta
 
-        --data.dead = true
+        local hit = false
+        local hit_info = nil
+        hit,hit_info = raycast_3D(previous_position, next_pos)
+        if hit then
+            data.dead = true
+        end
+
     end,
 }
 
