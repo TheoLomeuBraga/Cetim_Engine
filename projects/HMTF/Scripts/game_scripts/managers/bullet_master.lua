@@ -96,6 +96,42 @@ function calculate_next_position(a, b, t)
     return next_position
 end
 
+start_per_type = {
+    ["floor"] = function(data)
+        local mat = matreial:new("mesh")
+        mat.textures[1] = "Textures/white.png"
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 2,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
+        data.obj.components.physics_3D:set()
+        data.timer = 5
+    end,
+    ["normal"] = function(data)
+        local mat = matreial:new("explosion_mesh")
+        mat.textures[1] = "Textures/white.png"
+        data.obj = create_mesh(create_object(), false, data.start, { x = 0, y = 0, z = 0 }, { x = 0.2, y = 0.2, z = 0.2 }, 2,{ mat }, { mesh_location:new("3D Models/new_bullets.glb", "magic projectile:0") }, false)
+
+        data.timer = 5
+        data.progresion = 0
+    end,
+    ["impact"] = function(data)
+        local mat = matreial:new("explosion_mesh")
+        mat.textures[1] = "Textures/white.png"
+
+        local mesh = mesh_location:new("3D Models/new_bullets.glb", "magic projectile:0")
+        if data.mesh ~= nil then
+            mesh = data.mesh
+        end
+        data.obj = create_mesh(create_object(), false, data.target, { x = 0, y = 0, z = 0 }, { x = 0.2, y = 0.2, z = 0.2 }, 2,{ mat }, { mesh }, false)
+        
+        data.obj.components.render_mesh.render_count = 256
+        data.obj.components.render_mesh.materials[1].inputs.progresion = 1
+        data.obj.components.render_mesh:set()
+
+        data.timer = 0.1
+        data.progresion = 0
+    end,
+}
+
 function summon_bullet(args)
     local type = args[1]
     local start = args[2]
@@ -155,8 +191,29 @@ update_per_type = {
         local hit_info = nil
         hit,hit_info = raycast_3D(previous_position, next_pos)
         if hit then
+            summon_bullet({"impact",hit_info.position,hit_info.position,nil})
             data.dead = true
         end
+
+    end,
+    ["impact"] = function(data)
+        
+        data.progresion = data.progresion + (time.delta * 50)
+
+        data.obj.components.transform:get()
+        local previous_position = data.obj.components.transform.position
+        
+        
+
+        if data.timer < 0 then
+            data.dead = true
+        end
+        data.timer = data.timer - time.delta
+
+        data.obj.components.render_mesh.materials[1].inputs.progresion = data.obj.components.render_mesh.materials[1].inputs.progresion + (time.delta*50)
+        data.obj.components.render_mesh:set()
+
+       
 
     end,
 }
@@ -204,25 +261,7 @@ sprite_mat.textures[1] = "Textures/white.png"
 
 
 
-start_per_type = {
-    ["floor"] = function(data)
-        local mat = matreial:new("mesh")
-        mat.textures[1] = "Textures/white.png"
-        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 2,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
-        data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
-        data.obj.components.physics_3D:set()
-        data.timer = 5
-    end,
-    ["normal"] = function(data)
-        local mat = matreial:new("mesh")
-        mat.textures[1] = "Textures/white.png"
-        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 0.2, y = 0.2, z = 0.2 }, 2,{ mat }, { mesh_location:new("3D Models/new_bullets.glb", "magic projectile:0") }, false)
-        --data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
-        --data.obj.components.physics_3D:set()
-        data.timer = 5
-        data.progresion = 0
-    end,
-}
+
 
 
 

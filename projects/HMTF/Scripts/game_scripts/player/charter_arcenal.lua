@@ -82,7 +82,7 @@ animations_order = {
 
 function atack_loop()
     if global_data["items"] ~= nil and global_data["items"]["normal_atack"] == 1 then
-        change_spel_style(1, 0.5, 0, 1, 0.5, 0, 5)
+        change_spel_style(1, 0.75, 0, 0.75, 0.5, 0, 5)
         --if true then
         if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and animations_progresion["atack_L"] == -1 and animations_progresion["atack_R"] == -1 then
             if current_hand_use == "atack_R" then
@@ -97,6 +97,8 @@ function atack_loop()
             local start = camera.components.transform:get_global_position(0, 0, 1)
             local target = camera.components.transform:get_global_position(0, 0, 5)
             summon_bullet("normal", start, target)
+            --summon_bullet("impact", start, target)
+            
         end
 
         if animations_progresion["atack_R"] >= 0 then
