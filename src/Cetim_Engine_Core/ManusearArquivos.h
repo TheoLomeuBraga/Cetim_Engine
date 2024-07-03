@@ -436,8 +436,10 @@ namespace ManuseioDados
 
 	void start_ffmpef()
 	{
-
-		av_register_all();
+		#if defined(__linux__) || defined(__linux)
+			av_register_all();
+   		#endif
+		
 	}
 
 	void end_ffmpef()
@@ -525,7 +527,7 @@ namespace ManuseioDados
 		{
 			if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
 			{
-				codec = avcodec_find_decoder(formatContext->streams[i]->codecpar->codec_id);
+				codec = (AVCodec*)avcodec_find_decoder(formatContext->streams[i]->codecpar->codec_id);
 				videoStreamIndex = i;
 				break;
 			}

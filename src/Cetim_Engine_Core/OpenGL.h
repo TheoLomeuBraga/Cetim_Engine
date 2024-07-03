@@ -447,11 +447,7 @@ public:
 	void iniciar_lib()
 	{
 
-		if (GL_EXT_texture_compression_s3tc)
-		{
-			compresion_format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-			print("PSX compewssion ON");
-		}
+		
 
 		glDisable(GL_FRAMEBUFFER_SRGB);
 
