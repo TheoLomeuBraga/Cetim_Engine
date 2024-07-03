@@ -54,6 +54,8 @@ local is_player_touch = function(objs_touching)
             items[item_type] = items[item_type] + amount
             global_data["items"] = items
 
+            
+
             --obj_touching.components.lua_scripts:call_function("game_scripts/player/charter_data","play_pick_up_sound",{item_type})
             charter_data.functions.play_pick_up_sound({item_type})
 

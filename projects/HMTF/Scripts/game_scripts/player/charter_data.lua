@@ -33,6 +33,8 @@ function play_pick_up_sound(args)
         au.path = "Audio/sounds/get_item.wav"
     elseif args[1] == "consumable" then
         au.path = "Audio/sounds/get_item.wav"
+    elseif args[1] == "duble_jump" then
+        au.path = "Audio/sounds/get_item.wav"
     end
     au:set()
     return {}

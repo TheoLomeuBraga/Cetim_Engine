@@ -15,6 +15,7 @@ require("objects.time")
 
 require("short_cuts.create_collision")
 require("short_cuts.create_mesh")
+require("game_scripts.resources.entity_api")
 
 
 

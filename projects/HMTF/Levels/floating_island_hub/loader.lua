@@ -103,7 +103,12 @@ function level:START()
     coroutine.yield()
     
     --game_object:new(cenary_builders.cenary).components.lua_scripts:add_script("game_scripts/navegation_test")
-    
+
+    local obj = game_object(cenary_builders.cenary)
+    obj.components.audio_source.path = "Audio/musics/floating_island_theme.ogg"
+    obj.components.audio_source.loop = true
+    obj.components.audio_source.volume = 50
+    obj.components.audio_source:set()
 
     camera = {}
 

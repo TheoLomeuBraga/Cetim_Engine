@@ -7,6 +7,7 @@ require("short_cuts.create_sound")
 require("short_cuts.create_mesh")
 require("short_cuts.create_collision")
 require("game_scripts.resources.playable_scene")
+require("game_scripts.resources.bullet_api")
 require("math")
 
 
@@ -37,94 +38,6 @@ function clean_pre_calculated_paths()
     end
 end
 
-function START()
-end
-
-whait_time = 0
-local update_per_type = {
-    test_entity = function(entity)
-        local pos = entity.obj.components.transform:get_global_position()
-        pos.y = pos.y - 1.5
-
-        if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
-            entity.path = generate_navmesh_short_path(pos, player_position)
-            entity.progression = { 0.0 }
-        end
-
-
-        if distance(pos, player_position) > 10 then
-            walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
-        end
-
-        --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
-    end,
-    grass = function(entity)
-        --[[
-        local triger = entity.obj.components.physics_3D
-        triger:get()
-
-        if #triger:get_objects_coliding() > 1 and entity.animation_time ~= 1 then
-            set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
-
-            entity.animation_time = entity.animation_time + (time.delta * 4)
-            if entity.animation_time > get_scene_3D(entity.model_path).animations["normal"].duration then
-                entity.animation_time = get_scene_3D(entity.model_path).animations["normal"].duration
-            end
-        elseif entity.animation_time ~= 0 then
-            
-            set_keyframe(entity.model_path, entity.parts_ptr_list, true, "normal", entity.animation_time)
-
-            entity.animation_time = entity.animation_time - (time.delta * 4)
-            if entity.animation_time < 0  then
-                entity.animation_time = 0
-            end
-        end
-        ]]
-    end
-}
-
-function UPDATE()
-    if global_data.pause ~= nil and global_data.pause < 1 then
-        time:get()
-
-        player_position = { x = 0, y = 0, z = 0 }
-
-        if global_data.player_object_ptr ~= nil then
-            local player = game_object(global_data.player_object_ptr)
-
-            if player ~= nil then
-                player_position = player.components.transform:get_global_position()
-                local player_position_down = Vec3:new(player_position.x, player_position.y - 1000, player_position.z)
-                local hit, hit_info = raycast_3D(player_position, player_position_down)
-
-                if hit then
-                    player_position = hit_info.position
-                end
-                --print("A",ret.position.x,ret.position.y,ret.position.z)
-            end
-        end
-
-
-
-        for index, value in ipairs(entitys_list) do
-            update_per_type[value.type](value)
-        end
-
-        if time_to_clean_paths > 0.25 then
-            clean_pre_calculated_paths()
-            time_to_clean_paths = 0
-        else
-            time_to_clean_paths = time_to_clean_paths + time.delta
-        end
-    end
-end
-
-function COLLIDE(collision_info)
-end
-
-function END()
-end
-
 local start_per_type = {
     test_entity = function(entity)
         local model_path = "3D Models/test_friend.gltf"
@@ -152,36 +65,31 @@ local start_per_type = {
         entity.rig_obj.components.transform:set()
         entity.parts_ptr_list = entity_structures.parts_ptr_list
     end,
-    grass = function(entity)
-        local model_path = "3D Models/alien_grass.glb"
+    test_enemy = function (entity)
+        local model_path = "3D Models/test_friend.gltf"
 
-        --[[
         local entity_physics_3D = entity.obj.components.physics_3D
-        entity_physics_3D.boady_dynamic = boady_dynamics.dynamic
-        entity_physics_3D.collision_shape = collision_shapes.box
-        entity_physics_3D.scale = Vec3:new(0.5, 1, 0.5)
+        entity_physics_3D.boady_dynamic = boady_dynamics.kinematic
+        entity_physics_3D.collision_shape = collision_shapes.convex
+        entity_physics_3D.collision_mesh = mesh_location:new(model_path, "Cube.001")
+        entity_physics_3D.scale = Vec3:new(1, 1, 1)
         entity_physics_3D.rotate_x = false
         entity_physics_3D.rotate_y = false
         entity_physics_3D.rotate_z = false
         entity_physics_3D.friction = 0
         entity_physics_3D.gravity_scale = 0
-        entity_physics_3D.get_collision_info = true
-        entity_physics_3D.triger = true
+        entity_physics_3D.density = 1
+        entity_physics_3D.triger = false
         entity_physics_3D:set()
-        ]]
-        
+
         local entity_data = get_scene_3D(model_path)
-        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "grass_mesh", true, false)
+        local entity_structures = cenary_builders.entity(entity.obj.object_ptr, 2, entity_data, "mesh",
+            true, false)
 
-        
         entity.rig_obj = entity_structures.obj
+        entity.rig_obj.components.transform.position.y = -1.5
+        entity.rig_obj.components.transform:set()
         entity.parts_ptr_list = entity_structures.parts_ptr_list
-
-        entity.animation_time = 0
-        entity.model_path = model_path
-        set_keyframe(model_path, entity_structures.parts_ptr_list, true, "normal", entity.animation_time)
-        
-        
     end
 }
 
@@ -214,6 +122,75 @@ function summon_entity(args)
 
     return {}
 end
+
+function START()
+end
+
+whait_time = 0
+local update_per_type = {
+    test_entity = function(entity)
+        local pos = entity.obj.components.transform:get_global_position()
+        pos.y = pos.y - 1.5
+
+        if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
+            entity.path = generate_navmesh_short_path(pos, player_position)
+            entity.progression = { 0.0 }
+        end
+
+
+        if distance(pos, player_position) > 10 then
+            walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
+        end
+
+        --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
+    end,
+    test_enemy = function (entity)
+        
+    end
+}
+
+function UPDATE()
+    if global_data.pause ~= nil and global_data.pause < 1 then
+        time:get()
+
+        player_position = { x = 0, y = 0, z = 0 }
+
+        if global_data.player_object_ptr ~= nil then
+            local player = game_object(global_data.player_object_ptr)
+
+            if player ~= nil then
+                player_position = player.components.transform:get_global_position()
+                local player_position_down = Vec3:new(player_position.x, player_position.y - 1000, player_position.z)
+                local hit, hit_info = raycast_3D(player_position, player_position_down)
+
+                if hit then
+                    player_position = hit_info.position
+                end
+            end
+        end
+
+
+
+        for index, value in ipairs(entitys_list) do
+            update_per_type[value.type](value)
+        end
+
+        if time_to_clean_paths > 0.25 then
+            clean_pre_calculated_paths()
+            time_to_clean_paths = 0
+        else
+            time_to_clean_paths = time_to_clean_paths + time.delta
+        end
+    end
+end
+
+function COLLIDE(collision_info)
+end
+
+function END()
+end
+
+
 
 function remove_entity(adres)
     remove_object(entitys_list[adres].obj.object_ptr)

@@ -66,7 +66,7 @@ function START()
 
     core_obj = game_object(global_data.core_object_ptr)
 
-    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 10000)
+    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 100000)
     camera_ptr = camera.object_ptr
     global_data.camera_ptr = camera_ptr
     set_lisener_object(camera.object_ptr)
