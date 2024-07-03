@@ -12,8 +12,18 @@ function summon_entity(pos, rot_y, type)
         core_obj = game_object(global_data.core_object_ptr)
     end
 
-    local args = { pos = pos, rot_y = rot_y, type = type }
-    core_obj.components.lua_scripts.scripts["game_scripts/managers/entity_master"].functions.summon_entity(args)
+    
+    core_obj.components.lua_scripts.scripts["game_scripts/managers/entity_master"].functions.summon_entity({ pos = pos, rot_y = rot_y, type = type })
+end
+
+function check_hit(ptr,data)
+    if global_data.core_object_ptr ~= nil then
+        if core_obj == nil then
+            core_obj = game_object(global_data.core_object_ptr)
+        end
+
+        core_obj.components.lua_scripts.scripts["game_scripts/managers/entity_master"].functions.check_hit({ptr,data})
+    end
 end
 
 function clean_entityes()
@@ -25,3 +35,4 @@ function clean_entityes()
         core_obj.components.lua_scripts.scripts["game_scripts/managers/entity_master"].functions.clean({})
     end
 end
+

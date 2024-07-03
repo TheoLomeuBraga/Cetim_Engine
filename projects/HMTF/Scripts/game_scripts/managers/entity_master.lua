@@ -184,13 +184,22 @@ function UPDATE()
     end
 end
 
+--global_data.player_object_ptr
+
+function check_hit(args)
+    entitys_list = {}
+    
+    local ptr = args[1]
+    local data = args[2]
+    
+    return {}
+end
+
 function COLLIDE(collision_info)
 end
 
 function END()
 end
-
-
 
 function remove_entity(adres)
     remove_object(entitys_list[adres].obj.object_ptr)
