@@ -97,7 +97,6 @@ function atack_loop()
             local start = camera.components.transform:get_global_position(0, 0, 1)
             local target = camera.components.transform:get_global_position(0, 0, 5)
             summon_bullet("normal", start, target)
-            --summon_bullet("impact", start, target)
             
         end
 
