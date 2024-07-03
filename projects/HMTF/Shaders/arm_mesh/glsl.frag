@@ -78,6 +78,11 @@ void main() {
 
    vec4 spel_color = mix(color,vec4(color_2_r, color_2_g, color_2_b, 1.0f), perlin_v4);
 
-   ret = mix(texture(textures[0], uv_pos), spel_color, vert.COLOR.x);
+   if(spel_color.x + spel_color.y + spel_color.z == 0.0){
+      ret = texture(textures[0], uv_pos);
+   }else{
+      ret = mix(texture(textures[0], uv_pos), spel_color, vert.COLOR.x);
+   }
+   
 
 }

@@ -32,11 +32,11 @@ function change_spel_style(r, g, b, r2, g2, b2, speed)
             obj.components.render_mesh:get()
 
             for index, value in pairs(obj.components.render_mesh.materials) do
-                value.color = { r = r, g = g, b = b, a = 1 }
-                value.inputs.color_2_r = r2;
-                value.inputs.color_2_g = g2;
-                value.inputs.color_2_b = b2;
-                value.inputs.perlin_speed = speed
+                obj.components.render_mesh.materials[index].color = { r = r, g = g, b = b, a = 1 }
+                obj.components.render_mesh.materials[index].inputs.color_2_r = r2;
+                obj.components.render_mesh.materials[index].inputs.color_2_g = g2;
+                obj.components.render_mesh.materials[index].inputs.color_2_b = b2;
+                obj.components.render_mesh.materials[index].inputs.perlin_speed = speed
             end
 
             obj.components.render_mesh:set()
@@ -55,7 +55,8 @@ function START()
     arms_objs = cenary_builders.entity(base_arms.object_ptr, 4, arms_data, "arm_mesh", false, false)
     set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, "normal", 0)
 
-    change_spel_style(1, 0, 0, 1, 0.5, 0, 5)
+    
+    change_spel_style(0,0,0,0,0,0,0)
 end
 
 inputs_last_frame = {}
@@ -81,6 +82,7 @@ animations_order = {
 
 function atack_loop()
     if global_data["items"] ~= nil and global_data["items"]["normal_atack"] == 1 then
+        change_spel_style(1, 0.5, 0, 1, 0.5, 0, 5)
         --if true then
         if inputs.action_1 > 0 and inputs_last_frame.action_1 < 1 and animations_progresion["atack_L"] == -1 and animations_progresion["atack_R"] == -1 then
             if current_hand_use == "atack_R" then

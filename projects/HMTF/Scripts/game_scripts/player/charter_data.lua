@@ -102,7 +102,7 @@ function START()
     my_data.power = 100.0
     my_data.max_power = 100.0
 
-
+    
     health_transform = simple_ui_transform({ x = -0.05, y = 0, z = 0 }, { x = 0.1, y = 0.1, z = 0.1 })
     health_style = simple_ui_style({ r = 0.25, g = 0.25, b = 1, a = 1 })
     health_style.shader = "ui_element_heath_bar"
@@ -130,8 +130,8 @@ function UPDATE()
         health_style.inputs.power = my_data.health / my_data.max_health
         power_style.inputs.power = my_data.power / my_data.max_power
 
-        simple_ui_lable(health_transform, health_style)
-        simple_ui_lable(power_transform, power_style)
+        --simple_ui_lable(health_transform, health_style)
+        --simple_ui_lable(power_transform, power_style)
     end
 end
 

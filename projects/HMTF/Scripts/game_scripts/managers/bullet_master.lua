@@ -96,6 +96,37 @@ function calculate_next_position(a, b, t)
     return next_position
 end
 
+function summon_bullet(args)
+    local type = args[1]
+    local start = args[2]
+    local target = args[3]
+    local extra = args[4]
+
+    local obj = game_object(create_object(layers.main))
+
+    local bullet_data = {
+        obj = obj,
+        type = type,
+        start = start,
+        target = target,
+        extra = extra
+    }
+
+
+
+    
+    if start_per_type[bullet_data.type] ~= nil then
+        start_per_type[bullet_data.type](bullet_data)
+        
+        table.insert(bullet_list, bullet_data)
+    end
+
+
+    
+
+    return {}
+end
+
 update_per_type = {
     ["floor"] = function(data)
         if data.timer < 0 then
@@ -185,7 +216,7 @@ start_per_type = {
     ["normal"] = function(data)
         local mat = matreial:new("mesh")
         mat.textures[1] = "Textures/white.png"
-        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 2, y = 2, z = 2 }, 2,{ mat }, { mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0") }, false)
+        data.obj = create_mesh(create_object(), false, midpoint(data.start, data.target), { x = 0, y = 0, z = 0 }, { x = 0.2, y = 0.2, z = 0.2 }, 2,{ mat }, { mesh_location:new("3D Models/new_bullets.glb", "magic projectile:0") }, false)
         --data.obj.components.physics_3D.collision_mesh = mesh_location:new("engine assets/engine_models.glb", "oclusion_box:0")
         --data.obj.components.physics_3D:set()
         data.timer = 5
@@ -193,36 +224,7 @@ start_per_type = {
     end,
 }
 
-function summon_bullet(args)
-    local type = args[1]
-    local start = args[2]
-    local target = args[3]
-    local extra = args[4]
 
-    local obj = game_object(create_object(layers.main))
-
-    local bullet_data = {
-        obj = obj,
-        type = type,
-        start = start,
-        target = target,
-        extra = extra
-    }
-
-
-
-    
-    if start_per_type[bullet_data.type] ~= nil then
-        start_per_type[bullet_data.type](bullet_data)
-        
-        table.insert(bullet_list, bullet_data)
-    end
-
-
-    
-
-    return {}
-end
 
 function clean(args)
     for index, value in pairs(bullet_list) do
