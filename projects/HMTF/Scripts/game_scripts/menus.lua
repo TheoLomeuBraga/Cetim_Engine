@@ -50,10 +50,10 @@ function UPDATE()
         start_tf.scale = {x=0.5,y=0.5,z=0.5}
 
         if simple_ui_button(start_tf,"push me",style,1,style_howver) == 1 then
-            
+            selected_menu = 1
         end
         
-        
+    elseif selected_menu == 1 then
         
     end
 
