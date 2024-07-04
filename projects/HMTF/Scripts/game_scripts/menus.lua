@@ -133,17 +133,23 @@ function UPDATE()
         local start_tf = simple_ui_transform()
         start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
         start_tf.position = { x = 0, y = 0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "sensitivity", style, 2, style_howver) == 0.5 then
-            
+        if simple_ui_button(deepcopy(start_tf), "sensitivity: " .. tostring(get_set_global_volume()), style, 2, style_howver) == 0.5 then
+
+            if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
+                get_set_global_volume(math.max(get_set_global_volume() - 5,0))
+            elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
+                get_set_global_volume(math.min(get_set_global_volume() + 5,100))
+            end
+
         end
         start_tf.position = { x = 0.75, y = 0.25, z = 0 }
         start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
         if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
-            
+            get_set_global_volume(math.min(get_set_global_volume() + 5,100))
         end
         start_tf.position = { x = -0.75, y = 0.25, z = 0 }
         if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
-            
+            get_set_global_volume(math.max(get_set_global_volume() - 5,0))
         end
 
         --sensitivity
