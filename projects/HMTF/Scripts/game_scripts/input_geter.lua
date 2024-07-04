@@ -88,24 +88,6 @@ function UPDATE()
         
     end
 
-    --[[
-    inputs = {
-        foward = get_keyboard_input("w") - get_keyboard_input("s") - analog_foward,
-        left = get_keyboard_input("a") - get_keyboard_input("d") - analog_left,
-        jump = get_keyboard_input("space") + get_joystick_input(1,"la"),
-        interact = get_keyboard_input("e") + get_joystick_input(1,"north"),
-        action_1 = get_mouse_input("left") + (get_joystick_input(1,"rt")) ,
-        action_2 = get_mouse_input("right") + (get_joystick_input(1,"lt")) ,
-        mouse_pos_x = get_mouse_input("normalized_x"),
-        mouse_pos_y = get_mouse_input("normalized_y"),
-        mouse_view_x = get_mouse_input("rotation_x"),
-        mouse_view_y = get_mouse_input("rotation_y"),
-        analog_view_x = av_x,
-        analog_view_y = av_y,
-        menu = get_keyboard_input("escape") + get_joystick_input(1,"start"),
-    }
-    ]]
-
     if get_mouse_input("rotation_x") + get_mouse_input("rotation_y") + get_mouse_input("left") > 0.01 then
         main_input_method = "keyboard"
     elseif analog_foward + analog_left + av_x + av_y > 0 or analog_foward + analog_left + av_x + av_y < 0  then

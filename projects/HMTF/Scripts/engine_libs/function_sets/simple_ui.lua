@@ -124,14 +124,13 @@ function update_simple_ui()
         local inputs = global_data.inputs
         local inputs_last_frame = global_data.inputs_last_frame
 
-        local cursor_movement = {x=inputs.mouse_pos_x-cursor_pos_last_frame.x,y=cursor_pos_last_frame.y-inputs.mouse_pos_y}
-        set_selection_state({x=inputs.mouse_pos_x,y=inputs.mouse_pos_y},cursor_movement,global_data.ui_selection_id,inputs.action_1)
-        cursor_pos_last_frame = {x=inputs.mouse_pos_x,y=inputs.mouse_pos_y}
-    end 
-    
+        local cursor_movement = { x = inputs.mouse_pos_x - cursor_pos_last_frame.x, y = cursor_pos_last_frame.y -
+        inputs.mouse_pos_y }
+        set_selection_state({ x = inputs.mouse_pos_x, y = inputs.mouse_pos_y }, cursor_movement,
+            global_data.ui_selection_id, inputs.action_1)
+        cursor_pos_last_frame = { x = inputs.mouse_pos_x, y = inputs.mouse_pos_y }
+    end
 end
-
-
 
 function is_cliked(ui_transform, ui_joystick_id)
     if simple_ui_confirm_last_frame == 0 then
@@ -176,10 +175,41 @@ function is_holded(ui_transform, ui_joystick_id)
     return 0
 end
 
-function simple_ui_button(ui_transform, text, ui_style, ui_joystick_id)
-    simple_ui_display(ui_transform, text, ui_style)
-    return is_cliked(ui_transform, ui_joystick_id)
+function simple_ui_button(ui_transform, text, ui_style, ui_joystick_id, style_hover)
+    
+    if style_hover == nil then
+        simple_ui_display(ui_transform, text, ui_style)
+        return is_cliked(ui_transform, ui_joystick_id)
+    else
+        local d = is_cliked(ui_transform, ui_joystick_id)
+        if d == 0 then
+            simple_ui_display(ui_transform, text, ui_style)
+        elseif d == 0.5 then
+            simple_ui_display(ui_transform, text, style_hover)
+        end
+        return d
+    end
 end
+
+function simple_ui_hold_button(ui_transform, text, ui_style, ui_joystick_id, style_hover,style_click)
+    
+    if style_hover == nil then
+        simple_ui_display(ui_transform, text, ui_style)
+        return is_holded(ui_transform, ui_joystick_id)
+    else
+        local d = is_holded(ui_transform, ui_joystick_id)
+        if d == 0 then
+            simple_ui_display(ui_transform, text, ui_style)
+        elseif d == 0.5 then
+            simple_ui_display(ui_transform, text, style_hover)
+        elseif d == 1 then
+            simple_ui_display(ui_transform, text, style_click)
+        end
+        return d
+    end
+end
+
+
 
 function simple_ui_slider(ui_transform, text, ui_style, ui_joystick_id)
     simple_ui_display(ui_transform, text, ui_style)
@@ -189,28 +219,24 @@ function simple_ui_slider(ui_transform, text, ui_style, ui_joystick_id)
     return { x = 0, y = 0, z = 0 }
 end
 
-
-
-
-
-local ui_next_pos = {x=0,y=0}
-cursor_pos_last_frame = {x=0,y=0,z=0}
+local ui_next_pos = { x = 0, y = 0 }
+cursor_pos_last_frame = { x = 0, y = 0, z = 0 }
 local reload_last_frame = false
 function simple_ui_example()
-    
     local ui_transform = simple_ui_transform()
-    ui_transform.position = {x=ui_next_pos.x,y=0.30 + ui_next_pos.y,z=0}
-    ui_transform.scale = {x=0.25,y=0.05}
-    local slider_result = simple_ui_slider(ui_transform,"window",nil,1)
+    ui_transform.position = { x = ui_next_pos.x, y = 0.30 + ui_next_pos.y, z = 0 }
+    ui_transform.scale = { x = 0.25, y = 0.05 }
+    local slider_result = simple_ui_slider(ui_transform, "window", nil, 1)
     ui_next_pos.x = ui_next_pos.x + (slider_result.x * 2)
     ui_next_pos.y = ui_next_pos.y + (slider_result.y * 2)
-    
-    local style = simple_ui_style({r=0.5,g=0.5,b=0.5,a=1}, 0.05, {r=1,g=0,b=0,a=1}, {r=1,g=0,b=0,a=1})
+
+    local style = simple_ui_style({ r = 0.5, g = 0.5, b = 0.5, a = 1 }, 0.05, { r = 1, g = 0, b = 0, a = 1 },
+        { r = 1, g = 0, b = 0, a = 1 })
     ui_transform = simple_ui_transform()
-    ui_transform.position = {x=ui_next_pos.x,y=ui_next_pos.y,z=0}
-    ui_transform.scale = {x=0.25,y=0.25}
-   
-    if simple_ui_button(ui_transform,"push me",style,1) == 1 then
+    ui_transform.position = { x = ui_next_pos.x, y = ui_next_pos.y, z = 0 }
+    ui_transform.scale = { x = 0.25, y = 0.25 }
+
+    if simple_ui_button(ui_transform, "push me", style, 1) == 1 then
         print("A")
     end
 end
