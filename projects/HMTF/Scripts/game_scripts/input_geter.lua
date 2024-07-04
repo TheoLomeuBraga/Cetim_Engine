@@ -65,6 +65,8 @@ function UPDATE()
             mouse_view_y = get_mouse_input("rotation_y"),
             analog_view_x = 0,
             analog_view_y = 0,
+            select = get_mouse_input("left"),
+            back = get_keyboard_input("q"),
             menu = get_keyboard_input("escape") ,
         }
 
@@ -83,6 +85,8 @@ function UPDATE()
             mouse_view_y = 0,
             analog_view_x = av_x,
             analog_view_y = av_y,
+            select = get_joystick_input(1,"start") + get_joystick_input(1,"south"),
+            back = get_joystick_input(1,"east"),
             menu = get_joystick_input(1,"start"),
         }
         

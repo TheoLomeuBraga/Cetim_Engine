@@ -195,6 +195,7 @@ update_per_type = {
             summon_bullet({"impact",hit_info.position,hit_info.position,nil})
             data.dead = true
         end
+        check_hit(hit_info.collision_object,{damage = 1})
 
     end,
     ["impact"] = function(data)
