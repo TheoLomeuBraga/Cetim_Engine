@@ -85,7 +85,7 @@ function UPDATE()
             mouse_view_y = 0,
             analog_view_x = av_x,
             analog_view_y = av_y,
-            select = get_joystick_input(1,"start") + get_joystick_input(1,"south"),
+            select = get_joystick_input(1,"south"),
             back = get_joystick_input(1,"east"),
             menu = get_joystick_input(1,"start"),
         }

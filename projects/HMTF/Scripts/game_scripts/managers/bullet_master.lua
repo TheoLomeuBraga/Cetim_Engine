@@ -193,9 +193,10 @@ update_per_type = {
         hit,hit_info = raycast_3D(previous_position, next_pos)
         if hit then
             summon_bullet({"impact",hit_info.position,hit_info.position,nil})
+            check_hit(hit_info.collision_object,{damage = 1})
             data.dead = true
         end
-        check_hit(hit_info.collision_object,{damage = 1})
+        
 
     end,
     ["impact"] = function(data)

@@ -15,6 +15,8 @@ require("function_sets.simple_ui")
 local config_path = get_config_folder_path() .. "/hmtf"
 local config_file_path = config_path .. "/configs_save.lua"
 
+in_main_menu = 0
+
 function save_configs()
     window:get()
     local configs = {
@@ -28,7 +30,6 @@ function save_configs()
 end
 
 function START()
-
     global_data.pause = 1
     time:set_speed(0)
 
@@ -93,114 +94,139 @@ local style_click = simple_ui_style({ r = 0, g = 0, b = 0, a = 0 }, 0.0, { r = 0
 
 
 
-
+menu_ativado = true
 
 function UPDATE()
     update_ui()
 
-    if selected_menu == 0 then
-        joystick_selector_limits = { 1, 1 }
+    if selected_menu == 0 and in_main_menu == 0 then
+        selected_menu = 1
+    end
+
+    if in_main_menu == 0 and global_data.inputs.menu == 1 and global_data.inputs_last_frame.menu == 0 then
+        menu_ativado = not menu_ativado
+    end
+
+    if menu_ativado then
+        global_data.pause = 1
+        time:set_speed(0)
+    else
+        global_data.pause = 0
+        time:set_speed(1)
+    end
+
+    if menu_ativado then
+        if selected_menu == 0 then
+            joystick_selector_limits = { 1, 1 }
 
 
-        local start_tf = simple_ui_transform()
+            local start_tf = simple_ui_transform()
 
-        start_tf.scale = { x = 0.5, y = 0.5, z = 0.5 }
+            start_tf.scale = { x = 0.5, y = 0.5, z = 0.5 }
 
-        if simple_ui_button(start_tf, "start", style, 1, style_howver) == 1 then
-            selected_menu = 1
-        end
-    elseif selected_menu == 1 then
-        
-        if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
-            selected_menu = 0
-        end
+            if simple_ui_button(start_tf, "start", style, 1, style_howver) == 1 then
+                selected_menu = 1
+            end
+        elseif selected_menu == 1 then
+            if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
+                selected_menu = 0
+            end
 
-        joystick_selector_limits = { 1, 3 }
+            joystick_selector_limits = { 1, 3 }
 
 
-        local start_tf = simple_ui_transform()
-        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
-        start_tf.position = { x = 0, y = 0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "start", style, 1, style_howver) == 1 then
-            print("new_game")
-            core_obj = game_object(global_data.core_object_ptr)
-            core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "floating_island_hub" })
-            --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub" })
-        end
+            local start_tf = simple_ui_transform()
+            start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
+            start_tf.position = { x = 0, y = 0.25, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "start", style, 1, style_howver) == 1 then
+                print("new_game")
+                core_obj = game_object(global_data.core_object_ptr)
+                core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "floating_island_hub" })
+                --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub" })
+            end
 
-        start_tf.position = { x = 0, y = -0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "config", style, 2, style_howver) == 1 then
-            selected_menu = 2
-        end
+            start_tf.position = { x = 0, y = -0.25, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "config", style, 2, style_howver) == 1 then
+                selected_menu = 2
+            end
 
-        start_tf.position = { x = 0, y = -0.75, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "exit", style, 3, style_howver) == 1 then
-            window:close()
-        end
-    elseif selected_menu == 2 then
-        if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
-            save_configs()
-            selected_menu = 1
-        end
+            start_tf.position = { x = 0, y = -0.75, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "exit", style, 3, style_howver) == 1 then
+                if in_main_menu == 1 then
+                    window:close()
+                else
+                    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions
+                        .load_sceane_request({ "main_menu" })
+                    remove_object(this_object_ptr)
+                end
+            end
+        elseif selected_menu == 2 then
+            if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
+                save_configs()
+                selected_menu = 1
+            end
 
-        joystick_selector_limits = { 1, 4 }
+            joystick_selector_limits = { 1, 4 }
 
-        --sound
-        local start_tf = simple_ui_transform()
-        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
-        start_tf.position = { x = 0, y = 0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "sensitivity: " .. tostring(global_data.mouse_sensitivity), style, 2, style_howver) == 0.5 then
-            if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
-                global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
-            elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
+            --sound
+            local start_tf = simple_ui_transform()
+            start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
+            start_tf.position = { x = 0, y = 0.25, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "sensitivity: " .. tostring(global_data.mouse_sensitivity), style, 2, style_howver) == 0.5 then
+                if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
+                    global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
+                elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
+                    global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1, 40))
+                end
+            end
+            start_tf.position = { x = 0.75, y = 0.25, z = 0 }
+            start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
+            if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
                 global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1, 40))
             end
-        end
-        start_tf.position = { x = 0.75, y = 0.25, z = 0 }
-        start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
-        if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
-            global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1, 40))
-        end
-        start_tf.position = { x = -0.75, y = 0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
-            global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
-        end
+            start_tf.position = { x = -0.75, y = 0.25, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
+                global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
+            end
 
-        --sensitivity
-        start_tf.position = { x = 0, y = -0.25, z = 0 }
-        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
-        if simple_ui_button(deepcopy(start_tf), "sound: " .. tostring(get_set_global_volume()), style, 3, style_howver) == 0.5 then
-            if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
-                get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
-            elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
+            --sensitivity
+            start_tf.position = { x = 0, y = -0.25, z = 0 }
+            start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
+            if simple_ui_button(deepcopy(start_tf), "sound: " .. tostring(get_set_global_volume()), style, 3, style_howver) == 0.5 then
+                if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
+                    get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
+                elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
+                    get_set_global_volume(math.min(get_set_global_volume() + 5, 100))
+                end
+            end
+            start_tf.position = { x = 0.75, y = -0.25, z = 0 }
+            start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
+            if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
                 get_set_global_volume(math.min(get_set_global_volume() + 5, 100))
             end
-        end
-        start_tf.position = { x = 0.75, y = -0.25, z = 0 }
-        start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
-        if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
-            get_set_global_volume(math.min(get_set_global_volume() + 5, 100))
-        end
-        start_tf.position = { x = -0.75, y = -0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
-            get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
-        end
+            start_tf.position = { x = -0.75, y = -0.25, z = 0 }
+            if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
+                get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
+            end
 
-        start_tf.position = { x = 0, y = -0.75, z = 0 }
-        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
-        if simple_ui_button(deepcopy(start_tf), "toogle full screen", style, 4, style_howver) == 1 then
-            window:get()
-            print(window.full_screen)
-            window.full_screen = not window.full_screen
-            window.resolution.x = 256 * 4
-            window.resolution.y = 224 * 4
-            window:set()
-            save_configs()
+            start_tf.position = { x = 0, y = -0.75, z = 0 }
+            start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
+            if simple_ui_button(deepcopy(start_tf), "toogle full screen", style, 4, style_howver) == 1 then
+                window:get()
+                print(window.full_screen)
+                window.full_screen = not window.full_screen
+                window.resolution.x = 256 * 4
+                window.resolution.y = 224 * 4
+                window:set()
+                save_configs()
+            end
         end
     end
 end
 
 function END()
+    global_data.pause_menu_obj_ptr = nil
+    global_data.open_pause_menu_ptr = nil
     global_data.pause = 0
     time:set_speed(1)
 end
