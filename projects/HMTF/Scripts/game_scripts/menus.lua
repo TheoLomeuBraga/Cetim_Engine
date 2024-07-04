@@ -12,6 +12,9 @@ local serializer = require("libs.serialize")
 require("math")
 require("function_sets.simple_ui")
 
+local config_path = get_config_folder_path() .. "/hmtf"
+local config_file_path = config_path .. "/configs_save.lua"
+
 function save_configs()
     window:get()
     local configs = {
@@ -20,14 +23,25 @@ function save_configs()
         full_screen = window.full_screen
     }
 
-    local config_path = get_config_folder_path() .. "/hmtf"
-    local config_file_path = config_path .. "/configs_save.lua"
-
     create_directory(config_path)
     serializer.save_table(config_file_path, configs)
 end
 
 function START()
+
+    global_data.pause = 1
+    time:set_speed(0)
+
+    local configs = serializer.load_table(config_file_path)
+    if configs == nil then
+        configs = serializer.load_table(config_file_path)
+    end
+
+    global_data.mouse_sensitivity = configs.mouse_sensitivity
+    get_set_global_volume(configs.volume)
+    window:get()
+    window.full_screen = configs.full_screen
+    window:set()
 end
 
 local joystick_selector_limits = { 1, 1 }
@@ -96,6 +110,7 @@ function UPDATE()
             selected_menu = 1
         end
     elseif selected_menu == 1 then
+        
         if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
             selected_menu = 0
         end
@@ -124,6 +139,7 @@ function UPDATE()
         end
     elseif selected_menu == 2 then
         if global_data.inputs.back == 1 and global_data.inputs_last_frame.back == 0 then
+            save_configs()
             selected_menu = 1
         end
 
@@ -134,44 +150,40 @@ function UPDATE()
         start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
         start_tf.position = { x = 0, y = 0.25, z = 0 }
         if simple_ui_button(deepcopy(start_tf), "sensitivity: " .. tostring(global_data.mouse_sensitivity), style, 2, style_howver) == 0.5 then
-
             if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
-                global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1,0))
+                global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
             elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
-                global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1,40))
+                global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1, 40))
             end
-
         end
         start_tf.position = { x = 0.75, y = 0.25, z = 0 }
         start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
         if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
-            global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1,40))
+            global_data.mouse_sensitivity = (math.min(global_data.mouse_sensitivity + 1, 40))
         end
         start_tf.position = { x = -0.75, y = 0.25, z = 0 }
         if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
-            global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1,0))
+            global_data.mouse_sensitivity = (math.max(global_data.mouse_sensitivity - 1, 0))
         end
 
         --sensitivity
         start_tf.position = { x = 0, y = -0.25, z = 0 }
         start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
         if simple_ui_button(deepcopy(start_tf), "sound: " .. tostring(get_set_global_volume()), style, 3, style_howver) == 0.5 then
-
             if global_data.inputs.left >= 1 and global_data.inputs_last_frame.left < 1 then
-                get_set_global_volume(math.max(get_set_global_volume() - 5,0))
+                get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
             elseif global_data.inputs.left <= -1 and global_data.inputs_last_frame.left > -1 then
-                get_set_global_volume(math.min(get_set_global_volume() + 5,100))
+                get_set_global_volume(math.min(get_set_global_volume() + 5, 100))
             end
-
         end
         start_tf.position = { x = 0.75, y = -0.25, z = 0 }
         start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
         if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
-            get_set_global_volume(math.min(get_set_global_volume() + 5,100))
+            get_set_global_volume(math.min(get_set_global_volume() + 5, 100))
         end
         start_tf.position = { x = -0.75, y = -0.25, z = 0 }
         if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
-            get_set_global_volume(math.max(get_set_global_volume() - 5,0))
+            get_set_global_volume(math.max(get_set_global_volume() - 5, 0))
         end
 
         start_tf.position = { x = 0, y = -0.75, z = 0 }
@@ -189,6 +201,8 @@ function UPDATE()
 end
 
 function END()
+    global_data.pause = 0
+    time:set_speed(1)
 end
 
 function COLLIDE(collision_info)

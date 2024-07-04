@@ -145,7 +145,7 @@ sensitivity_display = {}
 function sensitivity_slider(state, id)
     if state == "hold" then
         local drag_obj = game_object(id)
-        local pos = drag_obj.components.ui_component.position
+        local pos = drag_obj.components.ui_component.positionF
 
         pos.x = pos.x + global_data.inputs.mouse_view_x
         pos.x = math.min(0.8 - 2, math.max(0.2 - 2, pos.x))
