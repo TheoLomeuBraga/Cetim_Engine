@@ -129,20 +129,41 @@ function UPDATE()
 
         joystick_selector_limits = { 1, 4 }
 
-
+        --sound
         local start_tf = simple_ui_transform()
         start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
         start_tf.position = { x = 0, y = 0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "sensitivity", style, 2, style_howver) == 1 then
-
+        if simple_ui_button(deepcopy(start_tf), "sensitivity", style, 2, style_howver) == 0.5 then
+            
+        end
+        start_tf.position = { x = 0.75, y = 0.25, z = 0 }
+        start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
+        if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
+            
+        end
+        start_tf.position = { x = -0.75, y = 0.25, z = 0 }
+        if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
+            
         end
 
+        --sensitivity
         start_tf.position = { x = 0, y = -0.25, z = 0 }
-        if simple_ui_button(deepcopy(start_tf), "sound", style, 3, style_howver) == 1 then
+        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
+        if simple_ui_button(deepcopy(start_tf), "sound", style, 3, style_howver) == 0.5 then
 
+        end
+        start_tf.position = { x = 0.75, y = -0.25, z = 0 }
+        start_tf.scale = { x = 0.25, y = 0.25, z = 0.25 }
+        if simple_ui_button(deepcopy(start_tf), ">", style, 4, style_howver) == 1 then
+            
+        end
+        start_tf.position = { x = -0.75, y = -0.25, z = 0 }
+        if simple_ui_button(deepcopy(start_tf), "<", style, 4, style_howver) == 1 then
+            
         end
 
         start_tf.position = { x = 0, y = -0.75, z = 0 }
+        start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
         if simple_ui_button(deepcopy(start_tf), "toogle full screen", style, 4, style_howver) == 1 then
             window:get()
             print(window.full_screen)
