@@ -34,6 +34,8 @@ function menu:START()
     menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "in_main_menu", 1)
     menu.menu_obj.components.lua_scripts:set_variable("game_scripts/menus", "menu_selected", "main_menu")
 
+    game_object(global_data.core_object_ptr).components.lua_scripts.scripts["core"].functions.set_background_image({ path = "Textures/test_sb.svg", color = { r = 1, g = 1, b = 1 } })
+
 end
 
 function menu:UPDATE()
