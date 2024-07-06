@@ -69,7 +69,7 @@ endif
 ifeq ($(OS),Linux)
 	INCLUDE_DIRS += -I./include/draco_linux
 	ifeq ($(OPT),0)
-		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -g -fsanitize=address -DDEBUG -DTARGET_FPS=30
+		COMPILER_FLAGS = -pedantic -DLLVM_ENABLE_LTO=THIN -std=c++17 -Wl,-E  -g -fsanitize=address -DDEBUG -DTARGET_FPS=30
 	endif
 		ifeq ($(OPT),1)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O1 -ffast-math -flto -DTARGET_FPS=60
