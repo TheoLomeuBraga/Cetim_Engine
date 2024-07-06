@@ -567,7 +567,7 @@ namespace ManuseioDados
 			avcodec_free_context(&codecContext);
 			avformat_close_input(&formatContext);
 			{
-				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+				std::lock_guard<std::mutex> lock(load_frame_mtx);
 				load_frame_list.erase(path);
 			}
 			return;
@@ -586,7 +586,7 @@ namespace ManuseioDados
 			avcodec_free_context(&codecContext);
 			avformat_close_input(&formatContext);
 			{
-				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+				std::lock_guard<std::mutex> lock(load_frame_mtx);
 				load_frame_list.erase(path);
 			}
 			return;
@@ -637,11 +637,14 @@ namespace ManuseioDados
 		sws_freeContext(swsCtx);
 
 		{
-			std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
+			
+			
 			if (frameDecoded)
 			{
+				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
 				mapeamento_imagems.aplicar(path, ret);
 			}
+			std::lock_guard<std::mutex> lock(load_frame_mtx);
 			load_frame_list.erase(path);
 		}
 	}

@@ -65,7 +65,7 @@ current_element = ""
 loked_hands = 0
 
 animations_progresion = {
-    prepare_hands = -1.0,
+    --prepare_hands = -1.0,
     atack_L = -1.0,
     atack_R = -1.0,
     walk = -1.0,
@@ -73,11 +73,11 @@ animations_progresion = {
 }
 
 animations_order = {
-    [1] = "prepare_hands",
-    [2] = "normal",
-    [3] = "walk",
-    [4] = "atack_L",
-    [5] = "atack_R",
+    --[1] = "prepare_hands",
+    [1] = "normal",
+    [2] = "walk",
+    [3] = "atack_L",
+    [4] = "atack_R",
 }
 
 function atack_loop()
@@ -171,6 +171,7 @@ function UPDATE()
             end
             if value2 > -1 then
                 set_keyframe("3D Models/charters/magic_arms.glb", arms_objs.parts_ptr_list, true, value, value2)
+                break
             end
         end
 
