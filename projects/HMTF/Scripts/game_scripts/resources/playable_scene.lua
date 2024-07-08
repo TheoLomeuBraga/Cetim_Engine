@@ -16,7 +16,7 @@ menus = {
             menu_obj.components.transform:set()
 
             menu_obj.components.lua_scripts:add_script("game_scripts/menus")
-            menu_obj.components.lua_scripts.scripts["game_scripts/menus"].variables.menu_selected = "pause"
+            menu_obj.components.lua_scripts.scripts["game_scripts/menus"].variables.in_main_menu = 0
         end
     end,
 }

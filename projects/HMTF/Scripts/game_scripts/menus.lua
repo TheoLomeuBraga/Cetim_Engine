@@ -35,10 +35,8 @@ function START()
 
     local configs = serializer.load_table(config_file_path)
     if configs == nil then
-        
         save_configs()
         configs = serializer.load_table(config_file_path)
-        
     end
 
     global_data.mouse_sensitivity = configs.mouse_sensitivity
@@ -99,6 +97,8 @@ local style_click = simple_ui_style({ r = 0, g = 0, b = 0, a = 0 }, 0.0, { r = 0
 
 menu_ativado = true
 
+started = false
+
 function UPDATE()
     update_ui()
 
@@ -141,12 +141,25 @@ function UPDATE()
             local start_tf = simple_ui_transform()
             start_tf.scale = { x = 0.5, y = 0.25, z = 0.5 }
             start_tf.position = { x = 0, y = 0.25, z = 0 }
-            if simple_ui_button(deepcopy(start_tf), "start", style, 1, style_howver) == 1 then
-                print("new_game")
-                core_obj = game_object(global_data.core_object_ptr)
-                core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "floating_island_hub" })
-                --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub" })
+
+            if in_main_menu == 1 then
+                if started == false then
+                    if simple_ui_button(deepcopy(start_tf), "start", style, 1, style_howver) == 1 then
+                        print("new_game")
+                        core_obj = game_object(global_data.core_object_ptr)
+                        core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({
+                            "floating_island_hub" })
+                        --core_obj.components.lua_scripts.scripts["core"].functions.load_sceane_request({ "hub" })
+
+                        started = true
+                    end
+                end
+            else
+                if simple_ui_button(deepcopy(start_tf), "continue", style, 1, style_howver) == 1 then
+                    remove_object(this_object_ptr)
+                end
             end
+
 
             start_tf.position = { x = 0, y = -0.25, z = 0 }
             if simple_ui_button(deepcopy(start_tf), "config", style, 2, style_howver) == 1 then
