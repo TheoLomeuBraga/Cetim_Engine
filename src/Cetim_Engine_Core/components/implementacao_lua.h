@@ -509,7 +509,7 @@ key_frame mix_keyframe(key_frame a, key_frame b, float time)
 	}
 	else if (a.has_rotation)
 	{
-		a.rotation = mix(a.rotation, b.rotation, time);
+		a.rotation = slerp(a.rotation, b.rotation, time);
 		return a;
 	}
 	else if (a.has_scale)
