@@ -35,7 +35,10 @@ function START()
 
     local configs = serializer.load_table(config_file_path)
     if configs == nil then
+        
+        save_configs()
         configs = serializer.load_table(config_file_path)
+        
     end
 
     global_data.mouse_sensitivity = configs.mouse_sensitivity
