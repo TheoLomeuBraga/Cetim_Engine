@@ -500,10 +500,7 @@ namespace ManuseioDados
 
 	void load_frame_thread(string path, float time)
 	{
-		{
-			std::lock_guard<std::mutex> lock(load_frame_mtx);
-			load_frame_list.insert(path);
-		}
+		
 
 		imagem ret;
 
@@ -512,6 +509,9 @@ namespace ManuseioDados
 		{
 			cerr << "Erro ao abrir o arquivo." << endl;
 			return;
+		}else{
+			std::lock_guard<std::mutex> lock(load_frame_mtx);
+			load_frame_list.insert(path);
 		}
 
 		if (avformat_find_stream_info(formatContext, nullptr) < 0)
@@ -637,8 +637,6 @@ namespace ManuseioDados
 		sws_freeContext(swsCtx);
 
 		{
-			
-			
 			if (frameDecoded)
 			{
 				std::lock_guard<std::mutex> lock(mapeamento_imagems_mtx);
@@ -659,7 +657,7 @@ namespace ManuseioDados
 
 	shared_ptr<imagem> get_frame(string name)
 	{
-		std::lock_guard<std::mutex> lock(load_frame_mtx);
+		//std::lock_guard<std::mutex> lock(load_frame_mtx);
 		while (load_frame_list.find(name) != load_frame_list.end())
 		{
 			//this_thread::sleep_for(chrono::microseconds(10));
