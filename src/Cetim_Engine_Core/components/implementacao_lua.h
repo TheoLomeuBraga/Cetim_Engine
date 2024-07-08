@@ -602,6 +602,7 @@ void apply_key_frame_transform(std::vector<key_frame> key_frames, vector<objeto_
 		else if (kfs.has_rotation)
 		{
 			change_rot(objects_ptrs[kfs.object_id], quat_graus(kfs.rotation));
+			objects_ptrs[kfs.object_id]->pegar_componente<transform_>()->quater = kfs.rotation;
 		}
 		else if (kfs.has_scale)
 		{
@@ -2753,6 +2754,8 @@ namespace funcoes_ponte
 
 			string animation_name1 = lua_tostring(L, 4);
 			string animation_name2 = lua_tostring(L, 6);
+
+			
 			if (scene->animacoes.find(animation_name1) != scene->animacoes.end() && scene->animacoes.find(animation_name2) != scene->animacoes.end())
 			{
 				animacao ani1 = scene->animacoes[animation_name1];

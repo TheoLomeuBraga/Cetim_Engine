@@ -203,9 +203,11 @@ public:
 
 		cena_objetos_selecionados->atualisar();
 
-		cena_objetos_selecionados->atualisar_transforms();
+		
 
 		cena_objetos_selecionados->atualisar_Logica_Scripst();
+
+		cena_objetos_selecionados->atualisar_transforms();
 
 		
 		reindenizar_cenario();
