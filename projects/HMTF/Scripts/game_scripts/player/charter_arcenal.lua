@@ -155,7 +155,7 @@ function UPDATE()
                 animations_progresion.normal = 0
             end
             animations_progresion.normal = animations_progresion.normal + time.delta
-            --animations_progresion.normal = -1
+            animations_progresion.normal = -1
             
         else
             animations_progresion.normal = -1

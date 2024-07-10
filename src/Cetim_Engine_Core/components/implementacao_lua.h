@@ -3230,10 +3230,6 @@ public:
 		}
 	}
 
-	
-
-	
-
 	void iniciar()
 	{
 
