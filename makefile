@@ -75,10 +75,10 @@ ifeq ($(OS),Linux)
 		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O1 -ffast-math -flto -DTARGET_FPS=60
 	endif
 	ifeq ($(OPT),2)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2 -ffast-math -flto -DTARGET_FPS=60
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -O2 -ffast-math -flto -DTARGET_FPS=120
 	endif
 	ifeq ($(OPT),3)
-		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -Ofast -ffast-math -flto -DTARGET_FPS=60 -ftree-parallelize-loops=8
+		COMPILER_FLAGS = -DLLVM_ENABLE_LTO=THIN -funroll-loops -finline-functions -std=c++17 -Wl,-E -static-libgcc -static-libstdc++ -Ofast -ffast-math -flto -DTARGET_FPS=240 -ftree-parallelize-loops=8
 	endif
 	TARGET_ENGINE = ./build/cetim_engine
 	SRC_ENGINE = ./src/Cetim_Engine/TMP.cpp $(SRC_IMGUI)
