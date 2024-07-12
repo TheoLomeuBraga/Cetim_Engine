@@ -7,12 +7,8 @@ using String = std::string;
 // #include "vibrar_controle.cpp"
 #include "RecursosT.h"
 
-#define TOUCHES std::vector<vec2>
+#define TOUCHES std::map<std::string,float>
 
-struct android_input_struct{
-	TOUCHES touches;
-	
-};
 typedef struct mobile_input_struct mobile_input;
 
 class input_manager
@@ -25,6 +21,7 @@ public:
 	input_mouse mouse_input;
 	vector<joystick> joysticks_input;
 	vr_headset_input vr_input;
+	TOUCHES screen_touches;
 
 	unsigned char main_controller_device = 0; // 0 = mouse & keyboard ; 1 = controller 
 
@@ -38,6 +35,11 @@ public:
 	{
 		joystick vj;
 		return vj;
+	}
+	virtual TOUCHES get_screen_touches()
+	{
+		TOUCHES t;
+		return t;
 	}
 	virtual void set_led(unsigned char no,float r,float g,float b){}
 	virtual void set_vibration(unsigned char no,float power_l,float power_r,float time){}
@@ -64,6 +66,7 @@ void get_input()
 		manuseio_inputs->get_mouse_input();
 		manuseio_inputs->get_joysticks_input(0);
 		manuseio_inputs->get_vr_headset_input();
+		manuseio_inputs->get_screen_touches();
 	}
 }
 
@@ -75,11 +78,13 @@ void get_input_using_threads()
 		thread t2(&input_manager::get_keyboard_input, manuseio_inputs);
 		thread t3(&input_manager::get_mouse_input, manuseio_inputs);
 		thread t4(&input_manager::get_joysticks_input, manuseio_inputs,0);
+		thread t5(&input_manager::get_screen_touches, manuseio_inputs);
 
 		t1.join();
 		t2.join();
 		t3.join();
 		t4.join();
+		t5.join();
 	}
 }
 

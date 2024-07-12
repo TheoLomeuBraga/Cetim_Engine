@@ -82,8 +82,8 @@ input_keys = {
         y = "y",
         normalized_x = "normalized_x",
         normalized_y = "normalized_y",
-        rotation_x = "rotation_x",
-        rotation_y = "rotation_y",
+        movement_x = "movement_x",
+        movement_y = "movement_y",
         scroll = "scroll",
     },
     joystick = {
@@ -112,8 +112,8 @@ input_keys = {
         touch_button = "touch_button",
         touch_x = "touch_x",
         touch_y = "touch_y",
-        rotation_x = "rotation_x",
-        rotation_y = "rotation_y",
+        movement_x = "movement_x",
+        movement_y = "movement_y",
         rotation_z = "rotation_z",
     }
 

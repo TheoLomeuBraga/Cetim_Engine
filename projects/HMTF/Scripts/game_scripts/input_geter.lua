@@ -46,7 +46,7 @@ function UPDATE()
     local analog_left =  -apply_death_zone(get_joystick_input(1,"lx"),0.2)
 
     local av_x = apply_death_zone(get_joystick_input(1,"rx"),0.2)-- + get_joystick_input(1,"rotation_z")
-    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2)-- + -get_joystick_input(1,"rotation_x")
+    local av_y = apply_death_zone(get_joystick_input(1,"ry"),0.2)-- + -get_joystick_input(1,"movement_x")
 
     if get_main_input_device() == 0 then
 
@@ -61,8 +61,8 @@ function UPDATE()
             action_2 = get_mouse_input("right") ,
             mouse_pos_x = get_mouse_input("normalized_x"),
             mouse_pos_y = get_mouse_input("normalized_y"),
-            mouse_view_x = get_mouse_input("rotation_x"),
-            mouse_view_y = get_mouse_input("rotation_y"),
+            mouse_view_x = get_mouse_input("movement_x"),
+            mouse_view_y = get_mouse_input("movement_y"),
             analog_view_x = 0,
             analog_view_y = 0,
             select = get_mouse_input("left"),
@@ -92,7 +92,7 @@ function UPDATE()
         
     end
 
-    if get_mouse_input("rotation_x") + get_mouse_input("rotation_y") + get_mouse_input("left") > 0.01 then
+    if get_mouse_input("movement_x") + get_mouse_input("movement_y") + get_mouse_input("left") > 0.01 then
         main_input_method = "keyboard"
     elseif analog_foward + analog_left + av_x + av_y > 0 or analog_foward + analog_left + av_x + av_y < 0  then
         main_input_method = "joystick"

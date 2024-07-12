@@ -54,9 +54,8 @@ camera_movement_intensity = 2
 
 this_physics_3d = {}
 
-start_point = {0,0,0}
+start_point = { 0, 0, 0 }
 function START()
-
     global_data.inventory = {
         jump_boost = 1,
         jump_dash = 1,
@@ -66,7 +65,8 @@ function START()
 
     core_obj = game_object(global_data.core_object_ptr)
 
-    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 100000)
+    camera = create_camera_perspective(this_object_ptr, { x = 0, y = 0.5, z = 0 }, { x = 0, y = 0, z = 0 }, 90, 0.1,
+        100000)
     camera_ptr = camera.object_ptr
     global_data.camera_ptr = camera_ptr
     set_lisener_object(camera.object_ptr)
@@ -161,8 +161,6 @@ function aproche_to_target_value(num, speed, target_value)
     end
     return ret
 end
-
-
 
 function manage_inpulse_land(i)
     local delta_friction = land_friction * time.delta
@@ -262,13 +260,15 @@ function UPDATE()
         if global_data.pause < 1 and global_data.interacting == 0 then
             --move camera
             window:get()
-            camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 20
+            camera_rotation.x = camera_rotation.x - (inputs.mouse_view_x) * mouse_sensitivity * 2000 * time.delta
             camera_rotation.y = math.max(
-                math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 20), 90), -90)
+                math.min(camera_rotation.y - ((inputs.mouse_view_y) * mouse_sensitivity * 2000 * time.delta), 90), -90)
 
+            --[[
             camera_rotation.x = camera_rotation.x - (inputs.analog_view_x) * mouse_sensitivity
             camera_rotation.y = math.max(
                 math.min(camera_rotation.y - ((inputs.analog_view_y) * mouse_sensitivity), 90), -90)
+            ]]
 
             if not this_object_physics_3D_seted then
                 this_physics_3d:set()
@@ -323,7 +323,7 @@ function UPDATE()
             if hit_down and inpulse.y <= 0 then
                 --inpulse
                 manage_inpulse_land(inpulse)
-                
+
                 jump_booster_used = false
 
 
@@ -343,13 +343,12 @@ function UPDATE()
             end
 
             if global_data["items"] ~= nil and global_data["items"]["duble_jump"] == 1 and jump_booster_used == false and hit_down == false and inputs.jump > 0 and not (inputs_last_frame.jump > 0) then
-
                 inpulse.y = jump_power
                 base_directional_input = deepcopy(input_dir)
-                
+
                 if math.abs(move_dir.x) + math.abs(move_dir.z) > 0.5 then
                     inpulse.x = boost_power * move_dir.x
-                    inpulse.z = boost_power * move_dir.z 
+                    inpulse.z = boost_power * move_dir.z
                 end
 
 
@@ -379,8 +378,7 @@ function UPDATE()
         this_object.components.transform:get()
         --print("A",this_object.components.transform.position.x,this_object.components.transform.position.y,this_object.components.transform.position.z)
         if this_object.components.transform.position.y < -20 then
-            
-            this_object.components.transform:change_position(start_point.x,start_point.y,start_point.z)
+            this_object.components.transform:change_position(start_point.x, start_point.y, start_point.z)
         end
 
         this_physics_3d:get()

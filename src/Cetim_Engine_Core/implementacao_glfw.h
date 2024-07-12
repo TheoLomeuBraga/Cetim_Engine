@@ -128,8 +128,7 @@ public:
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		//SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
-
+		// SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
 
 		window = SDL_CreateWindow(pegar_nome_arquivo(argumentos[1]).c_str(), configuracoes::janelaConfig.X, configuracoes::janelaConfig.Y, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		if (window == nullptr)
@@ -175,7 +174,7 @@ public:
 	long double tempoPerdido = 0;
 	void Reindenizar()
 	{
-		
+
 		/**/
 		while (true)
 		{
@@ -200,18 +199,13 @@ public:
 			f();
 		}
 
-
 		cena_objetos_selecionados->atualisar();
-
-		
 
 		cena_objetos_selecionados->atualisar_Logica_Scripst();
 
 		cena_objetos_selecionados->atualisar_transforms();
 
-		
 		reindenizar_cenario();
-		
 
 		for (function<void()> f : Depois_Render_Func)
 		{
@@ -318,8 +312,8 @@ public:
 
 	input_mouse get_mouse_input()
 	{
-		mouse_input.movimentos["rotation_x"] = 0;
-		mouse_input.movimentos["rotation_y"] = 0;
+		mouse_input.movimentos["movement_x"] = 0;
+		mouse_input.movimentos["movement_y"] = 0;
 
 		float x, y;
 		Uint32 mouseButtons = SDL_GetMouseState(&x, &y);
@@ -343,8 +337,8 @@ public:
 
 				int width, height;
 				SDL_GetWindowSize(window, &width, &height);
-				mouse_input.movimentos["rotation_x"] = (float)relX / (float)width;
-				mouse_input.movimentos["rotation_y"] = (float)relY / (float)height;
+				mouse_input.movimentos["movement_x"] = (float)relX / (float)width;
+				mouse_input.movimentos["movement_y"] = (float)relY / (float)height;
 
 				mouse_input.movimentos["normalized_x"] = (float)mouseX / (float)width;
 				mouse_input.movimentos["normalized_y"] = (float)mouseY / (float)height;
@@ -436,54 +430,37 @@ public:
 		return keyboard_input;
 	}
 
-	void print_button(SDL_Gamepad *gamepad, Uint8 button)
+	TOUCHES get_screen_touches()
 	{
+		TOUCHES t;
 
-		switch (button)
-		{
-		case SDL_GAMEPAD_BUTTON_SOUTH:
-			SDL_SetGamepadLED(gamepad, 255, 0, 0);
-			std::cout << "Botão SOUTH pressionado\n";
-			break;
-		case SDL_GAMEPAD_BUTTON_WEST:
-			std::cout << "Botão WEST pressionado\n";
-			SDL_SetGamepadLED(gamepad, 0, 0, 255);
-			break;
-		case SDL_GAMEPAD_BUTTON_NORTH:
-			std::cout << "Botão NORTH pressionado\n";
-			SDL_SetGamepadLED(gamepad, 0, 255, 0);
-			break;
-		case SDL_GAMEPAD_BUTTON_EAST:
-			std::cout << "Botão EAST pressionado\n";
-			SDL_SetGamepadLED(gamepad, 255, 255, 0);
-			break;
-		}
-	}
+		t["touch"] = 0.0;
 
-	void print_axis(SDL_Gamepad *gamepad, Uint8 axis, Sint16 power)
-	{
-		float fpower = (float)power / 32767.0;
-		if (fpower > 0.2 || fpower < -0.2)
+		for (SDL_Event event : event_list)
 		{
-			switch (axis)
+			t["touch"] == SDL_EVENT_FINGER_DOWN || SDL_EVENT_FINGER_MOTION;
+			if (t["touch"])
 			{
-			case SDL_GAMEPAD_AXIS_LEFTX:
-				print("SDL_GAMEPAD_AXIS_LEFTX", fpower);
-				break;
-			case SDL_GAMEPAD_AXIS_LEFTY:
-				print("SDL_GAMEPAD_AXIS_LEFTY", fpower);
-				break;
 
-			case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
-				print("SDL_GAMEPAD_AXIS_RIGHT_TRIGGER", fpower);
-				SDL_RumbleGamepad(gamepad, 0, 65535, 500);
-				break;
-			case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-				print("SDL_GAMEPAD_AXIS_LEFT_TRIGGER", fpower);
-				SDL_RumbleGamepad(gamepad, 65535, 0, 500);
-				break;
+				t["movement_x"] = event.tfinger.x - t["x"];
+				t["movement_y"] = event.tfinger.y - t["y"];
+
+				t["x"] = event.tfinger.x;
+				t["y"] = event.tfinger.y;
 			}
 		}
+
+		if (!t["touch"])
+		{
+
+			t["movement_x"] = 0.0;
+			t["movement_y"] = 0.0;
+
+			t["x"] = 0.0;
+			t["y"] = 0.0;
+		}
+
+		return t;
 	}
 
 	unsigned int wait_next_print;
@@ -571,7 +548,7 @@ public:
 				}
 				break;
 			case SDL_EVENT_GAMEPAD_BUTTON_UP:
-			switch (event.gbutton.button)
+				switch (event.gbutton.button)
 				{
 				case SDL_GAMEPAD_BUTTON_SOUTH:
 					sdl_gamepads_joysticks[event.cdevice.which]["south"] = 0;
@@ -621,7 +598,7 @@ public:
 				}
 				break;
 			case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-			switch (event.gaxis.axis)
+				switch (event.gaxis.axis)
 				{
 				case SDL_GAMEPAD_AXIS_LEFTX:
 					sdl_gamepads_joysticks[event.cdevice.which]["lx"] = event.gaxis.value / 32767.0;
@@ -647,9 +624,9 @@ public:
 				if (event.gsensor.sensor == SDL_SENSOR_GYRO)
 				{
 					float *data = event.gsensor.data;
-				sdl_gamepads_joysticks[event.cdevice.which]["rotation_x"] = data[0];
-				sdl_gamepads_joysticks[event.cdevice.which]["rotation_y"] = data[1];
-				sdl_gamepads_joysticks[event.cdevice.which]["rotation_z"] = data[2];
+					sdl_gamepads_joysticks[event.cdevice.which]["movement_x"] = data[0];
+					sdl_gamepads_joysticks[event.cdevice.which]["movement_y"] = data[1];
+					sdl_gamepads_joysticks[event.cdevice.which]["rotation_z"] = data[2];
 				}
 				break;
 			case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
@@ -657,17 +634,16 @@ public:
 				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = event.gtouchpad.y;
 				break;
 			case SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
-			sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = 0;
+				sdl_gamepads_joysticks[event.cdevice.which]["touch_x"] = 0;
 				sdl_gamepads_joysticks[event.cdevice.which]["touch_y"] = 0;
 				break;
 			case SDL_EVENT_GAMEPAD_REMOVED:
-			SDL_Gamepad *gp = sdl_gamepads[event.cdevice.which];
+				SDL_Gamepad *gp = sdl_gamepads[event.cdevice.which];
 				SDL_CloseGamepad(gp);
 				sdl_gamepads.erase(event.cdevice.which);
 				std::cout << "Gamepad desconectado\n";
 				break;
 			}
-			
 		}
 
 		auto j = sdl_gamepads_joysticks.begin();
@@ -700,7 +676,6 @@ public:
 		}
 	}
 
-	
 	vr_headset_input get_vr_headset_input()
 	{
 		return vr_input;
