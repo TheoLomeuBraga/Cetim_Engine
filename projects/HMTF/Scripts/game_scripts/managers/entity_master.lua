@@ -191,8 +191,9 @@ function check_hit(args)
     
     local ptr = args[1]
     local data = args[2]
+    local damage = data.damage
 
-    print("check hit",ptr)
+    print("check hit",ptr,damage)
     
     return {}
 end
