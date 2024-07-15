@@ -141,11 +141,20 @@ local update_per_type = {
         if distance(pos, player_position) > 10 then
             walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
         end
-
-        --entity.obj.components.transform:look_at(player_position,false,Vec3:new(0,1,0))
     end,
     test_enemy = function (entity)
-        
+        local pos = entity.obj.components.transform:get_global_position()
+        pos.y = pos.y - 1.5
+
+        if entity.path == nil or #entity.path == 0 or entity.progression == nil or #entity.progression == 0 then
+            entity.path = generate_navmesh_short_path(pos, player_position)
+            entity.progression = { 0.0 }
+        end
+
+        print(distance(pos, player_position))
+        if distance(pos, player_position) > 10 then
+            walk_to(entity.obj, entity.path, entity.progression, 3, 10 * time.delta * time.scale, true)
+        end
     end
 }
 
