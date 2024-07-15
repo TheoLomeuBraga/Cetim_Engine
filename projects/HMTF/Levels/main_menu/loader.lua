@@ -23,7 +23,8 @@ function menu:START()
     global_data.player_object_ptr = nil
     
     local layers = global_data.layers
-    menu.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    --menu.camera_obj = create_camera_perspective(layers.camera, { x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 }, 90, 0.1, 1000)
+    menu.camera_obj = create_camera_ortho(layers.camera,{ x = 0, y = 0, z = -10 }, { x = 0, y = 0, z = 0 },1,1,1,1,0.1,1000)
     set_lisener_object(menu.camera_obj.object_ptr)
 
     menu.menu_obj = game_object(create_object(layers.hud))
